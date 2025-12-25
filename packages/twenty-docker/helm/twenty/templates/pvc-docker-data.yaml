@@ -9,7 +9,8 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: server
 spec:
-  accessModes: {{ toYaml .Values.server.dockerDataPersistence.accessModes | nindent 2 }}
+  accessModes:
+{{ toYaml .Values.server.dockerDataPersistence.accessModes | nindent 4 }}
   resources:
     requests:
       storage: {{ .Values.server.dockerDataPersistence.size }}

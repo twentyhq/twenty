@@ -9,11 +9,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: server
 spec:
-  type: {{ .Values.server.service.type }}
-  sessionAffinity: {{ .Values.server.service.sessionAffinity }}
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: {{ .Values.server.service.sessionAffinityTimeoutSeconds }}
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: {{ include "twenty.name" . }}
     app.kubernetes.io/component: server

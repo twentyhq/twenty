@@ -1,13 +1,14 @@
 # Twenty Helm Chart
 
-Deploy Twenty CRM on Kubernetes with configurable server, worker, PostgreSQL, and Redis components. The chart supports using Bitnami subcharts for PostgreSQL and Redis or bundled minimal internal deployments.
+Deploy Twenty CRM on Kubernetes with server, worker, PostgreSQL, and Redis components.
 
 ## Features
 - Server and worker deployments with full env exposure via `values.yaml`.
-- Optional Bitnami `postgresql` and `redis` dependencies via conditions.
-- Internal lightweight Postgres (Spilo) and Redis when dependencies are disabled.
+- Internal PostgreSQL (Spilo) and Redis deployments included.
 - PVC-based persistence using dynamic storage classes (no static PV manifests).
 - Ingress with configurable annotations, hosts, and TLS.
+- Database readiness and migrations handled by server/worker init containers by default.
+– Standard Kubernetes Jobs for DB creation/user and migrations have been removed to simplify installs. Readiness and migrations run in init containers.
 
 ## Quick Start
 
@@ -23,23 +24,13 @@ helm install my-twenty ./packages/twenty-docker/helm/twenty \
   --namespace twentycrm --create-namespace
 ```
 
-Bitnami PostgreSQL/Redis:
-```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm dependency build ./packages/twenty-docker/helm/twenty
-helm install my-twenty ./packages/twenty-docker/helm/twenty \
-  --namespace twentycrm --create-namespace \
-  --set postgresql.enabled=true \
-  --set redis.enabled=true
-```
-
 External DB/Redis:
 ```bash
 helm install my-twenty ./packages/twenty-docker/helm/twenty \
   --namespace twentycrm --create-namespace \
-  --set postgresql.enabled=false,db.enabled=false \
+  --set db.enabled=false \
   --set db.external.host=db.example.com \
-  --set redis.enabled=false,redisInternal.enabled=false
+  --set redisInternal.enabled=false
 ```
 
 ## Key Values
@@ -50,7 +41,8 @@ See `values.yaml` for a comprehensive list.
 ## Notes
 
 - Database URL and Redis URL are composed automatically from chart settings
-- Default database `twenty` is created via post-install hook
+- Database `twenty` and schema `core` are created automatically by server init container
+- No optional jobs: the chart no longer provides separate Jobs for DB or migrations.
 - Access token auto-generated (32 chars) if not provided; reuses existing secret if present
 - TLS enabled by default via cert-manager (`acme: true`)
 - Requires default StorageClass for PVC provisioning

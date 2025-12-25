@@ -1,4 +1,4 @@
-{{- if and (not .Values.postgresql.enabled) .Values.db.enabled .Values.db.internal.persistence.enabled (not .Values.db.internal.persistence.existingClaim) }}
+{{- if and .Values.db.enabled .Values.db.internal.persistence.enabled (not .Values.db.internal.persistence.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -9,7 +9,8 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: db
 spec:
-  accessModes: {{ toYaml .Values.db.internal.persistence.accessModes | nindent 2 }}
+  accessModes:
+{{ toYaml .Values.db.internal.persistence.accessModes | nindent 4 }}
   resources:
     requests:
       storage: {{ .Values.db.internal.persistence.size }}

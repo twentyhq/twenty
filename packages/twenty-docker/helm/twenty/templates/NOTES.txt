@@ -11,10 +11,7 @@ To access the application:
   - URL: {{ include "twenty.serverUrl" . }}
 - If ingress disabled: expose the service as needed (e.g., `kubectl port-forward svc/{{ include "twenty.fullname" . }}-server 3000:{{ .Values.server.service.port }}` or create a LoadBalancer/NodePort).
 
-Database:
-- Using Bitnami PostgreSQL: {{ ternary "yes" "no" .Values.postgresql.enabled }}
-- Using internal DB: {{ ternary "yes" "no" (and (not .Values.postgresql.enabled) .Values.db.enabled) }}
-
-Redis:
-- Using Bitnami Redis: {{ ternary "yes" "no" .Values.redis.enabled }}
-- Using internal Redis: {{ ternary "yes" "no" (and (not .Values.redis.enabled) .Values.redisInternal.enabled) }}
+Configuration:
+- Using internal DB: {{ ternary "yes" "no" .Values.db.enabled }}
+- Using external DB: {{ ternary "yes" "no" (not .Values.db.enabled) }}
+- Using internal Redis: {{ ternary "yes" "no" .Values.redisInternal.enabled }}

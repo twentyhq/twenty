@@ -19,11 +19,10 @@ tests:
           path: metadata.name
           value: my-twenty-twenty-redis
 
-  - it: internal redis does not render when disabled and external is used
+  - it: internal redis does not render when disabled
     template: templates/deployment-redis-internal.yaml
     set:
       redisInternal.enabled: false
-      redis.enabled: true
     asserts:
       - hasDocuments:
           count: 0

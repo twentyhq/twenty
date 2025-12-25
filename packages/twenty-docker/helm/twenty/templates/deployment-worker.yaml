@@ -26,21 +26,29 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: worker
     spec:
-      {{- with .Values.worker.podSecurityContext }}
       securityContext:
-{{ toYaml . | nindent 8 }}
-      {{- end }}
+{{- toYaml .Values.securityContext | nindent 8 }}
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ if .Values.db.enabled }}{{ include "twenty.fullname" . }}-db{{ else }}{{ .Values.db.external.host }}{{ end }} \
+                               -p {{ if .Values.db.enabled }}5432{{ else }}{{ .Values.db.external.port | default 5432 }}{{ end }} \
+                               -U postgres; do
+                echo "Waiting for database socket..."
+                sleep 2
+              done
+              echo "Database socket is ready!"
       containers:
         - name: worker
           {{- $img := include "twenty.worker.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
           command:
-{{ toYaml .Values.worker.command | nindent 12 }}
-          {{- with .Values.worker.containerSecurityContext }}
-          securityContext:
-{{ toYaml . | nindent 12 }}
-          {{- end }}
+{{- toYaml .Values.worker.command | nindent 12 }}
           env:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
@@ -53,24 +61,15 @@ spec:
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: STORAGE_TYPE
               value: {{ include "twenty.storageType" . | quote }}
-            - name: DISABLE_DB_MIGRATIONS
-              value: {{ .Values.worker.env.DISABLE_DB_MIGRATIONS | quote }}
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
-            {{- with .Values.worker.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
             {{ $storageEnv | nindent 12 }}
             {{- end }}
-          {{- with .Values.worker.extraEnvFrom }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           stdin: true

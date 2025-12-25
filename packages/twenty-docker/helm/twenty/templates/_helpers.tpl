@@ -12,26 +12,22 @@
 {{- end -}}
 
 {{- define "twenty.namespace" -}}
-{{- if .Values.namespaceOverride -}}
-{{ .Values.namespaceOverride }}
-{{- else -}}
 {{ .Release.Namespace }}
-{{- end -}}
 {{- end -}}
 
 {{/* Server image fields merged with globals */}}
 {{- define "twenty.server.image" -}}
-{{- $repo := default $.Values.image.repository $.Values.server.image.repository -}}
-{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) $.Values.server.image.tag -}}
-{{- $pp := default $.Values.image.pullPolicy $.Values.server.image.pullPolicy -}}
+{{- $repo := default $.Values.image.repository (index $.Values.server.image "repository" | default "") -}}
+{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) (index $.Values.server.image "tag" | default "") -}}
+{{- $pp := default $.Values.image.pullPolicy (index $.Values.server.image "pullPolicy" | default "") -}}
 {{- printf "%s:%s|%s" $repo $tag $pp -}}
 {{- end -}}
 
 {{/* Worker image fields merged with globals */}}
 {{- define "twenty.worker.image" -}}
-{{- $repo := default $.Values.image.repository $.Values.worker.image.repository -}}
-{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) $.Values.worker.image.tag -}}
-{{- $pp := default $.Values.image.pullPolicy $.Values.worker.image.pullPolicy -}}
+{{- $repo := default $.Values.image.repository (index $.Values.worker.image "repository" | default "") -}}
+{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) (index $.Values.worker.image "tag" | default "") -}}
+{{- $pp := default $.Values.image.pullPolicy (index $.Values.worker.image "pullPolicy" | default "") -}}
 {{- printf "%s:%s|%s" $repo $tag $pp -}}
 {{- end -}}
 
@@ -50,16 +46,12 @@
 {{- define "twenty.dbUrl" -}}
 {{- if .Values.server.env.PG_DATABASE_URL -}}
 {{- .Values.server.env.PG_DATABASE_URL -}}
-{{- else if .Values.postgresql.enabled -}}
-{{- $host := printf "%s-postgresql" (include "twenty.fullname" .) -}}
-{{- $user := .Values.postgresql.auth.username | default "postgres" -}}
-{{- $pass := .Values.postgresql.auth.password | default "postgres" -}}
-{{- $db := .Values.postgresql.auth.database | default "twenty" -}}
-{{- printf "postgres://%s:%s@%s.%s.svc.cluster.local/%s" $user $pass $host (include "twenty.namespace" .) $db -}}
-{{- else if and .Values.db.enabled (not .Values.postgresql.enabled) -}}
+{{- else if .Values.db.enabled -}}
 {{- $host := printf "%s-db" (include "twenty.fullname" .) -}}
+{{- $user := .Values.db.internal.appUser | default "twenty_app_user" -}}
+{{- $pass := .Values.db.internal.appPassword | default (randAlphaNum 32) -}}
 {{- $db := .Values.db.internal.database | default "twenty" -}}
-{{- printf "postgres://postgres:postgres@%s.%s.svc.cluster.local/%s" $host (include "twenty.namespace" .) $db -}}
+{{- printf "postgres://%s:%s@%s.%s.svc.cluster.local/%s" $user $pass $host (include "twenty.namespace" .) $db -}}
 {{- else -}}
 {{- $scheme := "postgres" -}}
 {{- $host := .Values.db.external.host -}}
@@ -76,9 +68,6 @@
 {{- define "twenty.redisUrl" -}}
 {{- if .Values.server.env.REDIS_URL -}}
 {{- .Values.server.env.REDIS_URL -}}
-{{- else if .Values.redis.enabled -}}
-{{- $host := printf "%s-redis-master" (include "twenty.fullname" .) -}}
-{{- printf "redis://%s.%s.svc.cluster.local:6379" $host (include "twenty.namespace" .) -}}
 {{- else if .Values.redisInternal.enabled -}}
 {{- $host := printf "%s-redis" (include "twenty.fullname" .) -}}
 {{- printf "redis://%s.%s.svc.cluster.local:6379" $host (include "twenty.namespace" .) -}}
@@ -124,15 +113,9 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Server container port: prefer env NODE_PORT, else service.port, else 3000 */}}
+{{/* Server container port */}}
 {{- define "twenty.server.containerPort" -}}
-{{- if .Values.server.env.NODE_PORT -}}
-{{- .Values.server.env.NODE_PORT -}}
-{{- else if .Values.server.service.port -}}
-{{- .Values.server.service.port -}}
-{{- else -}}
-3000
-{{- end -}}
+{{- .Values.server.service.port | default 3000 -}}
 {{- end -}}
 
 {{/* Storage type: prefer top-level storage.type, else legacy server.env.STORAGE_TYPE, else local */}}

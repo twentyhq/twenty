@@ -5,14 +5,3 @@ type: application
 version: 0.1.0
 appVersion: "v1.14.0"
 icon: https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg
-
-# Optional dependencies; enable via values (postgresql.enabled / redis.enabled)
-dependencies:
-  - name: postgresql
-    version: "15.*"
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: postgresql.enabled
-  - name: redis
-    version: "19.*"
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: redis.enabled

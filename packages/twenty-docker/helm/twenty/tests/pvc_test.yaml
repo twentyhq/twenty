@@ -2,7 +2,7 @@ suite: pvc configuration
 templates:
   - templates/pvc-server.yaml
   - templates/pvc-db-internal.yaml
-  - templates/pvc-redis-internal.yaml
+  - templates/pvc-docker-data.yaml
 release:
   name: my-twenty
   namespace: default
@@ -45,7 +45,7 @@ tests:
     template: templates/pvc-server.yaml
     set:
       server.persistence.enabled: true
-      server.persistence.storageClassName: "-"
+      server.persistence.storageClass: ""
     asserts:
       - isNull:
           path: spec.storageClassName
@@ -54,8 +54,8 @@ tests:
     template: templates/pvc-db-internal.yaml
     set:
       db.enabled: true
-      db.persistence.enabled: true
-      db.persistence.size: 20Gi
+      db.internal.persistence.enabled: true
+      db.internal.persistence.size: 20Gi
     asserts:
       - isKind:
           of: PersistentVolumeClaim
@@ -77,17 +77,17 @@ tests:
     template: templates/pvc-db-internal.yaml
     set:
       db.enabled: true
-      db.persistence.enabled: true
+      db.internal.persistence.enabled: true
     asserts:
       - hasDocuments:
           count: 1
 
-  - it: redis-internal pvc renders when enabled
+  - it: docker-data pvc renders when enabled
     template: templates/pvc-docker-data.yaml
     set:
-      redisInternal.enabled: true
-      redisInternal.persistence.enabled: true
-      redisInternal.persistence.size: 5Gi
+      server.enabled: true
+      server.dockerDataPersistence.enabled: true
+      server.dockerDataPersistence.size: 5Gi
     asserts:
       - isKind:
           of: PersistentVolumeClaim

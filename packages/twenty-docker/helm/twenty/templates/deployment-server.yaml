@@ -26,10 +26,8 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: server
     spec:
-      {{- with .Values.server.podSecurityContext }}
       securityContext:
-{{ toYaml . | nindent 8 }}
-      {{- end }}
+{{- toYaml .Values.securityContext | nindent 8 }}
       volumes:
         {{- if .Values.server.dockerDataPersistence.enabled }}
         - name: docker-data
@@ -41,21 +39,80 @@ spec:
           persistentVolumeClaim:
             claimName: {{ if .Values.server.persistence.existingClaim }}{{ .Values.server.persistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-server{{ end }}
         {{- end }}
-        {{- with .Values.server.extraVolumes }}
-        {{- toYaml . | nindent 8 }}
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ if .Values.db.enabled }}{{ include "twenty.fullname" . }}-db{{ else }}{{ .Values.db.external.host }}{{ end }} \
+                               -p {{ if .Values.db.enabled }}5432{{ else }}{{ .Values.db.external.port | default 5432 }}{{ end }} \
+                               -U postgres; do
+                echo "Waiting for database socket..."
+                sleep 2
+              done
+              echo "Database socket is ready!"
+        {{- if .Values.db.enabled }}
+        - name: ensure-database-exists
+          image: postgres:16-alpine
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: appPassword
+          command:
+            - sh
+            - -c
+            - |
+              DBNAME={{ .Values.db.internal.database | default "twenty" }}
+              APP_USER={{ .Values.db.internal.appUser | default "twenty_app_user" }}
+              echo "Creating database ${DBNAME} if it doesn't exist..."
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -tc "SELECT 1 FROM pg_database WHERE datname='${DBNAME}'" | grep -q 1 || \
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -c "CREATE DATABASE \"${DBNAME}\""
+              echo "Creating app user ${APP_USER} if it doesn't exist..."
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -tc "SELECT 1 FROM pg_roles WHERE rolname='${APP_USER}'" | grep -q 1 || \
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -c "CREATE USER \"${APP_USER}\" WITH PASSWORD '${APP_PASSWORD}'"
+              echo "Creating core schema and granting permissions..."
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "CREATE SCHEMA IF NOT EXISTS core"
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON DATABASE \"${DBNAME}\" TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON SCHEMA core TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON SCHEMA public TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA core TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON TABLES TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON SEQUENCES TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO \"${APP_USER}\""
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d ${DBNAME} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO \"${APP_USER}\""
+              echo "Database ${DBNAME} is ready."
         {{- end }}
+        - name: run-migrations
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command:
+            - sh
+            - -c
+            - >-
+              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
+          env:
+            - name: PG_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
       containers:
         - name: server
           {{- $img := include "twenty.server.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
-          {{- with .Values.server.containerSecurityContext }}
-          securityContext:
-{{ toYaml . | nindent 12 }}
-          {{- end }}
           env:
-            - name: NODE_PORT
-              value: {{ include "twenty.server.containerPort" . | quote }}
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
             - name: PG_DATABASE_URL
@@ -78,17 +135,10 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
-            {{- with .Values.server.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
             {{ $storageEnv | nindent 12 }}
             {{- end }}
-          {{- with .Values.server.extraEnvFrom }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}
@@ -97,18 +147,18 @@ spec:
             httpGet:
               path: /
               port: {{ include "twenty.server.containerPort" . }}
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 10
-            timeoutSeconds: 2
-            failureThreshold: 3
+            timeoutSeconds: 5
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /
               port: {{ include "twenty.server.containerPort" . }}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 40
             periodSeconds: 5
-            timeoutSeconds: 2
-            failureThreshold: 3
+            timeoutSeconds: 5
+            failureThreshold: 5
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
           volumeMounts:

@@ -9,15 +9,14 @@ export DOMAIN=twenty.gc.kencove.com
 
 helm install my-twenty ./packages/twenty-docker/helm/twenty \
   --namespace twentycrm --create-namespace --wait \
-  --set server.ingress.hosts[0].host=$DOMAIN \
-  --set server.ingress.tls[0].hosts[0]=$DOMAIN
+  --set "server.ingress.hosts[0].host=$DOMAIN" \
+  --set "server.ingress.tls[0].hosts[0]=$DOMAIN"
 ```
 
 That's it! The chart will:
 - Auto-generate a secure access token
-- Create the internal PostgreSQL database "twenty"
-- Create a DB app user with generated password
-- Run TypeORM migrations
+- Create the PostgreSQL database "twenty" and schema "core" automatically
+- Run TypeORM migrations via server init
 - Enable TLS via cert-manager (acme: true by default for letsencrypt-prod)
 
 ## Access the App
@@ -35,13 +34,14 @@ kubectl get secret tokens -n twentycrm -o jsonpath='{.data.accessToken}' | base6
 
 Internal PostgreSQL credentials are managed by the chart and not exposed by default. If you need direct access, create your own user in the database pod or use an external PostgreSQL instance.
 
+Jobs for DB creation and migrations have been removed to simplify deployments; the server handles readiness and migrations at startup.
+
 ## Advanced Configuration
 
 See [full README](README.md) for:
 - External PostgreSQL/Redis
 - S3 storage configuration
 - Custom resource limits
-- Bitnami dependency charts
 
 ## Uninstall
 
