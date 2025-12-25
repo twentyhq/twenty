@@ -10,3 +10,7 @@ export type RecordCrudExecutionContext = {
 export type CreateRecordExecutionContext = RecordCrudExecutionContext & {
   createdBy?: ActorMetadata;
 };
+
+export type UpdateRecordExecutionContext = RecordCrudExecutionContext & {
+  updatedBy?: ActorMetadata;
+};
