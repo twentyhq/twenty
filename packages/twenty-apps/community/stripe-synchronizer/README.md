@@ -10,9 +10,9 @@ Synchronizes customers from Stripe to Twenty
 ## Setup
 1. Synchronize app
 ```bash
-twenty auth login
-cd stripe-synchronizer
-twenty app sync
+cd packages/twenty-apps/community/stripe-synchronizer
+yarn auth
+yarn sync
 ```
 2. Go to Stripe > Workbench > Webhooks and add webhook:
 - events: customer.subscription.created and customer.subscription.updated
@@ -35,3 +35,4 @@ twenty app sync
 ## Todo
 - add validation of signature key from Stripe to ensure that incoming request is valid
   (possible once request headers are exposed to serverless functions)
+- update app so it'll use provided Twenty generated object with native types from workspace once extending objects is possible
