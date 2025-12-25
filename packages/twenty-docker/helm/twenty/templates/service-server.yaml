@@ -16,6 +16,6 @@ spec:
   ports:
     - name: http-tcp
       port: {{ .Values.server.service.port }}
-      targetPort: {{ .Values.server.env.NODE_PORT }}
+      targetPort: {{ include "twenty.server.containerPort" . }}
       protocol: TCP
 {{- end }}

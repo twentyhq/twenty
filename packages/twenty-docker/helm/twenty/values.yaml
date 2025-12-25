@@ -82,6 +82,8 @@ server:
     accessModes:
       - ReadWriteOnce
 
+  extraVolumeMounts: []
+
 # Worker deployment
 worker:
   enabled: true
