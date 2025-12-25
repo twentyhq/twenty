@@ -128,8 +128,6 @@ export class ActorFromAuthContextService {
   ) {
     const existingValue = record[fieldName] as ActorMetadata | undefined;
 
-    // For createdBy: only inject if not already set
-    // For updatedBy: always overwrite with the latest actor
     if (fieldName === 'createdBy') {
       if (actorMetadata && (!existingValue || !existingValue.name)) {
         record[fieldName] = {
