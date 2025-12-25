@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Vytvořte nabídku nebo fakturu z Twenty
+description: Automaticky vytvářejte faktury v externích nástrojích, když se obchodní případy uzavřou.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Automaticky odesílejte data o obchodních případech do vašeho fakturačního systému (Stripe, QuickBooks, Xero atd.). když je příležitost vyhrána.
 
-## Workflow Structure
+## Struktura pracovního postupu
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Spouštěč**: Záznam je aktualizován (Příležitost)
+2. **Filtr**: Stav = Uzavřeno – vyhráno
+3. **Vyhledat záznam**: Získat podrobnosti o společnosti
+4. **Kód** (volitelné): Formátovat payload
+5. **Požadavek HTTP**: Odeslat do fakturačního systému
 
-## Step 1: Set Up the Trigger
+## Krok 1: Nastavení spouštěče
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Vytvořte nový pracovní postup
+2. Vyberte spouštěč **Záznam je aktualizován**
+3. Vyberte jako objekt **Příležitost**
 
-## Step 2: Filter for Closed Won
+## Krok 2: Filtrování na Uzavřeno – vyhráno
 
-Add a **Filter** action to only continue when the deal is won:
+Přidejte akci **Filtr**, aby se pokračovalo pouze tehdy, když je obchodní případ vyhraný:
 
-| Setting       | Hodnota                           |
-| ------------- | --------------------------------- |
-| **Field**     | Fáze                              |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| Nastavení    | Hodnota                                |
+| ------------ | -------------------------------------- |
+| **Pole**     | Fáze                                   |
+| **Podmínka** | Rovná se                               |
+| **Hodnota**  | `CLOSED_WON` (nebo název vašeho stavu) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  Spouštěč se vyvolá při jakékoli aktualizaci Příležitosti. Filtr zajistí, že pracovní postup bude pokračovat pouze tehdy, když se stav změní na Uzavřeno – vyhráno.
 </Tip>
 
-## Step 3: Get Company Details
+## Krok 3: Získat podrobnosti o společnosti
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Záznam Příležitosti nemusí obsahovat všechna pole Společnosti, která potřebujete pro fakturu. Přidejte akci **Vyhledat záznam**:
 
-| Setting      | Hodnota                                  |
-| ------------ | ---------------------------------------- |
-| **Object**   | Společnost                               |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| Nastavení       | Hodnota                                    |
+| --------------- | ------------------------------------------ |
+| **Objekt**      | Společnost                                 |
+| **Shoda podle** | ID se rovná `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+Tímto získáte úplný záznam Společnosti s fakturační adresou, daňovým ID atd.
 
-## Step 4: Format the Payload (Optional)
+## Krok 4: Formátování payloadu (volitelné)
 
-If your invoicing system expects a specific format, add a **Code** action:
+Pokud váš fakturační systém očekává specifický formát, přidejte akci **Kód**:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Krok 5: Odeslání do fakturačního systému
 
-Add an **HTTP Request** action:
+Přidejte akci **Požadavek HTTP**:
 
-| Setting     | Hodnota                                   |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Nastavení   | Hodnota                                      |
+| ----------- | -------------------------------------------- |
+| **Metoda**  | POST                                         |
+| **URL**     | Koncový bod API vašeho fakturačního systému  |
+| **Záhlaví** | `Authorization: Bearer YOUR_API_KEY`         |
+| **Tělo**    | `{{code.invoice}}` nebo namapujte pole přímo |
 
-### Example: Stripe Invoice
+### Příklad: Faktura ve Stripe
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Příklad: Faktura v QuickBooks
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Shrnutí kompletního pracovního postupu
 
-| Step | Akce                    | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filtr                   | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Kód                     | Format data for invoicing API        |
-| 5    | HTTP požadavek          | Create invoice in external system    |
+| Krok | Akce                          | Účel                                                   |
+| ---- | ----------------------------- | ------------------------------------------------------ |
+| 1    | Spouštěč: Záznam aktualizován | Spustí se při jakékoli změně Příležitosti              |
+| 2    | Filtr                         | Pokračujte pouze pokud Stav = Uzavřeno – vyhráno       |
+| 3    | Vyhledat záznam               | Získejte úplné podrobnosti o Společnosti pro fakturaci |
+| 4    | Kód                           | Naformátujte data pro fakturační API                   |
+| 5    | HTTP požadavek                | Vytvořte fakturu v externím systému                    |
 
-## Tips
+## Tipy
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Ukládejte externí ID**: Uložte ID faktury vrácené API zpět do Příležitosti pomocí akce **Aktualizovat záznam**
+* **Zpracování chyb**: Přidejte větev pro odeslání upozornění, pokud požadavek HTTP selže
+* **Nejprve testujte**: Použijte sandbox/test režim vašeho fakturačního systému před ostrým spuštěním
 
-## Related
+## Související
 
-* [Workflow Triggers](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizace pro Uzavřeno – vyhráno](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
