@@ -1,0 +1,25 @@
+{{- if .Values.server.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "twenty.fullname" . }}-server
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+spec:
+  type: {{ .Values.server.service.type }}
+  sessionAffinity: {{ .Values.server.service.sessionAffinity }}
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ .Values.server.service.sessionAffinityTimeoutSeconds }}
+  selector:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/component: server
+  ports:
+    - name: http-tcp
+      port: {{ .Values.server.service.port }}
+      targetPort: {{ .Values.server.env.NODE_PORT }}
+      protocol: TCP
+{{- end }}

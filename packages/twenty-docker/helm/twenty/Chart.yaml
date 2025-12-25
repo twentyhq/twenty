@@ -1,0 +1,17 @@
+apiVersion: v2
+name: twenty
+description: A Helm chart to deploy Twenty CRM (server + worker) with optional PostgreSQL and Redis dependencies.
+type: application
+version: 0.1.0
+appVersion: "latest"
+
+# Optional dependencies; enable via values (postgresql.enabled / redis.enabled)
+dependencies:
+  - name: postgresql
+    version: "15.*"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "19.*"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

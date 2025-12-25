@@ -1,0 +1,61 @@
+{{- $useBitnami := .Values.postgresql.enabled -}}
+{{- $useInternal := and (not .Values.postgresql.enabled) .Values.db.enabled -}}
+{{- if and .Values.db.createDatabaseHook.enabled (or $useBitnami $useInternal) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "twenty.fullname" . }}-create-db
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: db-init
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: db-init
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      containers:
+        - name: psql
+          image: {{ .Values.db.createDatabaseHook.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PGHOST
+              value: {{ if $useBitnami }}{{ printf "%s-postgresql" (include "twenty.fullname" .) }}{{ else }}{{ printf "%s-db" (include "twenty.fullname" .) }}{{ end }}
+            - name: PGUSER
+              value: {{ if $useBitnami }}{{ .Values.postgresql.auth.username | default "postgres" }}{{ else }}postgres{{ end }}
+            - name: PGPASSWORD
+              value: {{ if $useBitnami }}{{ .Values.postgresql.auth.password | default "postgres" | quote }}{{ else }}{{ .Values.db.internal.env.PGPASSWORD_SUPERUSER | default "postgres" | quote }}{{ end }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -eu
+              DBNAME={{ if $useBitnami }}{{ .Values.postgresql.auth.database | default "twenty" }}{{ else }}{{ .Values.db.internal.database | default "twenty" }}{{ end }}
+              # Wait for server
+              for i in $(seq 1 60); do
+                if psql -U "$PGUSER" -d postgres -c "SELECT 1" >/dev/null 2>&1; then break; fi
+                echo "Waiting for Postgres ($PGHOST)..."
+                sleep 2
+              done
+              # Create DB if missing
+              EXISTS=$(psql -U "$PGUSER" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='"$DBNAME"'" || true)
+              if [ "$EXISTS" != "1" ]; then
+                echo "Creating database $DBNAME"
+                psql -U "$PGUSER" -d postgres -c "CREATE DATABASE \"$DBNAME\";"
+              else
+                echo "Database $DBNAME already exists"
+              fi
+{{- end }}

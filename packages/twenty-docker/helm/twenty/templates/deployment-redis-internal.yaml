@@ -1,0 +1,45 @@
+{{- if and (not .Values.redis.enabled) .Values.redisInternal.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-redis
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: redis
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redisInternal.image.repository }}:{{ .Values.redisInternal.image.tag }}
+          imagePullPolicy: {{ .Values.redisInternal.image.pullPolicy }}
+          command:
+            - redis-stack-server
+          args: ["--maxmemory-policy", "noeviction"]
+          env:
+            - name: PORT
+              value: {{ .Values.redisInternal.service.port | quote }}
+          ports:
+            - containerPort: {{ .Values.redisInternal.service.port }}
+              name: redis
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.redisInternal.resources | nindent 12 }}
+{{- end }}

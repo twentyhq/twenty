@@ -1,0 +1,74 @@
+{{- if .Values.worker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-worker
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: worker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: worker
+    spec:
+      {{- with .Values.worker.podSecurityContext }}
+      securityContext:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: worker
+          {{- $img := include "twenty.worker.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command: {{ toYaml .Values.worker.command | nindent 12 }}
+          {{- with .Values.worker.containerSecurityContext }}
+          securityContext:
+{{ toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: SERVER_URL
+              value: {{ include "twenty.serverUrl" . | quote }}
+            - name: PG_DATABASE_URL
+              value: {{ include "twenty.dbUrl" . | quote }}
+            - name: REDIS_URL
+              value: {{ include "twenty.redisUrl" . | quote }}
+            - name: STORAGE_TYPE
+              value: {{ include "twenty.storageType" . | quote }}
+            - name: DISABLE_DB_MIGRATIONS
+              value: {{ .Values.worker.env.DISABLE_DB_MIGRATIONS | quote }}
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.secret.tokens.name" . }}
+                  key: accessToken
+            {{- with .Values.worker.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- $storageEnv := (include "twenty.storageEnv" .) }}
+            {{- if $storageEnv }}
+            {{ $storageEnv | nindent 12 }}
+            {{- end }}
+          {{- with .Values.worker.extraEnvFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          stdin: true
+          tty: true
+{{- end }}

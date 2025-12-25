@@ -1,0 +1,16 @@
+Thank you for installing Twenty!
+
+To access the application:
+
+- If ingress enabled:
+  - Primary host: {{ (index .Values.server.ingress.hosts 0).host | default "<set a host>" }}
+  - URL: {{ include "twenty.serverUrl" . }}
+- If ingress disabled: expose the service as needed (e.g., `kubectl port-forward svc/{{ include "twenty.fullname" . }}-server 3000:{{ .Values.server.service.port }}` or create a LoadBalancer/NodePort).
+
+Database:
+- Using Bitnami PostgreSQL: {{ ternary "yes" "no" .Values.postgresql.enabled }}
+- Using internal DB: {{ ternary "yes" "no" (and (not .Values.postgresql.enabled) .Values.db.enabled) }}
+
+Redis:
+- Using Bitnami Redis: {{ ternary "yes" "no" .Values.redis.enabled }}
+- Using internal Redis: {{ ternary "yes" "no" (and (not .Values.redis.enabled) .Values.redisInternal.enabled) }}

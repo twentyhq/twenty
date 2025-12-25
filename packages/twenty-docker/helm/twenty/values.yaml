@@ -1,0 +1,260 @@
+# Global image defaults
+image:
+  repository: twentycrm/twenty
+  tag: latest
+  pullPolicy: Always
+
+# Optional pull secrets applied to jobs and deployments
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace to use for names/scoping in templates (default release namespace)
+namespaceOverride: ""
+
+# Storage configuration (preferred over server.env.STORAGE_TYPE)
+storage:
+  type: local  # local | s3
+  s3:
+    bucket: ""
+    region: ""
+    endpoint: ""
+    accessKeyId: ""
+    secretAccessKey: ""
+
+# Common secrets
+secrets:
+  tokens:
+    create: true
+    name: tokens
+    accessToken: ""  # If empty and create=true, a random 32-char token is generated at install/upgrade.
+
+# Server component
+server:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ""
+    tag: ""
+    pullPolicy: ""
+
+  podSecurityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+  env:
+    NODE_PORT: 3000
+    # If not set, will be composed from db settings when possible
+    PG_DATABASE_URL: ""
+    # If not set, will be composed from redis settings when possible
+    REDIS_URL: ""
+    SIGN_IN_PREFILLED: "false"
+    STORAGE_TYPE: "local"
+    ACCESS_TOKEN_EXPIRES_IN: "7d"
+    LOGIN_TOKEN_EXPIRES_IN: "1h"
+    # Outbound email (commented defaults — set to enable SMTP)
+    # EMAIL_DRIVER: "LOGGER"        # LOGGER | SMTP
+    # EMAIL_SMTP_HOST: ""
+    # EMAIL_SMTP_PORT: 587
+    # EMAIL_SMTP_USER: ""
+    # EMAIL_SMTP_PASSWORD: ""
+    # EMAIL_SMTP_NO_TLS: false       # set true to disable TLS/starttls
+    # EMAIL_FROM_ADDRESS: "contact@yourdomain.com"
+    # EMAIL_FROM_NAME: "Your Name"
+    # EMAIL_SYSTEM_ADDRESS: "system@yourdomain.com"
+    # IS_EMAIL_VERIFICATION_REQUIRED: false
+    # EMAIL_VERIFICATION_TOKEN_EXPIRES_IN: "1h"
+    # PASSWORD_RESET_TOKEN_EXPIRES_IN: "5m"
+
+  service:
+    type: ClusterIP
+    port: 3000
+    sessionAffinity: ClientIP
+    sessionAffinityTimeoutSeconds: 10800
+
+  ingress:
+    enabled: true
+    className: nginx
+    acme: true  # Enable automatic TLS via cert-manager with letsencrypt-prod issuer
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        more_set_headers "X-Forwarded-For $http_x_forwarded_for";
+    hosts:
+      - host: crm.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: twenty-tls
+        hosts:
+          - crm.example.com
+
+  persistence:
+    # Persistent data for the app's local storage (/app/packages/twenty-server/.local-storage)
+    # Keep enabled for app data and caches that must survive pod restarts.
+    enabled: true
+    existingClaim: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  dockerDataPersistence:
+    # Separate volume backing /app/docker-data (local Docker-like scratch space).
+    # Disable if you don't need this path persisted between pod restarts.
+    enabled: true
+    existingClaim: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 100Mi
+
+  extraEnv: []
+  extraEnvFrom: []
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# Worker component
+worker:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ""
+    tag: ""
+    pullPolicy: ""
+
+  command: ["yarn", "worker:prod"]
+
+  podSecurityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1024Mi
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+
+  env:
+    PG_DATABASE_URL: ""
+    REDIS_URL: ""
+    STORAGE_TYPE: "local"
+    DISABLE_DB_MIGRATIONS: "false"
+
+  extraEnv: []
+  extraEnvFrom: []
+
+# PostgreSQL settings
+postgresql:
+  enabled: false
+  auth:
+    username: postgres
+    password: postgres
+    database: twenty
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# External DB (used when postgresql.enabled=false)
+db:
+  enabled: true       # when true and postgresql.enabled=false, deploy internal minimal DB from spilo image
+  internal:
+    database: twenty
+    image:
+      repository: twentycrm/twenty-postgres-spilo
+      tag: latest
+      pullPolicy: Always
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1024Mi
+    persistence:
+      enabled: true
+      existingClaim: ""
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
+      size: 10Gi
+    env:
+      PGUSER_SUPERUSER: postgres
+      PGPASSWORD_SUPERUSER: postgres
+      SPILO_PROVIDER: local
+      ALLOW_NOSSL: "true"
+
+  external:
+    host: ""
+    port: 5432
+    user: postgres
+    password: postgres
+    database: twenty
+    ssl: false
+
+  createDatabaseHook:
+    enabled: true
+    image: postgres:16-alpine
+    resources: {}
+
+  createUserHook:
+    enabled: false
+    username: twenty_app
+    password: "" # if empty, a random 24-char password is generated
+    secretName: twenty-db-user
+
+# Redis settings
+redis:
+  enabled: false  # enable to use Bitnami Redis subchart
+  architecture: standalone
+  master:
+    persistence:
+      enabled: false
+  auth:
+    enabled: false
+
+# Internal minimal Redis (used when redis.enabled=false and redisInternal.enabled=true)
+redisInternal:
+  enabled: true
+  image:
+    repository: redis/redis-stack-server
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1024Mi
+    limits:
+      cpu: 500m
+      memory: 2048Mi
+  service:
+    port: 6379

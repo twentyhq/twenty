@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "twenty.fullname" . }}-run-migrations
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: migrations
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: migrations
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+        - name: run-migrations
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command:
+            - sh
+            - -c
+            - >-
+              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
+          env:
+            - name: PG_DATABASE_URL
+              value: {{ include "twenty.dbUrl" . | quote }}
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}

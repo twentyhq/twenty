@@ -1,0 +1,109 @@
+{{- if .Values.server.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-server
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+spec:
+  replicas: {{ .Values.server.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: server
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: server
+    spec:
+      {{- with .Values.server.podSecurityContext }}
+      securityContext:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if .Values.server.dockerDataPersistence.enabled }}
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.server.dockerDataPersistence.existingClaim }}{{ .Values.server.dockerDataPersistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-docker-data{{ end }}
+        {{- end }}
+        {{- if .Values.server.persistence.enabled }}
+        - name: server-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.server.persistence.existingClaim }}{{ .Values.server.persistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-server{{ end }}
+        {{- end }}
+        {{- with .Values.server.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: server
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          {{- with .Values.server.containerSecurityContext }}
+          securityContext:
+{{ toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: NODE_PORT
+              value: {{ include "twenty.server.containerPort" . | quote }}
+            - name: SERVER_URL
+              value: {{ include "twenty.serverUrl" . | quote }}
+            - name: PG_DATABASE_URL
+              value: {{ include "twenty.dbUrl" . | quote }}
+            - name: REDIS_URL
+              value: {{ include "twenty.redisUrl" . | quote }}
+            - name: SIGN_IN_PREFILLED
+              value: {{ .Values.server.env.SIGN_IN_PREFILLED | quote }}
+            - name: STORAGE_TYPE
+              value: {{ include "twenty.storageType" . | quote }}
+            - name: ACCESS_TOKEN_EXPIRES_IN
+              value: {{ .Values.server.env.ACCESS_TOKEN_EXPIRES_IN | quote }}
+            - name: LOGIN_TOKEN_EXPIRES_IN
+              value: {{ .Values.server.env.LOGIN_TOKEN_EXPIRES_IN | quote }}
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.secret.tokens.name" . }}
+                  key: accessToken
+            {{- with .Values.server.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- $storageEnv := (include "twenty.storageEnv" .) }}
+            {{- if $storageEnv }}
+            {{ $storageEnv | nindent 12 }}
+            {{- end }}
+          {{- with .Values.server.extraEnvFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http-tcp
+              containerPort: {{ include "twenty.server.containerPort" . }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.server.dockerDataPersistence.enabled }}
+            - name: docker-data
+              mountPath: /app/docker-data
+            {{- end }}
+            {{- if .Values.server.persistence.enabled }}
+            - name: server-data
+              mountPath: /app/packages/twenty-server/.local-storage
+            {{- end }}
+            {{- with .Values.server.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          stdin: true
+          tty: true
+{{- end }}
