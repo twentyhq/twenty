@@ -79,4 +79,19 @@ export class StripeBillingMeterEventService {
       return acc + eventSummary.aggregated_value;
     }, 0);
   }
+
+  async getTotalCumulativeUsage(
+    stripeMeterId: string,
+    stripeCustomerId: string,
+  ): Promise<number> {
+    const startTime = new Date(0);
+    const endTime = new Date();
+
+    return this.sumMeterEvents(
+      stripeMeterId,
+      stripeCustomerId,
+      startTime,
+      endTime,
+    );
+  }
 }

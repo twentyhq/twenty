@@ -1,5 +1,5 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
-import { getWorkflowDiagramTriggerNode } from '../getWorkflowDiagramTriggerNode';
+import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 
 describe('getWorkflowDiagramTriggerNode', () => {
   describe('MANUAL trigger type', () => {

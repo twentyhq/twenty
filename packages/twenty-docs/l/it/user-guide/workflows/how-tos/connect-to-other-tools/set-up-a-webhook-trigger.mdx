@@ -1,44 +1,44 @@
 ---
-title: Set Up a Webhook Trigger
-description: Receive data from external services to trigger workflows.
+title: Configura un trigger webhook
+description: Ricevi dati da servizi esterni per attivare i flussi di lavoro.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Webhook triggers allow external services to start your workflows by sending data to a unique URL. Use them to connect forms, third-party apps, and custom integrations.
+I trigger webhook consentono ai servizi esterni di avviare i tuoi flussi di lavoro inviando dati a un URL univoco. Usali per connettere moduli, app di terze parti e integrazioni personalizzate.
 
-## When to Use Webhooks
+## Quando utilizzare i webhook
 
-| Use Case                | Esempio                                 |
-| ----------------------- | --------------------------------------- |
-| **Web forms**           | Contact form submissions create leads   |
-| **Third-party apps**    | Stripe payment → create customer record |
-| **Custom integrations** | Your app → Twenty automation            |
-| **No-code tools**       | Zapier, Make, n8n connections           |
+| Caso d'uso                      | Esempio                                      |
+| ------------------------------- | -------------------------------------------- |
+| **Moduli web**                  | Gli invii del modulo di contatto creano lead |
+| **App di terze parti**          | Pagamento Stripe → crea un record cliente    |
+| **Integrazioni personalizzate** | La tua app → automazione Twenty              |
+| **Strumenti no-code**           | Connessioni Zapier, Make, n8n                |
 
-## Step-by-Step Setup
+## Configurazione passo-passo
 
-### Step 1: Create the Workflow
+### Passaggio 1: Crea il flusso di lavoro
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it (e.g., "Website Form Submission")
+1. Vai a **Impostazioni → Flussi di lavoro**
+2. Fai clic su **+ Nuovo flusso di lavoro**
+3. Assegnagli un nome (ad es., "Invio modulo sito web")
 
-### Step 2: Configure the Webhook Trigger
+### Passaggio 2: Configura il trigger webhook
 
-1. Click on the trigger block
-2. Select **Webhook**
-3. You'll receive a unique webhook URL like:
+1. Fai clic sul blocco del trigger
+2. Seleziona **Webhook**
+3. Riceverai un URL webhook univoco come:
    ```
    https://api.twenty.com/webhooks/workflow/abc123...
    ```
-4. Copy this URL—you'll need it for your external service
+4. Copia questo URL—ti servirà per il tuo servizio esterno
 
-### Step 3: Define Expected Data Structure
+### Passaggio 3: Definisci la struttura dati attesa
 
-For **POST** requests, define the expected body structure:
+Per le richieste **POST**, definisci la struttura del corpo prevista:
 
-1. Click **Define expected body**
-2. Enter a sample JSON that matches what your service will send:
+1. Fai clic su **Definisci corpo previsto**
+2. Inserisci un JSON di esempio che corrisponda a ciò che il tuo servizio invierà:
 
 ```json
 {
@@ -50,30 +50,30 @@ For **POST** requests, define the expected body structure:
 }
 ```
 
-3. Click **Save**—this creates variables you can use in subsequent steps
+3. Fai clic su **Salva**—questo crea variabili che puoi usare nei passaggi successivi
 
-### Step 4: Add Actions
+### Passaggio 4: Aggiungi azioni
 
-Now add actions that use the webhook data:
+Ora aggiungi azioni che utilizzano i dati del webhook:
 
-**Example: Create a Person record**
+**Esempio: Crea un record Persona**
 
-1. Add **Create Record** action
-2. Select **People** object
-3. Map fields:
+1. Aggiungi l'azione **Crea record**
+2. Seleziona l'oggetto **People**
+3. Mappa i campi:
 
-| Campo   | Valore                                               |
-| ------- | ---------------------------------------------------- |
-| Nome    | `{{trigger.body.firstName}}`                         |
-| Cognome | `{{trigger.body.lastName}}`                          |
-| Email   | `{{trigger.body.email}}`                             |
-| Azienda | Search or create based on `{{trigger.body.company}}` |
+| Campo   | Valore                                            |
+| ------- | ------------------------------------------------- |
+| Nome    | `{{trigger.body.firstName}}`                      |
+| Cognome | `{{trigger.body.lastName}}`                       |
+| Email   | `{{trigger.body.email}}`                          |
+| Azienda | Cerca o crea in base a `{{trigger.body.company}}` |
 
-### Step 5: Test the Webhook
+### Passaggio 5: Testa il webhook
 
-Before activating, test your webhook:
+Prima di attivare, testa il tuo webhook:
 
-**Using cURL**:
+**Utilizzando cURL**:
 
 ```bash
 curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
@@ -81,22 +81,22 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
   -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
 ```
 
-**Using Postman or similar**:
+**Utilizzando Postman o simili**:
 
-1. Create a POST request to your webhook URL
-2. Set Content-Type header to `application/json`
-3. Add your test JSON body
-4. Send and check workflow runs
+1. Crea una richiesta POST verso l'URL del tuo webhook
+2. Imposta l'header Content-Type su `application/json`
+3. Aggiungi il body JSON di test
+4. Invia e controlla le esecuzioni del flusso di lavoro
 
-### Step 6: Activate
+### Passaggio 6: Attiva
 
-Once tested, click **Activate** to make the workflow live.
+Una volta testato, fai clic su **Attiva** per rendere operativo il flusso di lavoro.
 
-## Handling Different Data Structures
+## Gestione di strutture dati diverse
 
-### Nested Data
+### Dati annidati
 
-If your webhook sends nested data:
+Se il tuo webhook invia dati annidati:
 
 ```json
 {
@@ -108,11 +108,11 @@ If your webhook sends nested data:
 }
 ```
 
-Reference with: `{{trigger.body.contact.email}}`
+Fai riferimento con: `{{trigger.body.contact.email}}`
 
-### Arrays
+### Array
 
-If data includes arrays:
+Se i dati includono array:
 
 ```json
 {
@@ -123,11 +123,11 @@ If data includes arrays:
 }
 ```
 
-How you handle arrays depends on your use case:
+Il modo in cui gestisci gli array dipende dal caso d'uso:
 
-**Unknown number of items → Use Iterator**
+**Numero di elementi sconosciuto → Usa Iterator**
 
-If you need to process each item in the array (e.g., create a record for each), add a **Code** action to parse the array, then use **Iterator**:
+Se devi elaborare ogni elemento dell'array (ad es., creare un record per ciascuno), aggiungi un'azione **Code** per analizzare l'array, quindi usa **Iterator**:
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -138,11 +138,11 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Then use Iterator to loop through: `{{code.items}}`
+Quindi usa Iterator per iterare su: `{{code.items}}`
 
-**Known/specific fields → Extract to named fields**
+**Campi noti/specifici → Estrai in campi denominati**
 
-If the array contains specific fields you want to access individually (e.g., form answers where position 0 is always "first name", position 1 is always "last name"), add a **Code** action to extract them:
+Se l'array contiene campi specifici a cui vuoi accedere singolarmente (ad es., risposte di un modulo in cui la posizione 0 è sempre "nome", la posizione 1 è sempre "cognome"), aggiungi un'azione **Code** per estrarli:
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -159,13 +159,13 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Now you can select `product.name` and `product.qty` individually in subsequent steps.
+Ora puoi selezionare `product.name` e `product.qty` singolarmente nei passaggi successivi.
 
 <Tip>
-  For more details on handling arrays, see [Handle Arrays in Code Actions](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  Per maggiori dettagli sulla gestione degli array, vedi [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
-## Related
+## Correlati
 
-* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)

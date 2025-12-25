@@ -522,6 +522,10 @@ export default [
         {
           patterns: [
             {
+              group: ['../*'],
+              message: 'Relative parent imports are not allowed. Use @/ alias instead.',
+            },
+            {
               group: ['@tabler/icons-react'],
               message: 'Please import icons from `twenty-ui`',
             },
@@ -552,10 +556,10 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-empty-function': 'off',
@@ -688,6 +692,7 @@ export default [
       'lingui/no-unlocalized-strings': 'off',
     },
   },
+
 
   // JavaScript specific configuration
   {

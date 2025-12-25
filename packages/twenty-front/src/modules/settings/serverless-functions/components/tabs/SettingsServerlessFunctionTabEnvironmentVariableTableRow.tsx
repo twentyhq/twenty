@@ -1,4 +1,3 @@
-import { type EnvironmentVariable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -19,6 +18,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import type { ApplicationVariable } from '~/generated/graphql';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;
@@ -34,8 +34,8 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
   onDelete,
   initialEditMode = false,
 }: {
-  envVariable: EnvironmentVariable;
-  onChange: (newEnvVariable: EnvironmentVariable) => void;
+  envVariable: ApplicationVariable;
+  onChange: (newEnvVariable: ApplicationVariable) => void;
   onDelete: () => void;
   initialEditMode?: boolean;
 }) => {

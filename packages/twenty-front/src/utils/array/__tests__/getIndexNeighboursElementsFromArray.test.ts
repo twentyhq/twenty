@@ -1,5 +1,5 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { getIndexNeighboursElementsFromArray } from '../getIndexNeighboursElementsFromArray';
+import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
 type TestCase = {
   expected: ReturnType<typeof getIndexNeighboursElementsFromArray>;

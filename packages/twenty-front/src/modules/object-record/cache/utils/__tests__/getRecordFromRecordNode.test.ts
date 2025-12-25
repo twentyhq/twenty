@@ -1,4 +1,4 @@
-import { getRecordFromRecordNode } from '../getRecordFromRecordNode';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 
 describe('getRecordFromRecordNode', () => {
   it('should convert a simple record node', () => {

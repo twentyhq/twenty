@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { stepBarInternalState } from '../states/stepBarInternalState';
+import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
 
 export type StepsOptions = {
   initialStep: number;

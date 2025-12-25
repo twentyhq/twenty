@@ -1,7 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { buildDateFilterForDayGranularity } from '../buildDateFilterForDayGranularity';
+import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
 
 describe('buildDateFilterForDayGranularity', () => {
   describe('DATE field type', () => {

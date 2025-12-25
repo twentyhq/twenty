@@ -4,7 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
-import { mockedApolloClient } from '../mockedApolloClient';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 export const RootDecorator: Decorator = (Story, context) => {
   const { parameters } = context;

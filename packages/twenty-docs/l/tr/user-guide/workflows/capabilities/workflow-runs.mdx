@@ -1,92 +1,92 @@
 ---
 title: İş Akışı Çalıştırmaları
-description: Monitor and manage workflow executions.
+description: İş akışı çalıştırmalarını izleyin ve yönetin.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## Çalıştırmalar Hakkında
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+Bir **Çalıştırma**, bir iş akışı çalıştırmasının kaydıdır. Bir iş akışı her tetiklendiğinde—bir kayıt olayı, zamanlama, manuel işlem veya bir webhook tarafından—yeni bir çalıştırma oluşturulur.
 
-## Viewing Runs
+## Çalıştırmaları Görüntüleme
 
-### From the Workflow Editor
+### İş Akışı Düzenleyicisinden
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. İzlemek istediğiniz iş akışını açın
+2. Sağ taraftaki **Çalıştırmalar** paneline tıklayın
+3. Son çalıştırmaların, durumlarıyla birlikte listesini görün
 
-### From the Workflow Runs View
+### İş Akışı Çalıştırmaları Görünümünden
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. Kenar çubuğunda **İş Akışı Çalıştırmaları**'na gidin
+2. Tüm iş akışlarındaki çalıştırmaları görüntüleyin
+3. Duruma, iş akışına veya tarihe göre filtreleyin
 
-## Run Statuses
+## Çalıştırma Durumları
 
-| Durum              | Açıklama                                                                 |
-| ------------------ | ------------------------------------------------------------------------ |
-| **Çalıştırılıyor** | Workflow is currently executing                                          |
-| **Completed**      | Workflow finished successfully                                           |
-| **Failed**         | Workflow encountered an error and stopped                                |
-| **Waiting**        | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Durum              | Açıklama                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Çalıştırılıyor** | İş akışı şu anda yürütülüyor                                                  |
+| **Tamamlandı**     | İş akışı başarıyla tamamlandı                                                 |
+| **Başarısız**      | İş akışı bir hatayla karşılaştı ve durdu                                      |
+| **Bekleniyor**     | İş akışı duraklatıldı (ör. bir Gecikme eylemi veya Form gönderimi bekleniyor) |
 
-## Run Details
+## Çalıştırma Ayrıntıları
 
-Click on any run to see:
+Şunları görmek için herhangi bir çalıştırmaya tıklayın:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **Durum**: Çalıştırmanın mevcut durumu
+* **Başlangıç zamanı**: Çalıştırmanın başladığı an
+* **Süre**: Çalıştırmanın ne kadar sürdüğü
+* **Tetikleme verileri**: İş akışını başlatan girdi
+* **Adım çıktıları**: Her adımın döndürdüğü veriler
+* **Hata iletileri**: Çalıştırma başarısız olduysa neyin ters gittiği
 
-## Step-by-Step Execution
+## Adım Adım Yürütme
 
-Each run shows the progression through your workflow:
+Her çalıştırma, iş akışınız boyunca ilerlemeyi gösterir:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. Hangi adımların başarıyla tamamlandığını görün
+2. Hataların nerede gerçekleştiğini belirleyin
+3. Adımlar arasında aktarılan verileri görüntüleyin
+4. Adım girdilerini ve çıktılarını inceleyerek sorunlarda hata ayıklayın
 
-## Error Handling
+## Hata Yönetimi
 
-When a run fails:
+Bir çalıştırma başarısız olduğunda:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
+1. Başarısız olan çalıştırmayı açın
+2. Başarısızlığa neden olan adımı bulun
+3. Ayrıntılar için hata iletisini kontrol edin
+4. Yaygın sorunlar:
+   * Gerekli alanlar eksik
    * Geçersiz veri biçimi
-   * External API errors
-   * Permission issues
+   * Harici API hataları
+   * İzin sorunları
 
-## Re-running Workflows
+## İş Akışlarını Yeniden Çalıştırma
 
-If a run fails, you can:
+Bir çalıştırma başarısız olursa şunları yapabilirsiniz:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* Altta yatan sorunu düzeltin ve bir sonraki tetikleyiciyi bekleyin
+* Manuel iş akışları için aynı veya güncellenmiş verilerle yeniden tetikleyin
+* Gelecekteki başarısızlıkları önlemek için iş akışı mantığını gözden geçirin
 
-## Performance Tips
+## Performans İpuçları
 
-### Managing Run History
+### Çalıştırma Geçmişini Yönetme
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* Çalıştırmalar tarihsel referans için saklanır
+* Çok eski çalıştırmalar otomatik olarak arşivlenebilir
+* Kayıt tutmanız gerekiyorsa çalıştırma verilerini dışa aktarın
 
-### Monitoring Best Practices
+### İzleme En İyi Uygulamaları
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* Yeni iş akışlarını etkinleştirdikten sonra çalıştırmaları düzenli olarak kontrol edin
+* Kalıpları belirlemek için başarısız olan çalıştırmaları gözden geçirin
 
-## Related
+## İlgili
 
-* [Workflow Triggers](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/tr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışı Sorun Giderme](/l/tr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

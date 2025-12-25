@@ -12,8 +12,8 @@ import {
   beautifyPastDateRelativeToNow,
   hasDatePassed,
   parseDate,
-} from '../date-utils';
-import { logError } from '../logError';
+} from '~/utils/date-utils';
+import { logError } from '~/utils/logError';
 
 i18n.load(SOURCE_LOCALE, enMessages);
 i18n.activate(SOURCE_LOCALE);

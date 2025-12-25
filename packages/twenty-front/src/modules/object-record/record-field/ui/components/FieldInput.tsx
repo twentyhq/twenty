@@ -36,14 +36,14 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
-import { FieldContext } from '../contexts/FieldContext';
-import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
-import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
-import { DateTimeFieldInput } from '../meta-types/input/components/DateTimeFieldInput';
-import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
-import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
-import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
-import { isFieldText } from '../types/guards/isFieldText';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
+import { CurrencyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput';
+import { DateTimeFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/DateTimeFieldInput';
+import { NumberFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/NumberFieldInput';
+import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
+import { TextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/TextFieldInput';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 
 export const FieldInput = () => {
   const { fieldDefinition } = useContext(FieldContext);
