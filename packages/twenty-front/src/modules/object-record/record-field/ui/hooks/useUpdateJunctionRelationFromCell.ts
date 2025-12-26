@@ -9,10 +9,10 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
-    type FieldRelationFromManyValue,
-    type FieldRelationMetadata,
-    type FieldRelationMetadataSettings,
-    type FieldRelationValue,
+  type FieldRelationFromManyValue,
+  type FieldRelationMetadata,
+  type FieldRelationMetadataSettings,
+  type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -64,15 +64,20 @@ export const useUpdateJunctionRelationFromCell = ({
       field.id !== targetFieldId,
   );
 
+  // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
+  const junctionObjectNameSingular =
+    junctionObjectMetadata?.nameSingular ??
+    fieldDefinition.metadata.relationObjectMetadataNameSingular;
+
   // Skip the post-optimistic effect since we handle optimistic updates manually
   // Otherwise Apollo would also add the record, resulting in duplicates
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
-    objectNameSingular: junctionObjectMetadata?.nameSingular ?? '',
+    objectNameSingular: junctionObjectNameSingular,
     skipPostOptimisticEffect: true,
   });
 
   const { deleteOneRecord: deleteJunctionRecord } = useDeleteOneRecord({
-    objectNameSingular: junctionObjectMetadata?.nameSingular ?? '',
+    objectNameSingular: junctionObjectNameSingular,
   });
 
   const updateJunctionRelationFromCell = useRecoilCallback(

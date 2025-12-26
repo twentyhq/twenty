@@ -61,9 +61,8 @@ export const generateJunctionRelationGqlFields = ({
       continue;
     }
 
-    const labelIdentifierFieldMetadataItem = getLabelIdentifierFieldMetadataItem(
-      targetObjectMetadata,
-    );
+    const labelIdentifierFieldMetadataItem =
+      getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
 
     // Include the nested target object with its identifier fields
     junctionTargetFields[targetField.name] = {
@@ -104,4 +103,3 @@ export const isJunctionRelationField = (
     settings.junctionTargetRelationFieldIds.length > 0
   );
 };
-

@@ -7,6 +7,7 @@ import {
   SettingsDataModelFieldRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationJunctionForm } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
@@ -107,10 +108,16 @@ export const SettingsDataModelFieldRelationFormCard = ({
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
-        <SettingsDataModelFieldRelationForm
-          existingFieldMetadataId={existingFieldMetadataId}
-          disabled={disabled}
-        />
+        <>
+          <SettingsDataModelFieldRelationForm
+            existingFieldMetadataId={existingFieldMetadataId}
+            disabled={disabled}
+          />
+          <SettingsDataModelFieldRelationJunctionForm
+            existingFieldMetadataId={existingFieldMetadataId}
+            objectNameSingular={objectNameSingular}
+          />
+        </>
       }
     />
   );

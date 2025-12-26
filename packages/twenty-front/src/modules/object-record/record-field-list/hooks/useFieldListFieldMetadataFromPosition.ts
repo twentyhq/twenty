@@ -22,14 +22,17 @@ export const useFieldListFieldMetadataFromPosition = ({
   const {
     inlineFieldMetadataItems,
     inlineRelationFieldMetadataItems,
+    junctionRelationFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
   });
 
+  // Order must match the rendering order in RecordFieldList
   const fieldMetadataItems = [
     ...inlineRelationFieldMetadataItems,
     ...inlineFieldMetadataItems,
+    ...junctionRelationFieldMetadataItems,
     ...boxedRelationFieldMetadataItems,
   ];
 

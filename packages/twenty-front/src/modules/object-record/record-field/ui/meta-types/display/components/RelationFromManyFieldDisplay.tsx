@@ -9,9 +9,9 @@ import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetada
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
-import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/hooks/useJunctionRelation';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { type FieldRelationMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/utils/isJunctionRelation';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';

@@ -13,7 +13,6 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/hooks/useJunctionRelation';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
@@ -25,6 +24,7 @@ import {
   type FieldRelationMetadata,
   type FieldRelationMetadataSettings,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/utils/isJunctionRelation';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -175,14 +175,16 @@ export const RelationOneToManyFieldInput = () => {
     });
 
   // Hooks for junction "Add New" - creates target object + junction record
+  // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
-      junctionConfig?.targetObjectMetadata?.nameSingular ?? '',
+      junctionConfig?.targetObjectMetadata?.nameSingular ??
+      relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
     objectNameSingular:
-      junctionConfig?.junctionObjectMetadata?.nameSingular ?? '',
-    shouldMatchRootQueryFilter: true,
+      junctionConfig?.junctionObjectMetadata?.nameSingular ??
+      relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
   const layoutDirection = useRecoilComponentValue(
