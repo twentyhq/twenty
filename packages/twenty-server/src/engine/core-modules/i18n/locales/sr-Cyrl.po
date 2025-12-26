@@ -3390,7 +3390,7 @@ msgstr "Недостаје обавезно системско поље."
 #. js-lingui-id: eM40XC
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing time zone for date group by."
-msgstr ""
+msgstr "Недостаје временска зона за груписање по датуму."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -6447,7 +6447,7 @@ msgstr "Немате дозволу за измену овог прегледа.
 #. js-lingui-id: hMX1AE
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
-msgstr ""
+msgstr "Потрошили сте све своје кредите. Молимо вас, надоградите свој план да бисте наставили."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
