@@ -1,6 +1,8 @@
+import { isNull } from '@sniptt/guards';
 import {
   FieldMetadataType,
   type ObjectRecord,
+  OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +29,96 @@ type BuildCursorCompositeFieldWhereConditionParams = {
   cursorValue: ObjectRecordCursorLeafCompositeValue;
   isForwardPagination: boolean;
   isEqualityCondition?: boolean;
+};
+
+const buildNullCompositeFieldFilter = (
+  fieldKey: keyof ObjectRecord,
+  compositeFieldProperties: Array<{ name: string }>,
+): ObjectRecordFilter => {
+  const nullFilters = compositeFieldProperties.reduce<
+    Record<string, ObjectRecordFilter>
+  >(
+    (acc, property) => ({
+      ...acc,
+      [property.name]: { is: 'NULL' },
+    }),
+    {},
+  );
+
+  return { [fieldKey]: nullFilters };
+};
+
+const buildAllNullComparisonFilter = (
+  fieldKey: keyof ObjectRecord,
+  firstProperty: { name: string },
+  computedOperator: string,
+  orderByDirection: OrderByDirection,
+): ObjectRecordFilter | Record<string, never> => {
+  if (computedOperator === 'gt') {
+    return {
+      [fieldKey]: {
+        [firstProperty.name]: { is: 'NOT NULL' },
+      },
+    };
+  }
+
+  if (computedOperator === 'lt') {
+    const isNullsFirst =
+      orderByDirection === OrderByDirection.AscNullsFirst ||
+      orderByDirection === OrderByDirection.DescNullsFirst;
+
+    if (isNullsFirst) {
+      return {};
+    }
+
+    return {
+      [fieldKey]: {
+        [firstProperty.name]: { is: 'NOT NULL' },
+      },
+    };
+  }
+
+  return {};
+};
+
+const shouldIncludeNullsInComparison = (
+  computedOperator: string,
+  orderByDirection: OrderByDirection,
+): boolean => {
+  const isNullsFirst =
+    orderByDirection === OrderByDirection.AscNullsFirst ||
+    orderByDirection === OrderByDirection.DescNullsFirst;
+
+  return (
+    (computedOperator === 'lt' && isNullsFirst) ||
+    (computedOperator === 'gt' && !isNullsFirst)
+  );
+};
+
+const buildComparisonFilterWithNulls = (
+  fieldKey: keyof ObjectRecord,
+  cursorKey: string,
+  computedOperator: string,
+  cursorValue: unknown,
+): ObjectRecordFilter => {
+  return {
+    or: [
+      {
+        [fieldKey]: {
+          [cursorKey]: {
+            [computedOperator]: cursorValue,
+          },
+        },
+      },
+      {
+        [fieldKey]: {
+          [cursorKey]: {
+            is: 'NULL',
+          },
+        },
+      },
+    ],
+  };
 };
 
 export const buildCursorCompositeFieldWhereCondition = ({
@@ -64,9 +156,40 @@ export const buildCursorCompositeFieldWhereCondition = ({
     return {};
   }
 
+  const allSubFieldsAreNull = compositeFieldProperties.every((property) =>
+    isNull(cursorValue[property.name]),
+  );
+
+  if (allSubFieldsAreNull) {
+    if (isEqualityCondition) {
+      return buildNullCompositeFieldFilter(fieldKey, compositeFieldProperties);
+    }
+
+    const firstProperty = compositeFieldProperties[0];
+    const firstOrderByDirection = fieldOrderBy[fieldKey]?.[firstProperty.name];
+
+    if (!isDefined(firstOrderByDirection)) {
+      return {};
+    }
+
+    const isAscending = isAscendingOrder(firstOrderByDirection);
+    const computedOperator = computeOperator(isAscending, isForwardPagination);
+
+    return buildAllNullComparisonFilter(
+      fieldKey,
+      firstProperty,
+      computedOperator,
+      firstOrderByDirection,
+    );
+  }
+
   const cursorEntries = compositeFieldProperties
     .map((property) => {
       if (cursorValue[property.name] === undefined) {
+        return null;
+      }
+
+      if (isNull(cursorValue[property.name])) {
         return null;
       }
 
@@ -77,23 +200,18 @@ export const buildCursorCompositeFieldWhereCondition = ({
     .filter(isDefined);
 
   if (isEqualityCondition) {
-    const result = cursorEntries.reduce<Record<string, ObjectRecordFilter>>(
-      (acc, cursorEntry) => {
-        const [cursorKey, cursorValue] = Object.entries(cursorEntry)[0];
+    const equalityFilters = cursorEntries.reduce<
+      Record<string, ObjectRecordFilter>
+    >((acc, cursorEntry) => {
+      const [cursorKey, cursorValue] = Object.entries(cursorEntry)[0];
 
-        return {
-          ...acc,
-          [cursorKey]: {
-            eq: cursorValue,
-          },
-        };
-      },
-      {},
-    );
+      return {
+        ...acc,
+        [cursorKey]: { eq: cursorValue },
+      };
+    }, {});
 
-    return {
-      [fieldKey]: result,
-    };
+    return { [fieldKey]: equalityFilters };
   }
 
   const orConditions = buildCursorCumulativeWhereCondition({
@@ -120,6 +238,15 @@ export const buildCursorCompositeFieldWhereCondition = ({
         isAscending,
         isForwardPagination,
       );
+
+      if (shouldIncludeNullsInComparison(computedOperator, orderByDirection)) {
+        return buildComparisonFilterWithNulls(
+          fieldKey,
+          cursorKey,
+          computedOperator,
+          cursorValue,
+        );
+      }
 
       return {
         [fieldKey]: {
