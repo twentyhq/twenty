@@ -112,7 +112,6 @@ export const ChartFiltersSettings = ({
               <AdvancedFilterCommandMenuContainer
                 onUpdate={handleFiltersUpdate}
                 objectMetadataItem={objectMetadataItem}
-                isWorkflowFindRecords={false}
               />
               <ChartFiltersSettingsInitializeStateEffect
                 initialChartFilters={chartWidgetConfiguration.filter}

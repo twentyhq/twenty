@@ -43,6 +43,7 @@ const COMPOSITE_FIELD_METADATA_TYPES = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.LINKS,
   FieldMetadataType.CURRENCY,
+  FieldMetadataType.ACTOR,
 ];
 
 const isFilterableFieldType = (

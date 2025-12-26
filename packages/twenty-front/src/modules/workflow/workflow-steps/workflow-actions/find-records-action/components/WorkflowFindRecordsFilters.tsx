@@ -60,7 +60,6 @@ export const WorkflowFindRecordsFilters = ({
       onUpdate={readonly ? undefined : onUpdate}
       VariablePicker={WorkflowVariablePicker}
       readonly={readonly}
-      isWorkflowFindRecords={true}
     />
   );
 };
