@@ -141,6 +141,11 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldRelationMetadataSettings = {
+  relationType?: RelationType;
+  junctionTargetRelationFieldIds?: string[];
+} | null;
+
 // for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
@@ -150,14 +155,14 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldMorphRelationMetadata = BaseFieldMetadata & {
   morphRelations: FieldMetadataItemRelation[];
   relationType: RelationType;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldSelectMetadata = BaseFieldMetadata & {

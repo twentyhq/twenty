@@ -5,6 +5,9 @@ import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/hooks/useJunctionRelation';
+import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
 import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
@@ -13,6 +16,8 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import {
   type FieldMetadata,
   type FieldRelationFromManyValue,
+  type FieldRelationMetadata,
+  type FieldRelationMetadataSettings,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -40,6 +45,9 @@ export const useOpenFieldInputEditMode = () => {
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
 
+  const { openJunctionRelationFieldInput } =
+    useOpenJunctionRelationFieldInput();
+
   const { openMorphRelationManyToOneFieldInput } =
     useOpenMorphRelationManyToOneFieldInput();
 
@@ -56,6 +64,34 @@ export const useOpenFieldInputEditMode = () => {
         recordId: string;
         prefix?: string;
       }) => {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
+        // Get the actual field metadata item with saved settings from the database
+        const { fieldMetadataItem } = getFieldMetadataItemById({
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          objectMetadataItems,
+        });
+
+        // Check for metadata-driven junction relation (many-to-many through junction)
+        const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
+        const hasJunctionConfig = hasJunctionTargetRelationFieldIds(
+          fieldMetadataItem?.settings as FieldRelationMetadataSettings,
+        );
+
+        if (isOneToMany && hasJunctionConfig) {
+          openJunctionRelationFieldInput({
+            fieldDefinition:
+              fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+            recordId,
+            prefix,
+          });
+          return;
+        }
+
+        // Backward compatibility: hardcoded taskTarget/noteTarget check
+        // TODO: Remove this once taskTarget/noteTarget are migrated to use junction configuration
         if (
           isFieldRelationOneToMany(fieldDefinition) &&
           ['taskTarget', 'noteTarget'].includes(
@@ -73,10 +109,6 @@ export const useOpenFieldInputEditMode = () => {
 
           const activity = snapshot
             .getLoadable(recordStoreFamilyState(recordId))
-            .getValue();
-
-          const objectMetadataItems = snapshot
-            .getLoadable(objectMetadataItemsState)
             .getValue();
 
           const activityTargetObjectRecords = getActivityTargetObjectRecords({
@@ -166,6 +198,7 @@ export const useOpenFieldInputEditMode = () => {
       },
     [
       openActivityTargetCellEditMode,
+      openJunctionRelationFieldInput,
       openMorphRelationManyToOneFieldInput,
       openMorphRelationOneToManyFieldInput,
       openRelationFromManyFieldInput,
