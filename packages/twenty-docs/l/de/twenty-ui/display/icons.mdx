@@ -1,0 +1,73 @@
+---
+title: Icons
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Kopfzeile" />
+</Frame>
+
+Eine Liste von Symbolen, die in unserer App verwendet werden.
+
+## Tabler-Symbole
+
+Wir verwenden Tabler-Symbole für React in der gesamten App.
+
+<Tabs>
+  <Tab title="Installation">
+    <br />
+
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    Sie können jedes Symbol als Komponente importieren. Hier ist ein Beispiel:
+
+    <br />
+
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props  | Typ          | Beschreibung                              | Standard     |
+    | ------ | ------------ | ----------------------------------------- | ------------ |
+    | größe  | nummer       | Die Höhe und Breite des Symbols in Pixeln | 24           |
+    | farbe  | Zeichenkette | Die Farbe der Symbole                     | currentColor |
+    | Strich | nummer       | Die Strichbreite des Symbols in Pixeln    | 2            |
+  </Tab>
+</Tabs>
+
+## Benutzerdefinierte Symbole
+
+Zusätzlich zu den Tabler-Symbolen verwendet die App auch einige benutzerdefinierte Symbole.
+
+### Symbol: Adressbuch
+
+Zeigt ein Adressbuchsymbol an.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ    | Beschreibung                              | Standard |
+    | ------------- | ------ | ----------------------------------------- | -------- |
+    | größe         | nummer | Die Höhe und Breite des Symbols in Pixeln | 24       |
+    | Strich        | nummer | Die Strichbreite des Symbols in Pixeln    | 2        |
+  </Tab>
+</Tabs>

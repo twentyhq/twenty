@@ -1,5 +1,5 @@
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
-import { getEmptyTabLayout } from '../getEmptyTabLayout';
+import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
 
 describe('getEmptyTabLayout', () => {
   const mockTabLayouts: TabLayouts = {

@@ -1,0 +1,66 @@
+---
+title: Feedback
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Antet" />
+</Frame>
+
+Indică progresul sau numărătoarea inversă și se mișcă de la dreapta la stânga.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
+
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți     | Tip     | Descriere                                                                           | Implicit   |
+    | --------------- | ------- | ----------------------------------------------------------------------------------- | ---------- |
+    | durată          | număr   | Durata totală a animației barei de progres în milisecunde                           | 3          |
+    | întârziere      | număr   | Întârzierea în pornirea animației barei de progres în milisecunde                   | 0          |
+    | easing          | șir     | Funcția de accelerare (easing) pentru animația barei de progres                     | easeInOut  |
+    | înălțimeBară    | număr   | Înălțimea barei în pixeli                                                           | 24         |
+    | culoareBară     | şir     | Culoarea barei                                                                      | gray80     |
+    | pornireAutomată | boolean | Dacă `true`, animația barei de progres pornește automat când componenta se montează | `adevărat` |
+  </Tab>
+</Tabs>
+
+## Bara de Progres Circulară
+
+Indică progresul unei sarcini, utilizată adesea pe ecranele de încărcare sau în zonele unde doriți să comunicați procesele continue utilizatorului.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                              | Implicit     |
+    | ----------- | ----- | -------------------------------------- | ------------ |
+    | dimensiune  | număr | Dimensiunea barei de progres circulare | 50           |
+    | lățimeBară  | număr | Lățimea liniei barei de progres        | 5            |
+    | culoareBară | șir   | Culoarea barei de progres              | currentColor |
+  </Tab>
+</Tabs>

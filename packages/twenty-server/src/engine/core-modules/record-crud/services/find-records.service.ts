@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import isEmpty from 'lodash.isempty';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { OrderByDirection } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import {
@@ -12,23 +13,29 @@ import {
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
+import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class FindRecordsService {
   private readonly logger = new Logger(FindRecordsService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -52,54 +59,88 @@ export class FindRecordsService {
       };
     }
 
+    const authContext = buildSystemAuthContext(workspaceId);
+
     try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          rolePermissionConfig,
-        );
+      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectName,
+            rolePermissionConfig,
+          );
 
-      const { objectMetadataItemWithFieldsMaps, objectMetadataMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
-        );
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          } = repository.internalContext;
 
-      const graphqlQueryParser = new GraphqlQueryParser(
-        objectMetadataItemWithFieldsMaps,
-        objectMetadataMaps,
-      );
+          const objectId = objectIdByNameSingular[objectName];
 
-      const records = await this.getObjectRecords({
-        objectName,
-        filter,
-        orderBy,
-        limit,
-        offset,
-        repository,
-        graphqlQueryParser,
-        objectMetadataItemWithFieldsMaps,
-      });
+          if (!isDefined(objectId)) {
+            throw new RecordCrudException(
+              `Object ${objectName} not found`,
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
+          }
 
-      const totalCount = await this.getTotalCount({
-        objectName,
-        filter,
-        repository,
-        graphqlQueryParser,
-        objectMetadataItemWithFieldsMaps,
-      });
+          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatObjectMetadataMaps,
+            flatEntityId: objectId,
+          });
 
-      this.logger.log(`Found ${records.length} records in ${objectName}`);
+          const graphqlQueryParser = new GraphqlQueryParser(
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
 
-      return {
-        success: true,
-        message: `Found ${records.length} ${objectName} records`,
-        result: {
-          records,
-          count: totalCount,
+          const records = await this.getObjectRecords({
+            objectName,
+            filter,
+            orderBy,
+            limit,
+            offset,
+            repository,
+            graphqlQueryParser,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          });
+
+          const totalCount = await this.getTotalCount({
+            objectName,
+            filter,
+            repository,
+            graphqlQueryParser,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          });
+
+          this.logger.log(`Found ${records.length} records in ${objectName}`);
+
+          const recordReferences = records.map((record) => ({
+            objectNameSingular: objectName,
+            recordId: record.id as string,
+            displayName: getRecordDisplayName(
+              record,
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+          }));
+
+          return {
+            success: true,
+            message: `Found ${records.length} ${objectName} records`,
+            result: {
+              records,
+              count: totalCount,
+            },
+            recordReferences,
+          };
         },
-      };
+      );
     } catch (error) {
       this.logger.error(`Failed to find records: ${error}`);
 
@@ -115,10 +156,11 @@ export class FindRecordsService {
   private applyRestrictedFieldsToQueryBuilder<T extends ObjectLiteral>(
     queryBuilder: WorkspaceSelectQueryBuilder<T>,
     repository: WorkspaceRepository<T>,
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): WorkspaceSelectQueryBuilder<T> {
     const restrictedFields =
-      repository.objectRecordsPermissions?.[objectMetadataItemWithFieldsMaps.id]
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
         ?.restrictedFields;
 
     if (!restrictedFields || isEmpty(restrictedFields)) {
@@ -128,7 +170,8 @@ export class FindRecordsService {
     const selectableFields = getAllSelectableColumnNames({
       restrictedFields,
       objectMetadata: {
-        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        objectMetadataMapItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
       },
     });
 
@@ -146,7 +189,8 @@ export class FindRecordsService {
     offset,
     repository,
     graphqlQueryParser,
-    objectMetadataItemWithFieldsMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   }: {
     objectName: string;
     filter:
@@ -158,7 +202,8 @@ export class FindRecordsService {
     offset: number;
     repository: WorkspaceRepository<T>;
     graphqlQueryParser: GraphqlQueryParser;
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<T[]> {
     const queryBuilder = repository.createQueryBuilder(objectName);
 
@@ -183,7 +228,8 @@ export class FindRecordsService {
     const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(
       withOrderByQueryBuilder,
       repository,
-      objectMetadataItemWithFieldsMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     return queryBuilderWithSelect
@@ -197,7 +243,8 @@ export class FindRecordsService {
     filter,
     repository,
     graphqlQueryParser,
-    objectMetadataItemWithFieldsMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   }: {
     objectName: string;
     filter:
@@ -206,7 +253,8 @@ export class FindRecordsService {
       | undefined;
     repository: WorkspaceRepository<ObjectLiteral>;
     graphqlQueryParser: GraphqlQueryParser;
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<number> {
     const countQueryBuilder = repository.createQueryBuilder(objectName);
 
@@ -225,7 +273,8 @@ export class FindRecordsService {
     const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(
       withDeletedCountQueryBuilder,
       repository,
-      objectMetadataItemWithFieldsMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     return queryBuilderWithSelect.getCount();

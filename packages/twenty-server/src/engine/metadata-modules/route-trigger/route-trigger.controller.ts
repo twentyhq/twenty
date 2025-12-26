@@ -11,19 +11,20 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { HTTPMethod } from 'twenty-shared/types';
 
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
-import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger-rest-api-exception-filter';
+import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
 
 @Controller('s')
-@UseGuards(PublicEndpointGuard)
+@UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(RouteTriggerRestApiExceptionFilter)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
-  @Get('*')
+  @Get('*path')
   async get(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -31,7 +32,7 @@ export class RouteTriggerController {
     });
   }
 
-  @Post('*')
+  @Post('*path')
   async post(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -39,7 +40,7 @@ export class RouteTriggerController {
     });
   }
 
-  @Put('*')
+  @Put('*path')
   async put(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -47,7 +48,7 @@ export class RouteTriggerController {
     });
   }
 
-  @Patch('*')
+  @Patch('*path')
   async patch(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -55,7 +56,7 @@ export class RouteTriggerController {
     });
   }
 
-  @Delete('*')
+  @Delete('*path')
   async delete(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,

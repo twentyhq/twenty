@@ -1,9 +1,9 @@
 import { capitalize } from 'twenty-shared/utils';
 
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getFindManyResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
   fromMetadata = false,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
@@ -55,7 +55,7 @@ export const getFindManyResponse200 = (
 };
 
 export const getFindOneResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
@@ -82,7 +82,7 @@ export const getFindOneResponse200 = (
 };
 
 export const getRestoreOneResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
@@ -109,7 +109,7 @@ export const getRestoreOneResponse200 = (
 };
 
 export const getRestoreManyResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
@@ -141,7 +141,7 @@ export const getRestoreManyResponse200 = (
 };
 
 export const getCreateOneResponse201 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
   const one = fromMetadata ? 'One' : '';
@@ -173,7 +173,7 @@ export const getCreateOneResponse201 = (
 };
 
 export const getCreateManyResponse201 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
@@ -205,7 +205,7 @@ export const getCreateManyResponse201 = (
 };
 
 export const getUpdateOneResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
   const one = fromMetadata ? 'One' : '';
@@ -234,7 +234,7 @@ export const getUpdateOneResponse200 = (
 };
 
 export const getDeleteManyResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'namePlural'>,
+  item: Pick<FlatObjectMetadata, 'namePlural'>,
 ) => {
   return {
     description: 'Successful operation',
@@ -268,7 +268,7 @@ export const getDeleteManyResponse200 = (
 };
 
 export const getUpdateManyResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'namePlural' | 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'namePlural' | 'nameSingular'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
@@ -298,7 +298,7 @@ export const getUpdateManyResponse200 = (
 };
 
 export const getDeleteResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
   const one = fromMetadata ? 'One' : '';
@@ -391,7 +391,7 @@ export const getJsonResponse = () => {
 };
 
 export const getFindDuplicatesResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
@@ -441,7 +441,7 @@ export const getFindDuplicatesResponse200 = (
 };
 
 export const getMergeManyResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,

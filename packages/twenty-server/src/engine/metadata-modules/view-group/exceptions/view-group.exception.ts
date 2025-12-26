@@ -1,22 +1,27 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewGroupException extends CustomException {
-  declare code: ViewGroupExceptionCode;
+export class ViewGroupException extends CustomException<ViewGroupExceptionCode> {
   constructor(
     message: string,
     code: ViewGroupExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view group error occurred.`,
+    });
   }
 }
 
 export enum ViewGroupExceptionCode {
   VIEW_GROUP_NOT_FOUND = 'VIEW_GROUP_NOT_FOUND',
   INVALID_VIEW_GROUP_DATA = 'INVALID_VIEW_GROUP_DATA',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
+  MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID = 'MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID',
 }
 
 export enum ViewGroupExceptionMessageKey {
@@ -25,6 +30,7 @@ export enum ViewGroupExceptionMessageKey {
   VIEW_GROUP_NOT_FOUND = 'VIEW_GROUP_NOT_FOUND',
   INVALID_VIEW_GROUP_DATA = 'INVALID_VIEW_GROUP_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export const generateViewGroupExceptionMessage = (
@@ -42,8 +48,10 @@ export const generateViewGroupExceptionMessage = (
       return `Invalid view group data${id ? ` for view group id: ${id}` : ''}`;
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
+    case ViewGroupExceptionMessageKey.VIEW_NOT_FOUND:
+      return `View${id ? ` (id: ${id})` : ''} not found`;
     default:
-      return 'unknown';
+      assertUnreachable(key);
   }
 };
 
@@ -57,8 +65,5 @@ export const generateViewGroupUserFriendlyExceptionMessage = (
       return msg`ViewId is required to create a view group.`;
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view group.`;
-    default: {
-      return msg`unknown`;
-    }
   }
 };

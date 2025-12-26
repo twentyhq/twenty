@@ -1,0 +1,49 @@
+---
+title: Navigační panel
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Hlavička" />
+</Frame>
+
+Zobrazuje navigační panel, který obsahuje více komponent `NavigationBarItem`.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti     | Typ     | Popis                                                                                                                                                                                       |
+    | -------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | řetězec | Název aktuálně aktivního navigačního prvku                                                                                                                                                  |
+    | položky        | pole    | Pole objektů představujících jednotlivé navigační položky. Každý objekt obsahuje `název` položky, komponent `Ikona` ke zobrazení a funkce `onClick`, která se volá při kliknutí na položku. |
+  </Tab>
+</Tabs>

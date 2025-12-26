@@ -1,0 +1,58 @@
+---
+title: Segno di spunta
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Intestazione" />
+</Frame>
+
+Rappresenta un'azione riuscita o completata.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    Estende `React.ComponentPropsWithoutRef<'div'>` e accetta tutte le proprietà di un elemento `div` regolare.
+  </Tab>
+</Tabs>
+
+## Segno di spunta animato
+
+Rappresenta un'icona di segno di spunta con l'aggiunta della funzionalità di animazione.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà   | Tipo     | Descrizione                                     | Predefinito |
+    | ----------- | -------- | ----------------------------------------------- | ----------- |
+    | isAnimating | booleano | Controlla se il segno di spunta è in animazione | falso       |
+    | colore      | stringa  | Colore del segno di spunta                      |             |
+    | durata      | numero   | La durata dell'animazione in secondi            | 0,5 secondi |
+    | dimensione  | numero   | La dimensione del segno di spunta               | 28 pixel    |
+  </Tab>
+</Tabs>

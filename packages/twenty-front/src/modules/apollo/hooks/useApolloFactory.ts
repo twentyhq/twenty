@@ -17,7 +17,7 @@ import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ApolloFactory, type Options } from '../services/apollo.factory';
+import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
@@ -64,6 +64,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setTokenPair(tokenPair);
       },
       onUnauthenticatedError: () => {
+        // eslint-disable-next-line no-console
+        console.log('onUnauthenticatedError, resetting state');
         setTokenPair(null);
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);

@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -67,6 +68,12 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
             response,
             400,
           );
+        case ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED:
+          return this.httpExceptionHandlerService.handleError(
+            exception as CustomException,
+            response,
+            403,
+          );
         default:
           // TODO: change to 500 when we have input validation
           return this.httpExceptionHandlerService.handleError(
@@ -81,6 +88,7 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',
+      { userFriendlyMessage: msg`An unexpected error occurred.` },
     );
 
     return this.httpExceptionHandlerService.handleError(

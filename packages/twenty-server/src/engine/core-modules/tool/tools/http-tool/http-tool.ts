@@ -8,7 +8,10 @@ import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  type Tool,
+  type ToolExecutionContext,
+} from 'src/engine/core-modules/tool/types/tool.type';
 import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -20,7 +23,10 @@ export class HttpTool implements Tool {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async execute(parameters: ToolInput): Promise<ToolOutput> {
+  async execute(
+    parameters: ToolInput,
+    _context: ToolExecutionContext,
+  ): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
     const headersCopy = { ...headers };
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);

@@ -20,7 +20,7 @@ export const parseImapError = (
   if (error.message.includes('Connection not available')) {
     return new MessageImportDriverException(
       `IMAP client not available: ${error.message}`,
-      MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause || error },
     );
   }
@@ -67,18 +67,26 @@ export const parseImapError = (
     );
   }
 
-  if (error.message === 'Command failed' && error.responseText) {
-    if (error.responseText.includes('Resource temporarily unavailable')) {
+  if (error.message === 'Command failed') {
+    if (error.responseText) {
+      if (error.responseText.includes('Resource temporarily unavailable')) {
+        return new MessageImportDriverException(
+          `IMAP temporary error: ${error.responseText}`,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+          { cause: options?.cause || error },
+        );
+      }
+
       return new MessageImportDriverException(
-        `IMAP temporary error: ${error.responseText}`,
-        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        `IMAP command failed: ${error.responseText}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
         { cause: options?.cause || error },
       );
     }
 
     return new MessageImportDriverException(
-      `IMAP command failed: ${error.responseText}`,
-      MessageImportDriverExceptionCode.UNKNOWN,
+      `IMAP command failed: ${error.message}`,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause || error },
     );
   }

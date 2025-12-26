@@ -1,20 +1,26 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import axios from 'axios';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import {
+  ConnectedAccountProvider,
+  FieldActorSource,
+} from 'twenty-shared/types';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   type CompanyToCreate,
   CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
 
+jest.mock('axios');
+
 describe('CreateCompanyService', () => {
   let service: CreateCompanyService;
   let mockCompanyRepository: any;
+  let mockHttpService: any;
 
   const workspaceId = 'workspace-1';
 
@@ -99,15 +105,22 @@ describe('CreateCompanyService', () => {
       updateMany: jest.fn(),
     };
 
+    mockHttpService = {
+      get: jest.fn(),
+    };
+
+    (axios.create as jest.Mock).mockReturnValue(mockHttpService);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateCompanyService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest
+            getRepository: jest.fn().mockResolvedValue(mockCompanyRepository),
+            executeInWorkspaceContext: jest
               .fn()
-              .mockResolvedValue(mockCompanyRepository),
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {
@@ -150,6 +163,13 @@ describe('CreateCompanyService', () => {
     });
 
     it('should successfully create a company', async () => {
+      mockHttpService.get.mockResolvedValue({
+        data: {
+          name: 'Example1',
+          city: undefined,
+        },
+      });
+
       await service.createOrRestoreCompanies([companyToCreate1], workspaceId);
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
@@ -159,6 +179,20 @@ describe('CreateCompanyService', () => {
     });
 
     it('should successfully two companies', async () => {
+      mockHttpService.get
+        .mockResolvedValueOnce({
+          data: {
+            name: 'Example1',
+            city: undefined,
+          },
+        })
+        .mockResolvedValueOnce({
+          data: {
+            name: 'BNQ',
+            city: '',
+          },
+        });
+
       await service.createOrRestoreCompanies(
         [companyToCreate1, companyToCreate2],
         workspaceId,

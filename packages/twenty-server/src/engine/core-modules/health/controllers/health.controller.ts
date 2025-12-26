@@ -13,6 +13,7 @@ import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicator
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('healthz')
@@ -27,14 +28,14 @@ export class HealthController {
   ) {}
 
   @Get()
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HealthCheck()
   check() {
     return this.health.check([]);
   }
 
   @Get(':indicatorId')
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HealthCheck()
   checkService(@Param('indicatorId') indicatorId: HealthIndicatorId) {
     const checks = {

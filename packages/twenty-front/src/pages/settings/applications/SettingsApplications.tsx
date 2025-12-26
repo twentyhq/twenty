@@ -1,25 +1,55 @@
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { t } from '@lingui/core/macro';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Section } from 'twenty-ui/layout';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import {
+  H2Title,
+  CommandBlock,
+  IconCopy,
+  IconFileInfo,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input';
 import styled from '@emotion/styled';
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 
-const APPLICATIONS_ID = 'applications';
-
-const StyledNoApplicationContainer = styled.div``;
+const StyledButtonContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(2)} 0;
+`;
 
 export const SettingsApplications = () => {
+  const { t } = useLingui();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const { data } = useFindManyApplicationsQuery();
+
+  const { copyToClipboard } = useCopyToClipboard();
 
   const applications = data?.findManyApplications ?? [];
 
-  const tabs = [{ id: 'inUsed', title: 'In used' }];
+  const commands = [
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    'npx create-twenty-app@latest my-twenty-app',
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    'cd my-twenty-app',
+  ];
+
+  const button = (
+    <Button
+      onClick={() => {
+        copyToClipboard(commands.join('\n'), t`Commands copied to clipboard`);
+      }}
+      ariaLabel={t`Copy commands`}
+      Icon={IconCopy}
+    />
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -33,27 +63,30 @@ export const SettingsApplications = () => {
       ]}
     >
       <SettingsPageContainer>
+        {applications.length > 0 && (
+          <SettingsApplicationsTable applications={applications} />
+        )}
         <Section>
-          {applications.length > 0 ? (
-            <>
-              <TabList
-                tabs={tabs}
-                behaveAsLinks={false}
-                componentInstanceId={APPLICATIONS_ID}
-              />
-              <SettingsApplicationsTable applications={applications} />
-            </>
-          ) : (
-            <StyledNoApplicationContainer>
-              No installed application. Please check our{' '}
-              <LinkDisplay
-                value={{
-                  url: 'https://www.npmjs.com/package/twenty-cli',
-                  label: 'twenty-cli',
-                }}
-              />
-            </StyledNoApplicationContainer>
-          )}
+          <H2Title
+            title={t`Create an application`}
+            description={t`You can either create a private app or share it to others`}
+          />
+          <CommandBlock commands={commands} button={button} />
+          <StyledButtonContainer>
+            <Button
+              Icon={IconFileInfo}
+              title={t`Read documentation`}
+              onClick={() =>
+                window.open(
+                  getDocumentationUrl({
+                    locale: currentWorkspaceMember?.locale,
+                    path: '/developers/extend/capabilities/apps',
+                  }),
+                  '_blank',
+                )
+              }
+            />
+          </StyledButtonContainer>
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

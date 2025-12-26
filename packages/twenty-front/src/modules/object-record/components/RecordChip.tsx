@@ -6,6 +6,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -74,15 +75,6 @@ export const RecordChip = ({
 
   // TODO temporary until we create a record show page for Workspaces members
 
-  const avatarChip = (
-    <AvatarChip
-      placeholder={recordChipData.name}
-      placeholderColorSeed={record.id}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
-    />
-  );
-
   if (
     forceDisableClick ||
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember
@@ -90,11 +82,21 @@ export const RecordChip = ({
     return (
       <Chip
         label={recordChipData.name}
+        emptyLabel={t`Untitled`}
         size={size}
         maxWidth={maxWidth}
         className={className}
         variant={ChipVariant.Transparent}
-        leftComponent={isIconHidden ? null : avatarChip}
+        leftComponent={
+          isIconHidden ? null : (
+            <AvatarChip
+              placeholder={recordChipData.name}
+              placeholderColorSeed={record.id}
+              avatarType={recordChipData.avatarType}
+              avatarUrl={recordChipData.avatarUrl ?? ''}
+            />
+          )
+        }
       />
     );
   }
@@ -104,8 +106,18 @@ export const RecordChip = ({
       size={size}
       maxWidth={maxWidth}
       label={recordChipData.name}
+      emptyLabel={t`Untitled`}
       isLabelHidden={isLabelHidden}
-      leftComponent={isIconHidden ? null : avatarChip}
+      leftComponent={
+        isIconHidden ? null : (
+          <AvatarChip
+            placeholder={recordChipData.name}
+            placeholderColorSeed={record.id}
+            avatarType={recordChipData.avatarType}
+            avatarUrl={recordChipData.avatarUrl ?? ''}
+          />
+        )
+      }
       className={className}
       variant={
         variant ??

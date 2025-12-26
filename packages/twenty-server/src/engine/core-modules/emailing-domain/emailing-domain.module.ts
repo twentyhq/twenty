@@ -9,11 +9,13 @@ import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-do
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
     TypeORMModule,
     NestjsQueryTypeOrmModule.forFeature([EmailingDomainEntity]),
+    PermissionsModule,
   ],
   exports: [EmailingDomainService],
   providers: [

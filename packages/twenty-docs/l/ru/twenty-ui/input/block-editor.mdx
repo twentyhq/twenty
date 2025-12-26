@@ -1,0 +1,31 @@
+---
+title: Блочный редактор
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Заголовок" />
+</Frame>
+
+Использует блочный текстовый редактор от [BlockNote](https://www.blocknotejs.org/), чтобы пользователи могли редактировать и просматривать блоки контента.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
+
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства | Тип               | Описание                                      |
+    | -------- | ----------------- | --------------------------------------------- |
+    | редактор | `BlockNoteEditor` | Экземпляр или конфигурация блочного редактора |
+  </Tab>
+</Tabs>

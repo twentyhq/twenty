@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -6,8 +5,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type WorkflowDelayAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { DELAY_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DelayAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import {
@@ -32,12 +29,6 @@ export const WorkflowEditActionDelay = ({
   action,
   actionOptions,
 }: WorkflowEditActionDelayProps) => {
-  const { headerTitle, headerIcon, headerIconColor, headerType, getIcon } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: DELAY_ACTION.defaultLabel,
-    });
-
   const delayOptions: Array<SelectOption<'SCHEDULED_DATE' | 'DURATION'>> = [
     {
       label: t`At a specific date or time`,
@@ -139,28 +130,8 @@ export const WorkflowEditActionDelay = ({
     });
   };
 
-  const HeaderIcon = getIcon(headerIcon ?? 'IconPlayerPause');
-
   return (
     <>
-      <SidePanelHeader
-        initialTitle={headerTitle}
-        Icon={HeaderIcon}
-        iconColor={headerIconColor}
-        headerType={headerType}
-        onTitleChange={(newTitle: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newTitle,
-          });
-        }}
-        iconTooltip={DELAY_ACTION.defaultLabel}
-      />
-
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-delay-type"
@@ -180,7 +151,7 @@ export const WorkflowEditActionDelay = ({
             onChange={handleDateTimeChange}
             readonly={actionOptions.readonly}
             VariablePicker={WorkflowVariablePicker}
-            placeholder="Select a date"
+            placeholder={t`Select a date`}
           />
         )}
         {action.settings.input.delayType === 'DURATION' && (
@@ -191,7 +162,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('days', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Hours`}
@@ -199,7 +170,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('hours', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Minutes`}
@@ -207,7 +178,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('minutes', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Seconds`}
@@ -215,7 +186,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('seconds', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
           </>
         )}

@@ -24,11 +24,12 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -82,7 +83,8 @@ export const PageChangeEffect = () => {
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordIndexId);
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordIndexId);
+  const { resetRecordBoardSelection } =
+    useResetRecordBoardSelection(recordIndexId);
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordIndexId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordIndexId);
 
@@ -98,6 +100,8 @@ export const PageChangeEffect = () => {
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
+
+  const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
     closeCommandMenu();
@@ -141,7 +145,7 @@ export const PageChangeEffect = () => {
         deactivateRecordTableRow();
       }
       if (contextStoreCurrentViewType === ContextStoreViewType.Kanban) {
-        resetRecordSelection();
+        resetRecordBoardSelection();
         deactivateBoardCard();
         unfocusBoardCard();
       }
@@ -166,6 +170,18 @@ export const PageChangeEffect = () => {
             },
           },
         });
+
+        const isNewRecord = location.state?.isNewRecord === true;
+
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
+        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -304,11 +320,12 @@ export const PageChangeEffect = () => {
     resetTableRowSelection,
     unfocusRecordTableRow,
     deactivateRecordTableRow,
-    resetRecordSelection,
+    resetRecordBoardSelection,
     deactivateBoardCard,
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
+    openNewRecordTitleCell,
   ]);
 
   useEffect(() => {

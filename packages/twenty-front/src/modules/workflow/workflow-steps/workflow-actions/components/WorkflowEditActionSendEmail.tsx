@@ -4,7 +4,6 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -20,8 +19,6 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -29,7 +26,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { IconPlus, useIcons } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -72,7 +69,6 @@ export const WorkflowEditActionSendEmail = ({
   actionOptions,
 }: WorkflowEditActionSendEmailProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -233,7 +229,10 @@ export const WorkflowEditActionSendEmail = ({
     },
   });
 
-  let emptyOption: SelectOption<string | null> = { label: 'None', value: null };
+  let emptyOption: SelectOption<string | null> = {
+    label: t`None`,
+    value: null,
+  };
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
@@ -257,12 +256,6 @@ export const WorkflowEditActionSendEmail = ({
     }
   });
 
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: SEND_EMAIL_ACTION.defaultLabel,
-    });
-
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
@@ -270,28 +263,10 @@ export const WorkflowEditActionSendEmail = ({
   return (
     !loading && (
       <>
-        <SidePanelHeader
-          onTitleChange={(newName: string) => {
-            if (actionOptions.readonly === true) {
-              return;
-            }
-
-            actionOptions.onActionUpdate({
-              ...action,
-              name: newName,
-            });
-          }}
-          Icon={getIcon(headerIcon)}
-          iconColor={headerIconColor}
-          initialTitle={headerTitle}
-          headerType={headerType}
-          disabled={actionOptions.readonly}
-          iconTooltip={SEND_EMAIL_ACTION.defaultLabel}
-        />
         <WorkflowStepBody>
           <Select
             dropdownId="select-connected-account-id"
-            label="Account"
+            label={t`Account`}
             fullWidth
             emptyOption={emptyOption}
             value={formData.connectedAccountId}
@@ -302,7 +277,7 @@ export const WorkflowEditActionSendEmail = ({
                 navigate(SettingsPath.NewAccount);
               },
               Icon: IconPlus,
-              text: 'Add account',
+              text: t`Add account`,
             }}
             onChange={(connectedAccountId) => {
               handleFieldChange('connectedAccountId', connectedAccountId);
@@ -312,8 +287,8 @@ export const WorkflowEditActionSendEmail = ({
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <FormTextFieldInput
-            label="Email"
-            placeholder="Enter receiver email"
+            label={t`Email`}
+            placeholder={t`Enter receiver email`}
             readonly={actionOptions.readonly}
             defaultValue={formData.email}
             onChange={(email) => {
@@ -322,8 +297,8 @@ export const WorkflowEditActionSendEmail = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <FormTextFieldInput
-            label="Subject"
-            placeholder="Enter email subject"
+            label={t`Subject`}
+            placeholder={t`Enter email subject`}
             readonly={actionOptions.readonly}
             defaultValue={formData.subject}
             onChange={(subject) => {
@@ -332,8 +307,7 @@ export const WorkflowEditActionSendEmail = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <FormAdvancedTextFieldInput
-            label="Body"
-            placeholder="Enter email body"
+            label={t`Body`}
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
             onChange={(body: string) => {
@@ -347,7 +321,7 @@ export const WorkflowEditActionSendEmail = ({
                 href: '#',
               },
               {
-                children: headerTitle,
+                children: isDefined(action.name) ? action.name : t`Send Email`,
                 href: '#',
               },
               {
@@ -360,7 +334,7 @@ export const WorkflowEditActionSendEmail = ({
             maxWidth={EMAIL_EDITOR_MAX_WIDTH}
           />
           <WorkflowSendEmailAttachments
-            label="Attachments"
+            label={t`Attachments`}
             files={formData.files}
             onChange={(files) => {
               handleFieldChange('files', files);

@@ -1,38 +1,25 @@
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { formatDateByGranularity } from '../formatDateByGranularity';
+import { Temporal } from 'temporal-polyfill';
+import {
+  FirstDayOfTheWeek,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
+import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 
 describe('formatDateByGranularity', () => {
-  const testDate = new Date('2024-03-20T12:00:00Z');
-
-  beforeAll(() => {
-    // Mock toLocaleDateString to avoid timezone/locale issues
-    jest
-      .spyOn(Date.prototype, 'toLocaleDateString')
-      .mockImplementation((_locales, options) => {
-        if (options?.weekday === 'long') return 'Wednesday';
-        if (options?.month === 'long' && !isDefined(options?.year))
-          return 'March';
-        if (options?.month === 'long' && isDefined(options?.year))
-          return 'March 2024';
-        if (options?.month === 'short') return 'Mar 20, 2024';
-        return '3/20/2024';
-      });
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
+  const testDate = Temporal.PlainDate.from('2024-03-20');
+  const userTimezone = 'Europe/Paris';
 
   const testCases: {
     granularity:
       | ObjectRecordGroupByDateGranularity.DAY
+      | ObjectRecordGroupByDateGranularity.WEEK
       | ObjectRecordGroupByDateGranularity.MONTH
       | ObjectRecordGroupByDateGranularity.QUARTER
       | ObjectRecordGroupByDateGranularity.YEAR
       | ObjectRecordGroupByDateGranularity.NONE;
   }[] = [
     { granularity: ObjectRecordGroupByDateGranularity.DAY },
+    { granularity: ObjectRecordGroupByDateGranularity.WEEK },
     { granularity: ObjectRecordGroupByDateGranularity.MONTH },
     { granularity: ObjectRecordGroupByDateGranularity.QUARTER },
     { granularity: ObjectRecordGroupByDateGranularity.YEAR },
@@ -40,39 +27,120 @@ describe('formatDateByGranularity', () => {
   ];
 
   it.each(testCases)(
-    'should format date for $granularity granularity',
+    `should format date for $granularity granularity for ${testDate.toString()}`,
     ({ granularity }) => {
-      expect(formatDateByGranularity(testDate, granularity)).toMatchSnapshot();
+      expect(
+        formatDateByGranularity(
+          testDate,
+          granularity,
+          userTimezone,
+          FirstDayOfTheWeek.MONDAY,
+        ),
+      ).toMatchSnapshot();
     },
   );
 
+  describe('week calculations', () => {
+    it('should format week within same month', () => {
+      const date = Temporal.PlainDate.from('2024-05-06');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
+        FirstDayOfTheWeek.MONDAY,
+      );
+      expect(result).toBe('May 6 - 12, 2024');
+    });
+
+    it('should format week crossing months', () => {
+      const date = Temporal.PlainDate.from('2024-05-27');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
+        FirstDayOfTheWeek.MONDAY,
+      );
+      expect(result).toBe('May 27 - Jun 2, 2024');
+    });
+
+    it('should format week crossing years', () => {
+      const date = Temporal.PlainDate.from('2024-12-30');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
+        FirstDayOfTheWeek.MONDAY,
+      );
+      expect(result).toBe('Dec 30, 2024 - Jan 5, 2025');
+    });
+  });
+
   describe('quarter calculations', () => {
     const quarterTestCases: {
-      date: Date;
+      dayString: string;
       granularity: ObjectRecordGroupByDateGranularity.QUARTER;
     }[] = [
       {
-        date: new Date('2024-01-15'),
+        dayString: '2024-01-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-04-15'),
+        dayString: '2024-02-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-07-15'),
+        dayString: '2024-03-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-10-15'),
+        dayString: '2024-04-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-05-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-06-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-07-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-08-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-09-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-10-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-11-15',
+        granularity: ObjectRecordGroupByDateGranularity.QUARTER,
+      },
+      {
+        dayString: '2024-12-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
     ];
 
     it.each(quarterTestCases)(
-      'should calculate quarter for $granularity with date $date',
-      ({ date, granularity }) => {
-        expect(formatDateByGranularity(date, granularity)).toMatchSnapshot();
+      'should calculate quarter for $dayString',
+      ({ dayString, granularity }) => {
+        expect(
+          formatDateByGranularity(
+            Temporal.PlainDate.from(dayString),
+            granularity,
+            'Europe/Paris',
+            FirstDayOfTheWeek.MONDAY,
+          ),
+        ).toMatchSnapshot();
       },
     );
   });

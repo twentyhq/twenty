@@ -1,11 +1,11 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { type ComputedBarDatum } from '@nivo/bar';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 
 export const calculateBarChartEndLineCoordinates = (
-  bar: ComputedBarDatum<BarChartDataItem>,
-  layout: 'vertical' | 'horizontal',
+  bar: ComputedBarDatum<BarDatum>,
+  layout: BarChartLayout,
 ) => {
-  if (layout === 'vertical') {
+  if (layout === BarChartLayout.VERTICAL) {
     return {
       x1: bar.x,
       x2: bar.x + bar.width,

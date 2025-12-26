@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Client } from '@microsoft/microsoft-graph-client';
-import { GoogleApis } from 'googleapis';
+import { type Auth } from 'googleapis';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
+import { OAuth2ClientManagerExceptionCode } from 'src/modules/connected-account/oauth2-client-manager/exceptions/oauth2-client-manager.exceptions';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
@@ -19,7 +21,14 @@ export class OAuth2ClientManagerService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken'
     >,
-  ): Promise<GoogleApis> {
+  ): Promise<Auth.OAuth2Client> {
+    if (!isDefined(connectedAccount.refreshToken)) {
+      throw new CustomError(
+        'Refresh token is required',
+        OAuth2ClientManagerExceptionCode.REFRESH_TOKEN_REQUIRED,
+      );
+    }
+
     return this.googleOAuth2ClientManagerService.getOAuth2Client(
       connectedAccount.refreshToken,
     );
@@ -31,6 +40,13 @@ export class OAuth2ClientManagerService {
       'provider' | 'accessToken'
     >,
   ): Promise<Client> {
+    if (!isDefined(connectedAccount.accessToken)) {
+      throw new CustomError(
+        'Access token is required',
+        OAuth2ClientManagerExceptionCode.ACCESS_TOKEN_REQUIRED,
+      );
+    }
+
     return this.microsoftOAuth2ClientManagerService.getOAuth2Client(
       connectedAccount.accessToken,
     );

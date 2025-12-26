@@ -12,12 +12,14 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { UpdateWorkspaceMemberEmailJob } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
@@ -63,6 +65,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
+    AiAgentMonitorModule,
     CronTriggerModule,
     DatabaseEventTriggerModule,
     ServerlessFunctionModule,
@@ -74,6 +77,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
+    UpdateWorkspaceMemberEmailJob,
   ],
 })
 export class JobsModule {

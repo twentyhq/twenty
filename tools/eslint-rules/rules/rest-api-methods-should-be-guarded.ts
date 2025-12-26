@@ -13,10 +13,11 @@ export const restApiMethodsShouldBeGuarded = (node: TSESTree.MethodDefinition) =
   );
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
+  const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
 
-  function findClassDeclaration(
+  const findClassDeclaration = (
     node: TSESTree.Node
-  ): TSESTree.ClassDeclaration | null {
+  ): TSESTree.ClassDeclaration | null => {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
     }
@@ -32,11 +33,18 @@ export const restApiMethodsShouldBeGuarded = (node: TSESTree.MethodDefinition) =
     ? typedTokenHelpers.nodeHasAuthGuards(classNode)
     : false;
 
-  return (
-    hasRestApiMethodDecorator &&
-    !hasAuthGuards &&
-    !hasAuthGuardsOnController
-  );
+  const hasPermissionsGuardOnController = classNode
+    ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
+    : false;
+
+  // All endpoints need both auth guards and permission guards
+  const missingAuthGuard =
+    hasRestApiMethodDecorator && !hasAuthGuards && !hasAuthGuardsOnController;
+
+  const missingPermissionGuard =
+    hasRestApiMethodDecorator && !hasPermissionsGuard && !hasPermissionsGuardOnController;
+
+  return missingAuthGuard || missingPermissionGuard;
 };
 
 export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
@@ -44,20 +52,20 @@ export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'REST API endpoints should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model.',
+        'REST API endpoints should have authentication guards (UserAuthGuard, WorkspaceAuthGuard, or FilePathGuard) or be explicitly marked as public (PublicEndpointGuard) and permission guards (SettingsPermissionsGuard or CustomPermissionGuard) to maintain our security model.',
     },
     messages: {
       restApiMethodsShouldBeGuarded:
-        'All REST API controller endpoints should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpointGuard) decorators, or one decorating the root of the Controller.',
+        'All REST API controller endpoints must have authentication guards (@UseGuards(UserAuthGuard/WorkspaceAuthGuard/FilePathGuard/PublicEndpointGuard)) and permission guards (@UseGuards(..., SettingsPermissionsGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases).',
     },
     schema: [],
     hasSuggestions: false,
     type: 'suggestion',
   },
   defaultOptions: [],
-  create(context) {
+  create: (context) => {
     return {
-      MethodDefinition(node: TSESTree.MethodDefinition): void {
+      MethodDefinition: (node: TSESTree.MethodDefinition): void => {
         if (restApiMethodsShouldBeGuarded(node)) {
           context.report({
             node: node,
@@ -67,4 +75,4 @@ export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
       },
     };
   },
-}); 
+});

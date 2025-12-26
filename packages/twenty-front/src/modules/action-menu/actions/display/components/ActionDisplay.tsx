@@ -15,6 +15,7 @@ export type ActionDisplayProps = {
   shortLabel?: MessageDescriptor | string;
   description?: MessageDescriptor | string;
   Icon: IconComponent;
+  isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
   hotKeys?: string[];
 };
@@ -45,8 +46,5 @@ export const ActionDisplay = ({
     return <ActionDropdownItem action={action} onClick={onClick} to={to} />;
   }
 
-  return assertUnreachable(
-    displayType,
-    `Unsupported display type: ${displayType}`,
-  );
+  return assertUnreachable(displayType, 'Unsupported display type');
 };

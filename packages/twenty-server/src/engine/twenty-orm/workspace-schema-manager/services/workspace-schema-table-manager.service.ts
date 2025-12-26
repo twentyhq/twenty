@@ -39,14 +39,17 @@ export class WorkspaceSchemaTableManagerService {
     queryRunner,
     schemaName,
     tableName,
+    cascade = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
+    cascade?: boolean;
   }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
-    const sql = `DROP TABLE IF EXISTS "${safeSchemaName}"."${safeTableName}"`;
+    const cascadeClause = cascade ? ' CASCADE' : '';
+    const sql = `DROP TABLE IF EXISTS "${safeSchemaName}"."${safeTableName}"${cascadeClause}`;
 
     await queryRunner.query(sql);
   }

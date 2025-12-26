@@ -1,5 +1,5 @@
 import { type ReactNode, useContext } from 'react';
-import { createPortal } from 'react-dom';
+import { t } from '@lingui/core/macro';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
@@ -26,7 +26,7 @@ export const ActionModal = ({
   title,
   subtitle,
   onConfirmClick,
-  confirmButtonText = 'Confirm',
+  confirmButtonText = t`Confirm`,
   confirmButtonAccent = 'danger',
   isLoading = false,
   closeSidePanelOnShowPageOptionsActionExecution,
@@ -63,19 +63,17 @@ export const ActionModal = ({
   return (
     <>
       <ActionDisplay onClick={handleClick} />
-      {isModalOpened &&
-        createPortal(
-          <ConfirmationModal
-            modalId={modalId}
-            title={title}
-            subtitle={subtitle}
-            onConfirmClick={handleConfirmClick}
-            confirmButtonText={confirmButtonText}
-            confirmButtonAccent={confirmButtonAccent}
-            loading={isLoading}
-          />,
-          document.body,
-        )}
+      {isModalOpened && (
+        <ConfirmationModal
+          modalId={modalId}
+          title={title}
+          subtitle={subtitle}
+          onConfirmClick={handleConfirmClick}
+          confirmButtonText={confirmButtonText}
+          confirmButtonAccent={confirmButtonAccent}
+          loading={isLoading}
+        />
+      )}
     </>
   );
 };

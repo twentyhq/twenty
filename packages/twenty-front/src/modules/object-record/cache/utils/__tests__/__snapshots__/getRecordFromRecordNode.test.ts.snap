@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getRecordFromRecordNode should convert a simple record node 1`] = `
+{
+  "__typename": "Person",
+  "email": "john@example.com",
+  "id": "123",
+  "name": "John Doe",
+}
+`;
+
+exports[`getRecordFromRecordNode should handle array values 1`] = `
+{
+  "__typename": "Person",
+  "id": "123",
+  "scores": [
+    100,
+    200,
+    300,
+  ],
+  "tags": [
+    "developer",
+    "designer",
+  ],
+}
+`;
+
+exports[`getRecordFromRecordNode should handle connection fields with edges 1`] = `
+{
+  "__typename": "Company",
+  "id": "123",
+  "name": "Acme Inc",
+  "people": [
+    {
+      "__typename": "Person",
+      "id": "456",
+      "name": "John Doe",
+    },
+    {
+      "__typename": "Person",
+      "id": "789",
+      "name": "Jane Smith",
+    },
+  ],
+}
+`;
+
+exports[`getRecordFromRecordNode should handle deeply nested structures 1`] = `
+{
+  "__typename": "Workspace",
+  "id": "123",
+  "settings": {
+    "__typename": "WorkspaceSettings",
+    "display": {
+      "__typename": "DisplaySettings",
+      "layout": "compact",
+      "theme": "dark",
+    },
+  },
+}
+`;
+
+exports[`getRecordFromRecordNode should handle mixed nested objects and connections 1`] = `
+{
+  "__typename": "Company",
+  "address": {
+    "__typename": "Address",
+    "city": "New York",
+    "country": "USA",
+  },
+  "employees": [
+    {
+      "__typename": "Person",
+      "id": "456",
+      "name": {
+        "__typename": "FullName",
+        "firstName": "John",
+        "lastName": "Doe",
+      },
+    },
+  ],
+  "id": "123",
+  "name": "Acme Inc",
+}
+`;
+
+exports[`getRecordFromRecordNode should handle nested object fields 1`] = `
+{
+  "__typename": "Person",
+  "id": "123",
+  "name": {
+    "__typename": "FullName",
+    "firstName": "John",
+    "lastName": "Doe",
+  },
+}
+`;
+
+exports[`getRecordFromRecordNode should handle null and undefined values 1`] = `
+{
+  "__typename": "Person",
+  "email": null,
+  "id": "123",
+  "name": "John Doe",
+  "phone": undefined,
+}
+`;

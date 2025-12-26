@@ -1,4 +1,8 @@
-name: 'Test Docker Compose'
+name: CI Docker Compose
+
+permissions:
+  contents: read
+
 on:
   pull_request:
 

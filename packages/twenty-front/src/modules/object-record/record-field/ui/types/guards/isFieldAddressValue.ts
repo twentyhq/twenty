@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { ALLOWED_ADDRESS_SUBFIELDS } from 'twenty-shared/types';
-import { type FieldAddressValue } from '../FieldMetadata';
+import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const addressSchema = z.object({
   addressStreet1: z.string(),

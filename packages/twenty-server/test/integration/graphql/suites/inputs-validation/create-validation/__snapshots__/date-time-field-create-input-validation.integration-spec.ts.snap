@@ -1,21 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"invalid input syntax for type timestamp with time zone: "malformed-date""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date or date-time field "dateTimeField""`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"invalid input syntax for type timestamp with time zone: "{}""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"Invalid value [] for date or date-time field "dateTimeField""`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"invalid input syntax for type timestamp with time zone: "{}""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"Invalid value {} for date or date-time field "dateTimeField""`;
 
 exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"invalid input syntax for type timestamp with time zone: "1""`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"invalid input syntax for type timestamp with time zone: "true""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"Invalid value true for date or date-time field "dateTimeField""`;
 
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"malformed-date\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"["Invalid value 'malformed-date' for date or date-time field \\"dateTimeField\\""]"`;
 
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"{}\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"["Invalid value [] for date or date-time field \\"dateTimeField\\""]"`;
 
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"{}\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"["Invalid value {} for date or date-time field \\"dateTimeField\\""]"`;
 
 exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"1\\""]"`;
 
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"["invalid input syntax for type timestamp with time zone: \\"true\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"["Invalid value true for date or date-time field \\"dateTimeField\\""]"`;

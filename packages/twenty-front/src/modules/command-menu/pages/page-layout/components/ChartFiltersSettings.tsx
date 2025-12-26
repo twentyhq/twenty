@@ -1,6 +1,6 @@
-import { CommandMenuSubPageNavigationHeader } from '@/command-menu/pages/common/components/CommandMenuSubPageNavigationHeader';
-import { ChartFiltersSettingsInitializeStateEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/components/SidePanelSubPageNavigationHeader';
+import { ChartFiltersSettingsInitializeStateEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/command-menu/pages/page-layout/types/ChartWidget';
@@ -95,30 +95,32 @@ export const ChartFiltersSettings = ({
   );
 
   return (
-    <StyledChartFiltersPageContainer>
-      <CommandMenuSubPageNavigationHeader
+    <>
+      <SidePanelSubPageNavigationHeader
         title={t`Filter`}
         onBackClick={goBackFromCommandMenu}
       />
-      <div>
-        <InputLabel>{t`Conditions`}</InputLabel>
-        <RecordFilterGroupsComponentInstanceContext.Provider
-          value={{ instanceId }}
-        >
-          <RecordFiltersComponentInstanceContext.Provider
+      <StyledChartFiltersPageContainer>
+        <div>
+          <InputLabel>{t`Conditions`}</InputLabel>
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <AdvancedFilterCommandMenuContainer
-              onUpdate={handleFiltersUpdate}
-              objectMetadataItem={objectMetadataItem}
-              isWorkflowFindRecords={false}
-            />
-            <ChartFiltersSettingsInitializeStateEffect
-              initialChartFilters={chartWidgetConfiguration.filter}
-            />
-          </RecordFiltersComponentInstanceContext.Provider>
-        </RecordFilterGroupsComponentInstanceContext.Provider>
-      </div>
-    </StyledChartFiltersPageContainer>
+            <RecordFiltersComponentInstanceContext.Provider
+              value={{ instanceId }}
+            >
+              <AdvancedFilterCommandMenuContainer
+                onUpdate={handleFiltersUpdate}
+                objectMetadataItem={objectMetadataItem}
+                isWorkflowFindRecords={false}
+              />
+              <ChartFiltersSettingsInitializeStateEffect
+                initialChartFilters={chartWidgetConfiguration.filter}
+              />
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
+        </div>
+      </StyledChartFiltersPageContainer>
+    </>
   );
 };

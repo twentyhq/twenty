@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -29,9 +28,6 @@ import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/w
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -49,7 +45,7 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
-import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
+import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -95,7 +91,6 @@ export const WorkflowEditActionServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionServerlessFunctionProps) => {
-  const { getIcon } = useIcons();
   const { t } = useLingui();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isMobile = useIsMobile();
@@ -213,7 +208,7 @@ export const WorkflowEditActionServerlessFunction = ({
               isLeaf: true,
               icon: 'IconVariable',
               tab: 'test',
-              label: 'Generate Function Output',
+              label: t`Generate Function Output`,
             },
             _outputSchemaType: 'LINK',
           },
@@ -306,10 +301,14 @@ export const WorkflowEditActionServerlessFunction = ({
   };
 
   const tabs = [
-    { id: WorkflowServerlessFunctionTabId.CODE, title: 'Code', Icon: IconCode },
+    {
+      id: WorkflowServerlessFunctionTabId.CODE,
+      title: t`Code`,
+      Icon: IconCode,
+    },
     {
       id: WorkflowServerlessFunctionTabId.TEST,
-      title: 'Test',
+      title: t`Test`,
       Icon: IconPlayerPlay,
     },
   ];
@@ -329,13 +328,6 @@ export const WorkflowEditActionServerlessFunction = ({
     dependencies: [isFullScreen],
   });
 
-  const headerTitle = isDefined(action.name)
-    ? action.name
-    : CODE_ACTION.defaultLabel;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
-
   const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
 
   const breadcrumbLinks: BreadcrumbProps['links'] = [
@@ -344,7 +336,7 @@ export const WorkflowEditActionServerlessFunction = ({
       href: '#',
     },
     {
-      children: headerTitle,
+      children: isDefined(action.name) ? action.name : CODE_ACTION.defaultLabel,
       href: '#',
     },
     {
@@ -427,17 +419,6 @@ export const WorkflowEditActionServerlessFunction = ({
             WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
           }
         />
-        <SidePanelHeader
-          onTitleChange={(newName: string) => {
-            updateAction({ name: newName });
-          }}
-          Icon={getIcon(headerIcon)}
-          iconColor={headerIconColor}
-          initialTitle={headerTitle}
-          headerType={headerType}
-          disabled={actionOptions.readonly}
-          iconTooltip={CODE_ACTION.defaultLabel}
-        />
         <WorkflowStepBody>
           {activeTabId === WorkflowServerlessFunctionTabId.CODE && (
             <>
@@ -471,7 +452,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
-                <InputLabel>Result</InputLabel>
+                <InputLabel>{t`Result`}</InputLabel>
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
                   isTesting={isTesting}
@@ -479,7 +460,7 @@ export const WorkflowEditActionServerlessFunction = ({
               </StyledCodeEditorContainer>
               {serverlessFunctionTestData.output.logs.length > 0 && (
                 <StyledCodeEditorContainer>
-                  <InputLabel>Logs</InputLabel>
+                  <InputLabel>{t`Logs`}</InputLabel>
                   <TextArea
                     textAreaId={testLogsTextAreaId}
                     value={
@@ -500,7 +481,7 @@ export const WorkflowEditActionServerlessFunction = ({
               activeTabId === WorkflowServerlessFunctionTabId.TEST
                 ? [
                     <CmdEnterActionButton
-                      title="Test"
+                      title={t`Test`}
                       onClick={handleRunFunction}
                       disabled={isTesting}
                     />,

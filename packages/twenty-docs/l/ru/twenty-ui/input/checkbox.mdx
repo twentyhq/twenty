@@ -1,0 +1,44 @@
+---
+title: Флажок
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Заголовок" />
+</Frame>
+
+Используется, когда пользователю необходимо выбрать несколько значений из нескольких вариантов.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства        | Тип     | Описание                                                                                     |
+    | --------------- | ------- | -------------------------------------------------------------------------------------------- |
+    | checked         | булево  | Указывает, отмечен ли флажок                                                                 |
+    | indeterminate   | булево  | Указывает, находится ли флажок в неопределенном состоянии (ни отмечен, ни снят)              |
+    | onChange        | функция | Функция обратного вызова, которую вы хотите вызвать при изменении состояния флажка           |
+    | onCheckedChange | функция | Функция обратного вызова, которую вы хотите вызвать при изменении состояния `отмечено`       |
+    | вариант         | строка  | The visual style variant of the box. Варианты включают: `primary`, `secondary`, и `tertiary` |
+    | размер          | строка  | Размер флажка. Has two options: `small` and `large`                                          |
+    | форма           | строка  | Форма флажка. Имеет два варианта: `квадратная` и `округлая`                                  |
+  </Tab>
+</Tabs>

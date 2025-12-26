@@ -3,14 +3,18 @@ import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
+import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
+import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -52,7 +56,7 @@ const StyledSectionHeader = styled.div`
   display: flex;
   height: ${({ theme }) => theme.spacing(6)};
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   text-align: left;
 `;
 
@@ -66,13 +70,14 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
 
+  const { enqueueErrorSnackBar } = useSnackBar();
+
   const settingsAccountsSelectedMessageChannel = useRecoilValue(
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord<MessageFolder>({
-    objectNameSingular: CoreObjectNameSingular.MessageFolder,
-  });
+  const { updateMessageFoldersSyncStatus } =
+    useUpdateMessageFoldersSyncStatus();
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
@@ -80,7 +85,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
     shouldOnlyLoadRelationIdentifiers: false,
   });
 
-  const { record: messageChannel } = useFindOneRecord<MessageChannel>({
+  const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
     objectRecordId: settingsAccountsSelectedMessageChannel?.id,
     recordGqlFields,
@@ -110,22 +115,47 @@ export const SettingsAccountsMessageFoldersCard = () => {
     const allSynced = messageFoldersToToggle.every((folder) => folder.isSynced);
     const targetSyncState = !allSynced;
 
-    for (const folder of messageFoldersToToggle) {
-      await updateOneRecord({
-        idToUpdate: folder.id,
-        updateOneRecordInput: { isSynced: targetSyncState },
+    try {
+      await updateMessageFoldersSyncStatus({
+        messageFolderIds: messageFoldersToToggle.map((folder) => folder.id),
+        isSynced: targetSyncState,
+      });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
       });
     }
   };
 
-  const handleToggleFolder = async (messageFoldersToToggle: MessageFolder) => {
-    await updateOneRecord({
-      idToUpdate: messageFoldersToToggle.id,
-      updateOneRecordInput: {
-        isSynced: !messageFoldersToToggle.isSynced,
-      },
+  const handleToggleFolder = async (folderToToggle: MessageFolder) => {
+    const isSynced = !folderToToggle.isSynced;
+    const folderIdsToToggle = computeFolderIdsForSyncToggle({
+      folderId: folderToToggle.id,
+      allFolders: messageFolders,
+      isSynced,
     });
+
+    try {
+      await updateMessageFoldersSyncStatus({
+        messageFolderIds: folderIdsToToggle,
+        isSynced,
+      });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <Section>
+        <Table>
+          <SettingsMessageFoldersSkeletonLoader />
+        </Table>
+      </Section>
+    );
+  }
 
   if (!messageFolders || messageFolders.length === 0) {
     return <SettingsMessageFoldersEmptyStateCard />;

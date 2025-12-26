@@ -6,6 +6,7 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
+import pLimit from 'p-limit';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,7 +16,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
-import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -24,6 +24,9 @@ import {
 
 // Microsoft API limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
+
+/* reference: https://learn.microsoft.com/en-us/graph/throttling-limits#limits-per-mailbox */
+const FOLDER_PROCESSING_CONCURRENCY = 4;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
@@ -38,8 +41,6 @@ export class MicrosoftGetMessageListService {
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    const result: GetMessageListsResponse = [];
-
     if (messageFolders.length === 0) {
       throw new MessageImportDriverException(
         `Message channel ${messageChannel.id} has no message folders`,
@@ -47,16 +48,22 @@ export class MicrosoftGetMessageListService {
       );
     }
 
-    for (const folder of messageFolders) {
-      const response = await this.getMessageList(connectedAccount, folder);
+    const limit = pLimit(FOLDER_PROCESSING_CONCURRENCY);
 
-      result.push({
-        ...response,
-        folderId: folder.id,
-      });
-    }
+    const results = await Promise.all(
+      messageFolders.map((folder) =>
+        limit(async () => {
+          const response = await this.getMessageList(connectedAccount, folder);
 
-    return result;
+          return {
+            ...response,
+            folderId: folder.id,
+          };
+        }),
+      ),
+    );
+
+    return results;
   }
 
   public async getMessageList(
@@ -93,12 +100,6 @@ export class MicrosoftGetMessageListService {
         this.logger.error(
           `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
         );
-        if (isAccessTokenRefreshingError(error?.body)) {
-          throw new MessageImportDriverException(
-            error.message,
-            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-          );
-        }
         this.microsoftMessageListFetchErrorHandler.handleError(error);
       });
 
@@ -119,12 +120,6 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
-      if (isAccessTokenRefreshingError(error?.body)) {
-        throw new MessageImportDriverException(
-          error.message,
-          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-        );
-      }
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
 

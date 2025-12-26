@@ -1,0 +1,49 @@
+---
+title: Navigationsleiste
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Kopfzeile" />
+</Frame>
+
+Rendert eine Navigationsleiste, die mehrere `NavigationBarItem`-Komponenten enthält.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ          | Beschreibung                                                                                                                                                                                                                                 |
+    | --------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName  | Zeichenkette | Der Name des aktuell aktiven Navigationselements                                                                                                                                                                                             |
+    | items           | array        | Ein Array von Objekten, die jeweils ein Navigationselement repräsentieren. Jedes Objekt enthält den `name` des Elements, die zugehörige `Icon`-Komponente und eine Funktion `onClick`, die ausgeführt wird, wenn das Element angeklickt wird |
+  </Tab>
+</Tabs>

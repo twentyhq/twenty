@@ -13,11 +13,13 @@ import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });
 registerEnumType(ViewKey, { name: 'ViewKey' });
 registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
+registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
 
 @ObjectType('CoreView')
 export class ViewDTO {
@@ -61,6 +63,12 @@ export class ViewDTO {
   kanbanAggregateOperationFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string | null;
+
+  @Field({ nullable: false, defaultValue: false })
+  shouldHideEmptyGroups: boolean;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
@@ -95,4 +103,12 @@ export class ViewDTO {
 
   @Field(() => [ViewGroupDTO])
   viewGroups?: ViewGroupDTO[];
+
+  @Field(() => ViewVisibility, {
+    nullable: false,
+  })
+  visibility: ViewVisibility;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  createdByUserWorkspaceId?: string | null;
 }

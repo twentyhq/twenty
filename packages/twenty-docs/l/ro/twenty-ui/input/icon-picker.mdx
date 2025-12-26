@@ -1,0 +1,52 @@
+---
+title: Selector de iconițe
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Antet" />
+</Frame>
+
+Un selector de iconițe bazat pe listă derulantă care permite utilizatorilor să selecteze o iconiță dintr-o listă.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți           | Tip     | Descriere                                                                                                                   |
+    | --------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+    | dezactivat            | boolean | Dezactivează selectorul de iconițe dacă este setat pe `true`                                                                |
+    | laSchimbare           | funcție | Funcția callback declanșată când utilizatorul selectează o iconiță. Primește un obiect cu proprietățile `iconKey` și `Icon` |
+    | cheieIconițăSelectată | șir     | Cheia iconiței selectate inițial                                                                                            |
+    | laClickExterior       | funcție | Funcția callback declanșată când utilizatorul face clic în afara listei derulante                                           |
+    | laÎnchidere           | funcție | Funcția callback declanșată când lista derulantă este închisă                                                               |
+    | laDeschidere          | funcție | Funcția callback declanșată când lista derulantă este deschisă                                                              |
+    | variantă              | șir     | Varianta stilului vizual al iconiței clicabile. Opțiunile includ: `primar`, `secundar` și `terțiar`                         |
+  </Tab>
+</Tabs>

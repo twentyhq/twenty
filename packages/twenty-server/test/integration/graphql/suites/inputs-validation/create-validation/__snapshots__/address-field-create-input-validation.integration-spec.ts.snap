@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - ADDRESS Gql create input - failure ADDRESS - should fail with : {"addressField":"not-an-address"} 1`] = `"Expected type "AddressCreateInput" to be an object."`;
+
+exports[`Create input validation - ADDRESS Rest create input - failure ADDRESS - should fail with : {"addressField":"not-an-address"} 1`] = `"["Invalid object value 'not-an-address' for field \\"addressField\\""]"`;

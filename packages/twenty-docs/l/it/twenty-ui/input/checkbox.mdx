@@ -1,0 +1,44 @@
+---
+title: Checkbox
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Intestazione" />
+</Frame>
+
+Utilizzato quando un utente deve selezionare più valori da diverse opzioni.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props           | Tipo     | Descrizione                                                                                      |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------ |
+    | selezionato     | booleano | Indica se la casella di controllo è selezionata                                                  |
+    | indeterminato   | booleano | Indica se la casella di controllo è in uno stato indeterminato (né selezionata né deselezionata) |
+    | onChange        | funzione | La funzione callback che vuoi attivare quando lo stato della casella di controllo cambia         |
+    | onCheckedChange | funzione | La funzione callback che vuoi attivare quando lo stato di "selezionato" cambia                   |
+    | variante        | stringa  | Lo stile visivo della casella. Le opzioni includono: `primary`, `secondary` e `tertiary`         |
+    | dimensione      | stringa  | La dimensione della casella di controllo. Ha due opzioni: `small` e `large`                      |
+    | forma           | stringa  | La forma della casella di controllo. Ha due opzioni: `squared` e `rounded`                       |
+  </Tab>
+</Tabs>

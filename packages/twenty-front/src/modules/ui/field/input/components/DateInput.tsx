@@ -109,7 +109,8 @@ export const DateInput = ({
   return (
     <div ref={wrapperRef}>
       <DatePicker
-        date={internalValue ?? null}
+        instanceId={instanceId}
+        plainDateString={internalValue ?? null}
         onChange={handleChange}
         onClose={handleClose}
         clearable={clearable ?? false}

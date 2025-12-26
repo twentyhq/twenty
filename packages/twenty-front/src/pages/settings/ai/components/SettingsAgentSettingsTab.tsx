@@ -1,21 +1,27 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import {
+  useAiModelLabel,
+  useAiModelOptions,
+} from '@/ai/hooks/useAiModelOptions';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type Agent } from '~/generated/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
+import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '../components/SettingsAgentModelCapabilities';
-import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
+import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
+import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -60,7 +66,22 @@ export const SettingsAgentSettingsTab = ({
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const modelOptions = useAiModelOptions();
+  const aiModels = useRecoilValue(aiModelsState);
+  const activeModelOptions = useAiModelOptions();
+  const currentModelLabel = useAiModelLabel(formValues.modelId);
+
+  const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
+  const isCurrentModelDeprecated = currentModel?.deprecated === true;
+
+  const modelOptions = isCurrentModelDeprecated
+    ? [
+        {
+          value: formValues.modelId,
+          label: `${currentModelLabel} (deprecated)`,
+        },
+        ...activeModelOptions,
+      ]
+    : activeModelOptions;
 
   const noModelsAvailable = modelOptions.length === 0;
 
@@ -97,7 +118,6 @@ export const SettingsAgentSettingsTab = ({
           </StyledNameContainer>
         </StyledIconNameRow>
       </StyledFormContainer>
-
       <StyledFormContainer>
         <TextArea
           textAreaId="agent-description-textarea"
@@ -108,7 +128,6 @@ export const SettingsAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-
       <StyledFormContainer>
         {noModelsAvailable ? (
           <StyledErrorMessage>
@@ -125,7 +144,6 @@ export const SettingsAgentSettingsTab = ({
           />
         )}
       </StyledFormContainer>
-
       {formValues.modelId && (
         <StyledFormContainer>
           <SettingsAgentModelCapabilities
@@ -138,7 +156,6 @@ export const SettingsAgentSettingsTab = ({
           />
         </StyledFormContainer>
       )}
-
       <StyledFormContainer>
         <TextArea
           textAreaId="agent-prompt-textarea"
@@ -151,7 +168,15 @@ export const SettingsAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-
+      <StyledFormContainer>
+        <SettingsAgentResponseFormat
+          responseFormat={formValues.responseFormat}
+          onResponseFormatChange={(format) =>
+            onFieldChange('responseFormat', format)
+          }
+          disabled={disabled}
+        />
+      </StyledFormContainer>
       {!disabled && agent && formValues.isCustom && (
         <Section>
           <H2Title title={t`Danger zone`} description={t`Delete this agent`} />

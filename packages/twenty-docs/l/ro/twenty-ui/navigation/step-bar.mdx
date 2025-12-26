@@ -1,0 +1,34 @@
+---
+title: Bară de pași
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Antet" />
+</Frame>
+
+Afișează progresul printr-o secvență de pași numerotați prin evidențierea pasului activ. Redă un container cu pași, fiecare fiind reprezentat de componenta `Pas`.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                                                                     |
+    | ----------- | ----- | --------------------------------------------------------------------------------------------- |
+    | pasactiv    | număr | Indexul pasului activ în prezent. Aceasta determină ce pas ar trebui să fie evidențiat vizual |
+  </Tab>
+</Tabs>

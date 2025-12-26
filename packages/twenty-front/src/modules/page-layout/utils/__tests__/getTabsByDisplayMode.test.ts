@@ -1,7 +1,7 @@
 import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { PageLayoutType } from '~/generated/graphql';
-import { getTabsByDisplayMode } from '../getTabsByDisplayMode';
+import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 
 describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
@@ -32,7 +32,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -46,7 +47,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -58,7 +60,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout([]);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -72,7 +75,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -92,7 +96,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -106,7 +111,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -118,7 +124,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout([]);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -132,7 +139,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -152,7 +160,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -172,7 +181,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -185,7 +195,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout([]);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -199,7 +210,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -213,7 +225,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout([]);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -227,7 +240,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -244,12 +258,14 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const resultMobile = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
       const resultDesktop = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -266,12 +282,14 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const resultMobile = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
       const resultDesktop = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -289,7 +307,8 @@ describe('getTabsByDisplayMode', () => {
       const originalTabsLength = pageLayout.tabs.length;
 
       getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -306,7 +325,8 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout([tabWithExtraProps]);
 
       const result = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -322,12 +342,14 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const result1 = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
       const result2 = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -340,12 +362,14 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const mobileResult = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
       const desktopResult = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -362,12 +386,14 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const mobileResult = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
       const desktopResult = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -386,17 +412,20 @@ describe('getTabsByDisplayMode', () => {
       const pageLayout = createMockPageLayout(tabs);
 
       const resultBothTrue = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: true,
       });
       const resultOnlyMobile = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: true,
         isInRightDrawer: false,
       });
       const resultOnlyRightDrawer = getTabsByDisplayMode({
-        pageLayout,
+        tabs: pageLayout.tabs,
+        pageLayoutType: pageLayout.type,
         isMobile: false,
         isInRightDrawer: true,
       });

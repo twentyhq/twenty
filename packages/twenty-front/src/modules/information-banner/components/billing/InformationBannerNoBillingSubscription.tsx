@@ -20,6 +20,7 @@ export const InformationBannerNoBillingSubscription = () => {
 
   return (
     <InformationBanner
+      componentInstanceId="information-banner-no-billing-subscription"
       variant="danger"
       message={
         hasPermissionToSubscribe

@@ -1,10 +1,10 @@
-import { type ComputedBarDatum } from '@nivo/bar';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { calculateBarChartEndLineCoordinates } from '../calculateBarChartEndLineCoordinates';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { calculateBarChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartEndLineCoordinates';
 describe('calculateBarChartEndLineCoordinates', () => {
   const createMockBar = (
-    overrides?: Partial<ComputedBarDatum<BarChartDataItem>>,
-  ): ComputedBarDatum<BarChartDataItem> =>
+    overrides?: Partial<ComputedBarDatum<BarDatum>>,
+  ): ComputedBarDatum<BarDatum> =>
     ({
       x: 100,
       y: 50,
@@ -16,17 +16,20 @@ describe('calculateBarChartEndLineCoordinates', () => {
         value: 100,
         index: 0,
         indexValue: 'Q1',
-        data: { Q1: 100 } as BarChartDataItem,
+        data: { Q1: 100 } as BarDatum,
         formattedValue: '100',
         hidden: false,
       },
       label: 'Sales',
       ...overrides,
-    }) as ComputedBarDatum<BarChartDataItem>;
+    }) as ComputedBarDatum<BarDatum>;
   describe('vertical layout', () => {
     it('should calculate horizontal line coordinates at the top of vertical bars', () => {
       const mockBar = createMockBar();
-      const result = calculateBarChartEndLineCoordinates(mockBar, 'vertical');
+      const result = calculateBarChartEndLineCoordinates(
+        mockBar,
+        BarChartLayout.VERTICAL,
+      );
       expect(result).toEqual({
         x1: 100,
         x2: 140,
@@ -38,7 +41,7 @@ describe('calculateBarChartEndLineCoordinates', () => {
       const barAtOrigin = createMockBar({ x: 0, y: 0 });
       const result = calculateBarChartEndLineCoordinates(
         barAtOrigin,
-        'vertical',
+        BarChartLayout.VERTICAL,
       );
       expect(result).toEqual({
         x1: 0,
@@ -51,7 +54,7 @@ describe('calculateBarChartEndLineCoordinates', () => {
       const negativeBar = createMockBar({ x: -50, y: -20 });
       const result = calculateBarChartEndLineCoordinates(
         negativeBar,
-        'vertical',
+        BarChartLayout.VERTICAL,
       );
       expect(result).toEqual({
         x1: -50,
@@ -64,7 +67,10 @@ describe('calculateBarChartEndLineCoordinates', () => {
   describe('horizontal layout', () => {
     it('should calculate vertical line coordinates at the end of horizontal bars', () => {
       const mockBar = createMockBar();
-      const result = calculateBarChartEndLineCoordinates(mockBar, 'horizontal');
+      const result = calculateBarChartEndLineCoordinates(
+        mockBar,
+        BarChartLayout.HORIZONTAL,
+      );
       expect(result).toEqual({
         x1: 140,
         x2: 140,
@@ -74,7 +80,10 @@ describe('calculateBarChartEndLineCoordinates', () => {
     });
     it('should handle bars with different dimensions', () => {
       const wideBar = createMockBar({ width: 100, height: 20 });
-      const result = calculateBarChartEndLineCoordinates(wideBar, 'horizontal');
+      const result = calculateBarChartEndLineCoordinates(
+        wideBar,
+        BarChartLayout.HORIZONTAL,
+      );
       expect(result).toEqual({
         x1: 200,
         x2: 200,
@@ -84,7 +93,10 @@ describe('calculateBarChartEndLineCoordinates', () => {
     });
     it('should handle very thin bars', () => {
       const thinBar = createMockBar({ width: 1, height: 200 });
-      const result = calculateBarChartEndLineCoordinates(thinBar, 'horizontal');
+      const result = calculateBarChartEndLineCoordinates(
+        thinBar,
+        BarChartLayout.HORIZONTAL,
+      );
       expect(result).toEqual({
         x1: 101,
         x2: 101,

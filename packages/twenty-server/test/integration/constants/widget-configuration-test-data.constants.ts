@@ -1,7 +1,7 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
-import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';
@@ -10,6 +10,34 @@ export const TEST_FIELD_METADATA_ID_4 = '20202020-4444-4444-a444-444444444444';
 
 export const TEST_IFRAME_CONFIG = {
   url: 'https://example.com/dashboard',
+};
+
+export const TEST_STANDALONE_RICH_TEXT_CONFIG = {
+  body: {
+    blocknote:
+      '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}',
+    markdown: '# Hello world',
+  },
+};
+
+export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL = {
+  body: {
+    markdown: 'Simple text',
+  },
+};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
+  body: 'not an object',
+};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
+  body: {
+    blocknote: 'valid',
+    markdown: 'valid',
+    invalidField: 'should not be here',
+  },
 };
 
 export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
@@ -117,6 +145,8 @@ export const TEST_PIE_CHART_CONFIG = {
   aggregateOperation: AggregateOperations.SUM,
   orderBy: GraphOrderBy.VALUE_DESC,
   displayDataLabel: true,
+  displayLegend: true,
+  showCenterMetric: true,
   color: 'yellow',
   description: 'Distribution by category',
   filter: {
@@ -263,6 +293,8 @@ export function getValidConfigForWidgetType(widgetType: string): any {
 
       return configs[Math.floor(Math.random() * configs.length)];
     }
+    case 'STANDALONE_RICH_TEXT':
+      return TEST_STANDALONE_RICH_TEXT_CONFIG;
     case 'VIEW':
     case 'FIELDS':
     case 'TIMELINE':
@@ -271,6 +303,7 @@ export function getValidConfigForWidgetType(widgetType: string): any {
     case 'FILES':
     case 'EMAILS':
     case 'CALENDAR':
+    case 'FIELD_RICH_TEXT':
       return null;
     default:
       return null;

@@ -5,14 +5,15 @@ import { useEffect } from 'react';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
-import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput } from '../RatingFieldInput';
+import { useRatingField } from '@/object-record/record-field/ui/meta-types/hooks/useRatingField';
+import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -107,7 +108,7 @@ const meta: Meta = {
   argTypes: {
     onSubmit: { control: false },
   },
-  decorators: [clearMocksDecorator],
+  decorators: [I18nFrontDecorator, clearMocksDecorator],
   parameters: {
     clearMocks: true,
   },

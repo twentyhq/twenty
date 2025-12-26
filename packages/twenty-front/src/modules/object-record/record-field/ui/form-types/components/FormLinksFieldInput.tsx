@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -39,18 +40,18 @@ export const FormLinksFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
-          label="Primary Link Label"
+          label={t`Primary Link Label`}
           defaultValue={defaultValue?.primaryLinkLabel}
           onChange={handleChange('primaryLinkLabel')}
-          placeholder={placeholder ?? 'Primary Link Label'}
+          placeholder={placeholder ?? t`Primary Link Label`}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
         <FormTextFieldInput
-          label="Primary Link URL"
+          label={t`Primary Link URL`}
           defaultValue={defaultValue?.primaryLinkUrl}
           onChange={handleChange('primaryLinkUrl')}
-          placeholder={placeholder ?? 'Primary Link URL'}
+          placeholder={placeholder ?? t`Primary Link URL`}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />

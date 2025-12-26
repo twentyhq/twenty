@@ -18,7 +18,7 @@ export const generateIndexForFlatFieldMetadata = ({
   workspaceId,
 }: GenerateIndexForFlatFieldMetadataArgs): FlatIndexMetadata => {
   const indexId = v4();
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   const flatIndex: FlatIndexMetadata = generateFlatIndexMetadataWithNameOrThrow(
     {
@@ -44,7 +44,7 @@ export const generateIndexForFlatFieldMetadata = ({
         universalIdentifier: indexId,
         updatedAt: createdAt,
         workspaceId,
-        applicationId: null,
+        applicationId: flatFieldMetadata.applicationId,
       },
       flatObjectMetadata,
     },

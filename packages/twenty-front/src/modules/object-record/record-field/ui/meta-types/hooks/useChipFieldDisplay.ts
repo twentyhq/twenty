@@ -10,7 +10,7 @@ import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
   const {
@@ -21,6 +21,7 @@ export const useChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
+    isLabelIdentifierCompact,
   } = useContext(FieldContext);
 
   const { indexIdentifierUrl, labelIdentifierFieldMetadataItem } =
@@ -62,5 +63,6 @@ export const useChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
+    isLabelIdentifierCompact,
   };
 };

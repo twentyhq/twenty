@@ -1,12 +1,12 @@
-import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
-import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
+import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
-import { Text } from '@nivo/text';
-import { useTheme } from '@nivo/theming';
-import { useTooltip } from '@nivo/tooltip';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
-import { createElement, useCallback, useMemo, type MouseEvent } from 'react';
+import { useCallback, useMemo, type MouseEvent } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,44 +15,39 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   groupMode?: 'grouped' | 'stacked';
   data?: readonly D[];
   indexBy?: string;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   chartId?: string;
 };
 
-const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
+const StyledBarRect = styled(animated.rect)<{
+  $isInteractive?: boolean;
+  $isDimmed?: boolean;
+}>`
   cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
-  transition: filter 0.15s ease-in-out;
+  transition:
+    filter 0.15s ease-in-out,
+    opacity 0.15s ease-in-out;
+  opacity: ${({ $isDimmed }) =>
+    $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
 
   &:hover {
     filter: ${({ $isInteractive }) =>
-      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+      $isInteractive
+        ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
+        : 'none'};
   }
 `;
 
 // This is a copy of the BarItem component from @nivo/bar with some design modifications
 export const CustomBarItem = <D extends BarDatum>({
   bar: { data: barData, ...bar },
-  style: {
-    borderColor,
-    color,
-    height,
-    labelColor,
-    labelOpacity,
-    labelX,
-    labelY,
-    transform,
-    width,
-    textAnchor,
-  },
+  style: { borderColor, color, height, transform, width },
   borderRadius,
   borderWidth,
-  label,
-  shouldRenderLabel,
   isInteractive,
   onClick,
   onMouseEnter,
   onMouseLeave,
-  tooltip,
   isFocusable,
   ariaLabel,
   ariaLabelledBy,
@@ -63,16 +58,16 @@ export const CustomBarItem = <D extends BarDatum>({
   groupMode = 'grouped',
   data: chartData,
   indexBy,
-  layout = 'vertical',
+  layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
-  const theme = useTheme();
-  const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
-
-  const renderTooltip = useMemo(
-    () => () => createElement(tooltip, { ...bar, ...barData }),
-    [tooltip, bar, barData],
+  const highlightedLegendId = useRecoilComponentValue(
+    graphWidgetHighlightedLegendIdComponentState,
   );
+
+  const isDimmed =
+    isDefined(highlightedLegendId) &&
+    String(highlightedLegendId) !== String(barData.id);
 
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
@@ -80,33 +75,20 @@ export const CustomBarItem = <D extends BarDatum>({
     },
     [bar, barData, onClick],
   );
-  const handleTooltip = useCallback(
-    (event: MouseEvent<SVGRectElement>) =>
-      showTooltipFromEvent(renderTooltip(), event),
-    [showTooltipFromEvent, renderTooltip],
-  );
+
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
       onMouseEnter?.(barData, event);
-      showTooltipFromEvent(renderTooltip(), event);
     },
-    [barData, onMouseEnter, showTooltipFromEvent, renderTooltip],
+    [barData, onMouseEnter],
   );
+
   const handleMouseLeave = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
       onMouseLeave?.(barData, event);
-      hideTooltip();
     },
-    [barData, hideTooltip, onMouseLeave],
+    [barData, onMouseLeave],
   );
-
-  const handleFocus = useCallback(() => {
-    showTooltipAt(renderTooltip(), [bar.absX + bar.width / 2, bar.absY]);
-  }, [showTooltipAt, renderTooltip, bar]);
-
-  const handleBlur = useCallback(() => {
-    hideTooltip();
-  }, [hideTooltip]);
 
   const isNegativeValue = useMemo(
     () => isNumber(barData.value) && barData.value < 0,
@@ -114,7 +96,10 @@ export const CustomBarItem = <D extends BarDatum>({
   );
 
   const seriesIndex = useMemo(
-    () => (isDefined(keys) ? keys.findIndex((k) => k === barData.id) : -1),
+    () =>
+      isDefined(keys)
+        ? keys.findIndex((currentKey) => currentKey === barData.id)
+        : -1,
     [keys, barData.id],
   );
 
@@ -131,7 +116,7 @@ export const CustomBarItem = <D extends BarDatum>({
     }
 
     const dataPoint = chartData.find(
-      (data) => data[indexBy] === barData.indexValue,
+      (chartDataItem) => chartDataItem[indexBy] === barData.indexValue,
     );
 
     if (!isDefined(dataPoint)) {
@@ -158,7 +143,7 @@ export const CustomBarItem = <D extends BarDatum>({
     barData.indexValue,
   ]);
 
-  const isHorizontal = layout === 'horizontal';
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
   const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${
     seriesIndex >= 0 ? seriesIndex : 'x'
   }`;
@@ -168,12 +153,12 @@ export const CustomBarItem = <D extends BarDatum>({
 
   const constrainedThicknessDimension = to(
     unconstrainedThicknessDimension,
-    (dimension) => Math.min(dimension, BAR_CHART_MAXIMUM_WIDTH),
+    (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
   );
 
   const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
-    dimension > BAR_CHART_MAXIMUM_WIDTH
-      ? (dimension - BAR_CHART_MAXIMUM_WIDTH) / 2
+    dimension > BAR_CHART_CONSTANTS.MAXIMUM_WIDTH
+      ? (dimension - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2
       : 0,
   );
 
@@ -192,21 +177,23 @@ export const CustomBarItem = <D extends BarDatum>({
   const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
   const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
 
-  const widthWithOffset = (v: number) =>
-    Math.max(v + (isHorizontal ? borderRadius : 0), 0);
-  const heightWithOffset = (v: number) =>
-    Math.max(v + (isHorizontal ? 0 : borderRadius), 0);
-  const clampRadius = (v: number) => Math.min(borderRadius, v / 2);
+  const widthWithOffset = (value: number) =>
+    Math.max(value + (isHorizontal ? borderRadius : 0), 0);
+  const heightWithOffset = (value: number) =>
+    Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
+  const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
 
-  const clipRectWidth = to(finalBarWidthDimension, (v) => widthWithOffset(v));
-  const clipRectHeight = to(finalBarHeightDimension, (v) =>
-    heightWithOffset(v),
+  const clipRectWidth = to(finalBarWidthDimension, (value) =>
+    widthWithOffset(value),
   );
-  const clipRx = to(finalBarWidthDimension, (v) =>
-    clampRadius(widthWithOffset(v)),
+  const clipRectHeight = to(finalBarHeightDimension, (value) =>
+    heightWithOffset(value),
   );
-  const clipRy = to(finalBarHeightDimension, (v) =>
-    clampRadius(heightWithOffset(v)),
+  const clipBorderRadiusX = to(finalBarWidthDimension, (value) =>
+    clampRadius(widthWithOffset(value)),
+  );
+  const clipBorderRadiusY = to(finalBarHeightDimension, (value) =>
+    clampRadius(heightWithOffset(value)),
   );
 
   return (
@@ -218,8 +205,8 @@ export const CustomBarItem = <D extends BarDatum>({
               <animated.rect
                 x={clipPathX}
                 y={clipPathY}
-                rx={clipRx}
-                ry={clipRy}
+                rx={clipBorderRadiusX}
+                ry={clipBorderRadiusY}
                 width={clipRectWidth}
                 height={clipRectHeight}
               />
@@ -229,6 +216,7 @@ export const CustomBarItem = <D extends BarDatum>({
 
         <StyledBarRect
           $isInteractive={isInteractive}
+          $isDimmed={isDimmed}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
           width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
           height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}
@@ -245,31 +233,10 @@ export const CustomBarItem = <D extends BarDatum>({
           aria-disabled={ariaDisabled ? ariaDisabled(barData) : undefined}
           aria-hidden={ariaHidden ? ariaHidden(barData) : undefined}
           onMouseEnter={isInteractive ? handleMouseEnter : undefined}
-          onMouseMove={isInteractive ? handleTooltip : undefined}
           onMouseLeave={isInteractive ? handleMouseLeave : undefined}
           onClick={isInteractive ? handleClick : undefined}
-          onFocus={isInteractive && isFocusable ? handleFocus : undefined}
-          onBlur={isInteractive && isFocusable ? handleBlur : undefined}
           data-testid={`bar.item.${barData.id}.${barData.index}`}
         />
-
-        {shouldRenderLabel && (
-          <Text
-            x={labelX}
-            y={labelY}
-            textAnchor={textAnchor}
-            dominantBaseline="central"
-            fillOpacity={labelOpacity}
-            style={{
-              ...theme.labels.text,
-              // We don't want the label to intercept mouse events
-              pointerEvents: 'none',
-              fill: labelColor,
-            }}
-          >
-            {label}
-          </Text>
-        )}
       </animated.g>
     </animated.g>
   );

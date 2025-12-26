@@ -3,13 +3,14 @@ import { recordGroupIdsComponentState } from '@/object-record/record-group/state
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
-import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type ViewType } from '@/views/types/ViewType';
+
 import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =
@@ -17,22 +18,23 @@ export const visibleRecordGroupIdsComponentFamilySelector =
     key: 'visibleRecordGroupIdsComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
-      ({ instanceId, familyKey }) =>
+      ({ instanceId }) =>
       ({ get }) => {
         const recordGroupSort = get(
           recordIndexRecordGroupSortComponentState.atomFamily({
             instanceId,
           }),
         );
+
         const recordGroupIds = get(
           recordGroupIdsComponentState.atomFamily({
             instanceId,
           }),
         );
-        const hideEmptyRecordGroup = get(
-          recordIndexRecordGroupHideComponentFamilyState.atomFamily({
+
+        const shouldHideEmptyRecordGroups = get(
+          recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
             instanceId,
-            familyKey,
           }),
         );
 
@@ -57,23 +59,25 @@ export const visibleRecordGroupIdsComponentFamilySelector =
           const recordGroupDefinition = get(
             recordGroupDefinitionFamilyState(recordGroupId),
           );
-          const recordIds = get(
-            recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-              instanceId,
-              familyKey: recordGroupId,
-            }),
-          );
 
           if (!isDefined(recordGroupDefinition)) {
             continue;
           }
 
-          if (hideEmptyRecordGroup && recordIds.length === 0) {
+          if (!recordGroupDefinition.isVisible) {
             continue;
           }
 
-          if (!recordGroupDefinition.isVisible) {
-            continue;
+          if (shouldHideEmptyRecordGroups) {
+            const rowIds = get(
+              recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+                instanceId,
+                familyKey: recordGroupId,
+              }),
+            );
+            if (rowIds.length === 0) {
+              continue;
+            }
           }
 
           recordGroupSortedInsert(result, recordGroupDefinition, comparator);

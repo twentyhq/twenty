@@ -1,10 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
-import {
-  detectCalendarStartDay,
-  type NonSystemCalendarStartDay,
-} from '@/localization/utils/detection/detectCalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -15,7 +12,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { type FirstDayOfTheWeek, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   type RelativeDateFilter,
@@ -43,6 +40,7 @@ export const ObjectFilterDropdownDateInput = () => {
   const handleAbsoluteDateChange = (newPlainDate: string | null) => {
     const newFilterValue = newPlainDate ?? '';
 
+    // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
       value: newPlainDate,
       timeZone,
@@ -68,7 +66,7 @@ export const ObjectFilterDropdownDateInput = () => {
       userDefinedCalendarStartDay === CalendarStartDay[CalendarStartDay.SYSTEM]
         ? defaultSystemCalendarStartDay
         : userDefinedCalendarStartDay
-    ) as NonSystemCalendarStartDay;
+    ) as FirstDayOfTheWeek;
 
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
@@ -109,9 +107,10 @@ export const ObjectFilterDropdownDateInput = () => {
 
   return (
     <DatePicker
+      instanceId={`object-filter-dropdown-date-input`}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
-      date={plainDateValue ?? null}
+      plainDateString={plainDateValue ?? null}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onClear={handleClear}

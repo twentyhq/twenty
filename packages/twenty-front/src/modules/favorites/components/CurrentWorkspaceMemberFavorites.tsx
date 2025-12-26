@@ -21,16 +21,19 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Droppable } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -45,6 +48,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   folder,
   isGroup,
 }: CurrentWorkspaceMemberFavoritesProps) => {
+  const { t } = useLingui();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
@@ -56,19 +60,30 @@ export const CurrentWorkspaceMemberFavorites = ({
   );
   const { openModal } = useModal();
 
+  const isMobile = useIsMobile();
+
   const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
     openFavoriteFolderIdsState,
   );
+
+  const setCurrentFolderId = useSetRecoilState(currentFavoriteFolderIdState);
+
   const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
-    setOpenFavoriteFolderIds((currentOpenFolders) => {
-      if (isOpen) {
-        return currentOpenFolders.filter((id) => id !== folder.folderId);
-      } else {
-        return [...currentOpenFolders, folder.folderId];
-      }
-    });
+    if (isMobile) {
+      setCurrentFolderId((prev) =>
+        prev === folder.folderId ? null : folder.folderId,
+      );
+    } else {
+      setOpenFavoriteFolderIds((currentOpenFolders) => {
+        if (isOpen) {
+          return currentOpenFolders.filter((id) => id !== folder.folderId);
+        } else {
+          return [...currentOpenFolders, folder.folderId];
+        }
+      });
+    }
   };
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();
@@ -148,6 +163,8 @@ export const CurrentWorkspaceMemberFavorites = ({
     modalId,
   );
 
+  const favoriteCount = folder.favorites.length;
+
   return (
     <>
       <NavigationDrawerItemsCollapsableContainer
@@ -173,6 +190,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               className="navigation-drawer-item"
               isRightOptionsDropdownOpen={isDropdownOpenComponent}
               triggerEvent="CLICK"
+              preventCollapseOnMobile={isMobile}
             />
           </FavoritesDroppable>
         )}
@@ -238,10 +256,18 @@ export const CurrentWorkspaceMemberFavorites = ({
         createPortal(
           <ConfirmationModal
             modalId={modalId}
-            title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
-            subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
+            title={
+              folder.favorites.length > 1
+                ? t`Remove ${favoriteCount} favorites?`
+                : t`Remove ${favoriteCount} favorite?`
+            }
+            subtitle={
+              folder.favorites.length > 1
+                ? t`This action will delete this favorite folder and all ${favoriteCount} favorites inside. Do you want to continue?`
+                : t`This action will delete this favorite folder and the favorite inside. Do you want to continue?`
+            }
             onConfirmClick={handleConfirmDelete}
-            confirmButtonText="Delete Folder"
+            confirmButtonText={t`Delete Folder`}
           />,
           document.body,
         )}

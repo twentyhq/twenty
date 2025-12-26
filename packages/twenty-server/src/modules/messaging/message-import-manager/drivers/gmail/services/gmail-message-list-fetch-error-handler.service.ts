@@ -1,26 +1,37 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GmailNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-network-error-handler.service';
-import { parseGmailMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message-list-fetch-error.util';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-error.util';
+import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
+import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
+import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
 export class GmailMessageListFetchErrorHandler {
   private readonly logger = new Logger(GmailMessageListFetchErrorHandler.name);
 
-  constructor(
-    private readonly gmailNetworkErrorHandler: GmailNetworkErrorHandler,
-  ) {}
+  constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleError(error: any): void {
-    this.logger.log(`Error fetching message list`, error);
+  public handleError(error: unknown): void {
+    const constructorName = (error as unknown)?.constructor?.name ?? 'Unknown';
 
-    const networkError = this.gmailNetworkErrorHandler.handleError(error);
-
-    if (networkError) {
-      throw networkError;
+    this.logger.error(
+      `Gmail: Error fetching message list: ${JSON.stringify(error)}, constructor: ${constructorName}`,
+    );
+    if (isGmailNetworkError(error)) {
+      throw parseGmailNetworkError(error);
     }
 
-    throw parseGmailMessageListFetchError(error, { cause: error });
+    if (isGmailApiError(error)) {
+      throw parseGmailApiError(error);
+    }
+
+    throw new MessageImportDriverException(
+      'Unknown error',
+      MessageImportDriverExceptionCode.UNKNOWN,
+    );
   }
 }

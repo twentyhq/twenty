@@ -21,10 +21,12 @@
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.6.0",
     "@lingui/vite-plugin": "^5.1.2",
+    "@react-email/preview-server": "5.1.0",
     "@tiptap/core": "^3.4.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "react-email": "4.0.6"
+    "react-email": "5.1.0",
+    "vite-plugin-dts": "3.8.1"
   },
   "exports": {
     ".": {

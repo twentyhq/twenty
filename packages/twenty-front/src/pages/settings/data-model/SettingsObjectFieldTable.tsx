@@ -5,19 +5,22 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { IconSearch } from 'twenty-ui/display';
+import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -80,10 +83,17 @@ const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsOb
     },
   };
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchAndFilterContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
+
+const StyledSearchInput = styled(SettingsTextInput)`
+  flex: 1;
+`;
+
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: ObjectMetadataItem;
   mode: 'view' | 'new-field';
@@ -96,6 +106,7 @@ export const SettingsObjectFieldTable = ({
 }: SettingsObjectFieldTableProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showInactive, setShowInactive] = useState(true);
 
   const tableMetadata = objectMetadataItem.isCustom
     ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM
@@ -114,14 +125,13 @@ export const SettingsObjectFieldTable = ({
     setSettingsObjectFields(objectMetadataItem.fields);
   }, [objectMetadataItem, setSettingsObjectFields]);
 
-  const activeObjectSettingsDetailItems = useMemo(() => {
-    const activeMetadataFields = settingsObjectFields?.filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
+  const allObjectSettingsDetailItems = useMemo(() => {
+    const nonSystemFields = settingsObjectFields?.filter(
+      (fieldMetadataItem) => !fieldMetadataItem.isSystem,
     );
 
     return (
-      activeMetadataFields?.map(
+      nonSystemFields?.map(
         mapFieldMetadataItemToSettingsObjectDetailTableItem,
       ) ?? []
     );
@@ -130,61 +140,64 @@ export const SettingsObjectFieldTable = ({
     mapFieldMetadataItemToSettingsObjectDetailTableItem,
   ]);
 
-  const disabledObjectSettingsDetailItems = useMemo(() => {
-    const disabledFieldMetadataItems = settingsObjectFields?.filter(
-      (fieldMetadataItem) =>
-        !fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
-    );
-
-    return (
-      disabledFieldMetadataItems?.map(
-        mapFieldMetadataItemToSettingsObjectDetailTableItem,
-      ) ?? []
-    );
-  }, [
-    settingsObjectFields,
-    mapFieldMetadataItemToSettingsObjectDetailTableItem,
-  ]);
-
-  const sortedActiveObjectSettingsDetailItems = useSortedArray(
-    activeObjectSettingsDetailItems,
+  const sortedAllObjectSettingsDetailItems = useSortedArray(
+    allObjectSettingsDetailItems,
     tableMetadata,
   );
 
-  const sortedDisabledObjectSettingsDetailItems = useSortedArray(
-    disabledObjectSettingsDetailItems,
-    tableMetadata,
-  );
-
-  const filteredActiveItems = useMemo(() => {
+  const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);
-    return sortedActiveObjectSettingsDetailItems.filter((item) => {
-      return (
-        normalizeSearchText(item.label).includes(searchNormalized) ||
-        normalizeSearchText(item.dataType).includes(searchNormalized)
-      );
-    });
-  }, [sortedActiveObjectSettingsDetailItems, searchTerm]);
 
-  const filteredDisabledItems = useMemo(() => {
-    const searchNormalized = normalizeSearchText(searchTerm);
-    return sortedDisabledObjectSettingsDetailItems.filter((item) => {
-      return (
+    return sortedAllObjectSettingsDetailItems.filter((item) => {
+      const matchesActiveFilter =
+        showInactive || item.fieldMetadataItem.isActive;
+
+      const matchesSearch =
         normalizeSearchText(item.label).includes(searchNormalized) ||
-        normalizeSearchText(item.dataType).includes(searchNormalized)
-      );
+        normalizeSearchText(item.dataType).includes(searchNormalized);
+
+      return matchesActiveFilter && matchesSearch;
     });
-  }, [sortedDisabledObjectSettingsDetailItems, searchTerm]);
+  }, [sortedAllObjectSettingsDetailItems, searchTerm, showInactive]);
 
   return (
     <>
-      <StyledSearchInput
-        instanceId="object-field-table-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search a field...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      <StyledSearchAndFilterContainer>
+        <StyledSearchInput
+          instanceId="object-field-table-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search a field...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+        <Dropdown
+          dropdownId="settings-fields-filter-dropdown"
+          dropdownPlacement="bottom-end"
+          dropdownOffset={{ x: 0, y: 8 }}
+          clickableComponent={
+            <Button
+              Icon={IconFilter}
+              size="medium"
+              variant="secondary"
+              accent="default"
+              ariaLabel={t`Filter`}
+            />
+          }
+          dropdownComponents={
+            <DropdownContent>
+              <DropdownMenuItemsContainer>
+                <MenuItemToggle
+                  LeftIcon={IconArchive}
+                  onToggleChange={() => setShowInactive(!showInactive)}
+                  toggled={showInactive}
+                  text={t`Inactive`}
+                  toggleSize="small"
+                />
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          }
+        />
+      </StyledSearchAndFilterContainer>
       <Table>
         <StyledObjectFieldTableRow>
           {tableMetadata.fields.map((item) => (
@@ -198,33 +211,20 @@ export const SettingsObjectFieldTable = ({
           ))}
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
-        {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title={t`Active`}>
-            {filteredActiveItems.map((objectSettingsDetailItem) => (
-              <SettingsObjectFieldItemTableRow
-                key={objectSettingsDetailItem.fieldMetadataItem.id}
-                settingsObjectDetailTableItem={objectSettingsDetailItem}
-                status="active"
-                mode={mode}
-              />
-            ))}
-          </TableSection>
-        )}
-        {isNonEmptyArray(filteredDisabledItems) && (
-          <TableSection
-            isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title={t`Inactive`}
-          >
-            {filteredDisabledItems.map((objectSettingsDetailItem) => (
-              <SettingsObjectFieldItemTableRow
-                key={objectSettingsDetailItem.fieldMetadataItem.id}
-                settingsObjectDetailTableItem={objectSettingsDetailItem}
-                status="disabled"
-                mode={mode}
-              />
-            ))}
-          </TableSection>
-        )}
+        {filteredItems.map((objectSettingsDetailItem) => {
+          const status = objectSettingsDetailItem.fieldMetadataItem.isActive
+            ? 'active'
+            : 'disabled';
+
+          return (
+            <SettingsObjectFieldItemTableRow
+              key={objectSettingsDetailItem.fieldMetadataItem.id}
+              settingsObjectDetailTableItem={objectSettingsDetailItem}
+              status={status}
+              mode={mode}
+            />
+          );
+        })}
       </Table>
     </>
   );

@@ -1,0 +1,54 @@
+{
+  "name": "create-twenty-app",
+  "version": "0.2.4",
+  "description": "Command-line interface to create Twenty application",
+  "main": "dist/cli.cjs",
+  "bin": "dist/cli.cjs",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "npx rimraf dist && npx vite build"
+  },
+  "keywords": [
+    "twenty",
+    "cli",
+    "crm",
+    "application",
+    "development"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.mjs",
+      "require": "./dist/cli.cjs"
+    }
+  },
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@genql/cli": "^3.0.3",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^10.0.0",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.kebabcase": "^4.1.1",
+    "lodash.startcase": "^4.4.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.0",
+    "@types/inquirer": "^9.0.0",
+    "@types/lodash.camelcase": "^4.3.7",
+    "@types/lodash.kebabcase": "^4.1.7",
+    "@types/lodash.startcase": "^4",
+    "@types/node": "^20.0.0",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "engines": {
+    "node": "^24.5.0",
+    "yarn": "^4.0.2"
+  }
+}

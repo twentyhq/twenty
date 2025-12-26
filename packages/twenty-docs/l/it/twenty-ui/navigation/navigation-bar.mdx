@@ -1,0 +1,49 @@
+---
+title: Barra di navigazione
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Intestazione" />
+</Frame>
+
+Rende una barra di navigazione che contiene più componenti `NavigationBarItem`.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props          | Tipo   | Descrizione                                                                                                                                                                                                        |
+    | -------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | activeItemName | string | Il nome dell'elemento di navigazione attualmente attivo                                                                                                                                                            |
+    | elementi       | array  | Un array di oggetti che rappresentano ciascun elemento di navigazione. Ogni oggetto contiene il `name`, il componente `Icon` da visualizzare e una funzione `onClick` da chiamare quando l'elemento viene cliccato |
+  </Tab>
+</Tabs>

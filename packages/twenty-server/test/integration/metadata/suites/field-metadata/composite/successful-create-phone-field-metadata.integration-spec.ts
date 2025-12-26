@@ -6,12 +6,11 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import {
+  FieldMetadataType,
   type AdditionalPhoneMetadata,
   type PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+} from 'twenty-shared/types';
 
 const FIELD_NAME = 'phonenumber';
 
@@ -41,7 +40,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '123456789',
           primaryPhoneCallingCode: '+33',
           primaryPhoneCountryCode: 'FR',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -58,7 +57,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '123456789',
           primaryPhoneCallingCode: '+33',
           primaryPhoneCountryCode: 'FR',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -76,7 +75,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'US',
           primaryPhoneCallingCode: '+1',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -89,7 +88,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: '' as CountryCode,
           primaryPhoneCallingCode: '+1',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -102,7 +101,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '123456789',
           primaryPhoneCountryCode: 'FR',
           primaryPhoneCallingCode: '+33',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -114,7 +113,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '',
           primaryPhoneCountryCode: '' as CountryCode,
           primaryPhoneCallingCode: '',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },
@@ -131,7 +130,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
           primaryPhoneNumber: '',
           primaryPhoneCountryCode: '' as CountryCode,
           primaryPhoneCallingCode: '',
-          additionalPhones: null,
+          additionalPhones: [],
         },
       },
     },

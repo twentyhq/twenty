@@ -15,7 +15,7 @@ import {
   mockedConnectedAccounts,
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionSendEmail } from '../WorkflowEditActionSendEmail';
+import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 
 const DEFAULT_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
@@ -112,7 +112,6 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Send Email')).toBeVisible();
     expect(await canvas.findByText('Account')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
@@ -128,8 +127,6 @@ export const Configured: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    expect(await canvas.findByText('Send Welcome Email')).toBeVisible();
 
     expect(await canvas.findByText('Account')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();

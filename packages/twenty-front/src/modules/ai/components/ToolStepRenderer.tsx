@@ -6,6 +6,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
+import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
@@ -29,9 +30,18 @@ const StyledLoadingContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(3)};
   border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  min-width: 0;
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledJsonTreeContainer = styled.div`
+  overflow-x: auto;
+
+  ul {
+    min-width: 0;
+  }
 `;
 
 const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
@@ -44,10 +54,34 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
   transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  justify-content: space-between;
+  width: 100%;
 
   &:hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledToolName = styled.span`
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  color: ${({ theme }) => theme.font.color.light};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(0.5)}
+    ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLeftContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRightContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDisplayMessage = styled.span`
@@ -88,11 +122,6 @@ const StyledTab = styled.div<{ isActive: boolean }>`
   }
 `;
 
-const StyledJsonContainer = styled.div`
-  max-height: 400px;
-  overflow: auto;
-`;
-
 type TabType = 'output' | 'input';
 
 export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
@@ -105,27 +134,62 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const { input, output, type, errorText } = toolPart;
   const toolName = type.split('-')[1];
 
+  const toolInput =
+    isDefined(input) && typeof input === 'object' && 'input' in input
+      ? input.input
+      : input;
+
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
-  const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
+  if (toolName === 'code_interpreter') {
+    const codeInput = toolInput as { code?: string } | undefined;
+    const codeOutput = output as {
+      result?: {
+        stdout?: string;
+        stderr?: string;
+        exitCode?: number;
+        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+      };
+    } | null;
+
+    const isRunning = !output && !hasError;
+
+    return (
+      <CodeExecutionDisplay
+        code={codeInput?.code ?? ''}
+        stdout={codeOutput?.result?.stdout ?? ''}
+        stderr={codeOutput?.result?.stderr || errorText || ''}
+        exitCode={codeOutput?.result?.exitCode}
+        files={codeOutput?.result?.files}
+        isRunning={isRunning}
+      />
+    );
+  }
 
   if (!output && !hasError) {
     return (
       <StyledContainer>
-        <StyledLoadingContainer>
-          <ShimmeringText>
-            <StyledDisplayMessage>
-              {getToolDisplayMessage(input, toolName, false)}
-            </StyledDisplayMessage>
-          </ShimmeringText>
-        </StyledLoadingContainer>
+        <StyledToggleButton isExpandable={false}>
+          <StyledLeftContent>
+            <StyledLoadingContainer>
+              <ShimmeringText>
+                <StyledDisplayMessage>
+                  {getToolDisplayMessage(input, toolName, false)}
+                </StyledDisplayMessage>
+              </ShimmeringText>
+            </StyledLoadingContainer>
+          </StyledLeftContent>
+          <StyledRightContent>
+            <StyledToolName>{toolName}</StyledToolName>
+          </StyledRightContent>
+        </StyledToggleButton>
       </StyledContainer>
     );
   }
 
   const displayMessage = hasError
-    ? 'Tool execution failed'
+    ? t`Tool execution failed`
     : output &&
         typeof output === 'object' &&
         'message' in output &&
@@ -146,23 +210,28 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
         onClick={() => setIsExpanded(!isExpanded)}
         isExpandable={isExpandable}
       >
-        <StyledIconTextContainer>
-          <ToolIcon size={theme.icon.size.sm} />
-          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
-        </StyledIconTextContainer>
-        {isExpandable &&
-          (isExpanded ? (
-            <IconChevronUp size={theme.icon.size.sm} />
-          ) : (
-            <IconChevronDown size={theme.icon.size.sm} />
-          ))}
+        <StyledLeftContent>
+          <StyledIconTextContainer>
+            <ToolIcon size={theme.icon.size.sm} />
+            <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+          </StyledIconTextContainer>
+        </StyledLeftContent>
+        <StyledRightContent>
+          <StyledToolName>{toolName}</StyledToolName>
+          {isExpandable &&
+            (isExpanded ? (
+              <IconChevronUp size={theme.icon.size.sm} />
+            ) : (
+              <IconChevronDown size={theme.icon.size.sm} />
+            ))}
+        </StyledRightContent>
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded}>
+        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
           <StyledContentContainer>
             {hasError ? (
-              <StyledJsonContainer>{errorText}</StyledJsonContainer>
+              errorText
             ) : (
               <>
                 <StyledTabContainer>
@@ -170,22 +239,22 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     isActive={activeTab === 'output'}
                     onClick={() => setActiveTab('output')}
                   >
-                    Output
+                    {t`Output`}
                   </StyledTab>
                   <StyledTab
                     isActive={activeTab === 'input'}
                     onClick={() => setActiveTab('input')}
                   >
-                    Input
+                    {t`Input`}
                   </StyledTab>
                 </StyledTabContainer>
 
-                <StyledJsonContainer>
+                <StyledJsonTreeContainer>
                   <JsonTree
                     value={
-                      (activeTab === 'output' ? result : input) as JsonValue
+                      (activeTab === 'output' ? result : toolInput) as JsonValue
                     }
-                    shouldExpandNodeInitially={isTwoFirstDepths}
+                    shouldExpandNodeInitially={() => false}
                     emptyArrayLabel={t`Empty Array`}
                     emptyObjectLabel={t`Empty Object`}
                     emptyStringLabel={t`[empty string]`}
@@ -193,7 +262,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     arrowButtonExpandedLabel={t`Collapse`}
                     onNodeValueClick={copyToClipboard}
                   />
-                </StyledJsonContainer>
+                </StyledJsonTreeContainer>
               </>
             )}
           </StyledContentContainer>

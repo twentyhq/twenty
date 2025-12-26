@@ -3,6 +3,7 @@ import {
   WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { t } from '@lingui/core/macro';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,
@@ -24,6 +25,10 @@ export const HttpRequestExecutionResult = ({
     (httpRequestTestData.output.status !== undefined &&
       httpRequestTestData.output.status >= 400);
 
+  const headersCount = Object.keys(
+    httpRequestTestData.output.headers || {},
+  ).length;
+
   const status: ExecutionStatus = {
     isSuccess,
     isError,
@@ -40,13 +45,12 @@ export const HttpRequestExecutionResult = ({
             ? ` - ${httpRequestTestData.output.duration}ms`
             : ''
         }`
-      : 'Request Failed',
+      : t`Request Failed`,
     additionalInfo:
-      isSuccess &&
-      Object.keys(httpRequestTestData.output.headers || {}).length > 0
-        ? `${Object.keys(httpRequestTestData.output.headers || {}).length} headers received`
-        : isError && httpRequestTestData.output.error
-          ? httpRequestTestData.output.error
+      isSuccess && headersCount > 0
+        ? t`${headersCount} headers received`
+        : isError
+          ? t`An error occurred`
           : undefined,
   };
 
@@ -57,8 +61,8 @@ export const HttpRequestExecutionResult = ({
       height="100%"
       status={status}
       isTesting={isTesting}
-      loadingMessage="Sending request..."
-      idleMessage="Response"
+      loadingMessage={t`Sending request...`}
+      idleMessage={t`Response`}
     />
   );
 };

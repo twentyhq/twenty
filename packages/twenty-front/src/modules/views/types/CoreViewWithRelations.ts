@@ -9,6 +9,7 @@ import {
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewType,
+  type ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 export type CoreViewWithRelations = {
@@ -29,6 +30,8 @@ export type CoreViewWithRelations = {
     'workspaceId' | 'createdAt' | 'updatedAt'
   >[];
   viewSorts: CoreViewSortEssential[];
+  mainGroupByFieldMetadataId?: string | null;
+  shouldHideEmptyGroups: boolean;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   calendarFieldMetadataId?: string | null;
@@ -37,5 +40,7 @@ export type CoreViewWithRelations = {
   icon: string;
   openRecordIn: ViewOpenRecordIn;
   anyFieldFilterValue?: string | null;
+  visibility: ViewVisibility;
+  createdByUserWorkspaceId?: string | null;
   __typename?: 'CoreView';
 };

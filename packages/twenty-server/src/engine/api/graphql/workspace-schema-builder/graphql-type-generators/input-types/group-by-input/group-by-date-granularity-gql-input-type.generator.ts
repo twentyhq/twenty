@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLString,
+} from 'graphql';
+import {
+  FirstDayOfTheWeek,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
@@ -30,7 +37,7 @@ export class GroupByDateGranularityInputTypeGenerator {
           {} as Record<string, { value: string }>,
         ),
         description:
-          'Date granularity (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
+          'Date granularity (e.g. day, month, quarter, year, week, day of the week, quarter of the year, month of the year)',
       }),
     );
 
@@ -42,13 +49,38 @@ export class GroupByDateGranularityInputTypeGenerator {
       throw new Error('DateGranularityEnum not found');
     }
 
+    const firstDayOfWeekEnum = new GraphQLEnumType({
+      name: 'FirstDayOfTheWeek',
+      values: Object.values(FirstDayOfTheWeek).reduce(
+        (acc, option) => {
+          acc[option] = { value: option };
+
+          return acc;
+        },
+        {} as Record<string, { value: string }>,
+      ),
+      description: 'First day of the week (MONDAY, SUNDAY, SATURDAY)',
+    });
+
+    this.gqlTypesStorage.addGqlType('FirstDayOfTheWeek', firstDayOfWeekEnum);
+
     const groupByDateField = new GraphQLInputObjectType({
       name: GROUP_BY_DATE_GRANULARITY_INPUT_KEY,
       fields: {
         granularity: {
           type: dateGranularityEnum,
           description:
-            'Date granularity (e.g. day, month, quarter, year, day of the week, quarter of the year, month of the year)',
+            'Date granularity (e.g. day, month, quarter, year, week, day of the week, quarter of the year, month of the year)',
+        },
+        weekStartDay: {
+          type: firstDayOfWeekEnum,
+          description:
+            'First day of the week (only applicable when granularity is WEEK). Defaults to MONDAY if not specified.',
+        },
+        timeZone: {
+          type: GraphQLString,
+          description:
+            'Timezone used to compute the aggregate value and in which is expressed the granular period, for example a day in UTC-12 is not the same period as a day in UTC+3, the requester needs to precise this otherwise the server will assume a timezone and the requester cannot know in which timezone the aggregate values are computed.',
         },
       },
     });

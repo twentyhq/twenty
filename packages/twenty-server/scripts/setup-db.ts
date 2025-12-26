@@ -1,5 +1,3 @@
-import console from 'console';
-
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { camelToSnakeCase, performQuery } from './utils';
@@ -84,6 +82,7 @@ $$;`,
     }
   })
   .catch((err) => {
+    // eslint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
   });
 

@@ -35,9 +35,9 @@ import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { type ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils/loggerLink';
-import { StreamingRestLink } from '../utils/streamingRestLink';
+import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { loggerLink } from '@/apollo/utils/loggerLink';
+import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -131,6 +131,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         attempts: {
           max: 2,
           retryIf: (error) => {
+            // eslint-disable-next-line no-console
+            console.log('retryIf error from retryLink', error);
             if (this.isAuthenticationError(error)) {
               return false;
             }
@@ -147,11 +149,17 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           renewToken(uri, getTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
+                // eslint-disable-next-line no-console
+                console.log('setTokenPair from handleTokenRenewal');
                 onTokenPairChange?.(tokens);
                 cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
               }
             })
             .catch(() => {
+              // eslint-disable-next-line no-console
+              console.log(
+                'Failed to renew token, triggering unauthenticated error from handleTokenRenewal',
+              );
               onUnauthenticatedError?.();
             }),
         ).flatMap(() => forward(operation));
@@ -221,6 +229,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             onErrorCb?.(graphQLErrors);
             for (const graphQLError of graphQLErrors) {
               if (graphQLError.message === 'Unauthorized') {
+                // eslint-disable-next-line no-console
+                console.log('Unauthorized, triggering token renewal');
                 return handleTokenRenewal(operation, forward);
               }
 
@@ -233,9 +243,15 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return;
                 }
                 case 'UNAUTHENTICATED': {
+                  // eslint-disable-next-line no-console
+                  console.log('UNAUTHENTICATED, triggering token renewal');
                   return handleTokenRenewal(operation, forward);
                 }
-                case 'FORBIDDEN': {
+                case 'NOT_FOUND':
+                case 'BAD_USER_INPUT':
+                case 'FORBIDDEN':
+                case 'CONFLICT':
+                case 'METADATA_VALIDATION_FAILED': {
                   return;
                 }
                 case 'USER_INPUT_ERROR': {
@@ -259,6 +275,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               this.isRestOperation(operation) &&
               this.isAuthenticationError(networkError as ServerError)
             ) {
+              // eslint-disable-next-line no-console
+              console.log(
+                'Authentication error, triggering token renewal from errorLink',
+              );
               return handleTokenRenewal(operation, forward);
             }
 

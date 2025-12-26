@@ -67,11 +67,16 @@ export class BillingUsageService {
     }
 
     try {
-      await this.stripeBillingMeterEventService.sendBillingMeterEvent({
-        eventName: billingEvents[0].eventName,
-        value: billingEvents[0].value,
-        stripeCustomerId: workspaceStripeCustomer.stripeCustomerId,
-      });
+      await Promise.all(
+        billingEvents.map((event) =>
+          this.stripeBillingMeterEventService.sendBillingMeterEvent({
+            eventName: event.eventName,
+            value: event.value,
+            stripeCustomerId: workspaceStripeCustomer.stripeCustomerId,
+            dimensions: event.dimensions,
+          }),
+        ),
+      );
     } catch (error) {
       throw new BillingException(
         `Failed to send billing meter events to Stripe: ${error}`,

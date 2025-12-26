@@ -10,10 +10,11 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
@@ -35,6 +36,7 @@ const StyledContainer = styled.div`
 
 export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
@@ -78,11 +80,12 @@ export const UpdateViewButtonGroup = () => {
   };
 
   const handleUpdateViewClick = async () => {
+    if (!canPersistChanges) return;
     await saveCurrentViewFilterAndSorts();
     await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
     useAreViewFilterGroupsDifferentFromRecordFilterGroups();
@@ -111,7 +114,11 @@ export const UpdateViewButtonGroup = () => {
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
-          <Button title="Update view" onClick={handleUpdateViewClick} />
+          <Button
+            title={t`Update view`}
+            onClick={handleUpdateViewClick}
+            disabled={!canPersistChanges}
+          />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             clickableComponent={

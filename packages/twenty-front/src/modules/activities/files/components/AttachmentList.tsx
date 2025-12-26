@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { lazy, type ReactElement, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -12,10 +13,12 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
@@ -131,6 +134,14 @@ export const AttachmentList = ({
     isAttachmentPreviewEnabledState,
   );
 
+  const hasDownloadPermission = useHasPermissionFlag(
+    PermissionFlagType.DOWNLOAD_FILE,
+  );
+
+  const hasUploadPermission = useHasPermissionFlag(
+    PermissionFlagType.UPLOAD_FILE,
+  );
+
   const { openModal, closeModal } = useModal();
 
   const onUploadFile = async (file: File) => {
@@ -169,8 +180,10 @@ export const AttachmentList = ({
             </StyledTitle>
             {button}
           </StyledTitleBar>
-          <StyledDropZoneContainer onDragEnter={() => setIsDraggingFile(true)}>
-            {isDraggingFile ? (
+          <StyledDropZoneContainer
+            onDragEnter={() => hasUploadPermission && setIsDraggingFile(true)}
+          >
+            {isDraggingFile && hasUploadPermission ? (
               <DropZone
                 setIsDraggingFile={setIsDraggingFile}
                 onUploadFiles={onUploadFiles}
@@ -199,16 +212,19 @@ export const AttachmentList = ({
             size="large"
             isClosable
             onClose={handleClosePreview}
+            ignoreContainer
           >
             <StyledModalHeader>
               <StyledHeader>
                 <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
                 <StyledButtonContainer>
-                  <IconButton
-                    Icon={IconDownload}
-                    onClick={handleDownload}
-                    size="small"
-                  />
+                  {hasDownloadPermission && (
+                    <IconButton
+                      Icon={IconDownload}
+                      onClick={handleDownload}
+                      size="small"
+                    />
+                  )}
                   <IconButton
                     Icon={IconX}
                     onClick={handleClosePreview}
@@ -225,7 +241,7 @@ export const AttachmentList = ({
                   fallback={
                     <StyledLoadingContainer>
                       <StyledLoadingText>
-                        Loading document viewer...
+                        {t`Loading document viewer...`}
                       </StyledLoadingText>
                     </StyledLoadingContainer>
                   }

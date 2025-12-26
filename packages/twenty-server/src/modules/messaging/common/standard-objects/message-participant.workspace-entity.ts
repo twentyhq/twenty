@@ -1,5 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import {
+  FieldMetadataType,
+  MessageParticipantRole,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -7,6 +12,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -14,13 +20,13 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageParticipant,
+
   namePlural: 'messageParticipants',
   labelSingular: msg`Message Participant`,
   labelPlural: msg`Message Participants`,
@@ -38,14 +44,35 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Role`,
     icon: 'IconAt',
     options: [
-      { value: 'from', label: 'From', position: 0, color: 'green' },
-      { value: 'to', label: 'To', position: 1, color: 'blue' },
-      { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
-      { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
+      {
+        value: MessageParticipantRole.FROM,
+        label: 'From',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageParticipantRole.TO,
+        label: 'To',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageParticipantRole.CC,
+        label: 'Cc',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageParticipantRole.BCC,
+        label: 'Bcc',
+        position: 3,
+        color: 'red',
+      },
     ],
-    defaultValue: "'from'",
+    defaultValue: `'${MessageParticipantRole.FROM}'`,
   })
-  role: string;
+  @WorkspaceIsFieldUIReadOnly()
+  role: MessageParticipantRole;
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
@@ -54,7 +81,9 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
-  handle: string;
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
@@ -63,7 +92,9 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Display Name`,
     icon: 'IconUser',
   })
-  displayName: string;
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  displayName: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
@@ -75,6 +106,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   message: Relation<MessageWorkspaceEntity>;
 
   @WorkspaceJoinColumn('message')
@@ -90,6 +122,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
@@ -106,6 +139,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 

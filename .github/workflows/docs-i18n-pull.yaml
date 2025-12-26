@@ -1,0 +1,149 @@
+name: 'Pull docs translations from Crowdin'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '0 */2 * * *' # Every two hours
+  workflow_dispatch:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of status'
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of status'
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - 'packages/twenty-docs/**'
+      - 'crowdin-docs.yml'
+      - '.github/workflows/docs-i18n-pull.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  pull_docs_translations:
+    name: Pull docs translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Setup i18n-docs branch
+        if: github.event_name != 'pull_request'
+        run: |
+          git fetch origin i18n-docs || true
+          git checkout -B i18n-docs origin/i18n-docs || git checkout -b i18n-docs
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+
+      - name: Stash any changes before pulling translations
+        if: github.event_name != 'pull_request'
+        run: |
+          git add .
+          git stash || true
+
+      # Install Crowdin CLI for downloading translations
+      - name: Install Crowdin CLI
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: npm install -g @crowdin/cli
+
+      # Pull docs translations from Crowdin one language at a time
+      # This avoids build timeout issues when processing all languages at once
+      - name: Pull translated docs from Crowdin
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: |
+          # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
+          LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
+
+          for lang in $LANGUAGES; do
+            echo "=== Pulling translations for $lang ==="
+            crowdin download \
+              --config crowdin-docs.yml \
+              --token "$CROWDIN_PERSONAL_TOKEN" \
+              --base-url "https://twenty.api.crowdin.com" \
+              --language "$lang" \
+              --skip-untranslated-strings=false \
+              --skip-untranslated-files=false \
+              --export-only-approved=false \
+              --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
+            echo ""
+          done
+
+          echo "=== Download complete ==="
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Fix file permissions
+        if: github.event_name != 'pull_request'
+        run: sudo chown -R runner:docker . || true
+
+      - name: Fix translated documentation links
+        run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+
+      - name: Regenerate navigation template
+        if: github.event_name == 'pull_request'
+        run: yarn docs:generate-navigation-template
+
+      - name: Regenerate docs.json
+        run: yarn docs:generate
+
+      - name: Commit artifacts to pull request branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json
+          if git diff --staged --quiet --exit-code; then
+            echo "No navigation/doc changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: sync docs artifacts"
+          git push origin "HEAD:$HEAD_REF"
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+
+      - name: Check for changes and commit
+        if: github.event_name != 'pull_request'
+        id: check_changes
+        run: |
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: update docs translations from Crowdin and fix internal links"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        run: git push origin HEAD:i18n-docs
+
+      - name: Create pull request
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        run: |
+          if git diff --name-only origin/main..HEAD | grep -q .; then
+            gh pr create -B main -H i18n-docs --title 'i18n - docs translations' --body 'Created by Github action' || true
+          else
+            echo "No file differences between branches, skipping PR creation"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

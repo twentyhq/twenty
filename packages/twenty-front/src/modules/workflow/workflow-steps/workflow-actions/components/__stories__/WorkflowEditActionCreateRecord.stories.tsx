@@ -9,7 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionCreateRecord } from '../WorkflowEditActionCreateRecord';
+import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 
 const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
   title: 'Modules/Workflow/Actions/CreateRecord/EditAction',
@@ -71,15 +71,6 @@ export const Disabled: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    const titleText = await canvas.findByText('Create Record');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Create Record');
-    expect(titleInput).not.toBeInTheDocument();
 
     const objectSelectCurrentValue = await canvas.findByText('People');
 

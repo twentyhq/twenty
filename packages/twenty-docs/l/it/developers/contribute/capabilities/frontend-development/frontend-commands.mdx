@@ -1,0 +1,90 @@
+---
+title: Comandi frontend
+---
+
+## Comandi utili
+
+### Avviare l'app
+
+```bash
+npx nx start twenty-front
+```
+
+### Rigenerare lo schema graphql sulla base dello schema API graphql
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+OPPURE
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # aggiungere --fix per correggere gli errori di lint
+```
+
+## Traduzioni
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Test
+
+```bash
+npx nx run twenty-front:test # eseguire i test jest
+npx nx run twenty-front:storybook:serve:dev # eseguire storybook
+npx nx run twenty-front:storybook:test # eseguire i test # (è necessario che yarn storybook:serve:dev sia in esecuzione)
+npx nx run twenty-front:storybook:coverage # (è necessario che yarn storybook:serve:dev sia in esecuzione)
+```
+
+## Tech Stack
+
+Il progetto ha una struttura chiara e semplice, con un codice boilerplate minimo.
+
+**App**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**Testing**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**Strumenti**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## Architettura
+
+### Routing
+
+[React Router](https://reactrouter.com/) gestisce il routing.
+
+Per evitare [re-render](/l/it/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutili, tutta la logica del routing è in un `useEffect` in `PageChangeEffect`.
+
+### Gestione dello stato
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) gestisce lo stato.
+
+Vedi [best practices](/l/it/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) per ulteriori informazioni sulla gestione dello stato.
+
+## Testing
+
+[Jest](https://jestjs.io/) serve come strumento per i test unitari mentre [Storybook](https://storybook.js.org/) è per i test dei componenti.
+
+Jest è principalmente per testare le funzioni utility, e non i componenti stessi.
+
+Storybook è per testare il comportamento di componenti isolati, oltre che per mostrare il sistema di design.

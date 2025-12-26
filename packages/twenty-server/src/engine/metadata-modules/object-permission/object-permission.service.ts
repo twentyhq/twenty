@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   type ObjectPermissionInput,
@@ -16,8 +17,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export class ObjectPermissionService {
   constructor(
@@ -27,8 +27,8 @@ export class ObjectPermissionService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   public async upsertObjectPermissions({
@@ -53,14 +53,17 @@ export class ObjectPermissionService {
         roleWithObjectPermissions: role,
       });
 
-      const { byId: objectMetadataMapsById } =
-        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-          workspaceId,
+      const { flatObjectMetadataMaps } =
+        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps'],
+          },
         );
 
       input.objectPermissions.forEach((objectPermission) => {
         const objectMetadataForObjectPermission =
-          objectMetadataMapsById[objectPermission.objectMetadataId];
+          flatObjectMetadataMaps.byId[objectPermission.objectMetadataId];
 
         if (!isDefined(objectMetadataForObjectPermission)) {
           throw new PermissionsException(
@@ -104,12 +107,9 @@ export class ObjectPermissionService {
         throw new Error('Failed to upsert object permission');
       }
 
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId,
-          roleIds: [input.roleId],
-        },
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
       return this.objectPermissionRepository.find({
         where: {

@@ -8,4 +8,6 @@ export const VIEW_ENTITY_RELATION_PROPERTIES = [
   'viewGroups',
   'viewSorts',
   'workspace',
+  'createdBy',
+  'application',
 ] as const satisfies ViewEntityRelationProperties[];

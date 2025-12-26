@@ -386,6 +386,7 @@ describe('Field update permissions restrictions', () => {
         objectMetadataPluralName: 'companies',
         gqlFields: COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES,
         data: { name: 'UpdatedCompany' },
+        filter: { id: { eq: companyId } },
       });
 
       const response =

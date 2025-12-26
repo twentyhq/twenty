@@ -20,7 +20,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     request,
   }: {
     operationName: string;
-    request: Pick<Request, 'workspace' | 'locale' | 'body'>;
+    request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
   }) => {
     const workspace = request.workspace;
 
@@ -33,6 +33,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     const queryHash = createHash('sha256')
       .update(request.body.query)
       .digest('hex');
+
+    // For FindAllCoreViews, use user-specific cache key since visibility filtering is user-dependent
+    if (operationName === 'FindAllCoreViews') {
+      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${request.userWorkspaceId}:${queryHash}`;
+    }
 
     return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
   };

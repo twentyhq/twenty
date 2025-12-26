@@ -1,0 +1,41 @@
+---
+title: Drobečková navigace
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Hlavička" />
+</Frame>
+
+Zobrazuje drobečkovou navigační lištu.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ     | Popis                                                                                                                                                                                                               |
+    | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className  | řetězec | Volitelný název třídy pro dodatečné stylování                                                                                                                                                                       |
+    | odkazy     | pole    | Pole objektů, z nichž každý představuje odkaz na drobečkovou navigaci. Každý objekt má vlastnost `children` (text obsahu odkazu) a nepovinnou vlastnost `href` (URL, na které se má navigovat po kliknutí na odkaz) |
+  </Tab>
+</Tabs>

@@ -1,0 +1,51 @@
+---
+title: Auswahl
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Kopfzeile" />
+</Frame>
+
+Ermöglicht es Benutzern, einen Wert aus einer Liste vordefinierter Optionen auszuwählen.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ          | Beschreibung                                                                                                                                                                                                                 |
+    | --------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Klassenname     | Zeichenkette | Optionale CSS-Klasse für zusätzliche Stilgebung                                                                                                                                                                              |
+    | deaktiviert     | boolesch     | Wenn auf `true` gesetzt, wird die Benutzerinteraktion mit der Komponente deaktiviert                                                                                                                                         |
+    | Beschriftung    | string       | Die Beschriftung, um den Zweck der `Select`-Komponente zu beschreiben                                                                                                                                                        |
+    | onChange        | Funktion     | Die Funktion, die aufgerufen wird, wenn sich die ausgewählten Werte ändern                                                                                                                                                   |
+    | optionen        | Array        | Repräsentiert die verfügbaren Optionen für die `Select`-Komponente. Es ist ein Array von Objekten, bei dem jedes Objekt ein `value` (die eindeutige Kennung), `label` (die eindeutige Kennung) und ein optionales `Icon` hat |
+    | wert            | Zeichenkette | Repräsentiert den aktuell ausgewählten Wert. Es sollte mit einem der `value`-Eigenschaften im `options`-Array übereinstimmen                                                                                                 |
+  </Tab>
+</Tabs>

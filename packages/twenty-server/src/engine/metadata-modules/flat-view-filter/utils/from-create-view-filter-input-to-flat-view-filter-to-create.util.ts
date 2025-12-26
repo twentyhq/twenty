@@ -8,9 +8,11 @@ import { type CreateViewFilterInput } from 'src/engine/metadata-modules/view-fil
 export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
   createViewFilterInput: rawCreateViewFilterInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createViewFilterInput: CreateViewFilterInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatViewFilter => {
   const { fieldMetadataId, viewId, value, ...createViewFilterInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -25,7 +27,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
       ],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewFilterId = createViewFilterInput.id ?? v4();
 
   return {
@@ -44,6 +46,6 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     positionInViewFilterGroup:
       createViewFilterInput.positionInViewFilterGroup ?? null,
     subFieldName: createViewFilterInput.subFieldName ?? null,
-    applicationId: createViewFilterInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

@@ -5,8 +5,8 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -25,7 +25,6 @@ import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();
   const {
-    viewType,
     currentContentId,
     objectMetadataItem,
     onContentChange,
@@ -33,7 +32,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   } = useObjectOptionsDropdown();
 
   const recordGroupFieldMetadata = useRecoilComponentValue(
-    recordGroupFieldMetadataComponentState,
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const hiddenRecordGroupIds = useRecoilComponentValue(
@@ -45,9 +44,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   });
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
-    useRecordGroupVisibility({
-      viewType,
-    });
+    useRecordGroupVisibility();
 
   const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
     objectNamePlural,
@@ -78,10 +75,10 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
           />
         }
       >
-        Hidden {recordGroupFieldMetadata?.label}
+        {t`Hidden`} {recordGroupFieldMetadata?.label}
       </DropdownMenuHeader>
       <RecordGroupsVisibilityDropdownSection
-        title={`Hidden ${recordGroupFieldMetadata?.label}`}
+        title={`${t`Hidden`} ${recordGroupFieldMetadata?.label}`}
         recordGroupIds={hiddenRecordGroupIds}
         onVisibilityChange={handleRecordGroupVisibilityChange}
         isDraggable={false}

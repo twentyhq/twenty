@@ -6,25 +6,22 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<
-    FlatFieldMetadata<T>,
-    'universalIdentifier' | 'objectMetadataId' | 'type'
-  >
+  Pick<FlatFieldMetadata, 'universalIdentifier' | 'objectMetadataId' | 'type'>
 > &
   Partial<FlatFieldMetadata<T>>;
 
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
+  const createdAt = '2024-01-01T00:00:00.000Z';
 
   return {
     calendarViewIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFieldIds: [],
     createdAt,
+    mainGroupByFieldMetadataViewIds: [],
     updatedAt: createdAt,
     defaultValue: null,
     options: null,

@@ -19,8 +19,10 @@ import {
   UpdateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -60,15 +62,17 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<UpdateOneQueryArgs>> {
-    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
+      queryRunnerContext;
 
     return {
       ...args,
       data: (
-        await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
+        await this.dataArgProcessor.process({
           partialRecordInputs: [args.data],
           authContext,
-          objectMetadataItemWithFieldMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
           shouldBackfillPositionIfUndefined: false,
         })
       )[0],
@@ -77,14 +81,16 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
 
   async processQueryResult(
     queryResult: ObjectRecord,
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord(
       queryResult,
-      objectMetadataItemId,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       authContext.workspace.id,
     );
   }
@@ -93,9 +99,9 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata } = queryRunnerContext;
 
-    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
+    assertMutationNotOnRemoteObject(flatObjectMetadata);
     assertIsValidUuid(args.id);
   }
 }

@@ -1,0 +1,138 @@
+---
+title: Chip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Kopfzeile" />
+</Frame>
+
+Ein visuelles Element, das Sie als klickbaren oder nicht klickbaren Container mit einem Etikett, optionalen linken und rechten Komponenten und verschiedenen Stiloptionen verwenden können, um Etiketten und Tags anzuzeigen.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="Clickable Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ                       | Beschreibung                                                                                           |
+    | --------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
+    | linkToEntity    | Zeichenkette              | Der Link zur Entität                                                                                   |
+    | entityId        | Zeichenkette              | Der eindeutige Identifikator für die Entität                                                           |
+    | name            | string                    | Der Name der Entität                                                                                   |
+    | pictureUrl      | Zeichenkette              | s picture",                                                                                            |
+    | avatarType      | Avatar-Typ                | Der Typ des Avatars, den Sie anzeigen möchten. Hat zwei Optionen: `abgerundet` und `quadratisch`       |
+    | Variante        | `EntityChipVariante` enum | Variante des Entity-Chips, die Sie anzeigen möchten. Hat zwei Optionen: `regelmäßig` und `transparent` |
+    | LeftIcon        | Icon-Komponente           | Eine React-Komponente, die ein Symbol darstellt. Wird auf der linken Seite des Chips angezeigt         |
+  </Tab>
+</Tabs>
+
+## Beispiele
+
+### Transparenter deaktivierter Chip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br />
+
+### Deaktivierter Chip mit Tooltip
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Entity-Chip
+
+Ein Chip-ähnliches Element, um Informationen über eine Entität anzuzeigen.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="Entity name"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ                       | Beschreibung                                                                                           |
+    | ------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
+    | linkToEntity  | string                    | Der Link zur Entität                                                                                   |
+    | entityId      | string                    | Der eindeutige Identifikator für die Entität                                                           |
+    | name          | string                    | Der Name der Entität                                                                                   |
+    | pictureUrl    | Zeichenfolge              | s picture",                                                                                            |
+    | avatarType    | Avatar-Typ                | Der Typ des Avatars, den Sie anzeigen möchten. Hat zwei Optionen: `abgerundet` und `quadratisch`       |
+    | Variante      | `EntityChipVariante` enum | Variante des Entity-Chips, die Sie anzeigen möchten. Hat zwei Optionen: `regelmäßig` und `transparent` |
+    | LeftIcon      | Icon-Komponente           | Eine React-Komponente, die ein Symbol darstellt. Wird auf der linken Seite des Chips angezeigt         |
+  </Tab>
+</Tabs>

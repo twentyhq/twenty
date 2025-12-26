@@ -59,6 +59,22 @@
         "fix": {}
       }
     },
+    "lint:changed": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx)$' | grep '^packages/twenty-front/' | xargs -r npx eslint --config packages/twenty-front/eslint.config.mjs",
+        "base": "main"
+      },
+      "configurations": {
+        "fix": {
+          "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx)$' | grep '^packages/twenty-front/' | xargs -r npx eslint --config packages/twenty-front/eslint.config.mjs --fix"
+        },
+        "staged": {
+          "command": "git diff --cached --name-only --diff-filter=d | grep -E '\\.(ts|tsx|js|jsx)$' | grep '^packages/twenty-front/' | xargs -r npx eslint --config packages/twenty-front/eslint.config.mjs"
+        }
+      }
+    },
     "fmt": {
       "options": {
         "files": "src"
@@ -131,7 +147,7 @@
       "defaultConfiguration": "data",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "dotenv cross-var graphql-codegen -- --config={args.config}"
+        "command": "dotenv graphql-codegen -- --config={args.config}"
       },
       "configurations": {
         "data": {

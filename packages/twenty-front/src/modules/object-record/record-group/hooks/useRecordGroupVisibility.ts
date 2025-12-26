@@ -1,25 +1,20 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { type ViewType } from '@/views/types/ViewType';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
 import { useRecoilCallback } from 'recoil';
 
-type UseRecordGroupVisibilityParams = {
-  viewType: ViewType;
-};
-
-export const useRecordGroupVisibility = ({
-  viewType,
-}: UseRecordGroupVisibilityParams) => {
-  const objectOptionsDropdownRecordGroupHideFamilyState =
+export const useRecordGroupVisibility = () => {
+  const recordIndexShouldHideEmptyRecordGroupsCallbackState =
     useRecoilComponentCallbackState(
-      recordIndexRecordGroupHideComponentFamilyState,
+      recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
+  const { updateCurrentView } = useUpdateCurrentView();
 
   const handleVisibilityChange = useRecoilCallback(
     ({ set }) =>
@@ -35,14 +30,21 @@ export const useRecordGroupVisibility = ({
   );
 
   const handleHideEmptyRecordGroupChange = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       async () => {
-        set(
-          objectOptionsDropdownRecordGroupHideFamilyState(viewType),
-          (currentHideState) => !currentHideState,
-        );
+        const currentHideState = snapshot
+          .getLoadable(recordIndexShouldHideEmptyRecordGroupsCallbackState)
+          .getValue();
+
+        const newHideState = !currentHideState;
+
+        set(recordIndexShouldHideEmptyRecordGroupsCallbackState, newHideState);
+
+        await updateCurrentView({
+          shouldHideEmptyGroups: newHideState,
+        });
       },
-    [viewType, objectOptionsDropdownRecordGroupHideFamilyState],
+    [recordIndexShouldHideEmptyRecordGroupsCallbackState, updateCurrentView],
   );
 
   return {

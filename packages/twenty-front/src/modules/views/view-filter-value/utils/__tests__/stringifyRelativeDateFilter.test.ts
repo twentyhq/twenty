@@ -1,6 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
-import { stringifyRelativeDateFilter } from '../stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 jest.mock('@/localization/utils/detection/detectCalendarStartDay');
 
@@ -12,7 +13,7 @@ describe('stringifyRelativeDateFilter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDetectCalendarStartDay.mockReturnValue('MONDAY');
+    mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
   });
 
   describe('basic stringification', () => {
@@ -37,6 +38,21 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should stringify with different units', () => {
+      const secondFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'SECOND',
+      };
+      const minuteFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'MINUTE',
+      };
+      const hourFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'HOUR',
+      };
       const dayFilter: RelativeDateFilter = {
         direction: 'PAST',
         amount: 1,
@@ -58,6 +74,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'YEAR',
       };
 
+      expect(stringifyRelativeDateFilter(secondFilter)).toBe('PAST_1_SECOND');
+      expect(stringifyRelativeDateFilter(minuteFilter)).toBe('PAST_1_MINUTE');
+      expect(stringifyRelativeDateFilter(hourFilter)).toBe('PAST_1_HOUR');
       expect(stringifyRelativeDateFilter(dayFilter)).toBe('PAST_1_DAY');
       expect(stringifyRelativeDateFilter(weekFilter)).toBe('PAST_1_WEEK');
       expect(stringifyRelativeDateFilter(monthFilter)).toBe('PAST_1_MONTH');
@@ -213,7 +232,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
@@ -222,7 +241,7 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should use detected calendar start day when firstDayOfTheWeek is not provided', () => {
-      mockDetectCalendarStartDay.mockReturnValue('MONDAY');
+      mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
 
       const filter: RelativeDateFilter = {
         direction: 'PAST',
@@ -238,7 +257,7 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should use detected calendar start day when firstDayOfTheWeek is null', () => {
-      mockDetectCalendarStartDay.mockReturnValue('SATURDAY');
+      mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.SATURDAY);
 
       const filter: RelativeDateFilter = {
         direction: 'PAST',
@@ -259,7 +278,7 @@ describe('stringifyRelativeDateFilter', () => {
         direction: 'PAST',
         amount: 5,
         unit: 'DAY',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
@@ -289,7 +308,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 10,
         unit: 'MONTH',
         timezone: 'Europe/London',
-        firstDayOfTheWeek: 'MONDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
@@ -303,7 +322,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 7,
         unit: 'WEEK',
         timezone: 'Asia/Tokyo',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(

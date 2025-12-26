@@ -1,20 +1,24 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
@@ -75,12 +79,19 @@ const StyledPropertyBox = styled(PropertyBox)`
 export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
-  const fieldsToDisplay = [
+  const { inlineFieldMetadataItems } = useFieldListFieldMetadataItems({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    showRelationSections: false,
+    excludeCreatedAtAndUpdatedAt: true,
+  });
+
+  const standardFieldOrder = [
     'startsAt',
     'endsAt',
     'conferenceLink',
@@ -88,9 +99,16 @@ export const CalendarEventDetails = ({
     'description',
   ];
 
-  const fieldsByName = mapArrayToObject(
-    objectMetadataItem.fields,
-    ({ name }) => name,
+  const standardFields = standardFieldOrder
+    .map((fieldName) =>
+      inlineFieldMetadataItems.find(
+        (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
+      ),
+    )
+    .filter(isDefined);
+
+  const customFields = inlineFieldMetadataItems.filter(
+    (field) => field.isCustom && !standardFieldOrder.includes(field.name),
   );
 
   const { calendarEventParticipants } = calendarEvent;
@@ -100,14 +118,14 @@ export const CalendarEventDetails = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const Fields = fieldsToDisplay.map((fieldName) => (
-    <StyledPropertyBox key={fieldName}>
+  const renderField = (fieldMetadataItem: FieldMetadataItem) => (
+    <StyledPropertyBox key={fieldMetadataItem.id}>
       <FieldContext.Provider
         value={{
           recordId: calendarEvent.id,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-            field: fieldsByName[fieldName],
+            field: fieldMetadataItem,
             objectMetadataItem,
             showLabel: true,
             labelWidth: 72,
@@ -121,47 +139,52 @@ export const CalendarEventDetails = ({
           value={{
             instanceId: getRecordFieldInputInstanceId({
               recordId: calendarEvent.id,
-              fieldName,
+              fieldName: fieldMetadataItem.name,
               prefix: INPUT_ID_PREFIX,
             }),
           }}
         >
-          <RecordInlineCell instanceIdPrefix={INPUT_ID_PREFIX} />
+          <RecordInlineCell />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>
-  ));
+  );
 
   return (
-    <StyledContainer>
-      <StyledEventChip
-        accent={ChipAccent.TextSecondary}
-        size={ChipSize.Large}
-        variant={ChipVariant.Highlighted}
-        clickable={false}
-        leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
-        label="Event"
-      />
-      <StyledHeader>
-        <StyledTitle canceled={calendarEvent.isCanceled}>
-          {calendarEvent.title}
-        </StyledTitle>
-        <StyledCreatedAt>
-          Created{' '}
-          {beautifyPastDateRelativeToNow(
-            new Date(calendarEvent.externalCreatedAt),
+    <RecordFieldsScopeContextProvider
+      value={{ scopeInstanceId: INPUT_ID_PREFIX }}
+    >
+      <StyledContainer>
+        <StyledEventChip
+          accent={ChipAccent.TextSecondary}
+          size={ChipSize.Large}
+          variant={ChipVariant.Highlighted}
+          clickable={false}
+          leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
+          label={t`Event`}
+        />
+        <StyledHeader>
+          <StyledTitle canceled={calendarEvent.isCanceled}>
+            {calendarEvent.title}
+          </StyledTitle>
+          <StyledCreatedAt>
+            {t`Created`}{' '}
+            {beautifyPastDateRelativeToNow(
+              new Date(calendarEvent.externalCreatedAt),
+            )}
+          </StyledCreatedAt>
+        </StyledHeader>
+        <StyledFields>
+          {standardFields.slice(0, 2).map(renderField)}
+          {calendarEventParticipants && (
+            <CalendarEventParticipantsResponseStatus
+              participants={calendarEventParticipants}
+            />
           )}
-        </StyledCreatedAt>
-      </StyledHeader>
-      <StyledFields>
-        {Fields.slice(0, 2)}
-        {calendarEventParticipants && (
-          <CalendarEventParticipantsResponseStatus
-            participants={calendarEventParticipants}
-          />
-        )}
-        {Fields.slice(2)}
-      </StyledFields>
-    </StyledContainer>
+          {standardFields.slice(2).map(renderField)}
+          {customFields.map(renderField)}
+        </StyledFields>
+      </StyledContainer>
+    </RecordFieldsScopeContextProvider>
   );
 };

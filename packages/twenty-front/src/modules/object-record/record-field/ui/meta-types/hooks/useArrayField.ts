@@ -33,8 +33,8 @@ export const useArrayField = () => {
   return {
     fieldValue,
     fieldDefinition,
-    setFieldValue,
     draftValue,
+    setFieldValue,
     setDraftValue,
   };
 };

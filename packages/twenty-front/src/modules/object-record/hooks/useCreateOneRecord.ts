@@ -26,6 +26,7 @@ import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -186,7 +187,7 @@ export const useCreateOneRecord = <
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectNameSingular, { type: 'create-one' });
+    registerObjectOperation(objectMetadataItem, { type: 'create-one' });
 
     if (!isDefined(createdObject.data?.[mutationResponseField])) {
       throw new CustomError('Failed to create record');

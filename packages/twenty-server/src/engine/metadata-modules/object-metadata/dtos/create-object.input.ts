@@ -1,18 +1,22 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
-import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import {
-  type FieldMetadataType,
   type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
+import { Type } from 'class-transformer';
 
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { BeforeCreateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-create-one-object.hook';
 
 @InputType()
-@BeforeCreateOne(BeforeCreateOneObject)
 export class CreateObjectInput {
   @IsString()
   @IsNotEmpty()
@@ -55,9 +59,6 @@ export class CreateObjectInput {
   dataSourceId: string;
 
   @HideField()
-  workspaceId: string;
-
-  @HideField()
   applicationId?: string;
 
   @HideField()
@@ -80,4 +81,14 @@ export class CreateObjectInput {
   @IsOptional()
   @Field({ nullable: true }) // Not nullable to me
   isLabelSyncedWithName?: boolean;
+}
+
+@InputType()
+export class CreateOneObjectInput {
+  @Type(() => CreateObjectInput)
+  @ValidateNested()
+  @Field(() => CreateObjectInput, {
+    description: 'The object to create',
+  })
+  object!: CreateObjectInput;
 }

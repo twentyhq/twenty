@@ -1,0 +1,203 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "discoverTwenty": {
+          "label": "Discover Twenty",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "Capabilities"
+            },
+            "gettingStartedHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "dataModel": {
+          "label": "نموذج البيانات",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "Capabilities"
+            },
+            "dataModelHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "dataMigration": {
+          "label": "Data Migration",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "Capabilities"
+            },
+            "dataMigrationHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "calendarEmails": {
+          "label": "Calendar & Emails",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "Capabilities"
+            },
+            "calendarEmailsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "workflows": {
+          "label": "سير العمل",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "Capabilities"
+            },
+            "workflowsHowTos": {
+              "label": "How-Tos",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM Automations"
+                },
+                "connectToOtherTools": {
+                  "label": "Connect to Other Tools"
+                },
+                "advancedConfigurations": {
+                  "label": "Advanced Configurations"
+                },
+                "needMoreHelp": {
+                  "label": "Need More Help"
+                }
+              }
+            }
+          }
+        },
+        "ai": {
+          "label": "الذكاء الاصطناعي",
+          "groups": {
+            "aiCapabilities": {
+              "label": "Capabilities"
+            },
+            "aiHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "viewsPipelines": {
+          "label": "Views & Pipelines",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "Capabilities"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "dashboards": {
+          "label": "لوحات القيادة",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "Capabilities"
+            },
+            "dashboardsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "Permissions & Access",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "Capabilities"
+            },
+            "permissionsAccessHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "billing": {
+          "label": "الفوترة",
+          "groups": {
+            "billingCapabilities": {
+              "label": "Capabilities"
+            },
+            "billingHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
+        "settings": {
+          "label": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "Capabilities"
+            },
+            "settingsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        }
+      }
+    },
+    "developers": {
+      "label": "المطورون",
+      "groups": {
+        "developersGroup": {
+          "label": "المطورون"
+        },
+        "extend": {
+          "label": "Extend",
+          "groups": {
+            "extendCapabilities": {
+              "label": "Capabilities"
+            }
+          }
+        },
+        "selfHost": {
+          "label": "Self-Host",
+          "groups": {
+            "selfHostCapabilities": {
+              "label": "Capabilities"
+            }
+          }
+        },
+        "contribute": {
+          "label": "Contribute",
+          "groups": {
+            "contributeCapabilities": {
+              "label": "Capabilities",
+              "groups": {
+                "frontendDevelopment": {
+                  "label": "تطوير الواجهة الأمامية",
+                  "groups": {
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "عرض"
+                        },
+                        "feedback": {
+                          "label": "التغذية الراجعة"
+                        },
+                        "input": {
+                          "label": "إدخال"
+                        },
+                        "navigation": {
+                          "label": "Navigation"
+                        }
+                      }
+                    }
+                  }
+                },
+                "backendDevelopment": {
+                  "label": "تطوير الواجهة الخلفية"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

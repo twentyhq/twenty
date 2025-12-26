@@ -5,11 +5,9 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
-import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
-import { EditableSortChip } from '@/views/components/EditableSortChip';
+import { AdvancedFilterDropdownButton } from '@/views/advanced-filter-chip/components/AdvancedFilterDropdownButton';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { EditableSortChip } from '@/views/editable-chip/components/EditableSortChip';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -26,6 +24,9 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
 import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { EditableFilterDropdownButton } from '@/views/editable-chip/components/EditableFilterDropdownButton';
+import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useApplyCurrentViewAnyFieldFilterToAnyFieldFilter } from '@/views/hooks/useApplyCurrentViewAnyFieldFilterToAnyFieldFilter';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
@@ -109,7 +110,7 @@ export const ViewBarDetails = ({
     isViewBarExpandedComponentState,
   );
 
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
@@ -253,7 +254,12 @@ export const ViewBarDetails = ({
             {recordFilters.map((recordFilter) => (
               <ObjectFilterDropdownComponentInstanceContext.Provider
                 key={recordFilter.id}
-                value={{ instanceId: recordFilter.id }}
+                value={{
+                  instanceId:
+                    getEditableChipObjectFilterDropdownComponentInstanceId({
+                      recordFilterId: recordFilter.id,
+                    }),
+                }}
               >
                 <EditableFilterDropdownButton recordFilter={recordFilter} />
               </ObjectFilterDropdownComponentInstanceContext.Provider>

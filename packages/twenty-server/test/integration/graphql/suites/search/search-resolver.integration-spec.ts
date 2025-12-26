@@ -20,11 +20,13 @@ import {
   TEST_PET_ID_3,
   TEST_PET_ID_4,
 } from 'test/integration/constants/test-pet-ids.constants';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
-import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
+import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
+import { search } from 'test/integration/graphql/utils/search.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { type EachTestingContext } from 'twenty-shared/testing';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
 
 import {
   decodeCursor,
@@ -111,6 +113,7 @@ describe('SearchResolver', () => {
   const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
   beforeAll(async () => {
+    // TODO refactor not a good practice, or should at least restore afterwards
     await deleteAllRecords('person');
     await deleteAllRecords('company');
     await deleteAllRecords('opportunity');
@@ -121,33 +124,29 @@ describe('SearchResolver', () => {
     await deleteAllRecords('dashboard');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
+    await deleteAllRecords('_rocket');
+    ///
 
-    try {
-      await performCreateManyOperation(
-        'pet',
-        'pets',
-        OBJECT_MODEL_COMMON_FIELDS,
-        pets,
-      );
+    await createManyOperation({
+      objectMetadataSingularName: 'pet',
+      objectMetadataPluralName: 'pets',
+      gqlFields: OBJECT_MODEL_COMMON_FIELDS,
+      data: pets,
+    });
 
-      await performCreateManyOperation(
-        'person',
-        'people',
-        PERSON_GQL_FIELDS,
-        persons,
-      );
+    await createManyOperation({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS,
+      data: persons,
+    });
 
-      await performCreateManyOperation(
-        'company',
-        'companies',
-        COMPANY_GQL_FIELDS,
-        companies,
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      throw new Error('beforeAll failed');
-    }
+    await createManyOperation({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: COMPANY_GQL_FIELDS,
+      data: companies,
+    });
   });
 
   const testsUseCases: EachTestingContext<{
@@ -908,44 +907,48 @@ describe('SearchResolver', () => {
     },
   ];
 
-  it.each(testsUseCases)('$title', async ({ context }) => {
-    const graphqlOperation = searchFactory(context.input);
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+  it.each(eachTestingContextFilter(testsUseCases))(
+    '$title',
+    async ({ context }) => {
+      const response = await search({
+        ...context.input,
+        expectToFail: false,
+      });
 
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.search).toBeDefined();
+      expect(response.data).toBeDefined();
+      expect(response.data.search).toBeDefined();
 
-    const search = response.body.data.search;
-    const edges = search.edges;
-    const pageInfo = search.pageInfo;
+      const searchResult = response.data.search;
+      const edges = searchResult.edges;
+      const pageInfo = searchResult.pageInfo;
 
-    if (context.eval.orderedRecordIds.length > 0) {
-      expect(edges).not.toHaveLength(0);
-    } else {
-      expect(edges).toHaveLength(0);
-    }
+      if (context.eval.orderedRecordIds.length > 0) {
+        expect(edges).not.toHaveLength(0);
+      } else {
+        expect(edges).toHaveLength(0);
+      }
 
-    expect(
-      edges.map((edge: SearchResultEdgeDTO) => edge.node.recordId),
-    ).toEqual(context.eval.orderedRecordIds);
+      expect(
+        edges.map((edge: SearchResultEdgeDTO) => edge.node.recordId),
+      ).toEqual(context.eval.orderedRecordIds);
 
-    expect(pageInfo).toBeDefined();
-    expect(context.eval.pageInfo.hasNextPage).toEqual(pageInfo.hasNextPage);
-    expect(context.eval.pageInfo.decodedEndCursor).toEqual(
-      pageInfo.endCursor
-        ? decodeCursor(pageInfo.endCursor)
-        : pageInfo.endCursor,
-    );
-  });
+      expect(pageInfo).toBeDefined();
+      expect(context.eval.pageInfo.hasNextPage).toEqual(pageInfo.hasNextPage);
+      expect(context.eval.pageInfo.decodedEndCursor).toEqual(
+        pageInfo.endCursor
+          ? decodeCursor(pageInfo.endCursor)
+          : pageInfo.endCursor,
+      );
+    },
+  );
 
   it('should return cursor for each search edge', async () => {
-    const graphqlOperation = searchFactory({
+    const response = await search({
       searchInput: 'searchInput',
       excludedObjectNameSingulars: ['workspaceMember'],
       limit: 2,
+      expectToFail: false,
     });
-
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
     const expectedResult = {
       edges: [
@@ -978,17 +981,15 @@ describe('SearchResolver', () => {
     };
 
     expect({
-      ...response.body.data.search,
-      edges: response.body.data.search.edges.map(
-        (edge: SearchResultEdgeDTO) => ({
-          cursor: edge.cursor,
-        }),
-      ),
+      ...response.data.search,
+      edges: response.data.search.edges.map((edge: SearchResultEdgeDTO) => ({
+        cursor: edge.cursor,
+      })),
     }).toEqual(expectedResult);
   });
 
   it('should return cursor for each search edge with after cursor input', async () => {
-    const graphqlOperation = searchFactory({
+    const response = await search({
       searchInput: 'searchInput',
       excludedObjectNameSingulars: ['workspaceMember'],
       limit: 2,
@@ -998,9 +999,8 @@ describe('SearchResolver', () => {
           person: searchInput2Person.id,
         },
       }),
+      expectToFail: false,
     });
-
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
     const expectedResult = {
       edges: [
@@ -1035,12 +1035,10 @@ describe('SearchResolver', () => {
     };
 
     expect({
-      ...response.body.data.search,
-      edges: response.body.data.search.edges.map(
-        (edge: SearchResultEdgeDTO) => ({
-          cursor: edge.cursor,
-        }),
-      ),
+      ...response.data.search,
+      edges: response.data.search.edges.map((edge: SearchResultEdgeDTO) => ({
+        cursor: edge.cursor,
+      })),
     }).toEqual(expectedResult);
   });
 });

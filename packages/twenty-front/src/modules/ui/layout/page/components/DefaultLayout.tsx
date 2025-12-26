@@ -1,5 +1,4 @@
 import { AuthModal } from '@/auth/components/AuthModal';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -13,7 +12,7 @@ import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/compone
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -83,7 +82,7 @@ export const DefaultLayout = () => {
                 isSettingsPage && !isMobile && !useShowFullScreen
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
-                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                        NAVIGATION_DRAWER_CONSTRAINTS.default +
                         76)) /
                     2
                   : 0,
@@ -92,12 +91,7 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && (
-              <>
-                <CommandMenuRouter />
-                <KeyboardShortcutMenu />
-              </>
-            )}
+            {!showAuthModal && <KeyboardShortcutMenu />}
             {showAuthModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (

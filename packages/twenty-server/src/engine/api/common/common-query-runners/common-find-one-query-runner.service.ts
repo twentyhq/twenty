@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
@@ -22,7 +22,9 @@ import {
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -40,18 +42,19 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       authContext,
       rolePermissionConfig,
       workspaceDataSource,
-      objectMetadataMaps,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       commonQueryParser,
     } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
     );
 
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
       args.filter ?? ({} as ObjectRecordFilter),
     );
 
@@ -63,8 +66,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     const objectRecord = await queryBuilder
@@ -84,15 +88,15 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: objectRecords,
-        //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
@@ -107,27 +111,30 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     args: CommonInput<FindOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<FindOneQueryArgs>> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
     return {
       ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
         args.filter,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       ),
     };
   }
 
   async processQueryResult(
     queryResult: ObjectRecord,
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
     return this.commonResultGettersService.processRecord(
       queryResult,
-      objectMetadataItemId,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       authContext.workspace.id,
     );
   }

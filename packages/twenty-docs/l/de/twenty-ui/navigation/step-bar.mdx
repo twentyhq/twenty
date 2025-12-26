@@ -1,0 +1,34 @@
+---
+title: Schrittleiste
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Kopfzeile" />
+</Frame>
+
+Zeigt den Fortschritt durch eine Folge von nummerierten Schritten, indem der aktive Schritt hervorgehoben wird. Es rendert einen Container mit Schritten, die jeweils durch die `Step`-Komponente dargestellt werden.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ    | Beschreibung                                                                                              |
+    | --------------- | ------ | --------------------------------------------------------------------------------------------------------- |
+    | aktiverSchritt  | nummer | Der Index des derzeit aktiven Schritts. Dies bestimmt, welcher Schritt visuell hervorgehoben werden soll. |
+  </Tab>
+</Tabs>

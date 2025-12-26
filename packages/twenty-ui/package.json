@@ -17,6 +17,8 @@
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "tsx": "^4.19.3",
+    "vite-plugin-checker": "^0.10.2",
+    "vite-plugin-dts": "3.8.1",
     "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {
@@ -29,7 +31,7 @@
     "@tabler/icons-react": "^3.31.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^11.18.0",
-    "glob": "^11.0.1",
+    "glob": "^11.1.0",
     "hex-rgb": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

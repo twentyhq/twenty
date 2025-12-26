@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
-import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
-import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
+import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
+
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
+
+import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
+import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -23,44 +23,31 @@ const StyledColumnCardsContainer = styled.div`
 const StyledNewButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
-// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-const StyledSkeletonCardContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.background.quaternary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow:
-    0px 4px 8px 0px rgba(0, 0, 0, 0.08),
-    0px 0px 4px 0px rgba(0, 0, 0, 0.08);
-  color: ${({ theme }) => theme.font.color.primary};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
 
 type RecordBoardColumnCardsContainerProps = {
-  recordIds: string[];
+  recordBoardColumnId: string;
   droppableProvided: DroppableProvided;
 };
 
 export const RecordBoardColumnCardsContainer = ({
-  recordIds,
+  recordBoardColumnId,
   droppableProvided,
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const columnId = columnDefinition.id;
-
-  const isRecordIndexBoardColumnLoading = useRecoilValue(
-    isRecordIndexBoardColumnLoadingFamilyState(columnId),
+  const recordIds = useRecoilComponentFamilyValue(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    recordBoardColumnId,
   );
 
-  const visibleRecordFields = useRecoilComponentValue(
-    visibleRecordFieldsComponentSelector,
+  const recordIndexRecordGroupsAreInInitialLoading = useRecoilComponentValue(
+    recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const numberOfFields = visibleRecordFields.length;
-
-  const { currentView } = useGetCurrentViewOnly();
-
-  const isCompactModeActive = currentView?.isCompact ?? false;
+  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValue(
+    recordBoardShouldFetchMoreInColumnComponentFamilyState,
+    recordBoardColumnId,
+  );
 
   return (
     <StyledColumnCardsContainer
@@ -68,29 +55,20 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {isRecordIndexBoardColumnLoading ? (
-        Array.from(
-          {
-            length: getNumberOfCardsPerColumnForSkeletonLoading(
-              columnDefinition.position,
-            ),
-          },
-          (_, index) => (
-            <StyledSkeletonCardContainer
-              key={`${columnDefinition.id}-${index}`}
-            >
-              <RecordBoardColumnCardContainerSkeletonLoader
-                numberOfFields={numberOfFields}
-                titleSkeletonWidth={isCompactModeActive ? 72 : 54}
-                isCompactModeActive={isCompactModeActive}
-              />
-            </StyledSkeletonCardContainer>
-          ),
-        )
+      {recordIndexRecordGroupsAreInInitialLoading ? (
+        <RecordBoardColumnLoadingSkeletonCards />
       ) : (
-        <RecordBoardColumnCardsMemo recordIds={recordIds} />
+        recordIds.map((recordId, index) => (
+          <RecordBoardCardDraggableContainer
+            key={recordId}
+            recordId={recordId}
+            rowIndex={index}
+          />
+        ))
       )}
-      <RecordBoardColumnFetchMoreLoader />
+      {recordBoardShouldFetchMoreInColumn ? (
+        <RecordBoardColumnLoadingSkeletonCards />
+      ) : null}
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
         index={recordIds.length}
@@ -98,13 +76,12 @@ export const RecordBoardColumnCardsContainer = ({
       >
         {(draggableProvided) => (
           <div
-            ref={draggableProvided?.innerRef}
+            ref={draggableProvided.innerRef}
             // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
+            {...draggableProvided.draggableProps}
           ></div>
         )}
       </Draggable>
-      {droppableProvided?.placeholder}
       <StyledNewButtonContainer>
         <RecordBoardColumnNewRecordButton />
       </StyledNewButtonContainer>

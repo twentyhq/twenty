@@ -23,7 +23,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 type GenerateExportOptions = {
   columns: Pick<
     ColumnDefinition<FieldMetadata>,
-    'size' | 'label' | 'type' | 'metadata'
+    'label' | 'type' | 'metadata'
   >[];
   rows: Record<string, any>[];
 };
@@ -132,13 +132,15 @@ export const displayedExportProgress = (progress?: ExportProgress): string => {
     progress.displayType === 'percentage' &&
     isDefined(progress?.totalRecordCount)
   ) {
-    return `Export (${percentage(
+    const percentageValue = percentage(
       progress.exportedRecordCount,
       progress.totalRecordCount,
-    )}%)`;
+    );
+    return t`Export (${percentageValue}%)`;
   }
 
-  return `Export (${progress.exportedRecordCount})`;
+  const exportedCount = progress.exportedRecordCount;
+  return t`Export (${exportedCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {
@@ -169,7 +171,13 @@ export const useRecordIndexExportRecords = ({
 
   const downloadCsv = useMemo(
     () =>
-      (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
+      (
+        records: ObjectRecord[],
+        columns: Pick<
+          ColumnDefinition<FieldMetadata>,
+          'label' | 'type' | 'metadata'
+        >[],
+      ) => {
         const recordsProcessedForExport = processRecordsForCSVExport(records);
 
         csvDownloader(filename, { rows: recordsProcessedForExport, columns });

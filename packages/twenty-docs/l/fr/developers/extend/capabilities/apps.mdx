@@ -1,0 +1,522 @@
+---
+title: Twenty Apps
+description: Build and manage Twenty customizations as code.
+---
+
+<Warning>
+  Apps are currently in alpha testing. The feature is functional but still evolving.
+</Warning>
+
+## What Are Apps?
+
+Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+
+**What you can do today:**
+
+* Define custom objects and fields as code (managed data model)
+* Build serverless functions with custom triggers
+* Deploy the same app across multiple workspaces
+
+**Coming soon:**
+
+* Custom UI layouts and components
+
+## Prerequisites
+
+* Node.js 24+ and Yarn 4
+* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+
+## Getting Started
+
+Create a new app using the official scaffolder, then authenticate and start developing:
+
+```bash filename="Terminal"
+# Scaffold a new app
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# Authenticate using your API key (you'll be prompted)
+yarn auth
+
+# Start dev mode: automatically syncs local changes to your workspace
+yarn dev
+```
+
+From here you can:
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn create-entity
+
+# Generate a typed Twenty client and workspace entity types
+yarn generate
+
+# Run a one‑time sync (instead of watch mode)
+yarn sync
+
+# Watch your application's functions logs
+yarn logs
+
+# Uninstall the application from the current workspace
+yarn uninstall
+
+# Display commands' help
+yarn help
+```
+
+See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+
+## Project structure (scaffolded)
+
+When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+
+* Copies a minimal base application into `my-twenty-app/`
+* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
+* Creates config files and scripts wired to the `twenty` CLI
+* Generates a default application config and a default function role
+
+A freshly scaffolded app looks like this:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    releases/
+      yarn-4.9.2.cjs
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  src/
+    application.config.ts
+    role.config.ts
+    // your entities, actions, and other app files
+```
+
+At a high level:
+
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
+* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
+* **.nvmrc**: Pins the Node.js version expected by the project.
+* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app’s TypeScript sources.
+* **README.md**: A short README in the app root with basic instructions.
+* **src/**: The main place where you define your application-as-code:
+  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See “Application config” below.
+  * `role.config.ts`: Default function role used by your serverless functions. See “Default function role” below.
+  * Future entities, actions/functions, and any supporting code you add.
+
+Later commands will add more files and folders:
+
+* `yarn generate` will create a `generated/` folder (typed Twenty client + workspace types).
+* `yarn create-entity` will add entity definition files under `src/` for your custom objects.
+
+## Authentication
+
+The first time you run `yarn auth`, you'll be prompted for:
+
+* API URL (defaults to http://localhost:3000 or your current workspace profile)
+* API key
+
+Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+
+Examples:
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn auth
+
+# Use a specific workspace profile
+yarn auth --workspace my-custom-workspace
+```
+
+## Use the SDK resources (types & config)
+
+The twenty-sdk provides typed building blocks you use inside your app. Below are the key pieces you'll touch most often.
+
+### Defining objects
+
+Custom objects are regular TypeScript classes annotated with decorators from `twenty-sdk`. They live under `src/objects/` in your app and describe both schema and behavior for records in your workspace.
+
+Here is an example `postCard` object from the Hello World app:
+
+```typescript
+import { type Note } from '../../generated';
+
+import {
+  type AddressField,
+  Field,
+  FieldType,
+  type FullNameField,
+  Object,
+  OnDeleteAction,
+  Relation,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+@Object({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post card',
+  labelPlural: 'Post cards',
+  description: ' A post card object',
+  icon: 'IconMail',
+})
+export class PostCard {
+  @Field({
+    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+    type: FieldType.TEXT,
+    label: 'Content',
+    description: "Postcard's content",
+    icon: 'IconAbc',
+  })
+  content: string;
+
+  @Field({
+    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+    type: FieldType.FULL_NAME,
+    label: 'Recipient name',
+    icon: 'IconUser',
+  })
+  recipientName: FullNameField;
+
+  @Field({
+    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+    type: FieldType.ADDRESS,
+    label: 'Recipient address',
+    icon: 'IconHome',
+  })
+  recipientAddress: AddressField;
+
+  @Field({
+    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+    type: FieldType.SELECT,
+    label: 'Status',
+    icon: 'IconSend',
+    defaultValue: `'${PostCardStatus.DRAFT}'`,
+    options: [
+      { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+      { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+      { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+      { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+    ],
+  })
+  status: PostCardStatus;
+
+  @Relation({
+    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
+    type: RelationType.ONE_TO_MANY,
+    label: 'Notes',
+    icon: 'IconComment',
+    inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
+    onDelete: OnDeleteAction.CASCADE,
+  })
+  notes: Note[];
+
+  @Field({
+    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+    type: FieldType.DATE_TIME,
+    label: 'Delivered at',
+    icon: 'IconCheck',
+    isNullable: true,
+    defaultValue: null,
+  })
+  deliveredAt?: Date;
+}
+```
+
+Key points:
+
+* The `@Object` decorator defines the object identity and labels used across the workspace; its `universalIdentifier` must be unique and stable across deployments.
+* Each `@Field` decorator defines a field on the object with a type, label, and its own stable `universalIdentifier`.
+* `@Relation` wires this object to other objects (standard or custom) and controls cascade behavior with `onDelete`.
+* You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships, then generates object files similar to the `postCard` example.
+
+### Application config (application.config.ts)
+
+Every app has a single `application.config.ts` file that describes:
+
+* **Who the app is**: identifiers, display name, and description.
+* **How its functions run**: which role they use for permissions.
+* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+
+When you scaffold a new app, you start with a minimal config:
+
+```typescript
+import { type ApplicationConfig } from 'twenty-sdk';
+
+const config: ApplicationConfig = {
+  universalIdentifier: '<generated-app-uuid>',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  functionRoleUniversalIdentifier: '<generated-role-uuid>',
+};
+
+export default config;
+```
+
+You can gradually extend this file as your app grows. For example, you can add an icon and application-scoped variables:
+
+```typescript
+import { type ApplicationConfig } from 'twenty-sdk';
+
+const config: ApplicationConfig = {
+  universalIdentifier: '<your-app-uuid>',
+  displayName: 'My App',
+  description: 'What your app does',
+  icon: 'IconWorld', // Choose an icon by name
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '<uuid>',
+      description: 'Default recipient used by functions',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  functionRoleUniversalIdentifier: '<your-role-uuid>',
+};
+
+export default config;
+```
+
+Notes:
+
+* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
+* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
+* `functionRoleUniversalIdentifier` must match the role you define in `role.config.ts` (see below).
+
+#### Roles and permissions
+
+Applications can define roles that encapsulate permissions on your workspace’s objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app’s serverless functions.
+
+* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
+* The typed client will be restricted to the permissions granted to that role.
+* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+
+##### Default function role (role.config.ts)
+
+When you scaffold a new app, the CLI also creates `src/role.config.ts`. This file exports the default role your serverless functions will use at runtime:
+
+```typescript
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: '<generated-role-uuid>',
+  label: 'My Twenty App default function role',
+  description: 'My Twenty App default function role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: true,
+  canDestroyAllObjectRecords: false,
+};
+```
+
+The `universalIdentifier` of this role is automatically wired into `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+
+* **role.config.ts** defines what the default function role can do.
+* **application.config.ts** points to that role so your functions inherit its permissions.
+
+As you move beyond the initial scaffold, you should tighten this role and make it explicit about what it can access. A more production-ready role might look closer to:
+
+```typescript
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: '<your-role-uuid>',
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectNameSingular: 'postCard',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectNameSingular: 'postCard',
+      fieldName: 'content',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: ['APPLICATIONS'],
+};
+```
+
+Notes:
+
+* Start from the scaffolded role, then progressively restrict it following least‑privilege.
+* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
+* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
+* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Serverless function config and entrypoint
+
+Each function exports a main handler and a config describing its triggers. You can mix multiple trigger types.
+
+```typescript
+// src/actions/create-new-post-card.ts
+import type {
+  FunctionConfig,
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  CronPayload,
+} from 'twenty-sdk';
+import Twenty, { type Person } from '../generated';
+
+// main handler can accept parameters from route, cron, or database events
+export const main = async (
+  params:
+    | { name?: string }
+    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
+    | CronPayload,
+) => {
+  const client = new Twenty(); // generated typed client
+  const name = 'name' in params
+    ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export const config: FunctionConfig = {
+  universalIdentifier: '<function-uuid>',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: '<route-trigger-uuid>',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    {
+      universalIdentifier: '<cron-trigger-uuid>',
+      type: 'cron',
+      pattern: '0 0 1 1 *',
+    },
+    // Database event trigger
+    {
+      universalIdentifier: '<db-trigger-uuid>',
+      type: 'databaseEvent',
+      eventName: 'person.created',
+    },
+  ],
+};
+```
+
+Common trigger types:
+
+* route: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+
+> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+
+* cron: Runs your function on a schedule using a CRON expression.
+* databaseEvent: Runs on workspace object lifecycle events
+
+> e.g. `person.created`
+
+You can create new functions in two ways:
+
+* **Scaffolded**: Run `yarn create-entity --path <custom-path>` and choose the option to add a new function. This generates a starter file under `<custom-path>` with a `main` handler and a `config` block similar to the example above.
+* **Manual**: Create a new file and export `main` and `config` yourself, following the same pattern.
+
+### Generated typed client
+
+Run yarn generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+
+```typescript
+import Twenty from './generated';
+
+const client = new Twenty();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+```
+
+The client is re-generated by `yarn generate`. Re-run after changing your objects and `yarn sync` or when onboarding to a new workspace.
+
+#### Runtime credentials in serverless functions
+
+When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+
+* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
+* `TWENTY_API_KEY`: Short‑lived key scoped to your application’s default function role.
+
+Notes:
+
+* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
+* The API key’s permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
+* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role’s universal identifier.
+
+### Hello World example
+
+Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Manual setup (without the scaffolder)
+
+While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+Then add scripts like these:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "auth": "twenty auth login",
+    "generate": "twenty app generate",
+    "dev": "twenty app dev",
+    "sync": "twenty app sync",
+    "uninstall": "twenty app uninstall",
+    "logs": "twenty app logs",
+    "create-entity": "twenty app add",
+    "help": "twenty --help"
+  }
+}
+```
+
+Now you can run the same commands via Yarn, e.g. `yarn dev`, `yarn sync`, etc.
+
+## Troubleshooting
+
+* Authentication errors: run `yarn auth` and ensure your API key has the required permissions.
+* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
+* Types or client missing/outdated: run `yarn generate` and then `yarn dev`.
+* Dev mode not syncing: ensure `yarn dev` is running and that changes are not ignored by your environment.
+
+Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322

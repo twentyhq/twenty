@@ -2,13 +2,16 @@ import {
   FieldMetadataType,
   RelationType,
   type RestrictedFieldsPermissions,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type SelectableFieldsStructured = Record<
   string,
@@ -17,24 +20,29 @@ type SelectableFieldsStructured = Record<
 
 export const getAllSelectableFields = ({
   restrictedFields,
-  objectMetadata,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
-  objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
-  const fields = Object.values(objectMetadata.objectMetadataMapItem.fieldsById);
+  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldId,
+    });
 
-  for (const field of fields) {
-    if (restrictedFields[field.id]?.canRead === false) continue;
+    if (restrictedFields[flatField.id]?.canRead === false) continue;
 
-    if (isCompositeFieldMetadataType(field.type)) {
-      const compositeType = compositeTypeDefinitions.get(field.type);
+    if (isCompositeFieldMetadataType(flatField.type)) {
+      const compositeType = compositeTypeDefinitions.get(flatField.type);
 
       if (!compositeType) {
         throw new Error(
-          `Composite type definition not found for type: ${field.type}`,
+          `Composite type definition not found for type: ${flatField.type}`,
         );
       }
 
@@ -44,15 +52,15 @@ export const getAllSelectableFields = ({
         compositeFields[property.name] = true;
       }
 
-      result[field.name] = compositeFields;
+      result[flatField.name] = compositeFields;
     } else if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-      field.settings.relationType === RelationType.MANY_TO_ONE &&
-      isDefined(field.settings.joinColumnName)
+      isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION) &&
+      flatField.settings.relationType === RelationType.MANY_TO_ONE &&
+      isDefined(flatField.settings.joinColumnName)
     ) {
-      result[field.settings.joinColumnName] = true;
+      result[flatField.settings.joinColumnName] = true;
     } else {
-      result[field.name] = true;
+      result[flatField.name] = true;
     }
   }
 

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -34,6 +35,7 @@ const StyledSelectDropdown = styled(Select)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledNoBodyMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.md};
   padding: ${({ theme }) => theme.spacing(2)};
   text-align: left;
@@ -159,14 +161,18 @@ export const BodyInput = ({
 
   return (
     <FormFieldInputContainer>
-      <InputLabel>Body Input</InputLabel>
+      <InputLabel>{t`Body Input`}</InputLabel>
       <StyledSelectDropdown
         options={[
-          { label: 'Key/Value', value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
-          { label: 'Raw JSON', value: BODY_TYPES.RAW_JSON, Icon: IconFileText },
-          { label: 'Form Data', value: BODY_TYPES.FORM_DATA, Icon: IconKey },
-          { label: 'Text', value: BODY_TYPES.TEXT, Icon: IconFileText },
-          { label: 'None', value: BODY_TYPES.NONE, Icon: IconFileText },
+          { label: t`Key/Value`, value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
+          {
+            label: t`Raw JSON`,
+            value: BODY_TYPES.RAW_JSON,
+            Icon: IconFileText,
+          },
+          { label: t`Form Data`, value: BODY_TYPES.FORM_DATA, Icon: IconKey },
+          { label: t`Text`, value: BODY_TYPES.TEXT, Icon: IconFileText },
+          { label: t`None`, value: BODY_TYPES.NONE, Icon: IconFileText },
         ]}
         dropdownId="body-input-mode"
         value={getBodyTypeFromHeaders(headers) || BODY_TYPES.NONE}
@@ -191,8 +197,8 @@ export const BodyInput = ({
             defaultValue={defaultValueParsed as Record<string, string>}
             onChange={handleKeyValueChange}
             readonly={readonly}
-            keyPlaceholder="Property name"
-            valuePlaceholder="Property value"
+            keyPlaceholder={t`Property name`}
+            valuePlaceholder={t`Property value`}
           />
         ) : getBodyTypeFromHeaders(headers) === BODY_TYPES.FORM_DATA ? (
           <KeyValuePairInput
@@ -200,19 +206,19 @@ export const BodyInput = ({
             defaultValue={defaultValueParsed as Record<string, string>}
             onChange={handleKeyValueChange}
             readonly={readonly}
-            keyPlaceholder="Property name"
-            valuePlaceholder="Property value"
+            keyPlaceholder={t`Property name`}
+            valuePlaceholder={t`Property value`}
           />
         ) : getBodyTypeFromHeaders(headers) === BODY_TYPES.TEXT ? (
           <FormTextFieldInput
-            placeholder={'Enter text'}
+            placeholder={t`Enter text`}
             readonly={readonly}
             defaultValue={textValue}
             onChange={(value: string) => handleChangeTextValue(value)}
             VariablePicker={WorkflowVariablePicker}
           />
         ) : (
-          <StyledNoBodyMessage>No body</StyledNoBodyMessage>
+          <StyledNoBodyMessage>{t`No body`}</StyledNoBodyMessage>
         )}
       </StyledContainer>
     </FormFieldInputContainer>

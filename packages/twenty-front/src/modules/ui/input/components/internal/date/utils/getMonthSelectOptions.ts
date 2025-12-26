@@ -20,5 +20,5 @@ export const getMonthSelectOptions = (
 ): { label: string; value: number }[] =>
   getMonthNames(locale).map((month, index) => ({
     label: month,
-    value: index,
+    value: index + 1,
   }));

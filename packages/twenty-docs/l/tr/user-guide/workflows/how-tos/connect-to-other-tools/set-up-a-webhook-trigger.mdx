@@ -1,0 +1,171 @@
+---
+title: Bir Webhook Tetikleyicisi Ayarlayın
+description: İş akışlarını tetiklemek için harici hizmetlerden veri alın.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Webhook tetikleyicileri, harici hizmetlerin benzersiz bir URL'ye veri göndererek iş akışlarınızı başlatmasına olanak tanır. Formları, üçüncü taraf uygulamaları ve özel entegrasyonları bağlamak için bunları kullanın.
+
+## Webhook'lar Ne Zaman Kullanılır
+
+| Kullanım alanı                | Örnek                                                    |
+| ----------------------------- | -------------------------------------------------------- |
+| **Web formları**              | İletişim formu gönderimleri potansiyel müşteri oluşturur |
+| **Üçüncü taraf uygulamalar**  | Stripe ödemesi → müşteri kaydı oluşturur                 |
+| **Özel entegrasyonlar**       | Uygulamanız → Twenty otomasyonu                          |
+| **Kod gerektirmeyen araçlar** | Zapier, Make, n8n bağlantıları                           |
+
+## Adım adım kurulum
+
+### Adım 1: İş akışını oluşturun
+
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adlandırın (ör. "Website Form Submission")
+
+### Adım 2: Webhook tetikleyicisini yapılandırın
+
+1. Tetikleyici bloğuna tıklayın
+2. **Webhook**'u seçin
+3. Şuna benzer benzersiz bir webhook URL'si alacaksınız:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Bu URL'yi kopyalayın—harici hizmetiniz için buna ihtiyacınız olacak
+
+### Adım 3: Beklenen veri yapısını tanımlayın
+
+**POST** istekleri için beklenen gövde yapısını tanımlayın:
+
+1. **Beklenen gövdeyi tanımla**'ya tıklayın
+2. Hizmetinizin göndereceğiyle eşleşen örnek bir JSON girin:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. **Kaydet**'e tıklayın—bu, sonraki adımlarda kullanabileceğiniz değişkenler oluşturur
+
+### Adım 4: Eylemler ekleyin
+
+Şimdi webhook verisini kullanan eylemler ekleyin:
+
+**Örnek: Bir Kişi kaydı oluşturun**
+
+1. **Kayıt Oluştur** eylemini ekleyin
+2. **Kişiler** nesnesini seçin
+3. Alanları eşleyin:
+
+| Alan    | Değer                                                   |
+| ------- | ------------------------------------------------------- |
+| İsim    | `{{trigger.body.firstName}}`                            |
+| Soyadı  | `{{trigger.body.lastName}}`                             |
+| E-posta | `{{trigger.body.email}}`                                |
+| Şirket  | `{{trigger.body.company}}` temelinde ara veya oluşturun |
+
+### Adım 5: Webhook'u test edin
+
+Etkinleştirmeden önce, webhook'unuzu test edin:
+
+**cURL kullanarak**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Postman veya benzerini kullanarak**:
+
+1. Webhook URL'nize bir POST isteği oluşturun
+2. Content-Type üst bilgisini `application/json` olarak ayarlayın
+3. Test JSON gövdenizi ekleyin
+4. Gönderin ve iş akışı çalıştırmalarını kontrol edin
+
+### Adım 6: Etkinleştir
+
+Test edildikten sonra, iş akışını yayına almak için **Etkinleştir**'e tıklayın.
+
+## Farklı veri yapılarıyla çalışma
+
+### İç içe veri
+
+Webhook'unuz iç içe veri gönderiyorsa:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Şu şekilde referans verin: `{{trigger.body.contact.email}}`
+
+### Diziler
+
+Veri diziler içeriyorsa:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+Dizileri nasıl ele alacağınız kullanım durumunuza bağlıdır:
+
+**Bilinmeyen öğe sayısı → Iterator kullanın**
+
+Dizideki her öğeyi işlemeniz gerekiyorsa (ör. her biri için bir kayıt oluşturmak), diziyi ayrıştırmak için bir **Kod** eylemi ekleyin, ardından **Iterator** kullanın:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Ardından döngü için Iterator kullanın: `{{code.items}}`
+
+**Bilinen/belirli alanlar → Adlandırılmış alanlara ayıklayın**
+
+Dizi, ayrı ayrı erişmek istediğiniz belirli alanlar içeriyorsa (ör. konum 0 her zaman "first name", konum 1 her zaman "last name" ise), bunları ayıklamak için bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Artık sonraki adımlarda `product.name` ve `product.qty` öğelerini ayrı ayrı seçebilirsiniz.
+
+<Tip>
+  Dizileri ele alma hakkında daha fazla ayrıntı için bkz. [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)

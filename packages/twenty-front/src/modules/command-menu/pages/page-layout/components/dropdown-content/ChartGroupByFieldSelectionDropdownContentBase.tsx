@@ -1,8 +1,10 @@
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
+import { ChartGroupByFieldSelectionRelationFieldView } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -22,7 +24,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { BarChartGroupMode } from '~/generated/graphql';
+import { RelationType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -41,6 +43,9 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedCompositeField, setSelectedCompositeField] =
+    useState<FieldMetadataItem | null>(null);
+
+  const [selectedRelationField, setSelectedRelationField] =
     useState<FieldMetadataItem | null>(null);
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -77,8 +82,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         items: sourceObjectMetadataItem?.fields || [],
         searchQuery,
         getSearchableValues: (item) => [item.label, item.name],
-        // TODO: remove the relation filter once group by is supported for relation fields
-      }).filter((field) => !isFieldRelation(field) && !field.isSystem),
+      }).filter((field) => {
+        if (field.isSystem === true) {
+          return false;
+        }
+        if (isFieldRelation(field)) {
+          return field.relation?.type === RelationType.MANY_TO_ONE;
+        }
+        return true;
+      }),
     [sourceObjectMetadataItem?.fields, searchQuery],
   );
 
@@ -93,75 +105,110 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return null;
   }
 
-  const buildConfigUpdate = (
-    fieldId: string | null,
-    subFieldName: string | null,
-  ) => {
-    const isSecondaryAxis =
-      fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
-    const baseConfig = {
-      [fieldMetadataIdKey]: fieldId,
-      [subFieldNameKey]: subFieldName,
-    };
-
-    if (
-      !isSecondaryAxis ||
-      configuration.__typename !== 'BarChartConfiguration'
-    ) {
-      return baseConfig;
+  const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
+    if (isFieldRelation(fieldMetadataItem)) {
+      setSelectedRelationField(fieldMetadataItem);
+      return;
     }
 
-    return {
-      ...baseConfig,
-      groupMode: isDefined(fieldId)
-        ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
-        : null,
-    };
-  };
-
-  const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isCompositeFieldType(fieldMetadataItem.type)) {
       setSelectedCompositeField(fieldMetadataItem);
-    } else {
-      updateCurrentWidgetConfig({
-        configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
-      });
-      closeDropdown();
+      return;
     }
-  };
 
-  const handleSelectNone = () => {
     updateCurrentWidgetConfig({
-      configToUpdate: buildConfigUpdate(null, null),
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: fieldMetadataItem.id,
+        subFieldName: null,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
+      }),
     });
     closeDropdown();
   };
 
-  const handleBack = () => {
+  const handleSelectNone = () => {
+    updateCurrentWidgetConfig({
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: null,
+        subFieldName: null,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
+      }),
+    });
+    closeDropdown();
+  };
+
+  const handleBackFromComposite = () => {
     setSelectedCompositeField(null);
   };
 
-  const handleSelectSubField = (subFieldName: string) => {
+  const handleBackFromRelation = () => {
+    setSelectedRelationField(null);
+  };
+
+  const handleSelectCompositeSubField = (subFieldName: string) => {
     if (!isDefined(selectedCompositeField)) {
       return;
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: buildConfigUpdate(
-        selectedCompositeField.id,
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: selectedCompositeField.id,
         subFieldName,
-      ),
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
+      }),
     });
     closeDropdown();
   };
+
+  const handleSelectRelationSubField = (subFieldName: string) => {
+    if (!isDefined(selectedRelationField)) {
+      return;
+    }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: selectedRelationField.id,
+        subFieldName,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
+      }),
+    });
+    closeDropdown();
+  };
+
+  if (isDefined(selectedRelationField)) {
+    return (
+      <ChartGroupByFieldSelectionRelationFieldView
+        relationField={selectedRelationField}
+        currentSubFieldName={currentSubFieldName}
+        onBack={handleBackFromRelation}
+        onSelectSubField={handleSelectRelationSubField}
+      />
+    );
+  }
 
   if (isDefined(selectedCompositeField)) {
     return (
       <ChartGroupByFieldSelectionCompositeFieldView
         compositeField={selectedCompositeField}
         currentSubFieldName={currentSubFieldName}
-        onBack={handleBack}
-        onSelectSubField={handleSelectSubField}
+        onBack={handleBackFromComposite}
+        onSelectSubField={handleSelectCompositeSubField}
       />
     );
   }
@@ -206,11 +253,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 text={fieldMetadataItem.label}
                 selected={
                   !isCompositeFieldType(fieldMetadataItem.type) &&
+                  !isFieldRelation(fieldMetadataItem) &&
                   currentGroupByFieldMetadataId === fieldMetadataItem.id
                 }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
-                hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
+                hasSubMenu={
+                  isCompositeFieldType(fieldMetadataItem.type) ||
+                  isFieldRelation(fieldMetadataItem)
+                }
                 onClick={() => {
                   handleSelectField(fieldMetadataItem);
                 }}

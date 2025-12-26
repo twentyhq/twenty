@@ -1,0 +1,35 @@
+---
+title: Posso monitorare l'attività email su tutti gli oggetti?
+description: Comprendere il tracciamento dell'attività email tra i diversi oggetti.
+---
+
+## Oggetti supportati
+
+L'attività email è attualmente disponibile su **tre oggetti standard**:
+
+| Oggetto         | Cosa vedrai                                                              |
+| --------------- | ------------------------------------------------------------------------ |
+| **Persone**     | Tutte le email scambiate con quel contatto specifico                     |
+| **Aziende**     | Tutte le email con chiunque di quella azienda (in base al dominio email) |
+| **Opportunità** | Email relative all'azienda collegata all'opportunità                     |
+
+## Perché solo questi oggetti?
+
+Persone, Aziende e Opportunità sono gli oggetti relazionali principali in cui il contesto delle email offre il maggior valore. I thread email vengono collegati automaticamente in base a:
+
+* **Indirizzo email** → associato ai record delle Persone
+* **Dominio email** → associato ai record delle Aziende
+* **Relazione con l'Azienda** → collegata alle Opportunità
+
+## Oggetti personalizzati
+
+**Il tracciamento delle email non è disponibile sugli oggetti personalizzati** al momento.
+
+Se ti serve il contesto delle email su un oggetto personalizzato, valuta:
+
+* Usare un campo relazione per collegare il tuo oggetto personalizzato a Persone o Aziende
+* Visualizzare la cronologia delle email sul record della Persona o dell'Azienda collegato.
+
+## Piani futuri
+
+Stiamo valutando di estendere la visibilità delle email agli oggetti personalizzati. Partecipa alle nostre [discussioni su GitHub](https://github.com/twentyhq/twenty/discussions) per condividere il tuo caso d'uso e aiutarci a dare priorità a questa funzionalità.

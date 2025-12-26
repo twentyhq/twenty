@@ -118,12 +118,19 @@ export const UserAndViewsProviderEffect = () => {
         ...userQueryData.currentUser.currentWorkspace,
         defaultRole:
           userQueryData.currentUser.currentWorkspace.defaultRole ?? null,
+        workspaceCustomApplication:
+          userQueryData.currentUser.currentWorkspace
+            .workspaceCustomApplication ?? null,
       });
     }
 
     if (isDefined(userQueryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
-        ...userQueryData.currentUser.currentUserWorkspace,
+        permissionFlags:
+          userQueryData.currentUser.currentUserWorkspace.permissionFlags ?? [],
+        twoFactorAuthenticationMethodSummary:
+          userQueryData.currentUser.currentUserWorkspace
+            .twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:
           (userQueryData.currentUser.currentUserWorkspace
             .objectsPermissions as Array<
@@ -144,7 +151,7 @@ export const UserAndViewsProviderEffect = () => {
     ) => {
       return {
         ...workspaceMember,
-        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };

@@ -13,7 +13,7 @@ import {
   getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
 } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionHttpRequest } from '../WorkflowEditActionHttpRequest';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
   id: getWorkflowNodeIdMock(),
@@ -118,10 +118,6 @@ export const Configured: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const header = await canvas.findByTestId('side-panel-header');
-    const headerCanvas = within(header);
-    expect(await headerCanvas.findByText('API Call')).toBeVisible();
-
     const urlLabel = await canvas.findByText('URL');
     const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
     const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
@@ -222,7 +218,7 @@ export const WithObjectStringBody: Story = {
           body: `{
   "hey": "frontend",
   "oh": "backend",
-  "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
+  "amazing": "database {{${MOCKED_STEP_ID}.name}}"
 }`,
         },
         outputSchema: {},
@@ -257,7 +253,7 @@ export const WithObjectStringBody: Story = {
 
     expect(textboxes[6]).toHaveTextContent('frontend');
     expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Salary');
+    expect(textboxes[10]).toHaveTextContent('database Name');
   },
 };
 
@@ -277,7 +273,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           },
           body: `[
   "frontend",
-  {{${MOCKED_STEP_ID}.salary}},
+  {{${MOCKED_STEP_ID}.name}},
   "database"
 ]`,
         },
@@ -304,9 +300,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
-        '[ "frontend", Salary, "database"]',
-      );
+      expect(textboxes[5]).toHaveTextContent('[ "frontend", Name, "database"]');
     });
   },
 };
@@ -327,7 +321,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           },
           body: `{
   "speciality": "frontend",
-  "salary": {{${MOCKED_STEP_ID}.salary}}
+  "name": {{${MOCKED_STEP_ID}.name}}
 }`,
         },
         outputSchema: {},
@@ -354,7 +348,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
       const textboxes = canvas.getAllByRole('textbox');
 
       expect(textboxes[5]).toHaveTextContent(
-        '{ "speciality": "frontend", "salary": Salary}',
+        '{ "speciality": "frontend", "name": Name}',
       );
     });
   },

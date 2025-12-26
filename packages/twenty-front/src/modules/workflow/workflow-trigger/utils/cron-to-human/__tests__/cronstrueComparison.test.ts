@@ -10,26 +10,26 @@ describe('cronstrue comparison tests', () => {
     it('should handle "0 23 * * 1-5" like cronstrue', () => {
       // cronstrue: "At 11:00 PM, Monday through Friday" (but we use 24h format)
       expect(describeCronExpression('0 23 * * 1-5')).toBe(
-        'at 23:00 on weekdays',
+        'at 23:00 UTC on weekdays',
       );
     });
 
     it('should handle "0 23 * * *" like cronstrue', () => {
       // cronstrue: "At 11:00 PM, every day" (but we use 24h format and simpler wording)
-      expect(describeCronExpression('0 23 * * *')).toBe('at 23:00');
+      expect(describeCronExpression('0 23 * * *')).toBe('at 23:00 UTC');
     });
 
     it('should handle "23 12 * * 0#2" like cronstrue', () => {
       // cronstrue: "At 12:23 PM, on the second Sunday of the month" (but we use 24h format)
       expect(describeCronExpression('23 12 * * 0#2')).toBe(
-        'at 12:23 on the second Sunday of the month',
+        'at 12:23 UTC on the second Sunday of the month',
       );
     });
 
     it('should handle "23 14 * * 0#2" like cronstrue', () => {
       // cronstrue: "At 14:23, on the second Sunday of the month"
       expect(describeCronExpression('23 14 * * 0#2')).toBe(
-        'at 14:23 on the second Sunday of the month',
+        'at 14:23 UTC on the second Sunday of the month',
       );
     });
 
@@ -45,25 +45,25 @@ describe('cronstrue comparison tests', () => {
   describe('additional complex patterns', () => {
     it('should handle business hours patterns', () => {
       expect(describeCronExpression('*/15 9-17 * * 1-5')).toBe(
-        'every 15 minutes between 09:00 and 17:00 on weekdays',
+        'every 15 minutes between 09:00 UTC and 17:00 UTC on weekdays',
       );
     });
 
     it('should handle monthly patterns', () => {
       expect(describeCronExpression('0 9 1 */3 *')).toBe(
-        'at 09:00 on the 1st of the month every 3 months',
+        'at 09:00 UTC on the 1st of the month every 3 months',
       );
     });
 
     it('should handle last day patterns', () => {
       expect(describeCronExpression('0 23 L * *')).toBe(
-        'at 23:00 on the last day of the month',
+        'at 23:00 UTC on the last day of the month',
       );
     });
 
     it('should handle last Friday patterns', () => {
       expect(describeCronExpression('0 17 * * 5L')).toBe(
-        'at 17:00 on the last Friday of the month',
+        'at 17:00 UTC on the last Friday of the month',
       );
     });
   });
@@ -72,10 +72,10 @@ describe('cronstrue comparison tests', () => {
     it('should format in 12-hour when requested', () => {
       expect(
         describeCronExpression('0 14 * * *', { use24HourTimeFormat: false }),
-      ).toBe('at 2:00 PM');
+      ).toBe('at 2:00 PM UTC');
       expect(
         describeCronExpression('23 12 * * 0#2', { use24HourTimeFormat: false }),
-      ).toBe('at 12:23 PM on the second Sunday of the month');
+      ).toBe('at 12:23 PM UTC on the second Sunday of the month');
     });
   });
 });

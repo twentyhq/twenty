@@ -15,6 +15,7 @@ import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Other
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
@@ -66,6 +67,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
         workflowId,
         defaultLabel,
         getIcon(icon),
+        TRIGGER_STEP_ID,
       );
     };
   };
@@ -75,7 +77,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
-        Data
+        {t`Data`}
       </RightDrawerWorkflowSelectStepTitle>
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
@@ -91,7 +93,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
       })}
 
       <RightDrawerWorkflowSelectStepTitle>
-        Others
+        {t`Others`}
       </RightDrawerWorkflowSelectStepTitle>
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);

@@ -19,7 +19,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -27,7 +27,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -35,7 +35,7 @@
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
-        "main": "packages/twenty-server/dist/src/main.js",
+        "main": "packages/twenty-server/dist/main.js",
         "tsConfig": "packages/twenty-server/tsconfig.json",
         "outputPath": "packages/twenty-server/dist",
         "updateBuildableProjectDepsInPackageJson": true
@@ -44,17 +44,18 @@
     "typecheck": {},
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": ["typecheck", "build"],
+      "cache": false,
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start --watch"
+        "command": "NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start"
+        "command": "NODE_ENV=development nest start"
       }
     },
     "start:ci-if-needed": {
@@ -83,19 +84,29 @@
         "command": "cp .env.example .env"
       }
     },
+    "reset:env:e2e-testing-server": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.e2e-testing-server"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.e2e-testing-server .env"
+      }
+    },
     "command": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/command/command.js"
       }
     },
     "command-no-deps": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/command/command.js"
       }
     },
     "worker": {
@@ -103,7 +114,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/queue-worker/queue-worker.js"
+        "command": "node dist/queue-worker/queue-worker.js"
       }
     },
     "typeorm": {
@@ -143,6 +154,22 @@
       "configurations": {
         "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
         "fix": {}
+      }
+    },
+    "lint:changed": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint",
+        "base": "main"
+      },
+      "configurations": {
+        "fix": {
+          "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint --fix"
+        },
+        "staged": {
+          "command": "git diff --cached --name-only --diff-filter=d | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint"
+        }
       }
     },
     "test": {},

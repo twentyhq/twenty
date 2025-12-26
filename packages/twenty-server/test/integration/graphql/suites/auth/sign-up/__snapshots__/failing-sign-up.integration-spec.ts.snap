@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Successful User Sign Up (integration) should fail to sign up with duplicate email 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "USER_ALREADY_EXISTS",
+    "userFriendlyMessage": "User already exists",
+  },
+  "message": "User already exists",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Successful User Sign Up (integration) should fail to sign up with invalid email 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "email must be an email",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Successful User Sign Up (integration) should fail to sign up with weak password 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Password too weak",
+  },
+  "message": "Password too weak",
+  "name": "UserInputError",
+}
+`;

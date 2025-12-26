@@ -1,0 +1,49 @@
+---
+title: Bară de navigare
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Antet" />
+</Frame>
+
+Redă o bară de navigare care conține mai multe componente `NavigationBarItem`.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip   | Descriere                                                                                                                                                                                                                     |
+    | -------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | șir   | Numele elementului de navigare care este activ în prezent                                                                                                                                                                     |
+    | elemente       | array | O matrice de obiecte care reprezintă fiecare element de navigare. Fiecare obiect conține `numele` elementului, componenta `Icon` pentru afișare și o funcție `onClick` care să fie invocată atunci când elementul este apăsat |
+  </Tab>
+</Tabs>

@@ -1,0 +1,78 @@
+---
+title: Подсказка приложения
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Заголовок" />
+</Frame>
+
+Краткое сообщение, которое отображает дополнительную информацию, когда пользователь взаимодействует с элементом.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+    export const MyComponent = () => {
+      return (
+        <>
+          <p id="hoverText" style={{ display: "inline-block" }}>
+            Customer Insights
+          </p>
+          <AppTooltip
+            className
+            anchorSelect="#hoverText"
+            content="Explore customer behavior and preferences"
+            delayHide={0}
+            offset={6}
+            noArrow={false}
+            isOpen={true}
+            place="bottom"
+            positionStrategy="absolute"
+          />
+        </>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства         | Тип                                          | Описание                                                                                                                                                                                           |
+    | ---------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | строка                                       | Необязательный CSS-класс для дополнительного стилирования                                                                                                                                          |
+    | anchorSelect     | CSS-селектор                                 | Селектор для анкера подсказки (элемент, который активирует подсказку)                                                                                                                              |
+    | content          | строка                                       | Содержимое, которое вы хотите отобразить в подсказке                                                                                                                                               |
+    | delayHide        | число                                        | Задержка в секундах перед скрытием подсказки после того, как курсор покинет анкер                                                                                                                  |
+    | offset           | число                                        | Смещение в пикселях для позиционирования подсказки                                                                                                                                                 |
+    | noArrow          | булево                                       | Если `true`, стрелка на подсказке скрыта                                                                                                                                                           |
+    | isOpen           | булево                                       | Если `true`, подсказка открыта по умолчанию                                                                                                                                                        |
+    | place            | Строка `PlacesType` из `react-tooltip`       | Определяет расположение подсказки. Значения включают: `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, `left-end` |
+    | positionStrategy | Строка `PositionStrategy` из `react-tooltip` | Стратегия позиционирования для подсказки. Имеет два значения: `absolute` и `fixed`                                                                                                                 |
+  </Tab>
+</Tabs>
+
+## Переполненный текст с подсказкой
+
+Обрабатывает переполненный текст и отображает подсказку, когда текст переполняется.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      const crmTaskDescription =
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства | Тип    | Описание                                                                 |
+    | -------- | ------ | ------------------------------------------------------------------------ |
+    | текст    | строка | Содержимое, которое вы хотите отобразить в области переполненного текста |
+  </Tab>
+</Tabs>

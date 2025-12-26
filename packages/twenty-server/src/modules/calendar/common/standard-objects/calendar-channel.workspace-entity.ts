@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -9,6 +10,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -16,7 +18,6 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -69,6 +70,7 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
+
   namePlural: 'calendarChannels',
   labelSingular: msg`Calendar Channel`,
   labelPlural: msg`Calendar Channels`,
@@ -86,7 +88,9 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
-  handle: string;
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
@@ -127,6 +131,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
       },
     ],
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   syncStatus: CalendarChannelSyncStatus | null;
 
@@ -188,6 +193,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${CalendarChannelSyncStage.PENDING_CONFIGURATION}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   syncStage: CalendarChannelSyncStage;
 
   @WorkspaceField({
@@ -212,6 +218,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${CalendarChannelVisibility.SHARE_EVERYTHING}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   visibility: string;
 
   @WorkspaceField({
@@ -223,6 +230,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     defaultValue: true,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isContactAutoCreationEnabled: boolean;
 
   @WorkspaceField({
@@ -260,6 +268,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
   @WorkspaceField({
@@ -270,6 +279,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconRefresh',
     defaultValue: true,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isSyncEnabled: boolean;
 
   @WorkspaceField({
@@ -279,7 +289,9 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sync Cursor. Used for syncing events from the calendar provider`,
     icon: 'IconReload',
   })
-  syncCursor: string;
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  syncCursor: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
@@ -288,6 +300,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync date`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   syncedAt: string | null;
 
@@ -298,6 +311,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sync stage started at`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   syncStageStartedAt: string | null;
 
@@ -309,6 +323,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconX',
     defaultValue: 0,
   })
+  @WorkspaceIsFieldUIReadOnly()
   throttleFailureCount: number;
 
   @WorkspaceRelation({
@@ -321,6 +336,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'calendarChannels',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
   @WorkspaceJoinColumn('connectedAccount')
@@ -336,6 +352,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarChannelEventAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   calendarChannelEventAssociations: Relation<
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;

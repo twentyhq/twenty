@@ -2,11 +2,10 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { type ReactNode } from 'react';
 
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 
 type RecordTableDraggableTrProps = {
   className?: string;
@@ -28,16 +27,12 @@ export const RecordTableDraggableTr = ({
   children,
 }: RecordTableDraggableTrProps) => {
   const theme = useTheme();
-  const { recordTableId } = useRecordTableContextOrThrow();
-  const multiDragState = useRecordDragState('table', recordTableId);
 
-  const isSecondaryDragged =
-    multiDragState?.isDragging &&
-    multiDragState.originalSelection.includes(recordId) &&
-    recordId !== multiDragState.primaryDraggedRecordId;
+  const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   return (
     <Draggable
+      key={recordId}
       draggableId={recordId}
       index={draggableIndex}
       isDragDisabled={isDragDisabled}
@@ -75,9 +70,7 @@ export const RecordTableDraggableTr = ({
               }}
             >
               {children}
-              <RecordTableRowMultiDragPreview
-                isDragging={draggableSnapshot.isDragging}
-              />
+              <RecordTableRowMultiDragPreview />
             </RecordTableRowDraggableContextProvider>
           </RecordTableTr>
         </>

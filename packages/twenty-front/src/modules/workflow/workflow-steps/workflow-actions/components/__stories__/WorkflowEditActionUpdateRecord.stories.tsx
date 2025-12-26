@@ -11,7 +11,7 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionUpdateRecord } from '../WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -90,15 +90,6 @@ export const DisabledWithEmptyValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleText = await canvas.findByText('Update Record');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Update Record');
-    expect(titleInput).not.toBeInTheDocument();
-
     const objectSelectCurrentValue = await canvas.findByText('People');
 
     await userEvent.click(objectSelectCurrentValue);
@@ -151,15 +142,6 @@ export const DisabledWithDefaultStaticValues: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    const titleText = await canvas.findByText('Update Record');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Update Record');
-    expect(titleInput).not.toBeInTheDocument();
 
     const objectSelectCurrentValue = await canvas.findByText('People');
 
@@ -215,15 +197,6 @@ export const DisabledWithDefaultVariableValues: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    const titleText = await canvas.findByText('Update Record');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Update Record');
-    expect(titleInput).not.toBeInTheDocument();
 
     const objectSelectCurrentValue = await canvas.findByText('People');
 

@@ -3,7 +3,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
-import { getStepInfoHistoryItem } from '../utils/getStepInfoHistoryItem';
+import { getStepInfoHistoryItem } from '@/workflow/workflow-steps/utils/getStepInfoHistoryItem';
 
 export const useWorkflowRunStepInfo = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();

@@ -1,0 +1,38 @@
+---
+title: Štítek
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Hlavička" />
+</Frame>
+
+Komponenta pro vizuální kategorizaci nebo označení obsahu.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
+
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ             | Popis                                                                                                                                   |
+    | ---------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+    | className  | řetězec         | Volitelný název pro dodatečné stylování                                                                                                 |
+    | barva      | řetězec         | Barva štítku. Možnosti zahrnují: `zelená`, `tyrkysová`, `nebeská`, `modrá`, `fialová`, `růžová`, `červená`, `oranžová`, `žlutá`, `šedá` |
+    | text       | textový řetězec | Obsah štítku                                                                                                                            |
+    | onClick    | funkce          | Volitelná funkce vyvolaná při kliknutí uživatele na štítek                                                                              |
+  </Tab>
+</Tabs>

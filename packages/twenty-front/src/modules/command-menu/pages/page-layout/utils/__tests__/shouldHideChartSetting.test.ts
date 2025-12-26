@@ -5,7 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconChartBar } from 'twenty-ui/display';
-import { shouldHideChartSetting } from '../shouldHideChartSetting';
+import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 
 describe('shouldHideChartSetting', () => {
   const mockItemWithoutDependencies: ChartSettingsItem = {
@@ -13,7 +13,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`Data Labels`,
     Icon: IconChartBar,
     isBoolean: true,
-    isInput: false,
+    isNumberInput: false,
   };
 
   const mockItemDependingOnSource: ChartSettingsItem = {
@@ -21,7 +21,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`X Axis Data`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [CHART_CONFIGURATION_SETTING_IDS.SOURCE],
   };
 
@@ -30,7 +30,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`Sort By Group`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [CHART_CONFIGURATION_SETTING_IDS.GROUP_BY],
   };
 
@@ -39,7 +39,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`X Axis Data`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [
       CHART_CONFIGURATION_SETTING_IDS.SOURCE,
       CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
@@ -151,7 +151,7 @@ describe('shouldHideChartSetting', () => {
         label: msg`Data Labels`,
         Icon: IconChartBar,
         isBoolean: true,
-        isInput: false,
+        isNumberInput: false,
         dependsOn: undefined,
       };
 
@@ -170,7 +170,7 @@ describe('shouldHideChartSetting', () => {
         label: msg`Data Labels`,
         Icon: IconChartBar,
         isBoolean: true,
-        isInput: false,
+        isNumberInput: false,
         dependsOn: [],
       };
 
@@ -186,7 +186,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity X`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockDateGranularityYItem: ChartSettingsItem = {
@@ -194,7 +194,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity Y`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockDateGranularityItem: ChartSettingsItem = {
@@ -202,7 +202,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockObjectMetadataItem: ObjectMetadataItem = {
@@ -385,6 +385,28 @@ describe('shouldHideChartSetting', () => {
     });
 
     describe('DATE_GRANULARITY (Pie Chart)', () => {
+      const relationField: any = {
+        id: 'relation-field-id',
+        name: 'company',
+        label: 'Company',
+        type: FieldMetadataType.RELATION,
+        relation: { targetObjectMetadata: { nameSingular: 'company' } },
+      };
+
+      const targetObjectMetadata: any = {
+        id: 'company-id',
+        nameSingular: 'company',
+        namePlural: 'companies',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            label: 'Created At',
+            type: FieldMetadataType.DATE,
+          },
+        ],
+      };
+
       it('should show when group by field is a date field', () => {
         const pieChartConfig: ChartConfiguration = {
           __typename: 'PieChartConfiguration',
@@ -434,6 +456,30 @@ describe('shouldHideChartSetting', () => {
         );
 
         expect(result).toBe(true);
+      });
+
+      it('should show when group by field is a relation date subfield', () => {
+        const objectMetadataItemWithRelation: ObjectMetadataItem = {
+          ...mockObjectMetadataItem,
+          fields: [...mockObjectMetadataItem.fields, relationField],
+        } as any;
+
+        const pieChartConfig: ChartConfiguration = {
+          __typename: 'PieChartConfiguration',
+          groupByFieldMetadataId: relationField.id,
+          groupBySubFieldName: 'createdAt',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityItem,
+          'object-id',
+          true,
+          pieChartConfig,
+          objectMetadataItemWithRelation,
+          [objectMetadataItemWithRelation, targetObjectMetadata] as any,
+        );
+
+        expect(result).toBe(false);
       });
     });
   });

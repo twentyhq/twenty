@@ -36,7 +36,6 @@ import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/w
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
@@ -50,7 +49,6 @@ export class WorkflowExecutorWorkspaceService {
     private readonly billingService: BillingService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
   async executeFromSteps({
@@ -142,7 +140,7 @@ export class WorkflowExecutorWorkspaceService {
     const isError = isDefined(actionOutput.error);
 
     if (!isError) {
-      this.sendWorkflowNodeRunEvent(workspaceId);
+      this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -195,10 +193,11 @@ export class WorkflowExecutorWorkspaceService {
     const isIteratorStep = isWorkflowIteratorAction(executedStep);
 
     if (isIteratorStep) {
-      const iteratorStepResult =
-        executedStepResult.result as WorkflowIteratorResult;
+      const iteratorStepResult = executedStepResult.result as
+        | WorkflowIteratorResult
+        | undefined;
 
-      if (!iteratorStepResult.hasProcessedAllItems) {
+      if (!iteratorStepResult?.hasProcessedAllItems) {
         return isString(executedStep.settings.input.initialLoopStepIds)
           ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
           : executedStep.settings.input.initialLoopStepIds;
@@ -259,13 +258,18 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
-  private sendWorkflowNodeRunEvent(workspaceId: string) {
+  private sendWorkflowNodeRunEvent(workspaceId: string, workflowId: string) {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [
         {
           eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
           value: 1,
+          dimensions: {
+            execution_type: 'workflow_execution',
+            resource_id: workflowId,
+            execution_context_1: null,
+          },
         },
       ],
       workspaceId,
@@ -411,9 +415,6 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-    );
-    await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
-      workspaceId,
     );
   }
 }

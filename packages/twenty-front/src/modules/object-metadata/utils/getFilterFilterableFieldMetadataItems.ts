@@ -11,6 +11,10 @@ export const getFilterFilterableFieldMetadataItems = ({
     const isFieldActive = field.isActive;
     const isIdField = field.name === 'id';
 
+    const isWorkflowRelationField =
+      field.type === FieldMetadataType.RELATION &&
+      (field.name === 'workflow' || field.name === 'workflowVersion');
+
     const isRelationFieldHandled = !(
       field.type === FieldMetadataType.RELATION &&
       field.relation?.type !== RelationType.MANY_TO_ONE
@@ -39,7 +43,7 @@ export const getFilterFilterableFieldMetadataItems = ({
     ].includes(field.type);
 
     const isFieldFilterable =
-      (!isSystemField || isIdField) &&
+      (!isSystemField || isIdField || isWorkflowRelationField) &&
       isFieldActive &&
       isRelationFieldHandled &&
       isFieldTypeFilterable;

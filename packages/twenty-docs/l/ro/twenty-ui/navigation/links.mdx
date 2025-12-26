@@ -1,0 +1,154 @@
+---
+title: Linkuri
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Antet" />
+</Frame>
+
+## Link de Contact
+
+Un component de link stilizat pentru afișarea informațiilor de contact.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+
+    import { ContactLink } from 'twenty-ui/navigation';
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
+
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip               | Descriere                                               |
+    | ----------- | ----------------- | ------------------------------------------------------- |
+    | numeClasa   | șir               | Nume opțional pentru stilizare suplimentară             |
+    | href        | string            | URL-ul sau calea țintă pentru link                      |
+    | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
+    | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
+  </Tab>
+</Tabs>
+
+## Link Brut
+
+Un component de link stilizat pentru afișarea linkurilor.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip               | Descriere                                               |
+    | ----------- | ----------------- | ------------------------------------------------------- |
+    | numeClasă   | string            | Nume opțional pentru stilizare suplimentară             |
+    | href        | string            | URL-ul sau calea țintă pentru link                      |
+    | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
+    | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
+  </Tab>
+</Tabs>
+
+## Link Rotunjit
+
+Un link stilizat cu margini rotunjite cu un component Chip pentru linkuri.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip               | Descriere                                               |
+    | ----------- | ----------------- | ------------------------------------------------------- |
+    | href        | șir               | URL-ul sau calea țintă pentru link                      |
+    | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
+    | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
+  </Tab>
+</Tabs>
+
+## Link Social
+
+Linkuri sociale stilizate, cu suport pentru diverse tipuri de linkuri sociale, cum ar fi URL-uri, LinkedIn și X (sau Twitter).
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip               | Descriere                                                                  |
+    | ----------- | ----------------- | -------------------------------------------------------------------------- |
+    | href        | string            | URL-ul sau calea țintă pentru link                                         |
+    | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului                                |
+    | tip         | string            | Tipul linkurilor sociale. Opțiunile includ: `url`, `LinkedIn` și `Twitter` |
+    | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link                    |
+  </Tab>
+</Tabs>

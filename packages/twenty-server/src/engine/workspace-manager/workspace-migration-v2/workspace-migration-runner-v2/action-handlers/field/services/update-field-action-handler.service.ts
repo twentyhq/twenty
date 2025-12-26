@@ -10,7 +10,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -53,7 +52,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata<T>;
-  update: PropertyUpdate<FlatFieldMetadata<T>, P>;
+  update: PropertyUpdate<FlatFieldMetadata, P>;
 };
 
 @Injectable()
@@ -211,19 +210,26 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
       if (
-        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
-        update.property === 'settings'
+        isPropertyUpdate(update, 'settings') &&
+        isDefined(update.from?.joinColumnName) &&
+        isDefined(update.to?.joinColumnName) &&
+        update.from.joinColumnName !== update.to.joinColumnName &&
+        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
-        await this.handleMorphOrRelationSettingsUpdate({
-          flatFieldMetadata: optimisticFlatFieldMetadata,
+        await this.workspaceSchemaManagerService.columnManager.renameColumn({
           queryRunner,
           schemaName,
           tableName,
-          update: update as PropertyUpdate<
-            FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-            'settings'
-          >,
+          oldColumnName: update.from.joinColumnName,
+          newColumnName: update.to.joinColumnName,
         });
+        optimisticFlatFieldMetadata = {
+          ...optimisticFlatFieldMetadata,
+          settings: {
+            ...optimisticFlatFieldMetadata.settings,
+            joinColumnName: update.to.joinColumnName,
+          },
+        };
       }
     }
   }
@@ -263,13 +269,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
-    } else {
-      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-        throw new WorkspaceMigrationRunnerException(
-          'Relation field metadata name update is not supported yet',
-          WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
-        );
-      }
+    } else if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
@@ -417,34 +417,5 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         oldToNewEnumOptionMap: valueMapping,
       });
     }
-  }
-
-  private async handleMorphOrRelationSettingsUpdate({
-    queryRunner,
-    schemaName,
-    tableName,
-    update,
-  }: UpdateFieldPropertyUpdateHandlerArgs<
-    'settings',
-    MorphOrRelationFieldMetadataType
-  >) {
-    const fromJoinColumnName = update.from.joinColumnName;
-    const toJoinColumnName = update.to.joinColumnName;
-
-    if (
-      !isDefined(fromJoinColumnName) ||
-      !isDefined(toJoinColumnName) ||
-      fromJoinColumnName === toJoinColumnName
-    ) {
-      return;
-    }
-
-    await this.workspaceSchemaManagerService.columnManager.renameColumn({
-      newColumnName: fromJoinColumnName,
-      oldColumnName: toJoinColumnName,
-      queryRunner,
-      schemaName,
-      tableName,
-    });
   }
 }

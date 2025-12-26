@@ -12,7 +12,9 @@ import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectT
 export const SettingsApplicationDetailContentTab = ({
   application,
 }: {
-  application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
+    objects: { id: string }[];
+  };
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -37,11 +39,23 @@ export const SettingsApplicationDetailContentTab = ({
 
   return (
     <>
+      {shouldDisplayObjects && (
+        <Section>
+          <H2Title
+            title={t`Objects`}
+            description={t`Objects managed by this app`}
+          />
+          <SettingsObjectTable
+            objectMetadataItems={applicationObjectMetadataItems}
+            withSearchBar={false}
+          />
+        </Section>
+      )}
       {shouldDisplayServerlessFunctions && (
         <Section>
           <H2Title
-            title={t`Application serverless functions`}
-            description={t`Serverless functions created by application`}
+            title={t`Functions`}
+            description={t`Serverless functions powering this app`}
           />
           <SettingsServerlessFunctionsTable
             serverlessFunctions={serverlessFunctions}
@@ -51,23 +65,10 @@ export const SettingsApplicationDetailContentTab = ({
       {shouldDisplayAgents && (
         <Section>
           <H2Title
-            title={t`Application agents`}
-            description={t`Agents created by application`}
+            title={t`Agents`}
+            description={t`Agents powering this app`}
           />
-          <SettingsAIAgentsTable withSearchBar={false} />
-        </Section>
-      )}
-      {shouldDisplayObjects && (
-        <Section>
-          <H2Title
-            title={t`Application objects`}
-            description={t`Objects created by application`}
-          />
-          <SettingsObjectTable
-            activeObjects={applicationObjectMetadataItems}
-            inactiveObjects={[]}
-            withSearchBar={false}
-          />
+          <SettingsAIAgentsTable />
         </Section>
       )}
     </>

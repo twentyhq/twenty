@@ -1,4 +1,5 @@
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -10,10 +11,7 @@ type AttachmentDataSeed = {
   id: string;
   name: string;
   fullPath: string;
-  type: string;
-  fileCategory?: string;
-  // Deprecated: Use createdBy instead
-  authorId: string | null;
+  fileCategory: string;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
@@ -28,9 +26,7 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'id',
   'name',
   'fullPath',
-  'type',
   'fileCategory',
-  'authorId', // Deprecated: kept for backward compatibility during migration
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
@@ -70,152 +66,128 @@ const FILE_NAME_VARIATIONS = [
   // Documents
   {
     name: 'Service Agreement.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'NDA Document.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Project Proposal.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Invoice Q1 2024.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Meeting Notes.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Report Final.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Contract Signed.pdf',
-    type: 'TextDocument',
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   // Spreadsheets
   {
     name: 'Financial Forecast.xlsx',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Sales Report Q4.xlsx',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Team Roster.xlsx',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Expense Report.xlsx',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Inventory List.xlsx',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Data Export.csv',
-    type: 'Spreadsheet',
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   // Presentations
   {
     name: 'Pitch Deck.pptx',
-    type: 'Presentation',
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Q4 Results.pptx',
-    type: 'Presentation',
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Roadmap 2024.pptx',
-    type: 'Presentation',
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Company Overview.pptx',
-    type: 'Presentation',
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Training Materials.pptx',
-    type: 'Presentation',
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   // Images
   {
     name: 'Company Logo.png',
-    type: 'Image',
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
   {
     name: 'Product Photo.jpg',
-    type: 'Image',
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
-  { name: 'Diagram.png', type: 'Image', fileCategory: 'IMAGE', pathIndex: 3 },
-  { name: 'Wireframe.png', type: 'Image', fileCategory: 'IMAGE', pathIndex: 3 },
+  { name: 'Diagram.png', fileCategory: 'IMAGE', pathIndex: 3 },
+  { name: 'Wireframe.png', fileCategory: 'IMAGE', pathIndex: 3 },
   {
     name: 'Mockup Design.png',
-    type: 'Image',
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
-  { name: 'Headshot.jpg', type: 'Image', fileCategory: 'IMAGE', pathIndex: 3 },
+  { name: 'Headshot.jpg', fileCategory: 'IMAGE', pathIndex: 3 },
   // Archives
   {
     name: 'Project Files.zip',
-    type: 'Archive',
     fileCategory: 'ARCHIVE',
     pathIndex: 4,
   },
   {
     name: 'Backup Data.zip',
-    type: 'Archive',
     fileCategory: 'ARCHIVE',
     pathIndex: 4,
   },
   {
     name: 'Source Code.zip',
-    type: 'Archive',
     fileCategory: 'ARCHIVE',
     pathIndex: 4,
   },
@@ -275,10 +247,7 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       id: ATTACHMENT_DATA_SEED_IDS[`ID_${INDEX}`],
       name: NAME_VARIATION.name,
       fullPath: FILE_PATH,
-      type: NAME_VARIATION.type,
       fileCategory: NAME_VARIATION.fileCategory,
-      // Deprecated: Use createdBy fields instead
-      authorId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdBySource: FieldActorSource.MANUAL,
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim A',

@@ -3,6 +3,8 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -15,6 +17,9 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
+
+  const tabListComponentInstanceId =
+    getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
@@ -31,6 +36,11 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     componentInstanceId,
   );
 
+  const activeTabIdState = useRecoilComponentCallbackState(
+    activeTabIdComponentState,
+    tabListComponentInstanceId,
+  );
+
   const resetDraftPageLayoutToPersistedPageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -39,6 +49,21 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
           .getValue();
 
         if (isDefined(pageLayoutPersisted)) {
+          const currentActiveTabId = snapshot
+            .getLoadable(activeTabIdState)
+            .getValue();
+
+          const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
+          const isActiveTabInPersistedTabs =
+            currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
+
+          if (
+            !isActiveTabInPersistedTabs &&
+            pageLayoutPersisted.tabs.length > 0
+          ) {
+            set(activeTabIdState, pageLayoutPersisted.tabs[0].id);
+          }
+
           set(pageLayoutDraftState, {
             id: pageLayoutPersisted.id,
             name: pageLayoutPersisted.name,
@@ -55,6 +80,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       pageLayoutDraftState,
       pageLayoutPersistedState,
       pageLayoutCurrentLayoutsState,
+      activeTabIdState,
     ],
   );
 

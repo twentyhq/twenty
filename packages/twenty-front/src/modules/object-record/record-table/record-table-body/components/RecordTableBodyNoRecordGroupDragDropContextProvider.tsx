@@ -10,10 +10,10 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
-import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
-import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
-import { useRecordTableWithoutGroupDragOperations } from '@/object-record/record-drag/table/hooks/useRecordTableWithoutGroupDragOperations';
-import { selectedRowIdsComponentSelector } from '../../states/selectors/selectedRowIdsComponentSelector';
+import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
+import { useProcessTableWithoutGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithoutGroupRecordDrop';
+import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 
 export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   children,
@@ -27,10 +27,10 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
     recordTableId,
   );
 
-  const { startDrag } = useStartRecordDrag('table', recordTableId);
-  const { endDrag } = useEndRecordDrag('table', recordTableId);
-  const { processDragOperationWithoutGroup } =
-    useRecordTableWithoutGroupDragOperations();
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
+  const { processTableWithoutGroupRecordDrop } =
+    useProcessTableWithoutGroupRecordDrop();
 
   const handleDragStart = useRecoilCallback(
     ({ snapshot }) =>
@@ -40,17 +40,17 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
           selectedRowIdsSelector,
         );
 
-        startDrag(start, currentSelectedRecordIds);
+        startRecordDrag(start, currentSelectedRecordIds);
       },
-    [selectedRowIdsSelector, startDrag],
+    [selectedRowIdsSelector, startRecordDrag],
   );
 
   const handleDragEnd = useRecoilCallback(
     () => (result: DropResult) => {
-      processDragOperationWithoutGroup(result);
-      endDrag();
+      processTableWithoutGroupRecordDrop(result);
+      endRecordDrag();
     },
-    [endDrag, processDragOperationWithoutGroup],
+    [endRecordDrag, processTableWithoutGroupRecordDrop],
   );
 
   return (

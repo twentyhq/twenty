@@ -1,0 +1,154 @@
+---
+title: Odkazy
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Hlavička" />
+</Frame>
+
+## Odkaz na kontakt
+
+Stylizovaná komponenta odkazu pro zobrazení kontaktních informací.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+
+    import { ContactLink } from 'twenty-ui/navigation';
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
+
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ               | Popis                                                 |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | className  | řetězec           | Volitelný název pro další stylování                   |
+    | href       | řetězec           | Cílová URL adresa nebo cesta pro odkaz                |
+    | onClick    | funkce            | Funkce zpětného volání spuštěná při kliknutí na odkaz |
+    | děti       | `React.ReactNode` | Obsah, který se má zobrazovat uvnitř odkazu           |
+  </Tab>
+</Tabs>
+
+## Surový odkaz
+
+Stylizovaná komponenta odkazu pro zobrazení odkazů.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ               | Popis                                                 |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | className  | řetězec           | Volitelný název pro dodatečné stylování               |
+    | href       | řetězec           | Cílová URL adresa nebo cesta pro odkaz                |
+    | onClick    | funkce            | Funkce zpětného volání spuštěná při kliknutí na odkaz |
+    | děti       | `React.ReactNode` | Obsah, který se má zobrazovat uvnitř odkazu           |
+  </Tab>
+</Tabs>
+
+## Zaoblený odkaz
+
+Zaobleně stylizovaný odkaz s komponentou Chip pro odkazy.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ               | Popis                                                 |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | href       | řetězec           | Cílová URL adresa nebo cesta pro odkaz                |
+    | děti       | `React.ReactNode` | Obsah, který se má zobrazovat uvnitř odkazu           |
+    | onClick    | funkce            | Funkce zpětného volání spuštěná při kliknutí na odkaz |
+  </Tab>
+</Tabs>
+
+## Sociální odkaz
+
+Stylizované sociální odkazy s podporou různých typů sociálních odkazů, jako jsou URL, LinkedIn a X (nebo Twitter).
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ               | Popis                                                                   |
+    | ---------- | ----------------- | ----------------------------------------------------------------------- |
+    | href       | řetězec           | Cílová URL adresa nebo cesta pro odkaz                                  |
+    | děti       | `React.ReactNode` | Obsah, který se má zobrazovat uvnitř odkazu                             |
+    | typ        | řetězec           | Typ sociálního odkazu. Možnosti zahrnují: `url`, `LinkedIn` a `Twitter` |
+    | onClick    | funkce            | Funkce zpětného volání spuštěná při kliknutí na odkaz                   |
+  </Tab>
+</Tabs>

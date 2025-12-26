@@ -53,8 +53,11 @@ export class MessagingMessagesImportCronJob {
       try {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-        const messageChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
+        const now = new Date().toISOString();
+
+        const [messageChannels] = await this.coreDataSource.query(
+          `UPDATE ${schemaName}."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
+          WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}' RETURNING *`,
         );
 
         for (const messageChannel of messageChannels) {

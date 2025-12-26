@@ -3,18 +3,23 @@ import { useMutation } from '@apollo/client';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  type Workflow,
+  type WorkflowStatus,
+  type WorkflowVersion,
+} from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DeactivateWorkflowVersionMutation,
   type DeactivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -29,6 +34,10 @@ export const useDeactivateWorkflowVersion = () => {
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
+  const { objectMetadataItem: objectMetadataItemWorkflow } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+    });
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -78,6 +87,39 @@ export const useDeactivateWorkflowVersion = () => {
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
         });
+
+        const cachedWorkflow = getRecordFromCache<Workflow>({
+          objectMetadataItem: objectMetadataItemWorkflow,
+          cache: apolloCoreClient.cache,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          recordId: workflowVersion.workflowId,
+        });
+
+        const newStatuses = new Set(
+          [...(cachedWorkflow?.statuses ?? []), 'DEACTIVATED'].filter(
+            (status) => status !== 'ACTIVE',
+          ),
+        );
+
+        if (isDefined(cachedWorkflow)) {
+          modifyRecordFromCache({
+            cache: apolloCoreClient.cache,
+            recordId: workflowVersion.workflowId,
+            objectMetadataItem: objectMetadataItemWorkflow,
+            fieldModifiers: {
+              statuses: () => Array.from(newStatuses),
+            },
+          });
+          upsertRecordsInStore({
+            partialRecords: [
+              {
+                ...cachedWorkflow,
+                statuses: Array.from(newStatuses) as WorkflowStatus[],
+              },
+            ],
+          });
+        }
       },
     });
   };

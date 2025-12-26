@@ -13,7 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -21,6 +21,8 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { ApolloError } from '@apollo/client';
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -47,13 +49,16 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
+const firstNameErrorMessage = msg`First name can not be empty`;
+const lastNameErrorMessage = msg`Last name can not be empty`;
+
 const validationSchema = z
   .object({
     firstName: z.string().min(1, {
-      error: 'First name can not be empty',
+      error: i18n._(firstNameErrorMessage),
     }),
     lastName: z.string().min(1, {
-      error: 'Last name can not be empty',
+      error: i18n._(lastNameErrorMessage),
     }),
   })
   .required();
@@ -116,6 +121,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
+
               colorScheme: 'System',
             };
           }
@@ -175,8 +181,12 @@ export const CreateProfile = () => {
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Picture" />
-          <ProfilePictureUploader />
+          <H2Title title={t`Picture`} />
+          {currentWorkspaceMember?.id && (
+            <WorkspaceMemberPictureUploader
+              workspaceMemberId={currentWorkspaceMember.id}
+            />
+          )}
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
@@ -202,7 +212,7 @@ export const CreateProfile = () => {
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="Tim"
+                  placeholder={t`Tim`}
                   error={error?.message}
                   fullWidth
                 />
@@ -224,7 +234,7 @@ export const CreateProfile = () => {
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="Cook"
+                  placeholder={t`Cook`}
                   error={error?.message}
                   fullWidth
                 />

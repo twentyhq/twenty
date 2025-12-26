@@ -1,0 +1,154 @@
+---
+title: روابط
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="رأس الصفحة" />
+</Frame>
+
+## رابط الاتصال
+
+مكون رابط منمق لعرض معلومات الاتصال.
+
+<Tabs>
+  <Tab title="27332A2E2F2745">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+
+    import { ContactLink } from 'twenty-ui/navigation';
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
+
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص     | النوع             | الوصف                                            |
+    | --------- | ----------------- | ------------------------------------------------ |
+    | className | string            | اسم اختياري للتنسيق الإضافي.                     |
+    | رابط      | نص                | عنوان URL المستهدف أو المسار للرابط              |
+    | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
+    | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
+  </Tab>
+</Tabs>
+
+## رابط خام
+
+مكون رابط منمق لعرض الروابط.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص     | النوع             | الوصف                                            |
+    | --------- | ----------------- | ------------------------------------------------ |
+    | اسم الصنف | string            | اسم اختياري لتنسيقات إضافية                      |
+    | رابط      | string            | عنوان URL المستهدف أو المسار للرابط              |
+    | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
+    | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
+  </Tab>
+</Tabs>
+
+## رابط مستدير
+
+رابط مستدير مثبت مع مكون Chip للروابط.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص     | النوع             | الوصف                                            |
+    | --------- | ----------------- | ------------------------------------------------ |
+    | رابط      | string            | عنوان URL المستهدف أو المسار للرابط              |
+    | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
+    | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
+  </Tab>
+</Tabs>
+
+## رابط التواصل الاجتماعي
+
+روابط اجتماعية منمقة، مع دعم لأنواع متعددة من الروابط الاجتماعية، مثل العناوين الإلكترونية، LinkedIn، وX (أو Twitter).
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص     | النوع             | الوصف                                                                |
+    | --------- | ----------------- | -------------------------------------------------------------------- |
+    | رابط      | string            | عنوان URL المستهدف أو المسار للرابط                                  |
+    | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                                        |
+    | النوع     | string            | نوع الروابط الاجتماعية. تشمل الخيارات: `url`, `LinkedIn`, و`Twitter` |
+    | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط                     |
+  </Tab>
+</Tabs>

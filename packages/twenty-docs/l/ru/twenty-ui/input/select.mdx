@@ -1,0 +1,51 @@
+---
+title: Выбрать
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Заголовок" />
+</Frame>
+
+Позволяет пользователям выбирать значение из списка заранее определенных опций.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип     | Описание                                                                                                                                                                                                |
+    | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className | строка  | Необязательный CSS-класс для дополнительного стилирования                                                                                                                                               |
+    | disabled  | булево  | При установке в `true`, отключается взаимодействие пользователя с компонентом                                                                                                                           |
+    | метка     | строка  | Метка для описания назначения компонента `Выбрать`                                                                                                                                                      |
+    | onChange  | функция | Функция вызывается при изменении выбранных значений                                                                                                                                                     |
+    | настройки | массив  | Представляет доступные варианты для компонента `Выбранное`. Это массив объектов, где каждый объект имеет `value` (уникальный идентификатор), `label` (уникальный идентификатор) и необязательный `Icon` |
+    | значение  | строка  | Представляет текущее выбранное значение. Оно должно соответствовать одному из значений `value` в массиве `options`                                                                                      |
+  </Tab>
+</Tabs>

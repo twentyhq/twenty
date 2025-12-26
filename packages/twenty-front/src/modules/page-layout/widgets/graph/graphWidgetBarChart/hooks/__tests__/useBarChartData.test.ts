@@ -1,21 +1,26 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { type BarDatum } from '@nivo/bar';
 import { renderHook } from '@testing-library/react';
-import { useBarChartData } from '../useBarChartData';
+import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
+
+const mockUseRecoilComponentValue = jest.fn();
+jest.mock(
+  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  () => ({
+    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
+  }),
+);
 
 describe('useBarChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseRecoilComponentValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
     green: {
       name: 'green',
-      gradient: {
-        normal: ['green1', 'green2'],
-        hover: ['green3', 'green4'],
-      },
       solid: 'greenSolid',
       variations: [
         'green1',
@@ -34,10 +39,6 @@ describe('useBarChartData', () => {
     },
     purple: {
       name: 'purple',
-      gradient: {
-        normal: ['purple1', 'purple2'],
-        hover: ['purple3', 'purple4'],
-      },
       solid: 'purpleSolid',
       variations: [
         'purple1',
@@ -56,7 +57,7 @@ describe('useBarChartData', () => {
     },
   };
 
-  const mockData: BarChartDataItem[] = [
+  const mockData: BarDatum[] = [
     { month: 'Jan', sales: 100, costs: 80 },
     { month: 'Feb', sales: 120, costs: 90 },
     { month: 'Mar', sales: 150, costs: 100 },
@@ -99,7 +100,6 @@ describe('useBarChartData', () => {
       indexValue: 'Jan',
       colorScheme: {
         name: 'green',
-        gradient: mockColorRegistry.green.gradient,
       },
     });
     expect(result.current.barConfigs[1]).toMatchObject({
@@ -107,7 +107,6 @@ describe('useBarChartData', () => {
       indexValue: 'Jan',
       colorScheme: {
         name: 'purple',
-        gradient: mockColorRegistry.purple.gradient,
       },
     });
   });
@@ -129,7 +128,6 @@ describe('useBarChartData', () => {
       label: 'Sales',
       colorScheme: {
         name: 'green',
-        gradient: mockColorRegistry.green.gradient,
       },
     });
     expect(result.current.enrichedKeys[0].colorScheme.solid).toBeDefined();
@@ -138,7 +136,6 @@ describe('useBarChartData', () => {
       label: 'Costs',
       colorScheme: {
         name: 'purple',
-        gradient: mockColorRegistry.purple.gradient,
       },
     });
     expect(result.current.enrichedKeys[1].colorScheme.solid).toBeDefined();
@@ -203,5 +200,111 @@ describe('useBarChartData', () => {
 
     expect(result.current.enrichedKeys[0].label).toBe('sales');
     expect(result.current.enrichedKeys[1].label).toBe('costs');
+  });
+
+  it('should return legend items from all keys', () => {
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.legendItems).toHaveLength(2);
+    expect(result.current.legendItems[0]).toMatchObject({
+      id: 'sales',
+      label: 'Sales',
+      color: 'green5',
+    });
+  });
+
+  it('should filter visible keys based on hidden legend ids', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['costs']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.visibleKeys).toEqual(['sales']);
+    expect(result.current.enrichedKeys).toHaveLength(1);
+    expect(result.current.enrichedKeys[0].key).toBe('sales');
+  });
+
+  it('should maintain colors after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['sales']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedKeys[0].colorScheme.name).toBe('purple');
+  });
+
+  it('should keep all items in legend even when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['sales']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.visibleKeys).toHaveLength(1);
+    expect(result.current.legendItems).toHaveLength(2);
+  });
+
+  it('should filter barConfigs to only include visible keys', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['costs']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.barConfigs).toHaveLength(3);
+    result.current.barConfigs.forEach((config) => {
+      expect(config.key).toBe('sales');
+    });
+  });
+
+  it('should handle hidden ids that do not exist in keys', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.visibleKeys).toEqual(['sales', 'costs']);
+    expect(result.current.enrichedKeys).toHaveLength(2);
   });
 });

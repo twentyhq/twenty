@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -20,12 +21,12 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
       email: z
         .string()
         .trim()
-        .pipe(z.email({ error: 'Email must be a valid email' })),
+        .pipe(z.email({ error: t`Email must be a valid email` })),
       password:
         signInUpStep === SignInUpStep.Password
           ? z
               .string()
-              .regex(PASSWORD_REGEX, 'Password must be min. 8 characters')
+              .regex(PASSWORD_REGEX, t`Password must be min. 8 characters`)
           : z.string().optional(),
       captchaToken: z.string().default(''),
     })
@@ -64,5 +65,5 @@ export const useSignInUpForm = () => {
       form.setValue('password', 'tim@apple.dev');
     }
   }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail]);
-  return { form: form };
+  return { form };
 };

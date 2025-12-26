@@ -1,0 +1,57 @@
+name: CI Create App
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/create-twenty-app/**
+  create-app-test:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [lint, typecheck, test]
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build
+        run: npx nx build create-twenty-app
+      - name: Run ${{ matrix.task }} task
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:create-app
+          tasks: ${{ matrix.task }}
+  ci-create-app-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, create-app-test]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

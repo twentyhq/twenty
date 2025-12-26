@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
@@ -31,6 +32,7 @@ import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -44,6 +46,11 @@ import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.SECURITY),
+)
 export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
@@ -53,7 +60,7 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ServerLevelImpersonateGuard)
+  @UseGuards(ServerLevelImpersonateGuard)
   @Mutation(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
@@ -61,7 +68,7 @@ export class AdminPanelResolver {
     return await this.adminService.userLookup(userLookupInput.userIdentifier);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
@@ -83,19 +90,19 @@ export class AdminPanelResolver {
     }
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => ConfigVariablesOutput)
   async getConfigVariablesGrouped(): Promise<ConfigVariablesOutput> {
     return this.adminService.getConfigVariablesGrouped();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => SystemHealthDTO)
   async getSystemHealthStatus(): Promise<SystemHealthDTO> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => AdminPanelHealthServiceDataDTO)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -106,7 +113,7 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => QueueMetricsDataDTO)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })
@@ -124,13 +131,13 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
     return this.adminService.getVersionInfo();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => ConfigVariableDTO)
   async getDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -140,7 +147,7 @@ export class AdminPanelResolver {
     return this.adminService.getConfigVariable(key);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async createDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -152,7 +159,7 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async updateDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -164,7 +171,7 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -174,7 +181,7 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Query(() => QueueJobsResponseDTO)
   async getQueueJobs(
     @Args('queueName', { type: () => String })
@@ -194,7 +201,7 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => RetryJobsResponseDTO)
   async retryJobs(
     @Args('queueName', { type: () => String })
@@ -208,7 +215,7 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @UseGuards(AdminPanelGuard)
   @Mutation(() => DeleteJobsResponseDTO)
   async deleteJobs(
     @Args('queueName', { type: () => String })

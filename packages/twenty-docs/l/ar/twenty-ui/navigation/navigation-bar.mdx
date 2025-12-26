@@ -1,0 +1,49 @@
+---
+title: شريط التنقل
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="رأس الصفحة" />
+</Frame>
+
+يستعرض شريط التنقل الذي يحتوي على عدة مكونات `NavigationBarItem`.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات         | النوع  | الوصف                                                                                                                                                            |
+    | ---------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | اسم العنصر النشط | نص     | اسم العنصر النشط حاليًا في قائمة التنقل                                                                                                                          |
+    | العناصر          | مصفوفة | مصفوفة من الكائنات التي تمثل كل عنصر من عناصر التنقل. كل كائن يحتوي على `الاسم` للعنصر، ومكون `الأيقونة` للعرض، ودالة `onClick` التي تستدعي عند النقر على العنصر |
+  </Tab>
+</Tabs>

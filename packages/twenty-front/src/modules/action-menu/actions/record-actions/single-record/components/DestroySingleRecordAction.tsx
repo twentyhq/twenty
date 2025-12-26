@@ -1,8 +1,10 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
+import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -16,11 +18,15 @@ export const DestroySingleRecordAction = () => {
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
+  const { removeSelectedRecordsFromRecordBoard } =
+    useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
+
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const handleDeleteClick = async () => {
+    removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
 
     await destroyOneRecord(recordId);
@@ -31,10 +37,10 @@ export const DestroySingleRecordAction = () => {
 
   return (
     <ActionModal
-      title="Permanently Destroy Record"
-      subtitle="Are you sure you want to destroy this record? It cannot be recovered anymore."
+      title={t`Permanently Destroy Record`}
+      subtitle={t`Are you sure you want to destroy this record? It cannot be recovered anymore.`}
       onConfirmClick={handleDeleteClick}
-      confirmButtonText="Permanently Destroy Record"
+      confirmButtonText={t`Permanently Destroy Record`}
       closeSidePanelOnShowPageOptionsActionExecution={true}
     />
   );

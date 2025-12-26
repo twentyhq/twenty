@@ -1,0 +1,52 @@
+---
+title: Выбор иконки
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Заголовок" />
+</Frame>
+
+Выпадающий список выбора иконки, который позволяет пользователям выбрать иконку из списка.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства        | Тип     | Описание                                                                                                                      |
+    | --------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+    | отключено       | булево  | Отключает выбор иконки, если установлено значение `true`                                                                      |
+    | onChange        | функция | Функция обратного вызова, вызываемая, когда пользователь выбирает иконку. Она получает объект с свойствами `iconKey` и `Icon` |
+    | selectedIconKey | строка  | Ключ изначально выбранной иконки                                                                                              |
+    | onClickOutside  | функция | Функция обратного вызова, вызываемая при клике пользователя за пределами выпадающего списка                                   |
+    | onClose         | функция | Функция обратного вызова, вызываемая при закрытии выпадающего списка                                                          |
+    | onOpen          | функция | Функция обратного вызова, вызываемая при открытии выпадающего списка                                                          |
+    | вариант         | строка  | Визуальный стиль варианта кликабельной иконки. Варианты включают: `primary`, `secondary`, и `tertiary`                        |
+  </Tab>
+</Tabs>

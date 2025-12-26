@@ -1,0 +1,198 @@
+---
+title: Permisiuni
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Sistemul de permisiuni al Twenty vă permite să controlați accesul la trei domenii principale:
+
+* **Obiecte și Câmpuri**: Controlați cine poate vizualiza, edita sau șterge înregistrările și câmpurile individuale
+* **Setări**: Gestionați accesul la configurația workspace-ului și funcțiile administrative
+* **Acțiuni**: Controlați acțiunile generale ale workspace-ului cum ar fi importarea datelor sau trimiterea e-mailurilor
+
+## Create a Role
+
+Pentru a crea un rol nou:
+
+1. Accesați **Setări → Roluri**
+2. Sub **Toate Rolurile**, faceți clic pe **+ Creează Rol**
+3. Introduceți un nume de rol
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Faceți clic pe **Salvare** pentru a termina
+
+## Ștergeți un Rol
+
+Pentru a șterge un rol:
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l eliminați
+3. Deschideți tab-ul **Setări**, apoi faceți clic pe **Șterge Rol**
+4. Faceți clic pe **Confirmă** în fereastra modală
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Toate, cu excepția rolului **Admin**, pot fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului **Admin**.
+</Note>
+
+## Atribuiți Roluri Membrilor
+
+### Vizualizați Atribuirile Curente
+
+* Accesați **Setări → Roluri**
+* Vedeți toate rolurile și câți membri sunt alocați fiecăruia
+* Vizualizați ce membri au ce roluri
+
+### Atribuiți un Rol unui Membru
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. Faceți clic pe **+ Atribuie membrului**
+5. Selectați membrul workspace-ului din listă
+6. Confirmați atribuirea
+
+### Setați Rolul Implicit
+
+1. Accesați **Setări → Roluri**
+2. În secțiunea **Opțiuni**, găsiți **Rol Implicit**
+3. Selectați ce rol ar trebui să primească automat noii membri
+4. Noii membri ai workspace-ului vor primi acest rol când se alătură
+
+<Note>
+  You can only assign roles to existing workspace members. Pentru a invita noi membri, utilizați [Gestionarea Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Personalizați Permisiunile
+
+Permisiunile determină ce poate accesa sau modifica fiecare rol în cadrul workspace-ului dvs., incluzând înregistrările, setările și acțiunile obiectelor workspace-ului.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                                         | Descriere                              |
+| -------------------------------------------------- | -------------------------------------- |
+| **Vezi înregistrări pentru toate obiectele**       | View records in lists and detail pages |
+| **Editează înregistrări pentru toate obiectele**   | Modify existing records                |
+| **Șterge înregistrări pentru toate obiectele**     | Soft-delete records (can be restored)  |
+| **Distruge înregistrările pentru toate obiectele** | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | Descriere                  |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### Gestionați Suprascrierile de Permisiuni
+
+To override inherited permissions:
+
+1. Faceți clic pe **X** pentru a elimina regula moștenită
+2. Select the specific permissions you want
+3. Faceți clic pe pictograma portocalie **Anulează** (săgeată circulară) pentru a reveni la modificări
+
+Când ați terminat, faceți clic pe **Finalizare**, apoi **Salvare** odată ce ați fost redirecționat la pagina rolului.
+
+### Permisiuni pentru Setările Workspace-ului
+
+Controlați accesul la setările workspace-ului în două moduri:
+
+* Comutați **Setări Tot Acces** pentru a oferi acces complet
+* Sau activați permisiuni specifice (de ex., generarea de chei API, preferințele workspace-ului, atribuirea de roluri, configurația modelului de date, setările de securitate și gestionarea fluxurilor de lucru)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### Permisiuni de Acțiune în Workspace
+
+Controlați accesul la acțiunile generale ale workspace-ului:
+
+* Comutați **Aplicare Tot Acces** pentru a oferi permisiuni complete
+* Sau activați acțiuni individuale cum ar fi **Trimite E-mail**, **Importă CSV** și **Exportă CSV**
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Confirmați atribuirea
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Confirmați atribuirea
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

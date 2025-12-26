@@ -90,13 +90,18 @@ msgstr "Принять приглашение"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "Подтвердите ваш новый адрес электронной почты"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Подтвердите ваш адрес электронной почты"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Спасибо за регистрацию учетной записи на сайте Twenty! Прежде чем мы начнем, нам нужно убедиться, что это действительно вы. Нажмите ниже, чтобы подтвердить ваш электронный адрес."
+msgid "Confirm new email"
+msgstr "Подтвердить новый адрес эл. почты"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "Сбросьте ваш пароль 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Установите свой пароль 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "Сбросить"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Установить"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

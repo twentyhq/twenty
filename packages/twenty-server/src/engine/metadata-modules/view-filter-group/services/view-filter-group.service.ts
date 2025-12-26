@@ -180,7 +180,20 @@ export class ViewFilterGroupService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const viewFilterGroup = await this.findById(id, workspaceId);
+    const viewFilterGroup = await this.viewFilterGroupRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: [
+        'workspace',
+        'view',
+        'viewFilters',
+        'parentViewFilterGroup',
+        'childViewFilterGroups',
+      ],
+      withDeleted: true,
+    });
 
     if (!isDefined(viewFilterGroup)) {
       throw new ViewFilterGroupException(

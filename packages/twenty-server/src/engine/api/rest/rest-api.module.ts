@@ -8,6 +8,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { RestApiCoreModule } from 'src/engine/api/rest/core/rest-api-core.module';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api-metadata.controller';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api
     AuthModule,
     HttpModule,
     RestApiCoreModule,
+    PermissionsModule,
   ],
   controllers: [RestApiMetadataController],
   providers: [RestApiService, RestApiMetadataService],

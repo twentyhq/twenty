@@ -1,5 +1,5 @@
 import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { cleanAndFormatOperations } from '../cleanAndFormatOperations';
+import { cleanAndFormatOperations } from '@/settings/developers/utils/cleanAndFormatOperations';
 
 describe('cleanAndFormatOperations', () => {
   it('should filter out operations with null object values', () => {

@@ -1,0 +1,49 @@
+---
+title: Панель навигации
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Заголовок" />
+</Frame>
+
+Отображает панель навигации, содержащую несколько компонентов `NavigationBarItem`.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+    export const MyComponent = () => {
+
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
+
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства       | Тип    | Описание                                                                                                                                                                                           |
+    | -------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | строка | Имя текущего активного элемента навигации                                                                                                                                                          |
+    | items          | массив | Массив объектов, представляющих каждый элемент навигации. Каждый объект содержит `name` элемента, компонент `Icon` для отображения и функцию `onClick`, которая вызывается при нажатии на элемент. |
+  </Tab>
+</Tabs>

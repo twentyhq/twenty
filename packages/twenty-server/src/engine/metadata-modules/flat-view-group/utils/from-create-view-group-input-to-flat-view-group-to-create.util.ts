@@ -7,22 +7,23 @@ import { type CreateViewGroupInput } from 'src/engine/metadata-modules/view-grou
 export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
   createViewGroupInput: rawCreateViewGroupInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createViewGroupInput: CreateViewGroupInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatViewGroup => {
-  const { fieldMetadataId, viewId, ...createViewGroupInput } =
+  const { viewId, ...createViewGroupInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateViewGroupInput,
-      ['fieldMetadataId', 'fieldValue', 'id', 'viewId'],
+      ['fieldValue', 'id', 'viewId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewGroupId = createViewGroupInput.id ?? v4();
 
   return {
     id: viewGroupId,
-    fieldMetadataId,
     viewId,
     workspaceId,
     createdAt: createdAt,
@@ -33,6 +34,6 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     isVisible: createViewGroupInput.isVisible ?? true,
     fieldValue: createViewGroupInput.fieldValue,
     position: createViewGroupInput.position ?? 0,
-    applicationId: createViewGroupInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

@@ -8,6 +8,7 @@ import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +22,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -80,14 +82,22 @@ export const FilesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
+  const hasUploadPermission = useHasPermissionFlag(
+    PermissionFlagType.UPLOAD_FILE,
+  );
+
+  const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
+
   if (loading && isAttachmentsEmpty) {
     return <SkeletonLoader />;
   }
 
   if (isAttachmentsEmpty) {
     return (
-      <StyledDropZoneContainer onDragEnter={() => setIsDraggingFile(true)}>
-        {isDraggingFile ? (
+      <StyledDropZoneContainer
+        onDragEnter={() => canUploadFiles && setIsDraggingFile(true)}
+      >
+        {isDraggingFile && canUploadFiles ? (
           <DropZone
             setIsDraggingFile={setIsDraggingFile}
             onUploadFiles={onUploadFiles}
@@ -112,7 +122,7 @@ export const FilesCard = () => {
               type="file"
               multiple
             />
-            {hasObjectUpdatePermissions && (
+            {canUploadFiles && (
               <Button
                 Icon={IconPlus}
                 title={t`Add file`}
@@ -139,7 +149,7 @@ export const FilesCard = () => {
         title={t`All`}
         attachments={attachments ?? []}
         button={
-          hasObjectUpdatePermissions && (
+          canUploadFiles && (
             <Button
               Icon={IconPlus}
               size="small"

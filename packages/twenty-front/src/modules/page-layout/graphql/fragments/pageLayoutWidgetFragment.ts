@@ -31,12 +31,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         omitNullValues
         axisNameDisplay
         displayDataLabel
+        displayLegend
         rangeMin
         rangeMax
         color
         description
         filter
         groupMode
+        isCumulative
         timezone
         firstDayOfTheWeek
       }
@@ -55,11 +57,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         omitNullValues
         axisNameDisplay
         displayDataLabel
+        displayLegend
         rangeMin
         rangeMax
         color
         description
         filter
+        isStacked
+        isCumulative
         timezone
         firstDayOfTheWeek
       }
@@ -72,6 +77,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         dateGranularity
         orderBy
         displayDataLabel
+        showCenterMetric
+        displayLegend
         color
         description
         filter
@@ -87,8 +94,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         format
         description
         filter
+        prefix
+        suffix
         timezone
         firstDayOfTheWeek
+        ratioAggregateConfig {
+          fieldMetadataId
+          optionValue
+        }
       }
       ... on GaugeChartConfiguration {
         graphType
@@ -103,6 +116,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       }
       ... on IframeConfiguration {
         url
+      }
+      ... on StandaloneRichTextConfiguration {
+        body {
+          blocknote
+          markdown
+        }
       }
     }
     pageLayoutTabId

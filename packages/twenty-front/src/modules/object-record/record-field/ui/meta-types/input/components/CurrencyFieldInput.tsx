@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
 
-import { useCurrencyField } from '../../hooks/useCurrencyField';
+import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -28,7 +29,7 @@ export const CurrencyFieldInput = () => {
 
   const defaultCurrencyCodeWithoutSQLQuotes = (
     defaultValue as FieldCurrencyValue
-  ).currencyCode.replace(/'/g, '') as CurrencyCode;
+  )?.currencyCode?.replace(/'/g, '') as CurrencyCode;
 
   const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
     defaultCurrencyCodeWithoutSQLQuotes,
@@ -137,7 +138,7 @@ export const CurrencyFieldInput = () => {
       value={draftValue?.amount?.toString() ?? ''}
       currencyCode={currencyCode}
       autoFocus
-      placeholder="Currency"
+      placeholder={t`Currency`}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

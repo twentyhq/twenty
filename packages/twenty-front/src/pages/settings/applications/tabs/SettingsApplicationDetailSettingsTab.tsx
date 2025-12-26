@@ -1,12 +1,14 @@
-import type { Application } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
+import type { Application } from '~/generated/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
+import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
 }: {
-  application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects'> & {
+    objects: { id: string }[];
+  };
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
@@ -19,15 +21,17 @@ export const SettingsApplicationDetailSettingsTab = ({
   );
 
   return (
-    <SettingsApplicationDetailEnvironmentVariablesTable
-      envVariables={envVariables}
-      onUpdate={({ key, value }) =>
-        updateOneApplicationVariable({
-          key,
-          value,
-          applicationId: application.id,
-        })
-      }
-    />
+    <>
+      <SettingsApplicationDetailEnvironmentVariablesTable
+        envVariables={envVariables}
+        onUpdate={({ key, value }) =>
+          updateOneApplicationVariable({
+            key,
+            value,
+            applicationId: application.id,
+          })
+        }
+      />
+    </>
   );
 };

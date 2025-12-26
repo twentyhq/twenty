@@ -14,6 +14,7 @@ export const createOneObjectMetadata = async ({
   input,
   gqlFields,
   expectToFail = false,
+  token,
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>): CommonResponseBody<{
   createOneObject: ObjectMetadataDTO;
 }> => {
@@ -22,7 +23,7 @@ export const createOneObjectMetadata = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

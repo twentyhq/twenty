@@ -1,0 +1,137 @@
+---
+title: Metin
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Başlık" />
+</Frame>
+
+## Metin Girişi
+
+Kullanıcıların metin girmelerine ve düzenlemelerine izin verir.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
+
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
+
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
+
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür           | Açıklama                                                                                                   |
+    | -------------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
+    | sınıfAdı       | string        | Ek stil için isteğe bağlı isim                                                                             |
+    | etiket         | string        | Giriş için etiketi temsil eder                                                                             |
+    | onChange       | function      | Giriş değeri değiştiğinde çağrılan fonksiyon                                                               |
+    | tamGenişlik    | boolean       | Girişin genişliği %100 kaplaması gerekip gerekmediğini belirtir                                            |
+    | disableHotkeys | boolean       | Giriş için kısayol tuşlarının etkinleştirilip etkinleştirilmediğini belirtir                               |
+    | hata           | dize          | Gösterilecek hata mesajını temsil eder. Sağ kenarda bir hata simgesi ekler                                 |
+    | onKeyDown      | fonksiyon     | Giriş alanı odaklandığında bir tuşa basıldığında çağrılır. Bir `React.KeyboardEvent`'i argüman olarak alır |
+    | RightIcon      | IconComponent | Girişin sağ tarafında görüntülenen isteğe bağlı ikon bileşeni                                              |
+
+    Bileşen ayrıca diğer HTML giriş elemanının özelliklerini kabul eder.
+  </Tab>
+</Tabs>
+
+## Otomatik Boyutlandırma Metin Girişi
+
+Metni içeriğe göre otomatik olarak ayarlayan metin giriş bileşeni.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler  | Tür       | Açıklama                                                                       |
+    | ----------- | --------- | ------------------------------------------------------------------------------ |
+    | onValidate  | fonksiyon | Kullanıcı girişi doğruladığında tetiklemek istediğiniz geri çağırma fonksiyonu |
+    | minRows     | sayı      | Metin alanı için minimum satır sayısı                                          |
+    | yer tutucu  | dize      | Metin alanı boşken göstermek istediğiniz yer tutucu metin                      |
+    | onFocus     | fonksiyon | Metin alanı odaklandığında tetiklemek istediğiniz geri çağırma fonksiyonu      |
+    | varyant     | dize      | Girişin varyantı. Seçenekler şunları içerir: `varsayılan`, `ikon` ve `buton`   |
+    | buttonTitle | dize      | Buton varyantı için geçerli sadece buton başlığı                               |
+    | değer       | dize      | Metin alanı için başlangıç değeri                                              |
+  </Tab>
+</Tabs>
+
+## Metin Alanı
+
+Çok satırlı metin girişleri oluşturmanızı sağlar.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
+
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür       | Açıklama                                                               |
+    | ---------- | --------- | ---------------------------------------------------------------------- |
+    | devre dışı | boolean   | Metin alanının devre dışı olup olmadığını belirtir                     |
+    | minRows    | sayı      | Metin alanı için görünen minimum satır sayısı.                         |
+    | onChange   | fonksiyon | Metin alanının içeriği değiştiğinde tetiklenen geri çağırma fonksiyonu |
+    | yer tutucu | metin     | Metin alanı boşken görüntülenen yer tutucu metin                       |
+    | değer      | metin     | Metin alanının mevcut değeri                                           |
+  </Tab>
+</Tabs>

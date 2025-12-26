@@ -1,0 +1,492 @@
+{
+  "tabs": [
+    {
+      "key": "userGuide",
+      "label": "User Guide",
+      "groups": [
+        {
+          "key": "discoverTwenty",
+          "label": "Discover Twenty",
+          "icon": "rocket",
+          "pages": [
+            "user-guide/introduction",
+            {
+              "key": "gettingStartedCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/getting-started/capabilities/what-is-twenty",
+                "user-guide/getting-started/capabilities/implementation-services",
+                "user-guide/getting-started/capabilities/glossary"
+              ]
+            },
+            {
+              "key": "gettingStartedHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/getting-started/how-tos/create-workspace",
+                "user-guide/getting-started/how-tos/navigate-around-twenty",
+                "user-guide/getting-started/how-tos/configure-your-workspace"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "dataModel",
+          "label": "Data Model",
+          "icon": "database",
+          "pages": [
+            "user-guide/data-model/overview",
+            {
+              "key": "dataModelCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/data-model/capabilities/objects",
+                "user-guide/data-model/capabilities/fields",
+                "user-guide/data-model/capabilities/relation-fields"
+              ]
+            },
+            {
+              "key": "dataModelHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/data-model/how-tos/create-custom-objects",
+                "user-guide/data-model/how-tos/create-custom-fields",
+                "user-guide/data-model/how-tos/create-relation-fields",
+                "user-guide/data-model/how-tos/customize-your-data-model",
+                "user-guide/data-model/how-tos/data-model-faq"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "dataMigration",
+          "label": "Data Migration",
+          "icon": "cloud-arrow-up",
+          "pages": [
+            "user-guide/data-migration/overview",
+            {
+              "key": "dataMigrationCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/data-migration/capabilities/file-formats",
+                "user-guide/data-migration/capabilities/field-mapping",
+                "user-guide/data-migration/capabilities/uniqueness-constraints",
+                "user-guide/data-migration/capabilities/import-relations",
+                "user-guide/data-migration/capabilities/error-handling"
+              ]
+            },
+            {
+              "key": "dataMigrationHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/data-migration/how-tos/prepare-your-csv-files",
+                "user-guide/data-migration/how-tos/import-companies-via-csv",
+                "user-guide/data-migration/how-tos/import-contacts-via-csv",
+                "user-guide/data-migration/how-tos/import-relations-between-objects-via-csv",
+                "user-guide/data-migration/how-tos/update-existing-records-via-import",
+                "user-guide/data-migration/how-tos/fix-import-errors",
+                "user-guide/data-migration/how-tos/export-your-data",
+                "user-guide/data-migration/how-tos/import-data-via-api",
+                "user-guide/data-migration/how-tos/migrating-from-other-crms",
+                "user-guide/data-migration/how-tos/migrating-from-self-hosted-to-cloud"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "calendarEmails",
+          "label": "Calendar & Emails",
+          "icon": "envelope",
+          "pages": [
+            "user-guide/calendar-emails/overview",
+            {
+              "key": "calendarEmailsCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/calendar-emails/capabilities/mailbox",
+                "user-guide/calendar-emails/capabilities/calendar"
+              ]
+            },
+            {
+              "key": "calendarEmailsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                "user-guide/calendar-emails/how-tos/limit-emails-imported",
+                "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
+                "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
+                "user-guide/calendar-emails/how-tos/can-i-book-meetings-from-twenty",
+                "user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "workflows",
+          "label": "Workflows",
+          "icon": "bolt",
+          "pages": [
+            "user-guide/workflows/overview",
+            {
+              "key": "workflowsCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/workflows/capabilities/workflow-triggers",
+                "user-guide/workflows/capabilities/workflow-actions",
+                "user-guide/workflows/capabilities/workflow-branches",
+                "user-guide/workflows/capabilities/workflow-runs",
+                "user-guide/workflows/capabilities/workflow-versions",
+                "user-guide/workflows/capabilities/workflow-credits",
+                "user-guide/workflows/capabilities/use-branches-in-workflows",
+                "user-guide/workflows/capabilities/use-iterator",
+                "user-guide/workflows/capabilities/send-emails-from-workflows"
+              ]
+            },
+            {
+              "key": "workflowsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                {
+                  "key": "crmAutomations",
+                  "label": "CRM Automations",
+                  "pages": [
+                    "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                    "user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
+                    "user-guide/workflows/how-tos/crm-automations/formula-fields",
+                    "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
+                    "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
+                    "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                  ]
+                },
+                {
+                  "key": "connectToOtherTools",
+                  "label": "Connect to Other Tools",
+                  "pages": [
+                    "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
+                    "user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
+                    "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
+                    "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                  ]
+                },
+                {
+                  "key": "advancedConfigurations",
+                  "label": "Advanced Configurations",
+                  "pages": [
+                    "user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
+                  ]
+                },
+                {
+                  "key": "needMoreHelp",
+                  "label": "Need More Help",
+                  "pages": [
+                    "user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
+                    "user-guide/workflows/how-tos/need-more-help/workflows-faq",
+                    "user-guide/workflows/how-tos/need-more-help/professional-services"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "ai",
+          "label": "AI",
+          "icon": "robot",
+          "pages": [
+            "user-guide/ai/overview",
+            {
+              "key": "aiCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/ai/capabilities/ai-chatbot",
+                "user-guide/ai/capabilities/ai-agents",
+                "user-guide/ai/capabilities/permissions-access-control"
+              ]
+            },
+            {
+              "key": "aiHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/ai/how-tos/ai-faq"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "viewsPipelines",
+          "label": "Views & Pipelines",
+          "icon": "table",
+          "pages": [
+            "user-guide/views-pipelines/overview",
+            {
+              "key": "viewsPipelinesCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/views-pipelines/capabilities/table-views",
+                "user-guide/views-pipelines/capabilities/kanban-views",
+                "user-guide/views-pipelines/capabilities/calendar-view",
+                "user-guide/views-pipelines/capabilities/filters-and-sorting",
+                "user-guide/views-pipelines/capabilities/fields-and-columns",
+                "user-guide/views-pipelines/capabilities/view-settings"
+              ]
+            },
+            {
+              "key": "viewsPipelinesHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
+                "user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
+                "user-guide/views-pipelines/how-tos/create-a-calendar-view-for-tasks-due",
+                "user-guide/views-pipelines/how-tos/restrict-access-to-your-view",
+                "user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline",
+                "user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline",
+                "user-guide/views-pipelines/how-tos/track-time-in-stage"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "dashboards",
+          "label": "Dashboards",
+          "icon": "chart-bar",
+          "pages": [
+            "user-guide/dashboards/overview",
+            {
+              "key": "dashboardsCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/dashboards/capabilities/dashboards",
+                "user-guide/dashboards/capabilities/widgets"
+              ]
+            },
+            {
+              "key": "dashboardsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/dashboards/how-tos/dashboards-faq"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "permissionsAccess",
+          "label": "Permissions & Access",
+          "icon": "lock",
+          "pages": [
+            "user-guide/permissions-access/overview",
+            {
+              "key": "permissionsAccessCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/permissions-access/capabilities/permissions",
+                "user-guide/permissions-access/capabilities/sso-configuration"
+              ]
+            },
+            {
+              "key": "permissionsAccessHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/permissions-access/how-tos/permissions-faq"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "billing",
+          "label": "Billing",
+          "icon": "credit-card",
+          "pages": [
+            "user-guide/billing/overview",
+            {
+              "key": "billingCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/billing/capabilities/pricing-plans",
+                "user-guide/billing/capabilities/workflow-credits"
+              ]
+            },
+            {
+              "key": "billingHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/billing/how-tos/billing-faq"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "settings",
+          "label": "Settings",
+          "icon": "gear",
+          "pages": [
+            "user-guide/settings/overview",
+            {
+              "key": "settingsCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "user-guide/settings/capabilities/workspace-settings",
+                "user-guide/settings/capabilities/member-management",
+                "user-guide/settings/capabilities/profile-settings",
+                "user-guide/settings/capabilities/experience-settings",
+                "user-guide/settings/capabilities/domains-settings",
+                "user-guide/settings/capabilities/releases-settings"
+              ]
+            },
+            {
+              "key": "settingsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/settings/how-tos/settings-faq"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "developers",
+      "label": "Developers",
+      "groups": [
+        {
+          "key": "developersGroup",
+          "label": "Developers",
+          "pages": [
+            "developers/introduction"
+          ]
+        },
+        {
+          "key": "extend",
+          "label": "Extend",
+          "icon": "plug",
+          "pages": [
+            "developers/extend/extend",
+            {
+              "key": "extendCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "developers/extend/capabilities/apis",
+                "developers/extend/capabilities/webhooks",
+                "developers/extend/capabilities/apps"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "selfHost",
+          "label": "Self-Host",
+          "icon": "desktop",
+          "pages": [
+            "developers/self-host/self-host",
+            {
+              "key": "selfHostCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "developers/self-host/capabilities/docker-compose",
+                "developers/self-host/capabilities/setup",
+                "developers/self-host/capabilities/upgrade-guide",
+                "developers/self-host/capabilities/cloud-providers",
+                "developers/self-host/capabilities/troubleshooting"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "contribute",
+          "label": "Contribute",
+          "icon": "github",
+          "pages": [
+            "developers/contribute/contribute",
+            {
+              "key": "contributeCapabilities",
+              "label": "Capabilities",
+              "pages": [
+                "developers/contribute/capabilities/local-setup",
+                "developers/contribute/capabilities/bug-and-requests",
+                {
+                  "key": "frontendDevelopment",
+                  "label": "Frontend Development",
+                  "pages": [
+                    "developers/contribute/capabilities/frontend-development/storybook",
+                    {
+                      "key": "twentyUi",
+                      "label": "Twenty UI",
+                      "pages": [
+                        "twenty-ui/introduction",
+                        {
+                          "key": "display",
+                          "label": "Display",
+                          "pages": [
+                            "twenty-ui/display/checkmark",
+                            "twenty-ui/display/chip",
+                            "twenty-ui/display/icons",
+                            "twenty-ui/display/soon-pill",
+                            "twenty-ui/display/tag",
+                            "twenty-ui/display/app-tooltip"
+                          ]
+                        },
+                        {
+                          "key": "feedback",
+                          "label": "Feedback",
+                          "pages": [
+                            "twenty-ui/progress-bar"
+                          ]
+                        },
+                        {
+                          "key": "input",
+                          "label": "Input",
+                          "pages": [
+                            "twenty-ui/input/buttons",
+                            "twenty-ui/input/color-scheme",
+                            "twenty-ui/input/text",
+                            "twenty-ui/input/checkbox",
+                            "twenty-ui/input/icon-picker",
+                            "twenty-ui/input/image-input",
+                            "twenty-ui/input/radio",
+                            "twenty-ui/input/select",
+                            "twenty-ui/input/toggle",
+                            "twenty-ui/input/block-editor"
+                          ]
+                        },
+                        {
+                          "key": "navigation",
+                          "label": "Navigation",
+                          "pages": [
+                            "twenty-ui/navigation",
+                            "twenty-ui/navigation/breadcrumb",
+                            "twenty-ui/navigation/links",
+                            "twenty-ui/navigation/menu-item",
+                            "twenty-ui/navigation/navigation-bar",
+                            "twenty-ui/navigation/step-bar"
+                          ]
+                        }
+                      ]
+                    },
+                    "developers/contribute/capabilities/frontend-development/frontend-commands",
+                    "developers/contribute/capabilities/frontend-development/work-with-figma",
+                    "developers/contribute/capabilities/frontend-development/best-practices-front",
+                    "developers/contribute/capabilities/frontend-development/style-guide",
+                    "developers/contribute/capabilities/frontend-development/folder-architecture-front",
+                    "developers/contribute/capabilities/frontend-development/hotkeys"
+                  ]
+                },
+                {
+                  "key": "backendDevelopment",
+                  "label": "Backend Development",
+                  "pages": [
+                    "developers/contribute/capabilities/backend-development/server-commands",
+                    "developers/contribute/capabilities/backend-development/feature-flags",
+                    "developers/contribute/capabilities/backend-development/folder-architecture-server",
+                    "developers/contribute/capabilities/backend-development/zapier",
+                    "developers/contribute/capabilities/backend-development/best-practices-server",
+                    "developers/contribute/capabilities/backend-development/custom-objects",
+                    "developers/contribute/capabilities/backend-development/queue"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

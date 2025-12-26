@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { IsNull, Not, type EntityManager, type Repository } from 'typeorm';
 
@@ -8,11 +9,10 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
-import { standardRoleDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles';
+import { STANDARD_ROLE_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/standard-role-definitions';
 
 @Injectable()
 export class WorkspaceSyncRoleService {
@@ -38,11 +38,16 @@ export class WorkspaceSyncRoleService {
         workspaceId: context.workspaceId,
         standardId: Not(IsNull()),
       },
-      relations: ['permissionFlags'],
+      relations: [
+        'permissionFlags',
+        'roleTargets',
+        'objectPermissions',
+        'fieldPermissions',
+      ],
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(
-      standardRoleDefinitions,
+      STANDARD_ROLE_DEFINITIONS,
       context,
       existingStandardRoleEntities,
     );
@@ -60,6 +65,10 @@ export class WorkspaceSyncRoleService {
           const flatRoleData = removePropertiesFromRecord(roleToCreate, [
             'universalIdentifier',
             'id',
+            'permissionFlagIds',
+            'fieldPermissionIds',
+            'objectPermissionIds',
+            'roleTargetIds',
           ]);
 
           const createdRole = await roleRepository.save({
@@ -67,7 +76,7 @@ export class WorkspaceSyncRoleService {
             workspaceId: context.workspaceId,
           });
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToCreate.standardId,
           );
 
@@ -89,11 +98,15 @@ export class WorkspaceSyncRoleService {
             'id',
             'universalIdentifier',
             'workspaceId',
+            'permissionFlagIds',
+            'fieldPermissionIds',
+            'objectPermissionIds',
+            'roleTargetIds',
           ]);
 
           await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToUpdate.standardId,
           );
 

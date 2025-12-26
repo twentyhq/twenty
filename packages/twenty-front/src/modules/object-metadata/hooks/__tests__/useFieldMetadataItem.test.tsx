@@ -13,7 +13,7 @@ import {
   queries,
   responseData,
   variables,
-} from '../__mocks__/useFieldMetadataItem';
+} from '@/object-metadata/hooks/__mocks__/useFieldMetadataItem';
 
 import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -21,7 +21,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
-} from '../__mocks__/useFindManyObjectMetadataItems';
+} from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   useUpdateOneFieldMetadataItem: () => ({

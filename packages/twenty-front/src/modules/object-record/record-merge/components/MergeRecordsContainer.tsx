@@ -8,10 +8,10 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
+import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
+import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
 import { MergeRecordsFooter } from './MergeRecordsFooter';
@@ -45,9 +45,7 @@ type MergeRecordsContainerProps = {
 export const MergeRecordsContainer = ({
   objectNameSingular,
 }: MergeRecordsContainerProps) => {
-  const { selectedRecords } = useMergePreview({
-    objectNameSingular,
-  });
+  const { selectedRecords } = useMergeRecordsSelectedRecords();
 
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords);
 
@@ -76,9 +74,7 @@ export const MergeRecordsContainer = ({
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
               <MergePreviewTab objectNameSingular={objectNameSingular} />
             )}
-            {activeTabId === MergeRecordsTabId.SETTINGS && (
-              <MergeSettingsTab objectNameSingular={objectNameSingular} />
-            )}
+            {activeTabId === MergeRecordsTabId.SETTINGS && <MergeSettingsTab />}
             {selectedRecords.some((record) => record.id === activeTabId) && (
               <MergeRecordTab
                 objectNameSingular={objectNameSingular}

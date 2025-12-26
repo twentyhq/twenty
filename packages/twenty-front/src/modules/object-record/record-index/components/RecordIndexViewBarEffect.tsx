@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
@@ -24,7 +24,7 @@ export const RecordIndexViewBarEffect = ({
   });
 
   const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
   const { setViewObjectMetadataId, setAvailableFieldDefinitions } =
     useInitViewBar(viewBarId);

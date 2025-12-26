@@ -1,6 +1,7 @@
-import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
-import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -18,23 +19,33 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutId,
   );
 
+  const contextStoreIsFullTabWidgetInEditModeState =
+    useRecoilComponentCallbackState(
+      contextStoreIsPageInEditModeComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
+
   const setIsPageLayoutInEditMode = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (value: boolean) => {
         set(isPageLayoutInEditModeState, value);
-        set(forceRegisteredActionsByKeyState, (prev) => ({
-          ...prev,
-          [PageLayoutSingleRecordActionKeys.EDIT_LAYOUT]: !value,
-          [PageLayoutSingleRecordActionKeys.SAVE_LAYOUT]: value,
-          [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: value,
-          [PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE]: !value,
-          [SingleRecordActionKeys.ADD_TO_FAVORITES]: value,
-          [SingleRecordActionKeys.DELETE]: !value,
-          [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: !value,
-          [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: !value,
-        }));
+
+        set(contextStoreIsFullTabWidgetInEditModeState, value);
+
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          set(
+            contextStoreIsPageInEditModeComponentState.atomFamily({
+              instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+            }),
+            value,
+          );
+        }
       },
-    [isPageLayoutInEditModeState],
+    [isPageLayoutInEditModeState, contextStoreIsFullTabWidgetInEditModeState],
   );
 
   return { setIsPageLayoutInEditMode };

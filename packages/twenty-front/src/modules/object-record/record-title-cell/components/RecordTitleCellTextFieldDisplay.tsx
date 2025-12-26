@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
@@ -16,7 +17,7 @@ const StyledDiv = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   overflow: hidden;
-  height: 28px;
+  height: 24px;
   padding: ${({ theme }) => theme.spacing(0, 1.25)};
   box-sizing: border-box;
   display: flex;
@@ -60,7 +61,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
       }}
     >
       {isEmpty ? (
-        <StyledEmptyText>Untitled</StyledEmptyText>
+        <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
       ) : (
         <OverflowingTextWithTooltip
           text={

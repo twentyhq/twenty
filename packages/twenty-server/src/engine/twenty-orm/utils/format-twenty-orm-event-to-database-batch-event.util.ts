@@ -1,32 +1,42 @@
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  ObjectRecordCreateEvent,
+  ObjectRecordDeleteEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+  ObjectRecordUpsertEvent,
+  type ObjectRecordDiff,
+} from 'twenty-shared/database-events';
 
 import type { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import type { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import type { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import type { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,
 >({
   action,
   objectMetadataItem,
+  flatFieldMetadataMaps,
   workspaceId,
   authContext,
   entities,
   beforeEntities,
 }: {
   action: DatabaseEventAction;
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps;
+  objectMetadataItem: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
   authContext?: AuthContext;
   entities: T | T[];
@@ -37,7 +47,6 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   }
 
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
-  const fields = Object.values(objectMetadataItem.fieldsById ?? {});
   const entityArray = isDefined(entities)
     ? Array.isArray(entities)
       ? entities
@@ -56,6 +65,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordCreateEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = after.id;
         event.properties = { after };
 
@@ -64,19 +74,27 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       break;
     case DatabaseEventAction.UPDATED:
       events = entityArray
-        .map((after, idx) => {
+        .map((after) => {
           if (!beforeEntities) {
             throw new Error('beforeEntities is required for UPDATED action');
           }
 
           const before = Array.isArray(beforeEntities)
-            ? beforeEntities?.[idx]
+            ? beforeEntities.find((before) => before.id === after.id)
             : beforeEntities;
+
+          if (!isDefined(before)) {
+            throw new TwentyORMException(
+              'Record mismatch detected while computing event data for UPDATED action',
+              TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+            );
+          }
 
           const diff = objectRecordChangedValues(
             before,
             after,
             objectMetadataItem,
+            flatFieldMetadataMaps,
           ) as Partial<ObjectRecordDiff<T>>;
 
           const updatedFields = Object.keys(diff);
@@ -88,6 +106,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           const event = new ObjectRecordUpdateEvent<T>();
 
           event.userId = authContext?.user?.id;
+          event.workspaceMemberId = authContext?.workspaceMemberId;
           event.recordId = after.id;
           event.properties = {
             before,
@@ -105,6 +124,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordDeleteEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = before.id;
         event.properties = { before };
 
@@ -116,6 +136,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordDestroyEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = before.id;
         event.properties = { before };
 
@@ -123,15 +144,16 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       });
       break;
     case DatabaseEventAction.UPSERTED:
-      events = entityArray.map((after, index) => {
+      events = entityArray.map((after) => {
         const event = new ObjectRecordUpsertEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = after.id;
 
         const before = beforeEntities
           ? Array.isArray(beforeEntities)
-            ? beforeEntities[index]
+            ? beforeEntities.find((before) => before.id === after.id)
             : beforeEntities
           : undefined;
 
@@ -142,6 +164,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           before ?? {},
           after,
           objectMetadataItem,
+          flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
         updatedFields = Object.keys(diff);
 
@@ -167,7 +190,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
     objectMetadataNameSingular,
     action,
     events,
-    objectMetadata: { ...objectMetadataItem, fields },
+    objectMetadata: objectMetadataItem,
     workspaceId,
   };
 };

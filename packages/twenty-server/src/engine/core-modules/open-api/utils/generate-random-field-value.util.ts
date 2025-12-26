@@ -6,11 +6,12 @@ import { v4 } from 'uuid';
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const generateRandomFieldValue = ({
   field,
 }: {
-  field: FieldMetadataEntity;
+  field: FieldMetadataEntity | FlatFieldMetadata;
 }): FieldMetadataDefaultValue => {
   switch (field.type) {
     case FieldMetadataType.UUID: {
@@ -58,7 +59,7 @@ export const generateRandomFieldValue = ({
       return {
         primaryLinkLabel: '',
         primaryLinkUrl: faker.internet.url(),
-        additionalLinks: [],
+        secondaryLinks: [],
       };
     }
 
@@ -82,10 +83,10 @@ export const generateRandomFieldValue = ({
 
     case FieldMetadataType.SELECT: {
       if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
-        return [];
+        return null;
       }
 
-      return [field.options[0].value];
+      return field.options[0].value;
     }
 
     case FieldMetadataType.MULTI_SELECT: {

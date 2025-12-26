@@ -1,24 +1,24 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -72,6 +72,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
+
   namePlural: 'workflowVersions',
   labelSingular: msg`Workflow Version`,
   labelPlural: msg`Workflow Versions`,
@@ -79,7 +80,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
   icon: STANDARD_OBJECT_ICONS.workflowVersion,
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
-@WorkspaceIsObjectUIReadOnly()
+@WorkspaceIsSystem()
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
@@ -88,7 +89,9 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workflow version name`,
     icon: 'IconSettingsAutomation',
   })
-  name: string;
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
@@ -97,6 +100,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Json object to provide trigger`,
     icon: 'IconSettingsAutomation',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   trigger: WorkflowTrigger | null;
 
@@ -107,6 +111,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Json object to provide steps`,
     icon: 'IconSettingsAutomation',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   steps: WorkflowAction[] | null;
 
@@ -119,6 +124,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     options: WorkflowVersionStatusOptions,
     defaultValue: "'DRAFT'",
   })
+  @WorkspaceIsFieldUIReadOnly()
   status: WorkflowVersionStatus;
 
   @WorkspaceField({
@@ -129,6 +135,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   position: number;
 
@@ -143,6 +150,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
       SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
     ),
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
@@ -159,6 +167,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'versions',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
@@ -174,6 +183,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   runs: Relation<WorkflowRunWorkspaceEntity>;
 
@@ -186,6 +196,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
@@ -195,8 +206,10 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the version`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetWorkflowVersion',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

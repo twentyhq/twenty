@@ -4,6 +4,8 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -15,14 +17,18 @@ import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engin
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
-    createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
+    createObjectInput: CreateObjectInput;
     workspaceId: string;
+    workspaceCustomApplicationId: string;
+    existingFeatureFlagsMap: FeatureFlagMap;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     workspaceId,
+    workspaceCustomApplicationId,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    existingFeatureFlagsMap,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
     relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[];
@@ -48,11 +54,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
-          applicationId: createObjectInput.applicationId ?? null,
+          applicationId: workspaceCustomApplicationId,
         },
         workspaceId,
       });
-    const createdAt = new Date();
+    const createdAt = new Date().toISOString();
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldMetadataIds: [],
       viewIds: [],
@@ -81,7 +87,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       shortcut: createObjectInput.shortcut ?? null,
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
-      applicationId: createObjectInput.applicationId ?? null,
+      applicationId: workspaceCustomApplicationId,
       universalIdentifier: objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,
@@ -94,6 +100,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
+      workspaceCustomApplicationId,
+      existingFeatureFlagsMap,
     });
 
     const objectFlatFieldMetadatas: FlatFieldMetadata[] = [

@@ -17,6 +17,7 @@ import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 @InputType()
 export class CreateViewInput {
@@ -59,6 +60,11 @@ export class CreateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  shouldHideEmptyGroups?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
@@ -90,6 +96,18 @@ export class CreateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsEnum(ViewVisibility)
+  @Field(() => ViewVisibility, {
+    nullable: true,
+  })
+  visibility?: ViewVisibility;
 
   @HideField()
   universalIdentifier?: string;

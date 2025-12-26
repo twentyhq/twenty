@@ -2,12 +2,11 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { type ReactNode } from 'react';
 
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 
+import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -31,13 +30,8 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
   children,
 }: RecordTableDraggableTrFirstRowOfGroupProps) => {
   const theme = useTheme();
-  const { recordTableId } = useRecordTableContextOrThrow();
-  const multiDragState = useRecordDragState('table', recordTableId);
 
-  const isSecondaryDragged =
-    multiDragState?.isDragging &&
-    multiDragState.originalSelection.includes(recordId) &&
-    recordId !== multiDragState.primaryDraggedRecordId;
+  const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
   const isScrolledVertically = useRecoilComponentValue(
     isRecordTableScrolledVerticallyComponentState,
@@ -83,9 +77,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
               }}
             >
               {children}
-              <RecordTableRowMultiDragPreview
-                isDragging={draggableSnapshot.isDragging}
-              />
+              <RecordTableRowMultiDragPreview />
             </RecordTableRowDraggableContextProvider>
           </RecordTableTr>
         </>

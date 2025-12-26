@@ -1,0 +1,210 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Horizontal bar configuration should generate variables with secondary axis 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+    {
+      "ownerId": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Horizontal bar configuration should generate variables with single groupBy field 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Vertical bar configuration should generate variables with composite field 1`] = `
+{
+  "groupBy": [
+    {
+      "name": {
+        "firstName": true,
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "name": {
+        "firstName": "AscNullsLast",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Vertical bar configuration should generate variables with date field and granularity 1`] = `
+{
+  "groupBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "orderBy": "AscNullsLast",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Vertical bar configuration should generate variables with single groupBy field 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart Configuration Vertical bar configuration should generate variables with two groupBy fields 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+    {
+      "ownerId": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart Configuration should generate variables with composite field 1`] = `
+{
+  "groupBy": [
+    {
+      "name": {
+        "firstName": true,
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "name": {
+        "firstName": "AscNullsLast",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart Configuration should generate variables with date field and granularity 1`] = `
+{
+  "groupBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "orderBy": "AscNullsLast",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart Configuration should generate variables with secondary axis 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+    {
+      "ownerId": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart Configuration should generate variables with single groupBy field 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart Configuration should generate variables with two groupBy fields (multi-series) 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+    {
+      "ownerId": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
+}
+`;

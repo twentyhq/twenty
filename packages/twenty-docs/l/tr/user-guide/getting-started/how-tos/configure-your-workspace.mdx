@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Her iş farklı çalışır. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. Bu size anında değer katar ve ekibinizin gerçek verilerle Twenty'yi çalışırken görmesine yardımcı olur. You can do so under Settings → Accounts.</Note>
+
+## 1. Veri modelinizi özelleştirin
+
+Twenty, günlük ihtiyaçlarınızı en iyi şekilde destekleyecek veri modelini şekillendirmeniz için ihtiyaç duyduğunuz esnekliği sunar.
+Farklı nesneleriniz arasında ilişkiler dahil olmak üzere herhangi bir türde nesne ve alan oluşturabilirsiniz. Ayarlar → Veri Modeli altında bu işlemi gerçekleştirebilirsiniz.
+İşte birkaç ipucu:
+
+* **Özel alanlar veya özel nesneler için sınırınız yok**. Özel nesne ve alan eklemek planınızı yükseltmenize neden olmaz.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. We recommend using those as much as possible, adding fields to categorize your records if need be. İşte bir örnek:
+  * Ortak özel nesne oluşturmaktansa, potansiyel müşterileriniz ve iş ortaklarınız için Kişiler nesnesini kullanıp, Kişiler nesnesinde `Kişi Türü` adında bir alan oluşturmanız daha iyidir. Because you would not be able to access the emails exchanged with this person from the Partner records.
+  * Create different views under People, one to display partners and one to display prospects.
+* İki Kişinin aynı e-posta adresi olamaz. Two Companies cannot have the same domain.
+* Kullanmak istemediğiniz standart alanları ve nesneleri devre dışı bırakabilirsiniz.
+* Görünümlerden alanları gizleyebilirsiniz: alanlar oluşturmaktan korkmayın, hepsini göstermek zorunda değilsiniz.
+
+Veri modelinizi tasarlamayı öğrenmek için [bu makaleyi](/l/tr/user-guide/data-model/overview) okuyabilirsiniz.
+
+## 2. Verilerinizi yükleyin
+
+Mevcut verilerinizi Twenty'ye getirmek, ekibinize baştan itibaren bağlam sunar.
+
+### Posta kutunuzu bağlayın
+
+Çalışma alanınızı oluştururken bunu yapmadıysanız, Ayarlar → Hesaplar altında **Google veya Microsoft hesabınızı** bağlayın. Bu, Twenty'ye şunları yapma olanağı tanır:
+
+* Mesajlarınızı ve toplantılarınızı içe aktarın
+* Etkileşimlere dayalı olarak otomatik kişi oluşturma (isteğe bağlı)
+* İletişim geçmişini ekibiniz için görünür tutun
+
+**Başka bir sağlayıcı mı kullanıyorsunuz?**
+SMTP üzerinden başka bir posta kutusu veya CalDAV üzerinden başka bir takvim ekleyebilirsiniz. Özelliği Ayarlar → Sürüm Notları → Lab bölümünde etkinleştirmeniz gerektiğini unutmayın, ardından tekrar Ayarlar → Hesaplar sekmesine geri dönün.
+
+### Verilerinizi csv ile içe aktarın
+
+Komut menüsünü (`Cmd + K` veya `Ctrl + K`) kullanarak Kişiler, Şirketler, Fırsatlar veya herhangi bir özel nesneyi CSV ile içe aktarabilirsiniz.
+
+**Key guidelines**:
+
+* Beklenen formatı anlamak için örnek dosyayı indirin
+* Her dosyayı 10.000 kayıtla sınırlayın
+* Kişiler için tekrarlanan e-postaları veya Şirketler için tekrarlanan alan adlarını kaldırın
+* İçe aktarmadan önce hata kontrolü yapın ve düzeltin (sarı renkte vurgulanır)
+
+Veri içe aktarma hakkında daha fazla bilgi almak için [bu makaleyi](/l/tr/user-guide/data-migration/overview) okuyun.
+
+## 3. İlk görünümünüzü oluşturun
+
+Farklı görünümler oluşturmak, verileri ekibiniz için işe yarar hale getirmek için anahtardır.
+Nasıl yapılır:
+
+* **Sütunları ekleyin veya gizleyin**
+  Görüntülenen alanları düzenlemek için Seçenekler → Alanlar (sağ üst köşeden tıklayarak) kısmına gidin. Oradan alanları gösterebilir veya gizleyebilirsiniz.
+
+* **Alanları yeniden sıralayın**
+  Bir görünümden alanları yeniden sıralamak için Seçenekler → Alanlar (sağ üst köşeden tıklayarak) kısmına gidin. Alanları yeniden sıralamak için sürükleyip bırakabilirsiniz.
+
+* **Görünümünüzü filtreleyin**
+  Üst sağ köşeden Filtreler'i kullanarak görüntülenen kayıtları daraltın.
+
+* **Kayıtları sırala**
+  Üst sağ köşeden Sırala işlevini kullanarak veya sütun adına tıklayarak görüntülenen kayıtları sıralayabilirsiniz.
+
+* **Düzeni seçin**
+  Bir `Aşama` veya benzeri seçim türü alan varsa **Kanban düzeni** veya liste **Gruplandır** düzenine geçebilirsiniz.
+
+* **Görünümünüzü Favori olarak kaydedin**
+  Farklı görünümleri gösteren açılır menüyü kullanarak yapılabilir.
+
+## Sırada ne var?
+
+[İş akışlarını](/l/tr/user-guide/workflows/overview) kullanarak otomasyonlar oluşturmaya başlayın.

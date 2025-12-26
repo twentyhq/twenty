@@ -31,8 +31,15 @@ export class CalendarEventFindOnePostQueryHook
       throw new ForbiddenError('User is required');
     }
 
+    const workspace = authContext.workspace;
+
+    if (!workspace) {
+      throw new ForbiddenError('Workspace is required');
+    }
+
     await this.applyCalendarEventsVisibilityRestrictionsService.applyCalendarEventsVisibilityRestrictions(
       payload,
+      workspace.id,
       user?.id,
     );
   }

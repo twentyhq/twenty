@@ -90,13 +90,18 @@ msgstr "crwdns1:0crwdne1:0"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "crwdns64310:0crwdne64310:0"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "crwdns5:0crwdne5:0"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "crwdns5915:0crwdne5915:0"
+msgid "Confirm new email"
+msgstr "crwdns64312:0crwdne64312:0"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -130,13 +135,23 @@ msgstr "crwdns29:0crwdne29:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "crwdns37:0{duration}crwdne37:0"
+msgid "Set your password 🗝"
+msgstr "crwdns63704:0crwdne63704:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "crwdns27:0crwdne27:0"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "crwdns63706:0crwdne63706:0"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "crwdns37:0{duration}crwdne37:0"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

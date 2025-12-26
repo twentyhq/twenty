@@ -1,19 +1,33 @@
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import type { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const mockObjectMetadata = getMockObjectMetadataEntity({
+const mockObjectMetadata: FlatObjectMetadata = {
   id: 'id',
   nameSingular: 'nameSingular',
   namePlural: 'namePlural',
   workspaceId: 'workspaceId',
-});
+  labelSingular: 'Label Singular',
+  labelPlural: 'Label Plural',
+  isCustom: false,
+  isRemote: false,
+  isActive: true,
+  isSystem: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  universalIdentifier: 'id',
+  fieldMetadataIds: [],
+  indexMetadataIds: [],
+  viewIds: [],
+  applicationId: null,
+} as unknown as FlatObjectMetadata;
 
 describe('transformEventBatchToWebhookEvents', () => {
   it('should transform properly', () => {
-    const workspaceEventBatch = {
+    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
       workspaceId: 'workspaceId',
       objectMetadata: mockObjectMetadata,
       name: 'objectNameSingular.created',
@@ -48,7 +62,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEventBatch<ObjectRecordEvent>;
+    };
 
     const webhooks = [
       {
@@ -174,7 +188,7 @@ describe('transformEventBatchToWebhookEvents', () => {
   });
 
   it('should sanitize records properly', () => {
-    const workspaceEventBatch = {
+    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
       workspaceId: 'workspaceId',
       objectMetadata: mockObjectMetadata,
       name: 'webhook.created',
@@ -190,7 +204,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
       ],
-    } as WorkspaceEventBatch<ObjectRecordEvent>;
+    };
 
     const webhooks = [
       {

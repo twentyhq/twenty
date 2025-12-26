@@ -16,10 +16,12 @@ import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } f
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
+import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/utils/should-infer-deletion-from-missing-entities.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -32,11 +34,12 @@ export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
   dependencyOptimisticFlatEntityMaps: MetadataValidationRelatedFlatEntityMaps<T>;
   workspaceId: string;
+  additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
 } & FromTo<MetadataFlatEntityMaps<T>>;
 
-export type ValidateAndBuildReturnType<T extends AllMetadataName> =
-  | SuccessfulFlatEntityValidateAndBuild<T>
-  | FailedFlatEntityValidateAndBuild<T>;
+export type ValidateAndBuildReturnType<T extends AllMetadataName> = Promise<
+  SuccessfulFlatEntityValidateAndBuild<T> | FailedFlatEntityValidateAndBuild<T>
+>;
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
   T extends AllMetadataName,
@@ -55,7 +58,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
     workspaceId,
-  }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
+  }: ValidateAndBuildArgs<T>): ValidateAndBuildReturnType<T> {
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
     this.logger.time(
       `EntityBuilder ${this.metadataName}`,
@@ -161,10 +164,14 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       deletedFlatEntityMaps,
     );
 
-    for (const flatEntityToDeleteId in buildOptions
-      .inferDeletionFromMissingEntities?.[this.metadataName]
-      ? deletedFlatEntityMaps.byId
-      : {}) {
+    const flatEntityToDeleteIds = shouldInferDeletionFromMissingEntities({
+      buildOptions,
+      metadataName: this.metadataName,
+    })
+      ? Object.keys(deletedFlatEntityMaps.byId)
+      : [];
+
+    for (const flatEntityToDeleteId of flatEntityToDeleteIds) {
       const flatEntityToDelete =
         deletedFlatEntityMaps.byId[flatEntityToDeleteId];
 
@@ -302,13 +309,19 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'created'>>;
+  ):
+    | FlatEntityValidationReturnType<T, 'created'>
+    | Promise<FlatEntityValidationReturnType<T, 'created'>>;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
+  ):
+    | FlatEntityValidationReturnType<T, 'deleted'>
+    | Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'updated'>>;
+  ):
+    | FlatEntityValidationReturnType<T, 'updated'>
+    | Promise<FlatEntityValidationReturnType<T, 'updated'>>;
 }

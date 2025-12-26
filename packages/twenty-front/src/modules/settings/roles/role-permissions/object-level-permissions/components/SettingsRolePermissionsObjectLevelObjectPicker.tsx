@@ -7,6 +7,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -52,6 +53,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 }) => {
   const theme = useTheme();
   const navigate = useNavigateSettings();
+  const [searchParams] = useSearchParams();
+  const fromAgentId = searchParams.get('fromAgent');
   const [searchFilter, setSearchFilter] = useState('');
 
   const { objectMetadataItemsThatCanHavePermission } =
@@ -64,10 +67,11 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   };
 
   const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    navigate(SettingsPath.RoleObjectLevel, {
-      roleId,
-      objectMetadataId,
-    });
+    navigate(
+      SettingsPath.RoleObjectLevel,
+      { roleId, objectMetadataId },
+      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+    );
   };
 
   const { filterObjectMetadataItemsWithPermissionOverride } =

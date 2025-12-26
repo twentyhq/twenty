@@ -1,9 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type CompositeType,
+  compositeTypeDefinitions,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -91,17 +92,13 @@ export const createIndexMigration = async (
         .flat()
         .filter(isDefined);
 
-      const defaultWhereClause = indexMetadata.isUnique
-        ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != ''`
-        : null;
-
       return {
         name: indexMetadata.name,
         action: WorkspaceMigrationIndexActionType.CREATE,
         isUnique: indexMetadata.isUnique,
         columns,
         type: indexMetadata.indexType,
-        where: indexMetadata.indexWhereClause ?? defaultWhereClause,
+        where: indexMetadata.indexWhereClause,
       };
     });
 

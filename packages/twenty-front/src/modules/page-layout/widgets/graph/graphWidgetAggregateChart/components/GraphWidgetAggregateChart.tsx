@@ -12,6 +12,8 @@ import {
 type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;
+  prefix?: string;
+  suffix?: string;
 };
 
 const StyledTrendPercentageValue = styled.span`
@@ -43,6 +45,8 @@ const StyledH1Title = styled(H1Title)`
 export const GraphWidgetAggregateChart = ({
   value,
   trendPercentage,
+  prefix,
+  suffix,
 }: GraphWidgetAggregateChartProps) => {
   const theme = useTheme();
 
@@ -50,9 +54,14 @@ export const GraphWidgetAggregateChart = ({
     ? formatNumberChartTrend(trendPercentage)
     : undefined;
 
+  const displayValue = `${prefix ?? ''}${value}${suffix ?? ''}`;
+
   return (
     <StyledContainer>
-      <StyledH1Title title={value} fontColor={H1TitleFontColor.Primary} />
+      <StyledH1Title
+        title={displayValue}
+        fontColor={H1TitleFontColor.Primary}
+      />
       {isDefined(trendPercentage) && (
         <StyledTrendIconContainer>
           <StyledTrendPercentageValue>

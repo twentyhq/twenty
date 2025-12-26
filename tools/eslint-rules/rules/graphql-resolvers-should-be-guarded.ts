@@ -6,17 +6,20 @@ import { typedTokenHelpers } from '../utils/typedTokenHelpers';
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-graphql-resolvers-should-be-guarded"
 export const RULE_NAME = 'graphql-resolvers-should-be-guarded';
 
-export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition) => {
+export const graphqlResolversShouldBeGuarded = (
+  node: TSESTree.MethodDefinition,
+) => {
   const hasGraphQLResolverDecorator = typedTokenHelpers.nodeHasDecoratorsNamed(
     node,
-    ['Query', 'Mutation', 'Subscription']
+    ['Query', 'Mutation', 'Subscription'],
   );
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
+  const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
 
-  function findClassDeclaration(
-    node: TSESTree.Node
-  ): TSESTree.ClassDeclaration | null {
+  const findClassDeclaration = (
+    node: TSESTree.Node,
+  ): TSESTree.ClassDeclaration | null => {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
     }
@@ -24,7 +27,7 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
       return findClassDeclaration(node.parent);
     }
     return null;
-  }
+  };
 
   const classNode = findClassDeclaration(node);
 
@@ -32,11 +35,18 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     ? typedTokenHelpers.nodeHasAuthGuards(classNode)
     : false;
 
-  return (
-    hasGraphQLResolverDecorator &&
-    !hasAuthGuards &&
-    !hasAuthGuardsOnResolver
-  );
+  const hasPermissionsGuardOnResolver = classNode
+    ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
+    : false;
+
+  // All resolvers need both auth guards and permission guards
+  const missingAuthGuard =
+    hasGraphQLResolverDecorator && !hasAuthGuards && !hasAuthGuardsOnResolver;
+
+  const missingPermissionGuard =
+    hasGraphQLResolverDecorator && !hasPermissionsGuard && !hasPermissionsGuardOnResolver;
+
+  return missingAuthGuard || missingPermissionGuard;
 };
 
 export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
@@ -44,20 +54,20 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model.',
+        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) and permission guards (SettingsPermissionsGuard or CustomPermissionGuard) to maintain our security model.',
     },
     messages: {
       graphqlResolversShouldBeGuarded:
-        'All GraphQL root resolver methods (@Query, @Mutation, @Subscription) should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpointGuard) decorators, or one decorating the root of the Resolver class.',
+        'All GraphQL resolvers must have authentication guards (@UseGuards(UserAuthGuard/WorkspaceAuthGuard)) and permission guards (@UseGuards(..., SettingsPermissionsGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases like onboarding).',
     },
     schema: [],
     hasSuggestions: false,
     type: 'suggestion',
   },
   defaultOptions: [],
-  create(context) {
+  create: (context) => {
     return {
-      MethodDefinition(node: TSESTree.MethodDefinition): void {
+      MethodDefinition: (node: TSESTree.MethodDefinition): void => {
         if (graphqlResolversShouldBeGuarded(node)) {
           context.report({
             node: node,
@@ -67,4 +77,4 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
       },
     };
   },
-}); 
+});

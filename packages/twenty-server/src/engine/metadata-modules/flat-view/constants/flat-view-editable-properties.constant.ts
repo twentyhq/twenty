@@ -12,4 +12,7 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'anyFieldFilterValue',
   'calendarLayout',
   'calendarFieldMetadataId',
+  'visibility',
+  'mainGroupByFieldMetadataId',
+  'shouldHideEmptyGroups',
 ] as const satisfies (keyof FlatView)[];

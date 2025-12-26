@@ -1,3 +1,4 @@
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
@@ -7,6 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -28,7 +30,14 @@ const StyledNotesContainer = styled.div`
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
-  const { notes, loading } = useNotes(targetRecord);
+  const { notes, loading, totalCountNotes, fetchMoreNotes, hasNextPage } =
+    useNotes(targetRecord);
+
+  const handleLastRowVisible = async () => {
+    if (hasNextPage) {
+      await fetchMoreNotes();
+    }
+  };
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
@@ -59,16 +68,16 @@ export const NotesCard = () => {
         <AnimatedPlaceholder type="noNote" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No notes
+            {t`No notes`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no associated notes with this record.
+            {t`There are no associated notes with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
-            title="New note"
+            title={t`New note`}
             variant="secondary"
             onClick={() =>
               openCreateActivity({
@@ -84,15 +93,16 @@ export const NotesCard = () => {
   return (
     <StyledNotesContainer>
       <NoteList
-        title="All"
+        title={t`All`}
         notes={notes}
+        totalCount={totalCountNotes}
         button={
           hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"
               variant="secondary"
-              title="Add note"
+              title={t`Add note`}
               onClick={() =>
                 openCreateActivity({
                   targetableObjects: [targetRecord],
@@ -101,6 +111,10 @@ export const NotesCard = () => {
             />
           )
         }
+      />
+      <CustomResolverFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={handleLastRowVisible}
       />
     </StyledNotesContainer>
   );

@@ -9,21 +9,24 @@ type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
   workspaceId,
+  workspaceCustomApplicationId,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
     ['defaultValue', 'settings'],
   );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
@@ -32,12 +35,11 @@ export const getDefaultFlatFieldMetadata = ({
     isCustom: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(
-      createFieldInput.type,
       createFieldInput.isNullable,
       createFieldInput.isRemoteCreation,
     ),
-    isSystem: false,
-    isUnique: createFieldInput.isUnique ?? null,
+    isSystem: createFieldInput.isSystem ?? false,
+    isUnique: createFieldInput.isUnique ?? false,
     label: createFieldInput.label,
     name: createFieldInput.name,
     objectMetadataId: createFieldInput.objectMetadataId,
@@ -56,9 +58,8 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
-    applicationId: createFieldInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

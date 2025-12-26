@@ -1,13 +1,13 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { isDefined, isUUID } from 'class-validator';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
+import { type RelationOnDeleteAction } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { type ObjectType } from 'typeorm';
-import { type RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -88,7 +88,8 @@ export function WorkspaceRelation<TClass extends object>(
     );
     const name = propertyKey.toString();
     const label = options.label.message ?? '';
-    const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
+    const isLabelSyncedWithName =
+      computeMetadataNameFromLabel({ label }) === name;
 
     if (options.isMorphRelation && !isDefined(options.morphId)) {
       throw new CustomError(

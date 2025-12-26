@@ -29,11 +29,13 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
+  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
+  fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -42,12 +44,18 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
+  const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
+    roleId: roleId,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const navigationUrl = fromAgentId
+    ? `${navigationPath}?fromAgent=${fromAgentId}`
+    : navigationPath;
+
   return (
     <TableRow
-      to={getSettingsPath(SettingsPath.RoleObjectLevel, {
-        roleId: roleId,
-        objectMetadataId: objectMetadataItem.id,
-      })}
+      to={navigationUrl}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <StyledNameTableCell>

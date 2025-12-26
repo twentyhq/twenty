@@ -1,0 +1,51 @@
+name: 'Push docs to Crowdin'
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: ['main']
+    paths:
+      - 'packages/twenty-docs/**/*.mdx'
+      - '!packages/twenty-docs/l/**'
+      - 'packages/twenty-docs/navigation/navigation.template.json'
+      - 'crowdin-docs.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  push_docs:
+    name: Push documentation to Crowdin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.ref }}
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Generate navigation template for Crowdin
+        run: yarn docs:generate-navigation-template
+
+      - name: Upload docs to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          localization_branch_name: i18n-docs
+          base_url: 'https://twenty.api.crowdin.com'
+          config: 'crowdin-docs.yml'
+        env:
+          # Docs translations project
+          CROWDIN_PROJECT_ID: '2'
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+

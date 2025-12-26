@@ -1,0 +1,132 @@
+---
+title: Calendar & Emails
+description: Connect your email and calendar accounts to Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+</Frame>
+
+## Opțiuni de Conexiune
+
+### Cont Google (Gmail & Calendar Google)
+
+1. Mergeți la **Setări → Conturi**
+2. Faceți clic pe **Adăugați cont**
+3. Selectați **Continuați cu Google**
+4. Autorizați Twenty să acceseze Gmail și Calendarul Google
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. E-mailurile și evenimentele dvs. din calendar vor începe să se sincronizeze automat
+
+### Cont Microsoft (Outlook & Calendar Microsoft)
+
+1. Mergeți la **Setări → Conturi**
+2. Faceți clic pe **Adăugați cont**
+3. Selectați **Continuați cu Microsoft**
+4. Autorizați Twenty să acceseze Outlook și Calendarul Microsoft
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. E-mailurile și evenimentele dvs. din calendar vor începe să se sincronizeze automat
+
+### Configurarea SMTP/CalDAV (Alți Furnizori)
+
+Pentru alți furnizori de e-mail și calendar:
+
+1. Mergeți la **Setări → Lansări → Lab** pentru a activa funcția
+2. Întoarceți-vă la **Setări → Conturi**
+3. Configurați setările SMTP pentru e-mail
+4. Configurați setările CalDAV pentru calendar
+5. Testați conexiunea
+
+### Căsuțe Poștale Multiple
+
+* **Conturi Nelimitate**: Conectați multiple conturi de e-mail per utilizator
+* **Gestionarea Contului**: Schimbați între diferite căsuțe poștale
+* **Setări Sincronizare**: Configurați setări diferite per căsuță poștală
+
+<Warning>
+  Numai căsuțele poștale adevărate pot fi conectate (de exemplu, support@domain.com cu propria căsuță). Aliasurile de e-mail care redirecționează către altă căsuță poștală nu pot fi conectate la Twenty.
+</Warning>
+
+## Configurarea E-mailului
+
+### Vizibilitatea Mesajelor
+
+Alegeți diferite niveluri de vizibilitate pentru e-mailurile dvs.:
+
+* **Doar Metadate**: Partajați doar informații de bază (expeditor, destinatar, dată, oră)
+* **Subiect și Metadate**: Partajați linia de subiect împreună cu metadatele
+* **Toate Conținutul E-mailului**: Partajați întregul conținut al e-mailului, inclusiv atașamentele
+
+### Creare Automată de Contacte
+
+* **Dezactivat**: Fără creare automată de contacte
+* **Pentru mesajele trimise și primite**: Creați contacte pentru toate interacțiunile externe de e-mail
+* **Doar pentru mesajele trimise**: Creați contacte numai pentru e-mailurile pe care le trimiteți
+* **Notă**: E-mailurile interne (același domeniu) nu sunt sincronizate pentru a menține confidențialitatea
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Controlați ce e-mailuri sunt sincronizate cu Seleția dosarelor de Mesaje (Funcția Lab)
+
+Controlați care foldere de e-mail se sincronizează cu Twenty:
+
+1. Mergeți la **Setări → Lansări → Lab** și activați **Dosar Mesaje**
+2. Întoarceți-vă la **Setări → Conturi** și selectați contul dvs. de e-mail conectat
+3. Alegeți ce dosare să sincronizați:
+   * **Inbox**: E-mailurile primare primite
+   * **Trimise**: E-mailurile trimise de dvs.
+   * **Dosare Personalizate**: Orice dosare specifice pe care doriți să le includeți
+   * **Excludeți Dosare**: Săriți dosare precum Spam, Coș de gunoi sau dosare personale
+
+Acest lucru vă oferă control precis asupra a ceea ce apare în CRM-ul dvs. fără a sincroniza totul.
+
+**Ce se Sincronizează:**
+
+* **E-mailuri Externe**: Toate e-mailurile cu contacte externe din dosarele selectate
+* **E-mailuri Interne**: Nu sunt sincronizate (e-mailurile de același domeniu rămân private)
+* **Atașamente**: Va veni în H1 2026
+
+**Notă**: Nu oferim o adresă de e-mail CC pentru sincronizarea selectivă. În schimb, utilizați funcția Dosar Mesaje de mai sus pentru a obține același nivel de control asupra sincronizării e-mailurilor cu Twenty.
+
+## Configurarea Calendarului
+
+### Vizibilitatea Evenimentelor
+
+Alegeți ce va fi vizibil pentru alți utilizatori din workspace-ul dvs.:
+
+* **Totul**: Detaliile întregului eveniment vor fi împărtășite echipei dvs.
+* **Metadate**: Doar data și participanții vor fi împărtășite echipei dvs.
+
+### Creare Automată de Contacte pentru Întâlniri
+
+* **Da**: Creați automat contacte pentru participanți la întâlniri care nu sunt în CRM-ul dvs.
+* **Nu**: Legați doar întâlnirile de contacte existente
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Controlați ce evenimente sunt sincronizate
+
+* **Import Întâlniri**: Importați automat evenimente din calendar
+* **Legare de Contacte**: Legați întâlnirile de fișele Persoanelor și Companiilor
+
+**Ce se Sincronizează:**
+
+* **Întâlniri**: Evenimente din calendar cu participanți externi
+* **Legare de Contacte**: Evenimente legate automat de fișele CRM
+* **Evenimente ale Echipelor**: Vizibilitatea calendarului partajat
+
+## Frecvența Sincronizării
+
+**Actualizări la fiecare 5 minute**: Atât e-mailurile cât și datele din calendar se sincronizează automat la fiecare 5 minute după importul inițial.
+
+<Note>
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+</Note>
+
+## Pașii următori
+
+* [Mailbox capabilities](/l/ro/user-guide/calendar-emails/capabilities/mailbox)
+* [Troubleshoot missing emails](/l/ro/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

@@ -57,9 +57,6 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.TEXT,
         {
           factory: this.basicColumnActionFactory,
-          options: {
-            defaultValue: "''",
-          },
         },
       ],
       [FieldMetadataType.NUMERIC, { factory: this.basicColumnActionFactory }],

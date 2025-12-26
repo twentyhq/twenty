@@ -1,12 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEmptyTriggerEditable } from '../../workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
+import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
@@ -18,6 +19,9 @@ export default meta;
 type Story = StoryObj<typeof WorkflowDiagramEmptyTriggerEditable>;
 
 export const Default: Story = {
+  args: {
+    id: 'trigger-node',
+  },
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
@@ -36,10 +40,22 @@ export const Default: Story = {
 };
 
 export const Selected: Story = {
+  args: {
+    id: 'trigger-node',
+  },
   decorators: [
     (Story) => (
-      <div className="selectable selected" style={{ position: 'relative' }}>
-        <RecoilRoot>
+      <div style={{ position: 'relative' }}>
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(
+              workflowSelectedNodeComponentState.atomFamily({
+                instanceId: 'workflow-visualizer-instance-id',
+              }),
+              'trigger-node',
+            );
+          }}
+        >
           <WorkflowVisualizerComponentInstanceContext.Provider
             value={{ instanceId: 'workflow-visualizer-instance-id' }}
           >

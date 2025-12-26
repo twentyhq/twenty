@@ -2,23 +2,90 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type QueryRunner, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
+
+  async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+    workspace: workspaceInput,
+    workspaceId,
+  }:
+    | {
+        workspaceId: string;
+        workspace?: never;
+      }
+    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    const workspace = isDefined(workspaceInput)
+      ? workspaceInput
+      : await this.workspaceRepository.findOne({
+          where: {
+            id: workspaceId,
+          },
+        });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const twentyStandardApplicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+      ];
+
+    if (!isDefined(twentyStandardApplicationId)) {
+      throw new ApplicationException(
+        `Could not find workspace twenty standard applicationId in cache ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const twentyStandardFlatApplication =
+      flatApplicationMaps.byId[twentyStandardApplicationId];
+    const workspaceCustomFlatApplication =
+      flatApplicationMaps.byId[workspace.workspaceCustomApplicationId];
+
+    if (
+      !isDefined(twentyStandardFlatApplication) ||
+      !isDefined(workspaceCustomFlatApplication)
+    ) {
+      throw new ApplicationException(
+        `Could not find workspace custom and standard applications ${workspace.id}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return {
+      twentyStandardFlatApplication,
+      workspaceCustomFlatApplication,
+    };
+  }
 
   async findManyApplications(
     workspaceId: string,
@@ -64,10 +131,13 @@ export class ApplicationService {
     });
   }
 
-  async findByUniversalIdentifier(
-    universalIdentifier: string,
-    workspaceId: string,
-  ) {
+  async findByUniversalIdentifier({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }) {
     return this.applicationRepository.findOne({
       where: {
         universalIdentifier,
@@ -76,36 +146,96 @@ export class ApplicationService {
     });
   }
 
-  async create(data: {
-    universalIdentifier?: string;
-    name: string;
-    description?: string;
-    version?: string;
-    serverlessFunctionLayerId: string;
-    sourcePath: string;
-    workspaceId: string;
-  }): Promise<ApplicationEntity> {
+  async createTwentyStandardApplication(
+    {
+      workspaceId,
+      skipCacheInvalidation = false,
+    }: {
+      workspaceId: string;
+      skipCacheInvalidation?: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    const twentyStandardApplication = await this.create(
+      {
+        ...TWENTY_STANDARD_APPLICATION,
+        serverlessFunctionLayerId: null,
+        workspaceId,
+        canBeUninstalled: false,
+      },
+      queryRunner,
+    );
+
+    if (!skipCacheInvalidation) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    }
+
+    return twentyStandardApplication;
+  }
+
+  async createWorkspaceCustomApplication(
+    {
+      workspaceId,
+      workspaceDisplayName,
+    }: {
+      workspaceId: string;
+      workspaceDisplayName?: string;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    const applicationId = v4();
+    const workspaceCustomApplication = await this.create(
+      {
+        description: 'Workspace custom application',
+        name: `${isDefined(workspaceDisplayName) ? workspaceDisplayName : 'Workspace'}'s custom application`,
+        sourcePath: 'workspace-custom',
+        version: '1.0.0',
+        universalIdentifier: applicationId,
+        workspaceId: workspaceId,
+        id: applicationId,
+        serverlessFunctionLayerId: null,
+        canBeUninstalled: false,
+      },
+      queryRunner,
+    );
+
+    return workspaceCustomApplication;
+  }
+
+  async create(
+    data: Partial<ApplicationEntity> & { workspaceId: string },
+    queryRunner?: QueryRunner,
+  ): Promise<ApplicationEntity> {
     const application = this.applicationRepository.create({
       ...data,
       sourceType: 'local',
     });
 
-    return this.applicationRepository.save(application);
+    if (queryRunner) {
+      return queryRunner.manager.save(ApplicationEntity, application);
+    }
+
+    const savedApplication = await this.applicationRepository.save(application);
+
+    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
+      'flatApplicationMaps',
+    ]);
+
+    return savedApplication;
   }
 
   async update(
     id: string,
-    data: {
-      name?: string;
-      description?: string;
-      version?: string;
-      sourcePath?: string;
-      packageJson?: PackageJson;
-      yarnLock?: string;
-      packageChecksum?: string;
-    },
+    data: Parameters<typeof this.applicationRepository.update>[1],
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
+
+    await this.workspaceCacheService.invalidateAndRecompute(
+      data.workspaceId as string,
+      ['flatApplicationMaps'],
+    );
 
     const updatedApplication = await this.findById(id);
 
@@ -117,10 +247,10 @@ export class ApplicationService {
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {
-    const application = await this.findByUniversalIdentifier(
+    const application = await this.findByUniversalIdentifier({
       universalIdentifier,
       workspaceId,
-    );
+    });
 
     if (!isDefined(application)) {
       throw new Error(`Application does not exist`);
@@ -131,8 +261,13 @@ export class ApplicationService {
       workspaceId,
     });
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+    ]);
+
+    await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
-    });
+      ALL_FLAT_ENTITY_MAPS_PROPERTIES,
+    );
   }
 }

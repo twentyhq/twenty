@@ -1,13 +1,21 @@
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
-export const isFlatFieldMetadataNameSyncedWithLabel = (
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+
+export const isFlatFieldMetadataNameSyncedWithLabel = ({
+  flatFieldMetadata,
+  isSystemBuild,
+}: {
   flatFieldMetadata: Pick<
     FlatFieldMetadata,
     'name' | 'isLabelSyncedWithName' | 'label'
-  >,
-) => {
-  const computedName = computeMetadataNameFromLabel(flatFieldMetadata.label);
+  >;
+  isSystemBuild: boolean;
+}) => {
+  const computedName = computeMetadataNameFromLabel({
+    label: flatFieldMetadata.label,
+    applyCustomSuffix: !isSystemBuild,
+  });
 
   return flatFieldMetadata.name === computedName;
 };

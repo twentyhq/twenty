@@ -1,0 +1,198 @@
+---
+title: Alan Eşlemesi
+description: Veri içe aktarma sırasında alan eşlemenin nasıl çalıştığı.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Alan Eşlemesi Nasıl Çalışır
+
+Bir dosya yüklediğinizde, Twenty sütunlarınızı analiz eder ve bunları mevcut alanlarla eşleştirmeye çalışır.
+
+### Otomatik Eşleme
+
+Twenty, sütunları aşağıdakilere göre eşleştirmeye çalışır:
+
+* Sütun başlık adları (tam veya benzer eşleşmeler)
+* Veri türü algılama (tarihler, sayılar, e-postalar)
+* Yaygın alan kalıpları
+
+<Note>**Hızlı ipucu:** İçe aktarmak istediğiniz nesneden birkaç satır dışa aktarın. Dışa aktarılan dosya, Twenty'nin beklediği sütun adlarını tam olarak içerir; bu da içe aktarma sırasında otomatik eşlemeyi sorunsuz hale getirir.</Note>
+
+### Manuel Eşleme Seçenekleri
+
+Her sütun için şunları yapabilirsiniz:
+
+* **Bir alana eşleyin**: Açılır menüden eşleşen Twenty alanını seçin
+* **Eşleme yapmayın**: Sütunu tamamen atlayın (veri içe aktarılmayacaktır)
+
+<Note>**Alanlar, içe aktarmadan önce mevcut olmalıdır.** İçe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce özel alanları **Ayarlar → Veri Modeli** altında oluşturun.</Note>
+
+## Alan Türü Uyumluluğu
+
+Veri Modelinde mevcut olan tüm alan türleri içe aktarma için desteklenir.
+
+`id` değerlerini de içe aktararak yeni kayıtlara belirli bir ID atayabilir veya mevcut olanları güncelleyebilirsiniz.
+
+<img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
+
+## Veri Biçimi Gereksinimleri
+
+<Note>**Bazı alanların özel bir sözdizimi vardır.** İçe aktarmayı hazırlamadan önce her alan türü için beklenen sözdizimini görmek adına örnek dosyayı indirmenizi öneririz.</Note>
+
+### Adres Alanları
+
+Adres, birden çok sütuna sahip iç içe bir alandır. Bazıları boş bırakılabilir.
+
+* **Address / Address 1**: Sokak adresinin 1. satırı
+* **Address / Address 2**: Sokak adresinin 2. satırı
+* **Address / City**: Şehir adı
+* **Address / State**: Eyalet veya il
+* **Address / Country**: Ülke adı
+* **Address / Post Code**: Posta/ZIP kodu
+
+### Dizi Alanları
+
+Aşağıdaki biçimi kullanın:
+
+```
+["value1","value2"]
+```
+
+### Boole Alanları
+
+`TRUE` veya `FALSE` kullanın (büyük harf) - `true` ya da `false` kullanmayın
+
+### Para Birimi Alanları
+
+Para birimi, her ikisi de doldurulması gereken iki sütundan oluşan iç içe bir alandır:
+
+* **Amount / Amount**: Sayısal değer (örn. `1234.56`)
+* **Amount / Currency**: Para birimi kodu (örn. `USD`, `EUR`)
+
+### Tarih Alanları
+
+Desteklenen biçimler:
+
+* `YYYY-MM-DD` (önerilir)
+* `MM/DD/YYYY`
+* `DD/MM/YYYY`
+* ISO 8601 biçimi
+
+### Alan Adı Alanları
+
+* Kopyalar oluşmasını önlemek için `https://domain.com` biçiminin kullanılması önerilir; çünkü posta kutusu ve takvim eşzamanlaştırmalarıyla oluşturulan Şirketler için kullanılan biçim budur
+* Bir `Domain Label` ve `Domain URL` doldurulabilir: en iyi uygulama olarak etikete `domain.com`, URL'ye `https://domain.com` yazmaktır
+* Alan adları, Şirketler nesnesi içinde benzersiz olmalıdır
+* **İçe aktarılacak dosya içinde alan adlarının benzersiz olması gerekir**
+
+### E-posta Alanları
+
+* Geçerli e-posta biçiminde olmalıdır
+* E-postalar, Kişiler nesnesi içinde benzersiz olmalıdır
+* **İçe aktarılacak dosya içinde e-postaların benzersiz olması gerekir**
+* Ek e-postalar için: ana e-posta için **Emails / Primary Email**'i ve şu biçimle **Emails / Additional Emails**'i kullanın:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### ID Alanları
+
+İçe aktarma sırasında bir `id` belirtmek isteğe bağlıdır. Sağlanmazsa Twenty bir tane otomatik olarak oluşturur.
+
+`id` sütununu eşlemeye yönelik kullanım durumları:
+
+* **Belirli bir ID ayarlayın**: Yeni oluşturulan kayıtlar için UUID seçin
+* **Mevcut kayıtları güncelleyin**: Yinelenenler oluşturmak yerine mevcut kayıtlarla eşleştirerek güncelleyin. Bu durumda diğer benzersiz alanları eşlememeniz önerilir: Yalnızca tek bir benzersiz alanı eşlemek daha sorunsuz bir içe aktarma sağlar.
+
+<Note>Bir `id` sağlarsanız, UUID biçiminde olmalıdır (ör. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+### JSON Alanları
+
+Geçerli JSON biçimini kullanın:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### Bağlantı Alanları
+
+Alan Adı alanlarına benzer:
+
+* Etiket ve URL sütunlarının ikisini de doldurun: **Links / Link URL** ve **Links / Link Label**
+* Tam URL biçimini kullanın: `https://example.com`
+* İkincil bağlantılar için **Links / Secondary Links** sütununu şu biçimde kullanın:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### Çoklu Seçim Alanları
+
+**Görünen etiketleri** değil, **API adlarını** aşağıdaki biçimde kullanın:
+
+```
+["VALUE1","VALUE2"]
+```
+
+API adlarının nerede bulunacağını [buradan](#finding-api-names-for-select-fields) görün.
+
+<Note>Yeni seçim seçenekleri içe aktarma tarafından otomatik olarak oluşturulmaz. İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde ekleyin.</Note>
+
+<Warning>
+  **İçe aktarma üzerine yazar, ekleme yapmaz.**
+
+  Bir kayıtta halihazırda `VALUE2` ve `VALUE3` seçiliyse ve siz `["VALUE1"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `VALUE1` bulunur. Önceki seçimler birleştirilmez, değiştirilir.
+</Warning>
+
+### Sayı Alanları
+
+* Yalnızca sayılar
+* Ondalıklar nokta kullanır: `1234.56`
+* Binlik ayırıcı kullanmayın
+
+### Telefon Alanları
+
+Telefon, birden çok sütundan oluşan ve **doldurulması gereken** iç içe bir alandır
+
+* **Phones / Primary Phone Number**: Telefon numarası (örn. `4159095555`)
+* **Phones / Primary Phone Country Code**: Ülke kodu (örn. `US`)
+* **Phones / Primary Phone Calling Code**: Arama kodu (örn. `+1`)
+
+### Puanlama Alanları
+
+Şu API adı biçimini kullanın: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+
+### İlişki Alanları
+
+Lütfen şu özel makalemize bakın: [Nesneler Arasındaki İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
+
+### Seçim Alanları
+
+**Görünen etiketi** değil, seçeneğin **API adını** kullanın:
+
+```
+VALUE1
+```
+
+API adlarının nerede bulunacağını [buradan](#finding-api-names-for-select-fields) görün.
+<Note>Yeni seçim seçenekleri içe aktarma tarafından otomatik olarak oluşturulmaz. İçe aktarmadan önce **Ayarlar → Veri Modeli** altında eklenmelidir.</Note>
+
+### Metin Alanları
+
+* Özel biçimlendirme gerekmez
+* Baştaki/sondaki boşluklar kırpılır
+
+## API Adlarını Bulma
+
+Önceden tanımlı seçeneklere sahip Select, Multi-Select ve Array alanları için, görünen etiketler değil, **API adlarını** kullanmalısınız.
+
+### API Adları Nasıl Bulunur
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi ve alanı seçin
+3. **Gelişmiş mod**u etkinleştirin (ayarlar sayfasının sağ altındaki anahtarı kullanarak)
+4. Her seçenek için API adını görüntüleyin
+
+<VimeoEmbed videoId="1144910809" title="Video gösterimi" />

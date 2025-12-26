@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { messages as enMessages } from '~/locales/generated/en';
-import { getPageTitleFromPath } from '../title-utils';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 i18n.load('en', enMessages);
 i18n.activate('en');

@@ -6,7 +6,7 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/root-type.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 
 @Injectable()
 export class MutationTypeGenerator {
@@ -15,9 +15,9 @@ export class MutationTypeGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
+  buildAndStore(context: SchemaGenerationContext) {
     return this.rootTypeGenerator.buildAndStore(
-      objectMetadataCollection,
+      context,
       [...workspaceResolverBuilderMethodNames.mutations],
       GqlOperation.Mutation,
     );

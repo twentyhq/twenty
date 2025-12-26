@@ -1,5 +1,5 @@
-import { expect, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -8,7 +8,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
-import { SettingsObjectDetailPage } from '../SettingsObjectDetailPage';
+import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectDetail',
@@ -48,19 +48,5 @@ export const ObjectTabs: Story = {
 
     await expect(fieldsTab).toBeVisible();
     await expect(settingsTab).toBeVisible();
-  },
-};
-
-export const FieldDropdownMenu: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const [fieldVerticalDotsIconButton] = await canvas.findAllByRole('button', {
-      name: 'Active Field Options',
-    });
-
-    await userEvent.click(fieldVerticalDotsIconButton);
-
-    await canvas.findByText('View');
-    await canvas.findByText('Deactivate');
   },
 };

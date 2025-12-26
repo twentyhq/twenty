@@ -103,6 +103,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       schemaName,
       tableName,
       columnNames: columnNamesToDrop,
+      cascade: true,
     });
 
     const enumOperations = collectEnumOperationsForField({

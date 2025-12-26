@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { findOrThrow, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -21,11 +21,11 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 
 @Injectable()
@@ -93,7 +93,19 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    const subscription =
+    if (
+      isNonEmptyArray(customer?.billingSubscriptions) &&
+      customer.billingSubscriptions.some(
+        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
+      )
+    ) {
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
+
+    const stripeSubscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
         workspace,
@@ -108,7 +120,7 @@ export class BillingPortalWorkspaceService {
     const createdBillingSubscription =
       await this.billingSubscriptionService.syncSubscriptionToDatabase(
         workspace.id,
-        subscription,
+        stripeSubscription.id,
       );
 
     await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(

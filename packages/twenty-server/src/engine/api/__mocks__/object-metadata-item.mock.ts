@@ -1,13 +1,14 @@
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  FieldActorSource,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
@@ -460,32 +461,3 @@ export const objectMetadataItemMock: ObjectMetadataEntity = {
   createdAt: new Date(),
   updatedAt: new Date(),
 } as ObjectMetadataEntity;
-
-export const objectMetadataMapItemMock: ObjectMetadataItemWithFieldMaps = {
-  ...objectMetadataItemMock,
-  fieldsById: FIELDS_MOCK.reduce(
-    (acc, field) => ({
-      ...acc,
-      [field.id]: field,
-    }),
-    {},
-  ),
-  fieldIdByName: FIELDS_MOCK.reduce(
-    (acc, field) => ({
-      ...acc,
-      [field.name]: field.id,
-    }),
-    {},
-  ),
-  fieldIdByJoinColumnName: {},
-  indexMetadatas: [],
-};
-export const objectMetadataMapsMock: ObjectMetadataMaps = {
-  byId: {
-    [objectMetadataMapItemMock.id || 'mock-id']: objectMetadataMapItemMock,
-  },
-  idByNameSingular: {
-    [objectMetadataMapItemMock.nameSingular]:
-      objectMetadataMapItemMock.id || 'mock-id',
-  },
-};

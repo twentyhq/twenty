@@ -34,30 +34,24 @@ import {
   isExpectedSubFieldName,
 } from '@/utils/filter';
 
-import {
-  endOfDay,
-  endOfMinute,
-  roundToNearestMinutes,
-  startOfDay,
-  startOfMinute,
-} from 'date-fns';
-import { z } from 'zod';
-
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
   CustomError,
   getFilterTypeFromFieldType,
-  getPlainDateFromDate,
+  getNextPeriodStart,
+  getPeriodStart,
   isDefined,
   resolveDateFilter,
   resolveDateTimeFilter,
+  resolveRelativeDateFilterStringified,
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
+import { Temporal } from 'temporal-polyfill';
 
 type FieldShared = {
   id: string;
@@ -67,16 +61,14 @@ type FieldShared = {
 };
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
-  filterValueDependencies?: RecordFilterValueDependencies;
+  filterValueDependencies: RecordFilterValueDependencies;
   recordFilter: RecordFilter;
   fieldMetadataItems: FieldShared[];
-  recordIdsForUuid?: string[];
 };
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
   fieldMetadataItems,
-  recordIdsForUuid,
   filterValueDependencies,
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
@@ -176,20 +168,53 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           );
       }
     case 'DATE': {
-      const resolvedFilterValue = resolveDateFilter(recordFilter);
+      if (recordFilter.operand === RecordFilterOperand.IS_RELATIVE) {
+        const relativeDateFilterValue = resolveRelativeDateFilterStringified(
+          recordFilter.value,
+        );
 
-      const now = new Date();
+        const defaultDateRange = resolveDateFilter({
+          value: 'PAST_1_DAY',
+          operand: RecordFilterOperand.IS_RELATIVE,
+        });
 
-      const plainDateFilter =
-        typeof resolvedFilterValue === 'string' ? resolvedFilterValue : null;
+        if (!defaultDateRange) {
+          throw new Error('Failed to resolve default date range');
+        }
 
-      const nowAsPlainDate = getPlainDateFromDate(now);
+        const start =
+          relativeDateFilterValue?.start?.toString() ?? defaultDateRange.start;
+
+        const end =
+          relativeDateFilterValue?.end?.toString() ?? defaultDateRange.end;
+
+        return {
+          and: [
+            {
+              [correspondingFieldMetadataItem.name]: {
+                gte: start,
+              } as DateFilter,
+            },
+            {
+              [correspondingFieldMetadataItem.name]: {
+                lt: end,
+              } as DateFilter,
+            },
+          ],
+        };
+      }
+
+      const nowAsPlainDate = Temporal.Now.plainDateISO(
+        filterValueDependencies.timeZone,
+      ).toString();
+
+      const plainDateFilter = recordFilter.value;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS_AFTER: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              gt: plainDateFilter,
+              gte: plainDateFilter,
             } as DateFilter,
           };
         }
@@ -200,38 +225,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             } as DateFilter,
           };
         }
-        case RecordFilterOperand.IS_RELATIVE: {
-          const dateRange = z
-            .object({ start: z.string(), end: z.string() })
-            .safeParse(resolvedFilterValue).data;
 
-          const defaultDateRange = resolveDateFilter({
-            value: 'PAST_1_DAY',
-            operand: RecordFilterOperand.IS_RELATIVE,
-          });
-
-          if (!defaultDateRange) {
-            throw new Error('Failed to resolve default date range');
-          }
-
-          const { start: startPlainDate, end: endPlainDate } =
-            dateRange ?? defaultDateRange;
-
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startPlainDate,
-                } as DateFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endPlainDate,
-                } as DateFilter,
-              },
-            ],
-          };
-        }
         case RecordFilterOperand.IS: {
           return {
             [correspondingFieldMetadataItem.name]: {
@@ -242,7 +236,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         case RecordFilterOperand.IS_IN_PAST:
           return {
             [correspondingFieldMetadataItem.name]: {
-              lte: nowAsPlainDate,
+              lt: nowAsPlainDate,
             } as DateFilter,
           };
         case RecordFilterOperand.IS_IN_FUTURE:
@@ -265,71 +259,97 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     }
     case 'DATE_TIME': {
-      const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
-      const now = roundToNearestMinutes(new Date());
-      const date =
-        resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+      if (recordFilter.operand === RecordFilterOperand.IS_RELATIVE) {
+        const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
+
+        const parsedRelativeDateFilterValue =
+          isDefined(resolvedFilterValue) &&
+          typeof resolvedFilterValue === 'object'
+            ? resolvedFilterValue
+            : null;
+
+        if (!isDefined(parsedRelativeDateFilterValue)) {
+          throw new Error(
+            `Cannot parse relative date filter : "${recordFilter.value}"`,
+          );
+        }
+
+        const defaultDateRange = resolveDateTimeFilter({
+          value: `PAST_1_DAY;;${filterValueDependencies.timeZone}`,
+          operand: RecordFilterOperand.IS_RELATIVE,
+        });
+
+        if (
+          !isDefined(defaultDateRange?.start) ||
+          !isDefined(defaultDateRange?.end)
+        ) {
+          throw new Error('Failed to resolve default date range');
+        }
+
+        const start =
+          parsedRelativeDateFilterValue?.start ?? defaultDateRange.start;
+
+        const end = parsedRelativeDateFilterValue?.end ?? defaultDateRange.end;
+
+        return {
+          and: [
+            {
+              [correspondingFieldMetadataItem.name]: {
+                gte: start.toInstant().toString(),
+              } as DateTimeFilter,
+            },
+            {
+              [correspondingFieldMetadataItem.name]: {
+                lt: end.toInstant().toString(),
+              } as DateTimeFilter,
+            },
+          ],
+        };
+      }
+
+      if (!isNonEmptyString(recordFilter.value)) {
+        throw new Error(`Date filter is empty`);
+      }
+
+      const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
+
+      const now = Temporal.Now.zonedDateTimeISO(
+        filterValueDependencies.timeZone,
+      );
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS_AFTER: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              gt: date.toISOString(),
+              gte: resolvedDateTime.toString(),
             } as DateTimeFilter,
           };
         }
         case RecordFilterOperand.IS_BEFORE: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              lt: date.toISOString(),
+              lt: resolvedDateTime.toString(),
             } as DateTimeFilter,
           };
         }
-        case RecordFilterOperand.IS_RELATIVE: {
-          const dateRange = z
-            .object({ start: z.date(), end: z.date() })
-            .safeParse(resolvedFilterValue).data;
-
-          const defaultDateRange = resolveDateTimeFilter({
-            value: 'PAST_1_DAY',
-            operand: RecordFilterOperand.IS_RELATIVE,
-          });
-
-          if (!defaultDateRange) {
-            throw new Error('Failed to resolve default date range');
-          }
-
-          const { start, end } = dateRange ?? defaultDateRange;
-
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: start.toISOString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: end.toISOString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
-        }
         case RecordFilterOperand.IS: {
-          const isValid = resolvedFilterValue instanceof Date;
-          const date = isValid ? resolvedFilterValue : now;
+          const start = resolvedDateTime
+            .toZonedDateTimeISO('UTC')
+            .with({ second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 })
+            .toInstant();
+
+          const end = start.add({ minutes: 1 });
 
           return {
             and: [
               {
                 [correspondingFieldMetadataItem.name]: {
-                  lte: endOfMinute(date).toISOString(),
+                  lt: end.toString(),
                 } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
-                  gte: startOfMinute(date).toISOString(),
+                  gte: start.toString(),
                 } as DateTimeFilter,
               },
             ],
@@ -338,13 +358,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         case RecordFilterOperand.IS_IN_PAST:
           return {
             [correspondingFieldMetadataItem.name]: {
-              lte: now.toISOString(),
+              lt: now.toInstant().round('minute').toString(),
             } as DateTimeFilter,
           };
         case RecordFilterOperand.IS_IN_FUTURE:
           return {
             [correspondingFieldMetadataItem.name]: {
-              gte: now.toISOString(),
+              gt: now.toInstant().round('minute').toString(),
             } as DateTimeFilter,
           };
         case RecordFilterOperand.IS_TODAY: {
@@ -352,22 +372,22 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             and: [
               {
                 [correspondingFieldMetadataItem.name]: {
-                  lte: endOfDay(now).toISOString(),
+                  gte: getPeriodStart(now, 'DAY').toInstant().toString(),
                 } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
-                  gte: startOfDay(now).toISOString(),
+                  lt: getNextPeriodStart(now, 'DAY').toInstant().toString(),
                 } as DateTimeFilter,
               },
             ],
           };
         }
-        default:
-          throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-          );
       }
+
+      throw new Error(
+        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+      );
     }
     case 'RATING':
       switch (recordFilter.operand) {
@@ -417,6 +437,14 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             [correspondingFieldMetadataItem.name]: {
               eq: parseFloat(recordFilter.value),
             } as FloatFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                eq: parseFloat(recordFilter.value),
+              } as FloatFilter,
+            },
           };
         default:
           throw new Error(
@@ -1303,7 +1331,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       };
     }
     case 'UUID': {
-      const recordIds = recordIdsForUuid;
+      const recordIds = arrayOfUuidOrVariableSchema.parse(recordFilter.value);
 
       if (!isDefined(recordIds) || recordIds.length === 0) return;
 

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-
 type MessagingMonitoringTrackInput = {
   eventName: string;
   workspaceId?: string;
@@ -13,7 +11,7 @@ type MessagingMonitoringTrackInput = {
 
 @Injectable()
 export class MessagingMonitoringService {
-  constructor(private readonly _auditService: AuditService) {}
+  constructor() {}
 
   public async track({
     eventName: _eventName,

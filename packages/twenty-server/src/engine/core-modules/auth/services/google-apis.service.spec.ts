@@ -8,20 +8,20 @@ import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/serv
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
-import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
-import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
   CalendarChannelVisibility,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 jest.mock('uuid', () => ({
@@ -30,8 +30,8 @@ jest.mock('uuid', () => ({
 
 describe('GoogleAPIsService', () => {
   let service: GoogleAPIsService;
-  let resetCalendarChannelService: ResetCalendarChannelService;
-  let resetMessageChannelService: ResetMessageChannelService;
+  let calendarChannelSyncStatusService: CalendarChannelSyncStatusService;
+  let messagingChannelSyncStatusService: MessageChannelSyncStatusService;
   let createMessageChannelService: CreateMessageChannelService;
 
   const mockConnectedAccountRepository = {
@@ -77,9 +77,9 @@ describe('GoogleAPIsService', () => {
       providers: [
         GoogleAPIsService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest
+            getRepository: jest
               .fn()
               .mockImplementation((_workspaceId, entity) => {
                 if (entity === 'connectedAccount')
@@ -93,9 +93,12 @@ describe('GoogleAPIsService', () => {
 
                 return {};
               }),
-            getDataSourceForWorkspace: jest
+            getGlobalWorkspaceDataSource: jest
               .fn()
-              .mockImplementation(() => mockWorkspaceDataSource),
+              .mockResolvedValue(mockWorkspaceDataSource),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {
@@ -109,9 +112,9 @@ describe('GoogleAPIsService', () => {
           useValue: mockTwentyConfigService,
         },
         {
-          provide: ResetCalendarChannelService,
+          provide: CalendarChannelSyncStatusService,
           useValue: {
-            resetCalendarChannels: jest.fn(),
+            resetAndMarkAsCalendarEventListFetchPending: jest.fn(),
           },
         },
         {
@@ -125,9 +128,9 @@ describe('GoogleAPIsService', () => {
           },
         },
         {
-          provide: ResetMessageChannelService,
+          provide: MessageChannelSyncStatusService,
           useValue: {
-            resetMessageChannels: jest.fn(),
+            resetAndMarkAsMessagesListFetchPending: jest.fn(),
           },
         },
         {
@@ -172,12 +175,14 @@ describe('GoogleAPIsService', () => {
     }).compile();
 
     service = module.get<GoogleAPIsService>(GoogleAPIsService);
-    resetCalendarChannelService = module.get<ResetCalendarChannelService>(
-      ResetCalendarChannelService,
-    );
-    resetMessageChannelService = module.get<ResetMessageChannelService>(
-      ResetMessageChannelService,
-    );
+    calendarChannelSyncStatusService =
+      module.get<CalendarChannelSyncStatusService>(
+        CalendarChannelSyncStatusService,
+      );
+    messagingChannelSyncStatusService =
+      module.get<MessageChannelSyncStatusService>(
+        MessageChannelSyncStatusService,
+      );
     createMessageChannelService = module.get<CreateMessageChannelService>(
       CreateMessageChannelService,
     );
@@ -232,20 +237,12 @@ describe('GoogleAPIsService', () => {
       });
 
       expect(
-        resetCalendarChannelService.resetCalendarChannels,
-      ).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-        connectedAccountId: 'existing-account-id',
-        manager: expect.any(Object),
-      });
+        calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending,
+      ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
 
       expect(
-        resetMessageChannelService.resetMessageChannels,
-      ).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-        connectedAccountId: 'existing-account-id',
-        manager: expect.any(Object),
-      });
+        messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending,
+      ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
 
       expect(
         createMessageChannelService.createMessageChannel,

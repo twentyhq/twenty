@@ -3,10 +3,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
-import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/microsoft-email-alias-manager.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
+import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -28,11 +28,14 @@ describe('Email Alias Manager Service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: TwentyORMManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
             getRepository: jest
               .fn()
               .mockResolvedValue(connectedAccountRepository),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         EmailAliasManagerService,
@@ -86,6 +89,7 @@ describe('Email Alias Manager Service', () => {
 
       await emailAliasManagerService.refreshHandleAliases(
         mockConnectedAccount as ConnectedAccountWorkspaceEntity,
+        'test-workspace-id',
       );
 
       expect(

@@ -7,6 +7,7 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { type ViewType } from '@/views/types/ViewType';
+import { type ViewVisibility } from '~/generated-metadata/graphql';
 import { type ViewCalendarLayout } from '~/generated/graphql';
 
 export type View = {
@@ -21,17 +22,17 @@ export type View = {
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: CoreViewSortEssential[];
-  /**
-   * @deprecated Use `viewGroups.fieldMetadataId` instead.
-   */
-  kanbanFieldMetadataId: string;
   kanbanAggregateOperation: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId: string | null;
+  mainGroupByFieldMetadataId?: string | null;
+  shouldHideEmptyGroups: boolean;
   calendarFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;
   openRecordIn: ViewOpenRecordInType;
   anyFieldFilterValue?: string | null;
+  visibility: ViewVisibility;
+  createdByUserWorkspaceId?: string | null;
   __typename: 'View';
 };

@@ -1,23 +1,26 @@
-import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewFilterException extends CustomException {
-  declare code: ViewFilterExceptionCode;
+export class ViewFilterException extends CustomException<ViewFilterExceptionCode> {
   constructor(
     message: string,
     code: ViewFilterExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view filter error occurred.`,
+    });
   }
 }
 
 export enum ViewFilterExceptionCode {
   VIEW_FILTER_NOT_FOUND = 'VIEW_FILTER_NOT_FOUND',
   INVALID_VIEW_FILTER_DATA = 'INVALID_VIEW_FILTER_DATA',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export enum ViewFilterExceptionMessageKey {
@@ -26,6 +29,7 @@ export enum ViewFilterExceptionMessageKey {
   VIEW_FILTER_NOT_FOUND = 'VIEW_FILTER_NOT_FOUND',
   INVALID_VIEW_FILTER_DATA = 'INVALID_VIEW_FILTER_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export const generateViewFilterExceptionMessage = (
@@ -43,6 +47,8 @@ export const generateViewFilterExceptionMessage = (
       return `Invalid view filter data${id ? ` for view filter id: ${id}` : ''}`;
     case ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
+    case ViewFilterExceptionMessageKey.VIEW_NOT_FOUND:
+      return `View${id ? ` (id: ${id})` : ''} not found`;
     default:
       assertUnreachable(key);
   }

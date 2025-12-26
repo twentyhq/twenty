@@ -1,23 +1,26 @@
-import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewFilterGroupException extends CustomException {
-  declare code: ViewFilterGroupExceptionCode;
+export class ViewFilterGroupException extends CustomException<ViewFilterGroupExceptionCode> {
   constructor(
     message: string,
     code: ViewFilterGroupExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view filter group error occurred.`,
+    });
   }
 }
 
 export enum ViewFilterGroupExceptionCode {
   VIEW_FILTER_GROUP_NOT_FOUND = 'VIEW_FILTER_GROUP_NOT_FOUND',
   INVALID_VIEW_FILTER_GROUP_DATA = 'INVALID_VIEW_FILTER_GROUP_DATA',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export enum ViewFilterGroupExceptionMessageKey {
@@ -26,6 +29,7 @@ export enum ViewFilterGroupExceptionMessageKey {
   VIEW_FILTER_GROUP_NOT_FOUND = 'VIEW_FILTER_GROUP_NOT_FOUND',
   INVALID_VIEW_FILTER_GROUP_DATA = 'INVALID_VIEW_FILTER_GROUP_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export const generateViewFilterGroupExceptionMessage = (
@@ -43,6 +47,8 @@ export const generateViewFilterGroupExceptionMessage = (
       return `Invalid view filter group data${id ? ` for view filter group id: ${id}` : ''}`;
     case ViewFilterGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
+    case ViewFilterGroupExceptionMessageKey.VIEW_NOT_FOUND:
+      return `View${id ? ` (id: ${id})` : ''} not found`;
     default:
       assertUnreachable(key);
   }

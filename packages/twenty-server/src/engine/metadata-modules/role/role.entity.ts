@@ -14,16 +14,16 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
-export class RoleEntity extends SyncableEntity {
+export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  standardId?: string;
+  standardId: string | null;
 
   @Column({ nullable: false })
   label: string;
@@ -47,10 +47,10 @@ export class RoleEntity extends SyncableEntity {
   canDestroyAllObjectRecords: boolean;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
-  @Column({ nullable: true })
-  icon: string;
+  @Column({ nullable: true, type: 'varchar' })
+  icon: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -74,10 +74,10 @@ export class RoleEntity extends SyncableEntity {
   canBeAssignedToApiKeys: boolean;
 
   @OneToMany(
-    () => RoleTargetsEntity,
-    (roleTargets: RoleTargetsEntity) => roleTargets.role,
+    () => RoleTargetEntity,
+    (roleTargets: RoleTargetEntity) => roleTargets.role,
   )
-  roleTargets: Relation<RoleTargetsEntity[]>;
+  roleTargets: Relation<RoleTargetEntity[]>;
 
   @OneToMany(
     () => ObjectPermissionEntity,

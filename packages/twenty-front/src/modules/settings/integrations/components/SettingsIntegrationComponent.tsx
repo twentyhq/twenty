@@ -2,9 +2,10 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Pill } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconBolt,
@@ -12,7 +13,7 @@ import {
   IconPlus,
   Status,
 } from 'twenty-ui/display';
-import { Pill } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/input';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 interface SettingsIntegrationComponentProps {
@@ -85,14 +86,14 @@ export const SettingsIntegrationComponent = ({
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
-        <StyledSoonPill label="Soon" />
+        <StyledSoonPill label={t`Soon`} />
       ) : integration.type === 'Active' ? (
-        <Status color="green" text="Active" />
+        <Status color="green" text={t`Active`} />
       ) : integration.type === 'Add' ? (
         <Button
           to={integration.link}
           Icon={IconPlus}
-          title="Add"
+          title={t`Add`}
           size="small"
         />
       ) : integration.type === 'Use' ? (
@@ -100,7 +101,7 @@ export const SettingsIntegrationComponent = ({
           to={integration.link}
           target="_blank"
           Icon={IconBolt}
-          title="Use"
+          title={t`Use`}
           size="small"
         />
       ) : integration.type === 'Copy' ? (

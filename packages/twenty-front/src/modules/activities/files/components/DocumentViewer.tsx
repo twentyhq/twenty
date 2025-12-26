@@ -1,12 +1,16 @@
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { fetchCsvPreview } from '@/activities/files/utils/fetchCsvPreview';
+import { getFileType } from '@/activities/files/utils/getFileType';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconDownload } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledDocumentViewerContainer = styled.div`
@@ -35,6 +39,29 @@ const StyledDocumentViewerContainer = styled.div`
     overflow: auto;
     background: none;
   }
+`;
+
+const StyledUnavailablePreviewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
+`;
+
+const StyledMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  max-width: 400px;
+`;
+
+const StyledTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
 type DocumentViewerProps = {
@@ -72,11 +99,15 @@ export const DocumentViewer = ({
   documentName,
   documentUrl,
 }: DocumentViewerProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const [csvPreview, setCsvPreview] = useState<string | undefined>(undefined);
 
   const { extension } = getFileNameAndExtension(documentName);
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
+  const fileCategory = getFileType(documentName);
+  const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
+
   const mimeType = PREVIEWABLE_EXTENSIONS.includes(fileExtension)
     ? MIME_TYPE_MAPPING[fileExtension]
     : undefined;
@@ -88,6 +119,37 @@ export const DocumentViewer = ({
       });
     }
   }, [documentUrl, fileExtension]);
+
+  if (!isPreviewable) {
+    return (
+      <StyledDocumentViewerContainer>
+        <StyledUnavailablePreviewContainer>
+          <StyledTitle>
+            <Trans>Preview Not Available</Trans>
+          </StyledTitle>
+          <StyledMessage>
+            {fileCategory === 'ARCHIVE' ? (
+              <Trans>
+                Archive files cannot be previewed. Please download the file to
+                access its contents.
+              </Trans>
+            ) : (
+              <Trans>
+                This file type cannot be previewed. Please download the file to
+                view it.
+              </Trans>
+            )}
+          </StyledMessage>
+          <Button
+            Icon={IconDownload}
+            title={t`Download File`}
+            onClick={() => downloadFile(documentUrl, documentName)}
+            variant="secondary"
+          />
+        </StyledUnavailablePreviewContainer>
+      </StyledDocumentViewerContainer>
+    );
+  }
 
   if (fileExtension === 'csv' && !isDefined(csvPreview))
     return (

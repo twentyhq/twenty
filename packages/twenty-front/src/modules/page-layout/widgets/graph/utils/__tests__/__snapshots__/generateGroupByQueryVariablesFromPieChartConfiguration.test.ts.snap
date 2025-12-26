@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with composite field 1`] = `
+{
+  "groupBy": [
+    {
+      "name": {
+        "firstName": true,
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with date field and granularity 1`] = `
+{
+  "groupBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with limit 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+  "limit": 10,
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with orderBy 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "aggregate": {
+        "count": "AscNullsLast",
+      },
+    },
+  ],
+}
+`;
+
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with single groupBy field 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+}
+`;

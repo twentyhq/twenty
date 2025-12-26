@@ -35,6 +35,7 @@ export type ChipProps = {
   rightComponent?: (() => ReactNode) | ReactNode | null;
   className?: string;
   forceEmptyText?: boolean;
+  emptyLabel?: string;
 };
 
 const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
@@ -126,6 +127,7 @@ const StyledContainer = withTheme(styled.div<
       : 'var(--chip-horizontal-padding)'};
 `);
 
+// TODO: refactor this
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
 ) => {
@@ -151,6 +153,7 @@ export const Chip = ({
   className,
   maxWidth,
   forceEmptyText = false,
+  emptyLabel = 'Untitled',
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -167,7 +170,7 @@ export const Chip = ({
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
-        <StyledDiv>Untitled</StyledDiv>
+        <StyledDiv>{emptyLabel}</StyledDiv>
       ) : (
         ''
       )}

@@ -3,10 +3,9 @@ import { Injectable } from '@nestjs/common';
 import DOMPurify from 'dompurify';
 import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
-import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
-
-import { safeDecodeURIComponent } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/safe-decode-uri-component.util';
+import { safeDecodeURIComponent } from 'twenty-shared/utils';
+import { type Email as ParsedEmail } from 'postal-mime';
 
 @Injectable()
 export class ImapMessageTextExtractorService {
@@ -18,7 +17,7 @@ export class ImapMessageTextExtractorService {
     this.purify = DOMPurify(this.jsdomInstance.window);
   }
 
-  extractTextWithoutReplyQuotations(parsed: ParsedMail): string {
+  extractTextWithoutReplyQuotations(parsed: ParsedEmail): string {
     if (parsed.text) {
       const extractedText = planer.extractFrom(parsed.text, 'text/plain');
 
@@ -27,8 +26,6 @@ export class ImapMessageTextExtractorService {
 
     if (parsed.html) {
       const sanitizedHtml = this.purify.sanitize(parsed.html);
-
-      this.jsdomInstance.window.document.documentElement.innerHTML = `<html><body>${sanitizedHtml}</body></html>`;
 
       const cleanedHtml = planer.extractFromHtml(
         sanitizedHtml,

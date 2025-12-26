@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - FULL_NAME Gql create input - failure FULL_NAME - should fail with : {"fullNameField":"not-a-full-name"} 1`] = `"Expected type "FullNameCreateInput" to be an object."`;
+
+exports[`Create input validation - FULL_NAME Rest create input - failure FULL_NAME - should fail with : {"fullNameField":"not-a-full-name"} 1`] = `"["Invalid object value 'not-a-full-name' for field \\"fullNameField\\""]"`;

@@ -11,8 +11,9 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { LinksFieldInput } from '../LinksFieldInput';
+import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 
 const updateRecord = fn();
 
@@ -121,6 +122,7 @@ const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
 const meta: Meta = {
   title: 'UI/Data/Field/Input/LinksFieldInput',
   component: LinksInputWithContext,
+  decorators: [I18nFrontDecorator],
   args: {
     value: {
       primaryLinkUrl: null,

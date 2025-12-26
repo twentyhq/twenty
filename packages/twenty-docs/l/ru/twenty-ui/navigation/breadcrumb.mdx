@@ -1,0 +1,41 @@
+---
+title: Хлебные крошки
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Заголовок" />
+</Frame>
+
+Отображает панель навигации с хлебными крошками.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип    | Описание                                                                                                                                                                                                                          |
+    | --------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className | строка | Дополнительное имя класса для дополнительной стилизации                                                                                                                                                                           |
+    | ссылки    | массив | Массив объектов, каждый из которых представляет собой ссылку-хлебную крошку. Каждый объект имеет свойство `children` (текстовое содержимое ссылки) и необязательное свойство `href` (URL-адрес для перехода по ссылке при щелчке) |
+  </Tab>
+</Tabs>

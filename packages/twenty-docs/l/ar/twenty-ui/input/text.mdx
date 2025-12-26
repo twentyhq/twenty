@@ -1,0 +1,137 @@
+---
+title: نص
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="رأس الصفحة" />
+</Frame>
+
+## إدخال نص
+
+يسمح للمستخدمين بإدخال وتحرير النص.
+
+<Tabs>
+  <Tab title="27332A2E2F2745">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
+
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
+
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
+
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص            | النوع         | الوصف                                                                                                   |
+    | ---------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+    | className        | string        | اسم اختياري للتنسيق الإضافي.                                                                            |
+    | التسمية          | نص            | يمثل التسمية للإدخال.                                                                                   |
+    | onChange         | وظيفة         | الدالة التي تُستدعى عند تغيير قيمة الإدخال.                                                             |
+    | عرض كامل         | قيمة منطقية   | يشير إلى ما إذا كان الإدخال يجب أن يشغل 100% من العرض.                                                  |
+    | تعطيل الإختصارات | قيمة منطقية   | يشير إلى ما إذا كانت الاختصارات ممكنة للإدخال.                                                          |
+    | خطأ              | string        | يمثل رسالة الخطأ التي سيتم عرضها. عند توفرها، تضيف رمز خطأ على الجانب الأيمن من الإدخال.                |
+    | onKeyDown        | دالة          | يتم الاستدعاء عندما يتم الضغط على مفتاح عند التركيز على حقل الإدخال. يتلقى `React.KeyboardEvent` كمعلمة |
+    | أيقونة يمين      | مكون الأيقونة | مكون أيقونة اختياري معروض على الجانب الأيمن من الإدخال.                                                 |
+
+    يقبل المكون أيضًا دعم خصائص HTML أخرى لعناصر الإدخال.
+  </Tab>
+</Tabs>
+
+## إدخال نص بالحجم التلقائي
+
+مكون إدخال نصي يعدل ارتفاعه تلقائيًا بناءً على المحتوى.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص              | النوع | الوصف                                                         |
+    | ------------------ | ----- | ------------------------------------------------------------- |
+    | onValidate         | دالة  | الدالة التي ترغب في تفعيلها عند تصديق المستخدم الإدخال.       |
+    | الحد الأدنى للأسطر | رقم   | عدد الأسطر الأدنى للمساحة النصية.                             |
+    | النص التوضيحي      | نص    | النص التوضيحي الذي ترغب في عرضه عند كون المساحة النصية فارغة. |
+    | onFocus            | دالة  | الدالة التي ترغب في تفعيلها عند تركيز المساحة النصية.         |
+    | البديل             | نص    | البديل للإدخال. تشمل الخيارات: `افتراضي`، `أيقونة`، و`زر`.    |
+    | عنوان الزر         | نص    | العنوان للزر (فقط للبديل الزر).                               |
+    | القيمة             | نص    | القيمة الأولية للمساحة النصية.                                |
+  </Tab>
+</Tabs>
+
+## مساحة نصية
+
+تتيح لك إنشاء إدخالات نصية متعددة الأسطر.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
+
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص              | النوع       | الوصف                                            |
+    | ------------------ | ----------- | ------------------------------------------------ |
+    | تعطيل              | قيمة منطقية | يشير إلى ما إذا كانت المساحة النصية معطلة.       |
+    | الحد الأدنى للأسطر | رقم         | العدد الأدنى للأسطر الظاهرة للمساحة النصية.      |
+    | onChange           | وظيفة       | دالة الاستدعاء تُشغّل عند تغيّر محتوى منطقة النص |
+    | نص توضيحي          | نص          | النص المُوضّح عندما تكون منطقة النص فارغة        |
+    | القيمة             | نص          | القيمة الحالية لمنطقة النص                       |
+  </Tab>
+</Tabs>

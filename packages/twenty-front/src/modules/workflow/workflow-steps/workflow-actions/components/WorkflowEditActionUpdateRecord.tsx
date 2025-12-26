@@ -1,4 +1,4 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
+import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
@@ -10,8 +10,6 @@ import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpd
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { UPDATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpdateRecordAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -70,12 +68,6 @@ export const WorkflowEditActionUpdateRecord = ({
   });
 
   const isFormDisabled = actionOptions.readonly === true;
-
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: UPDATE_RECORD_ACTION.defaultLabel,
-    });
 
   const handleFieldChange = (
     fieldName: keyof UpdateRecordFormData,
@@ -156,32 +148,14 @@ export const WorkflowEditActionUpdateRecord = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={isFormDisabled}
-        iconTooltip={UPDATE_RECORD_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-update-record-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           disabled={isFormDisabled}
           value={formData.objectNameSingular}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: UpdateRecordFormData = {
@@ -204,7 +178,7 @@ export const WorkflowEditActionUpdateRecord = ({
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker
             testId="workflow-update-record-object-record-id"
-            label="Record"
+            label={t`Record`}
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
@@ -217,14 +191,15 @@ export const WorkflowEditActionUpdateRecord = ({
 
         {isDefined(selectedObjectMetadataItem) && (
           <WorkflowFieldsMultiSelect
-            label="Fields to update"
-            placeholder="Select fields to update"
+            label={t`Fields to update`}
+            placeholder={t`Select fields to update`}
             objectMetadataItem={selectedObjectMetadataItem}
             handleFieldsChange={(fieldsToUpdate) =>
               handleFieldChange('fieldsToUpdate', fieldsToUpdate)
             }
             readonly={isFormDisabled ?? false}
             defaultFields={formData.fieldsToUpdate}
+            actionType="UPDATE_RECORD"
           />
         )}
 

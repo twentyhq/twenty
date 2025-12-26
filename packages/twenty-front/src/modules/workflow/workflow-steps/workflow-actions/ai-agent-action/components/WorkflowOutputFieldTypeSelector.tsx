@@ -1,11 +1,11 @@
 import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { t } from '@lingui/core/macro';
+import { type AgentResponseFieldType } from 'twenty-shared/ai';
 
 type WorkflowOutputFieldTypeSelectorProps = {
-  value?: InputSchemaPropertyType;
-  onChange: (value: InputSchemaPropertyType) => void;
+  value?: AgentResponseFieldType;
+  onChange: (value: AgentResponseFieldType) => void;
   disabled?: boolean;
   dropdownId: string;
 };

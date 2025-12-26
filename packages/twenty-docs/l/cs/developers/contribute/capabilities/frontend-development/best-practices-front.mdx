@@ -1,0 +1,325 @@
+---
+title: Osvědčené postupy
+---
+
+Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při práci na frontend.
+
+## Správa stavu
+
+React a Recoil zajišťují správu stavu v kódu.
+
+### Použijte `useRecoilState` k ukládání stavu
+
+Je dobrým zvykem vytvořit tolik atomů, kolik potřebujete ke správě stavu.
+
+<Warning>
+  Je lepší použít více atomů než se snažit být příliš stručný s prop drilling.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Nepoužívejte `useRef` k ukládání stavu
+
+Vyhněte se používání `useRef` k ukládání stavu.
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+Podívejte se, jak spravovat překreslení, pokud máte pocit, že potřebujete `useRef`, abyste zabránili některým překreslením.
+
+## Správa překreslení
+
+Překreslení může být obtížné spravovat v Reactu.
+
+Zde jsou některá pravidla, která je třeba dodržovat, abyste se vyhnuli zbytečnému překreslování.
+
+Pamatujte, že můžete **vždy** zabránit opakovanému renderování pochopením jejich příčiny.
+
+### Pracujte na úrovni kořene
+
+Vyhýbání se překreslení v nových funkcích je nyní snadné tím, že je eliminujete na úrovni kořene.
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+Tímto způsobem víte, že existuje pouze jedno místo, které může spustit překreslování.
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+Můžete je také najít v knihovnách jako Apollo: `onCompleted`, `onError` atd.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+Stejný postup můžete aplikovat na logiku získávání dat pomocí Apollo hooks.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Použijte Recoil family states a Recoil family selectors
+
+Stavy rodiny třísek a selektory jsou skvělý způsob, jak se vyhnout překreslování.
+
+Jsou užitečné, když potřebujete uložit seznam položek.
+
+### Neměli byste používat `React.memo(MyComponent)`
+
+Vyhněte se používání `React.memo()`, protože to neřeší příčinu překreslování, ale spíše přeruší řetězec překreslování, což může vést k neočekávanému chování a ztěžuje refaktorování kódu.
+
+### Omezit použití `useCallback` nebo `useMemo`
+
+Často nejsou nutné a kód ztěžují na čtení a údržbu pro nepodstatné zlepšení výkonu.
+
+## Console.logs
+
+Příkazy `console.log` jsou hodnotné při vývoji, protože poskytují pohled na hodnoty proměnných a průběh kódu v reálném čase. Ale, zanechání v produkčním kódu může vést k několika problémům:
+
+1. **Výkon**: Přílišné logování může ovlivnit výkon za běhu, zejména u aplikací na straně klienta.
+
+2. **Bezpečnost**: Logování citlivých dat může vystavit kritické informace komukoliv, kdo nahlédne do konzole prohlížeče.
+
+3. **Čistota**: Naplnění konzole logy může zatížit důležitá varování nebo chyby, které je třeba vidět.
+
+4. **Profesionalita**: Koneční uživatelé nebo klienti kontrolující konzolu a vidící množství logovacích příkazů mohou zpochybnit kvalitu a úroveň kódu.
+
+Ujistěte se, že odstraníte všechny `console.logs`, než uvedete kód do produkce.
+
+## Pojmenovávání
+
+### Pojmenování proměnných
+
+Jména proměnných by měla přesně zobrazovat účel nebo funkci proměnné.
+
+#### Problém s generickými jmény
+
+Generická jména v programování nejsou ideální, protože postrádají specifikaci, což vede k nejednoznačnosti a snižuje čitelnost kódu. Taková jména neposkytnou informace o účelu proměnné nebo funkce, čímž ztěžují vývojářům pochopení záměru kódu bez hlubšího zkoumání. To může vést ke zvýšené době ladění, vyšší náchylnosti k chybám a obtížím při údržbě a spolupráci. Mezitím, použití popisných jmen činí kód samozřejmým a snadněji navigovatelným, čímž se zvyšuje jeho kvalita a produktivita vývojáře.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Některá slova, kterým se vyhnout v názvech proměnných
+
+* dummy
+
+### Obsluhovače událostí
+
+Jména obsluhovačů událostí by měla začínat `handle`, zatímco `on` je prefix používaný k pojmenování událostí v komponentech props.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Volitelné props
+
+Vyhněte se tomu, abyste pro volitelný props předávali výchozí hodnotu.
+
+**PŘÍKLAD**
+
+Vezměte komponent `EmailField` definovanou níže:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Použití**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Komponenta jako props
+
+Pokuste se co nejvíce předávat neinstancované komponenty jako props, aby si děti mohly samy rozhodnout, které props potřebují předat.
+
+Nejčastější příklad je komponenta ikon:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+Aby React pochopil, že komponenta je komponenta, musíte použít PascalCase, aby později ji bylo možné instancovat pomocí `<MyIcon>`
+
+## Prop Drilling: Udržujte to minimální
+
+Prop drilling, v kontextu React, odkazuje na praktiku předávání stavových proměnných a jejich setterů skrze mnoho vrstev komponent, i když mezilehlé komponenty je nepoužívají. Zatímco občas je to nutné, přehnané prop drilling může vést k:
+
+1. **Snížená čitelnost**: Sledování původu nebo využití vlastnosti může být komplikované ve složitě vnořených strukturách komponent.
+
+2. **Problémy s údržbou**: Změny v struktuře vlastností jedné komponenty mohou vyžadovat úpravy v některých komponentech, i když tyto vlastnosti přímo nepoužívají.
+
+3. **Snížená znovupoužitelnost komponentů**: Komponent přijímající mnoho props pouze pro jejich předání, se stává méně univerzálním a obtížněji použitelným v různých kontextech.
+
+Pokud máte pocit, že používáte přílišné prop drilling, podívejte se na osvědčené postupy správy stavu.
+
+## Importy
+
+Při importu, upřednostněte určené aliasy před upřesňováním úplných či relativních cest.
+
+**Aliasy**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Použití**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Dobře, využívá určené aliasy
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Validace schématu
+
+[Zod](https://github.com/colinhacks/zod) je validátor schémat pro netypová data:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Zlomové změny
+
+Vždy proveďte důkladné manuální testování, abyste zajistili, že úpravy nezpůsobily problémy jinde, zejména pokud testy zatím nebyly široce integrovány.

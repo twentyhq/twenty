@@ -1,0 +1,154 @@
+---
+title: Collegamenti
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Intestazione" />
+</Frame>
+
+## Collegamento di Contatto
+
+Un componente di collegamento stilizzato per visualizzare le informazioni di contatto.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+
+    import { ContactLink } from 'twenty-ui/navigation';
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
+
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà  | Tipo              | Descrizione                                                         |
+    | ---------- | ----------------- | ------------------------------------------------------------------- |
+    | nomeClasse | stringa           | Nome opzionale per lo stile aggiuntivo                              |
+    | href       | stringa           | L'URL di destinazione o il percorso per il link                     |
+    | onClick    | funzione          | Funzione di callback da attivare quando si fa clic sul collegamento |
+    | figli      | `React.ReactNode` | Il contenuto da visualizzare all'interno del collegamento           |
+  </Tab>
+</Tabs>
+
+## Collegamento Non Elaborato
+
+Un componente di collegamento stilizzato per visualizzare collegamenti.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà  | Tipo              | Descrizione                                                         |
+    | ---------- | ----------------- | ------------------------------------------------------------------- |
+    | nomeClasse | stringa           | Nome opzionale per lo stile aggiuntivo                              |
+    | href       | stringa           | L'URL di destinazione o il percorso per il link                     |
+    | onClick    | funzione          | Funzione di callback da attivare quando si fa clic sul collegamento |
+    | figli      | `React.ReactNode` | Il contenuto da visualizzare all'interno del collegamento           |
+  </Tab>
+</Tabs>
+
+## Collegamento Arrotondato
+
+Un collegamento stilizzato arrotondato con un componente Chip per i collegamenti.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
+
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà | Tipo              | Descrizione                                                         |
+    | --------- | ----------------- | ------------------------------------------------------------------- |
+    | href      | stringa           | L'URL di destinazione o il percorso per il link                     |
+    | figli     | `React.ReactNode` | Il contenuto da visualizzare all'interno del collegamento           |
+    | onClick   | funzione          | Funzione di callback da attivare quando si fa clic sul collegamento |
+  </Tab>
+</Tabs>
+
+## Collegamento Sociale
+
+Collegamenti social stilizzati, con supporto per vari tipi di collegamenti social, come URL, LinkedIn e X (o Twitter).
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà | Tipo              | Descrizione                                                                          |
+    | --------- | ----------------- | ------------------------------------------------------------------------------------ |
+    | href      | stringa           | L'URL di destinazione o il percorso per il link                                      |
+    | figli     | `React.ReactNode` | Il contenuto da visualizzare all'interno del collegamento                            |
+    | tipo      | stringa           | Il tipo di collegamenti social. Le opzioni includono: `url`, `LinkedIn`, e `Twitter` |
+    | onClick   | funzione          | Funzione di callback da attivare quando si fa clic sul collegamento                  |
+  </Tab>
+</Tabs>

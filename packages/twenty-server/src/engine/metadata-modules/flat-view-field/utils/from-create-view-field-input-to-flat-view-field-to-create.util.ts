@@ -8,11 +8,13 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-o
 export type FromCreateViewFieldInputToFlatViewFieldToCreateArgs = {
   createViewFieldInput: CreateViewFieldInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 };
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): FlatViewField => {
   const { fieldMetadataId, viewId, ...createViewFieldInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -20,7 +22,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
       ['aggregateOperation', 'fieldMetadataId', 'id', 'viewId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewFieldId = createViewFieldInput.id ?? v4();
 
   return {
@@ -37,6 +39,6 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
-    applicationId: createViewFieldInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

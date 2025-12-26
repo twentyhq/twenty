@@ -5,6 +5,5 @@ export type GaugeChartData = {
   min: number;
   max: number;
   color?: GraphColor;
-  to?: string;
   label?: string;
 };

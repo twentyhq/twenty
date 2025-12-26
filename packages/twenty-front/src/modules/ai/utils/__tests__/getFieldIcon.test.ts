@@ -1,19 +1,15 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { getFieldIcon } from '../getFieldIcon';
+import { getFieldIcon } from '@/ai/utils/getFieldIcon';
 
 describe('getFieldIcon', () => {
   describe('supported field types', () => {
-    it('should return IconAbc for TEXT field type', () => {
-      expect(getFieldIcon(FieldMetadataType.TEXT)).toBe('IconAbc');
+    it('should return IconAbc for string field type', () => {
+      expect(getFieldIcon('string')).toBe('IconAbc');
     });
-    it('should return IconText for NUMBER field type', () => {
-      expect(getFieldIcon(FieldMetadataType.NUMBER)).toBe('IconText');
+    it('should return IconText for number field type', () => {
+      expect(getFieldIcon('number')).toBe('IconText');
     });
-    it('should return IconCheckbox for BOOLEAN field type', () => {
-      expect(getFieldIcon(FieldMetadataType.BOOLEAN)).toBe('IconCheckbox');
-    });
-    it('should return IconCalendarEvent for DATE field type', () => {
-      expect(getFieldIcon(FieldMetadataType.DATE)).toBe('IconCalendarEvent');
+    it('should return IconCheckbox for boolean field type', () => {
+      expect(getFieldIcon('boolean')).toBe('IconCheckbox');
     });
   });
 
@@ -36,8 +32,8 @@ describe('getFieldIcon', () => {
 
   describe('consistency', () => {
     it('should return the same icon for the same field type', () => {
-      const result1 = getFieldIcon(FieldMetadataType.TEXT);
-      const result2 = getFieldIcon(FieldMetadataType.TEXT);
+      const result1 = getFieldIcon('string');
+      const result2 = getFieldIcon('string');
       expect(result1).toBe(result2);
     });
   });

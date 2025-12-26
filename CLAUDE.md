@@ -36,10 +36,16 @@ When testing the UI end to end, click on "Continue with Email" and use the prefi
 
 ### Code Quality
 ```bash
-# Linting
-npx nx lint twenty-front      # Frontend linting
-npx nx lint twenty-server     # Backend linting
-npx nx lint twenty-front --fix  # Auto-fix linting issues
+# Linting (changed files only - fastest)
+npx nx lint:changed twenty-front           # Lint only changed files vs main
+npx nx lint:changed twenty-server          # Lint only changed files vs main
+npx nx lint:changed twenty-front --configuration=fix  # Auto-fix changed files
+npx nx lint:changed twenty-front --configuration=staged  # Lint staged files only
+
+# Linting (full project)
+npx nx lint twenty-front      # Lint all files in frontend
+npx nx lint twenty-server     # Lint all files in backend
+npx nx lint twenty-front --fix  # Auto-fix all linting issues
 
 # Type checking
 npx nx typecheck twenty-front
@@ -65,7 +71,7 @@ npx nx run twenty-server:database:init:prod # Initialize database
 npx nx run twenty-server:database:migrate:prod # Run migrations
 
 # Generate migration
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/[name] -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/common/[name] -d src/database/typeorm/core/core.datasource.ts
 
 # Sync metadata
 npx nx run twenty-server:command workspace:sync-metadata

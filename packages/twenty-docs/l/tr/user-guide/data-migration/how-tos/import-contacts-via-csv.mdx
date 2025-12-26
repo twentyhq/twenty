@@ -1,0 +1,242 @@
+---
+title: CSV ile Kişileri İçe Aktarın
+description: Twenty'ye kişileri içe aktarmaya yönelik eksiksiz, adım adım kılavuz.
+---
+
+## Genel Bakış
+
+Bu kılavuz, kişilerinizi (Kişiler) Twenty'ye içe aktarma sürecinde size yol gösterir. **Önce Şirketleri içe aktarın**, Kişileri Şirketlere bağlamak istiyorsanız.
+
+## Başlamadan Önce
+
+### Ön Koşul Kontrol Listesi
+
+<Check>
+  Dosyanız CSV, XLSX veya XLS biçiminde
+</Check>
+
+<Check>
+  Dosyada 10.000'den az kayıt var
+</Check>
+
+<Check>
+  Dosyanızda yinelenen e-posta adresi yok
+</Check>
+
+<Check>
+  **Şirketler önce içe aktarılmış** (Kişileri Şirketlere bağlayacaksanız)
+</Check>
+
+<Check>
+  Tüm özel alanlar **Ayarlar → Veri Modeli**'nde mevcut
+</Check>
+
+<Warning>
+  **Kişilerden Önce Şirketleri İçe Aktarın**
+
+  Kişileri Şirketlere bağlamak istiyorsanız, önce Şirketleri içe aktarın. Şirkete referans verebilmeden önce şirketin mevcut olması gerekir.
+</Warning>
+
+## Adım 1: Kişi Verinizi Hazırlayın
+
+### Zorunlu ve Önerilen Alanlar
+
+| Alan             | Zorunlu mu?  | Biçim             | Notlar                        |
+| ---------------- | ------------ | ----------------- | ----------------------------- |
+| **E-posta**      | Önerilen     | `name@domain.com` | Benzersiz olmalı              |
+| **Ad**           | Önerilen     | Metin             |                               |
+| **Soyadı**       | Önerilen     | Metin             |                               |
+| **Şirket**       | İsteğe bağlı | Alan adı veya ID  | Mevcut bir Şirkete bağlanır   |
+| **Telefon**      | İsteğe bağlı | Birden çok sütun  | Aşağıya bakın                 |
+| **İş Unvanı**    | İsteğe bağlı | Metin             |                               |
+| **Özel Alanlar** | İsteğe bağlı | Değişir           | Veri Modeli'nde mevcut olmalı |
+
+### E-posta Biçimi
+
+* Geçerli e-posta biçiminde olmalıdır: `name@domain.com`
+* **Benzersiz olmalı** — dosyanızda veya Twenty'de yinelenen olmamalı
+* Ek e-postalar için **Emails / Additional Emails** sütununu kullanın:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Telefon Biçimi
+
+Telefon, birden çok sütun gerektiren **iç içe bir alan**dır:
+
+| Sütun                                   | Örnek        |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Şirketlerle Bağlantı Kurma
+
+Şirketin benzersiz tanımlayıcısını içeren bir sütun ekleyin:
+
+| Sütun Adı       | Biçim      | Örnek                                  |
+| --------------- | ---------- | -------------------------------------- |
+| `companyDomain` | URL biçimi | `https://acme.com`                     |
+| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Note>
+  **Alan Adı URL biçimini kullanın** (`https://acme.com`), etiketi değil. Bu, Şirketlerin Twenty'de nasıl saklandığıyla uyumludur.
+</Note>
+
+### Örnek CSV Yapısı
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
+John,Smith,john@acme.com,CEO,https://acme.com,4159095555,US
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
+```
+
+<Note>
+  **İpucu:** İçe aktarma sırasında **Örnek dosyayı indir**'i tıklayın ya da Twenty'nin beklediği tam sütun adlarını görmek için mevcut birkaç Kişiyi dışa aktarın.
+</Note>
+
+## Adım 2: İçe Aktarma Özelliğine Erişin
+
+**Seçenek 1: Kişiler görünümünden**
+
+1. Sol kenar çubuğunda **Kişiler**'e gidin
+2. Sağ üstteki **⋮** simgesine tıklayın
+3. **Kayıtları İçe Aktar**'ı seçin
+
+**Seçenek 2: Komut Menüsünü kullanma**
+
+1. Mac'te `Cmd + K`, Windows'ta `Ctrl + K` tuşlarına basın
+2. "import" yazın
+3. **Kayıtları İçe Aktar**'ı seçin
+4. **Kişiler**'i seçin
+
+## Adım 3: Dosyanızı Yükleyin
+
+1. **Dosya seç**'e tıklayın
+2. CSV, XLSX veya XLS dosyanızı seçin
+3. Twenty'nin dosyanızı analiz etmesini bekleyin
+
+## Adım 4: Sütunlarınızı Eşleyin
+
+Twenty, sütunlarınızı alanlarla eşleştirmeyi otomatik olarak dener. Gözden geçirin ve ayarlayın:
+
+1. **Otomatik eşlemeleri kontrol edin** — doğru olduklarını doğrulayın
+2. **Yanlış eşlemeleri düzeltin** — doğru alanı seçmek için açılır menüye tıklayın
+3. **Sütunları atlayın** — içe aktarmak istemediğiniz sütunlar için **Do not map** seçeneğini seçin
+
+### Önemli Eşleme Kuralları
+
+| Sütun Türü       | Eşlenecek Alan                 | Notlar                                                |
+| ---------------- | ------------------------------ | ----------------------------------------------------- |
+| Şirket referansı | **Company** ilişki alanı       | Alan adını YA DA id'yi kullanın, ikisini birden değil |
+| E-posta          | **E-posta**                    | Birincil e-posta adresi                               |
+| Ek e-postalar    | **Emails / Additional Emails** | Dizi biçimi                                           |
+| Telefon          | Ayrı sütunlar                  | Numara, Ülke Kodu, Arama Kodu                         |
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+### Şirket İlişkisinin Eşlenmesi
+
+Şirket sütununu eşlerken:
+
+1. Şirket referans sütununuzu bulun (ör. `companyDomain`)
+2. Bunu **Company** ilişki alanına eşleyin
+3. Twenty, her Kişiyi eşleşen Şirkete bağlar
+
+<Warning>
+  **İlişkiler için yalnızca BİR benzersiz tanımlayıcıyı eşleyin.**
+
+  Hem `companyId` hem de `companyDomain` eşlemeyin. Birini seçin — tercihen insanlar tarafından okunabildiği için alan adını.
+</Warning>
+
+## Adım 5: Seçim Alanı Değerlerini Eşleyin
+
+Seçim veya Çoklu Seçim alanlarınız varsa (örn. Potansiyel Müşteri Kaynağı):
+
+1. Twenty, değerlerinizi mevcut seçeneklerin yanında gösterir
+2. Dosyanızdaki her değeri bir Twenty seçeneğiyle eşleştirin
+3. Gerekiyorsa yeni seçenekler oluşturun
+
+<Note>
+  Seçim alanı seçenekleri, görüntü etiketlerini değil, **API adlarını** kullanır. API adlarını görmek için **Settings → Data Model** → **Advanced mode**'u etkinleştirin.
+</Note>
+
+## Adım 6: Hataları Gözden Geçirin ve Düzeltin
+
+İçe aktarmayı tamamlamadan önce Twenty verilerinizi doğrular:
+
+1. **Next Steps**'e tıklayın
+2. Hata içeren satırlar **sarı** renkle vurgulanır
+3. **Hataları doğrudan düzeltin** — bir hücreye tıklayın ve değeri düzenleyin
+4. **Sorunlu satırları kaldırın** — o satırı atlamak için X'e tıklayın
+
+### Yaygın Kişi İçe Aktarma Hataları
+
+| Hata                        | Neden                                       | Çözüm                                               |
+| --------------------------- | ------------------------------------------- | --------------------------------------------------- |
+| **Yinelenen e-posta**       | E-posta Twenty'de veya dosyada zaten mevcut | Yineleneni kaldırın veya mevcut kaydı güncelleyin   |
+| **Geçersiz e-posta biçimi** | E-posta biçimi hatalı                       | `name@domain.com` olarak düzeltin                   |
+| **İlişki bulunamadı**       | Şirket mevcut değil                         | Önce Şirketleri içe aktarın veya referansı düzeltin |
+| **Gerekli alan eksik**      | Gerekli alan boş                            | Değeri doldurun veya satırı kaldırın                |
+
+## Adım 7: İçe Aktarmayı Tamamlayın
+
+1. İçe aktarma özetini gözden geçirin
+2. İçe aktarmak için **Onayla**'ya tıklayın
+3. İçe aktarmanın tamamlanmasını bekleyin
+4. Birkaç kaydı ve Şirket bağlantılarını kontrol ederek doğrulayın
+
+## Kişileri İçe Aktardıktan Sonra
+
+Kişileriniz artık Twenty'de! Sonraki adımlar:
+
+1. **Şirket bağlantılarını doğrulayın** — doğru Şirkete bağlı olduklarını teyit etmek için birkaç Kişi kaydını açın
+2. **Fırsatları içe aktarın** — gerekiyorsa bunları Kişiler ve Şirketlerle ilişkilendirin
+3. **E-posta eşitlemesini ayarlayın** — kişi kayıtlarında e-posta geçmişini görmek için posta kutunuzu bağlayın
+
+## Mevcut Kişileri Güncelleme
+
+Yeni kişiler oluşturmak yerine kişileri güncellemek için:
+
+1. Dosyanıza `email` veya `id` sütununu ekleyin
+2. Twenty, kayıtları bu benzersiz tanımlayıcıya göre eşleştirir
+3. Mevcut kişiler güncellenir; yenileri oluşturulur
+
+Ayrıntılar için [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import) bölümüne bakın.
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="Neden iki Kişinin aynı e-postası olamaz?">
+    E-posta, Twenty'de benzersiz bir tanımlayıcıdır. Bu, yinelenen kişileri önler ve e-posta eşitlemesinin e-postaları doğru kişiyle doğru şekilde ilişkilendirmesini sağlar.
+  </Accordion>
+
+  <Accordion title="E-postası olmayan kişilerim varsa ne yapmalıyım?">
+    E-postayı boş bırakabilirsiniz. Ancak, daha iyi veri kalitesi ve e-posta eşitleme işlevi için mümkün olduğunda e-postaları eklemenizi öneririz.
+  </Accordion>
+
+  <Accordion title="İçe aktarma sırasında Kişileri Şirketlerle nasıl ilişkilendiririm?">
+    Şirketin alan adı (örn. `https://acme.com`) veya ID'si ile bir sütun ekleyin. Eşleme sırasında bu sütunu Şirket ilişki alanına bağlayın.
+  </Accordion>
+
+  <Accordion title="Şirket henüz mevcut değilse ne yapmalıyım?">
+    Önce Şirketleri içe aktarın, ardından Kişileri içe aktarın. Şirkete referans verebilmeden önce şirketin mevcut olması gerekir.
+  </Accordion>
+
+  <Accordion title="Önceki CRM'imden ID'yi içe aktarabilir miyim?">
+    Evet! Dış ID'yi saklamak için veri modelinizde "unique" olarak işaretlenmiş özel bir alan oluşturun. Not: `id` alan adı Twenty'nin dahili ID'si için ayrılmıştır.
+  </Accordion>
+
+  <Accordion title="'relation not found' hatalarını nasıl düzeltirim?">
+    Referans verdiğiniz Şirket mevcut değil. Ya önce Şirketi içe aktarın ya da alan adının/ID'nin mevcut bir Şirketle birebir eşleştiğini kontrol edin.
+  </Accordion>
+</AccordionGroup>
+
+## Sorun Giderme
+
+Sorun mu yaşıyorsunuz? Şunları kontrol edin:
+
+* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [İlişkiler Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)

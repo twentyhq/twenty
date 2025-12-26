@@ -1,0 +1,34 @@
+---
+title: Image Input
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Allows users to upload and remove an image.
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Type     | Description                                                                                       |
+    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
+    | picture      | string   | The image source URL                                                                              |
+    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
+    | onRemove     | function | The function called when the user clicks on the remove button                                     |
+    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
+    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
+    | errorMessage | string   | An optional error message to display below the image input                                        |
+    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  </Tab>
+</Tabs>

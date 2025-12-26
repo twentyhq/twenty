@@ -9,19 +9,22 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
+import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
+import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -62,19 +65,11 @@ const StyledButtonsContainer = styled.div`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const {
-    isLoading,
-    input,
-    handleInputChange,
-    scrollWrapperId,
-    messages,
-    isStreaming,
-    error,
-  } = useAgentChatContextOrThrow();
+  const { isLoading, messages, isStreaming, error } =
+    useAgentChatContextOrThrow();
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
+  const [agentChatInput, setAgentChatInput] =
+    useRecoilState(agentChatInputState);
 
   const { uploadFiles } = useAIChatFileUpload();
   const { createChatThread } = useCreateNewAIChatThread();
@@ -94,11 +89,15 @@ export const AIChatTab = () => {
       {!isDraggingFile && (
         <>
           {messages.length !== 0 && (
-            <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
+            <StyledScrollWrapper
+              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
+            >
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
                 const isLastMessageStreaming = isStreaming && isLastMessage;
-                const shouldShowError = error && isLastMessage;
+                const isLastAssistantMessage =
+                  isLastMessage && message.role === AgentMessageRole.ASSISTANT;
+                const shouldShowError = error && isLastAssistantMessage;
 
                 return (
                   <AIChatMessage
@@ -109,9 +108,17 @@ export const AIChatTab = () => {
                   />
                 );
               })}
+              {error &&
+                !isStreaming &&
+                messages.at(-1)?.role === AgentMessageRole.USER && (
+                  <AIChatStandaloneError error={error} />
+                )}
             </StyledScrollWrapper>
           )}
-          {messages.length === 0 && <AIChatEmptyState />}
+          {messages.length === 0 && !error && <AIChatEmptyState />}
+          {messages.length === 0 && error && !isLoading && (
+            <AIChatStandaloneError error={error} />
+          )}
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
           <StyledInputArea>
@@ -119,8 +126,8 @@ export const AIChatTab = () => {
             <TextArea
               textAreaId={AI_CHAT_INPUT_ID}
               placeholder={t`Enter a question...`}
-              value={input}
-              onChange={handleInputChange}
+              value={agentChatInput}
+              onChange={(value) => setAgentChatInput(value)}
               minRows={1}
               maxRows={20}
             />
@@ -144,11 +151,8 @@ export const AIChatTab = () => {
                 onClick={() => createChatThread()}
               />
               <AgentChatFileUploadButton />
-              {contextStoreCurrentObjectMetadataItemId ? (
-                <SendMessageWithRecordsContextButton />
-              ) : (
-                <SendMessageButton />
-              )}
+              <AIChatContextUsageButton />
+              <SendMessageButton />
             </StyledButtonsContainer>
           </StyledInputArea>
         </>

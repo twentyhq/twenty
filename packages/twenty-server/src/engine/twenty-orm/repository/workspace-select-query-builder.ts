@@ -33,15 +33,15 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
-  authContext?: AuthContext;
-  featureFlagMap?: FeatureFlagMap;
+  authContext: AuthContext;
+  featureFlagMap: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext?: AuthContext,
-    featureFlagMap?: FeatureFlagMap,
+    authContext: AuthContext,
+    featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
@@ -85,7 +85,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return {
@@ -94,7 +95,7 @@ export class WorkspaceSelectQueryBuilder<
         identifiers: result.identifiers,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -114,34 +115,35 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawOne<U = any>(): Promise<U | undefined> {
+  override async getRawOne<U = any>(): Promise<U | undefined> {
     try {
       this.validatePermissions();
 
       return super.getRawOne();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawMany<U = any>(): Promise<U[]> {
+  override async getRawMany<U = any>(): Promise<U[]> {
     try {
       this.validatePermissions();
 
       return super.getRawMany();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -163,12 +165,13 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -188,22 +191,23 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult[0];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
-  override getCount(): Promise<number> {
+  override async getCount(): Promise<number> {
     try {
       this.validatePermissions();
 
       return super.getCount();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -230,12 +234,13 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return [formattedResult, count];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -325,7 +330,9 @@ export class WorkspaceSelectQueryBuilder<
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
     });
   }

@@ -1,0 +1,66 @@
+---
+title: Feedback
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Intestazione" />
+</Frame>
+
+Indica progresso o conto alla rovescia e si muove da destra a sinistra.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
+
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props           | Tipo     | Descrizione                                                                                                | Predefinito |
+    | --------------- | -------- | ---------------------------------------------------------------------------------------------------------- | ----------- |
+    | durata          | numero   | La durata totale dell'animazione della barra di progresso in millisecondi                                  | 3           |
+    | ritardo         | numero   | Il ritardo nell'avvio dell'animazione della barra di progresso in millisecondi                             | 0           |
+    | smorzamento     | stringa  | Funzione di smorzamento per l'animazione della barra di progresso                                          | easeInOut   |
+    | altezzaBarra    | numero   | L'altezza della barra in pixel                                                                             | 24          |
+    | coloreBarra     | stringa  | Il colore della barra                                                                                      | gray80      |
+    | avvioAutomatico | booleano | Se `true`, l'animazione della barra di progresso inizia automaticamente quando il componente viene montato | `vero`      |
+  </Tab>
+</Tabs>
+
+## Barra di progresso circolare
+
+Indica il progresso di un'attività, spesso utilizzata in schermate di caricamento o aree in cui si desidera comunicare processi in corso all'utente.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà      | Tipo    | Descrizione                                       | Predefinito  |
+    | -------------- | ------- | ------------------------------------------------- | ------------ |
+    | dimensione     | numero  | La dimensione della barra di progresso circolare  | 50           |
+    | larghezzaBarra | numero  | La larghezza della linea della barra di progresso | 5            |
+    | coloreBarra    | stringa | Il colore della barra di progresso                | currentColor |
+  </Tab>
+</Tabs>

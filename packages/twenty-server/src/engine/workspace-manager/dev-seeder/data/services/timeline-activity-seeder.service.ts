@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { ObjectRecord } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -27,6 +28,7 @@ import { TASK_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/co
 import { TASK_TARGET_DATA_SEEDS_MAP } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 type RecordSeedWithId = Pick<ObjectRecord, 'id'> & Record<string, unknown>;
 
@@ -38,11 +40,11 @@ type TimelineActivitySeedData = Pick<
   | 'linkedRecordId'
   | 'linkedObjectMetadataId'
   | 'workspaceMemberId'
-  | 'companyId'
-  | 'personId'
-  | 'noteId'
-  | 'taskId'
-  | 'opportunityId'
+  | 'targetNoteId'
+  | 'targetTaskId'
+  | 'targetPersonId'
+  | 'targetCompanyId'
+  | 'targetOpportunityId'
 > & {
   properties: string; // JSON stringified for raw insertion
   createdAt: string; // ISO string for raw insertion
@@ -253,11 +255,11 @@ export class TimelineActivitySeederService {
           'linkedRecordId',
           'linkedObjectMetadataId',
           'workspaceMemberId',
-          'companyId',
-          'personId',
-          'noteId',
-          'taskId',
-          'opportunityId',
+          'targetNoteId',
+          'targetTaskId',
+          'targetPersonId',
+          'targetCompanyId',
+          'targetOpportunityId',
           'createdAt',
           'updatedAt',
           'happensAt',
@@ -290,21 +292,31 @@ export class TimelineActivitySeederService {
       linkedRecordId: recordId,
       linkedObjectMetadataId: null,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      companyId: null,
-      personId: null,
-      noteId: null,
-      taskId: null,
-      opportunityId: null,
+      targetNoteId: null,
+      targetTaskId: null,
+      targetPersonId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
     };
 
-    // Set the appropriate entity ID
-    const entityIdKey = `${entityType}Id`;
+    // Set the appropriate target entity ID for entities that have target columns
+    const entitiesWithTargetColumns = new Set([
+      'note',
+      'task',
+      'person',
+      'company',
+      'opportunity',
+    ]);
 
-    // @ts-expect-error - This is okay for morph
-    timelineActivity[entityIdKey] = recordId;
+    if (entitiesWithTargetColumns.has(entityType)) {
+      const targetIdKey = `${buildTimelineActivityRelatedMorphFieldMetadataName(entityType)}Id`;
+
+      // @ts-expect-error - This is okay for morph
+      timelineActivity[targetIdKey] = recordId;
+    }
 
     return timelineActivity;
   }
@@ -576,30 +588,30 @@ export class TimelineActivitySeederService {
       linkedRecordId: recordSeed.id,
       linkedObjectMetadataId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      companyId: null,
-      personId: null,
-      noteId: null,
-      taskId: null,
-      opportunityId: null,
+      targetNoteId: null,
+      targetTaskId: null,
+      targetPersonId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
     };
 
     // Set target ID (person, company, or opportunity)
-    const targetIdKey = `${targetInfo.targetType}Id`;
+    const targetIdKey = `target${capitalize(targetInfo.targetType)}Id`;
 
     // @ts-expect-error - This is okay for morph
     linkedActivity[targetIdKey] = targetInfo.targetId;
 
-    // Only set activity ID for entities that have corresponding columns
-    const entitiesWithColumns = new Set(['note', 'task']);
+    // Only set target activity ID for entities that have corresponding columns
+    const entitiesWithTargetColumns = new Set(['note', 'task']);
 
-    if (entitiesWithColumns.has(activityType)) {
-      const activityIdKey = `${activityType}Id`;
+    if (entitiesWithTargetColumns.has(activityType)) {
+      const targetActivityIdKey = `target${capitalize(activityType)}Id`;
 
       // @ts-expect-error - This is okay for morph
-      linkedActivity[activityIdKey] = recordSeed.id;
+      linkedActivity[targetActivityIdKey] = recordSeed.id;
     }
 
     return linkedActivity;

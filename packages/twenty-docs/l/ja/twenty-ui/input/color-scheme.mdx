@@ -1,0 +1,63 @@
+---
+title: Color Scheme
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Color Scheme Card
+
+Represents different color schemes and is specially tailored for light and dark themes.
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props            | Type                                    | Description                                                             | Default |
+    | ---------------- | --------------------------------------- | ----------------------------------------------------------------------- | ------- |
+    | variant          | string                                  | The color scheme variant. Options include `Dark`, `Light`, and `System` | light   |
+    | selected         | boolean                                 | If `true`, displays a checkmark to indicate the selected color scheme   |         |
+    | additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                       |         |
+  </Tab>
+</Tabs>
+
+## Color Scheme Picker
+
+Allows users to choose between different color schemes.
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props    | Type           | Description                                                                  |
+    | -------- | -------------- | ---------------------------------------------------------------------------- |
+    | value    | `Color Scheme` | The currently selected color scheme                                          |
+    | onChange | function       | The callback function you want to trigger when a user selects a color scheme |
+  </Tab>
+</Tabs>

@@ -16,6 +16,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       id: 'note-tab-fields',
       title: 'Fields',
+      icon: 'IconList',
       position: 100,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
@@ -37,6 +38,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
+          // Note: Configuration is null by default. For testing purposes,
+          // use useTempNoteFieldsConfiguration() hook at runtime to get
+          // a configuration with actual field metadata IDs from the backend.
           configuration: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -47,7 +51,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'note-widget-note',
           pageLayoutTabId: 'note-tab-fields',
           title: 'Note',
-          type: WidgetType.RICH_TEXT,
+          type: WidgetType.FIELD_RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -60,6 +64,52 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
+          conditionalDisplay: {
+            and: [
+              {
+                '===': [{ var: 'device' }, 'MOBILE'],
+              },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      __typename: 'PageLayoutTab',
+      id: 'note-tab-note',
+      title: 'Note',
+      position: 150,
+      layoutMode: 'vertical-list',
+      pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      deletedAt: null,
+      widgets: [
+        {
+          __typename: 'PageLayoutWidget',
+          id: 'note-widget-note',
+          pageLayoutTabId: 'note-tab-note',
+          title: 'Note',
+          type: WidgetType.FIELD_RICH_TEXT,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 12,
+            column: 0,
+            rowSpan: 6,
+            columnSpan: 12,
+          },
+          configuration: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+          conditionalDisplay: {
+            and: [
+              {
+                '===': [{ var: 'device' }, 'DESKTOP'],
+              },
+            ],
+          },
         },
       ],
     },
@@ -67,6 +117,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       id: 'note-tab-timeline',
       title: 'Timeline',
+      icon: 'IconTimelineEvent',
       position: 200,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
@@ -99,6 +150,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       id: 'note-tab-files',
       title: 'Files',
+      icon: 'IconPaperclip',
       position: 300,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,

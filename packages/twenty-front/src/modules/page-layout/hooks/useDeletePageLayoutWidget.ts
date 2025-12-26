@@ -1,12 +1,13 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { removeWidgetFromTab } from '../utils/removeWidgetFromTab';
-import { removeWidgetLayoutFromTab } from '../utils/removeWidgetLayoutFromTab';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
+import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
 
 export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -24,9 +25,13 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
+  const { closeCommandMenu } = useCommandMenu();
+
   const deletePageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetId: string) => {
+        closeCommandMenu();
+
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
@@ -53,7 +58,7 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           }));
         }
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+    [closeCommandMenu, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
   );
 
   return { deletePageLayoutWidget };

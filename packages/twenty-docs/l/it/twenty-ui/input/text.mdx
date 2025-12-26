@@ -1,0 +1,137 @@
+---
+title: Testo
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Intestazione" />
+</Frame>
+
+## Input Testo
+
+Consente agli utenti di inserire e modificare il testo.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
+
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
+
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
+
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà            | Tipo            | Descrizione                                                                                                                      |
+    | -------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse           | stringa         | Nome opzionale per lo stile aggiuntivo                                                                                           |
+    | etichetta            | stringa         | Rappresenta l'etichetta per l'input                                                                                              |
+    | cambiaDiStato        | funzione        | La funzione chiamata quando cambia il valore dell'input                                                                          |
+    | larghezzaCompleta    | booleano        | Indica se l'input deve occupare il 100% della larghezza                                                                          |
+    | disattivaTastiRapidi | booleano        | Indica se i tasti rapidi sono abilitati per l'input                                                                              |
+    | errore               | stringa         | Rappresenta il messaggio di errore da visualizzare. Quando fornito, aggiunge anche un'icona di errore sul lato destro dell'input |
+    | premiTasto           | funzione        | Chiamato quando un tasto viene premuto mentre il campo di input è attivo. Riceve un `React.KeyboardEvent` come argomento         |
+    | IconaDestra          | IconaComponente | Un componente icona opzionale visualizzato sul lato destro dell'input                                                            |
+
+    Il componente accetta anche altre proprietà dell'elemento di input HTML.
+  </Tab>
+</Tabs>
+
+## Input Testo Autosize
+
+Componente di input testo che regola automaticamente la sua altezza in base al contenuto.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà      | Tipo     | Descrizione                                                                           |
+    | -------------- | -------- | ------------------------------------------------------------------------------------- |
+    | suValida       | funzione | La funzione di callback che si vuole attivare quando l'utente valida l'input          |
+    | righeMinime    | numero   | Il numero minimo di righe per l'area di testo                                         |
+    | segnaposto     | stringa  | Il testo segnaposto che si vuole visualizzare quando l'area di testo è vuota          |
+    | suFocus        | funzione | La funzione di callback che si vuole attivare quando l'area di testo ottiene il focus |
+    | variante       | stringa  | La variante dell'input. Le opzioni includono: `predefinito`, `icona` e `pulsante`     |
+    | titoloPulsante | stringa  | Il titolo per il pulsante (applicabile solo per la variante pulsante)                 |
+    | valore         | stringa  | Il valore iniziale per l'area di testo                                                |
+  </Tab>
+</Tabs>
+
+## Area di Testo
+
+Consente di creare input di testo multilinea.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
+
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà     | Tipo     | Descrizione                                                                 |
+    | ------------- | -------- | --------------------------------------------------------------------------- |
+    | disabilitato  | booleano | Indica se l'area di testo è disabilitata                                    |
+    | righeMinime   | numero   | Numero minimo di righe visibili per l'area di testo.                        |
+    | cambiaDiStato | funzione | Funzione di callback attivata quando il contenuto dell'area di testo cambia |
+    | segnaposto    | stringa  | Il testo segnaposto visualizzato quando l'area di testo è vuota             |
+    | valore        | stringa  | Il valore corrente dell'area di testo                                       |
+  </Tab>
+</Tabs>

@@ -1,3 +1,4 @@
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -5,7 +6,7 @@ import {
   GraphType,
   WidgetType,
 } from '~/generated/graphql';
-import { createDefaultGraphWidget } from '../createDefaultGraphWidget';
+import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 
 describe('createDefaultGraphWidget', () => {
   const baseParams = {
@@ -96,7 +97,7 @@ describe('createDefaultGraphWidget', () => {
       });
 
       expect(widget.configuration?.__typename).toBe('BarChartConfiguration');
-      if (widget.configuration?.__typename === 'BarChartConfiguration') {
+      if (isBarChartConfiguration(widget.configuration)) {
         expect(widget.configuration.graphType).toBe(GraphType.HORIZONTAL_BAR);
       }
     });

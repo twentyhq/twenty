@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
@@ -6,6 +7,7 @@ import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
@@ -17,7 +19,7 @@ const StyledCard = styled.div<{ isSingleNote: boolean }>`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
-  max-width: ${({ isSingleNote }) => (isSingleNote ? '300px' : 'unset')};
+  width: 100%;
 `;
 
 const StyledCardDetailsContainer = styled.div`
@@ -88,7 +90,7 @@ export const NoteTile = ({
           })
         }
       >
-        <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+        <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
       <StyledFooter>
@@ -98,11 +100,17 @@ export const NoteTile = ({
           fieldMetadataName="noteTargets"
           fieldPosition={0}
         >
-          <ActivityTargetsInlineCell
-            componentInstanceId={componentInstanceId}
-            activityRecordId={note.id}
-            activityObjectNameSingular={CoreObjectNameSingular.Note}
-          />
+          <RecordFieldsScopeContextProvider
+            value={{
+              scopeInstanceId: note.id,
+            }}
+          >
+            <ActivityTargetsInlineCell
+              componentInstanceId={componentInstanceId}
+              activityRecordId={note.id}
+              activityObjectNameSingular={CoreObjectNameSingular.Note}
+            />
+          </RecordFieldsScopeContextProvider>
         </FieldContextProvider>
       </StyledFooter>
     </StyledCard>
