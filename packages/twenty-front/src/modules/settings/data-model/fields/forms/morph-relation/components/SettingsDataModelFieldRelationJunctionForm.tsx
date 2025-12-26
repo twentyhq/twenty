@@ -16,12 +16,10 @@ import { IconLink } from 'twenty-ui/display';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldRelationJunctionFormProps = {
-  existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
 export const SettingsDataModelFieldRelationJunctionForm = ({
-  existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldRelationJunctionFormProps) => {
   const { t } = useLingui();
@@ -31,37 +29,41 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   // Get source object using objectNameSingular (works for both new and existing fields)
-  const { objectMetadataItem: sourceObjectMetadataItem } = useObjectMetadataItem(
-    { objectNameSingular },
-  );
+  const { objectMetadataItem: sourceObjectMetadataItem } =
+    useObjectMetadataItem({ objectNameSingular });
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   // Watch form values - these are set by parent form's Controllers
   const relationType = watch('relationType') ?? RelationType.ONE_TO_MANY;
-  const targetObjectIds = watch('morphRelationObjectMetadataIds') ?? [];
+  const watchedTargetObjectIds = watch('morphRelationObjectMetadataIds');
   const junctionTargetFieldIds = watch('junctionTargetRelationFieldIds');
 
   // Get the junction object (target of the ONE_TO_MANY)
   const junctionObjectMetadataItem = useMemo(() => {
+    const targetObjectIds = watchedTargetObjectIds ?? [];
     if (
       relationType !== RelationType.ONE_TO_MANY ||
-      !targetObjectIds ||
       targetObjectIds.length !== 1
     ) {
       return undefined;
     }
     return objectMetadataItems.find((item) => item.id === targetObjectIds[0]);
-  }, [relationType, targetObjectIds, objectMetadataItems]);
+  }, [relationType, watchedTargetObjectIds, objectMetadataItems]);
 
   const sourceObjectMetadataId = sourceObjectMetadataItem?.id;
 
-  // Get MANY_TO_ONE relation fields on the junction object, excluding back-reference to source
-  const junctionManyToOneFields = useMemo(() => {
+  // Get valid junction target fields: MANY_TO_ONE relations or MORPH_RELATION fields
+  const junctionTargetFields = useMemo(() => {
     if (!junctionObjectMetadataItem) {
       return [];
     }
     return junctionObjectMetadataItem.fields.filter((field) => {
+      // Allow MORPH_RELATION fields (polymorphic)
+      if (field.type === FieldMetadataType.MORPH_RELATION) {
+        return true;
+      }
+      // Allow MANY_TO_ONE RELATION fields
       if (
         field.type !== FieldMetadataType.RELATION ||
         field.relation?.type !== RelationType.MANY_TO_ONE
@@ -83,12 +85,10 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     isDefined(junctionTargetFieldIds) && junctionTargetFieldIds.length > 0;
 
   const handleJunctionToggle = (checked: boolean) => {
-    if (checked && junctionManyToOneFields.length > 0) {
-      setValue(
-        'junctionTargetRelationFieldIds',
-        [junctionManyToOneFields[0].id],
-        { shouldDirty: true },
-      );
+    if (checked && junctionTargetFields.length > 0) {
+      setValue('junctionTargetRelationFieldIds', [junctionTargetFields[0].id], {
+        shouldDirty: true,
+      });
     } else {
       setValue('junctionTargetRelationFieldIds', undefined, {
         shouldDirty: true,
@@ -98,30 +98,43 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
 
   const junctionFieldOptions = useMemo(
     () =>
-      junctionManyToOneFields.map((field) => ({
-        label: field.label,
-        value: field.id,
-      })),
-    [junctionManyToOneFields],
+      junctionTargetFields.map((field) => {
+        // For MORPH_RELATION, indicate it targets multiple objects
+        const isMorph = field.type === FieldMetadataType.MORPH_RELATION;
+        return {
+          label: isMorph ? `${field.label} (polymorphic)` : field.label,
+          value: field.id,
+        };
+      }),
+    [junctionTargetFields],
   );
 
   // Get the target object name for user-friendly description
-  const targetObjectMetadata = junctionManyToOneFields[0]?.relation
-    ?.targetObjectMetadata
-    ? objectMetadataItems.find(
-        (item) =>
-          item.id ===
-          junctionManyToOneFields[0]?.relation?.targetObjectMetadata.id,
-      )
-    : undefined;
-  const targetObjectLabel = targetObjectMetadata?.labelPlural ?? 'records';
+  // For MORPH fields, use a generic label
+  const selectedField = junctionTargetFields.find(
+    (f) => f.id === junctionTargetFieldIds?.[0],
+  );
+  const isMorphSelected =
+    selectedField?.type === FieldMetadataType.MORPH_RELATION;
+
+  const targetObjectMetadata =
+    !isMorphSelected && junctionTargetFields[0]?.relation?.targetObjectMetadata
+      ? objectMetadataItems.find(
+          (item) =>
+            item.id ===
+            junctionTargetFields[0]?.relation?.targetObjectMetadata.id,
+        )
+      : undefined;
+  const targetObjectLabel = isMorphSelected
+    ? t`linked records`
+    : (targetObjectMetadata?.labelPlural ?? t`records`);
 
   // Only show for ONE_TO_MANY relations with potential junction objects, in advanced mode
   if (
     !isAdvancedModeEnabled ||
     relationType !== RelationType.ONE_TO_MANY ||
     !isDefined(junctionObjectMetadataItem) ||
-    junctionManyToOneFields.length === 0
+    junctionTargetFields.length === 0
   ) {
     return null;
   }

@@ -33,8 +33,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType as GeneratedFieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RelationOneToManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
@@ -115,12 +116,20 @@ export const RelationOneToManyFieldInput = () => {
     const targetField = junctionObjectMetadata.fields.find(
       (field) => field.id === targetFieldId,
     );
-    if (!targetField?.relation) return null;
+    if (!targetField) return null;
 
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === targetField.relation?.targetObjectMetadata.id,
-    );
-    if (!targetObjectMetadata) return null;
+    // Check if target field is MORPH_RELATION (polymorphic)
+    const isMorphRelation =
+      targetField.type === FieldMetadataType.MORPH_RELATION;
+
+    // For regular relations, get the single target object
+    let targetObjectMetadata;
+    if (!isMorphRelation && isDefined(targetField.relation)) {
+      targetObjectMetadata = objectMetadataItems.find(
+        (item) => item.id === targetField.relation?.targetObjectMetadata.id,
+      );
+      if (!targetObjectMetadata) return null;
+    }
 
     // Find the source field on junction (points back to the current object)
     const sourceField = junctionObjectMetadata.fields.find(
@@ -135,6 +144,7 @@ export const RelationOneToManyFieldInput = () => {
       targetObjectMetadata,
       targetField,
       sourceField,
+      isMorphRelation,
     };
   }, [
     isJunctionRelation,
@@ -146,6 +156,7 @@ export const RelationOneToManyFieldInput = () => {
   ]);
 
   const junctionTargetObjectMetadata = junctionConfig?.targetObjectMetadata;
+  const isMorphJunction = junctionConfig?.isMorphRelation ?? false;
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -203,11 +214,16 @@ export const RelationOneToManyFieldInput = () => {
     ({ snapshot, set }) =>
       async (searchInput?: string) => {
         // For junction relations: create target object + junction record
-        if (isJunctionRelation && isDefined(junctionConfig)) {
+        // Note: For MORPH junction relations, "Add New" is disabled (user must pick from existing records)
+        if (
+          isJunctionRelation &&
+          isDefined(junctionConfig) &&
+          !isMorphJunction
+        ) {
           const { targetObjectMetadata, targetField, sourceField } =
             junctionConfig;
 
-          if (!targetField || !sourceField) {
+          if (!targetField || !sourceField || !targetObjectMetadata) {
             return;
           }
 
@@ -217,7 +233,7 @@ export const RelationOneToManyFieldInput = () => {
             getLabelIdentifierFieldMetadataItem(targetObjectMetadata)?.type;
 
           const createTargetPayload =
-            labelIdentifierType === FieldMetadataType.FULL_NAME
+            labelIdentifierType === GeneratedFieldMetadataType.FULL_NAME
               ? {
                   id: newTargetId,
                   name:
@@ -321,6 +337,7 @@ export const RelationOneToManyFieldInput = () => {
       createJunctionRecord,
       fieldName,
       instanceId,
+      isMorphJunction,
       isJunctionRelation,
       junctionConfig,
       multipleRecordPickerPickableMorphItemsCallbackState,
@@ -330,8 +347,9 @@ export const RelationOneToManyFieldInput = () => {
     ],
   );
 
-  // Disable "Add New" for activity targets; for junction relations we can create
-  const canCreateNew = !isRelationFromActivityTargets;
+  // Disable "Add New" for activity targets and MORPH junction relations
+  // (For MORPH, we don't know which object type to create)
+  const canCreateNew = !isRelationFromActivityTargets && !isMorphJunction;
 
   // For junction relations, use the target object for "Add New", not the junction object
   const objectMetadataItemIdForCreate =

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -81,7 +81,7 @@ export const validateJunctionTargetRelationFieldIds = ({
       continue;
     }
 
-    // The target field must be a RELATION or MORPH_RELATION with MANY_TO_ONE type
+    // The target field must be a RELATION or MORPH_RELATION
     if (!isMorphOrRelationFlatFieldMetadata(targetField)) {
       errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -92,15 +92,21 @@ export const validateJunctionTargetRelationFieldIds = ({
       continue;
     }
 
-    const targetFieldSettings = targetField.settings;
+    // MORPH_RELATION fields are polymorphic and don't require MANY_TO_ONE check
+    const isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
 
-    if (targetFieldSettings.relationType !== RelationType.MANY_TO_ONE) {
-      errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Junction target field ${fieldId} is not a MANY_TO_ONE relation`,
-        userFriendlyMessage: msg`Junction target field must be a MANY_TO_ONE relation`,
-        value: fieldId,
-      });
+    if (!isMorphRelation) {
+      // For regular RELATION fields, must be MANY_TO_ONE
+      const targetFieldSettings = targetField.settings;
+
+      if (targetFieldSettings.relationType !== RelationType.MANY_TO_ONE) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Junction target field ${fieldId} is not a MANY_TO_ONE relation`,
+          userFriendlyMessage: msg`Junction target field must be a MANY_TO_ONE relation`,
+          value: fieldId,
+        });
+      }
     }
   }
 

@@ -17,6 +17,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useOpenJunctionRelationFieldInput = () => {
@@ -88,19 +89,34 @@ export const useOpenJunctionRelationFieldInput = () => {
           (field) => field.id === targetFieldId,
         );
 
-        if (!isDefined(targetField) || !isDefined(targetField.relation)) {
+        if (!isDefined(targetField)) {
           return;
         }
 
-        // Get the actual target object metadata (e.g., Rocket, not PetRocket)
-        const targetObjectMetadataId =
-          targetField.relation.targetObjectMetadata.id;
-        const targetObjectMetadata = objectMetadataItems.find(
-          (item) => item.id === targetObjectMetadataId,
-        );
+        // Check if the target field is a MORPH_RELATION (polymorphic)
+        const isMorphRelation =
+          targetField.type === FieldMetadataType.MORPH_RELATION;
 
-        if (!isDefined(targetObjectMetadata)) {
+        // For regular relations, validate the relation exists
+        if (!isMorphRelation && !isDefined(targetField.relation)) {
           return;
+        }
+
+        // Get target object metadata based on field type
+        let targetObjectMetadataId: string | undefined;
+        let targetObjectMetadata;
+
+        if (!isMorphRelation) {
+          // Regular RELATION: single target object
+          targetObjectMetadataId =
+            targetField.relation?.targetObjectMetadata.id;
+          targetObjectMetadata = objectMetadataItems.find(
+            (item) => item.id === targetObjectMetadataId,
+          );
+
+          if (!isDefined(targetObjectMetadata)) {
+            return;
+          }
         }
 
         // Extract currently selected target objects from junction records
@@ -113,23 +129,54 @@ export const useOpenJunctionRelationFieldInput = () => {
           for (const junctionRecord of junctionRecords) {
             if (!isDefined(junctionRecord)) continue;
 
-            // Get the target object from the junction record using the target field name
-            const targetObject = junctionRecord[targetField.name];
-            if (
-              isDefined(targetObject) &&
-              typeof targetObject === 'object' &&
-              'id' in targetObject
-            ) {
-              selectedTargetRecords.push({
-                recordId: (targetObject as { id: string }).id,
-                objectMetadataId: targetObjectMetadataId,
-              });
+            if (isMorphRelation) {
+              // For MORPH: scan all object metadata to find which field is populated
+              for (const objectMetadataItem of objectMetadataItems) {
+                if (
+                  !objectMetadataItem.isActive ||
+                  objectMetadataItem.isSystem
+                ) {
+                  continue;
+                }
+
+                const targetObject =
+                  junctionRecord[objectMetadataItem.nameSingular];
+                if (
+                  isDefined(targetObject) &&
+                  typeof targetObject === 'object' &&
+                  'id' in targetObject
+                ) {
+                  selectedTargetRecords.push({
+                    recordId: (targetObject as { id: string }).id,
+                    objectMetadataId: objectMetadataItem.id,
+                  });
+                  break; // Found the target for this junction record
+                }
+              }
+            } else {
+              // For regular RELATION: use the known target field name
+              const targetObject = junctionRecord[targetField.name];
+              if (
+                isDefined(targetObject) &&
+                typeof targetObject === 'object' &&
+                'id' in targetObject &&
+                isDefined(targetObjectMetadataId)
+              ) {
+                selectedTargetRecords.push({
+                  recordId: (targetObject as { id: string }).id,
+                  objectMetadataId: targetObjectMetadataId,
+                });
+              }
             }
           }
         }
 
-        // Only show the target object type in the picker (e.g., only Rockets)
-        const searchableObjectMetadataItems = [targetObjectMetadata];
+        // Determine searchable object types based on field type
+        const searchableObjectMetadataItems = isMorphRelation
+          ? objectMetadataItems.filter(
+              (item) => item.isActive && !item.isSystem,
+            )
+          : [targetObjectMetadata!];
 
         const pickableMorphItems = selectedTargetRecords.map((record) => ({
           recordId: record.recordId,

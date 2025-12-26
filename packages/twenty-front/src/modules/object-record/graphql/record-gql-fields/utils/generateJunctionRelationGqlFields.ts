@@ -37,15 +37,43 @@ export const generateJunctionRelationGqlFields = ({
   }
 
   // Build fields for each junction target relation
-  const junctionTargetFields: RecordGqlFields = {};
+  let junctionTargetFields: RecordGqlFields = {};
 
   for (const targetFieldId of settings.junctionTargetRelationFieldIds) {
     const targetField = junctionObjectMetadata.fields.find(
       (field) => field.id === targetFieldId,
     );
 
+    if (!isDefined(targetField)) {
+      continue;
+    }
+
+    // Handle MORPH_RELATION fields (polymorphic - targets multiple object types)
+    if (targetField.type === FieldMetadataType.MORPH_RELATION) {
+      // For MORPH, include ALL active non-system object fields
+      for (const objectMetadataItem of objectMetadataItems) {
+        if (!objectMetadataItem.isActive || objectMetadataItem.isSystem) {
+          continue;
+        }
+
+        const labelIdentifierFieldMetadataItem =
+          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+        // Include the nested target object with its identifier fields
+        junctionTargetFields[objectMetadataItem.nameSingular] = {
+          id: true,
+          ...(isDefined(labelIdentifierFieldMetadataItem)
+            ? { [labelIdentifierFieldMetadataItem.name]: true }
+            : {}),
+        };
+        // Also include the ID field
+        junctionTargetFields[`${objectMetadataItem.nameSingular}Id`] = true;
+      }
+      continue;
+    }
+
+    // Handle regular RELATION fields (single target)
     if (
-      !isDefined(targetField) ||
       targetField.type !== FieldMetadataType.RELATION ||
       !isDefined(targetField.relation)
     ) {

@@ -1,4 +1,5 @@
 import { useRecoilCallback } from 'recoil';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -54,6 +55,10 @@ export const useUpdateJunctionRelationFromCell = ({
     (field) => field.id === targetFieldId,
   );
 
+  // Check if the target field is a MORPH_RELATION (polymorphic)
+  const isMorphRelation =
+    targetField?.type === FieldMetadataType.MORPH_RELATION;
+
   // Find the source field on junction (the field that points back to the source object)
   // This is the inverse of the current ONE_TO_MANY relation
   const sourceFieldOnJunction = junctionObjectMetadata?.fields.find(
@@ -91,8 +96,24 @@ export const useUpdateJunctionRelationFromCell = ({
           return;
         }
 
-        const targetFieldName = targetField.name;
         const sourceFieldName = sourceFieldOnJunction.name;
+
+        // For MORPH relations, determine the target field name from the picked object
+        // For regular relations, use the known target field name
+        let targetFieldName: string;
+
+        if (isMorphRelation) {
+          // Find the picked object metadata to get its name
+          const pickedObjectMetadata = objectMetadataItems.find(
+            (item) => item.id === morphItem.objectMetadataId,
+          );
+          if (!isDefined(pickedObjectMetadata)) {
+            return;
+          }
+          targetFieldName = pickedObjectMetadata.nameSingular;
+        } else {
+          targetFieldName = targetField.name;
+        }
 
         // Read current junction records from the store (always fresh)
         const currentJunctionRecords =
@@ -110,24 +131,60 @@ export const useUpdateJunctionRelationFromCell = ({
         // isSelected=false means user wants to DESELECT (delete junction)
         if (!morphItem.isSelected) {
           // DESELECT: Find and delete the junction record
-          // Check both embedded object (targetField) and ID field (targetFieldId)
-          const junctionRecordToDelete = currentJunctionRecords.find(
-            (junctionRecord) => {
-              // Try embedded object first
-              const targetObject = junctionRecord[targetFieldName];
-              if (
-                isDefined(targetObject) &&
-                typeof targetObject === 'object' &&
-                'id' in targetObject &&
-                (targetObject as { id: string }).id === morphItem.recordId
-              ) {
-                return true;
-              }
-              // Fall back to ID field
-              const targetId = junctionRecord[`${targetFieldName}Id`];
-              return targetId === morphItem.recordId;
-            },
-          );
+          let junctionRecordToDelete;
+
+          if (isMorphRelation) {
+            // For MORPH: scan all possible target fields to find the junction record
+            junctionRecordToDelete = currentJunctionRecords.find(
+              (junctionRecord) => {
+                for (const objectMetadataItem of objectMetadataItems) {
+                  if (
+                    !objectMetadataItem.isActive ||
+                    objectMetadataItem.isSystem
+                  ) {
+                    continue;
+                  }
+                  // Check embedded object
+                  const targetObject =
+                    junctionRecord[objectMetadataItem.nameSingular];
+                  if (
+                    isDefined(targetObject) &&
+                    typeof targetObject === 'object' &&
+                    'id' in targetObject &&
+                    (targetObject as { id: string }).id === morphItem.recordId
+                  ) {
+                    return true;
+                  }
+                  // Check ID field
+                  const targetId =
+                    junctionRecord[`${objectMetadataItem.nameSingular}Id`];
+                  if (targetId === morphItem.recordId) {
+                    return true;
+                  }
+                }
+                return false;
+              },
+            );
+          } else {
+            // For regular RELATION: use the known target field name
+            junctionRecordToDelete = currentJunctionRecords.find(
+              (junctionRecord) => {
+                // Try embedded object first
+                const targetObject = junctionRecord[targetFieldName];
+                if (
+                  isDefined(targetObject) &&
+                  typeof targetObject === 'object' &&
+                  'id' in targetObject &&
+                  (targetObject as { id: string }).id === morphItem.recordId
+                ) {
+                  return true;
+                }
+                // Fall back to ID field
+                const targetId = junctionRecord[`${targetFieldName}Id`];
+                return targetId === morphItem.recordId;
+              },
+            );
+          }
 
           if (isDefined(junctionRecordToDelete)) {
             await deleteJunctionRecord(junctionRecordToDelete.id);
@@ -222,7 +279,9 @@ export const useUpdateJunctionRelationFromCell = ({
       createJunctionRecord,
       deleteJunctionRecord,
       fieldDefinition.metadata.fieldName,
+      isMorphRelation,
       junctionObjectMetadata,
+      objectMetadataItems,
       recordId,
       sourceFieldOnJunction,
       targetField,

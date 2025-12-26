@@ -13,4 +13,3 @@ export const hasJunctionTargetRelationFieldIds = (
     settings.junctionTargetRelationFieldIds.length > 0
   );
 };
-

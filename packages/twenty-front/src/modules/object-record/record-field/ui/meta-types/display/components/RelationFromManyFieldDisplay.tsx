@@ -5,6 +5,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -12,10 +13,12 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { type FieldRelationMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/utils/isJunctionRelation';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';
 import { isArray } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -62,15 +65,24 @@ export const RelationFromManyFieldDisplay = () => {
     const targetField = junctionObjectMetadata.fields.find(
       (field) => field.id === targetFieldId,
     );
-    if (!targetField?.relation) return null;
+    if (!targetField) return null;
 
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === targetField.relation?.targetObjectMetadata.id,
-    );
+    // Check if target field is a MORPH_RELATION (polymorphic)
+    const isMorphRelation =
+      targetField.type === FieldMetadataType.MORPH_RELATION;
+
+    // For regular relations, get the single target object
+    let targetObjectMetadata;
+    if (!isMorphRelation && isDefined(targetField.relation)) {
+      targetObjectMetadata = objectMetadataItems.find(
+        (item) => item.id === targetField.relation?.targetObjectMetadata.id,
+      );
+    }
 
     return {
       targetField,
       targetObjectMetadata,
+      isMorphRelation,
     };
   }, [
     isJunctionRelation,
@@ -155,29 +167,69 @@ export const RelationFromManyFieldDisplay = () => {
     );
   } else if (isJunctionRelation && isDefined(junctionConfig)) {
     // Junction relation: display target objects extracted from junction records
-    const { targetField, targetObjectMetadata } = junctionConfig;
+    const { targetField, targetObjectMetadata, isMorphRelation } =
+      junctionConfig;
 
-    if (!targetField || !targetObjectMetadata) {
+    if (!targetField) {
       return null;
     }
 
-    const targetRecords = fieldValue
-      .map((junctionRecord) => {
-        if (!isDefined(junctionRecord)) return null;
+    // For regular relations, we need the target object metadata
+    if (!isMorphRelation && !targetObjectMetadata) {
+      return null;
+    }
+
+    // Extract target records from junction records
+    const targetRecordsWithMetadata: Array<{
+      record: ObjectRecord;
+      objectMetadata: ObjectMetadataItem;
+    }> = [];
+
+    for (const junctionRecord of fieldValue) {
+      if (!isDefined(junctionRecord)) continue;
+
+      if (isMorphRelation) {
+        // For MORPH: scan all object metadata to find which field is populated
+        for (const objectMetadataItem of objectMetadataItems) {
+          if (!objectMetadataItem.isActive || objectMetadataItem.isSystem) {
+            continue;
+          }
+          const targetObject = junctionRecord[objectMetadataItem.nameSingular];
+          if (
+            isDefined(targetObject) &&
+            typeof targetObject === 'object' &&
+            'id' in targetObject
+          ) {
+            targetRecordsWithMetadata.push({
+              record: targetObject as ObjectRecord,
+              objectMetadata: objectMetadataItem,
+            });
+            break;
+          }
+        }
+      } else {
+        // For regular RELATION: use the known target field name
         const targetObject = junctionRecord[targetField.name];
-        if (!isDefined(targetObject) || typeof targetObject !== 'object')
-          return null;
-        return targetObject;
-      })
-      .filter(isDefined);
+        if (
+          isDefined(targetObject) &&
+          typeof targetObject === 'object' &&
+          isDefined(targetObjectMetadata)
+        ) {
+          targetRecordsWithMetadata.push({
+            record: targetObject as ObjectRecord,
+            objectMetadata: targetObjectMetadata,
+          });
+        }
+      }
+    }
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {targetRecords.map((targetRecord) => (
+        {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
           <RecordChip
-            key={targetRecord.id}
-            objectNameSingular={targetObjectMetadata.nameSingular}
-            record={targetRecord}
+            key={record.id as string}
+            objectNameSingular={objectMetadata.nameSingular}
+            record={record}
             forceDisableClick={disableChipClick}
             triggerEvent={triggerEvent}
           />
