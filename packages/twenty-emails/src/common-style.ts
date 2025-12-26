@@ -22,8 +22,11 @@ const grayScale = {
   gray0: '#ffffff',
 };
 
+// Controlit brand colors
 const colors = {
   blue40: '#5e90f2',
+  controlitGold: '#fab900',
+  controlitDark: '#4a4f53',
 };
 
 export const emailTheme = {
@@ -54,7 +57,7 @@ export const emailTheme = {
   },
   background: {
     colors: { highlight: grayScale.gray15 },
-    button: grayScale.gray60,
+    button: colors.controlitDark, // Controlit brand button color
     transparent: {
       medium: 'rgba(0, 0, 0, 0.08)',
       light: 'rgba(0, 0, 0, 0.04)',
