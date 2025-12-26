@@ -21,6 +21,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -169,6 +170,12 @@ describe('BillingSubscriptionService', () => {
           provide: StripeBillingAlertService,
           useValue: {
             createUsageThresholdAlertForCustomerMeter: jest.fn(),
+          },
+        },
+        {
+          provide: StripeCreditGrantService,
+          useValue: {
+            getCustomerCreditBalance: jest.fn().mockResolvedValue(0),
           },
         },
         BillingPriceService,
