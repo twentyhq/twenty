@@ -11204,7 +11204,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész fiókját."
 
@@ -12265,9 +12266,11 @@ msgstr "Küldünk Önnek egy linket a tartomány tulajdonjogának ellenőrzésé
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Várjuk a fizetési szolgáltatónk (Stripe) visszaigazolását.\n"
+msgstr ""
+"Várjuk a fizetési szolgáltatónk (Stripe) visszaigazolását.\n"
 "Kérjük, próbálja meg néhány másodperc múlva, elnézést."
 
 #. js-lingui-id: LnnVIT

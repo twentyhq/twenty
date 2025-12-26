@@ -11204,7 +11204,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn toàn bộ tài khoản của bạn."
 
@@ -12265,9 +12266,11 @@ msgstr "Chúng tôi sẽ gửi cho bạn một liên kết để xác minh quy�
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Chúng tôi đang chờ xác nhận từ nhà cung cấp thanh toán (Stripe).\n"
+msgstr ""
+"Chúng tôi đang chờ xác nhận từ nhà cung cấp thanh toán (Stripe).\n"
 "Vui lòng thử lại sau vài giây, xin lỗi."
 
 #. js-lingui-id: LnnVIT
