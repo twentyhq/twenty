@@ -13,6 +13,94 @@ This document outlines the complete plan to deploy and customize the Twenty CRM 
 
 ---
 
+## Part 0: Repository & Fork Management
+
+### 0.1 Repository Structure
+
+This project is a **fork** of the open-source Twenty CRM, allowing Controlit to:
+- Receive upstream security updates and bug fixes
+- Maintain custom branding and features
+- Keep a clean separation between upstream and customizations
+
+**Repository Setup:**
+```
+Upstream:  github.com/twentyhq/twenty      (original Twenty CRM)
+Origin:    github.com/akruminsh/controlit-crm  (your fork)
+```
+
+### 0.2 Branching Strategy
+
+```
+upstream/main ────────────────────────────→ (Twenty CRM updates)
+                     ↓ periodic merge
+origin/main ─────────●────────────────────→ (synced with upstream)
+                     ↓ branch
+controlit-main ──────●─────●─────●────────→ (Controlit production)
+                     ↑     ↑     ↑
+               branding  config  features
+```
+
+**Branches:**
+| Branch | Purpose |
+|--------|---------|
+| `main` | Synced with upstream Twenty CRM |
+| `controlit-main` | Controlit production branch |
+| `feature/*` | New features for Controlit |
+| `fix/*` | Bug fixes |
+
+### 0.3 Initial Setup Commands
+
+Run these commands to set up the fork properly:
+
+```bash
+# 1. Add upstream remote (already done)
+git remote add upstream https://github.com/twentyhq/twenty.git
+
+# 2. Create controlit-main branch from main
+git checkout main
+git checkout -b controlit-main
+
+# 3. Push controlit-main to origin
+git push -u origin controlit-main
+
+# 4. Set controlit-main as default branch in GitHub settings
+```
+
+### 0.4 Syncing with Upstream (When Needed)
+
+To pull updates from Twenty CRM:
+
+```bash
+# Fetch upstream changes
+git fetch upstream
+
+# Merge into main
+git checkout main
+git merge upstream/main
+git push origin main
+
+# Merge into controlit-main (resolve conflicts if any)
+git checkout controlit-main
+git merge main
+git push origin controlit-main
+```
+
+### 0.5 Making Controlit Customizations
+
+All customizations should be made on `controlit-main` or feature branches:
+
+```bash
+# For new features
+git checkout controlit-main
+git checkout -b feature/branding-update
+# ... make changes ...
+git commit -m "Update branding colors"
+git push origin feature/branding-update
+# Create PR to controlit-main
+```
+
+---
+
 ## Part 1: Technical Architecture Overview
 
 ### 1.1 System Components
