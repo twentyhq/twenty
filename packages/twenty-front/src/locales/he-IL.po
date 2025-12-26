@@ -11204,7 +11204,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "לא ניתן לבטל פעולה זו. זה ימחק לצמיתות את כל החשבון שלך."
 
@@ -12265,9 +12266,11 @@ msgstr "נשלח לך קישור לאימות בעלות על הדומיין"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "אנחנו ממתינים לאישור מספק התשלומים שלנו (Stripe).\n"
+msgstr ""
+"אנחנו ממתינים לאישור מספק התשלומים שלנו (Stripe).\n"
 "אנא נסה שוב בעוד מספר שניות, סליחה."
 
 #. js-lingui-id: LnnVIT
