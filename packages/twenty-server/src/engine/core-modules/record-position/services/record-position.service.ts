@@ -26,7 +26,7 @@ export class RecordPositionService {
     workspaceId,
     index = 0,
   }: RecordPositionServiceCreateArgs): Promise<number> {
-    if (typeof value === 'number') {
+    if (isNumber(value) && !Number.isNaN(value)) {
       return value;
     }
 
@@ -96,13 +96,18 @@ export class RecordPositionService {
 
     const numericPositions = recordsWithExistingNumberPosition
       .map((record) => record.position)
-      .filter(isNumber);
+      .filter((position) => isNumber(position) && !Number.isNaN(position));
 
     const calculatePosition = (
       mathOperation: (positions: number[], existingPosition: number) => number,
       existingPosition: number | null,
     ): number => {
-      const fallback = isDefined(existingPosition) ? existingPosition : 1;
+      const sanitizedExistingPosition =
+        isDefined(existingPosition) && !Number.isNaN(existingPosition)
+          ? existingPosition
+          : null;
+
+      const fallback = sanitizedExistingPosition ?? 1;
 
       return numericPositions.length > 0
         ? mathOperation(numericPositions, fallback)
@@ -208,20 +213,23 @@ export class RecordPositionService {
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    const result =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectMetadata.nameSingular,
+            {
+              shouldBypassPermissionChecks: true,
+            },
+          );
 
-        return await repository.minimum('position');
-      },
-    );
+          return await repository.minimum('position');
+        },
+      );
+
+    return this.sanitizePositionValue(result);
   }
 
   private async findMaxPosition(
@@ -230,19 +238,30 @@ export class RecordPositionService {
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    const result =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectMetadata.nameSingular,
+            {
+              shouldBypassPermissionChecks: true,
+            },
+          );
 
-        return await repository.maximum('position');
-      },
-    );
+          return await repository.maximum('position');
+        },
+      );
+
+    return this.sanitizePositionValue(result);
+  }
+
+  private sanitizePositionValue(value: number | null): number | null {
+    if (!isDefined(value) || Number.isNaN(value)) {
+      return null;
+    }
+
+    return value;
   }
 }
