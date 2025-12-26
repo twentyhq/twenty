@@ -338,7 +338,7 @@ export const FormDateFieldInput = ({
                     <OverlayContainer>
                       <DatePicker
                         instanceId={instanceId}
-                        date={pickerDate}
+                        plainDateString={pickerDate}
                         onChange={handlePickerChange}
                         onClose={handlePickerMouseSelect}
                         onEnter={handlePickerEnter}

@@ -14,7 +14,7 @@ import {
   GraphOrderBy,
   GraphType,
 } from '~/generated-metadata/graphql';
-import { useChartSettingsValues } from '../useChartSettingsValues';
+import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 
 const mockObjectMetadataItem: ObjectMetadataItem = {
   id: 'obj-1',

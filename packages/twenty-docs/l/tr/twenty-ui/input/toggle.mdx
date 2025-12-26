@@ -1,0 +1,36 @@
+---
+title: Toggle
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Başlık" />
+</Frame>
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
+
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür       | Açıklama                                                                                                | Varsayılan   |
+    | ---------- | --------- | ------------------------------------------------------------------------------------------------------- | ------------ |
+    | değer      | boolean   | Geçiş butonunun mevcut durumu                                                                           | `yanlış`     |
+    | onChange   | fonksiyon | Callback function triggered when the toggle state changes                                               |              |
+    | renk       | metin     | Color of the toggle when it\                                                                            | mavi renktir |
+    | toggleSize | metin     | Geçiş butonunun boyutu, hem yüksekliği hem de genişliği etkiler. İki seçeneği vardır: `küçük` ve `orta` | orta         |
+  </Tab>
+</Tabs>

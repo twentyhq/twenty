@@ -1,7 +1,7 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '../../record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
-import { RecordCalendarComponentInstanceContext } from '../contexts/RecordCalendarComponentInstanceContext';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
+import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 
 export const recordCalendarSelectedRecordIdsComponentSelector =
   createComponentSelector<string[]>({

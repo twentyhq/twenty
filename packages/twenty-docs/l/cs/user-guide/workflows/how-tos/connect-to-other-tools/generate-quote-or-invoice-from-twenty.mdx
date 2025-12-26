@@ -1,0 +1,143 @@
+---
+title: Vytvořte nabídku nebo fakturu z Twenty
+description: Automaticky vytvářejte faktury v externích nástrojích, když se obchodní případy uzavřou.
+---
+
+Automaticky odesílejte data o obchodních případech do vašeho fakturačního systému (Stripe, QuickBooks, Xero atd.). když je příležitost vyhrána.
+
+## Struktura pracovního postupu
+
+1. **Spouštěč**: Záznam je aktualizován (Příležitost)
+2. **Filtr**: Stav = Uzavřeno – vyhráno
+3. **Vyhledat záznam**: Získat podrobnosti o společnosti
+4. **Kód** (volitelné): Formátovat payload
+5. **Požadavek HTTP**: Odeslat do fakturačního systému
+
+## Krok 1: Nastavení spouštěče
+
+1. Vytvořte nový pracovní postup
+2. Vyberte spouštěč **Záznam je aktualizován**
+3. Vyberte jako objekt **Příležitost**
+
+## Krok 2: Filtrování na Uzavřeno – vyhráno
+
+Přidejte akci **Filtr**, aby se pokračovalo pouze tehdy, když je obchodní případ vyhraný:
+
+| Nastavení    | Hodnota                                |
+| ------------ | -------------------------------------- |
+| **Pole**     | Fáze                                   |
+| **Podmínka** | Rovná se                               |
+| **Hodnota**  | `CLOSED_WON` (nebo název vašeho stavu) |
+
+<Tip>
+  Spouštěč se vyvolá při jakékoli aktualizaci Příležitosti. Filtr zajistí, že pracovní postup bude pokračovat pouze tehdy, když se stav změní na Uzavřeno – vyhráno.
+</Tip>
+
+## Krok 3: Získat podrobnosti o společnosti
+
+Záznam Příležitosti nemusí obsahovat všechna pole Společnosti, která potřebujete pro fakturu. Přidejte akci **Vyhledat záznam**:
+
+| Nastavení       | Hodnota                                    |
+| --------------- | ------------------------------------------ |
+| **Objekt**      | Společnost                                 |
+| **Shoda podle** | ID se rovná `{{trigger.object.companyId}}` |
+
+Tímto získáte úplný záznam Společnosti s fakturační adresou, daňovým ID atd.
+
+## Krok 4: Formátování payloadu (volitelné)
+
+Pokud váš fakturační systém očekává specifický formát, přidejte akci **Kód**:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Krok 5: Odeslání do fakturačního systému
+
+Přidejte akci **Požadavek HTTP**:
+
+| Nastavení   | Hodnota                                      |
+| ----------- | -------------------------------------------- |
+| **Metoda**  | POST                                         |
+| **URL**     | Koncový bod API vašeho fakturačního systému  |
+| **Záhlaví** | `Authorization: Bearer YOUR_API_KEY`         |
+| **Tělo**    | `{{code.invoice}}` nebo namapujte pole přímo |
+
+### Příklad: Faktura ve Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Příklad: Faktura v QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Shrnutí kompletního pracovního postupu
+
+| Krok | Akce                          | Účel                                                   |
+| ---- | ----------------------------- | ------------------------------------------------------ |
+| 1    | Spouštěč: Záznam aktualizován | Spustí se při jakékoli změně Příležitosti              |
+| 2    | Filtr                         | Pokračujte pouze pokud Stav = Uzavřeno – vyhráno       |
+| 3    | Vyhledat záznam               | Získejte úplné podrobnosti o Společnosti pro fakturaci |
+| 4    | Kód                           | Naformátujte data pro fakturační API                   |
+| 5    | HTTP požadavek                | Vytvořte fakturu v externím systému                    |
+
+## Tipy
+
+* **Ukládejte externí ID**: Uložte ID faktury vrácené API zpět do Příležitosti pomocí akce **Aktualizovat záznam**
+* **Zpracování chyb**: Přidejte větev pro odeslání upozornění, pokud požadavek HTTP selže
+* **Nejprve testujte**: Použijte sandbox/test režim vašeho fakturačního systému před ostrým spuštěním
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizace pro Uzavřeno – vyhráno](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

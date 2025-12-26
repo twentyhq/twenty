@@ -1,4 +1,4 @@
-import { parseHttpJsonBodyWithoutVariablesOrThrow } from '../parseHttpJsonBodyWithoutVariablesOrThrow';
+import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 
 describe('parseHttpJsonBodyWithoutVariablesOrThrow', () => {
   it('should parse valid JSON without variables', () => {

@@ -6,5 +6,7 @@ export const CODE_LIGHT = {
     sky: COLOR_LIGHT.sky10,
     pink: COLOR_LIGHT.pink10,
     orange: COLOR_LIGHT.orange8,
+    green: COLOR_LIGHT.lime8,
   },
+  font: { family: 'DM Mono' },
 };

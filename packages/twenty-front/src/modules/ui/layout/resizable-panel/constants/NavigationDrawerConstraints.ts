@@ -1,4 +1,4 @@
-import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
+import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
 
 export const NAVIGATION_DRAWER_CONSTRAINTS: ResizablePanelConstraints = {
   min: 180,

@@ -164,6 +164,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -470,7 +471,7 @@
         "language": "fr",
         "tabs": [
           {
-            "tab": "Guide de l'utilisateur",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -496,7 +497,7 @@
                 ]
               },
               {
-                "group": "Modèle de données",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/fr/user-guide/data-model/overview",
@@ -578,7 +579,7 @@
                 ]
               },
               {
-                "group": "Flux de travail",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/fr/user-guide/workflows/overview",
@@ -603,6 +604,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/fr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -748,7 +750,7 @@
                 ]
               },
               {
-                "group": "Paramètres",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/fr/user-guide/settings/overview",
@@ -774,10 +776,10 @@
             ]
           },
           {
-            "tab": "Développeurs",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "Développeurs",
+                "group": "Developers",
                 "pages": [
                   "l/fr/developers/introduction"
                 ]
@@ -825,7 +827,7 @@
                       "l/fr/developers/contribute/capabilities/local-setup",
                       "l/fr/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Développement du frontend",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/fr/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -833,7 +835,7 @@
                             "pages": [
                               "l/fr/twenty-ui/introduction",
                               {
-                                "group": "Afficher",
+                                "group": "Display",
                                 "pages": [
                                   "l/fr/twenty-ui/display/checkmark",
                                   "l/fr/twenty-ui/display/chip",
@@ -844,7 +846,7 @@
                                 ]
                               },
                               {
-                                "group": "Vos commentaires",
+                                "group": "Feedback",
                                 "pages": [
                                   "l/fr/twenty-ui/progress-bar"
                                 ]
@@ -886,7 +888,7 @@
                         ]
                       },
                       {
-                        "group": "Développement du backend",
+                        "group": "Backend Development",
                         "pages": [
                           "l/fr/developers/contribute/capabilities/backend-development/server-commands",
                           "l/fr/developers/contribute/capabilities/backend-development/feature-flags",
@@ -909,7 +911,7 @@
         "language": "ar",
         "tabs": [
           {
-            "tab": "دليل المستخدم",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1042,6 +1044,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ar/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -1076,7 +1079,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "الذكاء الاصطناعي",
                 "icon": "robot",
                 "pages": [
                   "l/ar/user-guide/ai/overview",
@@ -1127,7 +1130,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "لوحات القيادة",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ar/user-guide/dashboards/overview",
@@ -1167,7 +1170,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "الفوترة",
                 "icon": "credit-card",
                 "pages": [
                   "l/ar/user-guide/billing/overview",
@@ -1187,7 +1190,7 @@
                 ]
               },
               {
-                "group": "الإعدادات",
+                "group": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
                 "icon": "gear",
                 "pages": [
                   "l/ar/user-guide/settings/overview",
@@ -1216,7 +1219,7 @@
             "tab": "المطورون",
             "groups": [
               {
-                "group": "المطورين",
+                "group": "المطورون",
                 "pages": [
                   "l/ar/developers/introduction"
                 ]
@@ -1264,7 +1267,7 @@
                       "l/ar/developers/contribute/capabilities/local-setup",
                       "l/ar/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "تطوير الواجهة",
+                        "group": "تطوير الواجهة الأمامية",
                         "pages": [
                           "l/ar/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -1283,13 +1286,13 @@
                                 ]
                               },
                               {
-                                "group": "الملاحظات",
+                                "group": "التغذية الراجعة",
                                 "pages": [
                                   "l/ar/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "إدخال",
                                 "pages": [
                                   "l/ar/twenty-ui/input/buttons",
                                   "l/ar/twenty-ui/input/color-scheme",
@@ -1325,7 +1328,7 @@
                         ]
                       },
                       {
-                        "group": "تطوير الخلفية",
+                        "group": "تطوير الواجهة الخلفية",
                         "pages": [
                           "l/ar/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ar/developers/contribute/capabilities/backend-development/feature-flags",
@@ -1348,7 +1351,7 @@
         "language": "cs",
         "tabs": [
           {
-            "tab": "Uživatelská příručka",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1481,6 +1484,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/cs/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -1503,7 +1507,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Potřebujete další pomoc",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -1566,7 +1570,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Panely",
                 "icon": "chart-bar",
                 "pages": [
                   "l/cs/user-guide/dashboards/overview",
@@ -1606,7 +1610,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Fakturace",
                 "icon": "credit-card",
                 "pages": [
                   "l/cs/user-guide/billing/overview",
@@ -1711,7 +1715,7 @@
                             "pages": [
                               "l/cs/twenty-ui/introduction",
                               {
-                                "group": "Zobrazení",
+                                "group": "Zobrazit",
                                 "pages": [
                                   "l/cs/twenty-ui/display/checkmark",
                                   "l/cs/twenty-ui/display/chip",
@@ -1722,13 +1726,13 @@
                                 ]
                               },
                               {
-                                "group": "Komentář",
+                                "group": "Zpětná vazba",
                                 "pages": [
                                   "l/cs/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "Vstup",
                                 "pages": [
                                   "l/cs/twenty-ui/input/buttons",
                                   "l/cs/twenty-ui/input/color-scheme",
@@ -1743,7 +1747,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigace",
                                 "pages": [
                                   "l/cs/twenty-ui/navigation",
                                   "l/cs/twenty-ui/navigation/breadcrumb",
@@ -1787,7 +1791,7 @@
         "language": "de",
         "tabs": [
           {
-            "tab": "Benutzerhandbuch",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1920,6 +1924,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/de/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/de/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -1942,7 +1947,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Brauchen Sie mehr Hilfe",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -1954,7 +1959,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "KI",
                 "icon": "robot",
                 "pages": [
                   "l/de/user-guide/ai/overview",
@@ -2045,7 +2050,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Abrechnung",
                 "icon": "credit-card",
                 "pages": [
                   "l/de/user-guide/billing/overview",
@@ -2150,7 +2155,7 @@
                             "pages": [
                               "l/de/twenty-ui/introduction",
                               {
-                                "group": "Anzeige",
+                                "group": "Anzeigen",
                                 "pages": [
                                   "l/de/twenty-ui/display/checkmark",
                                   "l/de/twenty-ui/display/chip",
@@ -2161,13 +2166,13 @@
                                 ]
                               },
                               {
-                                "group": "Feedback",
+                                "group": "Rückmeldung",
                                 "pages": [
                                   "l/de/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "Eingabe",
                                 "pages": [
                                   "l/de/twenty-ui/input/buttons",
                                   "l/de/twenty-ui/input/color-scheme",
@@ -2226,7 +2231,7 @@
         "language": "es",
         "tabs": [
           {
-            "tab": "Guía de usuario",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -2252,7 +2257,7 @@
                 ]
               },
               {
-                "group": "Modelo de datos",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/es/user-guide/data-model/overview",
@@ -2359,6 +2364,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/es/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/es/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/es/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -2504,7 +2510,7 @@
                 ]
               },
               {
-                "group": "Configuración",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/es/user-guide/settings/overview",
@@ -2530,10 +2536,10 @@
             ]
           },
           {
-            "tab": "Desarrolladores",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "Desarrolladores",
+                "group": "Developers",
                 "pages": [
                   "l/es/developers/introduction"
                 ]
@@ -2581,7 +2587,7 @@
                       "l/es/developers/contribute/capabilities/local-setup",
                       "l/es/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Desarrollo Frontend",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/es/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -2589,7 +2595,7 @@
                             "pages": [
                               "l/es/twenty-ui/introduction",
                               {
-                                "group": "Mostrar",
+                                "group": "Display",
                                 "pages": [
                                   "l/es/twenty-ui/display/checkmark",
                                   "l/es/twenty-ui/display/chip",
@@ -2600,13 +2606,13 @@
                                 ]
                               },
                               {
-                                "group": "Retroalimentación",
+                                "group": "Feedback",
                                 "pages": [
                                   "l/es/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Entrada",
+                                "group": "Input",
                                 "pages": [
                                   "l/es/twenty-ui/input/buttons",
                                   "l/es/twenty-ui/input/color-scheme",
@@ -2621,7 +2627,7 @@
                                 ]
                               },
                               {
-                                "group": "Navegación",
+                                "group": "Navigation",
                                 "pages": [
                                   "l/es/twenty-ui/navigation",
                                   "l/es/twenty-ui/navigation/breadcrumb",
@@ -2642,7 +2648,7 @@
                         ]
                       },
                       {
-                        "group": "Desarrollo de backend",
+                        "group": "Backend Development",
                         "pages": [
                           "l/es/developers/contribute/capabilities/backend-development/server-commands",
                           "l/es/developers/contribute/capabilities/backend-development/feature-flags",
@@ -2665,7 +2671,7 @@
         "language": "it",
         "tabs": [
           {
-            "tab": "Guida Utente",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -2773,7 +2779,7 @@
                 ]
               },
               {
-                "group": "Workflows",
+                "group": "Flussi di Lavoro",
                 "icon": "bolt",
                 "pages": [
                   "l/it/user-guide/workflows/overview",
@@ -2798,6 +2804,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/it/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/it/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -2883,7 +2890,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Cruscotti",
                 "icon": "chart-bar",
                 "pages": [
                   "l/it/user-guide/dashboards/overview",
@@ -2923,7 +2930,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Fatturazione",
                 "icon": "credit-card",
                 "pages": [
                   "l/it/user-guide/billing/overview",
@@ -3028,7 +3035,7 @@
                             "pages": [
                               "l/it/twenty-ui/introduction",
                               {
-                                "group": "Visualizzazione",
+                                "group": "Mostra",
                                 "pages": [
                                   "l/it/twenty-ui/display/checkmark",
                                   "l/it/twenty-ui/display/chip",
@@ -3060,7 +3067,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigazione",
                                 "pages": [
                                   "l/it/twenty-ui/navigation",
                                   "l/it/twenty-ui/navigation/breadcrumb",
@@ -3104,7 +3111,7 @@
         "language": "ja",
         "tabs": [
           {
-            "tab": "ユーザーガイド",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -3130,7 +3137,7 @@
                 ]
               },
               {
-                "group": "データモデル",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/ja/user-guide/data-model/overview",
@@ -3212,7 +3219,7 @@
                 ]
               },
               {
-                "group": "ワークフロー",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/ja/user-guide/workflows/overview",
@@ -3237,6 +3244,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ja/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -3382,7 +3390,7 @@
                 ]
               },
               {
-                "group": "設定",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/ja/user-guide/settings/overview",
@@ -3408,10 +3416,10 @@
             ]
           },
           {
-            "tab": "開発者",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "開発者",
+                "group": "Developers",
                 "pages": [
                   "l/ja/developers/introduction"
                 ]
@@ -3459,7 +3467,7 @@
                       "l/ja/developers/contribute/capabilities/local-setup",
                       "l/ja/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "フロントエンド開発",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/ja/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -3467,7 +3475,7 @@
                             "pages": [
                               "l/ja/twenty-ui/introduction",
                               {
-                                "group": "表示",
+                                "group": "Display",
                                 "pages": [
                                   "l/ja/twenty-ui/display/checkmark",
                                   "l/ja/twenty-ui/display/chip",
@@ -3478,7 +3486,7 @@
                                 ]
                               },
                               {
-                                "group": "フィードバック",
+                                "group": "Feedback",
                                 "pages": [
                                   "l/ja/twenty-ui/progress-bar"
                                 ]
@@ -3520,7 +3528,7 @@
                         ]
                       },
                       {
-                        "group": "バックエンド開発",
+                        "group": "Backend Development",
                         "pages": [
                           "l/ja/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ja/developers/contribute/capabilities/backend-development/feature-flags",
@@ -3569,7 +3577,7 @@
                 ]
               },
               {
-                "group": "데이터 모델",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/ko/user-guide/data-model/overview",
@@ -3676,6 +3684,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ko/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -3821,7 +3830,7 @@
                 ]
               },
               {
-                "group": "설정",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/ko/user-guide/settings/overview",
@@ -3847,10 +3856,10 @@
             ]
           },
           {
-            "tab": "개발자",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "개발자",
+                "group": "Developers",
                 "pages": [
                   "l/ko/developers/introduction"
                 ]
@@ -3898,7 +3907,7 @@
                       "l/ko/developers/contribute/capabilities/local-setup",
                       "l/ko/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "프론트엔드 개발",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/ko/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -3906,7 +3915,7 @@
                             "pages": [
                               "l/ko/twenty-ui/introduction",
                               {
-                                "group": "표시",
+                                "group": "Display",
                                 "pages": [
                                   "l/ko/twenty-ui/display/checkmark",
                                   "l/ko/twenty-ui/display/chip",
@@ -3917,13 +3926,13 @@
                                 ]
                               },
                               {
-                                "group": "피드백",
+                                "group": "Feedback",
                                 "pages": [
                                   "l/ko/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "입력",
+                                "group": "Input",
                                 "pages": [
                                   "l/ko/twenty-ui/input/buttons",
                                   "l/ko/twenty-ui/input/color-scheme",
@@ -3938,7 +3947,7 @@
                                 ]
                               },
                               {
-                                "group": "네비게이션",
+                                "group": "Navigation",
                                 "pages": [
                                   "l/ko/twenty-ui/navigation",
                                   "l/ko/twenty-ui/navigation/breadcrumb",
@@ -3959,7 +3968,7 @@
                         ]
                       },
                       {
-                        "group": "백엔드 개발",
+                        "group": "Backend Development",
                         "pages": [
                           "l/ko/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ko/developers/contribute/capabilities/backend-development/feature-flags",
@@ -3982,7 +3991,7 @@
         "language": "pt",
         "tabs": [
           {
-            "tab": "Manual do Usuário",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -4008,7 +4017,7 @@
                 ]
               },
               {
-                "group": "Modelo de Dados",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/pt/user-guide/data-model/overview",
@@ -4115,6 +4124,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/pt/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/pt/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -4260,7 +4270,7 @@
                 ]
               },
               {
-                "group": "Configurações",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/pt/user-guide/settings/overview",
@@ -4286,10 +4296,10 @@
             ]
           },
           {
-            "tab": "Desenvolvedores",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "Desenvolvedores",
+                "group": "Developers",
                 "pages": [
                   "l/pt/developers/introduction"
                 ]
@@ -4337,7 +4347,7 @@
                       "l/pt/developers/contribute/capabilities/local-setup",
                       "l/pt/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Desenvolvimento Frontend",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/pt/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -4345,7 +4355,7 @@
                             "pages": [
                               "l/pt/twenty-ui/introduction",
                               {
-                                "group": "Exibição",
+                                "group": "Display",
                                 "pages": [
                                   "l/pt/twenty-ui/display/checkmark",
                                   "l/pt/twenty-ui/display/chip",
@@ -4398,7 +4408,7 @@
                         ]
                       },
                       {
-                        "group": "Desenvolvimento de backend",
+                        "group": "Backend Development",
                         "pages": [
                           "l/pt/developers/contribute/capabilities/backend-development/server-commands",
                           "l/pt/developers/contribute/capabilities/backend-development/feature-flags",
@@ -4421,7 +4431,7 @@
         "language": "ro",
         "tabs": [
           {
-            "tab": "Ghid de utilizator",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -4554,6 +4564,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ro/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ro/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -4576,7 +4587,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Ai nevoie de mai mult ajutor",
                         "pages": [
                           "l/ro/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -4609,7 +4620,7 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Vizualizări și fluxuri",
                 "icon": "table",
                 "pages": [
                   "l/ro/user-guide/views-pipelines/overview",
@@ -4639,7 +4650,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Tablouri de Bord",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ro/user-guide/dashboards/overview",
@@ -4679,7 +4690,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Facturare",
                 "icon": "credit-card",
                 "pages": [
                   "l/ro/user-guide/billing/overview",
@@ -4776,7 +4787,7 @@
                       "l/ro/developers/contribute/capabilities/local-setup",
                       "l/ro/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Dezvoltare Frontend",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/ro/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -4816,7 +4827,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigare",
                                 "pages": [
                                   "l/ro/twenty-ui/navigation",
                                   "l/ro/twenty-ui/navigation/breadcrumb",
@@ -4860,7 +4871,7 @@
         "language": "ru",
         "tabs": [
           {
-            "tab": "Руководство пользователя",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -4993,6 +5004,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ru/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ru/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -5015,7 +5027,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Нужна дополнительная помощь",
                         "pages": [
                           "l/ru/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/ru/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -5027,7 +5039,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "ИИ",
                 "icon": "robot",
                 "pages": [
                   "l/ru/user-guide/ai/overview",
@@ -5048,7 +5060,7 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Представления и воронки",
                 "icon": "table",
                 "pages": [
                   "l/ru/user-guide/views-pipelines/overview",
@@ -5078,7 +5090,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Панели управления",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ru/user-guide/dashboards/overview",
@@ -5118,7 +5130,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Биллинг",
                 "icon": "credit-card",
                 "pages": [
                   "l/ru/user-guide/billing/overview",
@@ -5276,7 +5288,7 @@
                         ]
                       },
                       {
-                        "group": "Бэкенд разработка",
+                        "group": "Разработка серверной части",
                         "pages": [
                           "l/ru/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ru/developers/contribute/capabilities/backend-development/feature-flags",
@@ -5432,6 +5444,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/tr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -5454,7 +5467,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Daha Fazla Yardım mı İhtiyacınız Var",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -5517,7 +5530,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Gösterge Panelleri",
                 "icon": "chart-bar",
                 "pages": [
                   "l/tr/user-guide/dashboards/overview",
@@ -5557,7 +5570,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Faturalandırma",
                 "icon": "credit-card",
                 "pages": [
                   "l/tr/user-guide/billing/overview",
@@ -5764,7 +5777,7 @@
                 ]
               },
               {
-                "group": "數據模型",
+                "group": "Data Model",
                 "icon": "database",
                 "pages": [
                   "l/zh/user-guide/data-model/overview",
@@ -5846,7 +5859,7 @@
                 ]
               },
               {
-                "group": "Workflow",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/zh/user-guide/workflows/overview",
@@ -5871,6 +5884,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/zh/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/zh/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
@@ -6016,7 +6030,7 @@
                 ]
               },
               {
-                "group": "設置",
+                "group": "Settings",
                 "icon": "gear",
                 "pages": [
                   "l/zh/user-guide/settings/overview",
@@ -6042,10 +6056,10 @@
             ]
           },
           {
-            "tab": "開發人員",
+            "tab": "Developers",
             "groups": [
               {
-                "group": "開發人員",
+                "group": "Developers",
                 "pages": [
                   "l/zh/developers/introduction"
                 ]
@@ -6093,7 +6107,7 @@
                       "l/zh/developers/contribute/capabilities/local-setup",
                       "l/zh/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "前端開發",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/zh/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -6101,7 +6115,7 @@
                             "pages": [
                               "l/zh/twenty-ui/introduction",
                               {
-                                "group": "顯示",
+                                "group": "Display",
                                 "pages": [
                                   "l/zh/twenty-ui/display/checkmark",
                                   "l/zh/twenty-ui/display/chip",
@@ -6112,13 +6126,13 @@
                                 ]
                               },
                               {
-                                "group": "反饋",
+                                "group": "Feedback",
                                 "pages": [
                                   "l/zh/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "輸入",
+                                "group": "Input",
                                 "pages": [
                                   "l/zh/twenty-ui/input/buttons",
                                   "l/zh/twenty-ui/input/color-scheme",
@@ -6133,7 +6147,7 @@
                                 ]
                               },
                               {
-                                "group": "導航",
+                                "group": "Navigation",
                                 "pages": [
                                   "l/zh/twenty-ui/navigation",
                                   "l/zh/twenty-ui/navigation/breadcrumb",
@@ -6154,7 +6168,7 @@
                         ]
                       },
                       {
-                        "group": "後端開發",
+                        "group": "Backend Development",
                         "pages": [
                           "l/zh/developers/contribute/capabilities/backend-development/server-commands",
                           "l/zh/developers/contribute/capabilities/backend-development/feature-flags",

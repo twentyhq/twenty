@@ -5,6 +5,8 @@ import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/F
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
 
+import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
+
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
@@ -13,7 +15,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext } from 'react';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 export const CurrencyFieldInput = () => {
   const { draftValue, setDraftValue, defaultValue, decimals } =

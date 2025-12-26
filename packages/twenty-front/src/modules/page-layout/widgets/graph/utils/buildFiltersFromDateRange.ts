@@ -1,11 +1,11 @@
 import { type RangeChartFilter } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
+import { type Temporal } from 'temporal-polyfill';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { getPlainDateFromDate } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const buildFiltersFromDateRange = (
-  rangeStartDate: Date,
-  rangeEndDate: Date,
+  rangeStartDate: Temporal.ZonedDateTime,
+  rangeEndDate: Temporal.ZonedDateTime,
   fieldType: FieldMetadataType,
   fieldName: string,
 ): RangeChartFilter[] => {
@@ -14,12 +14,12 @@ export const buildFiltersFromDateRange = (
       {
         fieldName,
         operand: ViewFilterOperand.IS_AFTER,
-        value: rangeStartDate.toISOString(),
+        value: rangeStartDate.toString({ timeZoneName: 'never' }),
       },
       {
         fieldName,
         operand: ViewFilterOperand.IS_BEFORE,
-        value: rangeEndDate.toISOString(),
+        value: rangeEndDate.toString({ timeZoneName: 'never' }),
       },
     ];
   }
@@ -28,12 +28,12 @@ export const buildFiltersFromDateRange = (
     {
       fieldName,
       operand: ViewFilterOperand.IS_AFTER,
-      value: getPlainDateFromDate(rangeStartDate),
+      value: rangeStartDate.toPlainDate().toString(),
     },
     {
       fieldName,
       operand: ViewFilterOperand.IS_BEFORE,
-      value: getPlainDateFromDate(rangeEndDate),
+      value: rangeEndDate.toPlainDate().toString(),
     },
   ];
 };

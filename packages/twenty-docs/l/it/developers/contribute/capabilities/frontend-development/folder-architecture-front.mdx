@@ -1,0 +1,109 @@
+---
+title: Architettura delle Cartelle
+info: Uno sguardo dettagliato all'architettura delle nostre cartelle
+---
+
+In questa guida, esplorerai i dettagli della struttura delle directory del progetto e come contribuisce all'organizzazione e alla manutenibilità di Twenty.
+
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+
+```
+fronte
+└───moduli
+│ └───modulo1
+│ │ └───sottomodulo1
+│ └───modulo2
+│ └───ui
+│ │ └───schermo
+│ │ └───ingressi
+│ │ │ └───bottoni
+│ │ └───...
+└───pagine
+└───...
+```
+
+## Pagine
+
+Include i componenti di alto livello definiti dalle rotte dell'applicazione. Importano componenti di livello inferiore dalla cartella modules (vedi dettagli sotto).
+
+## Moduli
+
+Ogni modulo rappresenta una funzionalità o un gruppo di funzionalità, comprendente i suoi componenti specifici, stati e logica operativa.
+Dovrebbero tutti seguire la struttura sottostante. Puoi nidificare moduli all'interno di moduli (indicati come sottomoduli) e le stesse regole si applicano.
+
+```
+modulo1
+ └───componenti
+ │ └───componente1
+ │ └───componente2
+ └───costanti
+ └───contesti
+ └───graphql
+ │ └───frammenti
+ │ └───query
+ │ └───mutazioni
+ └───hook
+ │ └───interni
+ └───stati
+ │ └───selettori
+ └───tipi
+ └───utilità
+```
+
+### Contesti
+
+Un contesto è un modo per passare dati attraverso l'albero dei componenti senza dover trasmettere i props manualmente a ogni livello.
+
+Vedi [React Context](https://react.dev/reference/react#context-hooks) per ulteriori dettagli.
+
+### GraphQL
+
+Include frammenti, query e mutazioni.
+
+Vedi [GraphQL](https://graphql.org/learn/) per ulteriori dettagli.
+
+* Frammenti
+
+Un frammento è un pezzo riutilizzabile di una query, che puoi usare in posti diversi. Usando i frammenti, è più facile evitare la duplicazione di codice.
+
+Vedi [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) per ulteriori dettagli.
+
+* Query
+
+Vedi [GraphQL Queries](https://graphql.org/learn/queries/) per ulteriori dettagli.
+
+* Mutazioni
+
+Vedi [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) per ulteriori dettagli.
+
+### Hook
+
+Vedi [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) per ulteriori dettagli.
+
+### Stati
+
+Contiene la logica di gestione degli stati. [RecoilJS](https://recoiljs.org) se ne occupa.
+
+* Selettori: Vedi [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) per ulteriori dettagli.
+
+La gestione degli stati integrata di React si occupa ancora dello stato all'interno di un componente.
+
+### Utilità
+
+Dovrebbe contenere solo funzioni pure riutilizzabili. Otherwise, create custom hooks in the `hooks` folder.
+
+## UI
+
+Contiene tutti i componenti UI riutilizzabili usati nell'applicazione.
+
+Questa cartella può contenere sottocartelle, come `data`, `display`, `feedback` e `input` per tipi specifici di componenti. Ogni componente dovrebbe essere autonomo e riutilizzabile, così da poterlo utilizzare in diverse parti dell'applicazione.
+
+Separando i componenti UI dagli altri componenti nella cartella `modules`, è più facile mantenere un design coerente e apportare modifiche alla UI senza influenzare altre parti (logica di business) del codice.
+
+## Interfaccia e dipendenze
+
+Puoi importare codice di altri moduli da qualsiasi modulo, tranne la cartella `ui`. Questo manterrà il suo codice facile da testare.
+
+### Interni
+
+Ogni parte (hook, stati, ...) di un modulo può avere una cartella `internal`, che contiene le parti utilizzate solo all'interno del modulo.

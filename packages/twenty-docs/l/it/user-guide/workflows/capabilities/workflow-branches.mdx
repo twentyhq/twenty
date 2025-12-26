@@ -1,0 +1,66 @@
+---
+title: Workflow Branches
+description: Crea percorsi paralleli e logica condizionale nei tuoi flussi di lavoro.
+---
+
+I rami ti consentono di suddividere il tuo workflow in più percorsi che possono essere eseguiti simultaneamente o in modo condizionale in base ai tuoi dati.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Come funzionano i rami
+
+Quando crei più connessioni da un singolo nodo, ogni percorso diventa un ramo. Per impostazione predefinita, **tutti i rami vengono eseguiti in parallelo**—non si attendono a vicenda.
+
+## Creazione dei rami
+
+### Aggiungi un nuovo ramo
+
+1. **Fai clic con il tasto destro sull'area di lavoro principale** del workflow (non su un nodo esistente)
+2. Clicca su **Aggiungi nodo**
+3. Scegli il tipo di nodo per il tuo nuovo ramo
+4. Trascina una freccia dalla parte inferiore del passaggio precedente alla parte superiore di questa nuova azione
+5. Ripeti per aggiungere altri rami dallo stesso nodo
+
+<Note>
+  Ogni ramo è indipendente. L'aggiunta di un ramo non influisce sugli altri percorsi esistenti da quel nodo.
+</Note>
+
+### Layout visivo
+
+I rami appaiono come percorsi paralleli nell'editor del workflow. Puoi trascinare i nodi per riorganizzare il layout visivo senza influire sull'esecuzione.
+
+## Rami condizionali
+
+Poiché tutti i rami vengono eseguiti per impostazione predefinita, usa nodi **Filtro** per controllare quali percorsi vengono effettivamente eseguiti:
+
+| Ramo | Condizione del filtro | Azione                            |
+| ---- | --------------------- | --------------------------------- |
+| A    | Fase = "Vinta"        | Invia un'email di congratulazioni |
+| B    | Fase = "Persa"        | Crea un'attività di follow-up     |
+| C    | Fase = "Negoziazione" | Notifica il responsabile          |
+
+1. Crea rami dal tuo trigger o dall'azione
+2. Aggiungi un nodo **Filtro** come primo passaggio di ciascun ramo
+3. Configura ciascun filtro con condizioni reciprocamente esclusive
+4. Aggiungi le azioni dopo ciascun filtro
+
+Solo i rami in cui la condizione del filtro è soddisfatta continueranno l'esecuzione.
+
+## Unione dei rami
+
+**I rami non si uniscono automaticamente.** Ogni ramo viene eseguito in modo indipendente fino a quando non termina. Hai la massima flessibilità su come gestirlo:
+
+* **Opzione 1: Mantieni i rami separati**
+  Ogni ramo gestisce indipendentemente le proprie azioni di follow-up. Questo è l'approccio più semplice quando i rami non devono convergere.
+
+* **Opzione 2: Unisci i rami manualmente**
+  Quando crei il tuo workflow, puoi collegare manualmente più rami alla stessa azione a valle. Trascina semplicemente le frecce dalla fine di ciascun ramo a un nodo comune.
+
+<Note>
+  Sebbene tu possa usare un nodo [Delay](/l/it/user-guide/workflows/capabilities/workflow-actions#delay) per mettere in pausa l'esecuzione, al momento non è configurabile per attendere "fino a quando termina un altro ramo".
+</Note>
+
+## Correlati
+
+* [Come usare i rami nei workflow](/l/it/user-guide/workflows/capabilities/use-branches-in-workflows) - Guida passo passo
+* [Azioni del workflow](/l/it/user-guide/workflows/capabilities/workflow-actions) - Azioni disponibili, incluso Filtro

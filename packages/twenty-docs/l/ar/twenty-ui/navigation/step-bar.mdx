@@ -1,0 +1,34 @@
+---
+title: شريط الخطوات
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="رأس الصفحة" />
+</Frame>
+
+يعرض التقدم من خلال سلسلة من الخطوات المرقمة عن طريق تمييز الخطوة النشطة. يولد حاوية تحتوي على خطوات، يتم تمثيل كل منها بواسطة مكون 'Step'.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات   | النوع | الوصف                                                             |
+    | ---------- | ----- | ----------------------------------------------------------------- |
+    | activeStep | رقم   | مؤشر للخطوة النشطة حاليًا. هذا يحدد أي خطوة يجب إبرازها بشكل مرئي |
+  </Tab>
+</Tabs>

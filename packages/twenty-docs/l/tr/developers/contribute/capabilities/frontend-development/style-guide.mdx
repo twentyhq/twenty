@@ -1,0 +1,290 @@
+---
+title: Stil Rehberi
+---
+
+Bu belge, kod yazarken uyulması gereken kuralları içermektedir.
+
+Buradaki amaç, okunması ve bakımı kolay tutarlı bir kod tabanı oluşturmaktır.
+
+Bunun için, biraz daha ayrıntılı olmak, çok kısa olmaktan daha iyidir.
+
+Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+
+Burada tanımlanmayan, ancak linters tarafından otomatik olarak kontrol edilen birçok kural vardır.
+
+## React
+
+### Fonksiyonel bileşenler kullanın
+
+Her zaman TSX fonksiyonel bileşenlerini kullanın.
+
+Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Özellikler
+
+Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+
+Use props destructuring.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### JSX Elemanlarında Tek Değişkenli Prop Yayılımından Kaçının
+
+JSX elemanlarında tek değişkenli prop yayılımını, örneğin `{...props}` kullanmaktan kaçının. Bu uygulama, bileşenin hangi prop'ları aldığını belirsizleştirdiği için okunması zor ve bakımı güç kodlara yol açar.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Gerekçe:
+
+* İlk bakışta, hangi prop'ların kod tarafından geçirildiği daha açıktır, bu da anlamayı ve bakımı kolaylaştırır.
+* Prop'lar aracılığıyla bileşenler arasında sıkı bağlanmayı önlemeye yardımcı olur.
+* Linting araçları, prop'ları açıkça listelediğinizde yanlış yazılmış veya kullanılmayan prop'ları tanımlamayı kolaylaştırır.
+
+## JavaScript
+
+### Nullish-birleştirme operatörü `??` kullanın
+
+```tsx
+// ❌ Kötü, değer 0 veya '' olsa bile 'default' döndürebilir
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ İyi, 'default' yalnızca değer null veya undefined olduğunda döner
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Opsiyonel zincirleme `?.` kullanın
+
+```tsx
+// ❌ Bad
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Use `type` instead of `interface`
+
+Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Use string literals instead of enums
+
+[String literalleri](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types), TypeScript'te enum benzeri değerleri yönetmek için en iyi yöntemdir. Pick ve Omit ile genişletilmesi daha kolay olur ve özellikle kod tamamlama ile daha iyi bir geliştirici deneyimi sunarlar.
+
+TypeScript, enum'ların neden kaçınılması gereken bir seçenek olduğunu [burada](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums) açıklamaktadır.
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ İyi, bir string literal kullanıyor
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL ve iç kütüphaneler
+
+GraphQL codegen tarafından üretilen enum'ları kullanmalısınız.
+
+Bir iç kütüphane kullanırken de bir enum kullanmak daha iyidir, böylece iç kütüphane, iç API ile ilgili olmayan bir string literal türü açmak zorunda kalmaz.
+
+Örnek:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Şekil Verme
+
+### Use StyledComponents
+
+Style the components with [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ İyi
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Styled bileşenleri, bunları "gerçek" bileşenlerden ayırt etmek için "Styled" önekiyle belirtin.
+
+```tsx
+// ❌ Kötü
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ İyi
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Temalandırma
+
+Çoğu bileşen şekillendirmesi için temayı kullanmak tercih edilen bir yaklaşımdır.
+
+#### Ölçü birimleri
+
+Styled bileşenler içinde doğrudan `px` veya `rem` değerlerini kullanmaktan kaçının. Gerekli değerler genellikle temada tanımlanmıştır, bu nedenle bu amaçlar için temayı kullanmak önerilir.
+
+#### Renkler
+
+Yeni renkler eklemekten kaçının; Bunun yerine temadaki mevcut paleti kullanın. Palet uyum sağlamıyorsa, lütfen ekibin düzeltmesi için bir yorum bırakın.
+
+```tsx
+// ❌ Kötü, tema kullanmadan doğrudan stil değerleri belirtiyor
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ İyi, temayı kullanıyor
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Enforcing No-Type Imports
+
+Tip ithalatlarından kaçının. Bu standardı uygulamak için bir ESLint kuralı, herhangi bir tip ithalatını kontrol eder ve raporlar. Bu, TypeScript kodunda tutarlılık ve okunabilirliği sağlamaya yardımcı olur.
+
+```tsx
+// ❌ Kötü
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Kötü
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ İyi
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Neden Tip İthalatları Yok
+
+* **Tutarlılık**: Hem tip hem de değer ithalatları için tek bir yaklaşım kullanarak, kod tabanı modül import stilinde tutarlı kalır.
+
+* **Okunabilirlik**: İthalat türü olmadığında, değer veya tip ithal ettiğiniz zaman daha anlaşılır olur böylece kod okunabilirliği artırılır. Bu belirsizliği azaltır ve ithal edilen sembollerinin amacını anlamayı kolaylaştırır.
+
+* **Bakım Kolaylığı**: Kod tabanının bakımını kolaylaştırır çünkü geliştiriciler kodu incelerken veya değiştirirken yalnızca tip ithalatlarını tanımlayabilir ve bulabilirler.
+
+### ESLint Kuralı
+
+ESLint kuralı, `@typescript-eslint/consistent-type-imports`, tip ithalat standardını uygular. Bu kural, herhangi bir tip ithalat ihlali için hata veya uyarı üretir.
+
+Lütfen unutmayın ki bu kural, istemeden yapılan tip ithalatlarının gerçekleştiği nadir durumları özellikle ele alır. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Çoğu durumda, yalnızca tip ithalatları kullanmanıza gerek yoktur.
+
+Kodunuzun bu kurala uygun olduğundan emin olmak için, geliştirme iş akışınızın bir parçası olarak ESLint'i çalıştırdığınızdan emin olun.

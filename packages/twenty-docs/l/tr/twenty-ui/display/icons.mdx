@@ -1,0 +1,73 @@
+---
+title: İkonlar
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Başlık" />
+</Frame>
+
+A list of icons used throughout our app.
+
+## Tabler Icons
+
+We use Tabler icons for React throughout the app.
+
+<Tabs>
+  <Tab title="Kurulum">
+    <br />
+
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    Her bir ikonu bir bileşen olarak içe aktarabilirsiniz. İşte bir örnek:
+
+    <br />
+
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür   | Açıklama                                  | Varsayılan   |
+    | ---------- | ----- | ----------------------------------------- | ------------ |
+    | boyut      | sayı  | İkonun piksel cinsinden boyu ve genişliği | 24           |
+    | renk       | metin | İkonların rengi                           | currentColor |
+    | kontur     | sayı  | İkonun piksel cinsinden kontur kalınlığı  | 2            |
+  </Tab>
+</Tabs>
+
+## Özel İkonlar
+
+In addition to Tabler icons, the app also uses some custom icons.
+
+### İkon Adres Defteri
+
+Displays an address book icon.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür  | Açıklama                                  | Varsayılan |
+    | ---------- | ---- | ----------------------------------------- | ---------- |
+    | boyut      | sayı | İkonun piksel cinsinden boyu ve genişliği | 24         |
+    | kontur     | sayı | İkonun piksel cinsinden kontur kalınlığı  | 2          |
+  </Tab>
+</Tabs>

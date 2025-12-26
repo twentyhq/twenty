@@ -18,6 +18,7 @@ export enum CommonQueryRunnerExceptionCode {
   BAD_REQUEST = 'BAD_REQUEST',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   TOO_COMPLEX_QUERY = 'TOO_COMPLEX_QUERY',
+  MISSING_TIMEZONE_FOR_DATE_GROUP_BY = 'MISSING_TIMEZONE_FOR_DATE_GROUP_BY',
 }
 
 const commonQueryRunnerExceptionUserFriendlyMessages: Record<
@@ -38,6 +39,7 @@ const commonQueryRunnerExceptionUserFriendlyMessages: Record<
   [CommonQueryRunnerExceptionCode.BAD_REQUEST]: msg`Bad request.`,
   [CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR]: msg`An unexpected error occurred.`,
   [CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY]: msg`Query is too complex.`,
+  [CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY]: msg`Missing time zone for date group by.`,
 };
 
 export class CommonQueryRunnerException extends CustomException<CommonQueryRunnerExceptionCode> {

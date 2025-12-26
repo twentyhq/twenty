@@ -45,6 +45,7 @@ export class DeleteViewFilterPermissionGuard implements CanActivate {
       viewId,
       request.userWorkspaceId,
       request.workspace.id,
+      request.apiKey?.id,
     );
   }
 }

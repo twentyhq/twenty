@@ -1,0 +1,138 @@
+---
+title: Chip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Antet" />
+</Frame>
+
+Un element vizual pe care îl puteți folosi ca un container clicabil sau non-clicabil, cu o etichetă, componente opționale la stânga și dreapta și diverse opțiuni de stil pentru a afișa etichete și tag-uri.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="Clickable Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți  | Tip                        | Descriere                                                                                    |
+    | ------------ | -------------------------- | -------------------------------------------------------------------------------------------- |
+    | linkToEntity | șir                        | Legătura către entitate                                                                      |
+    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                         |
+    | nume         | șir                        | Numele entității                                                                             |
+    | pictureUrl   | șir                        | imagine a lui s                                                                              |
+    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Has two options: `rounded` and `squared`       |
+    | variant      | `Enumul EntityChipVariant` | Variant of the entity chip you want to display. Are două opțiuni: `regulat` și `transparent` |
+    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                 |
+  </Tab>
+</Tabs>
+
+## Exemple
+
+### Transparent Disabled Chip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br />
+
+### Disabled Chip with Tooltip
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Entity Chip
+
+A Chip-like element to display information about an entity.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="Entity name"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți  | Tip                        | Descriere                                                                                    |
+    | ------------ | -------------------------- | -------------------------------------------------------------------------------------------- |
+    | linkToEntity | șir                        | Legătura către entitate                                                                      |
+    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                         |
+    | nume         | șir                        | Numele entității                                                                             |
+    | pictureUrl   | șir                        | imagine a lui s                                                                              |
+    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Has two options: `rounded` and `squared`       |
+    | variant      | `Enumul EntityChipVariant` | Variant of the entity chip you want to display. Are două opțiuni: `regulat` și `transparent` |
+    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                 |
+  </Tab>
+</Tabs>

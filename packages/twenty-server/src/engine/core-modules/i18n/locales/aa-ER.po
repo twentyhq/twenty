@@ -556,11 +556,6 @@ msgstr "crwdns913:0crwdne913:0"
 msgid "Associated User Id"
 msgstr "crwdns915:0crwdne915:0"
 
-#. js-lingui-id: scLx/y
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "At least one folder must be synced."
-msgstr "crwdns64532:0crwdne64532:0"
-
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
@@ -2652,12 +2647,12 @@ msgid "Invalid page layout data."
 msgstr "crwdns65438:0crwdne65438:0"
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "crwdns65440:0crwdne65440:0"
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "crwdns65442:0crwdne65442:0"
 
@@ -3253,11 +3248,6 @@ msgstr "crwdns1299:0crwdne1299:0"
 msgid "Message folder import policy"
 msgstr "crwdns8188:0crwdne8188:0"
 
-#. js-lingui-id: aIgrkW
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "Message folder not found"
-msgstr "crwdns64536:0crwdne64536:0"
-
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3396,6 +3386,11 @@ msgstr "crwdns6654:0{connectFieldName}crwdne6654:0"
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing required system field."
 msgstr "crwdns65542:0crwdne65542:0"
+
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr "crwdns105148:0crwdne105148:0"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -4001,7 +3996,7 @@ msgid "Page layout tab not found"
 msgstr "crwdns64952:0crwdne64952:0"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "crwdns65576:0crwdne65576:0"
 
@@ -4056,7 +4051,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "crwdns65034:0crwdne65034:0"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "crwdns65578:0crwdne65578:0"
 
@@ -6448,6 +6443,11 @@ msgstr "crwdns63722:0crwdne63722:0"
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "crwdns63724:0crwdne63724:0"
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "crwdns105194:0crwdne105194:0"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

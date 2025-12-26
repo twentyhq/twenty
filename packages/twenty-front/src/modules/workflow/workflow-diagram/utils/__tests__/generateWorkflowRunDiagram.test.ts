@@ -5,7 +5,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
-import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
+import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),

@@ -1,0 +1,51 @@
+---
+title: Vybrat
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Hlavička" />
+</Frame>
+
+Umožňuje uživatelům vybrat hodnotu z nabídky předdefinovaných možností.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ                | Popis                                                                                                                                                                                                    |
+    | ---------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className  | řetězec            | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                                             |
+    | neaktivní  | booleovská hodnota | Pokud je nastaveno na `true`, zakáže interakci uživatele s komponentou.                                                                                                                                  |
+    | štítek     | textový řetězec    | Štítek popisující účel komponenty `Vybrat`.                                                                                                                                                              |
+    | onChange   | funkce             | Funkce volaná při změně vybraných hodnot.                                                                                                                                                                |
+    | možnosti   | pole               | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
+    | hodnota    | řetězec            | Reprezentuje aktuálně vybranou hodnotu. Měla by odpovídat jedné z `hodnot` v poli `možnosti`.                                                                                                            |
+  </Tab>
+</Tabs>

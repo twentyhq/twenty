@@ -18,7 +18,6 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     canBeAssignedToUsers: role.canBeAssignedToUsers,
     canBeAssignedToAgents: role.canBeAssignedToAgents,
     canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,
-    canBeAssignedToApplications: role.canBeAssignedToApplications,
     workspaceId: role.workspaceId,
     createdAt: role.createdAt.toISOString(),
     updatedAt: role.updatedAt.toISOString(),

@@ -3387,6 +3387,11 @@ msgstr "必要なフィールドがありません: 少なくとも一つのユ�
 msgid "Missing required system field."
 msgstr "必須のシステムフィールドがありません。"
 
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr "日付のグループ化に必要なタイムゾーンが指定されていません。"
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -6438,6 +6443,11 @@ msgstr "ワークスペースレベルのビュ​​ーを作成する権限が
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "このビューを変更する権限がありません。"
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "クレジットの残高を使い切りました。続行するにはプランをアップグレードしてください。"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

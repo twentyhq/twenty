@@ -118,6 +118,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -137,6 +138,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: 'WorkspaceMember',
       icon: 'IconCircleUser',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'blocklist',
       settings: {

@@ -3387,6 +3387,11 @@ msgstr "Λείπουν απαραίτητα πεδία: τουλάχιστον �
 msgid "Missing required system field."
 msgstr "Λείπει απαιτούμενο πεδίο συστήματος."
 
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr ""
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -6438,6 +6443,11 @@ msgstr "Δεν έχετε άδεια να δημιουργήσετε προβο�
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "Δεν έχετε άδεια να τροποποιήσετε αυτή την προβολή."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "Έχετε εξαντλήσει τις πιστώσεις σας. Παρακαλούμε αναβαθμίστε το πλάνο σας για να συνεχίσετε."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

@@ -1,0 +1,209 @@
+---
+title: Exportujte svá data
+description: Kompletní podrobný návod krok za krokem k exportu dat z Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Přehled
+
+Exportujte data svého pracovního prostoru do CSV pro zálohování, vytváření přehledů nebo migraci.
+
+**Případy použití:**
+
+* **Pravidelné zálohy** — uchovávejte kopie svých dat
+* **Externí přehledy** — analyzujte data v Excelu, Google Sheets nebo nástrojích BI
+* **Migrace** — přesuňte data do jiného systému
+* **Hromadné aktualizace** — exportujte, upravte a znovu importujte pro aktualizaci záznamů
+
+## Co potřebujete vědět
+
+### Limity exportu
+
+* **Maximálně 20 000 záznamů** na jeden export
+* Exportují se pouze **viditelné sloupce**
+* Exportují se pouze **filtrované záznamy** (podle vašeho aktuálního zobrazení)
+
+<Note>U větších exportů (20 000+ záznamů) použijte filtry pro export po dávkách nebo použijte [API](/l/cs/developers/extend/capabilities/apis).</Note>
+
+### Oprávnění
+
+K exportu dat potřebujete oprávnění **"Export CSV"**. Pokud tuto možnost nemáte, kontaktujte správce pracovního prostoru.
+
+## Krok 1: Přejděte na objekt
+
+Přejděte na objekt, který chcete exportovat:
+
+* **Lidé** — pro kontakty
+* **Společnosti** — pro organizace
+* **Příležitosti** — pro obchodní případy
+* **Vlastní objekty** — jakýkoli objekt, který jste vytvořili
+
+## Krok 2: Nakonfigurujte své zobrazení
+
+**Důležité:** Export zahrnuje pouze to, co je viditelné ve vašem aktuálním zobrazení.
+
+### Přidat/Odebrat sloupce
+
+1. Klikněte na **Možnosti → Pole** (nebo na **+** na konci sloupců)
+2. Zaškrtněte pole, která chcete exportovat
+3. Zrušte zaškrtnutí polí, která nepotřebujete
+
+### Filtrování záznamů (volitelné)
+
+Pokud potřebujete pouze podmnožinu dat:
+
+1. Klikněte na **Filtr**
+2. Přidejte podmínky filtru (např. "Datum vytvoření > 1. ledna 2024")
+3. Exportovány budou pouze odpovídající záznamy
+
+### Řazení záznamů (volitelné)
+
+1. Kliknutím na záhlaví sloupce seřadíte
+2. Export bude respektovat vaše pořadí řazení
+
+<Note>**Vytvořte vyhrazené zobrazení pro export.** Uložte si zobrazení speciálně nakonfigurované pro exporty, abyste je nemuseli pokaždé znovu nastavovat.</Note>
+
+## Krok 3: Exportujte data
+
+1. Klikněte na ikonu **⋮** vpravo nahoře v tabulce
+2. Vyberte **Exportovat zobrazení**
+3. Vyberte, kam uložit soubor CSV
+4. Počkejte na dokončení stahování
+
+## Co se exportuje
+
+| Zahrnuto                               | Není zahrnuto                   |
+| -------------------------------------- | ------------------------------- |
+| Všechny viditelné sloupce              | Skryté sloupce                  |
+| Záznamy odpovídající aktuálním filtrům | Vyfiltrované záznamy            |
+| Hodnoty vlastních polí                 | Pole, která nejsou ve zobrazení |
+| ID záznamů                             | Přílohy souborů                 |
+| ID vztahů                              | Obrázky                         |
+
+### Relační pole
+
+ID vztahů se exportují pouze na **"many" straně** vztahu:
+
+* **Export Lidé** obsahuje sloupec `companyId` (vztah Lidé → Společnost)
+* **Export Společnosti** NEOBSAHUJE `peopleIds` (Společnosti jsou na "one" straně)
+
+To znamená, že můžete použít export objektu Lidé k opětovnému importu a zachování propojení na Společnost, ale budete muset znovu importovat objekt Lidé po objektu Společnosti, abyste znovu vytvořili vztahy.
+
+## Export pro konkrétní účely
+
+### Pro zálohování
+
+1. Vytvořte zobrazení, kde jsou viditelná **všechna pole**
+2. Odstraňte všechny filtry, abyste zahrnuli všechny záznamy
+3. Exportujte každý typ objektu samostatně
+4. Ukládejte exporty na zabezpečeném místě
+5. Nastavte opakované připomenutí (týdně/měsíčně)
+
+### Pro externí přehledy
+
+1. Zahrňte pouze pole, která potřebujete pro analýzu
+2. Použijte filtry, abyste se zaměřili na relevantní data
+3. Zvažte řazení podle pole, které budete analyzovat
+
+### Pro hromadné aktualizace
+
+1. Exportujte záznamy, které chcete aktualizovat
+2. Zahrňte jedinečný identifikátor (`email`, `domain` nebo `id`)
+3. Upravte exportovaný soubor
+4. Znovu importujte pro aktualizaci záznamů
+   Viz: [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Pro migraci
+
+Pokud exportujete kvůli migraci do jiného systému:
+
+1. **Exportujte každý objekt samostatně** — Lidé, Společnosti, Příležitosti atd.
+2. **Zahrňte pole ID** — pomohou zachovat vztahy
+3. **Zdokumentujte mapování polí** — poznamenejte si, jak se pole Twenty mapují na váš cílový systém
+
+## Práce s velkými datovými sadami (20 000+ záznamů)
+
+Limit exportu je 20 000 záznamů. Pro větší datové sady:
+
+### Možnost 1: Export po dávkách
+
+1. Přidejte filtr (např. rozsahy pole "Datum vytvoření")
+2. Exportujte první dávku
+3. Změňte filtr
+4. Exportujte další dávku
+5. Sloučte soubory v tabulkovém procesoru
+
+**Příklady filtrů pro dávkování:**
+
+* Podle časového období (leden, únor, březen...)
+* Podle vlastníka (Člen týmu A, Člen týmu B...)
+* Podle stavu (Aktivní, Neaktivní...)
+
+### Možnost 2: Použijte API
+
+API nemá limit počtu záznamů:
+
+1. Získejte svůj klíč API v **Nastavení → Vývojáři**
+2. Použijte GraphQL API k dotazování na záznamy
+3. Zpracujte výsledky ve své aplikaci
+
+Viz: [Dokumentace API](/l/cs/developers/extend/capabilities/apis)
+
+## Tipy a osvědčené postupy
+
+### Vytvářejte zobrazení pro export
+
+Ukládejte zobrazení nakonfigurovaná speciálně pro export:
+
+1. Nakonfigurujte sloupce a filtry
+2. Klikněte na **Možnosti zobrazení** → **Uložit jako nové zobrazení**
+3. Pojmenujte ho "Export - [účel]"
+
+### Zabezpečte své exporty
+
+Exportované soubory mohou obsahovat citlivá data:
+
+* Ukládejte na zabezpečených místech
+* Smažte staré exporty, když už nejsou potřeba
+* Buďte opatrní při sdílení exportovaných souborů
+
+### Kontrola před exportem
+
+<Check>Jsou viditelné správné sloupce</Check>
+<Check>Filtry jsou nastaveny správně (nebo odstraněny pro plný export)</Check>
+<Check>Máte oprávnění k exportu</Check>
+
+## Časté dotazy
+
+<AccordionGroup>
+  <Accordion title="Proč v mém exportu chybí některé sloupce?">
+    Exportují se pouze viditelné sloupce. Před exportem přidejte požadované sloupce přes **Možnosti → Pole**.
+  </Accordion>
+
+  <Accordion title="Proč můj export neobsahuje všechny záznamy?">
+    Zkontrolujte své filtry. Export zahrnuje pouze záznamy odpovídající filtrům vašeho aktuálního zobrazení. Odstraňte filtry, abyste exportovali všechny záznamy.
+  </Accordion>
+
+  <Accordion title="Mohu exportovat více než 20 000 záznamů?">
+    Ne v rámci jednoho exportu. Použijte filtry k exportu po dávkách, nebo pro větší datové sady použijte API.
+  </Accordion>
+
+  <Accordion title="V jakém formátu je exportovaný soubor?">
+    CSV (Comma Separated Values). Otevírá se v Excelu, Google Sheets nebo libovolné tabulkové aplikaci.
+  </Accordion>
+
+  <Accordion title="Jsou zahrnuta ID vztahů?">
+    Ano, ale pouze na straně "many" u vztahů. Například export Lidé obsahuje `companyId`, ale export Společnosti neobsahuje ID lidí.
+  </Accordion>
+
+  <Accordion title="Mohu exporty automatizovat?">
+    Ne přímo přes uživatelské rozhraní. Použijte API k vytvoření automatizovaných exportních pracovních postupů.
+  </Accordion>
+</AccordionGroup>
+
+## Další kroky
+
+* [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-migration/how-tos/update-existing-records-via-import) — upravte a znovu importujte svůj export
+* [Jak importovat data přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api) — pro velké datové sady
+* [Dokumentace API](/l/cs/developers/extend/capabilities/apis) — vytvářejte vlastní pracovní postupy pro export

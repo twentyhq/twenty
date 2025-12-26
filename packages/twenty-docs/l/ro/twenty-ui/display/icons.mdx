@@ -1,0 +1,73 @@
+---
+title: Pictograme
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Antet" />
+</Frame>
+
+O listă de pictograme utilizate în toată aplicația noastră.
+
+## Pictograme Tabler
+
+Folosim pictograme Tabler pentru React în toată aplicația.
+
+<Tabs>
+  <Tab title="Instalare">
+    <br />
+
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    You can import each icon as a component. Iată un exemplu:
+
+    <br />
+
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                  | Implicit     |
+    | ----------- | ----- | ------------------------------------------ | ------------ |
+    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24           |
+    | culoare     | șir   | Culoarea pictogramelor                     | currentColor |
+    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2            |
+  </Tab>
+</Tabs>
+
+## Pictograme personalizate
+
+Pe lângă pictogramele Tabler, aplicația utilizează și alte pictograme personalizate.
+
+### Pictogramă Agendă
+
+Afișează o pictogramă de agendă.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                  | Implicit |
+    | ----------- | ----- | ------------------------------------------ | -------- |
+    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24       |
+    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2        |
+  </Tab>
+</Tabs>

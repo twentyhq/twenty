@@ -1,0 +1,138 @@
+---
+title: رقاقة
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="رأس الصفحة" />
+</Frame>
+
+عنصر مرئي يمكن استخدامه كحاوية قابلة للنقر أو غير قابلة للنقر، مع علامة وعناصر اختيارية يسار ويمين، وخيارات تصميم متنوعة لعرض العلامات والبطاقات.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="Clickable Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات           | النوع                   | الوصف                                                                  |
+    | ------------------ | ----------------------- | ---------------------------------------------------------------------- |
+    | linkToEntity       | نص                      | الرابط إلى الكيان                                                      |
+    | معرف الكيان        | نص                      | المعرف الفريد للكيان                                                   |
+    | الاسم              | نص                      | اسم الكيان                                                             |
+    | رابط الصورة        | نص                      | s picture",                                                            |
+    | نوع الصورة الرمزية | نوع الصورة الرمزية      | نوع الصورة الرمزية التي تريد عرضها. لديه خياران: `مستدير` و `مربع`     |
+    | التنوع             | تعداد EntityChipVariant | تنوع الرقاقة الكيانية التي ترغب في عرضها. لديه خياران: `عادي` و `شفاف` |
+    | الأيقونة اليسرى    | مكون رمز                | مكون React يمثل رمزًا. يظهر على الجانب الأيسر من الرقاقة               |
+  </Tab>
+</Tabs>
+
+## الأمثلة
+
+### رقاقة شفافة معطلة
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br />
+
+### رقاقة معطلة مع تلميح
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## رقاقة كيان
+
+عنصر يشبه الرقاقة لعرض معلومات عن كيان.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="Entity name"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص            | النوع                   | الوصف                                                                  |
+    | ------------------ | ----------------------- | ---------------------------------------------------------------------- |
+    | linkToEntity       | نص                      | الرابط إلى الكيان                                                      |
+    | معرف الكيان        | نص                      | المعرف الفريد للكيان                                                   |
+    | الاسم              | نص                      | اسم الكيان                                                             |
+    | رابط الصورة        | نص                      | s picture",                                                            |
+    | نوع الصورة الرمزية | نوع الصورة الرمزية      | نوع الصورة الرمزية التي تريد عرضها. لديه خياران: `مستدير` و `مربع`     |
+    | التنوع             | تعداد EntityChipVariant | تنوع الرقاقة الكيانية التي ترغب في عرضها. لديه خياران: `عادي` و `شفاف` |
+    | الأيقونة اليسرى    | مكون رمز                | مكون React يمثل رمزًا. يظهر على الجانب الأيسر من الرقاقة               |
+  </Tab>
+</Tabs>

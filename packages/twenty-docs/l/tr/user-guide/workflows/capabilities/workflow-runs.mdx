@@ -1,0 +1,92 @@
+---
+title: İş Akışı Çalıştırmaları
+description: İş akışı çalıştırmalarını izleyin ve yönetin.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Çalıştırmalar Hakkında
+
+Bir **Çalıştırma**, bir iş akışı çalıştırmasının kaydıdır. Bir iş akışı her tetiklendiğinde—bir kayıt olayı, zamanlama, manuel işlem veya bir webhook tarafından—yeni bir çalıştırma oluşturulur.
+
+## Çalıştırmaları Görüntüleme
+
+### İş Akışı Düzenleyicisinden
+
+1. İzlemek istediğiniz iş akışını açın
+2. Sağ taraftaki **Çalıştırmalar** paneline tıklayın
+3. Son çalıştırmaların, durumlarıyla birlikte listesini görün
+
+### İş Akışı Çalıştırmaları Görünümünden
+
+1. Kenar çubuğunda **İş Akışı Çalıştırmaları**'na gidin
+2. Tüm iş akışlarındaki çalıştırmaları görüntüleyin
+3. Duruma, iş akışına veya tarihe göre filtreleyin
+
+## Çalıştırma Durumları
+
+| Durum              | Açıklama                                                                      |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Çalıştırılıyor** | İş akışı şu anda yürütülüyor                                                  |
+| **Tamamlandı**     | İş akışı başarıyla tamamlandı                                                 |
+| **Başarısız**      | İş akışı bir hatayla karşılaştı ve durdu                                      |
+| **Bekleniyor**     | İş akışı duraklatıldı (ör. bir Gecikme eylemi veya Form gönderimi bekleniyor) |
+
+## Çalıştırma Ayrıntıları
+
+Şunları görmek için herhangi bir çalıştırmaya tıklayın:
+
+* **Durum**: Çalıştırmanın mevcut durumu
+* **Başlangıç zamanı**: Çalıştırmanın başladığı an
+* **Süre**: Çalıştırmanın ne kadar sürdüğü
+* **Tetikleme verileri**: İş akışını başlatan girdi
+* **Adım çıktıları**: Her adımın döndürdüğü veriler
+* **Hata iletileri**: Çalıştırma başarısız olduysa neyin ters gittiği
+
+## Adım Adım Yürütme
+
+Her çalıştırma, iş akışınız boyunca ilerlemeyi gösterir:
+
+1. Hangi adımların başarıyla tamamlandığını görün
+2. Hataların nerede gerçekleştiğini belirleyin
+3. Adımlar arasında aktarılan verileri görüntüleyin
+4. Adım girdilerini ve çıktılarını inceleyerek sorunlarda hata ayıklayın
+
+## Hata Yönetimi
+
+Bir çalıştırma başarısız olduğunda:
+
+1. Başarısız olan çalıştırmayı açın
+2. Başarısızlığa neden olan adımı bulun
+3. Ayrıntılar için hata iletisini kontrol edin
+4. Yaygın sorunlar:
+   * Gerekli alanlar eksik
+   * Geçersiz veri biçimi
+   * Harici API hataları
+   * İzin sorunları
+
+## İş Akışlarını Yeniden Çalıştırma
+
+Bir çalıştırma başarısız olursa şunları yapabilirsiniz:
+
+* Altta yatan sorunu düzeltin ve bir sonraki tetikleyiciyi bekleyin
+* Manuel iş akışları için aynı veya güncellenmiş verilerle yeniden tetikleyin
+* Gelecekteki başarısızlıkları önlemek için iş akışı mantığını gözden geçirin
+
+## Performans İpuçları
+
+### Çalıştırma Geçmişini Yönetme
+
+* Çalıştırmalar tarihsel referans için saklanır
+* Çok eski çalıştırmalar otomatik olarak arşivlenebilir
+* Kayıt tutmanız gerekiyorsa çalıştırma verilerini dışa aktarın
+
+### İzleme En İyi Uygulamaları
+
+* Yeni iş akışlarını etkinleştirdikten sonra çalıştırmaları düzenli olarak kontrol edin
+* Kalıpları belirlemek için başarısız olan çalıştırmaları gözden geçirin
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışı Sorun Giderme](/l/tr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

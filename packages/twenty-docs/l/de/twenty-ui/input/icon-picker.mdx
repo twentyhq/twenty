@@ -1,0 +1,52 @@
+---
+title: Symbolauswahl
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Kopfzeile" />
+</Frame>
+
+A dropdown-based icon picker that allows users to select an icon from a list.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ          | Beschreibung                                                                                                                           |
+    | --------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+    | deaktiviert     | boolesch     | Disables the icon picker if set to `true`                                                                                              |
+    | beiÄnderung     | function     | Die Rückruffunktion wird ausgelöst, wenn der Benutzer ein Symbol auswählt. Es erhält ein Objekt mit `iconKey` und `Icon` Eigenschaften |
+    | selectedIconKey | string       | Der Schlüssel des ursprünglich ausgewählten Symbols                                                                                    |
+    | onClickOutside  | Funktion     | Rückruffunktion wird ausgelöst, wenn der Benutzer außerhalb des Dropdowns klickt                                                       |
+    | onClose         | Funktion     | Rückruffunktion wird ausgelöst, wenn das Dropdown geschlossen wird                                                                     |
+    | onOpen          | Funktion     | Rückruffunktion wird ausgelöst, wenn das Dropdown geöffnet wird                                                                        |
+    | Variante        | Zeichenkette | Die visuelle Stilvariante des klickbaren Symbols. Optionen umfassen: `primary`, `secondary` und `tertiary`                             |
+  </Tab>
+</Tabs>

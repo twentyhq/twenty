@@ -1,0 +1,82 @@
+---
+title: Zpracování polí v akcích Code
+description: Naučte se správně pracovat se vstupy typu pole v akcích Code v pracovních postupech.
+---
+
+Při práci s poli v akcích Code se můžete setkat se dvěma běžnými problémy:
+
+1. **Pole předaná jako řetězce** — data z externích systémů nebo předchozích kroků dorazí jako řetězec místo skutečného pole
+2. **Nelze vybírat jednotlivé položky** — můžete vybrat pouze celé pole, nikoli konkrétní pole objektů v něm
+
+Obojí lze vyřešit pomocí uzlu Code.
+
+## Parsování polí z řetězců
+
+Pole se mezi kroky pracovního postupu často předávají jako řetězce nebo JSON, nikoli jako nativní pole. K tomu dochází, když:
+
+* Příjem dat z externích API pomocí HTTP Request
+* Zpracování dat webhooků
+* Předávání dat mezi kroky pracovního postupu
+
+**Řešení**: Přidejte tento vzor na začátek své akce Code:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+Klíčový řádek `typeof users === "string" ? JSON.parse(users) : users` ověřuje, zda je vstup řetězec, v případě potřeby jej rozparsuje, nebo jej použije přímo, pokud už jde o pole.
+
+## Extrahování jednotlivých atributů z polí
+
+Webhook může vrátit pole jako `answers: [...]`, ale v následujících krocích pracovního postupu lze vybrat pouze celé pole — nikoli jednotlivé položky v něm.
+
+**Řešení**: Přidejte uzel Code, který extrahuje konkrétní pole a vrátí je jako strukturovaný objekt:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Uzel Code vrátí místo pole strukturovaný objekt. V následujících krocích nyní můžete ve výběru proměnných vybrat jednotlivá pole, jako `answer.firstname` a `answer.name`.
+
+<Note>
+  Aktivně pracujeme na tom, aby bylo zacházení s poli v budoucích aktualizacích snazší.
+</Note>
+
+<Tip>
+  Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
+</Tip>

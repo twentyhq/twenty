@@ -1,4 +1,5 @@
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
+
 import { isDefined } from 'twenty-shared/utils';
 
 export const detectTimeFormat = (): keyof typeof TimeFormat => {

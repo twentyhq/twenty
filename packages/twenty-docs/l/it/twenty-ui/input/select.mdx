@@ -1,0 +1,51 @@
+---
+title: Seleziona
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Intestazione" />
+</Frame>
+
+Permette agli utenti di scegliere un valore da un elenco di opzioni predefinite.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Tipo     | Descrizione                                                                                                                                                                                              |
+    | ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse   | string   | Classe CSS opzionale per uno stile aggiuntivo                                                                                                                                                            |
+    | disabilitato | booleano | Quando impostato su `true`, disabilita l'interazione dell'utente con il componente                                                                                                                       |
+    | etichetta    | stringa  | L'etichetta per descrivere lo scopo del componente `Select`                                                                                                                                              |
+    | onChange     | funzione | La funzione chiamata quando i valori selezionati cambiano                                                                                                                                                |
+    | opzioni      | array    | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
+    | valore       | stringa  | Rappresenta il valore attualmente selezionato. It should match one of the `value` properties in the `options` array                                                                                      |
+  </Tab>
+</Tabs>

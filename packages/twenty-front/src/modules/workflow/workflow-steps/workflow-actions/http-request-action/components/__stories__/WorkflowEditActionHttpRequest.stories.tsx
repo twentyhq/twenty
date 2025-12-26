@@ -13,7 +13,7 @@ import {
   getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
 } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionHttpRequest } from '../WorkflowEditActionHttpRequest';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
   id: getWorkflowNodeIdMock(),

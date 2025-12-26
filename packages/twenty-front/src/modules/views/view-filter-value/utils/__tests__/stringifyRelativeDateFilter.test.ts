@@ -1,7 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
-import { stringifyRelativeDateFilter } from '../stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 jest.mock('@/localization/utils/detection/detectCalendarStartDay');
 
@@ -13,7 +13,7 @@ describe('stringifyRelativeDateFilter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDetectCalendarStartDay.mockReturnValue('MONDAY');
+    mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
   });
 
   describe('basic stringification', () => {
@@ -241,7 +241,7 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should use detected calendar start day when firstDayOfTheWeek is not provided', () => {
-      mockDetectCalendarStartDay.mockReturnValue('MONDAY');
+      mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
 
       const filter: RelativeDateFilter = {
         direction: 'PAST',
@@ -257,7 +257,7 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should use detected calendar start day when firstDayOfTheWeek is null', () => {
-      mockDetectCalendarStartDay.mockReturnValue('SATURDAY');
+      mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.SATURDAY);
 
       const filter: RelativeDateFilter = {
         direction: 'PAST',

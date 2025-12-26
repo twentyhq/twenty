@@ -1,0 +1,97 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Antet" />
+</Frame>
+
+Utilizat când utilizatorii pot alege doar o opțiune dintr-o serie de opțiuni.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
+
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
+
+
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți       | Tip                     | Descriere                                                                                      |
+    | ----------------- | ----------------------- | ---------------------------------------------------------------------------------------------- |
+    | stil              | proprietăți `React.CSS` | Stiluri suplimentare inline pentru componentă                                                  |
+    | numeClasa         | șir                     | Clasă CSS opțională pentru stilizare suplimentară                                              |
+    | bifat             | boolean                 | Indică dacă butonul radio este selectat                                                        |
+    | valoare           | șir                     | Eticheta sau textul asociat cu butonul radio                                                   |
+    | onChange          | funcție                 | Funcția apelată când butonul radio selectat este schimbat                                      |
+    | laSchimbareBifată | funcție                 | Funcția apelată atunci când starea `verificat` a butonului radio se schimbă                    |
+    | dimensiune        | șir                     | Dimensiunea butonului radio. Opțiuni incluse: `mare` și `mic`                                  |
+    | dezactivat        | boolean                 | Dacă este `adevărat`, butonul radio este dezactivat și nu este clicabil                        |
+    | labelPosition     | șir                     | Poziția textului etichetei în raport cu butonul radio. Are două opțiuni: `stânga` și `dreapta` |
+  </Tab>
+</Tabs>
+
+## Grup Radio
+
+Groups together related radio buttons.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const [selectedValue, setSelectedValue] = useState("Option 1");
+
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți   | Tip               | Descriere                                                                             |
+    | ------------- | ----------------- | ------------------------------------------------------------------------------------- |
+    | valoare       | șir               | Valoarea butonului radio selectat în prezent                                          |
+    | onChange      | funcție           | Funcția callback activată când butonul radio este schimbat                            |
+    | onValueChange | funcție           | Funcția callback activată când valoarea selectată din grup se schimbă.                |
+    | copii         | `React.ReactNode` | Îți permite să trimiți componente React (cum ar fi Radio) ca și copii la Grupul Radio |
+  </Tab>
+</Tabs>

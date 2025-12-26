@@ -1,5 +1,5 @@
 ---
-title: 标签
+title: Tag
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -7,38 +7,32 @@ image: /images/user-guide/table-views/table.png
   <img src="/images/user-guide/table-views/table.png" alt="Header" />
 </Frame>
 
-用于可视化分类或标记内容的组件。
+Component to visually categorize or label content.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { Tag } from "@/ui/display/tag/components/Tag";
-
-export const MyComponent = () => {
-  return (
-    <Tag
-      className
-      color="red"
-      text="Urgent"
-      onClick={() => console.log("click")}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 属性      | 类型  | 描述                                                              |
-| ------- | --- | --------------------------------------------------------------- |
-| 类名      | 字符串 | 用于附加样式的可选名称                                                     |
-| 颜色      | 字符串 | 标签的颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
-| 文本      | 字符串 | 标签的内容                                                           |
-| onClick | 函数  | 用户点击标签时的可选调用函数                                                  |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props     | Type     | Description                                                                                                                 |
+    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+    | className | string   | Optional name for additional styling                                                                                        |
+    | color     | string   | Color of the tag. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+    | text      | string   | The content of the tag                                                                                                      |
+    | onClick   | function | Optional function called when a user clicks on the tag                                                                      |
+  </Tab>
 </Tabs>

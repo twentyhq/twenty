@@ -13,5 +13,4 @@ export const FLAT_ROLE_EDITABLE_PROPERTIES: (keyof FlatRole)[] = [
   'canBeAssignedToUsers',
   'canBeAssignedToAgents',
   'canBeAssignedToApiKeys',
-  'canBeAssignedToApplications',
 ];

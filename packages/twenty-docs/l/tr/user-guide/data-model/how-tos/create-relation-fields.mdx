@@ -1,0 +1,60 @@
+---
+title: İlişki Alanları Oluşturma
+description: Nesneleri ilişki alanlarıyla bağlamaya yönelik adım adım rehber.
+---
+
+İlişki alanları, farklı nesnelerdeki kayıtları birbirine bağlar—örneğin, Kişileri Şirketlere bağlamak.
+
+<Note>
+  **İlişki adları oluşturulduktan sonra değiştirilemez** (API’yi etkiler). Adlarınızı dikkatle planlayın.
+</Note>
+
+## Başlamadan Önce
+
+Karar verin:
+
+* Hangi nesneleri bağlıyorsunuz? (ör. Kişiler → Şirketler)
+* "bir" taraf hangisi? (ör. Şirket)
+* "çok" taraf hangisi? (ör. Kişiler — birçok kişi bir şirkette çalışır)
+* Alan her iki tarafta nasıl adlandırılmalı?
+
+İlişki türlerinin açıklaması için [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) bölümüne bakın.
+
+## Adımlar
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. İlişkinin olmasını istediğiniz nesneyi seçin (genellikle "çok" tarafı)
+3. **+ Alan Ekle**'ye tıklayın
+4. Alan türü olarak **İlişki**'yi seçin
+5. **Hedef nesne**yi seçin
+6. **Bire-Çok** veya **Çoktan-Bire** seçin.
+7. İlişkinin **her iki tarafı** için alan adlarını girin.
+8. **Kaydet**'e tıklayın
+
+## Örnek: Kişiler → Şirketler
+
+* **Ayarlar → Veri Modeli → Kişiler** bölümüne gidin
+* Bir İlişki alanı ekleyin
+* Hedef: **Şirketler**
+* Tür: **Çoktan-Bire**
+* Kişiler nesnesindeki alan: **Şirket**
+* Şirketler nesnesindeki alan: **Çalışanlar**
+
+Artık her Kişi bir Şirkete bağlanabilir ve her Şirket kendi Kişilerini gösterir.
+
+## Bir İlişkiyi Silme
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. İlişki alanını bulun
+3. **⋮ → Devre Dışı Bırak**'a tıklayın
+
+Bağlantılar korunur ancak gizlenir. Geri yüklemek için yeniden etkinleştirin.
+
+<Note>
+  **Bir ilişkiyi silmek, kayıtları silmez.** Yalnızca aralarındaki bağlantı kaldırılır.
+</Note>
+
+## İlgili
+
+* [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — türler ve sınırlamalar
+* [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bağlantılı kayıtları toplu içe aktarma
