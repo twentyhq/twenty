@@ -33,7 +33,8 @@ export class PublicDomainException extends CustomException<PublicDomainException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? getPublicDomainExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ??
+        getPublicDomainExceptionUserFriendlyMessage(code),
     });
   }
 }

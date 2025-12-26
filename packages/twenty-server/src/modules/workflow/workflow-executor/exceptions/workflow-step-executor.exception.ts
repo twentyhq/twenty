@@ -1,6 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum WorkflowStepExecutorExceptionCode {
@@ -10,26 +12,33 @@ export enum WorkflowStepExecutorExceptionCode {
   INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
 
-const workflowStepExecutorExceptionUserFriendlyMessages: Record<
-  WorkflowStepExecutorExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND]: msg`Workspace not found.`,
-  [WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE]: msg`Invalid workflow step type.`,
-  [WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND]: msg`Workflow step not found.`,
-  [WorkflowStepExecutorExceptionCode.INTERNAL_ERROR]: msg`An unexpected workflow error occurred.`,
+const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
+  code: WorkflowStepExecutorExceptionCode,
+) => {
+  switch (code) {
+    case WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE:
+      return msg`Invalid workflow step type.`;
+    case WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND:
+      return msg`Workflow step not found.`;
+    case WorkflowStepExecutorExceptionCode.INTERNAL_ERROR:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkflowStepExecutorException extends CustomException<WorkflowStepExecutorExceptionCode> {
   constructor(
     message: string,
     code: WorkflowStepExecutorExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workflowStepExecutorExceptionUserFriendlyMessages[code],
+        getWorkflowStepExecutorExceptionUserFriendlyMessage(code),
     });
   }
 }
