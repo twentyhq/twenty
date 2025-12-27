@@ -140,6 +140,13 @@ describe('BillingCreditRolloverService', () => {
       expect(stripeCreditGrantService.voidCreditGrant).toHaveBeenCalledWith(
         'grant_old',
       );
+
+      // Should create the new grant after voiding
+      expect(stripeCreditGrantService.createCreditGrant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          creditUnits: 500, // 1000 - 500 = 500 unused
+        }),
+      );
     });
   });
 
