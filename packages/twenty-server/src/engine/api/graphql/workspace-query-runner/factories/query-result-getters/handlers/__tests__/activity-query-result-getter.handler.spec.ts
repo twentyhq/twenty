@@ -20,6 +20,7 @@ const baseNote = {
     workspaceMemberId: '1',
     context: {},
   },
+  updatedBy: null,
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
   noteTargets: [],

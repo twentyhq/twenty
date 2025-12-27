@@ -7,7 +7,7 @@ import {
   type FullNameMetadata,
 } from 'twenty-shared/types';
 
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -31,8 +31,8 @@ const fromFullNameMetadataToName = ({
   lastName,
 }: FullNameMetadata) => `${firstName} ${lastName}`;
 
-describe('CreatedByFromAuthContextService', () => {
-  let service: CreatedByFromAuthContextService;
+describe('ActorFromAuthContextService', () => {
+  let service: ActorFromAuthContextService;
   const mockWorkspaceMemberRepository = {
     findOneOrFail: jest.fn(),
   };
@@ -51,7 +51,7 @@ describe('CreatedByFromAuthContextService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CreatedByFromAuthContextService,
+        ActorFromAuthContextService,
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: globalWorkspaceOrmManager,
@@ -93,8 +93,8 @@ describe('CreatedByFromAuthContextService', () => {
       ],
     }).compile();
 
-    service = module.get<CreatedByFromAuthContextService>(
-      CreatedByFromAuthContextService,
+    service = module.get<ActorFromAuthContextService>(
+      ActorFromAuthContextService,
     );
   });
 
@@ -129,11 +129,11 @@ describe('CreatedByFromAuthContextService', () => {
         mockedWorkspaceMember,
       );
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -169,11 +169,11 @@ describe('CreatedByFromAuthContextService', () => {
         mockedWorkspaceMember,
       );
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -196,11 +196,11 @@ describe('CreatedByFromAuthContextService', () => {
         workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
       } as const satisfies TestingAuthContext;
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -220,9 +220,13 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       await expect(
-        service.injectCreatedBy([{}], 'person', authContext as AuthContext),
+        service.injectCreatedBy({
+          records: [{}],
+          objectMetadataNameSingular: 'person',
+          authContext: authContext as AuthContext,
+        }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Unable to build createdBy metadata - no valid actor information found in auth context"`,
+        `"Unable to build actor metadata - no valid actor information found in auth context"`,
       );
     });
   });
