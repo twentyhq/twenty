@@ -18,6 +18,8 @@ import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardV
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
@@ -60,6 +62,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
+  const { isInRightDrawer } = useLayoutRenderingContext();
+  const isMobile = useIsMobile();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -99,6 +103,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     layoutMode,
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
+    isMobile,
+    isInRightDrawer,
   });
 
   const actions = useWidgetActions({ widget });
