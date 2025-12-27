@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { addMonths, addYears } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
@@ -15,7 +16,6 @@ const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 
 @Injectable()
 export class BillingWebhookInvoiceService {
-  protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
   constructor(
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
@@ -72,68 +72,52 @@ export class BillingWebhookInvoiceService {
     invoicedPeriodStart: Date,
     invoicedPeriodEnd: Date,
   ): Promise<void> {
-    try {
-      const subscription =
-        await this.billingSubscriptionService.getCurrentBillingSubscription({
-          stripeCustomerId,
-        });
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        stripeCustomerId,
+      });
 
-      if (!isDefined(subscription)) {
-        this.logger.warn(
-          `Cannot process rollover: subscription not found for customer ${stripeCustomerId}`,
-        );
-
-        return;
-      }
-
-      const rolloverParams =
-        await this.billingCreditRolloverService.getWorkflowRolloverParameters(
-          subscription.id,
-        );
-
-      if (!isDefined(rolloverParams)) {
-        return;
-      }
-
-      // The invoice covers the period that just ended (invoicedPeriodStart to invoicedPeriodEnd)
-      // We need to calculate unused credits from this period and roll them over
-      // Credits should expire at the end of the NEXT period
-      const nextPeriodEnd = this.calculateNextPeriodEnd(
-        invoicedPeriodEnd,
-        subscription.interval,
-      );
-
-      await this.billingCreditRolloverService.processRolloverOnPeriodTransition(
-        {
-          stripeCustomerId,
-          subscriptionId: subscription.id,
-          stripeMeterId: rolloverParams.stripeMeterId,
-          previousPeriodStart: invoicedPeriodStart,
-          previousPeriodEnd: invoicedPeriodEnd,
-          newPeriodEnd: nextPeriodEnd,
-          tierQuantity: rolloverParams.tierQuantity,
-          unitPriceCents: rolloverParams.unitPriceCents,
-        },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Error processing rollover for customer ${stripeCustomerId}: ${error}`,
-      );
+    if (!isDefined(subscription)) {
+      return;
     }
+
+    const rolloverParams =
+      await this.billingCreditRolloverService.getWorkflowRolloverParameters(
+        subscription.id,
+      );
+
+    if (!isDefined(rolloverParams)) {
+      return;
+    }
+
+    // The invoice covers the period that just ended (invoicedPeriodStart to invoicedPeriodEnd)
+    // We need to calculate unused credits from this period and roll them over
+    // Credits should expire at the end of the NEXT period
+    const nextPeriodEnd = this.calculateNextPeriodEnd(
+      invoicedPeriodEnd,
+      subscription.interval,
+    );
+
+    await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
+      stripeCustomerId,
+      subscriptionId: subscription.id,
+      stripeMeterId: rolloverParams.stripeMeterId,
+      previousPeriodStart: invoicedPeriodStart,
+      previousPeriodEnd: invoicedPeriodEnd,
+      newPeriodEnd: nextPeriodEnd,
+      tierQuantity: rolloverParams.tierQuantity,
+      unitPriceCents: rolloverParams.unitPriceCents,
+    });
   }
 
   private calculateNextPeriodEnd(
     periodEnd: Date,
     interval: SubscriptionInterval,
   ): Date {
-    const result = new Date(periodEnd);
-
     if (interval === SubscriptionInterval.Year) {
-      result.setFullYear(result.getFullYear() + 1);
-    } else {
-      result.setMonth(result.getMonth() + 1);
+      return addYears(periodEnd, 1);
     }
 
-    return result;
+    return addMonths(periodEnd, 1);
   }
 }

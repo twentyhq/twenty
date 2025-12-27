@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
@@ -12,7 +12,6 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 
 @Injectable()
 export class StripeBillingAlertService {
-  protected readonly logger = new Logger(StripeBillingAlertService.name);
   private readonly stripe: Stripe;
 
   constructor(
@@ -76,10 +75,6 @@ export class StripeBillingAlertService {
         ],
       },
     });
-
-    this.logger.log(
-      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (usageAtPeriodStart=${usageAtPeriodStart} + tierCap=${tierCap} + creditBalance=${creditBalance})`,
-    );
   }
 
   private async archiveAlertsForCustomer(
@@ -101,7 +96,6 @@ export class StripeBillingAlertService {
 
     for (const alert of customerAlerts) {
       await this.stripe.billing.alerts.archive(alert.id);
-      this.logger.log(`Archived alert ${alert.id} for customer ${customerId}`);
     }
   }
 }

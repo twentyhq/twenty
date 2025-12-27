@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
@@ -9,8 +9,6 @@ import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe
 
 @Injectable()
 export class BillingCreditRolloverService {
-  protected readonly logger = new Logger(BillingCreditRolloverService.name);
-
   constructor(
     private readonly stripeCreditGrantService: StripeCreditGrantService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
@@ -48,25 +46,13 @@ export class BillingCreditRolloverService {
         previousPeriodEnd,
       );
 
-    this.logger.log(
-      `Rollover calculation for customer ${stripeCustomerId}: used ${usedCredits} of ${tierQuantity} credits`,
-    );
-
     const unusedCredits = Math.max(0, tierQuantity - usedCredits);
 
     if (unusedCredits <= 0) {
-      this.logger.log(
-        `No rollover needed for customer ${stripeCustomerId}: all credits used`,
-      );
-
       return;
     }
 
     const rolloverAmount = Math.min(unusedCredits, tierQuantity);
-
-    this.logger.log(
-      `Creating rollover credit grant for customer ${stripeCustomerId}: ${rolloverAmount} credits (unused: ${unusedCredits}, cap: ${tierQuantity})`,
-    );
 
     await this.stripeCreditGrantService.createCreditGrant({
       customerId: stripeCustomerId,
@@ -96,10 +82,6 @@ export class BillingCreditRolloverService {
       return;
     }
 
-    this.logger.log(
-      `Voiding ${rolloverGrants.length} existing rollover grant(s) for customer ${stripeCustomerId}`,
-    );
-
     for (const grant of rolloverGrants) {
       await this.stripeCreditGrantService.voidCreditGrant(grant.id);
     }
@@ -120,10 +102,6 @@ export class BillingCreditRolloverService {
     );
 
     if (!workflowItem) {
-      this.logger.warn(
-        `Workflow subscription item not found for subscription ${subscriptionId}`,
-      );
-
       return null;
     }
 

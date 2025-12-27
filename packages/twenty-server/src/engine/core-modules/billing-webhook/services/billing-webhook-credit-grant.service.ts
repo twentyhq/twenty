@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,8 +12,6 @@ import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe
 
 @Injectable()
 export class BillingWebhookCreditGrantService {
-  protected readonly logger = new Logger(BillingWebhookCreditGrantService.name);
-
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
@@ -22,10 +20,6 @@ export class BillingWebhookCreditGrantService {
   ) {}
 
   async processStripeEvent(stripeCustomerId: string): Promise<void> {
-    this.logger.log(
-      `Processing credit grant event for customer ${stripeCustomerId}`,
-    );
-
     await this.recreateBillingAlertForCustomer(stripeCustomerId);
   }
 
@@ -38,10 +32,6 @@ export class BillingWebhookCreditGrantService {
       });
 
     if (!isDefined(subscription)) {
-      this.logger.warn(
-        `Cannot recreate billing alert: subscription not found for customer ${stripeCustomerId}`,
-      );
-
       return;
     }
 
@@ -55,10 +45,6 @@ export class BillingWebhookCreditGrantService {
     );
 
     if (!isDefined(workflowItem)) {
-      this.logger.warn(
-        `Cannot recreate billing alert: workflow subscription item not found for subscription ${subscription.id}`,
-      );
-
       return;
     }
 
@@ -75,10 +61,6 @@ export class BillingWebhookCreditGrantService {
       workflowItem.tierQuantity,
       creditBalance,
       subscription.currentPeriodStart,
-    );
-
-    this.logger.log(
-      `Recreated billing alert for customer ${stripeCustomerId} with credit balance ${creditBalance}`,
     );
   }
 }

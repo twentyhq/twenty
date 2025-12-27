@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
@@ -9,7 +9,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class StripeCreditGrantService {
-  protected readonly logger = new Logger(StripeCreditGrantService.name);
   private readonly stripe: Stripe;
 
   constructor(
@@ -40,10 +39,6 @@ export class StripeCreditGrantService {
     const monetaryAmount = this.convertCreditsToMonetary(
       creditUnits,
       unitPriceCents,
-    );
-
-    this.logger.log(
-      `Creating credit grant for customer ${customerId}: ${creditUnits} credits = ${monetaryAmount} cents`,
     );
 
     // Add 60 seconds buffer to ensure effective_at is in the future when Stripe processes it
@@ -90,7 +85,6 @@ export class StripeCreditGrantService {
 
   async voidCreditGrant(creditGrantId: string): Promise<void> {
     await this.stripe.billing.creditGrants.voidGrant(creditGrantId);
-    this.logger.log(`Voided credit grant ${creditGrantId}`);
   }
 
   async listCreditGrants(
