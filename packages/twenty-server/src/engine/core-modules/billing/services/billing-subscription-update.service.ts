@@ -443,8 +443,8 @@ export class BillingSubscriptionUpdateService {
     switch (update.type) {
       case SubscriptionUpdateType.PLAN: {
         const currentPlan =
-          getCurrentLicensedBillingSubscriptionItemOrThrow(subscription)
-            .billingProduct?.metadata.planKey;
+          subscription.billingSubscriptionItems[0].billingProduct?.metadata
+            .planKey;
 
         const isDowngrade =
           currentPlan !== update.newPlan &&
@@ -524,11 +524,6 @@ export class BillingSubscriptionUpdateService {
         return await this.computeSubscriptionPricesUpdateByInterval(
           update.newInterval,
           currentPrices,
-        );
-      default:
-        return assertUnreachable(
-          update,
-          'Should never occur, add validator for new subscription update type',
         );
     }
   }
