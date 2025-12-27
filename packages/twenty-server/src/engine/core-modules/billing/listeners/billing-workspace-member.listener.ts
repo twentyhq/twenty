@@ -27,6 +27,7 @@ export class BillingWorkspaceMemberListener {
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
   async handleCreateOrDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
