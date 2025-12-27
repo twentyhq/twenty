@@ -19,20 +19,21 @@ import {
 
 import type Stripe from 'stripe';
 
-// Simplified types for JSONB storage - avoids TypeORM's DeepPartialEntity issues with complex Stripe types
-type AutomaticTaxJson = {
-  disabled_reason?: string | null;
+// Serialized types for JSONB storage - uses Stripe's enum types but normalizes expandable fields
+// These avoid TypeORM's DeepPartialEntity issues with Stripe's expandable object types (e.g. Stripe.Account)
+export type AutomaticTaxJson = {
+  disabled_reason: Stripe.Subscription.AutomaticTax['disabled_reason'];
   enabled: boolean;
-  liability?: {
-    type: string;
-    account?: string;
+  liability: {
+    type: Stripe.Subscription.AutomaticTax.Liability.Type;
+    account?: string; // Normalized: always string ID, never expanded Stripe.Account
   } | null;
 };
 
-type CancellationDetailsJson = {
-  comment?: string | null;
-  feedback?: string | null;
-  reason?: string | null;
+export type CancellationDetailsJson = {
+  comment: string | null;
+  feedback: Stripe.Subscription.CancellationDetails.Feedback | null;
+  reason: Stripe.Subscription.CancellationDetails.Reason | null;
 };
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

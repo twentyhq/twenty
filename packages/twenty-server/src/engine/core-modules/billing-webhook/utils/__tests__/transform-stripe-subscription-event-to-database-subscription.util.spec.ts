@@ -121,7 +121,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
       cancellation_details: {
         comment: 'Customer requested cancellation',
         feedback: 'too_expensive',
-        reason: 'customer_request',
+        reason: 'cancellation_requested',
       },
     });
 
@@ -136,7 +136,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
     expect(result.cancellationDetails).toEqual({
       comment: 'Customer requested cancellation',
       feedback: 'too_expensive',
-      reason: 'customer_request',
+      reason: 'cancellation_requested',
     });
   });
 

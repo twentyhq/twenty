@@ -2,29 +2,18 @@
 
 import type Stripe from 'stripe';
 
-import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
+import {
+  type AutomaticTaxJson,
+  type CancellationDetailsJson,
+} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
+import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 
-// Simplified types for JSONB storage - avoids TypeORM's DeepPartialEntity issues with complex Stripe types
-type AutomaticTaxJson = {
-  disabled_reason?: string | null;
-  enabled: boolean;
-  liability?: {
-    type: string;
-    account?: string;
-  } | null;
-};
-
-type CancellationDetailsJson = {
-  comment?: string | null;
-  feedback?: string | null;
-  reason?: string | null;
-};
-
-// Converts Stripe AutomaticTax to simplified JSON for JSONB storage
+// Converts Stripe AutomaticTax to serialized JSON for JSONB storage
+// Normalizes expandable fields (e.g., liability.account) to string IDs
 const toAutomaticTaxJson = (
   value: Stripe.Subscription.AutomaticTax | null | undefined,
 ): AutomaticTaxJson | undefined => {
@@ -47,7 +36,7 @@ const toAutomaticTaxJson = (
   };
 };
 
-// Converts Stripe CancellationDetails to simplified JSON for JSONB storage
+// Converts Stripe CancellationDetails to serialized JSON for JSONB storage
 const toCancellationDetailsJson = (
   value: Stripe.Subscription.CancellationDetails | null | undefined,
 ): CancellationDetailsJson | undefined => {
