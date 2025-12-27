@@ -33,6 +33,7 @@ export class StripeBillingAlertService {
     customerId: string,
     tierCap: number,
     creditBalance: number = 0,
+    periodStart?: Date,
   ): Promise<void> {
     const meter = (await this.stripeBillingMeterService.getAllMeters()).find(
       (meterItem) => {
@@ -44,14 +45,21 @@ export class StripeBillingAlertService {
 
     await this.archiveAlertsForCustomer(customerId, meter.id);
 
-    const cumulativeUsage =
-      await this.stripeBillingMeterEventService.getTotalCumulativeUsage(
-        meter.id,
-        customerId,
-      );
+    // Use cumulative usage at period start to ensure consistent threshold
+    // regardless of when the alert is created/recreated during the period
+    const usageAtPeriodStart = periodStart
+      ? await this.stripeBillingMeterEventService.getCumulativeUsageAtTime(
+          meter.id,
+          customerId,
+          periodStart,
+        )
+      : await this.stripeBillingMeterEventService.getTotalCumulativeUsage(
+          meter.id,
+          customerId,
+        );
 
-    // Include credit balance (rollover credits) in the threshold
-    const dynamicThreshold = cumulativeUsage + tierCap + creditBalance;
+    // Threshold = usage at period start + allowance for this period
+    const dynamicThreshold = usageAtPeriodStart + tierCap + creditBalance;
 
     await this.stripe.billing.alerts.create({
       alert_type: 'usage_threshold',
@@ -70,7 +78,7 @@ export class StripeBillingAlertService {
     });
 
     this.logger.log(
-      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (cumulative=${cumulativeUsage} + tierCap=${tierCap} + creditBalance=${creditBalance})`,
+      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (usageAtPeriodStart=${usageAtPeriodStart} + tierCap=${tierCap} + creditBalance=${creditBalance})`,
     );
   }
 

@@ -250,6 +250,8 @@ export class BillingSubscriptionService {
       await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
         billingSubscription.stripeCustomerId,
         newTierCap,
+        0,
+        billingSubscription.currentPeriodStart,
       );
     }
   }
@@ -597,7 +599,10 @@ export class BillingSubscriptionService {
     return price.tiers[0].up_to;
   }
 
-  async createBillingAlertForCustomer(stripeCustomerId: string): Promise<void> {
+  async createBillingAlertForCustomer(
+    stripeCustomerId: string,
+    periodStart?: Date,
+  ): Promise<void> {
     const subscription = await this.getCurrentBillingSubscription({
       stripeCustomerId,
     });
@@ -627,10 +632,14 @@ export class BillingSubscriptionService {
         workflowPricingInfo.unitPriceCents,
       );
 
+    // Use the subscription's current period start if not provided
+    const effectivePeriodStart = periodStart ?? subscription.currentPeriodStart;
+
     await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
       stripeCustomerId,
       workflowPricingInfo.tierCap,
       creditBalance,
+      effectivePeriodStart,
     );
   }
 

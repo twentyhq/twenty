@@ -68,10 +68,13 @@ export class BillingWebhookCreditGrantService {
         workflowItem.unitPriceCents,
       );
 
+    // Use subscription's current period start to ensure consistent threshold
+    // regardless of when credits are added during the period
     await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
       stripeCustomerId,
       workflowItem.tierQuantity,
       creditBalance,
+      subscription.currentPeriodStart,
     );
 
     this.logger.log(

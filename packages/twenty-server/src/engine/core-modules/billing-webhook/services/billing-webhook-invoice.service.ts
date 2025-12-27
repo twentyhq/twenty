@@ -7,9 +7,9 @@ import { type Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 
@@ -32,8 +32,10 @@ export class BillingWebhookInvoiceService {
       period_end: periodEnd,
     } = data.object;
 
-    // In Stripe SDK v19+, subscription moved from invoice.subscription to invoice.parent.subscription_details.subscription
-    const stripeSubscriptionId = parent?.subscription_details?.subscription as
+    // In Stripe SDK v19+, subscription moved to invoice.parent.subscription_details.subscription
+    // Fall back to invoice.subscription for standard subscription invoices
+    const stripeSubscriptionId = (parent?.subscription_details?.subscription ??
+      (data.object as unknown as { subscription?: string }).subscription) as
       | string
       | undefined;
     const stripeCustomerId = customer as string | undefined;
@@ -55,9 +57,11 @@ export class BillingWebhookInvoiceService {
         );
       }
 
-      if (isDefined(stripeCustomerId)) {
+      if (isDefined(stripeCustomerId) && periodEnd) {
+        // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
         await this.billingSubscriptionService.createBillingAlertForCustomer(
           stripeCustomerId,
+          new Date(periodEnd * 1000),
         );
       }
     }
@@ -65,8 +69,8 @@ export class BillingWebhookInvoiceService {
 
   private async processRollover(
     stripeCustomerId: string,
-    newPeriodStart: Date,
-    newPeriodEnd: Date,
+    invoicedPeriodStart: Date,
+    invoicedPeriodEnd: Date,
   ): Promise<void> {
     try {
       const subscription =
@@ -91,9 +95,11 @@ export class BillingWebhookInvoiceService {
         return;
       }
 
-      const previousPeriodEnd = newPeriodStart;
-      const previousPeriodStart = this.calculatePreviousPeriodStart(
-        previousPeriodEnd,
+      // The invoice covers the period that just ended (invoicedPeriodStart to invoicedPeriodEnd)
+      // We need to calculate unused credits from this period and roll them over
+      // Credits should expire at the end of the NEXT period
+      const nextPeriodEnd = this.calculateNextPeriodEnd(
+        invoicedPeriodEnd,
         subscription.interval,
       );
 
@@ -102,9 +108,9 @@ export class BillingWebhookInvoiceService {
           stripeCustomerId,
           subscriptionId: subscription.id,
           stripeMeterId: rolloverParams.stripeMeterId,
-          previousPeriodStart,
-          previousPeriodEnd,
-          newPeriodEnd,
+          previousPeriodStart: invoicedPeriodStart,
+          previousPeriodEnd: invoicedPeriodEnd,
+          newPeriodEnd: nextPeriodEnd,
           tierQuantity: rolloverParams.tierQuantity,
           unitPriceCents: rolloverParams.unitPriceCents,
         },
@@ -116,16 +122,16 @@ export class BillingWebhookInvoiceService {
     }
   }
 
-  private calculatePreviousPeriodStart(
+  private calculateNextPeriodEnd(
     periodEnd: Date,
     interval: SubscriptionInterval,
   ): Date {
     const result = new Date(periodEnd);
 
     if (interval === SubscriptionInterval.Year) {
-      result.setFullYear(result.getFullYear() - 1);
+      result.setFullYear(result.getFullYear() + 1);
     } else {
-      result.setMonth(result.getMonth() - 1);
+      result.setMonth(result.getMonth() + 1);
     }
 
     return result;
