@@ -6447,7 +6447,7 @@ msgstr "Δεν έχετε άδεια να τροποποιήσετε αυτή τ
 #. js-lingui-id: hMX1AE
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
-msgstr ""
+msgstr "Έχετε εξαντλήσει τις πιστώσεις σας. Παρακαλούμε αναβαθμίστε το πλάνο σας για να συνεχίσετε."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

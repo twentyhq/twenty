@@ -3390,7 +3390,7 @@ msgstr "필수 시스템 필드가 누락되었습니다."
 #. js-lingui-id: eM40XC
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing time zone for date group by."
-msgstr ""
+msgstr "날짜 기준 그룹화에 사용할 시간대가 없습니다."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -6447,7 +6447,7 @@ msgstr "이 보기를 수정할 권한이 없습니다."
 #. js-lingui-id: hMX1AE
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
-msgstr ""
+msgstr "크레딧이 모두 소진되었습니다. 계속하려면 요금제를 업그레이드해 주세요."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

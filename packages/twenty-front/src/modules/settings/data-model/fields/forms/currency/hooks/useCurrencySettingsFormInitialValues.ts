@@ -4,6 +4,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -28,6 +29,7 @@ export const useCurrencySettingsFormInitialValues = ({
   const initialFormValues: SettingsDataModelFieldCurrencyFormValues = {
     settings: {
       format: fieldMetadataItem?.settings?.format ?? 'short',
+      decimals: fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
     },
     defaultValue: {
       amountMicros: initialAmountMicrosValue,

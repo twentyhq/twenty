@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
@@ -23,12 +24,14 @@ export const FieldWidgetCellEditModePortal = ({
   recordId,
   instanceId,
 }: FieldWidgetCellEditModePortalProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
-  const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+  const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
     recordId,
-    fieldMetadataItem.id,
-    'inline-cell',
-  );
+    fieldMetadataId: fieldMetadataItem.id,
+    componentType: 'inline-cell',
+    instanceId: scopeInstanceId,
+  });
   const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
 
   const setIsHovered = useSetRecoilComponentState(
