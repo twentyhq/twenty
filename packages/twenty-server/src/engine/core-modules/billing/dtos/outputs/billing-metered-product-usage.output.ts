@@ -20,5 +20,11 @@ export class BillingMeteredProductUsageOutput {
   grantedCredits: number;
 
   @Field(() => Number)
+  rolloverCredits: number;
+
+  @Field(() => Number)
+  totalGrantedCredits: number;
+
+  @Field(() => Number)
   unitPriceCents: number;
 }

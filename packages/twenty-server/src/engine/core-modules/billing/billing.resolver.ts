@@ -18,6 +18,7 @@ import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/output
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -51,6 +52,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
@@ -144,7 +146,7 @@ export class BillingResolver {
   async switchSubscriptionInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    await this.billingSubscriptionService.changeInterval(workspace.id);
+    await this.billingSubscriptionUpdateService.changeInterval(workspace.id);
 
     return {
       billingSubscriptions:
@@ -164,7 +166,7 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.changePlan(workspace.id);
+    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
 
     return {
       billingSubscriptions:
@@ -184,7 +186,7 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async cancelSwitchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.cancelSwitchPlan(workspace.id);
+    await this.billingSubscriptionUpdateService.cancelSwitchPlan(workspace.id);
 
     return {
       billingSubscriptions:
@@ -206,7 +208,9 @@ export class BillingResolver {
   async cancelSwitchBillingInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    await this.billingSubscriptionService.cancelSwitchInterval(workspace.id);
+    await this.billingSubscriptionUpdateService.cancelSwitchInterval(
+      workspace.id,
+    );
 
     return {
       billingSubscriptions:
@@ -229,7 +233,7 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { priceId }: BillingUpdateSubscriptionItemPriceInput,
   ) {
-    await this.billingSubscriptionService.changeMeteredPrice(
+    await this.billingSubscriptionUpdateService.changeMeteredPrice(
       workspace.id,
       priceId,
     );
@@ -282,7 +286,9 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async cancelSwitchMeteredPrice(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.cancelSwitchMeteredPrice(workspace);
+    await this.billingSubscriptionUpdateService.cancelSwitchMeteredPrice(
+      workspace,
+    );
 
     return {
       billingSubscriptions:
