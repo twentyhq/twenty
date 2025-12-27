@@ -23,7 +23,7 @@ export class UserWorkspaceResolver {
   @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
+    SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
