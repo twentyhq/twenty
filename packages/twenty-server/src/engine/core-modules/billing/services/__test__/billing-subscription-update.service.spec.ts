@@ -5,26 +5,21 @@ import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
-import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import {
   arrangeBillingPriceRepositoryFindOneOrFail,
@@ -53,9 +48,9 @@ import {
   METER_PRICE_PRO_YEAR_ID,
 } from './utils/price.constants';
 
-describe('BillingSubscriptionService', () => {
+describe('BillingSubscriptionUpdateService', () => {
   let module: TestingModule;
-  let service: BillingSubscriptionService;
+  let service: BillingSubscriptionUpdateService;
   let billingSubscriptionRepository: jest.Mocked<
     Repository<BillingSubscriptionEntity>
   >;
@@ -65,18 +60,18 @@ describe('BillingSubscriptionService', () => {
   let stripeSubscriptionScheduleService: jest.Mocked<StripeSubscriptionScheduleService>;
   let stripeSubscriptionService: jest.Mocked<StripeSubscriptionService>;
   let billingSubscriptionPhaseService: jest.Mocked<BillingSubscriptionPhaseService>;
+  let billingSubscriptionService: jest.Mocked<BillingSubscriptionService>;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
       providers: [
-        BillingSubscriptionService,
+        BillingSubscriptionUpdateService,
         {
-          provide: BillingPlanService,
+          provide: BillingSubscriptionService,
           useValue: {
-            getPlanBaseProduct: jest.fn(),
-            listPlans: jest.fn(),
-            getPlanByPriceId: jest.fn(),
-            getPricesPerPlanByInterval: jest.fn(),
+            syncSubscriptionToDatabase: jest
+              .fn()
+              .mockResolvedValue({} as BillingSubscriptionEntity),
           },
         },
         {
@@ -85,13 +80,6 @@ describe('BillingSubscriptionService', () => {
             getProductPrices: jest.fn(),
           },
         },
-        {
-          provide: StripeCustomerService,
-          useValue: {
-            hasPaymentMethod: jest.fn(),
-          },
-        },
-        { provide: StripeSubscriptionItemService, useValue: {} },
         {
           provide: StripeSubscriptionScheduleService,
           useValue: {
@@ -106,8 +94,6 @@ describe('BillingSubscriptionService', () => {
           provide: StripeSubscriptionService,
           useValue: {
             updateSubscription: jest.fn().mockResolvedValue({}),
-            cancelSubscription: jest.fn(),
-            collectLastInvoice: jest.fn(),
           },
         },
         {
@@ -141,16 +127,6 @@ describe('BillingSubscriptionService', () => {
           },
         },
         {
-          provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue(0),
-          },
-        },
-        {
-          provide: getRepositoryToken(BillingEntitlementEntity),
-          useValue: repoMock<BillingEntitlementEntity>(),
-        },
-        {
           provide: getRepositoryToken(BillingSubscriptionEntity),
           useValue: repoMock<BillingSubscriptionEntity>(),
         },
@@ -163,26 +139,25 @@ describe('BillingSubscriptionService', () => {
           useValue: repoMock<BillingSubscriptionItemEntity>(),
         },
         {
-          provide: getRepositoryToken(BillingCustomerEntity),
-          useValue: repoMock<BillingCustomerEntity>(),
-        },
-        {
           provide: StripeBillingAlertService,
           useValue: {
             createUsageThresholdAlertForCustomerMeter: jest.fn(),
           },
         },
         {
-          provide: StripeCreditGrantService,
+          provide: MeteredCreditService,
           useValue: {
-            getCustomerCreditBalance: jest.fn().mockResolvedValue(0),
+            getMeteredPricingInfoFromPriceId: jest
+              .fn()
+              .mockResolvedValue({ tierCap: 1000, unitPriceCents: 10 }),
+            getCreditBalance: jest.fn().mockResolvedValue(0),
           },
         },
         BillingPriceService,
       ],
     }).compile();
 
-    service = module.get(BillingSubscriptionService);
+    service = module.get(BillingSubscriptionUpdateService);
     billingSubscriptionRepository = module.get(
       getRepositoryToken(BillingSubscriptionEntity),
     );
@@ -196,10 +171,7 @@ describe('BillingSubscriptionService', () => {
     billingSubscriptionPhaseService = module.get(
       BillingSubscriptionPhaseService,
     );
-
-    jest
-      .spyOn(service, 'syncSubscriptionToDatabase')
-      .mockResolvedValue({} as BillingSubscriptionEntity);
+    billingSubscriptionService = module.get(BillingSubscriptionService);
 
     jest
       .spyOn(billingPriceService, 'getBillingThresholdsByMeterPriceId')
@@ -290,7 +262,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionScheduleService.updateSchedule,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should update from PRO to ENTERPRISE - with schedule', async () => {
@@ -424,7 +398,9 @@ describe('BillingSubscriptionService', () => {
           }),
         ],
       });
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should update from ENTERPRISE to PRO - without schedule', async () => {
@@ -518,7 +494,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should update from ENTERPRISE to PRO - with schedule', async () => {
@@ -626,7 +604,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
   });
 
@@ -694,7 +674,9 @@ describe('BillingSubscriptionService', () => {
           },
         },
       );
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change metered price from low cap to high cap - with schedule (ENTERPRISE to PRO downgrade)', async () => {
@@ -835,7 +817,9 @@ describe('BillingSubscriptionService', () => {
           }),
         ],
       });
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change metered price from high cap to low cap - without schedule', async () => {
@@ -920,7 +904,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change metered price from high cap to low cap - with schedule (ENTERPRISE to PRO downgrade)', async () => {
@@ -1035,7 +1021,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
   });
 
@@ -1113,7 +1101,9 @@ describe('BillingSubscriptionService', () => {
           },
         },
       );
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change interval from monthly to yearly - with schedule (ENTERPRISE monthly to PRO yearly downgrade)', async () => {
@@ -1245,7 +1235,9 @@ describe('BillingSubscriptionService', () => {
           }),
         ],
       });
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change interval from yearly to monthly - without schedule', async () => {
@@ -1339,7 +1331,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change interval from yearly to monthly - with schedule (ENTERPRISE yearly to PRO monthly downgrade)', async () => {
@@ -1447,7 +1441,9 @@ describe('BillingSubscriptionService', () => {
       expect(
         stripeSubscriptionService.updateSubscription,
       ).not.toHaveBeenCalled();
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
   });
 
@@ -1508,7 +1504,9 @@ describe('BillingSubscriptionService', () => {
           },
         },
       );
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change seats from 1 to 2 - with schedule (ENTERPRISE monthly to PRO yearly downgrade)', async () => {
@@ -1623,7 +1621,9 @@ describe('BillingSubscriptionService', () => {
           }),
         ],
       });
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change seats from 2 to 1 - without schedule', async () => {
@@ -1682,7 +1682,9 @@ describe('BillingSubscriptionService', () => {
           },
         },
       );
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
 
     it('should change seats from 2 to 1 - with schedule', async () => {
@@ -1797,7 +1799,9 @@ describe('BillingSubscriptionService', () => {
           }),
         ],
       });
-      expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+      expect(
+        billingSubscriptionService.syncSubscriptionToDatabase,
+      ).toHaveBeenCalled();
     });
   });
 });

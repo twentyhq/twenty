@@ -2,8 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
+import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 
@@ -12,7 +11,7 @@ export class BillingCreditRolloverService {
   constructor(
     private readonly stripeCreditGrantService: StripeCreditGrantService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
-    private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
+    private readonly meteredCreditService: MeteredCreditService,
   ) {}
 
   async processRolloverOnPeriodTransition({
@@ -87,28 +86,13 @@ export class BillingCreditRolloverService {
     }
   }
 
-  async getWorkflowRolloverParameters(subscriptionId: string): Promise<{
+  async getMeteredRolloverParameters(subscriptionId: string): Promise<{
     stripeMeterId: string;
     tierQuantity: number;
     unitPriceCents: number;
   } | null> {
-    const meteredDetails =
-      await this.billingSubscriptionItemService.getMeteredSubscriptionItemDetails(
-        subscriptionId,
-      );
-
-    const workflowItem = meteredDetails.find(
-      (item) => item.productKey === BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    return this.meteredCreditService.getMeteredRolloverParameters(
+      subscriptionId,
     );
-
-    if (!workflowItem) {
-      return null;
-    }
-
-    return {
-      stripeMeterId: workflowItem.stripeMeterId,
-      tierQuantity: workflowItem.tierQuantity,
-      unitPriceCents: workflowItem.unitPriceCents,
-    };
   }
 }

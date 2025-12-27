@@ -7,10 +7,12 @@ import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 
@@ -21,23 +23,18 @@ export class BillingWebhookInvoiceService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
+    private readonly meteredCreditService: MeteredCreditService,
   ) {}
 
   async processStripeEvent(data: Stripe.InvoiceFinalizedEvent.Data) {
     const {
       billing_reason: billingReason,
       customer,
-      parent,
       period_start: periodStart,
       period_end: periodEnd,
     } = data.object;
 
-    // In Stripe SDK v19+, subscription moved to invoice.parent.subscription_details.subscription
-    // Fall back to invoice.subscription for standard subscription invoices
-    const stripeSubscriptionId = (parent?.subscription_details?.subscription ??
-      (data.object as unknown as { subscription?: string }).subscription) as
-      | string
-      | undefined;
+    const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
     const stripeCustomerId = customer as string | undefined;
 
     if (
@@ -59,7 +56,7 @@ export class BillingWebhookInvoiceService {
 
       if (isDefined(stripeCustomerId) && periodEnd) {
         // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
-        await this.billingSubscriptionService.createBillingAlertForCustomer(
+        await this.meteredCreditService.recreateBillingAlertForCustomer(
           stripeCustomerId,
           new Date(periodEnd * 1000),
         );
@@ -82,7 +79,7 @@ export class BillingWebhookInvoiceService {
     }
 
     const rolloverParams =
-      await this.billingCreditRolloverService.getWorkflowRolloverParameters(
+      await this.billingCreditRolloverService.getMeteredRolloverParameters(
         subscription.id,
       );
 
