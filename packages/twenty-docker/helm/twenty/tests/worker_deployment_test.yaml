@@ -1,0 +1,76 @@
+suite: worker deployment
+templates:
+  - templates/deployment-worker.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: renders with correct name and labels
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-worker
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: twenty
+      - equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: worker
+
+  - it: uses db-url secret for database connection
+    set:
+      db.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="PG_DATABASE_URL")].valueFrom.secretKeyRef.name
+          value: my-twenty-twenty-db-url
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="PG_DATABASE_URL")].valueFrom.secretKeyRef.key
+          value: url
+
+  - it: does not mount storage by default
+    asserts:
+      - isNull:
+          path: spec.template.spec.volumes
+
+  - it: uses correct command for worker process
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].command
+          content: yarn
+      - contains:
+          path: spec.template.spec.containers[0].command
+          content: worker:prod
+
+  - it: sets replica count to 1 by default
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: supports local storage configuration
+    set:
+      storage.type: local
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="STORAGE_TYPE")].value
+          value: local
+
+  - it: uses custom image when specified
+    set:
+      worker.image.repository: custom/twenty
+      worker.image.tag: v2.0.0
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^custom/twenty:v2.0.0$"
+
+  - it: falls back to Chart.AppVersion when tag not specified
+    set:
+      worker.image.tag: ""
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: ":v1.14.0$"

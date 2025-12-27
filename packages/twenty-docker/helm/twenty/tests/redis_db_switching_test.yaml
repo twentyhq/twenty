@@ -1,0 +1,91 @@
+suite: redis and database switching
+templates:
+  - templates/deployment-redis-internal.yaml
+  - templates/service-redis-internal.yaml
+  - templates/deployment-db-internal.yaml
+  - templates/service-db-internal.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: internal redis deployment renders when enabled
+    template: templates/deployment-redis-internal.yaml
+    set:
+      redisInternal.enabled: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-redis
+
+  - it: internal redis does not render when disabled
+    template: templates/deployment-redis-internal.yaml
+    set:
+      redisInternal.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: redis service renders when internal redis enabled
+    template: templates/service-redis-internal.yaml
+    set:
+      redisInternal.enabled: true
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-redis
+
+  - it: redis uses args for port configuration
+    template: templates/deployment-redis-internal.yaml
+    set:
+      redisInternal.enabled: true
+      redisInternal.service.port: 6379
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --port
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "6379"
+
+  - it: internal db deployment renders when enabled
+    template: templates/deployment-db-internal.yaml
+    set:
+      db.enabled: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-db
+
+  - it: internal db does not render when disabled
+    template: templates/deployment-db-internal.yaml
+    set:
+      db.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: internal db uses Recreate strategy for PVC
+    template: templates/deployment-db-internal.yaml
+    set:
+      db.enabled: true
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: Recreate
+
+  - it: db service renders when internal db enabled
+    template: templates/service-db-internal.yaml
+    set:
+      db.enabled: true
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-db

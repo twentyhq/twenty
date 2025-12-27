@@ -1,0 +1,43 @@
+suite: app user and database initialization
+templates:
+  - templates/secret-db-url.yaml
+  - templates/deployment-server.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: db-url secret includes app password
+    template: templates/secret-db-url.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - isKind:
+          of: Secret
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-db-url
+      - isNotEmpty:
+          path: stringData.appPassword
+
+  - it: server init container creates app user with proper permissions
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: test_user
+      db.internal.database: testdb
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: CREATE USER
+
+  - it: db url uses app user not superuser
+    template: templates/secret-db-url.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: my_app
+      db.internal.database: mydb
+    asserts:
+      - matchRegex:
+          path: stringData.url
+          pattern: ^postgres://my_app:.*@my-twenty-twenty-db

@@ -1,0 +1,20 @@
+{{- if and .Values.db.enabled .Values.db.internal.persistence.enabled (not .Values.db.internal.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "twenty.fullname" . }}-db
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: db
+spec:
+  accessModes:
+{{ toYaml .Values.db.internal.persistence.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.db.internal.persistence.size }}
+  {{- if .Values.db.internal.persistence.storageClass }}
+  storageClassName: {{ .Values.db.internal.persistence.storageClass }}
+  {{- end }}
+{{- end }}
