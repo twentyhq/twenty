@@ -247,10 +247,19 @@ export class BillingSubscriptionService {
       const newTierCap =
         await this.getWorkflowTierCapFromPriceId(meteredPriceId);
 
+      const unitPriceCents =
+        await this.getWorkflowUnitPriceFromPriceId(meteredPriceId);
+
+      const creditBalance =
+        await this.stripeCreditGrantService.getCustomerCreditBalance(
+          billingSubscription.stripeCustomerId,
+          unitPriceCents,
+        );
+
       await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
         billingSubscription.stripeCustomerId,
         newTierCap,
-        0,
+        creditBalance,
         billingSubscription.currentPeriodStart,
       );
     }
@@ -597,6 +606,18 @@ export class BillingSubscriptionService {
     billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
 
     return price.tiers[0].up_to;
+  }
+
+  async getWorkflowUnitPriceFromPriceId(
+    meteredPriceId: string,
+  ): Promise<number> {
+    const price = await this.billingPriceRepository.findOneOrFail({
+      where: { stripePriceId: meteredPriceId },
+    });
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return Number(price.tiers[1].unit_amount_decimal);
   }
 
   async createBillingAlertForCustomer(
