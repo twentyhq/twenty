@@ -55,6 +55,8 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
+  // Junction configuration for many-to-many relations
+  junctionTargetRelationFieldIds: z.array(z.uuid()).optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
@@ -87,9 +89,9 @@ export const SettingsDataModelFieldRelationForm = ({
       fieldMetadataItem: existingFieldMetadataItem,
     });
 
+  // For RELATION fields, relationType is stored in relation.type
   const initialRelationType =
-    existingFieldMetadataItem?.settings?.relationType ??
-    RelationType.ONE_TO_MANY;
+    existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useRelationSettingsFormDefaultValuesTargetFieldMetadata({

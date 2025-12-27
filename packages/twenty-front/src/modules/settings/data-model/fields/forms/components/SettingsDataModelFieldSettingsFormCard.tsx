@@ -59,6 +59,12 @@ const dateTimeFieldFormSchema = z
   .extend(settingsDataModelFieldDateFormSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
 
+const relationFieldFormSchema = z
+  .object({
+    type: z.literal(FieldMetadataType.RELATION),
+  })
+  .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
+
 const morphRelationFieldFormSchema = z
   .object({
     type: z.literal(FieldMetadataType.MORPH_RELATION),
@@ -124,6 +130,7 @@ const otherFieldsFormSchema = z
         omit(SETTINGS_FIELD_TYPE_CONFIGS, [
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
+          FieldMetadataType.RELATION,
           FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
@@ -149,6 +156,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
+    relationFieldFormSchema,
     morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,

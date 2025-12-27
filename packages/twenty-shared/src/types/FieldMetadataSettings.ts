@@ -41,6 +41,11 @@ export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
+  // For ONE_TO_MANY relations that go through a junction table
+  // IDs of the relation fields on the junction object that point to the "target" objects
+  // For simple M:N, this is just one field (the other side of the relationship)
+  // For polymorphic M:N (like taskTarget), this could be multiple fields
+  junctionTargetRelationFieldIds?: string[];
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
