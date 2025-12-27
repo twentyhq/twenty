@@ -31,7 +31,7 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const apolloCoreClient = useApolloCoreClient();
 
-  const { combinedFilters, orderBy, recordGqlFields } =
+  const { combinedFilters, orderBy, recordGqlFields, recordGroupsLimit } =
     useRecordIndexGroupCommonQueryVariables();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -55,11 +55,12 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
       recordIndexGroupsRecordGroupsGroupByQuery,
       {
         variables: {
-          filter: { ...combinedFilters },
+          filter: combinedFilters,
           groupBy: {
             ...groupByGqlInput,
           },
           orderByForRecords: orderBy,
+          limit: recordGroupsLimit,
         },
         client: apolloCoreClient,
       },

@@ -1,0 +1,1 @@
+export const VIEW_GROUP_VISIBLE_OPTIONS_MAX = 40;

@@ -3,8 +3,8 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useRecoilValue } from 'recoil';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
@@ -15,6 +15,7 @@ type RecordGroupMenuItemDraggableProps = {
   showDragGrip?: boolean;
   isDraggable?: boolean;
   onVisibilityChange: (recordGroup: RecordGroupDefinition) => void;
+  isVisibleLimitReached?: boolean;
 };
 
 export const RecordGroupMenuItemDraggable = ({
@@ -22,6 +23,7 @@ export const RecordGroupMenuItemDraggable = ({
   showDragGrip,
   isDraggable,
   onVisibilityChange,
+  isVisibleLimitReached = false,
 }: RecordGroupMenuItemDraggableProps) => {
   const recordGroup = useRecoilValue(
     recordGroupDefinitionFamilyState(recordGroupId),
@@ -35,6 +37,11 @@ export const RecordGroupMenuItemDraggable = ({
 
   const getIconButtons = (recordGroup: RecordGroupDefinition) => {
     const groupValue = recordGroup.value;
+
+    if (!recordGroup.isVisible && isVisibleLimitReached) {
+      return undefined;
+    }
+
     const iconButtons = [
       {
         Icon: recordGroup.isVisible ? IconEyeOff : IconEye,
