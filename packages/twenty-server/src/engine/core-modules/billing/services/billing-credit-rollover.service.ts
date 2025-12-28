@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 
@@ -11,7 +10,6 @@ export class BillingCreditRolloverService {
   constructor(
     private readonly stripeCreditGrantService: StripeCreditGrantService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
-    private readonly meteredCreditService: MeteredCreditService,
   ) {}
 
   async processRolloverOnPeriodTransition({
@@ -84,15 +82,5 @@ export class BillingCreditRolloverService {
     for (const grant of rolloverGrants) {
       await this.stripeCreditGrantService.voidCreditGrant(grant.id);
     }
-  }
-
-  async getMeteredRolloverParameters(subscriptionId: string): Promise<{
-    stripeMeterId: string;
-    tierQuantity: number;
-    unitPriceCents: number;
-  } | null> {
-    return this.meteredCreditService.getMeteredRolloverParameters(
-      subscriptionId,
-    );
   }
 }

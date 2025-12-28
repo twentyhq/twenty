@@ -38,30 +38,43 @@ export class BillingWebhookInvoiceService {
     const stripeCustomerId = customer as string | undefined;
 
     if (
-      isDefined(stripeSubscriptionId) &&
-      billingReason === SUBSCRIPTION_CYCLE_BILLING_REASON
+      !isDefined(stripeSubscriptionId) ||
+      billingReason !== SUBSCRIPTION_CYCLE_BILLING_REASON
     ) {
-      await this.billingSubscriptionItemRepository.update(
-        { stripeSubscriptionId },
-        { hasReachedCurrentPeriodCap: false },
-      );
-
-      if (isDefined(stripeCustomerId) && periodStart && periodEnd) {
-        await this.processRollover(
-          stripeCustomerId,
-          new Date(periodStart * 1000),
-          new Date(periodEnd * 1000),
-        );
-      }
-
-      if (isDefined(stripeCustomerId) && periodEnd) {
-        // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
-        await this.meteredCreditService.recreateBillingAlertForCustomer(
-          stripeCustomerId,
-          new Date(periodEnd * 1000),
-        );
-      }
+      return;
     }
+
+    await this.billingSubscriptionItemRepository.update(
+      { stripeSubscriptionId },
+      { hasReachedCurrentPeriodCap: false },
+    );
+
+    if (!isDefined(stripeCustomerId) || !periodEnd) {
+      return;
+    }
+
+    if (periodStart) {
+      await this.processRollover(
+        stripeCustomerId,
+        new Date(periodStart * 1000),
+        new Date(periodEnd * 1000),
+      );
+    }
+
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        stripeCustomerId,
+      });
+
+    if (!isDefined(subscription)) {
+      return;
+    }
+
+    // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
+    await this.meteredCreditService.recreateBillingAlertForSubscription(
+      subscription,
+      new Date(periodEnd * 1000),
+    );
   }
 
   private async processRollover(
@@ -79,7 +92,7 @@ export class BillingWebhookInvoiceService {
     }
 
     const rolloverParams =
-      await this.billingCreditRolloverService.getMeteredRolloverParameters(
+      await this.meteredCreditService.getMeteredRolloverParameters(
         subscription.id,
       );
 

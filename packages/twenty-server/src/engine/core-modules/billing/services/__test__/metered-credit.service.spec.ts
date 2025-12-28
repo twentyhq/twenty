@@ -177,7 +177,7 @@ describe('MeteredCreditService', () => {
     });
   });
 
-  describe('recreateBillingAlertForCustomer', () => {
+  describe('recreateBillingAlertForSubscription', () => {
     it('should create billing alert with correct parameters', async () => {
       const currentPeriodStart = new Date('2024-01-01');
       const mockSubscription = {
@@ -217,23 +217,33 @@ describe('MeteredCreditService', () => {
         ],
       };
 
-      // Mock for getCurrentBillingSubscription (uses find)
-      billingSubscriptionRepository.find.mockResolvedValue([mockSubscription]);
       // Mock for getMeteredPricingInfo (uses findOne)
       billingSubscriptionRepository.findOne.mockResolvedValue(mockSubscription);
       stripeCreditGrantService.getCustomerCreditBalance.mockResolvedValue(500);
 
-      await service.recreateBillingAlertForCustomer('cus_123');
+      await service.recreateBillingAlertForSubscription(
+        mockSubscription as any,
+      );
 
       expect(
         stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter,
       ).toHaveBeenCalledWith('cus_123', 1000, 500, currentPeriodStart);
     });
 
-    it('should not create alert when subscription not found', async () => {
-      billingSubscriptionRepository.find.mockResolvedValue([]);
+    it('should not create alert when metered pricing info not found', async () => {
+      const mockSubscription = {
+        id: 'sub_123',
+        stripeCustomerId: 'cus_123',
+        currentPeriodStart: new Date('2024-01-01'),
+        status: SubscriptionStatus.Active,
+        billingSubscriptionItems: [],
+      };
 
-      await service.recreateBillingAlertForCustomer('cus_123');
+      billingSubscriptionRepository.findOne.mockResolvedValue(mockSubscription);
+
+      await service.recreateBillingAlertForSubscription(
+        mockSubscription as any,
+      );
 
       expect(
         stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter,

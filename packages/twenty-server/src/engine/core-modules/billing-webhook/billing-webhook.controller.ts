@@ -160,17 +160,16 @@ export class BillingWebhookController {
         const stripeCustomerId =
           typeof customer === 'string' ? customer : customer?.id;
 
-        if (stripeCustomerId) {
-          return await this.billingWebhookCreditGrantService.processStripeEvent(
-            stripeCustomerId,
+        if (!stripeCustomerId) {
+          throw new BillingException(
+            'Customer ID is required for credit grant events',
+            BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND,
           );
         }
 
-        this.logger.warn(
-          `Credit grant event ${event.type} missing customer ID, skipping`,
+        return await this.billingWebhookCreditGrantService.processStripeEvent(
+          stripeCustomerId,
         );
-
-        return {};
       }
 
       default:

@@ -225,8 +225,8 @@ export class BillingSubscriptionService {
       { hasReachedCurrentPeriodCap: false },
     );
 
-    await this.meteredCreditService.recreateBillingAlertForCustomer(
-      billingSubscription.stripeCustomerId,
+    await this.meteredCreditService.recreateBillingAlertForSubscription(
+      billingSubscription,
     );
 
     return {

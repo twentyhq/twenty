@@ -4,13 +4,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Not, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
@@ -133,25 +132,13 @@ export class MeteredCreditService {
   }
 
   /**
-   * Recreate billing alert for a customer. This archives existing alerts and creates
+   * Recreate billing alert for a subscription. This archives existing alerts and creates
    * a new one with the correct threshold based on current pricing and credit balance.
    */
-  async recreateBillingAlertForCustomer(
-    stripeCustomerId: string,
+  async recreateBillingAlertForSubscription(
+    subscription: BillingSubscriptionEntity,
     periodStart?: Date,
   ): Promise<void> {
-    const subscription = await this.getCurrentBillingSubscription({
-      stripeCustomerId,
-    });
-
-    if (!isDefined(subscription)) {
-      this.logger.warn(
-        `Cannot create billing alert: subscription not found for stripeCustomerId ${stripeCustomerId}`,
-      );
-
-      return;
-    }
-
     const meteredPricingInfo = await this.getMeteredPricingInfo(
       subscription.id,
     );
@@ -166,7 +153,7 @@ export class MeteredCreditService {
 
     const creditBalance =
       await this.stripeCreditGrantService.getCustomerCreditBalance(
-        stripeCustomerId,
+        subscription.stripeCustomerId,
         meteredPricingInfo.unitPriceCents,
       );
 
@@ -174,7 +161,7 @@ export class MeteredCreditService {
     const effectivePeriodStart = periodStart ?? subscription.currentPeriodStart;
 
     await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
-      stripeCustomerId,
+      subscription.stripeCustomerId,
       meteredPricingInfo.tierCap,
       creditBalance,
       effectivePeriodStart,
@@ -192,21 +179,5 @@ export class MeteredCreditService {
       stripeCustomerId,
       unitPriceCents,
     );
-  }
-
-  private async getCurrentBillingSubscription(criteria: {
-    workspaceId?: string;
-    stripeCustomerId?: string;
-  }): Promise<BillingSubscriptionEntity | undefined> {
-    const notCanceledSubscriptions =
-      await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: [
-          'billingSubscriptionItems',
-          'billingSubscriptionItems.billingProduct',
-        ],
-      });
-
-    return notCanceledSubscriptions[0];
   }
 }

@@ -5,7 +5,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import type Stripe from 'stripe';
 
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 
@@ -13,7 +12,6 @@ describe('BillingCreditRolloverService', () => {
   let service: BillingCreditRolloverService;
   let stripeCreditGrantService: jest.Mocked<StripeCreditGrantService>;
   let stripeBillingMeterEventService: jest.Mocked<StripeBillingMeterEventService>;
-  let meteredCreditService: jest.Mocked<MeteredCreditService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,12 +31,6 @@ describe('BillingCreditRolloverService', () => {
             sumMeterEvents: jest.fn(),
           },
         },
-        {
-          provide: MeteredCreditService,
-          useValue: {
-            getMeteredRolloverParameters: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -47,7 +39,6 @@ describe('BillingCreditRolloverService', () => {
     );
     stripeCreditGrantService = module.get(StripeCreditGrantService);
     stripeBillingMeterEventService = module.get(StripeBillingMeterEventService);
-    meteredCreditService = module.get(MeteredCreditService);
   });
 
   describe('processRolloverOnPeriodTransition', () => {
@@ -147,35 +138,6 @@ describe('BillingCreditRolloverService', () => {
           creditUnits: 500, // 1000 - 500 = 500 unused
         }),
       );
-    });
-  });
-
-  describe('getMeteredRolloverParameters', () => {
-    it('should delegate to MeteredCreditService', async () => {
-      const mockResult = {
-        stripeMeterId: 'meter_workflow',
-        tierQuantity: 5000,
-        unitPriceCents: 5,
-      };
-
-      meteredCreditService.getMeteredRolloverParameters.mockResolvedValue(
-        mockResult,
-      );
-
-      const result = await service.getMeteredRolloverParameters('sub_123');
-
-      expect(
-        meteredCreditService.getMeteredRolloverParameters,
-      ).toHaveBeenCalledWith('sub_123');
-      expect(result).toEqual(mockResult);
-    });
-
-    it('should return null when MeteredCreditService returns null', async () => {
-      meteredCreditService.getMeteredRolloverParameters.mockResolvedValue(null);
-
-      const result = await service.getMeteredRolloverParameters('sub_123');
-
-      expect(result).toBeNull();
     });
   });
 });
