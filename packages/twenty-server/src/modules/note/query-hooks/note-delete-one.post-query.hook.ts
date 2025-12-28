@@ -24,7 +24,7 @@ export class NoteDeleteOnePostQueryHook
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: NoteWorkspaceEntity[],
   ): Promise<void> {
     if (!payload || payload?.length === 0) {
