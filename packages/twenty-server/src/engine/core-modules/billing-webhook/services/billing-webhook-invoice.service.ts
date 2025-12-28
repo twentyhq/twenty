@@ -9,6 +9,7 @@ import type Stripe from 'stripe';
 
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -53,14 +54,6 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    if (periodStart) {
-      await this.processRollover(
-        stripeCustomerId,
-        new Date(periodStart * 1000),
-        new Date(periodEnd * 1000),
-      );
-    }
-
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
         stripeCustomerId,
@@ -68,6 +61,14 @@ export class BillingWebhookInvoiceService {
 
     if (!isDefined(subscription)) {
       return;
+    }
+
+    if (periodStart) {
+      await this.processRollover(
+        subscription,
+        new Date(periodStart * 1000),
+        new Date(periodEnd * 1000),
+      );
     }
 
     // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
@@ -78,19 +79,10 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processRollover(
-    stripeCustomerId: string,
+    subscription: BillingSubscriptionEntity,
     invoicedPeriodStart: Date,
     invoicedPeriodEnd: Date,
   ): Promise<void> {
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        stripeCustomerId,
-      });
-
-    if (!isDefined(subscription)) {
-      return;
-    }
-
     const rolloverParams =
       await this.meteredCreditService.getMeteredRolloverParameters(
         subscription.id,
@@ -109,7 +101,7 @@ export class BillingWebhookInvoiceService {
     );
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
-      stripeCustomerId,
+      stripeCustomerId: subscription.stripeCustomerId,
       subscriptionId: subscription.id,
       stripeMeterId: rolloverParams.stripeMeterId,
       previousPeriodStart: invoicedPeriodStart,

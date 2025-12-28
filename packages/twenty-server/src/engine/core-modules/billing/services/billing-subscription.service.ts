@@ -131,14 +131,14 @@ export class BillingSubscriptionService {
     const stripeProductId = baseProduct.stripeProductId;
 
     const billingSubscriptionItem =
-      billingSubscription.billingSubscriptionItems.filter(
-        (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === stripeProductId,
-      )?.[0];
+      billingSubscription.billingSubscriptionItems.find(
+        (item) => item.stripeProductId === stripeProductId,
+      );
 
     if (!billingSubscriptionItem) {
-      throw new Error(
+      throw new BillingException(
         `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
       );
     }
 
@@ -163,7 +163,7 @@ export class BillingSubscriptionService {
       { stripeCustomerId: data.object.customer as string },
     );
 
-    if (billingSubscription?.status === 'unpaid') {
+    if (billingSubscription.status === SubscriptionStatus.Unpaid) {
       await this.stripeSubscriptionService.collectLastInvoice(
         billingSubscription.stripeSubscriptionId,
       );
@@ -171,25 +171,21 @@ export class BillingSubscriptionService {
 
     return {
       handleUnpaidInvoiceStripeSubscriptionId:
-        billingSubscription?.stripeSubscriptionId,
+        billingSubscription.stripeSubscriptionId,
     };
   }
 
   async getWorkspaceEntitlementByKey(
     workspaceId: string,
     key: BillingEntitlementKey,
-  ) {
+  ): Promise<boolean> {
     const entitlement = await this.billingEntitlementRepository.findOneBy({
       workspaceId,
       key,
       value: true,
     });
 
-    if (!entitlement) {
-      return false;
-    }
-
-    return entitlement.value;
+    return entitlement?.value ?? false;
   }
 
   async endTrialPeriod(workspace: WorkspaceEntity) {
@@ -263,20 +259,6 @@ export class BillingSubscriptionService {
           ),
       },
     );
-
-    const meteredSubscriptionItem =
-      billingSubscription.billingSubscriptionItems.find(
-        (item) =>
-          item.billingProduct.metadata.productKey ===
-          BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      );
-
-    if (!meteredSubscriptionItem) {
-      throw new BillingException(
-        'Workflow subscription item not found',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
-      );
-    }
   }
 
   async syncSubscriptionToDatabase(
