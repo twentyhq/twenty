@@ -185,6 +185,7 @@ export type {
   StepFilterGroup,
   StepFilter,
   StepFilterWithPotentiallyDeprecatedOperand,
+  StepIfElseBranch,
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
