@@ -205,7 +205,11 @@ export class BillingSubscriptionService {
     );
 
     if (!hasPaymentMethod) {
-      return { hasPaymentMethod: false, status: undefined };
+      return {
+        hasPaymentMethod: false,
+        status: undefined,
+        stripeCustomerId: billingSubscription.stripeCustomerId,
+      };
     }
 
     const updatedSubscription =
