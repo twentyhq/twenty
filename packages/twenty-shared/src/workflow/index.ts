@@ -33,6 +33,11 @@ export { workflowFormActionSchema } from './schemas/form-action-schema';
 export { workflowFormActionSettingsSchema } from './schemas/form-action-settings-schema';
 export { workflowHttpRequestActionSchema } from './schemas/http-request-action-schema';
 export { workflowHttpRequestActionSettingsSchema } from './schemas/http-request-action-settings-schema';
+export { workflowIfElseActionSchema } from './schemas/if-else-action-schema';
+export {
+  stepIfElseBranchSchema,
+  workflowIfElseActionSettingsSchema,
+} from './schemas/if-else-action-settings-schema';
 export { workflowIteratorActionSchema } from './schemas/iterator-action-schema';
 export { workflowIteratorActionSettingsSchema } from './schemas/iterator-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
