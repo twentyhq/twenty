@@ -1920,6 +1920,11 @@ msgstr "Nền"
 msgid "Background Colors"
 msgstr "Màu nền"
 
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
+
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
@@ -9598,6 +9603,11 @@ msgstr "Cập nhật vai trò thành công"
 msgid "Roles"
 msgstr "Vai trò"
 
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
+
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -11455,6 +11465,11 @@ msgstr "Tạo công cụ"
 #. js-lingui-id: 72c5Qo
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
+msgstr ""
+
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
 msgstr ""
 
 #. js-lingui-id: hg5QeV
