@@ -11,12 +11,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
+import { ExposedWorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/exposed-workspace-related-entity';
 
 @Index('IDX_API_KEY_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'apiKey', schema: 'core' })
 @ObjectType('ApiKey')
-export class ApiKeyEntity extends WorkspaceRelatedEntity {
+export class ApiKeyEntity extends ExposedWorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

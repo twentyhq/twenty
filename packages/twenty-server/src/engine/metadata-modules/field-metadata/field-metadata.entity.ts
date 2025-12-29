@@ -52,6 +52,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/type
   'objectMetadataId',
   'workspaceId',
 ])
+@Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
     TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
   >
@@ -124,10 +125,6 @@ export class FieldMetadataEntity<
   // Is this really nullable ?
   @Column({ nullable: true, default: false, type: 'boolean' })
   isUnique: boolean | null;
-
-  @Column({ nullable: false, type: 'uuid' })
-  @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
-  override workspaceId: string;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
