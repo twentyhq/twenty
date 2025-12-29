@@ -8,7 +8,7 @@ export const AgentChatMessagesEffect = ({
 }: {
   messages: ExtendedUIMessage[];
 }) => {
-  const { scrollToBottom } = useAgentChatScrollToBottom();
+  const { scrollToBottom, isNearBottom } = useAgentChatScrollToBottom();
   const [, setPreviousMessages] = useState<ExtendedUIMessage[] | null>(null);
 
   useEffect(() => {
@@ -22,10 +22,18 @@ export const AgentChatMessagesEffect = ({
 
       // We intentionally force this effect because the chat transport streams messages incrementally
       // and the only reliable way to react to those chunks is through useEffect updates.
-      scrollToBottom();
+
+      const isNewMessage =
+        previousMessages === null ||
+        messages.length !== previousMessages.length;
+
+      if (isNewMessage || isNearBottom) {
+        scrollToBottom();
+      }
+
       return messages;
     });
-  }, [messages, scrollToBottom]);
+  }, [messages, scrollToBottom, isNearBottom]);
 
   return null;
 };
