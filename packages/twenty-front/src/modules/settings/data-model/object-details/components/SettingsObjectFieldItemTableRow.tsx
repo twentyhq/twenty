@@ -17,7 +17,12 @@ import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  IconMinus,
+  IconPlus,
+  useIcons,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
