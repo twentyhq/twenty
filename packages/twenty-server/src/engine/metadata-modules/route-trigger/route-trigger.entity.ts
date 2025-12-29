@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -9,9 +10,8 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { HTTPMethod } from 'twenty-shared/types';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 

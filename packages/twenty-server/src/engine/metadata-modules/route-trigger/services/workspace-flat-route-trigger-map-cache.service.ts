@@ -45,6 +45,7 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceCacheProv
         ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.routeTrigger)[],
       );
       const flatRouteTrigger = {
+        ...routeTriggerEntityWithoutRelations,
         createdAt: routeTriggerEntity.createdAt.toISOString(),
         updatedAt: routeTriggerEntity.updatedAt.toISOString(),
         universalIdentifier:

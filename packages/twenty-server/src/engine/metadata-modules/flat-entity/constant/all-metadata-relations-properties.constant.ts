@@ -1,4 +1,4 @@
-import { ExtractEntityRelatedSyncableEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-syncable-entity-properties.type';
+import { ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
@@ -127,11 +127,9 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
 } as const satisfies {
   [TName in AllMetadataName]: {
-    [P in ExtractEntityRelatedSyncableEntityProperties<
+    [P in ExtractEntityRelatedEntityProperties<
       MetadataEntity<TName>
     >]: true;
-  } & {
-    workspace: true;
-    application: true;
+    // TODO remove once viewSorts and viewFilterGroups have been migrated to v2
   } & Partial<Record<keyof MetadataEntity<TName>, true>>;
 };
