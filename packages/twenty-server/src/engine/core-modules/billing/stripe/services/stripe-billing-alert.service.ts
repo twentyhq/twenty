@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
@@ -12,7 +12,6 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 
 @Injectable()
 export class StripeBillingAlertService {
-  protected readonly logger = new Logger(StripeBillingAlertService.name);
   private readonly stripe: Stripe;
 
   constructor(
@@ -32,10 +31,12 @@ export class StripeBillingAlertService {
   async createUsageThresholdAlertForCustomerMeter(
     customerId: string,
     tierCap: number,
+    creditBalance: number = 0,
+    periodStart?: Date,
   ): Promise<void> {
     const meter = (await this.stripeBillingMeterService.getAllMeters()).find(
-      (meter) => {
-        return meter.event_name === BillingMeterEventName.WORKFLOW_NODE_RUN;
+      (meterItem) => {
+        return meterItem.event_name === BillingMeterEventName.WORKFLOW_NODE_RUN;
       },
     );
 
@@ -43,13 +44,21 @@ export class StripeBillingAlertService {
 
     await this.archiveAlertsForCustomer(customerId, meter.id);
 
-    const cumulativeUsage =
-      await this.stripeBillingMeterEventService.getTotalCumulativeUsage(
-        meter.id,
-        customerId,
-      );
+    // Use cumulative usage at period start to ensure consistent threshold
+    // regardless of when the alert is created/recreated during the period
+    const usageAtPeriodStart = periodStart
+      ? await this.stripeBillingMeterEventService.getCumulativeUsageAtTime(
+          meter.id,
+          customerId,
+          periodStart,
+        )
+      : await this.stripeBillingMeterEventService.getTotalCumulativeUsage(
+          meter.id,
+          customerId,
+        );
 
-    const dynamicThreshold = cumulativeUsage + tierCap;
+    // Threshold = usage at period start + allowance for this period
+    const dynamicThreshold = usageAtPeriodStart + tierCap + creditBalance;
 
     await this.stripe.billing.alerts.create({
       alert_type: 'usage_threshold',
@@ -66,10 +75,6 @@ export class StripeBillingAlertService {
         ],
       },
     });
-
-    this.logger.log(
-      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (cumulative=${cumulativeUsage} + tierCap=${tierCap})`,
-    );
   }
 
   private async archiveAlertsForCustomer(
@@ -91,7 +96,6 @@ export class StripeBillingAlertService {
 
     for (const alert of customerAlerts) {
       await this.stripe.billing.alerts.archive(alert.id);
-      this.logger.log(`Archived alert ${alert.id} for customer ${customerId}`);
     }
   }
 }

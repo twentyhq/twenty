@@ -91,6 +91,7 @@ export type FieldCurrencyMetadata = BaseFieldMetadata & {
   isPositive?: boolean;
   settings?: {
     format: FieldCurrencyFormat | null;
+    decimals?: number;
   };
 };
 
