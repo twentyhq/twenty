@@ -65,7 +65,11 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
-          configuration: null,
+          configuration: {
+            __typename: 'FieldsConfiguration',
+            configurationType: WidgetConfigurationType.FIELDS,
+            sections: [],
+          },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
@@ -158,6 +162,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'people',
             layout: 'FIELD',
           },
@@ -205,6 +210,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'name',
             layout: 'FIELD',
           },
