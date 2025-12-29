@@ -148,6 +148,44 @@ describe('getSortIconForFieldType', () => {
     });
   });
 
+  describe('value-based sort', () => {
+    it('should return IconSortAscending for VALUE_ASC', () => {
+      expect(
+        getSortIconForFieldType({
+          fieldType: FieldMetadataType.NUMBER,
+          orderBy: GraphOrderBy.VALUE_ASC,
+        }),
+      ).toBe(IconSortAscendingNumbers);
+    });
+
+    it('should return IconSortDescending for VALUE_DESC', () => {
+      expect(
+        getSortIconForFieldType({
+          fieldType: FieldMetadataType.NUMBER,
+          orderBy: GraphOrderBy.VALUE_DESC,
+        }),
+      ).toBe(IconSortDescendingNumbers);
+    });
+
+    it('should return IconSortAscending for VALUE_ASC with undefined field type', () => {
+      expect(
+        getSortIconForFieldType({
+          fieldType: undefined,
+          orderBy: GraphOrderBy.VALUE_ASC,
+        }),
+      ).toBe(IconSortAscending);
+    });
+
+    it('should return IconSortDescending for VALUE_DESC with undefined field type', () => {
+      expect(
+        getSortIconForFieldType({
+          fieldType: undefined,
+          orderBy: GraphOrderBy.VALUE_DESC,
+        }),
+      ).toBe(IconSortDescending);
+    });
+  });
+
   describe('default cases', () => {
     it('should return IconSortAscending for DATE field ascending', () => {
       expect(

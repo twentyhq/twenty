@@ -33,7 +33,8 @@ export const getSortIconForFieldType = ({
 }): IconComponent => {
   const isAscending =
     orderBy === GraphOrderBy.FIELD_ASC ||
-    orderBy === GraphOrderBy.FIELD_POSITION_ASC;
+    orderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+    orderBy === GraphOrderBy.VALUE_ASC;
 
   const isPositionSort =
     orderBy === GraphOrderBy.FIELD_POSITION_ASC ||
