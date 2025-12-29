@@ -18,8 +18,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
@@ -78,8 +78,8 @@ export class PageLayoutWidgetEntity
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: GridPosition;
 
-  @Column({ type: 'jsonb', nullable: true })
-  configuration: WidgetConfigurationInterface | null;
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: AllPageLayoutWidgetConfiguration;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

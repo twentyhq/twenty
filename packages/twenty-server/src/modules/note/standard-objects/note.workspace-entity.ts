@@ -101,9 +101,8 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     description: msg`The workspace member who last updated the record`,
   })
-  @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()
-  updatedBy: ActorMetadata | null;
+  updatedBy: ActorMetadata;
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,

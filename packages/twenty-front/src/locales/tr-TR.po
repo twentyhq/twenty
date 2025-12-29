@@ -204,6 +204,13 @@ msgstr "{objectLabelPlural} içinde {totalCount} üzerinden {currentRank}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} gün} other {{days} günler}}"
 
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
+
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1127,6 +1134,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr "Soruları özel temsilcilere yönlendirmek için kullanılan ajanlar"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1912,6 +1920,11 @@ msgstr "Arka plan"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
 msgstr "Arka Plan Renkleri"
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
 
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
@@ -5589,6 +5602,7 @@ msgid "Functions - Settings"
 msgstr "Fonksiyonlar - Ayarlar"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "Gösterge Grafiği"
@@ -5925,6 +5939,7 @@ msgid "Home"
 msgstr "Ana sayfa"
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -6046,6 +6061,11 @@ msgstr "Bu anahtarı kaybettiyseniz, yeniden oluşturabilirsiniz ancak bu anahta
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iÇerik"
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
+msgstr ""
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -6827,6 +6847,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "Çizgi Grafiği"
@@ -8153,6 +8174,7 @@ msgstr "Sayı formatı"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "Ondalık basamak sayısı"
 
@@ -8759,6 +8781,7 @@ msgid "Picture"
 msgstr "Resim"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "Pasta Grafiği"
@@ -9532,6 +9555,7 @@ msgid "Revoked for this object"
 msgstr "Bu nesne için iptal edildi"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9589,6 +9613,11 @@ msgstr "Rol başarıyla güncellendi"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Roller"
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -11449,6 +11478,11 @@ msgstr "Araç oluşturma"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11739,6 +11773,11 @@ msgstr "birim"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "Bilinmiyor"
+
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
+msgstr ""
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -12074,6 +12113,7 @@ msgid "Version of the application"
 msgstr "Uygulamanın versiyonu"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""

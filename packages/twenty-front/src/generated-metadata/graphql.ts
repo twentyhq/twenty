@@ -149,12 +149,12 @@ export type AggregateChartConfiguration = {
   __typename?: 'AggregateChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   format?: Maybe<Scalars['String']>;
-  graphType: GraphType;
   label?: Maybe<Scalars['String']>;
   prefix?: Maybe<Scalars['String']>;
   ratioAggregateConfig?: Maybe<RatioAggregateConfig>;
@@ -351,14 +351,15 @@ export type BarChartConfiguration = {
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
-  graphType: GraphType;
   groupMode?: Maybe<BarChartGroupMode>;
   isCumulative?: Maybe<Scalars['Boolean']>;
+  layout: BarChartLayout;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
@@ -379,6 +380,12 @@ export enum BarChartGroupMode {
   STACKED = 'STACKED'
 }
 
+/** Layout orientation for bar charts */
+export enum BarChartLayout {
+  HORIZONTAL = 'HORIZONTAL',
+  VERTICAL = 'VERTICAL'
+}
+
 export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
@@ -388,6 +395,8 @@ export type Billing = {
 
 export type BillingEndTrialPeriodOutput = {
   __typename?: 'BillingEndTrialPeriodOutput';
+  /** Billing portal URL for payment method update (returned when no payment method exists) */
+  billingPortalUrl?: Maybe<Scalars['String']>;
   /** Boolean that confirms if a payment method was found */
   hasPaymentMethod: Scalars['Boolean'];
   /** Updated subscription status */
@@ -418,6 +427,8 @@ export type BillingMeteredProductUsageOutput = {
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
+  rolloverCredits: Scalars['Float'];
+  totalGrantedCredits: Scalars['Float'];
   unitPriceCents: Scalars['Float'];
   usedCredits: Scalars['Float'];
 };
@@ -895,12 +906,12 @@ export type CreatePageLayoutTabInput = {
 };
 
 export type CreatePageLayoutWidgetInput = {
-  configuration?: InputMaybe<Scalars['JSON']>;
+  configuration: Scalars['JSON'];
   gridPosition: GridPositionInput;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
   title: Scalars['String'];
-  type?: InputMaybe<WidgetType>;
+  type: WidgetType;
 };
 
 export type CreateRemoteServerInput = {
@@ -1472,11 +1483,11 @@ export type GaugeChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
-  graphType: GraphType;
   timezone?: Maybe<Scalars['String']>;
 };
 
@@ -1513,16 +1524,6 @@ export enum GraphOrderBy {
   FIELD_DESC = 'FIELD_DESC',
   VALUE_ASC = 'VALUE_ASC',
   VALUE_DESC = 'VALUE_DESC'
-}
-
-/** Type of graph widget */
-export enum GraphType {
-  AGGREGATE = 'AGGREGATE',
-  GAUGE = 'GAUGE',
-  HORIZONTAL_BAR = 'HORIZONTAL_BAR',
-  LINE = 'LINE',
-  PIE = 'PIE',
-  VERTICAL_BAR = 'VERTICAL_BAR'
 }
 
 export type GridPosition = {
@@ -1563,6 +1564,7 @@ export enum IdentityProviderType {
 
 export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
+  configurationType: WidgetConfigurationType;
   url?: Maybe<Scalars['String']>;
 };
 
@@ -1716,12 +1718,12 @@ export type LineChartConfiguration = {
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
-  graphType: GraphType;
   isCumulative?: Maybe<Scalars['Boolean']>;
   isStacked?: Maybe<Scalars['Boolean']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
@@ -1956,7 +1958,6 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: SignedFile;
   uploadImage: SignedFile;
-  uploadProfilePicture: SignedFile;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
@@ -2846,11 +2847,6 @@ export type MutationUploadImageArgs = {
 };
 
 
-export type MutationUploadProfilePictureArgs = {
-  file: Scalars['Upload'];
-};
-
-
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
 };
@@ -3128,7 +3124,7 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  configuration?: Maybe<WidgetConfiguration>;
+  configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
@@ -3179,13 +3175,13 @@ export type PieChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
+  configurationType: WidgetConfigurationType;
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
-  graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   hideEmptyCategory?: Maybe<Scalars['Boolean']>;
@@ -3731,11 +3727,6 @@ export type RatioAggregateConfig = {
   optionValue: Scalars['String'];
 };
 
-export type RatioAggregateConfigInput = {
-  fieldMetadataId: Scalars['UUID'];
-  optionValue: Scalars['String'];
-};
-
 export type Relation = {
   __typename?: 'Relation';
   sourceFieldMetadata: Field;
@@ -4041,6 +4032,7 @@ export type SignedFile = {
 export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextV2Body;
+  configurationType: WidgetConfigurationType;
 };
 
 export type StandardOverrides = {
@@ -4799,6 +4791,29 @@ export type Webhook = {
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
 
+export enum WidgetConfigurationType {
+  AGGREGATE_CHART = 'AGGREGATE_CHART',
+  BAR_CHART = 'BAR_CHART',
+  CALENDAR = 'CALENDAR',
+  EMAILS = 'EMAILS',
+  FIELD = 'FIELD',
+  FIELDS = 'FIELDS',
+  FIELD_RICH_TEXT = 'FIELD_RICH_TEXT',
+  FILES = 'FILES',
+  GAUGE_CHART = 'GAUGE_CHART',
+  IFRAME = 'IFRAME',
+  LINE_CHART = 'LINE_CHART',
+  NOTES = 'NOTES',
+  PIE_CHART = 'PIE_CHART',
+  STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT',
+  TASKS = 'TASKS',
+  TIMELINE = 'TIMELINE',
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
+  WORKFLOW_VERSION = 'WORKFLOW_VERSION'
+}
+
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
   EMAILS = 'EMAILS',
@@ -5438,7 +5453,7 @@ export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession
 export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean } };
+export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean, billingPortalUrl?: string | null } };
 
 export type SetMeteredSubscriptionPriceMutationVariables = Exact<{
   priceId: Scalars['String'];
@@ -5467,7 +5482,7 @@ export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSes
 export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, unitPriceCents: number }> };
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
 
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6115,13 +6130,6 @@ export type DeleteUserWorkspaceMutationVariables = Exact<{
 
 
 export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserFromWorkspace: { __typename?: 'UserWorkspace', id: string } };
-
-export type UploadProfilePictureMutationVariables = Exact<{
-  file: Scalars['Upload'];
-}>;
-
-
-export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'SignedFile', path: string, token: string } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -9127,6 +9135,7 @@ export const EndSubscriptionTrialPeriodDocument = gql`
   endSubscriptionTrialPeriod {
     status
     hasPaymentMethod
+    billingPortalUrl
   }
 }
     `;
@@ -9311,6 +9320,8 @@ export const GetMeteredProductsUsageDocument = gql`
     productKey
     usedCredits
     grantedCredits
+    rolloverCredits
+    totalGrantedCredits
     unitPriceCents
   }
 }
@@ -12745,40 +12756,6 @@ export function useDeleteUserWorkspaceMutation(baseOptions?: Apollo.MutationHook
 export type DeleteUserWorkspaceMutationHookResult = ReturnType<typeof useDeleteUserWorkspaceMutation>;
 export type DeleteUserWorkspaceMutationResult = Apollo.MutationResult<DeleteUserWorkspaceMutation>;
 export type DeleteUserWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
-export const UploadProfilePictureDocument = gql`
-    mutation UploadProfilePicture($file: Upload!) {
-  uploadProfilePicture(file: $file) {
-    path
-    token
-  }
-}
-    `;
-export type UploadProfilePictureMutationFn = Apollo.MutationFunction<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
-
-/**
- * __useUploadProfilePictureMutation__
- *
- * To run a mutation, you first call `useUploadProfilePictureMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadProfilePictureMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadProfilePictureMutation, { data, loading, error }] = useUploadProfilePictureMutation({
- *   variables: {
- *      file: // value for 'file'
- *   },
- * });
- */
-export function useUploadProfilePictureMutation(baseOptions?: Apollo.MutationHookOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>(UploadProfilePictureDocument, options);
-      }
-export type UploadProfilePictureMutationHookResult = ReturnType<typeof useUploadProfilePictureMutation>;
-export type UploadProfilePictureMutationResult = Apollo.MutationResult<UploadProfilePictureMutation>;
-export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {

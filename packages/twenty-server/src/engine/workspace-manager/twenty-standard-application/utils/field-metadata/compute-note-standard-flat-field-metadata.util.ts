@@ -191,7 +191,12 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       description: 'The workspace member who last updated the record',
       icon: 'IconUserCircle',
       isUIReadOnly: true,
-      isNullable: true,
+      isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -46,7 +46,7 @@
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
-    "@monaco-editor/react": "^4.6.0",
+    "@monaco-editor/react": "^4.7.0",
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",

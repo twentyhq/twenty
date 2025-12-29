@@ -1,34 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
-import { BackfillUpdatedByViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-view-fields.command';
+import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
+import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      ObjectMetadataEntity,
-      ViewEntity,
-      ViewFieldEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, PageLayoutWidgetEntity]),
     DataSourceModule,
-    FieldMetadataModule,
-    ViewFieldModule,
+    WorkspaceSchemaManagerModule,
     WorkspaceCacheModule,
   ],
   providers: [
-    BackfillUpdatedByFieldCommand,
-    BackfillUpdatedByViewFieldsCommand,
+    MigratePageLayoutWidgetConfigurationCommand,
+    FixNanPositionValuesInNotesCommand,
   ],
-  exports: [BackfillUpdatedByFieldCommand, BackfillUpdatedByViewFieldsCommand],
+  exports: [
+    MigratePageLayoutWidgetConfigurationCommand,
+    FixNanPositionValuesInNotesCommand,
+  ],
 })
 export class V1_15_UpgradeVersionCommandModule {}

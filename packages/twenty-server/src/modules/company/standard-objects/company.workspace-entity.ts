@@ -175,9 +175,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     description: msg`The workspace member who last updated the record`,
   })
-  @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()
-  updatedBy: ActorMetadata | null;
+  updatedBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({

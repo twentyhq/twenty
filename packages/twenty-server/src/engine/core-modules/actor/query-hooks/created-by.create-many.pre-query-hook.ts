@@ -36,7 +36,7 @@ export class CreatedByCreateManyPreQueryHook
 
     return {
       ...payload,
-      data: await this.actorFromAuthContextService.injectCreatedBy({
+      data: await this.actorFromAuthContextService.injectActorFieldsOnCreate({
         records: payload.data,
         objectMetadataNameSingular: objectName,
         authContext,

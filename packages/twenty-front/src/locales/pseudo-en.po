@@ -199,6 +199,13 @@ msgstr ""
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr ""
 
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
+
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1122,6 +1129,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr ""
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1906,6 +1914,11 @@ msgstr ""
 #. js-lingui-id: Hv/jpu
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
+msgstr ""
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
 msgstr ""
 
 #. js-lingui-id: EmSrGB
@@ -5584,6 +5597,7 @@ msgid "Functions - Settings"
 msgstr ""
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr ""
@@ -5920,6 +5934,7 @@ msgid "Home"
 msgstr ""
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -6040,6 +6055,11 @@ msgstr ""
 #. js-lingui-id: KDMdBi
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
+msgstr ""
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
 msgstr ""
 
 #. js-lingui-id: hiXeBh
@@ -6822,6 +6842,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr ""
@@ -8148,6 +8169,7 @@ msgstr ""
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr ""
 
@@ -8754,6 +8776,7 @@ msgid "Picture"
 msgstr ""
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr ""
@@ -9527,6 +9550,7 @@ msgid "Revoked for this object"
 msgstr ""
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9583,6 +9607,11 @@ msgstr ""
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
+msgstr ""
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
 msgstr ""
 
 #. js-lingui-id: uJc01W
@@ -11444,6 +11473,11 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11733,6 +11767,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
+msgstr ""
+
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
 msgstr ""
 
 #. js-lingui-id: 29VNqC
@@ -12069,6 +12108,7 @@ msgid "Version of the application"
 msgstr ""
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""

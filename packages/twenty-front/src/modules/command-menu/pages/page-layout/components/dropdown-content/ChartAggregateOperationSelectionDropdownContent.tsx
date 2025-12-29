@@ -3,9 +3,7 @@ import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/p
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { isAggregateChartConfiguration } from '@/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
@@ -42,13 +40,19 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
 
   const configuration = widgetInEditMode?.configuration;
 
-  const isAggregateChart = isAggregateChartConfiguration(configuration);
+  const isAggregateChart = isWidgetConfigurationOfType(
+    configuration,
+    'AggregateChartConfiguration',
+  );
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
 
-  if (
-    !isBarOrLineChartConfiguration(configuration) &&
-    !isAggregateChart &&
-    !isPieChartConfiguration(configuration)
-  ) {
+  if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
     throw new Error('Invalid configuration type');
   }
 

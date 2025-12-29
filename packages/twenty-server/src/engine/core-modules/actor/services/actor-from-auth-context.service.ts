@@ -46,6 +46,26 @@ export class ActorFromAuthContextService {
     });
   }
 
+  async injectActorFieldsOnCreate({
+    records,
+    objectMetadataNameSingular,
+    authContext,
+  }: InjectActorParams): Promise<RecordInput[]> {
+    const recordsWithCreatedBy = await this.injectActorField({
+      records,
+      objectMetadataNameSingular,
+      authContext,
+      fieldName: 'createdBy',
+    });
+
+    return await this.injectActorField({
+      records: recordsWithCreatedBy,
+      objectMetadataNameSingular,
+      authContext,
+      fieldName: 'updatedBy',
+    });
+  }
+
   async injectUpdatedBy({
     records,
     objectMetadataNameSingular,

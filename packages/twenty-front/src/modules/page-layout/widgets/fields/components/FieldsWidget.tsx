@@ -4,7 +4,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -18,6 +17,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
 import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellHoveredPortal';
+import { FieldsWidgetSectionContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetSectionContainer';
 import { useFieldsWidgetSectionsWithIndices } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetSectionsWithIndices';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -112,7 +112,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           }}
         >
           {sectionsWithFieldIndices.map((section) => (
-            <RecordDetailSectionContainer
+            <FieldsWidgetSectionContainer
               key={section.id}
               title={section.title}
             >
@@ -182,7 +182,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                   </>
                 )}
               </PropertyBox>
-            </RecordDetailSectionContainer>
+            </FieldsWidgetSectionContainer>
           ))}
 
           <FieldsWidgetCellHoveredPortal

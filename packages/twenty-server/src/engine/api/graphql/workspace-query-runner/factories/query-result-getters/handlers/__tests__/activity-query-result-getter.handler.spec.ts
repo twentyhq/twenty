@@ -20,7 +20,12 @@ const baseNote = {
     workspaceMemberId: '1',
     context: {},
   },
-  updatedBy: null,
+  updatedBy: {
+    name: 'Test',
+    source: FieldActorSource.MANUAL,
+    workspaceMemberId: '1',
+    context: {},
+  },
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
   noteTargets: [],
