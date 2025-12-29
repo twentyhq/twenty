@@ -4,7 +4,7 @@ test('Create Industry Select Field', async ({ page }) => {
     await page.getByRole('link', { name: 'Settings' }).click();
     await page.getByRole('link', { name: 'Data model' }).click();
     await page.getByRole('link', { name: 'Opportunities' }).click();
-    await page.getByRole('button', { name: 'Add Field' }).click();
+    await page.getByRole('button', { name: 'New Field' }).click();
     await page.getByRole('link', { name: 'Select', exact: true }).click();
     await page.getByRole('textbox', { name: 'Employees' }).click();
     await page.getByRole('textbox', { name: 'Employees' }).fill('Industry');
