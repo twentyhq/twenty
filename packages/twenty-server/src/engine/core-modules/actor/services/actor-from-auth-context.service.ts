@@ -38,11 +38,19 @@ export class ActorFromAuthContextService {
     objectMetadataNameSingular,
     authContext,
   }: InjectActorParams): Promise<RecordInput[]> {
-    return this.injectActorField({
+    // On record creation, both createdBy and updatedBy should be set to the same actor
+    const recordsWithCreatedBy = await this.injectActorField({
       records,
       objectMetadataNameSingular,
       authContext,
       fieldName: 'createdBy',
+    });
+
+    return this.injectActorField({
+      records: recordsWithCreatedBy,
+      objectMetadataNameSingular,
+      authContext,
+      fieldName: 'updatedBy',
     });
   }
 
