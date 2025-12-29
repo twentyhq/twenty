@@ -11402,7 +11402,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@monaco-editor/react@npm:^4.6.0":
+"@monaco-editor/react@npm:^4.7.0":
   version: 4.7.0
   resolution: "@monaco-editor/react@npm:4.7.0"
   dependencies:
@@ -56622,7 +56622,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
-    "@monaco-editor/react": "npm:^4.6.0"
+    "@monaco-editor/react": "npm:^4.7.0"
     "@nivo/bar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
@@ -57008,7 +57008,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@linaria/react": "npm:^6.2.1"
-    "@monaco-editor/react": "npm:^4.6.0"
+    "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@swc/plugin-emotion": "npm:10.0.4"
