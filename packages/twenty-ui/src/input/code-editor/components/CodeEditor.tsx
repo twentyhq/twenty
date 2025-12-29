@@ -143,7 +143,7 @@ export const CodeEditor = ({
       <StyledEditor
         height={height}
         variant={variant}
-        value={isLoading ? '' : value}
+        value={value}
         language={language}
         loading=""
         transparentBackground={transparentBackground}
