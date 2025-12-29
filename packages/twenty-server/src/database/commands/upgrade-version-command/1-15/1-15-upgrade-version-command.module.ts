@@ -10,20 +10,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      PageLayoutWidgetEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, PageLayoutWidgetEntity]),
     DataSourceModule,
     WorkspaceSchemaManagerModule,
     WorkspaceCacheModule,
   ],
-  providers: [
-    MigratePageLayoutWidgetConfigurationCommand,
-  ],
-  exports: [
-    MigratePageLayoutWidgetConfigurationCommand,
-  ],
+  providers: [MigratePageLayoutWidgetConfigurationCommand],
+  exports: [MigratePageLayoutWidgetConfigurationCommand],
 })
 export class V1_15_UpgradeVersionCommandModule {}
-
