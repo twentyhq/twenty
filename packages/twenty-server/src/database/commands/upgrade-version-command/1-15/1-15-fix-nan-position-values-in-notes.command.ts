@@ -10,11 +10,10 @@ import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Command({
   name: 'upgrade:1-15:fix-nan-position-values-in-notes',
-  description: 'Fix NaN position values in notes by replacing them with 0',
+  description: 'Fix NaN position values in notes by replacing them with 2',
 })
 export class FixNanPositionValuesInNotesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(
@@ -43,22 +42,21 @@ export class FixNanPositionValuesInNotesCommand extends ActiveOrSuspendedWorkspa
       );
     }
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
     if (isDryRun) {
       this.logger.log('Dry run mode: No changes will be applied');
     }
 
     try {
       // Count NaN position values in notes
-      const countResult = await dataSource.query(
-        `SELECT COUNT(*) as count FROM "${schemaName}"."note" WHERE "position" = 'NaN'::float8`,
-        [],
-        undefined,
+      const noteRepository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'note',
         { shouldBypassPermissionChecks: true },
       );
 
-      const nanCount = parseInt(countResult[0]?.count || '0', 10);
+      const nanCount = await noteRepository.count({
+        where: { position: 'NaN' },
+      });
 
       this.logger.log(
         `Found ${nanCount} note(s) with NaN position values in workspace ${workspaceId}`,
@@ -72,12 +70,12 @@ export class FixNanPositionValuesInNotesCommand extends ActiveOrSuspendedWorkspa
 
       if (!isDryRun) {
         // Update NaN position values to 2 because 1 is first position
-        await dataSource.query(
-          `UPDATE "${schemaName}"."note" SET "position" = 2 WHERE "position" = 'NaN'::float8`,
-          [],
-          undefined,
-          { shouldBypassPermissionChecks: true },
-        );
+        await noteRepository
+          .createQueryBuilder()
+          .update()
+          .set({ position: 2 })
+          .where('position = :nanString', { nanString: 'NaN' })
+          .execute();
 
         this.logger.log(
           `Fixed ${nanCount} NaN position value(s) in notes for workspace ${workspaceId}`,

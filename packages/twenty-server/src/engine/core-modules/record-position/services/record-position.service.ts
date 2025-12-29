@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { sanitizeNumber } from 'src/engine/utils/sanitize-number.utli';
 
 export type RecordPositionServiceCreateArgs = {
   value: number | 'first' | 'last';
@@ -229,7 +230,7 @@ export class RecordPositionService {
         },
       );
 
-    return this.sanitizePositionValue(result);
+    return sanitizeNumber(result);
   }
 
   private async findMaxPosition(
@@ -254,14 +255,6 @@ export class RecordPositionService {
         },
       );
 
-    return this.sanitizePositionValue(result);
-  }
-
-  private sanitizePositionValue(value: number | null): number | null {
-    if (!isDefined(value) || Number.isNaN(value)) {
-      return null;
-    }
-
-    return value;
+    return sanitizeNumber(result);
   }
 }
