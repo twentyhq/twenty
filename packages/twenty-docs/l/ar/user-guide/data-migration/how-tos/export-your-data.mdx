@@ -1,209 +1,209 @@
 ---
-title: Export Your Data
-description: Complete step-by-step guide to exporting data from Twenty.
+title: تصدير بياناتك
+description: دليل كامل خطوة بخطوة لتصدير البيانات من Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## نظرة عامة
 
-Export your workspace data to CSV for backups, reporting, or migration.
+صدّر بيانات مساحة العمل الخاصة بك إلى CSV لأغراض النسخ الاحتياطي أو إعداد التقارير أو الترحيل.
 
 **حالات الاستخدام:**
 
-* **Regular backups** — keep copies of your data
-* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
-* **Migration** — move data to another system
-* **Bulk updates** — export, edit, and re-import to update records
+* **نسخ احتياطية منتظمة** — احتفظ بنسخ من بياناتك
+* **تقارير خارجية** — حلّل البيانات في Excel وGoogle Sheets أو أدوات ذكاء الأعمال (BI)
+* **الترحيل** — انقل البيانات إلى نظام آخر
+* **تحديثات دفعيّة** — صدّر، ثم حرّر وأعد الاستيراد لتحديث السجلات
 
-## What You Need to Know
+## ما تحتاج إلى معرفته
 
-### Export Limits
+### حدود التصدير
 
-* **Maximum 20,000 records** per export
-* Only **visible columns** are exported
-* Only **filtered records** are exported (based on your current view)
+* **حد أقصى 20,000 سجل** لكل عملية تصدير
+* يتم تصدير **الأعمدة المرئية** فقط
+* يتم تصدير **السجلات المصفّاة** فقط (استنادًا إلى العرض الحالي لديك)
 
-<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/ar/developers/extend/capabilities/apis).</Note>
+<Note>بالنسبة لعمليات التصدير الأكبر (أكثر من 20,000 سجل)، استخدم عوامل التصفية للتصدير على دفعات أو استخدم [واجهة برمجة التطبيقات (API)](/l/ar/developers/extend/capabilities/apis).</Note>
 
 ### الصلاحيات
 
-You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+تحتاج إلى صلاحية **"تصدير CSV"** لتصدير البيانات. تواصل مع مشرف مساحة العمل إذا لم يكن هذا الخيار متاحًا لديك.
 
-## Step 1: Navigate to the Object
+## الخطوة 1: الانتقال إلى الكائن
 
-Go to the object you want to export:
+اذهب إلى الكائن الذي تريد تصديره:
 
-* **People** — for contacts
-* **Companies** — for organizations
-* **Opportunities** — for deals
-* **Custom objects** — any object you've created
+* **الأشخاص** — لجهات الاتصال
+* **الشركات** — للمؤسسات
+* **الفرص** — للصفقات
+* **كائنات مخصصة** — أي كائن قمت بإنشائه
 
-## Step 2: Configure Your View
+## الخطوة 2: تهيئة العرض الخاص بك
 
-**Important:** The export includes only what's visible in your current view.
+**مهم:** يتضمن التصدير فقط ما هو مرئي في عرضك الحالي.
 
-### Add/Remove Columns
+### إضافة/إزالة الأعمدة
 
-1. Click **Options → Fields** (or the **+** at the end of columns)
-2. Check the fields you want to export
-3. Uncheck fields you don't need
+1. انقر **الخيارات → الحقول** (أو **+** في نهاية الأعمدة)
+2. حدّد الحقول التي تريد تصديرها
+3. ألغ تحديد الحقول التي لا تحتاجها
 
-### Filter Records (Optional)
+### تصفية السجلات (اختياري)
 
-If you only need a subset of data:
+إذا كنت تحتاج فقط إلى مجموعة فرعية من البيانات:
 
-1. Click **Filter**
-2. Add filter conditions (e.g., "Created date > January 1, 2024")
-3. Only matching records will be exported
+1. انقر على **تصفية**
+2. أضف شروط التصفية (مثال: "تاريخ الإنشاء > 1 يناير 2024")
+3. سيتم تصدير السجلات المطابقة فقط
 
-### Sort Records (Optional)
+### فرز السجلات (اختياري)
 
-1. Click a column header to sort
-2. The export will follow your sort order
+1. انقر على عنوان عمود للفرز
+2. سيتبع التصدير ترتيب الفرز الذي اخترته
 
-<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+<Note>**أنشئ عرضًا مخصصًا للتصدير.** احفظ عرضًا مُهيّأً خصيصًا لعمليات التصدير حتى لا تحتاج إلى إعادة التهيئة في كل مرة.</Note>
 
-## Step 3: Export the Data
+## الخطوة 3: تصدير البيانات
 
-1. Click the **⋮** icon on the top right of the table
-2. Select **Export view**
-3. Choose where to save the CSV file
-4. Wait for the download to complete
+1. انقر على أيقونة **⋮** في أعلى يمين الجدول
+2. حدد **تصدير العرض**
+3. اختر مكان حفظ ملف CSV
+4. انتظر حتى يكتمل التنزيل
 
-## What Gets Exported
+## ما الذي يتم تصديره
 
-| Included                         | Not Included           |
-| -------------------------------- | ---------------------- |
-| All visible columns              | Hidden columns         |
-| Records matching current filters | Filtered-out records   |
-| Custom field values              | Fields not in the view |
-| Record IDs                       | File attachments       |
-| Relation IDs                     | Images                 |
+| متضمن                                   | غير متضمن                    |
+| --------------------------------------- | ---------------------------- |
+| جميع الأعمدة المرئية                    | الأعمدة المخفية              |
+| السجلات المطابقة لعوامل التصفية الحالية | السجلات المُستبعدة بالتصفية  |
+| قيم الحقول المخصصة                      | الحقول غير الموجودة في العرض |
+| معرّفات السجلات                         | مرفقات الملفات               |
+| معرّفات العلاقات                        | الصور                        |
 
 ### حقول العلاقات
 
-Relation IDs are only exported on the **"many" side** of a relationship:
+يتم تصدير معرّفات العلاقات فقط على جانب "المتعدد" من العلاقة:
 
-* **People export** includes a `companyId` column (People → Company relation)
-* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+* **تصدير الأشخاص** يتضمن عمود `companyId` (علاقة الأشخاص → الشركة)
+* **تصدير الشركات** لا يتضمن `peopleIds` (الشركات هي جانب "الواحد")
 
-This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+هذا يعني أنه يمكنك استخدام تصدير الأشخاص لإعادة الاستيراد والحفاظ على رابط الشركة، لكن ستحتاج إلى إعادة استيراد الأشخاص بعد الشركات لإعادة إنشاء العلاقات.
 
-## Exporting for Specific Purposes
+## التصدير لأغراض محددة
 
-### For Backups
+### للنسخ الاحتياطي
 
-1. Create a view with **all fields** visible
-2. Remove all filters to include all records
-3. Export each object type separately
-4. Store exports in a secure location
-5. Set a recurring reminder (weekly/monthly)
+1. أنشئ عرضًا تكون فيه **جميع الحقول** مرئية
+2. أزل جميع عوامل التصفية لتضمين كل السجلات
+3. صدّر كل نوع من الكائنات على حدة
+4. احفظ ملفات التصدير في موقع آمن
+5. عيّن تذكيرًا متكررًا (أسبوعي/شهري)
 
-### For External Reporting
+### للتقارير الخارجية
 
-1. Include only the fields you need for analysis
-2. Apply filters to focus on relevant data
-3. Consider sorting by the field you'll analyze
+1. ضمّن فقط الحقول التي تحتاجها للتحليل
+2. طبّق عوامل تصفية للتركيز على البيانات ذات الصلة
+3. فكّر في الفرز حسب الحقل الذي ستقوم بتحليله
 
-### For Bulk Updates
+### للتحديثات الدفعيّة
 
-1. Export the records you want to update
-2. Include the unique identifier (`email`, `domain`, or `id`)
-3. Edit the exported file
-4. Re-import to update records
-   See: [How to Update Existing Records](/l/ar/user-guide/data-migration/how-tos/update-existing-records-via-import)
+1. صدّر السجلات التي تريد تحديثها
+2. ضمّن المعرّف الفريد (`email`، `domain`، أو `id`)
+3. حرّر الملف المُصدَّر
+4. أعد الاستيراد لتحديث السجلات
+   راجع: [كيفية تحديث السجلات الموجودة](/l/ar/user-guide/data-migration/how-tos/update-existing-records-via-import)
 
-### For Migration
+### للترحيل
 
-If you're exporting to migrate to another system:
+إذا كنت تقوم بالتصدير للترحيل إلى نظام آخر:
 
-1. **Export each object separately** — People, Companies, Opportunities, etc.
-2. **Include ID fields** — these help maintain relationships
-3. **Document field mappings** — note how Twenty fields map to your target system
+1. **صدّر كل كائن على حدة** — الأشخاص، الشركات، الفرص، إلخ.
+2. **ضمّن حقول المعرّف** — فهي تساعد في الحفاظ على العلاقات
+3. **وَثِّق مطابقة الحقول** — دوّن كيفية توافق حقول Twenty مع نظامك المستهدف
 
-## Handling Large Datasets (20,000+ Records)
+## التعامل مع مجموعات بيانات كبيرة (أكثر من 20,000 سجل)
 
-The export limit is 20,000 records. For larger datasets:
+حد التصدير هو 20,000 سجل. بالنسبة لمجموعات البيانات الأكبر:
 
-### Option 1: Export in Batches
+### الخيار 1: التصدير على دفعات
 
-1. Add a filter (e.g., "Created date" ranges)
-2. Export the first batch
-3. Change the filter
-4. Export the next batch
-5. Combine files in your spreadsheet
+1. أضف عامل تصفية (مثال: نطاقات "تاريخ الإنشاء")
+2. صدّر الدفعة الأولى
+3. غيِّر عامل التصفية
+4. صدّر الدفعة التالية
+5. ادمج الملفات في تطبيق جداول البيانات لديك
 
-**Example filters for batching:**
+**أمثلة لعوامل التصفية للتجميع على دفعات:**
 
-* By date range (January, February, March...)
-* By owner (Team member A, Team member B...)
-* By status (Active, Inactive...)
+* حسب النطاق الزمني (يناير، فبراير، مارس...)
+* حسب المالك (عضو الفريق أ، عضو الفريق ب...)
+* حسب الحالة (نشط، غير نشط...)
 
-### Option 2: Use the API
+### الخيار 2: استخدام واجهة برمجة التطبيقات (API)
 
-The API has no record limit:
+لا يوجد حد للسجلات في واجهة برمجة التطبيقات (API):
 
-1. Get your API key from **Settings → Developers**
-2. Use the GraphQL API to query records
-3. Process results in your application
+1. احصل على مفتاح API من **الإعدادات → المطوّرون**
+2. استخدم واجهة برمجة تطبيقات GraphQL للاستعلام عن السجلات
+3. عالج النتائج في تطبيقك
 
-See: [API Documentation](/l/ar/developers/extend/capabilities/apis)
+راجع: [وثائق واجهة برمجة التطبيقات (API)](/l/ar/developers/extend/capabilities/apis)
 
-## Tips and Best Practices
+## نصائح وأفضل الممارسات
 
-### Create Export Views
+### إنشاء عروض للتصدير
 
-Save views configured specifically for exports:
+احفظ عروضًا مُهيّأة خصيصًا لعمليات التصدير:
 
-1. Configure columns and filters
-2. Click **View options** → **Save as new view**
-3. Name it "Export - [Purpose]"
+1. هيّئ الأعمدة وعوامل التصفية
+2. انقر **خيارات العرض** → **حفظ كعرض جديد**
+3. سمّه "تصدير - [الغرض]"
 
-### Secure Your Exports
+### أمّن عمليات التصدير الخاصة بك
 
-Exported files may contain sensitive data:
+قد تحتوي ملفات التصدير على بيانات حساسة:
 
-* Store in secure locations
-* Delete old exports when no longer needed
-* Be careful sharing export files
+* احفظها في مواقع آمنة
+* احذف عمليات التصدير القديمة عندما لا تعود مطلوبة
+* كن حذرًا عند مشاركة ملفات التصدير
 
-### Check Before Exporting
+### تحقّق قبل التصدير
 
-<Check>Correct columns are visible</Check>
-<Check>Filters are set correctly (or removed for full export)</Check>
-<Check>You have Export permission</Check>
+<Check>الأعمدة الصحيحة مرئية</Check>
+<Check>تم ضبط عوامل التصفية بشكل صحيح (أو تمت إزالتها للتصدير الكامل)</Check>
+<Check>لديك صلاحية التصدير</Check>
 
-## FAQ
+## الأسئلة الشائعة
 
 <AccordionGroup>
-  <Accordion title="Why are some columns missing from my export?">
-    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  <Accordion title="لماذا تفتقد عملية التصدير بعض الأعمدة؟">
+    يتم تصدير الأعمدة المرئية فقط. أضف الأعمدة التي تحتاجها عبر **الخيارات → الحقول** قبل التصدير.
   </Accordion>
 
-  <Accordion title="Why doesn't my export have all records?">
-    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  <Accordion title="لماذا لا تحتوي عملية التصدير على جميع السجلات؟">
+    تحقّق من عوامل التصفية لديك. يتضمن التصدير فقط السجلات التي تطابق عوامل التصفية في عرضك الحالي. أزل عوامل التصفية لتصدير جميع السجلات.
   </Accordion>
 
-  <Accordion title="Can I export more than 20,000 records?">
-    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  <Accordion title="هل يمكنني تصدير أكثر من 20,000 سجل؟">
+    ليس في عملية تصدير واحدة. استخدم عوامل التصفية للتصدير على دفعات، أو استخدم واجهة برمجة التطبيقات (API) لمجموعات البيانات الأكبر.
   </Accordion>
 
-  <Accordion title="What format is the export file?">
-    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  <Accordion title="ما صيغة ملف التصدير؟">
+    CSV (قيم مفصولة بفواصل). يفتح في Excel أو Google Sheets أو أي تطبيق لجداول البيانات.
   </Accordion>
 
-  <Accordion title="Are relation IDs included?">
-    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  <Accordion title="هل يتم تضمين معرّفات العلاقات؟">
+    نعم، ولكن فقط على جانب "المتعدد" من العلاقات. على سبيل المثال، يتضمن تصدير الأشخاص `companyId`، بينما لا يتضمن تصدير الشركات معرّفات الأشخاص.
   </Accordion>
 
-  <Accordion title="Can I automate exports?">
-    Not directly through the UI. Use the API to build automated export workflows.
+  <Accordion title="هل يمكنني أتمتة عمليات التصدير؟">
+    ليس مباشرة عبر واجهة المستخدم. استخدم واجهة برمجة التطبيقات (API) لبناء عمليات سير عمل تصدير مؤتمتة.
   </Accordion>
 </AccordionGroup>
 
 ## الخطوات التالية
 
-* [How to Update Existing Records](/l/ar/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
-* [How to Import Data via API](/l/ar/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
-* [API Documentation](/l/ar/developers/extend/capabilities/apis) — build custom export workflows
+* [كيفية تحديث السجلات الموجودة](/l/ar/user-guide/data-migration/how-tos/update-existing-records-via-import) — حرّر وأعد استيراد ملف التصدير الخاص بك
+* [كيفية استيراد البيانات عبر واجهة برمجة التطبيقات (API)](/l/ar/user-guide/data-migration/how-tos/import-data-via-api) — لمجموعات البيانات الكبيرة
+* [وثائق واجهة برمجة التطبيقات (API)](/l/ar/developers/extend/capabilities/apis) — أنشئ عمليات سير عمل تصدير مخصصة

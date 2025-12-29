@@ -136,6 +136,13 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
+  // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
+  const navigateToFieldEdit = () =>
+    navigate(SettingsPath.ObjectFieldEdit, {
+      objectNamePlural: objectMetadataItem.namePlural,
+      fieldName: fieldMetadataItem.name,
+    });
+
   const { activateMetadataField } = useFieldMetadataItem();
 
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
@@ -195,15 +202,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   return (
     <StyledObjectFieldTableRow
-      onClick={
-        mode === 'view'
-          ? () =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-          : undefined
-      }
+      onClick={mode === 'view' ? navigateToFieldEdit : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
         <StyledNameTableCell>
@@ -251,12 +250,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <StyledIconTableCell>
         {status === 'active' ? (
           mode === 'view' ? (
-            <UndecoratedLink
-              to={getSettingsPath(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })}
-            >
+            <UndecoratedLink to={linkToNavigate}>
               <StyledIconChevronRight
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.sm}
@@ -276,12 +270,7 @@ export const SettingsObjectFieldItemTableRow = ({
             isCustomField={fieldMetadataItem.isCustom === true}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
-            onEdit={() =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-            }
+            onEdit={navigateToFieldEdit}
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }

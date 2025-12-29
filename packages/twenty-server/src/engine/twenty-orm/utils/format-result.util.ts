@@ -2,6 +2,7 @@ import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNull } from '@sniptt/guards';
 import {
+  FieldActorSource,
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
@@ -157,6 +158,13 @@ export function formatResult<T>(
       : value;
   }
 
+  // After assembling composite fields, handle those with missing required subfields
+  handleEmptyCompositeFields(
+    newData,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
+
   const fieldMetadataItemsOfTypeDateOnly = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
@@ -249,4 +257,86 @@ function transformCompositeFieldNullValue(
       compositePropertyName
     ] ?? value
   );
+}
+
+/**
+ * Handles composite fields with missing required subfields.
+ * - For nullable fields: sets to null if all required subfields are null
+ * - For non-nullable fields: provides a default value to prevent GraphQL errors
+ *
+ * This handles existing records that were created before the field was added
+ * or records with incomplete data.
+ */
+function handleEmptyCompositeFields(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, any>,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+) {
+  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
+
+  for (const fieldMetadata of compositeFieldMetadataCollection) {
+    const fieldValue = data[fieldMetadata.name];
+
+    if (!isDefined(fieldValue) || !isPlainObject(fieldValue)) {
+      continue;
+    }
+
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
+
+    if (!compositeType) {
+      continue;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const typedFieldValue = fieldValue as Record<string, any>;
+
+    // Check if all required properties are null/undefined
+    const requiredProperties = compositeType.properties.filter(
+      (prop) => prop.isRequired,
+    );
+
+    const allRequiredPropertiesAreNull = requiredProperties.every(
+      (prop) =>
+        !isDefined(typedFieldValue[prop.name]) ||
+        isNull(typedFieldValue[prop.name]),
+    );
+
+    if (allRequiredPropertiesAreNull && requiredProperties.length > 0) {
+      if (fieldMetadata.isNullable) {
+        // Field is nullable, set to null
+        data[fieldMetadata.name] = null;
+      } else {
+        // Field is non-nullable, provide a default value
+        data[fieldMetadata.name] = getDefaultCompositeFieldValue(
+          fieldMetadata.type,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Returns a default value for non-nullable composite fields.
+ */
+function getDefaultCompositeFieldValue(
+  fieldType: FieldMetadataType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any> | null {
+  switch (fieldType) {
+    case FieldMetadataType.ACTOR:
+      return {
+        source: FieldActorSource.MANUAL,
+        name: '',
+        workspaceMemberId: null,
+        context: {},
+      };
+    default:
+      // For other composite types, return null and let GraphQL handle the error
+      // This should be extended as needed for other non-nullable composite fields
+      return null;
+  }
 }

@@ -12,6 +12,9 @@ type TaskDataSeed = {
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
 };
 
 export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
@@ -26,6 +29,9 @@ export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
 ];
 
 // Generate all task IDs
@@ -210,6 +216,9 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       createdBySource: 'MANUAL',
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim A',
+      updatedBySource: 'MANUAL',
+      updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      updatedByName: 'Tim A',
     });
   }
 
@@ -242,6 +251,9 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       createdBySource: 'MANUAL',
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim A',
+      updatedBySource: 'MANUAL',
+      updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      updatedByName: 'Tim A',
     });
   }
 
