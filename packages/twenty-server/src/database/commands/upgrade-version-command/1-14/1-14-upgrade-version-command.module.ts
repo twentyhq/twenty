@@ -9,6 +9,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     AiAgentModule,
     RoleModule,
     WorkspaceSchemaManagerModule,
+    WorkspaceCacheModule,
   ],
   providers: [UpdateCreatedByEnumCommand, DeleteRemovedAgentsCommand],
   exports: [DeleteRemovedAgentsCommand, UpdateCreatedByEnumCommand],
