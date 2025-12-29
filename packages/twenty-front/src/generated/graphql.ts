@@ -837,6 +837,7 @@ export type CreateDraftFromWorkflowVersionInput = {
 };
 
 export type CreateFieldInput = {
+  applicationId?: InputMaybe<Scalars['UUID']>;
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -1313,6 +1314,7 @@ export enum FeatureFlagKey {
 
 export type Field = {
   __typename?: 'Field';
+  applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
@@ -4140,6 +4142,7 @@ export type UpdateDatabaseEventTriggerInputUpdates = {
 };
 
 export type UpdateFieldInput = {
+  applicationId?: InputMaybe<Scalars['UUID']>;
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
