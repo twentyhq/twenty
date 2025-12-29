@@ -9,10 +9,8 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
-import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
-import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -52,9 +50,18 @@ export const ChartSortBySelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  const isPieChart = isPieChartConfiguration(configuration);
-  const isLineChart = isLineChartConfiguration(configuration);
-  const isBarChart = isBarChartConfiguration(configuration);
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
+  const isLineChart = isWidgetConfigurationOfType(
+    configuration,
+    'LineChartConfiguration',
+  );
+  const isBarChart = isWidgetConfigurationOfType(
+    configuration,
+    'BarChartConfiguration',
+  );
 
   if (!isBarChart && !isLineChart && !isPieChart) {
     throw new Error('Invalid configuration type');

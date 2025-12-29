@@ -9,9 +9,9 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
+
 import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -37,6 +37,19 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { closeDropdown } = useCloseDropdown();
 
+  const configuration = widgetInEditMode?.configuration;
+
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
+  if (!isBarOrLineChart) {
+    throw new Error('Invalid configuration type');
+  }
+
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -45,11 +58,6 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     selectedItemIdComponentState,
     dropdownId,
   );
-
-  const configuration = widgetInEditMode?.configuration;
-
-  const isBarOrLineChart = isBarOrLineChartConfiguration(configuration);
-  const isLineChart = isLineChartConfiguration(configuration);
 
   if (!isBarOrLineChart) {
     throw new Error('Invalid configuration type');
@@ -103,7 +111,12 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     closeDropdown();
   };
 
-  const chartType = isLineChart ? 'line' : 'bar';
+  const chartType = isWidgetConfigurationOfType(
+    configuration,
+    'LineChartConfiguration',
+  )
+    ? 'line'
+    : 'bar';
 
   const availableOptions = filterSortOptionsByFieldType({
     options: AGGREGATE_SORT_BY_OPTIONS,
