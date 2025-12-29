@@ -14,7 +14,6 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
@@ -67,9 +66,6 @@ export class ViewFieldEntity
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
@@ -78,10 +74,6 @@ export class ViewFieldEntity
 
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date | null;
-
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFields, {
     onDelete: 'CASCADE',

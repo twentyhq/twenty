@@ -53,9 +53,6 @@ export class RouteTriggerEntity
   @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionId: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

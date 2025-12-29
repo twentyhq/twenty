@@ -38,13 +38,13 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceCacheProv
     const flatRouteTriggerMaps = createEmptyFlatEntityMaps();
 
     for (const routeTriggerEntity of routeTriggers) {
+      const routeTriggerEntityWithoutRelations = removePropertiesFromRecord(
+        routeTriggerEntity,
+        Object.keys(
+          ALL_METADATA_RELATION_PROPERTIES.routeTrigger,
+        ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.routeTrigger)[],
+      );
       const flatRouteTrigger = {
-        ...removePropertiesFromRecord(
-          routeTriggerEntity,
-          Object.keys(
-            ALL_METADATA_RELATION_PROPERTIES.routeTrigger,
-          ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.routeTrigger)[],
-        ),
         createdAt: routeTriggerEntity.createdAt.toISOString(),
         updatedAt: routeTriggerEntity.updatedAt.toISOString(),
         universalIdentifier:
