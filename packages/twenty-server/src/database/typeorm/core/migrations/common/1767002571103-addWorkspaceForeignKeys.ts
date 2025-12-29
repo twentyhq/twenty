@@ -33,9 +33,51 @@ export class AddWorkspaceForeignKeys1767002571103
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" ADD CONSTRAINT "FK_ef5dde6a681970b9c1e10563498" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."dataSource" ADD CONSTRAINT "FK_e1914827ee8b22fba4254578311" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."objectPermission" ADD CONSTRAINT "FK_edcd87df18d3284141757bf6e16" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."permissionFlag" ADD CONSTRAINT "FK_835bc9f7ef959debfc5cd268049" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunctionLayer" ADD CONSTRAINT "FK_ca0699c3c906e903d7381c6a771" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."workspaceMigration" ADD CONSTRAINT "FK_bebfcf8dcb299fd39ad04ed4c7f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."remoteTable" ADD CONSTRAINT "FK_30b429b14ddc6aab7495fa884f3" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."remoteServer" ADD CONSTRAINT "FK_d1293835c5a0bb89fc0ed45713f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."remoteServer" DROP CONSTRAINT "FK_d1293835c5a0bb89fc0ed45713f"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."remoteTable" DROP CONSTRAINT "FK_30b429b14ddc6aab7495fa884f3"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."workspaceMigration" DROP CONSTRAINT "FK_bebfcf8dcb299fd39ad04ed4c7f"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."serverlessFunctionLayer" DROP CONSTRAINT "FK_ca0699c3c906e903d7381c6a771"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."permissionFlag" DROP CONSTRAINT "FK_835bc9f7ef959debfc5cd268049"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."objectPermission" DROP CONSTRAINT "FK_edcd87df18d3284141757bf6e16"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."dataSource" DROP CONSTRAINT "FK_e1914827ee8b22fba4254578311"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" DROP CONSTRAINT "FK_ef5dde6a681970b9c1e10563498"`,
     );

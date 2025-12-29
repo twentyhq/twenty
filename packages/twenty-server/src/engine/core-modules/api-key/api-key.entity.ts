@@ -30,6 +30,7 @@ export class ApiKeyEntity extends ExposedWorkspaceRelatedEntity {
   expiresAt: Date;
 
   @Field(() => Date, { nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   revokedAt?: Date | null;
 
   @Field(() => Date)
