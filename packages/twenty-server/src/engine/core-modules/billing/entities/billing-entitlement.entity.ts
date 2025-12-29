@@ -18,7 +18,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType('BillingEntitlement')
@@ -26,7 +26,7 @@ import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-syn
   'key',
   'workspaceId',
 ])
-export class BillingEntitlementEntity extends WorkspaceBoundEntity {
+export class BillingEntitlementEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

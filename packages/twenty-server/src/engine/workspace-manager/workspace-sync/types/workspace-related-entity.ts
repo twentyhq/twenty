@@ -2,7 +2,7 @@ import { Column, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export abstract class WorkspaceBoundEntity {
+export abstract class WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

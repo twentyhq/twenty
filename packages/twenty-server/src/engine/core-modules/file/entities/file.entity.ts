@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('file')
 @ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
-export class FileEntity extends WorkspaceBoundEntity {
+export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

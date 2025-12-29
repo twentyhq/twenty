@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'approvedAccessDomain', schema: 'core' })
 @ObjectType('ApprovedAccessDomain')
@@ -17,7 +17,7 @@ import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-syn
   'domain',
   'workspaceId',
 ])
-export class ApprovedAccessDomainEntity extends WorkspaceBoundEntity {
+export class ApprovedAccessDomainEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

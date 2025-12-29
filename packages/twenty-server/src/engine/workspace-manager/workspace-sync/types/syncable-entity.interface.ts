@@ -1,12 +1,12 @@
 import { Column, Index, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
 import type { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Index(['workspaceId', 'universalIdentifier'], {
   unique: true,
 })
-export abstract class SyncableEntity extends WorkspaceBoundEntity {
+export abstract class SyncableEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   // TODO should not be nullable
   universalIdentifier: string;

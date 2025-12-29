@@ -1,3 +1,4 @@
+import { PackageJson } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -7,13 +8,12 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { PackageJson } from 'twenty-shared/application';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('serverlessFunctionLayer')
-export class ServerlessFunctionLayerEntity extends WorkspaceBoundEntity {
+export class ServerlessFunctionLayerEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -11,7 +11,7 @@ import {
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -38,7 +38,7 @@ export type ForeignDataWrapperOptions<T extends RemoteServerType> =
 @Entity('remoteServer')
 export class RemoteServerEntity<
   T extends RemoteServerType,
-> extends WorkspaceBoundEntity {
+> extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

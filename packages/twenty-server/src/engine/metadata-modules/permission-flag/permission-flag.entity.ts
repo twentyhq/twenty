@@ -1,3 +1,4 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   Column,
   CreateDateColumn,
@@ -9,14 +10,13 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('permissionFlag')
 @Unique('IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
-export class PermissionFlagEntity extends WorkspaceBoundEntity {
+export class PermissionFlagEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -14,7 +14,7 @@ import {
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })
 @ObjectType('EmailingDomain')
@@ -22,7 +22,7 @@ import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-syn
   'domain',
   'workspaceId',
 ])
-export class EmailingDomainEntity extends WorkspaceBoundEntity {
+export class EmailingDomainEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -1,13 +1,13 @@
+import { type RelationOnDeleteAction } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { type RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
@@ -130,7 +130,7 @@ export type WorkspaceMigrationTableAction = {
 };
 
 @Entity('workspaceMigration')
-export class WorkspaceMigrationEntity extends WorkspaceBoundEntity {
+export class WorkspaceMigrationEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

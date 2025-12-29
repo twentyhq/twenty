@@ -8,11 +8,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'postgresCredentials', schema: 'core' })
 @ObjectType('PostgresCredentials')
-export class PostgresCredentialsEntity extends WorkspaceBoundEntity {
+export class PostgresCredentialsEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

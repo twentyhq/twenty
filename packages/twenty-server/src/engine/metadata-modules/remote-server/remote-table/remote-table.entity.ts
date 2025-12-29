@@ -13,10 +13,10 @@ import {
   RemoteServerEntity,
   type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('remoteTable')
-export class RemoteTableEntity extends WorkspaceBoundEntity {
+export class RemoteTableEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
