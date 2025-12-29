@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -14,8 +14,8 @@ import {
 } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
-@WorkspaceQueryHook(`*.createMany`)
-export class CreatedByCreateManyPreQueryHook
+@WorkspaceQueryHook(`*.updateOne`)
+export class UpdatedByUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
@@ -25,8 +25,8 @@ export class CreatedByCreateManyPreQueryHook
   async execute(
     authContext: AuthContext,
     objectName: string,
-    payload: CreateManyResolverArgs<RecordInput>,
-  ): Promise<CreateManyResolverArgs<RecordInput>> {
+    payload: UpdateOneResolverArgs<RecordInput>,
+  ): Promise<UpdateOneResolverArgs<RecordInput>> {
     if (!isDefined(payload.data)) {
       throw new GraphqlQueryRunnerException(
         'Payload data is required',
@@ -34,13 +34,16 @@ export class CreatedByCreateManyPreQueryHook
       );
     }
 
-    return {
-      ...payload,
-      data: await this.actorFromAuthContextService.injectActorFieldsOnCreate({
-        records: payload.data,
+    const [recordToUpdateData] =
+      await this.actorFromAuthContextService.injectUpdatedBy({
+        records: [payload.data],
         objectMetadataNameSingular: objectName,
         authContext,
-      }),
+      });
+
+    return {
+      ...payload,
+      data: recordToUpdateData,
     };
   }
 }

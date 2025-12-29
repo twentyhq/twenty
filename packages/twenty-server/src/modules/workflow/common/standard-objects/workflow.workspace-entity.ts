@@ -220,4 +220,14 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
 }

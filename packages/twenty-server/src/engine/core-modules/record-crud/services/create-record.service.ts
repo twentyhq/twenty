@@ -124,14 +124,17 @@ export class CreateRecordService {
             flatFieldMetadataMaps,
           );
 
+          const actorMetadata = params.createdBy ?? {
+            source: FieldActorSource.WORKFLOW,
+            name: 'Workflow',
+          };
+
           const insertResult = await repository.insert(
             {
               ...transformedObjectRecord,
               position,
-              createdBy: params.createdBy ?? {
-                source: FieldActorSource.WORKFLOW,
-                name: 'Workflow',
-              },
+              createdBy: actorMetadata,
+              updatedBy: actorMetadata,
             },
             undefined,
             selectedColumns,
