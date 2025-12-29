@@ -249,5 +249,3 @@ describe('sortChartData', () => {
     });
   });
 });
-
-

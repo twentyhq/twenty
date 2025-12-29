@@ -74,7 +74,7 @@ describe('sortOptionsForManualOrder', () => {
 
       const result = sortOptionsForManualOrder(options, manualSortOrder);
 
-      expect(result[0].value).toBe('b');
+      expect(result.map((option) => option.value)).toEqual(['b', 'a', 'c']);
     });
   });
 

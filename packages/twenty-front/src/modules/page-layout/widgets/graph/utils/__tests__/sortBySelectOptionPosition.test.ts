@@ -5,9 +5,21 @@ import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/so
 describe('sortBySelectOptionPosition', () => {
   const mockOptions: FieldMetadataItemOption[] = [
     { id: '1', value: 'NEW', label: 'New', position: 0, color: 'red' },
-    { id: '2', value: 'IN_PROGRESS', label: 'In Progress', position: 1, color: 'yellow' },
+    {
+      id: '2',
+      value: 'IN_PROGRESS',
+      label: 'In Progress',
+      position: 1,
+      color: 'yellow',
+    },
     { id: '3', value: 'DONE', label: 'Done', position: 2, color: 'green' },
-    { id: '4', value: 'ARCHIVED', label: 'Archived', position: 3, color: 'gray' },
+    {
+      id: '4',
+      value: 'ARCHIVED',
+      label: 'Archived',
+      position: 3,
+      color: 'gray',
+    },
   ];
 
   const buildFormattedToRawLookup = (
@@ -189,4 +201,3 @@ describe('sortBySelectOptionPosition', () => {
     });
   });
 });
-
