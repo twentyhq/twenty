@@ -1,8 +1,4 @@
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type FlatObjectMetadata = FlatEntityFrom<ObjectMetadataEntity> & {
-  fieldMetadataIds: string[];
-  indexMetadataIds: string[];
-  viewIds: string[];
-};
+export type FlatObjectMetadata = FlatEntityFrom<ObjectMetadataEntity>;
