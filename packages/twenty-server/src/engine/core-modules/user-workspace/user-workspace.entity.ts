@@ -26,6 +26,7 @@ import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
 
 registerEnumType(PermissionFlagType, {
   name: 'PermissionFlagType',
@@ -47,7 +48,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 )
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
-export class UserWorkspaceEntity {
+export class UserWorkspaceEntity extends WorkspaceBoundEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -62,17 +63,6 @@ export class UserWorkspaceEntity {
   @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   userId: string;
-
-  @Field(() => WorkspaceEntity, { nullable: true })
-  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.workspaceUsers, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
-  @Field(() => UUIDScalarType, { nullable: false })
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @Column({ nullable: true })
   defaultAvatarUrl: string;

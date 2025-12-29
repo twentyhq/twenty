@@ -7,15 +7,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -46,7 +43,7 @@ registerEnumType(SSOIdentityProviderStatus, {
 
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType('WorkspaceSSOIdentityProvider')
-export class WorkspaceSSOIdentityProviderEntity {
+export class WorkspaceSSOIdentityProviderEntity extends WorkspaceBoundEntity {
   // COMMON
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -61,19 +58,6 @@ export class WorkspaceSSOIdentityProviderEntity {
     default: SSOIdentityProviderStatus.Active,
   })
   status: SSOIdentityProviderStatus;
-
-  @ManyToOne(
-    () => WorkspaceEntity,
-    (workspace) => workspace.workspaceSSOIdentityProviders,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
