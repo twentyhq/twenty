@@ -11,6 +11,7 @@ import {
   type IfElseSettings,
 } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody';
 import styled from '@emotion/styled';
+import { i18n, type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
   type StepFilterGroup,
@@ -53,7 +54,7 @@ type WorkflowIfElseBranchEditorProps = {
   action: WorkflowIfElseAction;
   branch: StepIfElseBranch;
   branchIndex: number;
-  branchLabel: string;
+  branchLabel: MessageDescriptor;
   branchFilterGroup: StepFilterGroup | undefined;
   readonly: boolean;
   onSettingsUpdate: (newSettings: IfElseSettings) => void;
@@ -79,7 +80,7 @@ export const WorkflowIfElseBranchEditor = ({
     return (
       <StyledBranchContainer>
         <StyledBranchHeader>
-          <StyledBranchLabel>{branchLabel}</StyledBranchLabel>
+          <StyledBranchLabel>{i18n._(branchLabel)}</StyledBranchLabel>
         </StyledBranchHeader>
         <StyledElsePlaceholder>
           {t`Default path when no conditions match`}
@@ -94,7 +95,7 @@ export const WorkflowIfElseBranchEditor = ({
         stepId: action.id,
         readonly,
         onFilterSettingsUpdate,
-        firstFilterLabel: branchLabel,
+        firstFilterLabel: i18n._(branchLabel),
       }}
     >
       <StyledBranchContainer>
