@@ -211,7 +211,6 @@ export const useUpdateJunctionRelationFromCell = ({
       isMorphRelation,
       junctionObjectMetadata,
       morphFields,
-      objectMetadataItems,
       recordId,
       sourceFieldOnJunction,
       targetField,

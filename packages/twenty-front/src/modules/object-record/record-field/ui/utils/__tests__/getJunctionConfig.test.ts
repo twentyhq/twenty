@@ -12,7 +12,11 @@ const createMockRelation = (
 ): FieldMetadataItemRelation => ({
   type,
   sourceFieldMetadata: { id: 'source-field-id', name: 'sourceField' },
-  targetFieldMetadata: { id: 'target-field-id', name: 'targetField', isCustom: false },
+  targetFieldMetadata: {
+    id: 'target-field-id',
+    name: 'targetField',
+    isCustom: false,
+  },
   sourceObjectMetadata: {
     id: 'source-object-id',
     nameSingular: 'sourceObject',
