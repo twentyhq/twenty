@@ -28,7 +28,9 @@ test('Create workflow', async ({ page }) => {
     createWorkflowButton.click()
   ]);
 
+
   const recordName = page.getByTestId('top-bar-title').getByPlaceholder('Name');
+  await expect(recordName).toBeVisible();
   await recordName.click();
 
   const nameInput = page.getByTestId('top-bar-title').getByRole('textbox');
