@@ -202,7 +202,6 @@ export type ApiKey = {
   revokedAt?: Maybe<Scalars['DateTime']>;
   role: Role;
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
   workspaceId: Scalars['UUID'];
 };
 
@@ -4684,7 +4683,6 @@ export type UserWorkspace = {
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['UUID'];
-  workspace?: Maybe<Workspace>;
   workspaceId: Scalars['UUID'];
 };
 
@@ -4791,7 +4789,6 @@ export type Webhook = {
   secret: Scalars['String'];
   targetUrl: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
   workspaceId: Scalars['UUID'];
 };
 
