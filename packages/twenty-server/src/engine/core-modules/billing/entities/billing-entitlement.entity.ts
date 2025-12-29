@@ -18,13 +18,15 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
+
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType('BillingEntitlement')
 @Unique('IDX_BILLING_ENTITLEMENT_KEY_WORKSPACE_ID_UNIQUE', [
   'key',
   'workspaceId',
 ])
-export class BillingEntitlementEntity {
+export class BillingEntitlementEntity extends WorkspaceBoundEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,10 +34,6 @@ export class BillingEntitlementEntity {
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })
   key: BillingEntitlementKey;
-
-  @Field(() => UUIDScalarType)
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @Column({ nullable: false })
   stripeCustomerId: string;

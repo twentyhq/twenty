@@ -10,12 +10,13 @@ import {
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
 
 export type DataSourceType = DataSourceOptions['type'];
 
 @Entity('dataSource')
 @Index('IDX_DATA_SOURCE_WORKSPACE_ID_CREATED_AT', ['workspaceId', 'createdAt'])
-export class DataSourceEntity {
+export class DataSourceEntity extends WorkspaceBoundEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -38,9 +39,6 @@ export class DataSourceEntity {
     cascade: true,
   })
   objects: ObjectMetadataEntity[];
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

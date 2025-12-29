@@ -16,10 +16,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
 @ObjectType('BillingCustomer')
-export class BillingCustomerEntity {
+export class BillingCustomerEntity extends WorkspaceBoundEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,9 +33,6 @@ export class BillingCustomerEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid', unique: true })
-  workspaceId: string;
 
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;

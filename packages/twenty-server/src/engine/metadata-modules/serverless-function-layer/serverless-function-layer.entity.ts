@@ -10,9 +10,10 @@ import {
 import { PackageJson } from 'twenty-shared/application';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { WorkspaceBoundEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-bound-entity';
 
 @Entity('serverlessFunctionLayer')
-export class ServerlessFunctionLayerEntity {
+export class ServerlessFunctionLayerEntity extends WorkspaceBoundEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,9 +25,6 @@ export class ServerlessFunctionLayerEntity {
 
   @Column({ type: 'text', nullable: false })
   checksum: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @OneToMany(
     () => ServerlessFunctionEntity,
