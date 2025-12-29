@@ -1,4 +1,15 @@
 import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/findJunctionRecordByTargetId';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+
+const createMockJunctionRecord = (
+  id: string,
+  targetData: Record<string, unknown>,
+): ObjectRecord =>
+  ({
+    id,
+    __typename: 'JunctionObject',
+    ...targetData,
+  }) as ObjectRecord;
 
 describe('findJunctionRecordByTargetId', () => {
   it('should return undefined for empty junction records', () => {
@@ -12,14 +23,12 @@ describe('findJunctionRecordByTargetId', () => {
 
   it('should find junction record by target field name', () => {
     const junctionRecords = [
-      {
-        id: 'junction-1',
+      createMockJunctionRecord('junction-1', {
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
-      {
-        id: 'junction-2',
+      }),
+      createMockJunctionRecord('junction-2', {
         company: { id: 'company-2', name: 'Beta Inc' },
-      },
+      }),
     ];
 
     const result = findJunctionRecordByTargetId({
@@ -28,18 +37,14 @@ describe('findJunctionRecordByTargetId', () => {
       targetFieldName: 'company',
     });
 
-    expect(result).toEqual({
-      id: 'junction-2',
-      company: { id: 'company-2', name: 'Beta Inc' },
-    });
+    expect(result?.id).toBe('junction-2');
   });
 
   it('should return undefined when target record is not found', () => {
     const junctionRecords = [
-      {
-        id: 'junction-1',
+      createMockJunctionRecord('junction-1', {
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
+      }),
     ];
 
     const result = findJunctionRecordByTargetId({
@@ -53,12 +58,11 @@ describe('findJunctionRecordByTargetId', () => {
 
   it('should skip undefined junction records', () => {
     const junctionRecords = [
-      undefined,
-      {
-        id: 'junction-1',
+      undefined as unknown as ObjectRecord,
+      createMockJunctionRecord('junction-1', {
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
-    ] as any[];
+      }),
+    ];
 
     const result = findJunctionRecordByTargetId({
       junctionRecords,
@@ -66,22 +70,15 @@ describe('findJunctionRecordByTargetId', () => {
       targetFieldName: 'company',
     });
 
-    expect(result).toEqual({
-      id: 'junction-1',
-      company: { id: 'company-1', name: 'Acme Corp' },
-    });
+    expect(result?.id).toBe('junction-1');
   });
 
   it('should handle null target objects', () => {
     const junctionRecords = [
-      {
-        id: 'junction-1',
-        company: null,
-      },
-      {
-        id: 'junction-2',
+      createMockJunctionRecord('junction-1', { company: null }),
+      createMockJunctionRecord('junction-2', {
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
+      }),
     ];
 
     const result = findJunctionRecordByTargetId({
@@ -90,22 +87,17 @@ describe('findJunctionRecordByTargetId', () => {
       targetFieldName: 'company',
     });
 
-    expect(result).toEqual({
-      id: 'junction-2',
-      company: { id: 'company-1', name: 'Acme Corp' },
-    });
+    expect(result?.id).toBe('junction-2');
   });
 
   it('should handle target objects without id property', () => {
     const junctionRecords = [
-      {
-        id: 'junction-1',
+      createMockJunctionRecord('junction-1', {
         company: { name: 'No ID Company' },
-      },
-      {
-        id: 'junction-2',
+      }),
+      createMockJunctionRecord('junction-2', {
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
+      }),
     ];
 
     const result = findJunctionRecordByTargetId({
@@ -114,19 +106,15 @@ describe('findJunctionRecordByTargetId', () => {
       targetFieldName: 'company',
     });
 
-    expect(result).toEqual({
-      id: 'junction-2',
-      company: { id: 'company-1', name: 'Acme Corp' },
-    });
+    expect(result?.id).toBe('junction-2');
   });
 
   it('should work with different target field names', () => {
     const junctionRecords = [
-      {
-        id: 'junction-1',
+      createMockJunctionRecord('junction-1', {
         person: { id: 'person-1', name: 'John Doe' },
         company: { id: 'company-1', name: 'Acme Corp' },
-      },
+      }),
     ];
 
     const personResult = findJunctionRecordByTargetId({
@@ -144,4 +132,3 @@ describe('findJunctionRecordByTargetId', () => {
     expect(companyResult?.id).toBe('junction-1');
   });
 });
-

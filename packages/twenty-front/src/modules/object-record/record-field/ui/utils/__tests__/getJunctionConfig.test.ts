@@ -1,8 +1,29 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+
+const createMockRelation = (
+  targetObjectId: string,
+  targetObjectName: string,
+  type: RelationType = RelationType.MANY_TO_ONE,
+): FieldMetadataItemRelation => ({
+  type,
+  sourceFieldMetadata: { id: 'source-field-id', name: 'sourceField' },
+  targetFieldMetadata: { id: 'target-field-id', name: 'targetField', isCustom: false },
+  sourceObjectMetadata: {
+    id: 'source-object-id',
+    nameSingular: 'sourceObject',
+    namePlural: 'sourceObjects',
+  },
+  targetObjectMetadata: {
+    id: targetObjectId,
+    nameSingular: targetObjectName,
+    namePlural: `${targetObjectName}s`,
+  },
+});
 
 const createMockField = (
   overrides: Partial<FieldMetadataItem>,
@@ -71,14 +92,14 @@ describe('getJunctionConfig', () => {
         name: 'company',
         morphId: 'morph-group-1',
         type: FieldMetadataType.MORPH_RELATION,
-        relation: { targetObjectMetadata: { id: 'company-id' } },
+        relation: createMockRelation('company-id', 'company'),
       });
       const morphField2 = createMockField({
         id: 'morph-field-2',
         name: 'person',
         morphId: 'morph-group-1',
         type: FieldMetadataType.MORPH_RELATION,
-        relation: { targetObjectMetadata: { id: 'person-id' } },
+        relation: createMockRelation('person-id', 'person'),
       });
       const junctionObject = createMockObjectMetadata({
         id: 'junction-id',
@@ -123,10 +144,7 @@ describe('getJunctionConfig', () => {
         id: 'source-field',
         name: 'project',
         type: FieldMetadataType.RELATION,
-        relation: {
-          targetObjectMetadata: { id: 'source-object-id' },
-          type: RelationType.MANY_TO_ONE,
-        },
+        relation: createMockRelation('source-object-id', 'project'),
       });
       const morphField = createMockField({
         id: 'morph-field-1',
@@ -158,10 +176,7 @@ describe('getJunctionConfig', () => {
         id: 'target-field-id',
         name: 'company',
         type: FieldMetadataType.RELATION,
-        relation: {
-          targetObjectMetadata: { id: 'company-metadata-id' },
-          type: RelationType.MANY_TO_ONE,
-        },
+        relation: createMockRelation('company-metadata-id', 'company'),
       });
       const junctionObject = createMockObjectMetadata({
         id: 'junction-id',
@@ -249,19 +264,13 @@ describe('getJunctionConfig', () => {
         id: 'source-field',
         name: 'project',
         type: FieldMetadataType.RELATION,
-        relation: {
-          targetObjectMetadata: { id: 'source-object-id' },
-          type: RelationType.MANY_TO_ONE,
-        },
+        relation: createMockRelation('source-object-id', 'project'),
       });
       const targetField = createMockField({
         id: 'target-field-id',
         name: 'company',
         type: FieldMetadataType.RELATION,
-        relation: {
-          targetObjectMetadata: { id: 'company-metadata-id' },
-          type: RelationType.MANY_TO_ONE,
-        },
+        relation: createMockRelation('company-metadata-id', 'company'),
       });
       const junctionObject = createMockObjectMetadata({
         id: 'junction-id',
@@ -281,4 +290,3 @@ describe('getJunctionConfig', () => {
     });
   });
 });
-

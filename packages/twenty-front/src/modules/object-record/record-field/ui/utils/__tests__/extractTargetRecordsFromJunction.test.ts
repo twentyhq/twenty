@@ -1,7 +1,33 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/extractTargetRecordsFromJunction';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { RelationType } from '~/generated-metadata/graphql';
+
+const createMockRelation = (
+  targetObjectId: string,
+  targetObjectName: string,
+): FieldMetadataItemRelation => ({
+  type: RelationType.MANY_TO_ONE,
+  sourceFieldMetadata: { id: 'source-field-id', name: 'sourceField' },
+  targetFieldMetadata: {
+    id: 'target-field-id',
+    name: 'targetField',
+    isCustom: false,
+  },
+  sourceObjectMetadata: {
+    id: 'source-object-id',
+    nameSingular: 'sourceObject',
+    namePlural: 'sourceObjects',
+  },
+  targetObjectMetadata: {
+    id: targetObjectId,
+    nameSingular: targetObjectName,
+    namePlural: `${targetObjectName}s`,
+  },
+});
 
 const mockObjectMetadataItems: ObjectMetadataItem[] = [
   {
@@ -20,9 +46,7 @@ const mockTargetField: FieldMetadataItem = {
   id: 'target-field-id',
   name: 'company',
   type: FieldMetadataType.RELATION,
-  relation: {
-    targetObjectMetadata: { id: 'company-metadata-id' },
-  },
+  relation: createMockRelation('company-metadata-id', 'company'),
 } as FieldMetadataItem;
 
 const mockMorphFields: FieldMetadataItem[] = [
@@ -31,20 +55,26 @@ const mockMorphFields: FieldMetadataItem[] = [
     name: 'company',
     morphId: 'morph-group-1',
     type: FieldMetadataType.MORPH_RELATION,
-    relation: {
-      targetObjectMetadata: { id: 'company-metadata-id' },
-    },
+    relation: createMockRelation('company-metadata-id', 'company'),
   } as FieldMetadataItem,
   {
     id: 'morph-field-person-id',
     name: 'person',
     morphId: 'morph-group-1',
     type: FieldMetadataType.MORPH_RELATION,
-    relation: {
-      targetObjectMetadata: { id: 'person-metadata-id' },
-    },
+    relation: createMockRelation('person-metadata-id', 'person'),
   } as FieldMetadataItem,
 ];
+
+const createMockJunctionRecord = (
+  id: string,
+  targetData: Record<string, unknown>,
+): ObjectRecord =>
+  ({
+    id,
+    __typename: 'JunctionObject',
+    ...targetData,
+  }) as ObjectRecord;
 
 describe('extractTargetRecordsFromJunction', () => {
   describe('with null/undefined junction records', () => {
@@ -74,8 +104,12 @@ describe('extractTargetRecordsFromJunction', () => {
   describe('with regular relations', () => {
     it('should extract target records from junction records', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
-        { id: 'junction-2', company: { id: 'company-2', name: 'Beta Inc' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
+        createMockJunctionRecord('junction-2', {
+          company: { id: 'company-2', name: 'Beta Inc' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -94,7 +128,9 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should include record when includeRecord is true', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -117,8 +153,10 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should skip junction records with null target', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: null },
-        { id: 'junction-2', company: { id: 'company-1', name: 'Acme Corp' } },
+        createMockJunctionRecord('junction-1', { company: null }),
+        createMockJunctionRecord('junction-2', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -137,8 +175,12 @@ describe('extractTargetRecordsFromJunction', () => {
   describe('with morph relations', () => {
     it('should extract target records from different morph fields', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
-        { id: 'junction-2', person: { id: 'person-1', name: 'John Doe' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
+        createMockJunctionRecord('junction-2', {
+          person: { id: 'person-1', name: 'John Doe' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -161,7 +203,9 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should return correct object metadata for each morph field', () => {
       const junctionRecords = [
-        { id: 'junction-1', person: { id: 'person-1', name: 'Jane Doe' } },
+        createMockJunctionRecord('junction-1', {
+          person: { id: 'person-1', name: 'Jane Doe' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -176,7 +220,9 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should include record when includeRecord is true for morph relations', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -198,9 +244,11 @@ describe('extractTargetRecordsFromJunction', () => {
   describe('edge cases', () => {
     it('should skip undefined junction records in array', () => {
       const junctionRecords = [
-        undefined,
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
-      ] as any[];
+        undefined as unknown as ObjectRecord,
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
+      ];
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
@@ -215,7 +263,9 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should return empty for morph relations without morphFields', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -230,7 +280,9 @@ describe('extractTargetRecordsFromJunction', () => {
 
     it('should return empty for regular relations without targetField', () => {
       const junctionRecords = [
-        { id: 'junction-1', company: { id: 'company-1', name: 'Acme Corp' } },
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
       ];
 
       const result = extractTargetRecordsFromJunction({
@@ -245,4 +297,3 @@ describe('extractTargetRecordsFromJunction', () => {
     });
   });
 });
-
