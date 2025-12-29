@@ -41,7 +41,7 @@ export class RestInputRequestParserException extends CustomException<RestInputRe
   constructor(
     message: string,
     code: RestInputRequestParserExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor },
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
