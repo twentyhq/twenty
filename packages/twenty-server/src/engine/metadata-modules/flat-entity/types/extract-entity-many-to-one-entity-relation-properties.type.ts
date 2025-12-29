@@ -9,6 +9,10 @@ export type ExtractEntityManyToOneEntityRelationProperties<
   TTarget = MetadataEntity<AllMetadataName> | AllNonSyncableEntity,
 > = NonNullable<
   {
-    [P in keyof T]: NonNullable<T[P]> extends Relation<TTarget> ? P : never;
+    [P in keyof T]: [NonNullable<T[P]>] extends [never]
+      ? never
+      : NonNullable<T[P]> extends Relation<TTarget>
+        ? P
+        : never;
   }[keyof T]
 >;
