@@ -30,7 +30,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 @Command({
-  name: 'upgrade:1-15:backfill-updated-by-view-fields',
+  name: 'upgrade:1-16:backfill-updated-by-view-fields',
   description: 'Backfill updatedBy view fields for all views',
 })
 export class BackfillUpdatedByViewFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
