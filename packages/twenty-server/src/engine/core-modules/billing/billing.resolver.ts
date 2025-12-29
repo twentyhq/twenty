@@ -266,7 +266,28 @@ export class BillingResolver {
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingEndTrialPeriodOutput> {
-    return await this.billingSubscriptionService.endTrialPeriod(workspace);
+    const result =
+      await this.billingSubscriptionService.endTrialPeriod(workspace);
+
+    if (!result.hasPaymentMethod && result.stripeCustomerId) {
+      const billingPortalUrl =
+        await this.billingPortalWorkspaceService.computeBillingPortalSessionURLForPaymentMethodUpdate(
+          workspace,
+          result.stripeCustomerId,
+          '/settings/billing',
+        );
+
+      return {
+        hasPaymentMethod: false,
+        status: undefined,
+        billingPortalUrl,
+      };
+    }
+
+    return {
+      hasPaymentMethod: result.hasPaymentMethod,
+      status: result.status,
+    };
   }
 
   @Query(() => [BillingMeteredProductUsageOutput])
