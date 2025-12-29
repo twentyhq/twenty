@@ -1228,7 +1228,7 @@ export const OnMobile: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -1324,7 +1324,7 @@ export const InSidePanel: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
