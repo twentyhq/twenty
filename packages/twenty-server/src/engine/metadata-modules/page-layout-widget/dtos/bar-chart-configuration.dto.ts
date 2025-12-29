@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsIn,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -20,19 +21,22 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
-@ObjectType('PieChartConfiguration')
-export class PieChartConfigurationValidator
+@ObjectType('BarChartConfiguration')
+export class BarChartConfigurationDTO
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.PIE_CHART])
+  @IsIn([WidgetConfigurationType.BAR_CHART])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.PIE_CHART;
+  configurationType: WidgetConfigurationType.BAR_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -47,12 +51,12 @@ export class PieChartConfigurationValidator
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  groupByFieldMetadataId: string;
+  primaryAxisGroupByFieldMetadataId: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  groupBySubFieldName?: string;
+  primaryAxisGroupBySubFieldName?: string;
 
   @Field(() => ObjectRecordGroupByDateGranularity, {
     nullable: true,
@@ -60,15 +64,48 @@ export class PieChartConfigurationValidator
   })
   @IsEnum(ObjectRecordGroupByDateGranularity)
   @IsOptional()
-  dateGranularity?: ObjectRecordGroupByDateGranularity;
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
 
-  @Field(() => GraphOrderBy, {
-    nullable: true,
-    defaultValue: GraphOrderBy.VALUE_DESC,
-  })
+  @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderBy?: GraphOrderBy;
+  primaryAxisOrderBy?: GraphOrderBy;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  secondaryAxisGroupByFieldMetadataId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  secondaryAxisGroupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
+
+  @Field(() => GraphOrderBy, { nullable: true })
+  @IsEnum(GraphOrderBy)
+  @IsOptional()
+  secondaryAxisOrderBy?: GraphOrderBy;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  omitNullValues?: boolean;
+
+  @Field(() => AxisNameDisplay, {
+    nullable: true,
+    defaultValue: AxisNameDisplay.NONE,
+  })
+  @IsEnum(AxisNameDisplay)
+  @IsOptional()
+  axisNameDisplay?: AxisNameDisplay;
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
@@ -78,17 +115,17 @@ export class PieChartConfigurationValidator
   @Field(() => Boolean, { nullable: true, defaultValue: true })
   @IsBoolean()
   @IsOptional()
-  showCenterMetric?: boolean;
-
-  @Field(() => Boolean, { nullable: true, defaultValue: true })
-  @IsBoolean()
-  @IsOptional()
   displayLegend?: boolean;
 
-  @Field(() => Boolean, { nullable: true, defaultValue: false })
-  @IsBoolean()
+  @Field(() => Number, { nullable: true })
+  @IsNumber()
   @IsOptional()
-  hideEmptyCategory?: boolean;
+  rangeMin?: number;
+
+  @Field(() => Number, { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  rangeMax?: number;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -104,6 +141,25 @@ export class PieChartConfigurationValidator
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => BarChartGroupMode, {
+    nullable: true,
+  })
+  @IsEnum(BarChartGroupMode)
+  @IsOptional()
+  groupMode?: BarChartGroupMode;
+
+  @Field(() => BarChartLayout)
+  @IsEnum(BarChartLayout)
+  @IsNotEmpty()
+  layout: BarChartLayout;
+
+  @Field(() => Boolean, {
+    nullable: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  isCumulative?: boolean;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

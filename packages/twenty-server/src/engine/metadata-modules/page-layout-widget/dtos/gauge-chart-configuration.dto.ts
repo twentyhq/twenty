@@ -1,6 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -13,7 +12,6 @@ import {
   IsUUID,
   Max,
   Min,
-  ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -24,16 +22,15 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
-import { RatioAggregateConfigValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/ratio-aggregate-config.validator';
 
-@ObjectType('AggregateChartConfiguration')
-export class AggregateChartConfigurationValidator
+@ObjectType('GaugeChartConfiguration')
+export class GaugeChartConfigurationDTO
   implements PageLayoutWidgetConfigurationBase
 {
   @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.AGGREGATE_CHART])
+  @IsIn([WidgetConfigurationType.GAUGE_CHART])
   @IsNotEmpty()
-  configurationType: WidgetConfigurationType.AGGREGATE_CHART;
+  configurationType: WidgetConfigurationType.GAUGE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -45,11 +42,6 @@ export class AggregateChartConfigurationValidator
   @IsNotEmpty()
   aggregateOperation: AggregateOperations;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  label?: string;
-
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
   @IsOptional()
@@ -58,7 +50,7 @@ export class AggregateChartConfigurationValidator
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  format?: string;
+  color?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -80,20 +72,4 @@ export class AggregateChartConfigurationValidator
   @Min(0)
   @Max(7)
   firstDayOfTheWeek?: number;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  prefix?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  suffix?: string;
-
-  @Field(() => RatioAggregateConfigValidator, { nullable: true })
-  @ValidateNested()
-  @Type(() => RatioAggregateConfigValidator)
-  @IsOptional()
-  ratioAggregateConfig?: RatioAggregateConfigValidator;
 }
