@@ -91,7 +91,7 @@ export const SettingsObjectTable = ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
             objectTypeLabel: getItemTagInfo({
-              objectMetadataItem,
+              entity: objectMetadataItem,
               workspaceCustomApplicationId:
                 currentWorkspace?.workspaceCustomApplication?.id,
             }).labelText,

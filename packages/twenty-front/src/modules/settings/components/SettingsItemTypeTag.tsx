@@ -18,7 +18,7 @@ export const SettingsItemTypeTag = ({
 }: SettingsItemTypeTagProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
-    objectMetadataItem: { isCustom, isRemote, applicationId },
+    entity: { isCustom, isRemote, applicationId },
     workspaceCustomApplicationId:
       currentWorkspace?.workspaceCustomApplication?.id,
   });

@@ -3,6 +3,9 @@ import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDelete
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
@@ -26,9 +29,6 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
-
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
-import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
@@ -200,6 +200,10 @@ export const SettingsObjectFieldItemTableRow = ({
       ? relationObjectMetadataItem?.labelSingular
       : relationObjectMetadataItem?.labelPlural;
 
+  console.log(fieldMetadataItem.name, {
+    app: fieldMetadataItem.applicationId,
+    custom: fieldMetadataItem.isCustom,
+  });
   return (
     <StyledObjectFieldTableRow
       onClick={mode === 'view' ? navigateToFieldEdit : undefined}
@@ -224,7 +228,14 @@ export const SettingsObjectFieldItemTableRow = ({
         </StyledNameTableCell>
       </UndecoratedLink>
 
-      <TableCell>{typeLabel}</TableCell>
+      <TableCell>
+        <SettingsItemTypeTag
+          item={{
+            applicationId: fieldMetadataItem.applicationId,
+            isCustom: fieldMetadataItem.isCustom ?? undefined,
+          }}
+        />
+      </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}

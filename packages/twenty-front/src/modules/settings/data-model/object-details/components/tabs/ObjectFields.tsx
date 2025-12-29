@@ -1,17 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
-
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
-import { useRecoilValue } from 'recoil';
+import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -25,13 +24,11 @@ type ObjectFieldsProps = {
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const readonly = isObjectMetadataSettingsReadOnly({
+  const { t } = useLingui();
+  const readonly = isObjectMetadataReadOnly({
     objectMetadataItem,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
   });
 
-  const { t } = useLingui();
   const objectLabelSingular = objectMetadataItem.labelSingular;
 
   return (
