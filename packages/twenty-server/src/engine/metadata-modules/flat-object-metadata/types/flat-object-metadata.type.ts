@@ -6,4 +6,3 @@ export type FlatObjectMetadata = FlatEntityFrom<ObjectMetadataEntity> & {
   indexMetadataIds: string[];
   viewIds: string[];
 };
-

@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
-
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Entity({ name: 'routeTrigger', schema: 'core' })

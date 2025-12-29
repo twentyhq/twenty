@@ -32,7 +32,10 @@ import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index
 import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RemoteServerType, type RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  type RemoteServerType,
+  type RemoteServerEntity,
+} from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { type RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { type SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { type ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
@@ -78,4 +81,3 @@ export type AllNonSyncableEntity =
   | UserWorkspaceEntity
   | WebhookEntity
   | WorkspaceEntity;
-

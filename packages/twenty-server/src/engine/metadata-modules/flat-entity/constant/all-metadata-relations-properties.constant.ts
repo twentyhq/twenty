@@ -1,6 +1,7 @@
-import { ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 
 export const ALL_METADATA_RELATION_PROPERTIES = {
   agent: {
@@ -127,9 +128,7 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
 } as const satisfies {
   [TName in AllMetadataName]: {
-    [P in ExtractEntityRelatedEntityProperties<
-      MetadataEntity<TName>
-    >]: true;
+    [P in ExtractEntityRelatedEntityProperties<MetadataEntity<TName>>]: true;
     // TODO remove once viewSorts and viewFilterGroups have been migrated to v2
   } & Partial<Record<keyof MetadataEntity<TName>, true>>;
 };

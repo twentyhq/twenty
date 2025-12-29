@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
-
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
