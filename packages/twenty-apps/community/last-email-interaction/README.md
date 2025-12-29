@@ -3,8 +3,7 @@
 Updates Last interaction and Interaction status fields based on last email date
 
 ## Requirements
-- twenty-cli `npm install -g twenty-cli`
-- an `apiKey`. Go to `https://twenty.com/settings/api-webhooks` to generate one
+- an `apiKey`- go to Settings > API & Webhooks to generate one
 
 ## Setup
 1. Add and synchronize app
@@ -20,5 +19,5 @@ yarn sync
 - Extracts the datetime of message and calculates the last interaction status
 - Fetches all users and companies connected to them and updates their Last interaction and Interaction status fields
 
-To-Do:
+## Todo:
 - update app with generated Twenty object once extending objects is possible
