@@ -34,7 +34,7 @@ export class UpdateRecordService {
       fieldsToUpdate,
       workspaceId,
       rolePermissionConfig,
-      updatedBy,
+      // updatedBy,
     } = params;
 
     if (!workspaceId) {
