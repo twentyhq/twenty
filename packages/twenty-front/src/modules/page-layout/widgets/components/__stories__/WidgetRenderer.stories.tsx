@@ -1199,6 +1199,201 @@ export const WithOneToManyRelationFieldWidget: Story = {
   },
 };
 
+export const OnMobile: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+    docs: {
+      description: {
+        story:
+          'Widget on mobile viewport should use side-column variant instead of record-page variant.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-mobile',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.GRAPH,
+      title: 'Mobile Widget',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: 'widget-mobile',
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+};
+
+export const InSidePanel: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Widget in side panel (right drawer) should use side-column variant instead of record-page variant.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-side-panel',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.GRAPH,
+      title: 'Side Panel Widget',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: true,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: 'widget-side-panel',
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+};
+
 export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
   parameters: {
     catalog: {
