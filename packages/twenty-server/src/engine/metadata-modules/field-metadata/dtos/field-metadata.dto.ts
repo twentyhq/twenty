@@ -1,32 +1,32 @@
 import {
-    Field,
-    HideField,
-    ObjectType,
-    registerEnumType,
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
 } from '@nestjs/graphql';
 
 import {
-    Authorize,
-    FilterableField,
-    IDField,
-    QueryOptions,
-    Relation,
+  Authorize,
+  FilterableField,
+  IDField,
+  QueryOptions,
+  Relation,
 } from '@ptc-org/nestjs-query-graphql';
 import { Transform } from 'class-transformer';
 import {
-    IsBoolean,
-    IsDateString,
-    IsEnum,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsUUID,
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
-    type FieldMetadataOptions,
-    type FieldMetadataSettings,
-    FieldMetadataType,
+  type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
