@@ -6457,6 +6457,11 @@ msgstr "You do not have permission to perform this workflow action."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."

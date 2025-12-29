@@ -6462,6 +6462,11 @@ msgstr "이 워크플로우 작업을 수행할 권한이 없습니다."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "다음 필드를 업데이트할 권한이 없습니다: {fieldsList}. 작업 공간 관리자에게 문의하십시오."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."

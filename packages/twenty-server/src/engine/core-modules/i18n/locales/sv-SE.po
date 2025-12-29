@@ -6468,6 +6468,11 @@ msgstr "Du har inte behörighet att utföra denna arbetsflödesåtgärd."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Du har inte behörighet att uppdatera följande fält: {fieldsList}. Vänligen kontakta din arbetsytsadministratör."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."

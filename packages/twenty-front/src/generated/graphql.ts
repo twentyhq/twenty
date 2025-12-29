@@ -1934,7 +1934,6 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: SignedFile;
   uploadImage: SignedFile;
-  uploadProfilePicture: SignedFile;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
@@ -2775,11 +2774,6 @@ export type MutationUploadFileArgs = {
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
-};
-
-
-export type MutationUploadProfilePictureArgs = {
-  file: Scalars['Upload'];
 };
 
 
