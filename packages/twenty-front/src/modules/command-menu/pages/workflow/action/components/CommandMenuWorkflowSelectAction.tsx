@@ -49,11 +49,9 @@ export const CommandMenuWorkflowSelectAction = ({
         {t`Flow`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={
-          isIfElseEnabled
-            ? FLOW_ACTIONS
-            : FLOW_ACTIONS.filter((action) => action.type !== 'IF_ELSE')
-        }
+        actions={FLOW_ACTIONS.filter(
+          (action) => action.type !== 'IF_ELSE' || isIfElseEnabled,
+        )}
         onClick={onActionSelected}
       />
 
