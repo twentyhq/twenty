@@ -70,6 +70,17 @@ const barChartConfigSchema = z.object({
     ])
     .optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
+  secondaryAxisOrderBy: z
+    .enum([
+      'FIELD_ASC',
+      'FIELD_DESC',
+      'FIELD_POSITION_ASC',
+      'FIELD_POSITION_DESC',
+      'VALUE_ASC',
+      'VALUE_DESC',
+      'MANUAL',
+    ])
+    .optional(),
   secondaryAxisManualSortOrder: z.array(z.string()).optional(),
   displayDataLabel: z.boolean().optional().default(false),
   displayLegend: z.boolean().optional().default(true),
@@ -95,6 +106,17 @@ const lineChartConfigSchema = z.object({
     ])
     .optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
+  secondaryAxisOrderBy: z
+    .enum([
+      'FIELD_ASC',
+      'FIELD_DESC',
+      'FIELD_POSITION_ASC',
+      'FIELD_POSITION_DESC',
+      'VALUE_ASC',
+      'VALUE_DESC',
+      'MANUAL',
+    ])
+    .optional(),
   secondaryAxisManualSortOrder: z.array(z.string()).optional(),
   displayDataLabel: z.boolean().optional().default(false),
   filter: z.record(z.string(), z.unknown()).optional(),
