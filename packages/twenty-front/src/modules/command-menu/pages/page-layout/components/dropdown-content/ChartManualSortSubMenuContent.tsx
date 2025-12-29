@@ -4,11 +4,9 @@ import { type DropResult } from '@hello-pangea/dnd';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import {
-  type ChartManualSortAxis,
-  getManualSortConfigKey,
-} from '@/command-menu/pages/page-layout/utils/getManualSortConfigKey';
+
 import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { sortOptionsForManualOrder } from '@/page-layout/widgets/graph/utils/sortOptionsForManualOrder';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -21,11 +19,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconChevronLeft, IconGripVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { type WidgetConfiguration } from '~/generated/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type ChartManualSortSubMenuContentProps = {
   fieldMetadataItem: FieldMetadataItem;
-  axis: ChartManualSortAxis;
+  axis: 'primary' | 'secondary';
   onBack: () => void;
 };
 
@@ -40,7 +39,8 @@ export const ChartManualSortSubMenuContent = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const configuration = widgetInEditMode?.configuration;
+  // TODO: Remove this cast when we FieldsConfiguration and FieldConfiguration are in the backend
+  const configuration = widgetInEditMode?.configuration as WidgetConfiguration;
   const options = fieldMetadataItem.options ?? [];
 
   const currentManualSortOrder = getManualSortOrderFromConfig(
@@ -64,7 +64,14 @@ export const ChartManualSortSubMenuContent = ({
     });
 
     const newManualSortOrder = reorderedOptions.map((option) => option.value);
-    const configKey = getManualSortConfigKey(axis);
+    const configKey = isWidgetConfigurationOfType(
+      configuration,
+      'PieChartConfiguration',
+    )
+      ? 'manualSortOrder'
+      : axis === 'primary'
+        ? 'primaryAxisManualSortOrder'
+        : 'secondaryAxisManualSortOrder';
 
     updateCurrentWidgetConfig({
       configToUpdate: { [configKey]: newManualSortOrder },

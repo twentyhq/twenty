@@ -1,37 +1,28 @@
-import {
-  type ChartManualSortAxis,
-  getManualSortConfigKey,
-} from '@/command-menu/pages/page-layout/utils/getManualSortConfigKey';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { isDefined } from 'twenty-shared/utils';
-
-type ChartConfiguration =
-  | { __typename?: string; [key: string]: unknown }
-  | null
-  | undefined;
+import { type WidgetConfiguration } from '~/generated/graphql';
 
 export const getManualSortOrderFromConfig = (
-  configuration: ChartConfiguration,
-  axis: ChartManualSortAxis,
+  configuration: WidgetConfiguration,
+  axis?: 'primary' | 'secondary',
 ): string[] | undefined => {
-  if (!isDefined(configuration)) return undefined;
+  if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
+    return configuration.manualSortOrder ?? undefined;
+  }
 
-  const configKey = getManualSortConfigKey(axis);
-
-  if (
-    axis === 'pie' &&
-    configuration.__typename === 'PieChartConfiguration' &&
-    'manualSortOrder' in configuration
-  ) {
-    return (configuration.manualSortOrder as string[] | null) ?? undefined;
+  if (!isDefined(axis)) {
+    return undefined;
   }
 
   if (
-    (axis === 'primary' || axis === 'secondary') &&
-    (configuration.__typename === 'BarChartConfiguration' ||
-      configuration.__typename === 'LineChartConfiguration') &&
-    configKey in configuration
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration')
   ) {
-    return (configuration[configKey] as string[] | null) ?? undefined;
+    if (axis === 'primary') {
+      return configuration.primaryAxisManualSortOrder ?? undefined;
+    }
+
+    return configuration.secondaryAxisManualSortOrder ?? undefined;
   }
 
   return undefined;

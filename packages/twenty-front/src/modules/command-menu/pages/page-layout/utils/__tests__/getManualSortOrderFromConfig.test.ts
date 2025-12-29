@@ -1,4 +1,11 @@
 import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
+import { expect } from '@storybook/test';
+import {
+  WidgetConfigurationType,
+  type BarChartConfiguration,
+  type LineChartConfiguration,
+  type PieChartConfiguration,
+} from '~/generated/graphql';
 
 describe('getManualSortOrderFromConfig', () => {
   describe('pie chart configuration', () => {
@@ -6,39 +13,37 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'PieChartConfiguration' as const,
         manualSortOrder: ['a', 'b', 'c'],
-      };
+      } as PieChartConfiguration;
 
-      expect(getManualSortOrderFromConfig(config, 'pie')).toEqual([
-        'a',
-        'b',
-        'c',
-      ]);
+      expect(getManualSortOrderFromConfig(config)).toEqual(['a', 'b', 'c']);
     });
 
     it('should return undefined for null manualSortOrder', () => {
       const config = {
         __typename: 'PieChartConfiguration' as const,
         manualSortOrder: null,
-      };
+      } as PieChartConfiguration;
 
-      expect(getManualSortOrderFromConfig(config, 'pie')).toBeUndefined();
+      expect(getManualSortOrderFromConfig(config)).toBeUndefined();
     });
 
     it('should return undefined when manualSortOrder is not in config', () => {
       const config = {
-        __typename: 'PieChartConfiguration' as const,
-      };
+        __typename: 'PieChartConfiguration',
+        configurationType: WidgetConfigurationType.PIE_CHART,
+      } as PieChartConfiguration;
 
-      expect(getManualSortOrderFromConfig(config, 'pie')).toBeUndefined();
+      expect(getManualSortOrderFromConfig(config)).toBeUndefined();
     });
 
     it('should return undefined for wrong typename', () => {
       const config = {
-        __typename: 'BarChartConfiguration' as const,
+        __typename: 'BarChartConfiguration',
+        configurationType: WidgetConfigurationType.BAR_CHART,
         manualSortOrder: ['a', 'b', 'c'],
-      };
+      } as unknown as BarChartConfiguration;
 
-      expect(getManualSortOrderFromConfig(config, 'pie')).toBeUndefined();
+      expect(getManualSortOrderFromConfig(config)).toBeUndefined();
     });
   });
 
@@ -47,7 +52,7 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'BarChartConfiguration' as const,
         primaryAxisManualSortOrder: ['x', 'y', 'z'],
-      };
+      } as BarChartConfiguration;
 
       expect(getManualSortOrderFromConfig(config, 'primary')).toEqual([
         'x',
@@ -60,7 +65,7 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'BarChartConfiguration' as const,
         secondaryAxisManualSortOrder: ['1', '2', '3'],
-      };
+      } as BarChartConfiguration;
 
       expect(getManualSortOrderFromConfig(config, 'secondary')).toEqual([
         '1',
@@ -73,7 +78,7 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'BarChartConfiguration' as const,
         primaryAxisManualSortOrder: null,
-      };
+      } as BarChartConfiguration;
 
       expect(getManualSortOrderFromConfig(config, 'primary')).toBeUndefined();
     });
@@ -84,7 +89,7 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'LineChartConfiguration' as const,
         primaryAxisManualSortOrder: ['a', 'b'],
-      };
+      } as LineChartConfiguration;
 
       expect(getManualSortOrderFromConfig(config, 'primary')).toEqual([
         'a',
@@ -96,7 +101,7 @@ describe('getManualSortOrderFromConfig', () => {
       const config = {
         __typename: 'LineChartConfiguration' as const,
         secondaryAxisManualSortOrder: ['c', 'd'],
-      };
+      } as LineChartConfiguration;
 
       expect(getManualSortOrderFromConfig(config, 'secondary')).toEqual([
         'c',

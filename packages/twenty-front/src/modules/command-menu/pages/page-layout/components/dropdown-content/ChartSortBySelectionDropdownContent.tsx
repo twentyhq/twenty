@@ -175,7 +175,7 @@ export const ChartSortBySelectionDropdownContent = () => {
     return (
       <ChartManualSortSubMenuContent
         fieldMetadataItem={primaryAxisField}
-        axis={isPieChart ? 'pie' : 'primary'}
+        axis={'primary'}
         onBack={() => setIsSubMenuOpen(false)}
       />
     );
