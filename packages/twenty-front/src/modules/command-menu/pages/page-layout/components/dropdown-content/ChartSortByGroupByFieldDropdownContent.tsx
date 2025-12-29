@@ -10,6 +10,7 @@ import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/u
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
 import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
 import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -48,6 +49,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const configuration = widgetInEditMode?.configuration;
 
   const isBarOrLineChart = isBarOrLineChartConfiguration(configuration);
+  const isLineChart = isLineChartConfiguration(configuration);
 
   if (!isBarOrLineChart) {
     throw new Error('Invalid configuration type');
@@ -101,10 +103,12 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     closeDropdown();
   };
 
+  const chartType = isLineChart ? 'line' : 'bar';
+
   const availableOptions = filterSortOptionsByFieldType({
     options: AGGREGATE_SORT_BY_OPTIONS,
     isSelectField: isSecondaryAxisSelectField,
-    chartType: 'bar',
+    chartType,
   });
 
   if (isSubMenuOpen && isDefined(secondaryAxisField)) {
