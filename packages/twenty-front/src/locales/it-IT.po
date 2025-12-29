@@ -67,7 +67,7 @@ msgstr ": Passato"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": Oggi{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, one {{1} lavoro non può essere riavviato} other {{2} lavori
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} giorno} other {{days} giorni}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} anno} other {{years} anni}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{currentRank} di {totalCount} in {objectLabelPlural}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} giorno} other {{days} giorni}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -682,7 +689,6 @@ msgstr "Azioni che gli utenti possono eseguire su questo oggetto"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "Attiva"
@@ -1068,7 +1074,7 @@ msgstr "Dopo un determinato periodo di tempo"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "Successivo o uguale a"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1110,16 +1116,17 @@ msgid "Agent tokens"
 msgstr "Token dell'agente"
 
 #. js-lingui-id: 8Uv5e6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "Agenti"
 
-#. js-lingui-id: Y1fJZS
+#. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Agents created by application"
-msgstr "Agenti creati dall'applicazione"
+msgid "Agents powering this app"
+msgstr "Agenti che alimentano questa applicazione"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1158,6 +1165,11 @@ msgstr "Modello AI"
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "AI Models"
 msgstr ""
+
+#. js-lingui-id: Sfwld8
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
+msgstr "IA non configurata. Imposta OPENAI_API_KEY, ANTHROPIC_API_KEY o XAI_API_KEY nel tuo ambiente."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1545,11 +1557,6 @@ msgstr "Apple"
 msgid "Applicability"
 msgstr "Applicabilità"
 
-#. js-lingui-id: uNojI9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application agents"
-msgstr "Agenti dell'applicazione"
-
 #. js-lingui-id: bw50Pz
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
@@ -1560,18 +1567,8 @@ msgstr "pagina dei dettagli dell'applicazione"
 msgid "Application details"
 msgstr "Dettagli dell'applicazione"
 
-#. js-lingui-id: E5NJII
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application objects"
-msgstr "Oggetti dell'applicazione"
-
-#. js-lingui-id: fqP45C
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application serverless functions"
-msgstr "Funzioni serverless dell'applicazione"
-
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -1921,6 +1918,11 @@ msgstr "Contesto"
 #. js-lingui-id: Hv/jpu
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
+msgstr ""
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
 msgstr ""
 
 #. js-lingui-id: EmSrGB
@@ -2522,6 +2524,11 @@ msgstr "Icona del comando"
 msgid "Command Menu"
 msgstr "Menu Comandi"
 
+#. js-lingui-id: 4XlFx/
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Commands copied to clipboard"
+msgstr "Comandi copiati negli appunti"
+
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
@@ -2747,6 +2754,11 @@ msgstr ""
 msgid "Contact auto-creation"
 msgstr "Creazione automatica dei contatti"
 
+#. js-lingui-id: cByGGA
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "Contact your admin to continue using Workflow or AI features."
+msgstr "Contatta l'amministratore per continuare a usare le funzionalità dei flussi di lavoro o di IA."
+
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
@@ -2848,6 +2860,11 @@ msgstr "Copia"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
 msgstr "Copia codice"
+
+#. js-lingui-id: Es0ros
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Copy commands"
+msgstr "Copia comandi"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3013,6 +3030,11 @@ msgstr "Crea un workflow e torna qui per visualizzarne le versioni"
 msgid "Create a workspace"
 msgstr "Crea uno spazio di lavoro"
 
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Create an application"
+msgstr "Crea un'applicazione"
+
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
@@ -3158,6 +3180,16 @@ msgstr "Utilizzo dei Crediti"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
 msgstr "Crediti per periodo"
+
+#. js-lingui-id: EABlI0
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Please contact your workspace admin to upgrade."
+msgstr "Crediti esauriti. Contatta l'amministratore dello spazio di lavoro per eseguire l'aggiornamento."
+
+#. js-lingui-id: JIXvMy
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Upgrade your plan to get more credits."
+msgstr "Crediti esauriti. Aggiorna il tuo piano per ottenere più crediti."
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -3312,7 +3344,6 @@ msgstr "Ceco"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -4130,7 +4161,6 @@ msgid "eddy@gmail.com, @apple.com"
 msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -4429,6 +4459,16 @@ msgstr "Abilita opzioni di bypass"
 msgid "Enable model-specific features"
 msgstr "Abilita le funzionalità specifiche del modello"
 
+#. js-lingui-id: k1i50B
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End Trial Period"
+msgstr "Termina il periodo di prova"
+
+#. js-lingui-id: QEUZoG
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End trial period to continue using Workflow or AI features."
+msgstr "Termina il periodo di prova per continuare a usare le funzionalità dei flussi di lavoro o di IA."
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -4627,7 +4667,6 @@ msgid "Entity ID copied to clipboard"
 msgstr "ID entità copiato negli appunti"
 
 #. js-lingui-id: 3IeauL
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 msgid "Env Variable Options"
 msgstr "Opzioni delle variabili di ambiente"
@@ -4718,7 +4757,7 @@ msgid "Error resending invitation"
 msgstr "Errore nel reinvio dell'invito"
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -5530,6 +5569,11 @@ msgstr "quarto"
 msgid "Fourth"
 msgstr "Quarto"
 
+#. js-lingui-id: aUj1gh
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
+msgstr "Crediti della prova gratuita esauriti. Abbonati ora per continuare a usare le funzionalità di IA."
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -5545,6 +5589,11 @@ msgstr "dal {startDay} al {endDay}"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Accesso completo"
+
+#. js-lingui-id: xANKBj
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Functions"
+msgstr "Funzioni"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -6161,7 +6210,6 @@ msgid "Indexes"
 msgstr "Indici"
 
 #. js-lingui-id: CE+M2e
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Info"
 msgstr "Info"
@@ -6201,6 +6249,11 @@ msgstr "Inserisci un input JSON, quindi premi \"Esegui\" per testare la tua funz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Installa e gestisci applicazioni"
+
+#. js-lingui-id: N52taw
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Installed applications"
+msgstr "Applicazioni installate"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6325,12 +6378,12 @@ msgstr "Numero non valido"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "URL non valido"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "URL non valido. Fai clic su modifica per configurare questo widget."
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6397,7 +6450,7 @@ msgstr "È"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "È successivo o uguale a"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6492,7 +6545,7 @@ msgstr "È relativo"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "È oggi{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6817,6 +6870,11 @@ msgstr "ha collegato un'email con"
 msgid "list"
 msgstr ""
 
+#. js-lingui-id: 5Kn+XX
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "List installed applications. Use filter to search for a specific application"
+msgstr "Elenca le applicazioni installate. Usa il filtro per cercare un'applicazione specifica"
+
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -7003,6 +7061,11 @@ msgstr "Gestisci viste"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage workflows"
 msgstr "Gestisci flussi di lavoro"
+
+#. js-lingui-id: cbzOP7
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Manage your app"
+msgstr "Gestisci la tua app"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -7341,7 +7404,6 @@ msgstr "Le mie viste non elencate"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7749,11 +7811,6 @@ msgstr "Nessun elemento eliminato trovato {objectLabelSingular}"
 msgid "No deleted records matching the filter criteria were found."
 msgstr "Non sono stati trovati record eliminati che corrispondono ai criteri del filtro."
 
-#. js-lingui-id: flmDTf
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-msgid "No description"
-msgstr "Nessuna descrizione"
-
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -7819,25 +7876,10 @@ msgstr "Nessuna cartella trovata"
 msgid "No folders found for this account"
 msgstr "Nessuna cartella trovata per questo account"
 
-#. js-lingui-id: xlUOps
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. End trial period and activate your billing to continue."
-msgstr "Nessuna esecuzione di workflow gratuita rimasta. Termina il periodo di prova e attiva la tua fatturazione per continuare."
-
-#. js-lingui-id: pxYUeX
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. Please contact your admin."
-msgstr "Nessuna esecuzione di workflow gratuita rimasta. Si prega di contattare l'amministratore."
-
 #. js-lingui-id: gIrKyO
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
-
-#. js-lingui-id: kkGPb1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "No installed application. Please check our <0/>"
-msgstr "Nessuna applicazione installata. Controlla la nostra <0/>"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8123,6 +8165,7 @@ msgstr "Formato numerico"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "Numero di decimali"
 
@@ -8193,6 +8236,7 @@ msgstr "Livello oggetto"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
@@ -8203,10 +8247,10 @@ msgstr "Oggetti"
 msgid "Objects and fields permissions settings"
 msgstr "Impostazioni delle autorizzazioni per oggetti e campi"
 
-#. js-lingui-id: X51S3F
+#. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Objects created by application"
-msgstr "Oggetti creati dall'applicazione"
+msgid "Objects managed by this app"
+msgstr "Oggetti gestiti da questa app"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8805,7 +8849,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "Digita \"{confirmationValue}\" per confermare che vuoi eliminare questa chiave API. Tieni presente che qualsiasi script che utilizza questa chiave smetterà di funzionare."
 
 #. js-lingui-id: L0SEpC
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
 msgstr ""
 
@@ -9089,6 +9133,11 @@ msgstr "JSON grezzo"
 #: src/pages/settings/updates/SettingsUpdates.tsx
 msgid "Read changelog"
 msgstr "Leggi il changelog"
+
+#. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Read documentation"
+msgstr "Leggi la documentazione"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9554,6 +9603,11 @@ msgstr "Ruolo aggiornato con successo"
 msgid "Roles"
 msgstr "Ruoli"
 
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
+
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -9699,11 +9753,6 @@ msgstr "Cerca un membro del team..."
 msgid "Search a type"
 msgstr "Cerca un tipo"
 
-#. js-lingui-id: 4J+cf6
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
-msgid "Search a variable"
-msgstr "Cerca una variabile"
-
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search agents"
@@ -9713,6 +9762,11 @@ msgstr "Cerca agenti"
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "Cerca un agente..."
+
+#. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Search an application"
+msgstr "Cerca un'applicazione"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10162,10 +10216,10 @@ msgstr "Serbo (Cirillico)"
 msgid "serverless function"
 msgstr "funzione serverless"
 
-#. js-lingui-id: eGHP1w
+#. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Serverless functions created by application"
-msgstr "Funzioni serverless create dall'applicazione"
+msgid "Serverless functions powering this app"
+msgstr "Funzioni serverless che alimentano questa app"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -10713,6 +10767,7 @@ msgstr "Abbonarsi"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "Sottoscrivi Ora"
 
@@ -11414,6 +11469,11 @@ msgstr "Generazione dello strumento"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11665,18 +11725,18 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr ""
 
 #. js-lingui-id: u+6vfA
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall this application"
 msgstr ""
 
@@ -11838,6 +11898,11 @@ msgstr "Aggiornamenti"
 msgid "Upgrade"
 msgstr "Aggiorna"
 
+#. js-lingui-id: 7aHRdp
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Upgrade Plan"
+msgstr "Aggiorna piano"
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -11963,7 +12028,6 @@ msgid "Validate Data"
 msgstr "Convalida i dati"
 
 #. js-lingui-id: wMHvYH
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
@@ -12068,6 +12132,11 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Visualizza dettagli fatturazione"
+
+#. js-lingui-id: SXCuo2
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "View Docs"
+msgstr "Visualizza la documentazione"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12515,7 +12584,7 @@ msgstr "Giallo"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
@@ -12545,6 +12614,11 @@ msgstr "Appartieni già a questo workspace"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "Non sei autorizzato a creare record per questo oggetto"
+
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "You can either create a private app or share it to others"
+msgstr "Puoi creare un'app privata o condividerla con altri"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

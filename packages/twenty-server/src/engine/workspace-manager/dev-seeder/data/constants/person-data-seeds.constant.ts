@@ -17,6 +17,9 @@ type PersonDataSeed = {
   phonesPrimaryPhoneNumber: string;
   phonesPrimaryPhoneCountryCode: string;
   phonesPrimaryPhoneCallingCode: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
   position: number;
 };
 
@@ -36,6 +39,9 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'phonesPrimaryPhoneNumber',
   'phonesPrimaryPhoneCountryCode',
   'phonesPrimaryPhoneCallingCode',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
   'position',
 ];
 
@@ -21650,6 +21656,9 @@ const PERSON_DATA_SEEDS_RAW = [
 export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
   (person, index) => ({
     ...person,
+    updatedBySource: person.createdBySource,
+    updatedByWorkspaceMemberId: person.createdByWorkspaceMemberId,
+    updatedByName: person.createdByName,
     position: index + 1,
   }),
 );

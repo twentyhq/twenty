@@ -1,7 +1,5 @@
-import {
-  type CreateRecordExecutionContext,
-  type RecordCrudExecutionContext,
-} from './execution-context.type';
+import { type CreateRecordExecutionContext } from './create-record-execution-context.type';
+import { type RecordCrudExecutionContext } from './record-crud-execution-context.type';
 import { type CreateRecordInput } from './record-crud-input.type';
 
 export type CreateRecordParams = CreateRecordInput &

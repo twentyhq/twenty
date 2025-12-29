@@ -31,6 +31,7 @@ export enum BillingExceptionCode {
   BILLING_PRICE_INVALID = 'BILLING_PRICE_INVALID',
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
+  BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -83,6 +84,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Subscription phase not found.`;
     case BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND:
       return msg`Multiple subscriptions found where one was expected.`;
+    case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
+      return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
     default:
       assertUnreachable(code);
   }

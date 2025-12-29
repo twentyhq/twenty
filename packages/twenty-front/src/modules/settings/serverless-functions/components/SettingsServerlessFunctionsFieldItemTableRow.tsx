@@ -1,16 +1,17 @@
 import styled from '@emotion/styled';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ServerlessFunction } from '~/generated-metadata/graphql';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useTheme } from '@emotion/react';
 import { IconChevronRight } from 'twenty-ui/display';
-
-export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
-`;
+import { StyledTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledRuntimeTableCell = styled(TableCell)`
+  color: ${({ theme }) => theme.font.color.secondary};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -32,15 +33,18 @@ export const SettingsServerlessFunctionsFieldItemTableRow = ({
 }) => {
   const theme = useTheme();
   return (
-    <StyledApisFieldTableRow to={to}>
+    <StyledTableRow to={to}>
       <StyledNameTableCell>{serverlessFunction.name}</StyledNameTableCell>
-      <StyledNameTableCell>{serverlessFunction.runtime}</StyledNameTableCell>
+      <StyledNameTableCell></StyledNameTableCell>
+      <StyledRuntimeTableCell>
+        {serverlessFunction.runtime}
+      </StyledRuntimeTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
       </StyledIconTableCell>
-    </StyledApisFieldTableRow>
+    </StyledTableRow>
   );
 };

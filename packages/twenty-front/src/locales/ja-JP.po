@@ -67,7 +67,7 @@ msgstr "過去"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": 今日{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, other {{2} 件のジョブを再試行できませんでし�
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days}日} other {{days}日}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years}年} other {{years}年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{objectLabelPlural} の {totalCount} 件中 {currentRank}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} 日}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -682,7 +689,6 @@ msgstr "このオブジェクトにユーザーが行えるアクション"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "有効化"
@@ -1068,7 +1074,7 @@ msgstr "一定時間経過後"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "以降（同日を含む）"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1110,16 +1116,17 @@ msgid "Agent tokens"
 msgstr "エージェントのトークン"
 
 #. js-lingui-id: 8Uv5e6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "エージェントたち"
 
-#. js-lingui-id: Y1fJZS
+#. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Agents created by application"
-msgstr "アプリケーションによって作成されたエージェント"
+msgid "Agents powering this app"
+msgstr "このアプリを支えるエージェント"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1158,6 +1165,11 @@ msgstr "AIモデル"
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "AI Models"
 msgstr ""
+
+#. js-lingui-id: Sfwld8
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
+msgstr "AI が構成されていません。環境変数に OPENAI_API_KEY、ANTHROPIC_API_KEY、または XAI_API_KEY を設定してください。"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1545,11 +1557,6 @@ msgstr "アップル"
 msgid "Applicability"
 msgstr "適用範囲"
 
-#. js-lingui-id: uNojI9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application agents"
-msgstr "アプリケーションエージェント"
-
 #. js-lingui-id: bw50Pz
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
@@ -1560,18 +1567,8 @@ msgstr "アプリケーション詳細ページ"
 msgid "Application details"
 msgstr "アプリケーション詳細"
 
-#. js-lingui-id: E5NJII
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application objects"
-msgstr "アプリケーションオブジェクト"
-
-#. js-lingui-id: fqP45C
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application serverless functions"
-msgstr "アプリケーションのサーバーレス関数"
-
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -1922,6 +1919,11 @@ msgstr "背景"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
 msgstr "背景色"
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
 
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
@@ -2522,6 +2524,11 @@ msgstr "コマンドメニューアイコン"
 msgid "Command Menu"
 msgstr "コマンドメニュー"
 
+#. js-lingui-id: 4XlFx/
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Commands copied to clipboard"
+msgstr "コマンドがクリップボードにコピーされました"
+
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
@@ -2747,6 +2754,11 @@ msgstr ""
 msgid "Contact auto-creation"
 msgstr "連絡先自動作成"
 
+#. js-lingui-id: cByGGA
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "Contact your admin to continue using Workflow or AI features."
+msgstr "ワークフローや AI 機能の利用を継続するには、管理者に連絡してください。"
+
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
@@ -2848,6 +2860,11 @@ msgstr "コピー"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
 msgstr "コードをコピー"
+
+#. js-lingui-id: Es0ros
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Copy commands"
+msgstr "コマンドをコピー"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3013,6 +3030,11 @@ msgstr "ワークフローを作成し、ここに戻ってそのバージョン
 msgid "Create a workspace"
 msgstr "ワークスペースを作成"
 
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Create an application"
+msgstr "アプリケーションを作成"
+
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
@@ -3158,6 +3180,16 @@ msgstr "クレジット使用量"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
 msgstr "期間別のクレジット"
+
+#. js-lingui-id: EABlI0
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Please contact your workspace admin to upgrade."
+msgstr "クレジットを使い切りました。アップグレードするには、ワークスペースの管理者にお問い合わせください。"
+
+#. js-lingui-id: JIXvMy
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Upgrade your plan to get more credits."
+msgstr "クレジットを使い切りました。より多くのクレジットを得るには、プランをアップグレードしてください。"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -3312,7 +3344,6 @@ msgstr "チェコ語"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -4130,7 +4161,6 @@ msgid "eddy@gmail.com, @apple.com"
 msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -4429,6 +4459,16 @@ msgstr "バイパスオプションを有効にする"
 msgid "Enable model-specific features"
 msgstr "モデル固有の機能を有効にする"
 
+#. js-lingui-id: k1i50B
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End Trial Period"
+msgstr "トライアル期間を終了"
+
+#. js-lingui-id: QEUZoG
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End trial period to continue using Workflow or AI features."
+msgstr "ワークフローや AI 機能の利用を継続するには、トライアル期間を終了してください。"
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -4627,7 +4667,6 @@ msgid "Entity ID copied to clipboard"
 msgstr "エンティティIDがクリップボードにコピーされました"
 
 #. js-lingui-id: 3IeauL
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 msgid "Env Variable Options"
 msgstr "環境変数のオプション"
@@ -4718,7 +4757,7 @@ msgid "Error resending invitation"
 msgstr "招待の再送エラー"
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -5530,6 +5569,11 @@ msgstr "第四"
 msgid "Fourth"
 msgstr "第四"
 
+#. js-lingui-id: aUj1gh
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
+msgstr "無料トライアルのクレジットを使い切りました。AI 機能の利用を継続するには、今すぐご契約ください。"
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -5545,6 +5589,11 @@ msgstr "{startDay} から {endDay} へ"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "フルアクセス"
+
+#. js-lingui-id: xANKBj
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Functions"
+msgstr "機能"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -6161,7 +6210,6 @@ msgid "Indexes"
 msgstr "インデックス"
 
 #. js-lingui-id: CE+M2e
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Info"
 msgstr "情報"
@@ -6201,6 +6249,11 @@ msgstr "JSON入力を挿入し、「実行」を押して関数をテストし�
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "アプリケーションのインストールと管理"
+
+#. js-lingui-id: N52taw
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Installed applications"
+msgstr "インストール済みのアプリケーション"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6325,12 +6378,12 @@ msgstr "無効な数値"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "無効なURL"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "無効なURLです。このウィジェットを構成するには「編集」をクリックしてください。"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6397,7 +6450,7 @@ msgstr "である"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "が以降（同日を含む）"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6492,7 +6545,7 @@ msgstr "相対である"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "が今日{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6817,6 +6870,11 @@ msgstr "メールをリンクしました"
 msgid "list"
 msgstr ""
 
+#. js-lingui-id: 5Kn+XX
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "List installed applications. Use filter to search for a specific application"
+msgstr "インストール済みのアプリケーションを一覧表示します。フィルターを使って特定のアプリケーションを検索できます。"
+
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -7003,6 +7061,11 @@ msgstr "ビューを管理"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage workflows"
 msgstr "ワークフローを管理"
+
+#. js-lingui-id: cbzOP7
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Manage your app"
+msgstr "アプリを管理"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -7341,7 +7404,6 @@ msgstr "非公開ビュー"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7749,11 +7811,6 @@ msgstr "削除された{objectLabelSingular}が見つかりません"
 msgid "No deleted records matching the filter criteria were found."
 msgstr "フィルター基準に合致する削除されたレコードは見つかりませんでした。"
 
-#. js-lingui-id: flmDTf
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-msgid "No description"
-msgstr "説明なし"
-
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -7819,25 +7876,10 @@ msgstr "フォルダーが見つかりません"
 msgid "No folders found for this account"
 msgstr "このアカウントにはフォルダーが見つかりませんでした"
 
-#. js-lingui-id: xlUOps
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. End trial period and activate your billing to continue."
-msgstr "無料のワークフロー実行が残っていません。トライアル期間を終了し、継続するには請求を有効化してください。"
-
-#. js-lingui-id: pxYUeX
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. Please contact your admin."
-msgstr "無料のワークフロー実行は残っていません。管理者に連絡してください。"
-
 #. js-lingui-id: gIrKyO
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
-
-#. js-lingui-id: kkGPb1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "No installed application. Please check our <0/>"
-msgstr "インストール済みのアプリケーションはありません。<0/> をご確認ください"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8123,6 +8165,7 @@ msgstr "数字の形式"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "小数点の数"
 
@@ -8193,6 +8236,7 @@ msgstr "オブジェクトレベル"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
@@ -8203,10 +8247,10 @@ msgstr "オブジェクト"
 msgid "Objects and fields permissions settings"
 msgstr "オブジェクトとフィールドの権限設定"
 
-#. js-lingui-id: X51S3F
+#. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Objects created by application"
-msgstr "アプリケーションによって作成されたオブジェクト"
+msgid "Objects managed by this app"
+msgstr "このアプリで管理されているオブジェクト"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8805,7 +8849,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "\"{confirmationValue}\"と入力して、このAPIキーを削除することを確認してください。このキーを使用しているスクリプトは動作しなくなりますのでご注意ください。"
 
 #. js-lingui-id: L0SEpC
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
 msgstr ""
 
@@ -9089,6 +9133,11 @@ msgstr "生の JSON"
 #: src/pages/settings/updates/SettingsUpdates.tsx
 msgid "Read changelog"
 msgstr "変更履歴を確認する"
+
+#. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Read documentation"
+msgstr "ドキュメントを読む"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9554,6 +9603,11 @@ msgstr "ロールが正常に更新されました"
 msgid "Roles"
 msgstr "役割"
 
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
+
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -9699,11 +9753,6 @@ msgstr "メンバーを検索…"
 msgid "Search a type"
 msgstr "タイプを検索"
 
-#. js-lingui-id: 4J+cf6
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
-msgid "Search a variable"
-msgstr "変数を検索"
-
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search agents"
@@ -9713,6 +9762,11 @@ msgstr "エージェントを検索"
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "エージェントを検索..."
+
+#. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Search an application"
+msgstr "アプリケーションを検索"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10162,10 +10216,10 @@ msgstr "セルビア語（キリル文字）"
 msgid "serverless function"
 msgstr "サーバーレス関数"
 
-#. js-lingui-id: eGHP1w
+#. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Serverless functions created by application"
-msgstr "アプリケーションによって作成されたサーバーレス関数"
+msgid "Serverless functions powering this app"
+msgstr "このアプリを支えるサーバーレス機能"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -10713,6 +10767,7 @@ msgstr "購読"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "今すぐ購読"
 
@@ -11412,6 +11467,11 @@ msgstr "ツール生成"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11663,18 +11723,18 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr ""
 
 #. js-lingui-id: u+6vfA
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall this application"
 msgstr ""
 
@@ -11836,6 +11896,11 @@ msgstr "更新"
 msgid "Upgrade"
 msgstr "アップグレード"
 
+#. js-lingui-id: 7aHRdp
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Upgrade Plan"
+msgstr "プランをアップグレード"
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -11961,7 +12026,6 @@ msgid "Validate Data"
 msgstr "データを検証"
 
 #. js-lingui-id: wMHvYH
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
@@ -12066,6 +12130,11 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "請求の詳細を表示"
+
+#. js-lingui-id: SXCuo2
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "View Docs"
+msgstr "ドキュメントを表示"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12513,7 +12582,7 @@ msgstr "黄色"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
@@ -12543,6 +12612,11 @@ msgstr "すでにこのワークスペースに所属しています"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "このオブジェクトでレコードを作成することは許可されていません"
+
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "You can either create a private app or share it to others"
+msgstr "プライベートアプリを作成することも、他のユーザーと共有することもできます。"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Twenty'den Teklif veya Fatura Oluşturun
+description: Fırsatlar kapandığında harici araçlarda otomatik olarak faturalar oluşturun.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Fırsat verilerini faturalama sisteminize (Stripe, QuickBooks, Xero, vb.) otomatik olarak gönderin bir fırsat kazanıldığında.
 
-## Workflow Structure
+## İş Akışı Yapısı
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Tetikleme**: Kayıt Güncellendi (Fırsat)
+2. **Filtre**: Aşama = Closed Won
+3. **Kayıt Ara**: Şirket ayrıntılarını alın
+4. **Kod** (isteğe bağlı): Yükü biçimlendirin
+5. **HTTP İsteği**: Faturalama sistemine gönderin
 
-## Step 1: Set Up the Trigger
+## Adım 1: Tetiklemeyi Ayarlayın
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Yeni bir iş akışı oluşturun
+2. **Kayıt Güncellendi** tetikleyicisini seçin
+3. Nesne olarak **Fırsat**'ı seçin
 
-## Step 2: Filter for Closed Won
+## Adım 2: Closed Won için filtreleyin
 
-Add a **Filter** action to only continue when the deal is won:
+Yalnızca fırsat kazanıldığında devam etmek için bir **Filtre** eylemi ekleyin:
 
-| Setting       | Değer                             |
-| ------------- | --------------------------------- |
-| **Field**     | Aşama                             |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| Ayar      | Değer                            |
+| --------- | -------------------------------- |
+| **Alan**  | Aşama                            |
+| **Koşul** | Eşittir                          |
+| **Değer** | `CLOSED_WON` (veya aşama adınız) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  Tetikleyici, herhangi bir Fırsat güncellemesinde tetiklenir. Filtre, aşama Closed Won olduğunda iş akışının devam etmesini sağlar.
 </Tip>
 
-## Step 3: Get Company Details
+## Adım 3: Şirket Ayrıntılarını Alın
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Fırsat kaydı, fatura için ihtiyaç duyduğunuz tüm Şirket alanlarını içermeyebilir. Bir **Kayıt Ara** eylemi ekleyin:
 
-| Setting      | Değer                                    |
-| ------------ | ---------------------------------------- |
-| **Object**   | Şirket                                   |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| Ayar                   | Değer                                               |
+| ---------------------- | --------------------------------------------------- |
+| **Nesne**              | Şirket                                              |
+| **Şuna göre eşleştir** | ID, `{{trigger.object.companyId}}` değerine eşittir |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+Bu, fatura adresi, vergi kimliği vb. ile birlikte tam Şirket kaydını getirir.
 
-## Step 4: Format the Payload (Optional)
+## Adım 4: Yükü Biçimlendirin (İsteğe Bağlı)
 
-If your invoicing system expects a specific format, add a **Code** action:
+Faturalama sisteminiz belirli bir biçim bekliyorsa bir **Kod** eylemi ekleyin:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Adım 5: Faturalama Sistemine Gönderin
 
-Add an **HTTP Request** action:
+Bir **HTTP İsteği** eylemi ekleyin:
 
-| Setting     | Değer                                     |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Ayar          | Değer                                             |
+| ------------- | ------------------------------------------------- |
+| **Yöntem**    | POST                                              |
+| **URL**       | Faturalama API uç noktanız                        |
+| **Başlıklar** | `Authorization: Bearer YOUR_API_KEY`              |
+| **Gövde**     | `{{code.invoice}}` veya alanları doğrudan eşleyin |
 
-### Example: Stripe Invoice
+### Örnek: Stripe Faturası
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Örnek: QuickBooks Faturası
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Tam İş Akışı Özeti
 
-| Step | Eylem                   | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filtre                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Kod                     | Format data for invoicing API        |
-| 5    | HTTP İsteği             | Create invoice in external system    |
+| Adım | Eylem                        | Amaç                                          |
+| ---- | ---------------------------- | --------------------------------------------- |
+| 1    | Tetikleme: Kayıt Güncellendi | Herhangi bir Fırsat değiştiğinde tetiklenir   |
+| 2    | Filtre                       | Yalnızca Aşama = Closed Won ise devam edin    |
+| 3    | Kayıt Ara                    | Faturalama için tam Şirket ayrıntılarını alın |
+| 4    | Kod                          | Faturalama API'si için verileri biçimlendirin |
+| 5    | HTTP İsteği                  | Harici sistemde fatura oluşturun              |
 
-## Tips
+## İpuçları
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Harici kimlikleri saklayın**: API tarafından döndürülen fatura kimliğini bir **Kayıt Güncelle** eylemi kullanarak Fırsat'a geri kaydedin
+* **Hata işleme**: HTTP isteği başarısız olursa bir bildirim göndermek için bir dal ekleyin
+* **Önce test edin**: Canlıya almadan önce faturalama sisteminizin sandbox/test modunu kullanın
 
-## Related
+## İlgili
 
-* [Workflow Triggers](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Kazanıldı Otomasyonları](/l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

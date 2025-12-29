@@ -1,21 +1,21 @@
 ---
 title: Acțiuni Workflow
-description: Learn about the actions available in Twenty workflows.
+description: Aflați despre acțiunile disponibile în fluxurile de lucru Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## Despre acțiuni
 
-Acțiunile definesc ce se întâmplă după declanșarea unui trigger. You can chain multiple actions together to build complex automations.
+Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți înlănțui mai multe acțiuni pentru a construi automatizări complexe.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Folosiți selectorul de variabile (faceți clic pe pictograma `(x+)`) pentru a răsfoi datele disponibile din pașii anteriori
+  * Plasați cursorul peste orice câmp de intrare pentru a vedea din care pas provine o variabilă — util atunci când același câmp (de ex., ID) există în mai mulți pași anteriori
+  * Dați fiecărei acțiuni un nume descriptiv pentru o mentenanță mai ușoară
 </Tip>
 
-## Record Actions
+## Acțiuni asupra înregistrărilor
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ Adaugă o nouă înregistrare la un obiect selectat.
 
 * Selectați obiectul țintă
 * Completați câmpurile obligatorii și opționale
-* Use data from previous steps or input values manually to populate fields
+* Folosiți date din pașii anteriori sau introduceți manual valori pentru a completa câmpurile
 
 **Output**: Datele noii înregistrări create sunt disponibile pentru utilizare în pașii următori.
 
@@ -41,8 +41,8 @@ Modifică o înregistrare existentă într-un obiect selectat.
 
 * Selectați obiectul țintă
 * Alegeți înregistrarea specifică de actualizat.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Puteți alege fie o înregistrare specifică, folosind meniul derulant care afișează toate înregistrările disponibile.
+  * Sau puteți selecta dinamic înregistrarea, desemnând o înregistrare găsită într-un pas anterior, folosind `(x+)`. Nu puteți căuta înregistrarea pe baza unor criterii diferite în această etapă. Dacă încă nu ați identificat înregistrarea, adăugați un pas `Search Record` înaintea acestui pas `Update Record`.
 * Selectați câmpurile de modificat și introduceți valori noi
 
 **Output**: Datele înregistrării actualizate sunt disponibile pentru utilizare în pașii următori.
@@ -71,25 +71,25 @@ Găsește înregistrări într-un obiect selectat folosind condițiile de filtra
 **Output**: Returnează înregistrările care se potrivesc care pot fi utilizate în pașii următori.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Limită**: Search Records returnează maximum **200 de înregistrări**. Dacă aveți nevoie să procesați mai multe, adăugați filtre specifice pentru a reduce rezultatele sau folosiți fluxuri de lucru programate pentru a procesa în loturi.
 </Note>
 
-**Best Practice**: Use [branches](/l/ro/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Cea mai bună practică**: Utilizați [ramuri](/l/ro/user-guide/workflows/capabilities/workflow-branches) după Search Records pentru a gestiona scenariile "găsit" vs "ne-găsit".
 
 ### Upsert Record
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Creează o înregistrare nouă sau actualizează una existentă pe baza criteriilor de potrivire. Este util când nu sunteți sigur dacă o înregistrare există deja.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Configurare**:
 
 * Selectați obiectul țintă
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Rețineți ce câmpuri pot fi folosite pentru potrivire: email pentru Persoane, domeniu pentru Companii, ID pentru orice obiect sau orice câmp marcat ca Unique. Va trebui să completați cel puțin unul dintre acestea mai jos.
+* Completați valorile câmpurilor. Nu uitați să completați cel puțin unul dintre identificatorii unici.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **Potrivirea funcționează de obicei și mai bine când adăugați un singur identificator unic.** De exemplu, captura de ecran de mai jos va potrivi companiile pe baza domeniului lor. ID-ul nu este neapărat necesar.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

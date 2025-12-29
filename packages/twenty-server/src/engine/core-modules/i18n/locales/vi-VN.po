@@ -3390,7 +3390,7 @@ msgstr "Thiếu trường hệ thống bắt buộc."
 #. js-lingui-id: eM40XC
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing time zone for date group by."
-msgstr ""
+msgstr "Thiếu múi giờ khi nhóm theo ngày."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -5198,6 +5198,20 @@ msgstr "Tên phiên bản quy trình làm việc"
 msgid "The workflow version status"
 msgstr "Trạng thái phiên bản quy trình làm việc"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5623,6 +5637,20 @@ msgstr "Thời gian cập nhật"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Giới hạn trường cập nhật chỉ áp dụng cho các đối tượng có thể cập nhật."
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -6434,6 +6462,11 @@ msgstr "Bạn không có quyền thực hiện hành động quy trình làm vi�
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Bạn không có quyền cập nhật các trường này: {fieldsList}. Vui lòng liên hệ quản trị viên không gian làm việc của bạn."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
@@ -6443,6 +6476,11 @@ msgstr "Bạn không có quyền tạo các chế độ xem cấp không gian l�
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "Bạn không có quyền sửa đổi chế độ xem này."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "Bạn đã dùng hết credit. Vui lòng nâng cấp gói dịch vụ để tiếp tục."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

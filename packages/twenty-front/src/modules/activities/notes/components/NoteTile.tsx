@@ -7,6 +7,7 @@ import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
@@ -99,11 +100,17 @@ export const NoteTile = ({
           fieldMetadataName="noteTargets"
           fieldPosition={0}
         >
-          <ActivityTargetsInlineCell
-            componentInstanceId={componentInstanceId}
-            activityRecordId={note.id}
-            activityObjectNameSingular={CoreObjectNameSingular.Note}
-          />
+          <RecordFieldsScopeContextProvider
+            value={{
+              scopeInstanceId: note.id,
+            }}
+          >
+            <ActivityTargetsInlineCell
+              componentInstanceId={componentInstanceId}
+              activityRecordId={note.id}
+              activityObjectNameSingular={CoreObjectNameSingular.Note}
+            />
+          </RecordFieldsScopeContextProvider>
         </FieldContextProvider>
       </StyledFooter>
     </StyledCard>

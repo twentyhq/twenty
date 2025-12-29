@@ -3390,7 +3390,7 @@ msgstr "缺少必要的系統欄位。"
 #. js-lingui-id: eM40XC
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing time zone for date group by."
-msgstr ""
+msgstr "缺少用於日期分組的時區。"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -5198,6 +5198,20 @@ msgstr "工作流程版本名稱"
 msgid "The workflow version status"
 msgstr "工作流程版本狀態"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5623,6 +5637,20 @@ msgstr "更新日期時間"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "更新欄位限制僅適用於可更新的物件。"
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -6434,6 +6462,11 @@ msgstr "您沒有權限執行此工作流程操作。"
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "您無權更新這些欄位：{fieldsList}。請聯繫您的工作區管理員。"
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
@@ -6443,6 +6476,11 @@ msgstr "您無權創建工作區層次的視圖。"
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "您無權修改此視圖。"
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "您的點數已用盡。請升級您的方案以繼續。"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
