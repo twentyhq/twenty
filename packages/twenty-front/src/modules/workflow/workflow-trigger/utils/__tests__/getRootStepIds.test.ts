@@ -1,5 +1,5 @@
 import { type WorkflowAction } from '@/workflow/types/Workflow';
-import { getRootStepIds } from '../getRootStepIds';
+import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 
 describe('getRootStepIds', () => {
   it('should return empty array for empty steps', () => {

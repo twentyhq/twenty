@@ -10,7 +10,11 @@ import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGr
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  type FirstDayOfTheWeek,
+  isDefined,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
   type LineChartConfiguration,
@@ -22,6 +26,8 @@ type TransformGroupByDataToLineChartDataParams = {
   objectMetadataItems: ObjectMetadataItem[];
   configuration: LineChartConfiguration;
   aggregateOperation: string;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformGroupByDataToLineChartDataResult = {
@@ -51,6 +57,8 @@ export const transformGroupByDataToLineChartData = ({
   objectMetadataItems,
   configuration,
   aggregateOperation,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformGroupByDataToLineChartDataParams): TransformGroupByDataToLineChartDataResult => {
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
@@ -194,6 +202,8 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
+        firstDayOfTheWeek,
       })
     : transformOneDimensionalGroupByToLineChartData({
         rawResults: filteredResults,
@@ -203,6 +213,8 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
+        firstDayOfTheWeek,
       });
 
   return {

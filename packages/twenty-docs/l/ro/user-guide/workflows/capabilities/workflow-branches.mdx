@@ -1,0 +1,66 @@
+---
+title: Workflow Branches
+description: Creați căi paralele și logică condițională în fluxurile dvs. de lucru.
+---
+
+Ramificațiile vă permit să împărțiți fluxul de lucru în mai multe căi care pot rula simultan sau condițional, în funcție de datele dvs.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Cum funcționează ramificațiile
+
+Când creați mai multe conexiuni dintr-un singur nod, fiecare cale devine o ramificație. În mod implicit, **toate ramificațiile se execută în paralel**—nu se așteaptă una pe alta.
+
+## Crearea ramificațiilor
+
+### Adăugați o ramificație nouă
+
+1. **Faceți clic dreapta pe pânza principală** a fluxului de lucru (nu pe un nod existent)
+2. Faceți clic pe **Adăugați nod**
+3. Alegeți tipul de nod pentru ramificația nouă
+4. Trageți o săgeată din partea de jos a pasului anterior la partea de sus a acestei noi acțiuni
+5. Repetați pentru a adăuga mai multe ramificații din același nod
+
+<Note>
+  Fiecare ramificație este independentă. Adăugarea unei ramificații nu afectează celelalte căi existente din acel nod.
+</Note>
+
+### Machetă vizuală
+
+Ramificațiile apar ca căi paralele în editorul de fluxuri de lucru. Puteți glisa noduri pentru a rearanja macheta vizuală fără a afecta execuția.
+
+## Ramificații condiționale
+
+Deoarece toate ramificațiile rulează în mod implicit, utilizați noduri **Filtru** pentru a controla care căi se execută de fapt:
+
+| Ramificație | Condiție de filtrare | Acțiune                           |
+| ----------- | -------------------- | --------------------------------- |
+| A           | Etapă = "Câștigat"   | Trimiteți un e-mail de felicitări |
+| B           | Etapă = "Pierdut"    | Creați o sarcină de urmărire      |
+| C           | Etapă = "Negociere"  | Notificați managerul              |
+
+1. Creați ramificații din declanșatorul sau acțiunea dvs.
+2. Adăugați un nod **Filtru** ca prim pas al fiecărei ramificații
+3. Configurați fiecare filtru cu condiții care se exclud reciproc
+4. Adăugați acțiunile după fiecare filtru
+
+Doar ramificațiile în care condiția filtrului este îndeplinită vor continua să se execute.
+
+## Îmbinarea ramificațiilor
+
+**Ramificațiile nu se îmbină automat.** Fiecare ramificație rulează independent până când se încheie. Aveți flexibilitate completă în modul în care gestionați acest lucru:
+
+* **Opțiunea 1: Păstrați ramificațiile separate**
+  Fiecare ramificație gestionează independent propriile acțiuni de urmărire. Aceasta este cea mai simplă abordare atunci când ramificațiile nu trebuie să convergă.
+
+* **Opțiunea 2: Îmbinați ramificațiile manual**
+  La crearea fluxului de lucru, puteți conecta manual mai multe ramificații la aceeași acțiune ulterioară. Pur și simplu trageți săgeți de la capătul fiecărei ramificații către un nod comun.
+
+<Note>
+  Deși puteți utiliza un nod [Întârziere](/l/ro/user-guide/workflows/capabilities/workflow-actions#delay) pentru a întrerupe execuția, în prezent nu poate fi configurat să aștepte "până când se termină o altă ramificație".
+</Note>
+
+## Conexe
+
+* [Cum să utilizați ramificațiile în fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/use-branches-in-workflows) - Ghid pas cu pas
+* [Acțiuni ale fluxului de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions) - Acțiuni disponibile, inclusiv Filtru

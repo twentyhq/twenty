@@ -1,0 +1,290 @@
+---
+title: Stylová příručka
+---
+
+Tento dokument obsahuje pravidla pro psaní kódu.
+
+Cílem zde je mít konzistentní kódovou základnu, která je snadno čitelná a snadno udržovatelná.
+
+Pro toto je lepší být trochu více rozvláčný než být příliš stručný.
+
+Vždy mějte na paměti, že lidé čtou kód častěji, než ho píší, zvláště u projektu s otevřeným zdrojovým kódem, kde může kdokoli přispět.
+
+Existuje mnoho pravidel, která zde nejsou definována, ale která jsou automaticky kontrolována lintery.
+
+## React
+
+### Používejte funkcionální komponenty
+
+Vždy používejte funkcionální komponenty TSX.
+
+Nepoužívejte implicitní `import` s `const`, protože je obtížnější číst a importovat s automatickým dokončováním kódu.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Vlastnosti
+
+Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+
+Use props destructuring.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Upusťte od používání `React.FC` nebo `React.FunctionComponent` k definování typů rekvizit
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### No Single Variable Prop Spreading in JSX Elements
+
+Avoid using single variable prop spreading in JSX elements, like `{...props}`. Tato praxe často vede k tomu, že kód je méně čitelný a obtížnější udržovat, protože není jasné, které rekvizity komponenta přijímá.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Odůvodnění:
+
+* Na první pohled je jasné, které prop kód předává, čímž je snazší pochopit a udržovat.
+* It helps to prevent tight coupling between components via their props.
+* Linting tools make it easier to identify misspelled or unused props when you list props explicitly.
+
+## JavaScript
+
+### Používejte operátor nullish-coalescing `??`
+
+```tsx
+// ❌ Špatné, může vrátit 'default' i když je hodnota 0 nebo ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Dobré, vrací 'default' pouze pokud je hodnota null nebo undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Používejte volitelné zřetězení `?.`
+
+```tsx
+// ❌ Bad
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Používejte `type` místo `interface`
+
+Vždy používejte `type` místo `interface`, protože se téměř vždy překrývají a `type` je flexibilnější.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Používejte textové literály místo výčtů
+
+[Textové literály](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) jsou preferovaný způsob pro zpracování hodnot podobných výčtům v TypeScriptu. Jsou snadněji rozšířitelné pomocí Pick a Omit a nabízejí lepší uživatelský zážitek, zejména s automatickým dokončováním kódu.
+
+Proč TypeScript doporučuje vyhnout se výčtům zjistíte [zde](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Dobré, používá textový literál
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL a interní knihovny
+
+Měli byste používat výčty, které generuje kód generátor GraphQL.
+
+Je také lepší používat výčet při používání interní knihovny, aby interní knihovna nemusela vystavovat textový typ neusouvisející s interním API.
+
+Příklad:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Styling
+
+### Používejte StyledComponents
+
+Styling komponenty s [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Špatné
+<div className="my-class">Ahoj světe</div>
+```
+
+```tsx
+// ✅ Dobré
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Prefixujte stylizované komponenty "Styled", abyste je odlišili od "skutečných" komponent.
+
+```tsx
+// ❌ Špatné
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Dobré
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Theming
+
+Využití tématu pro většinu stylování komponent je preferovaný přístup.
+
+#### Jednotky měření
+
+Vyhýbejte se používání hodnot `px` nebo `rem` přímo ve stylizovaných komponentách. Potřebné hodnoty jsou obvykle již definovány v tématu, takže se doporučuje využívat je pro tyto účely.
+
+#### Barvy
+
+Refrain from introducing new colors; instead, use the existing palette from the theme. Pokud by došlo k tomu, že paleta neodpovídá, prosím nechte komentář, aby to tým mohl napravit.
+
+```tsx
+// ❌ Špatné, přímo specifikuje hodnoty stylu bez využití tématu
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Dobré, využívá téma
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Prosazování Zákazu Importů Typů
+
+Vyhýbejte se typovým importům. K prosazení tohoto standardu pravidlo ESLint kontroluje a hlásí jakékoli typové importy. To pomáhá udržovat konzistenci a čitelnost v TypeScript kódu.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Proč Zákaz Importů Typů
+
+* **Consistency**: By avoiding type imports and using a single approach for both type and value imports, the codebase remains consistent in its module import style.
+
+* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. Tím se snižuje dvojznačnost a usnadňuje pochopení účelu importovaných symbolů.
+
+* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+
+### Pravidlo ESLint
+
+Pravidlo ESLint, `@typescript-eslint/consistent-type-imports`, prosazuje standard zákazu importů typů. Toto pravidlo generuje chyby nebo varování pro jakékoli porušení typového importu.
+
+Upozorňujeme, že toto pravidlo konkrétně řeší vzácné okrajové případy, kdy dochází k neúmyslným typovým importům. TypeScript sám odrazuje tuto praxi, jak je uvedeno v [poznámkách k verzi TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Ve většině případů byste neměli potřebovat používat pouze typové importy.
+
+To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.

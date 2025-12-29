@@ -20,8 +20,20 @@ export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { isPlainDateAfter } from './date/isPlainDateAfter';
+export { isPlainDateBefore } from './date/isPlainDateBefore';
+export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
+export { isPlainDateInSameMonth } from './date/isPlainDateInSameMonth';
+export { isPlainDateInWeekend } from './date/isPlainDateInWeekend';
+export { isSamePlainDate } from './date/isSamePlainDate';
+export { parseToPlainDateOrThrow } from './date/parseToPlainDateOrThrow';
+export { sortPlainDate } from './date/sortPlainDate';
+export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';
+export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDateIntoUserTimeZoneInstantString';
+export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { CustomError } from './errors/CustomError';
+export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
@@ -32,14 +44,20 @@ export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-o
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
+export type { DateTimePeriod } from './filter/dates/types/DateTimePeriod';
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
+export { addUnitToZonedDateTime } from './filter/dates/utils/addUnitToZonedDateTime';
+export { convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek } from './filter/dates/utils/convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek';
+export { convertFirstDayOfTheWeekToCalendarStartDayNumber } from './filter/dates/utils/convertFirstDayOfTheWeekToCalendarStartDayNumber';
 export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
 export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
-export { getDateFromPlainDate } from './filter/dates/utils/getDateFromPlainDate';
-export { getEndUnitOfDateTime } from './filter/dates/utils/getEndUnitOfDateTime';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
-export { getPlainDateFromDate } from './filter/dates/utils/getPlainDateFromDate';
-export { getStartUnitOfDateTime } from './filter/dates/utils/getStartUnitOfDateTime';
+export { getFirstDayOfTheWeekAsISONumber } from './filter/dates/utils/getFirstDayOfTheWeekAsISONumber';
+export {
+  FIRST_DAY_OF_WEEK_ISO_8601_MONDAY,
+  getNextPeriodStart,
+} from './filter/dates/utils/getNextPeriodStart';
+export { getPeriodStart } from './filter/dates/utils/getPeriodStart';
 export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';
 export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
 export { relativeDateFilterDirectionSchema } from './filter/dates/utils/relativeDateFilterDirectionSchema';
@@ -56,8 +74,8 @@ export { resolveRelativeDateFilter } from './filter/dates/utils/resolveRelativeD
 export { resolveRelativeDateFilterStringified } from './filter/dates/utils/resolveRelativeDateFilterStringified';
 export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelativeDateTimeFilter';
 export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
-export { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from './filter/dates/utils/shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone';
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
+export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
@@ -67,7 +85,6 @@ export type {
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
-export { computeTimezoneDifferenceInMinutes } from './filter/utils/computeTimezoneDifferenceInMinutes';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -102,6 +119,7 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { resolveRichTextVariables } from './rich-text-variable-resolver';
 export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';

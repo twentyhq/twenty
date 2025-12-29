@@ -4,36 +4,33 @@ image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="رأس الصفحة" />
 </Frame>
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="الاستخدام">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
 
-```jsx
-import { Toggle } from "twenty-ui/input";
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Toggle
-    value = {true}
-    onChange = {()=>console.log('On Change event')}
-    color="green"
-    toggleSize = "medium"
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| المحددات    | النوع       | الوصف                                                                                                       | الإعداد الافتراضي |
-| ----------- | ----------- | ----------------------------------------------------------------------------------------------------------- | ----------------- |
-| القيمة      | قيمة منطقية | The current state of the toggle                                                                             | `خاطئ`            |
-| عند التغيير | وظيفة       | Callback function triggered when the toggle state changes                                                   |                   |
-| اللون       | string      | لون التبديل عند كونه                                                                                        | لون أزرق          |
-| حجم التبديل | string      | حجم التبديل الذي يؤثر على كل من الطول والوزن. يوجد خياران: `صغير` و `متوسط` | متوسط             |
-
-</Tab>
+  <Tab title="الخصائص">
+    | الخصائص     | النوع       | الوصف                                                                       | الإعداد الافتراضي |
+    | ----------- | ----------- | --------------------------------------------------------------------------- | ----------------- |
+    | القيمة      | قيمة منطقية | The current state of the toggle                                             | `خاطئ`            |
+    | عند التغيير | دالة        | Callback function triggered when the toggle state changes                   |                   |
+    | اللون       | string      | لون التبديل عند كونه                                                        | لون أزرق          |
+    | حجم التبديل | نص          | حجم التبديل الذي يؤثر على كل من الطول والوزن. لديها خياران: `صغير` و`متوسط` | متوسط             |
+  </Tab>
 </Tabs>

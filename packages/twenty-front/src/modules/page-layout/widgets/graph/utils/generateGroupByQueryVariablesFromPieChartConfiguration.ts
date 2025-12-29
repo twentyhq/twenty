@@ -23,6 +23,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
+  userTimeZone,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
@@ -30,6 +31,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   aggregateOperation?: string;
   limit?: number;
   firstDayOfTheWeek?: number;
+  userTimeZone?: string;
 }) => {
   const groupByFieldId = chartConfiguration.groupByFieldMetadataId;
   const groupBySubFieldName =
@@ -65,6 +67,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         : undefined,
       firstDayOfTheWeek,
       isNestedDateField: isNestedDate,
+      timeZone: userTimeZone,
     }),
   ];
 

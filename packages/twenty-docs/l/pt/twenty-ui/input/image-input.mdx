@@ -1,5 +1,5 @@
 ---
-title: Entrada de Imagem
+title: Image Input
 image: /images/user-guide/objects/objects.png
 ---
 
@@ -7,36 +7,28 @@ image: /images/user-guide/objects/objects.png
   <img src="/images/user-guide/objects/objects.png" alt="Header" />
 </Frame>
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import { SandpackEditor} from '@site/src/ui/SandpackEditor'
-import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
-
-Permite aos usuários enviar e remover uma imagem.
+Allows users to upload and remove an image.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
 
-```jsx
-import { ImageInput } from "@/ui/input/components/ImageInput";
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ImageInput/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props          | Tipo                                     | Descrição                                                                                                           |
-| -------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| imagem         | Nome opcional para estilização adicional | A URL de origem da imagem                                                                                           |
-| aoEnviar       | função                                   | A função chamada quando um usuário envia uma nova imagem. Ela recebe o objeto `File` como parâmetro |
-| aoRemover      | função                                   | A função chamada quando o usuário clica no botão de remover                                                         |
-| aoCancelar     | função                                   | A função chamada quando um usuário clica no botão de cancelar durante o envio de imagem                             |
-| estáEnviando   | booleano                                 | Indica se uma imagem está sendo enviada no momento                                                                  |
-| mensagemDeErro | Nome opcional para estilização adicional | Uma mensagem de erro opcional a ser exibida abaixo da entrada de imagem                                             |
-| desativado     | booleano                                 | Se `true`, o input inteiro está desativado e os botões não são clicáveis                                            |
-
-</Tab>
+  <Tab title="Props">
+    | Props        | Type     | Description                                                                                       |
+    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
+    | picture      | string   | The image source URL                                                                              |
+    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
+    | onRemove     | function | The function called when the user clicks on the remove button                                     |
+    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
+    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
+    | errorMessage | string   | An optional error message to display below the image input                                        |
+    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  </Tab>
 </Tabs>

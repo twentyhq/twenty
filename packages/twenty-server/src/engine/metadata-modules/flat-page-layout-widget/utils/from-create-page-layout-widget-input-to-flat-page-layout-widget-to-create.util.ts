@@ -45,7 +45,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     type: createPageLayoutWidgetInput.type ?? WidgetType.VIEW,
     objectMetadataId: createPageLayoutWidgetInput.objectMetadataId ?? null,
     gridPosition: createPageLayoutWidgetInput.gridPosition,
-    configuration: createPageLayoutWidgetInput.configuration ?? null,
+    configuration: createPageLayoutWidgetInput.configuration,
     applicationId: workspaceCustomApplicationId,
   };
 };

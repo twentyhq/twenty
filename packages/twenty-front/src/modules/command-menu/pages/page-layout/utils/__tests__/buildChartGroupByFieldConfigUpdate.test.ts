@@ -1,18 +1,20 @@
+import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
+import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
-  type BarChartConfiguration,
   BarChartGroupMode,
   GraphOrderBy,
-  type PieChartConfiguration,
+  WidgetConfigurationType,
 } from '~/generated/graphql';
-import { buildChartGroupByFieldConfigUpdate } from '../buildChartGroupByFieldConfigUpdate';
+import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 
 describe('buildChartGroupByFieldConfigUpdate', () => {
   it('sets default orderBy and dateGranularity for primary axis', () => {
     const result = buildChartGroupByFieldConfigUpdate({
       configuration: {
         __typename: 'BarChartConfiguration',
-      } as BarChartConfiguration,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+      } as TypedBarChartConfiguration,
       fieldMetadataIdKey: 'primaryAxisGroupByFieldMetadataId',
       subFieldNameKey: 'primaryAxisGroupBySubFieldName',
       fieldId: 'field',
@@ -29,7 +31,8 @@ describe('buildChartGroupByFieldConfigUpdate', () => {
     const result = buildChartGroupByFieldConfigUpdate({
       configuration: {
         __typename: 'BarChartConfiguration',
-      } as BarChartConfiguration,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+      } as TypedBarChartConfiguration,
       fieldMetadataIdKey: 'primaryAxisGroupByFieldMetadataId',
       subFieldNameKey: 'primaryAxisGroupBySubFieldName',
       fieldId: null,
@@ -46,7 +49,8 @@ describe('buildChartGroupByFieldConfigUpdate', () => {
     const result = buildChartGroupByFieldConfigUpdate({
       configuration: {
         __typename: 'BarChartConfiguration',
-      } as BarChartConfiguration,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+      } as TypedBarChartConfiguration,
       fieldMetadataIdKey: 'secondaryAxisGroupByFieldMetadataId',
       subFieldNameKey: 'secondaryAxisGroupBySubFieldName',
       fieldId: 'field',
@@ -62,7 +66,8 @@ describe('buildChartGroupByFieldConfigUpdate', () => {
     const result = buildChartGroupByFieldConfigUpdate({
       configuration: {
         __typename: 'PieChartConfiguration',
-      } as PieChartConfiguration,
+        configurationType: WidgetConfigurationType.PIE_CHART,
+      } as TypedPieChartConfiguration,
       fieldMetadataIdKey: 'groupByFieldMetadataId',
       subFieldNameKey: 'groupBySubFieldName',
       fieldId: 'field',

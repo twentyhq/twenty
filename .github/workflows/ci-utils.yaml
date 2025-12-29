@@ -30,12 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Utils / Run Danger.js
         run: cd packages/twenty-utils && npx nx danger:ci
         env:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
-  
+
   congratulate:
     timeout-minutes: 3
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Run congratulate-dangerfile.js
         run: cd packages/twenty-utils && npx nx danger:congratulate
         env:

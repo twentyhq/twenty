@@ -5,7 +5,7 @@ import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/work
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowStepFilterContext } from '../states/context/WorkflowStepFilterContext';
+import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 
 export const useRemoveStepFilter = () => {
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);

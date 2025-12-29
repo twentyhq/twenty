@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -15,7 +19,10 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'favoriteFolder'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'favoriteFolder', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'favoriteFolder'>,
   FlatFieldMetadata
 > => ({
@@ -51,7 +58,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -70,7 +77,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -88,7 +95,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -108,6 +115,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       icon: 'IconList',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -125,6 +133,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       description: 'Name of the favorite folder',
       icon: 'IconText',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -144,6 +153,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       description: 'Favorites in this folder',
       icon: 'IconHeart',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'favoriteFolder',
       settings: {

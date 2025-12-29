@@ -1,13 +1,13 @@
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { type CrudOperationType } from 'twenty-shared/types';
-import { classifyMetadataError } from '../utils/classify-metadata-error.util';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();

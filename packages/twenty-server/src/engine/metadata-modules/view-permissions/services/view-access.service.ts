@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -26,6 +26,7 @@ export class ViewAccessService {
     viewId: string | null,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
     // If viewId is null, the entity doesn't exist - allow the operation
     // so the service can handle the NOT_FOUND error properly
@@ -43,13 +44,14 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId);
+    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
   }
 
   async canUserModifyViewByChildEntity(
     viewId: string | null,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
     // If viewId is null, the child entity doesn't exist
     // Allow through so the service can throw the proper entity-specific error
@@ -68,41 +70,35 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId);
+    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
   }
 
   async canUserCreateView(
     visibility: ViewVisibility,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
-    // For WORKSPACE visibility views, user must have VIEWS permission
-    if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        });
-
-      const hasViewsPermission =
-        permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-      if (!hasViewsPermission) {
-        throw new ViewException(
-          generateViewExceptionMessage(
-            ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
-          ),
-          ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED,
-          {
-            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-              ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
-            ),
-          },
-        );
+    // UNLISTED views can only be created by users (not API keys)
+    if (visibility === ViewVisibility.UNLISTED) {
+      if (!isDefined(userWorkspaceId)) {
+        this.throwCreatePermissionDenied();
       }
+
+      return true;
     }
 
-    // For UNLISTED views or users without userWorkspaceId, allow creation
+    // WORKSPACE visibility views require VIEWS permission
+    const hasPermission = await this.hasViewsPermission(
+      userWorkspaceId,
+      workspaceId,
+      apiKeyId,
+    );
+
+    if (!hasPermission) {
+      this.throwCreatePermissionDenied();
+    }
+
     return true;
   }
 
@@ -110,41 +106,81 @@ export class ViewAccessService {
     view: ViewEntity,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
+    const hasPermission = await this.hasViewsPermission(
+      userWorkspaceId,
+      workspaceId,
+      apiKeyId,
+    );
 
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    // Users with VIEWS permission can manipulate all views
-    if (hasViewsPermission) {
+    if (hasPermission) {
       return true;
     }
 
     // Users without VIEWS permission can only manipulate their own unlisted views
-    const canAccess =
+    const isOwnUnlistedView =
       view.visibility === ViewVisibility.UNLISTED &&
       view.createdByUserWorkspaceId === userWorkspaceId;
 
-    if (!canAccess) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED,
-        ),
-        ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED,
-          ),
-        },
-      );
+    if (isOwnUnlistedView) {
+      return true;
     }
 
-    return true;
+    this.throwModifyPermissionDenied();
+  }
+
+  private async hasViewsPermission(
+    userWorkspaceId: string | undefined,
+    workspaceId: string,
+    apiKeyId?: string,
+  ): Promise<boolean> {
+    if (isDefined(userWorkspaceId)) {
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId,
+        });
+
+      return permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+    }
+
+    if (isDefined(apiKeyId)) {
+      return this.permissionsService.userHasWorkspaceSettingPermission({
+        workspaceId,
+        apiKeyId,
+        setting: PermissionFlagType.VIEWS,
+      });
+    }
+
+    return false;
+  }
+
+  private throwCreatePermissionDenied(): never {
+    throw new ViewException(
+      generateViewExceptionMessage(
+        ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+      ),
+      ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED,
+      {
+        userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+          ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+        ),
+      },
+    );
+  }
+
+  private throwModifyPermissionDenied(): never {
+    throw new ViewException(
+      generateViewExceptionMessage(
+        ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED,
+      ),
+      ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
+      {
+        userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+          ViewExceptionMessageKey.VIEW_MODIFY_PERMISSION_DENIED,
+        ),
+      },
+    );
   }
 }

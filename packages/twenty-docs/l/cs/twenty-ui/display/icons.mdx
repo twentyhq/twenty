@@ -4,7 +4,7 @@ image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="Hlavička" />
 </Frame>
 
 Seznam ikon používaných po celé naší aplikaci.
@@ -14,39 +14,35 @@ Seznam ikon používaných po celé naší aplikaci.
 V celé aplikaci používáme ikony Tabler pro React.
 
 <Tabs>
+  <Tab title="Instalace">
+    <br />
 
-<Tab title="Installation"><br/>
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
 
-```
-yarn add @tabler/icons-react
-```
+  <Tab title="Vlastnosti">
+    Každou ikonu můžete importovat jako komponentu. Zde je příklad:
 
-</Tab>
+    <br />
 
-<Tab title="Props">
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
 
-Každou ikonu můžete importovat jako komponentu. Here's an example: <br />
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconArrowLeft } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return <IconArrowLeft color="red" size={48} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti | Typ             | Popis                          | Výchozí       |
-| ---------- | --------------- | ------------------------------ | ------------- |
-| velikost   | číslo           | Výška a šířka ikony v pixelech | 24            |
-| barva      | textový řetězec | Barva ikon                     | současnáBarva |
-| stroke     | číslo           | Šířka tahu ikony v pixelech    | 2             |
-
-</Tab>
-
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ     | Popis                          | Výchozí       |
+    | ---------- | ------- | ------------------------------ | ------------- |
+    | velikost   | číslo   | Výška a šířka ikony v pixelech | 24            |
+    | barva      | řetězec | Barva ikon                     | současnáBarva |
+    | stroke     | číslo   | Šířka tahu ikony v pixelech    | 2             |
+  </Tab>
 </Tabs>
 
 ## Custom Icons
@@ -58,26 +54,20 @@ Kromě ikon Tabler aplikace používá také některé vlastní ikony.
 Zobrazí ikonu adresáře.
 
 <Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconAddressBook } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return <IconAddressBook size={24} stroke={2} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti | Typ   | Popis                          | Výchozí |
-| ---------- | ----- | ------------------------------ | ------- |
-| velikost   | číslo | Výška a šířka ikony v pixelech | 24      |
-| stroke     | číslo | Šířka tahu ikony v pixelech    | 2       |
-
-</Tab>
-
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ   | Popis                          | Výchozí |
+    | ---------- | ----- | ------------------------------ | ------- |
+    | velikost   | číslo | Výška a šířka ikony v pixelech | 24      |
+    | stroke     | číslo | Šířka tahu ikony v pixelech    | 2       |
+  </Tab>
 </Tabs>

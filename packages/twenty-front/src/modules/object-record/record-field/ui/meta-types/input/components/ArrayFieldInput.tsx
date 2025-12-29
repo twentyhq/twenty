@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useArrayField } from '@/object-record/record-field/ui/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
@@ -62,13 +63,13 @@ export const ArrayFieldInput = () => {
 
   return (
     <MultiItemFieldInput
-      newItemLabel="Add Item"
+      newItemLabel={t`Add Item`}
       items={arrayItems}
       onChange={handleChange}
       onEnter={handleEnter}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
-      placeholder="Enter value"
+      placeholder={t`Enter value`}
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem

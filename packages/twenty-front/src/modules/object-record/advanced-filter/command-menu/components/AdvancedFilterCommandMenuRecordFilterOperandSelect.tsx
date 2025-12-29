@@ -5,6 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,7 +16,7 @@ type AdvancedFilterCommandMenuRecordFilterOperandSelectProps = {
 export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterCommandMenuRecordFilterOperandSelectProps) => {
-  const { readonly } = useContext(AdvancedFilterContext);
+  const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
   const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
@@ -35,13 +36,16 @@ export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
       })
     : [];
 
+  const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
+  const timeZoneAbbreviation = shouldUseUTCTimeZone ? 'UTC' : undefined;
+
   if (isDisabled === true) {
     return (
       <SelectControl
         selectedOption={{
           label: filter?.operand
-            ? getOperandLabel(filter.operand)
-            : 'Select operand',
+            ? getOperandLabel(filter.operand, timeZoneAbbreviation)
+            : t`Select operand`,
           value: null,
         }}
         isDisabled

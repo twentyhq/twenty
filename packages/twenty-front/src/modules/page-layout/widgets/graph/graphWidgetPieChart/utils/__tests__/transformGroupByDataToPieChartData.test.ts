@@ -1,12 +1,15 @@
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
-  GraphType,
 } from '~/generated-metadata/graphql';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import {
+  WidgetConfigurationType,
+  type PieChartConfiguration,
+} from '~/generated/graphql';
 
 jest.mock(
   '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues',
@@ -20,6 +23,7 @@ const { formatPrimaryDimensionValues } = jest.requireMock(
 ) as { formatPrimaryDimensionValues: jest.Mock };
 
 describe('transformGroupByDataToPieChartData', () => {
+  const userTimezone = 'Europe/Paris';
   it('keeps null group buckets aligned with their aggregate values', () => {
     const groupByField = {
       id: 'group-by-field',
@@ -47,7 +51,7 @@ describe('transformGroupByDataToPieChartData', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: aggregateField.id,
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: groupByField.id,
       displayLegend: true,
     } as PieChartConfiguration;
@@ -76,6 +80,8 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result.data).toEqual([
@@ -114,7 +120,7 @@ describe('transformGroupByDataToPieChartData', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: aggregateField.id,
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: groupByField.id,
       displayLegend: false,
       color: 'red',
@@ -143,6 +149,8 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result.showLegend).toBe(false);

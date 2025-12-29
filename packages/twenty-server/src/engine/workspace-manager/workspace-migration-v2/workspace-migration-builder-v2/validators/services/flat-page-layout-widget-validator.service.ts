@@ -7,13 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
-import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
-import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
-import { type GridPosition } from 'src/engine/metadata-modules/page-layout/types/grid-position.type';
-import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
-import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout/utils/validate-widget-grid-position.util';
+import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
+import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import {
   FailedFlatEntityValidation,
   FlatEntityValidationError,
@@ -219,7 +219,7 @@ export class FlatPageLayoutWidgetValidatorService {
     isDashboardV2Enabled,
   }: {
     type: WidgetType | undefined;
-    configuration: WidgetConfigurationInterface | null | undefined;
+    configuration: AllPageLayoutWidgetConfiguration | null | undefined;
     widgetTitle: string;
     isDashboardV2Enabled: boolean;
   }): Promise<FlatEntityValidationError[]> {

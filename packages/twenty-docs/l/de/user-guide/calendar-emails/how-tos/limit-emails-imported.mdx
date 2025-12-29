@@ -1,0 +1,52 @@
+---
+title: Importierte E-Mails begrenzen
+description: Steuern Sie, welche E-Mails in Twenty importiert werden.
+---
+
+## Übersicht
+
+Standardmäßig synchronisiert Twenty alle externen E-Mails aus Ihrem verbundenen Postfach. Sie können den Import mithilfe der **Ordnerauswahl** und der **Sichtbarkeitseinstellungen** begrenzen.
+
+## Methode 1: Ordnerauswahl (Empfohlen)
+
+Bestimmen Sie, welche E-Mail-Ordner mit Twenty synchronisiert werden:
+
+1. Gehen Sie zu **Einstellungen → Veröffentlichungen → Lab**
+2. Aktivieren Sie **Nachrichtenordner**
+3. Zurück zu **Einstellungen → Konten**
+4. Wählen Sie Ihr verbundenes E-Mail-Konto aus
+5. Wählen Sie, welche Ordner synchronisiert werden sollen:
+
+| Ordner                        | Beschreibung                               |
+| ----------------------------- | ------------------------------------------ |
+| **Posteingang**               | Primäre eingehende E-Mails                 |
+| **Gesendet**                  | Ausgehende E-Mails, die Sie gesendet haben |
+| **Archiv**                    | Archivierte Nachrichten                    |
+| **Benutzerdefinierte Ordner** | Beliebige spezifische Ordner Ihrer Wahl    |
+
+6. Schließen Sie Ordner aus, die Sie nicht synchronisieren möchten (Spam, Papierkorb, persönliche Ordner)
+
+<Note>Damit haben Sie genaue Kontrolle darüber, welche E-Mails in Ihrem CRM erscheinen, ohne alles zu synchronisieren.</Note>
+
+## Methode 2: Einstellungen zur automatischen Kontakterstellung
+
+Steuern Sie, wann aus E-Mails Kontakte erstellt werden:
+
+1. Gehen Sie zu **Einstellungen → Konten**
+2. Wählen Sie Ihr verbundenes Postfach aus
+3. Wählen Sie eine Option:
+   * **Deaktiviert**: Es werden keine Kontakte erstellt, E-Mails werden jedoch weiterhin mit bestehenden Kontakten synchronisiert
+   * **Gesendet & Empfangen**: Erstellt Kontakte aus allen externen E-Mails
+   * **Nur Gesendet**: Erstellt Kontakte nur aus E-Mails, die Sie senden
+
+## Was stets ausgeschlossen ist
+
+Diese E-Mails werden unabhängig von den Einstellungen nie synchronisiert:
+
+* **Interne E-Mails**: Nachrichten zwischen Kollegen (gleiche Domain)
+* **Gruppen-E-Mails**: Verteilerlisten und Gruppennachrichten
+* **Spam/Papierkorb**: Systemordner sind in der Regel ausgeschlossen
+
+## Wichtiger Hinweis
+
+<Note>Wir stellen keine CC-E-Mail-Adresse für selektives Synchronisieren bereit. Verwenden Sie die oben genannte Ordnerauswahl, um das gleiche Maß an Kontrolle zu erreichen.</Note>

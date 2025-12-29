@@ -9,14 +9,20 @@ import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/ho
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { type Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordCalendarGroupByRecords = (selectedDate: Date) => {
+export const useRecordCalendarGroupByRecords = (
+  selectedDate: Temporal.PlainDate,
+) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
+
+  const { userTimezone } = useUserTimezone();
 
   const recordIndexCalendarFieldMetadataId = useRecoilValue(
     recordIndexCalendarFieldMetadataIdState,
@@ -40,6 +46,7 @@ export const useRecordCalendarGroupByRecords = (selectedDate: Date) => {
         buildGroupByFieldObject({
           field: calendarFieldMetadataItem,
           dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+          timeZone: userTimezone,
         }),
       ];
 

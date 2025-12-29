@@ -13,6 +13,7 @@ import {
   type DragStart,
   type OnDragEndResponder,
 } from '@hello-pangea/dnd';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,6 +26,10 @@ export const RecordCalendarMonth = () => {
   const recordCalendarSelectedDate = useRecoilComponentValue(
     recordCalendarSelectedDateComponentState,
   );
+
+  if (!isDefined(recordCalendarSelectedDate)) {
+    throw new Error(`Cannot show RecordCalendarMonth without a selected date`);
+  }
 
   const { processCalendarCardDrop } = useProcessCalendarCardDrop();
   const { startRecordDrag } = useStartRecordDrag();

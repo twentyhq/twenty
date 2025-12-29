@@ -1,13 +1,13 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { generateGroupByQueryVariablesFromPieChartConfiguration } from '../generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {
@@ -45,7 +45,7 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: 'aggregate-field',
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: 'field-1',
       ...overrides,
     }) as PieChartConfiguration;
@@ -86,6 +86,7 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
           groupBySubFieldName: null,
           dateGranularity: 'MONTH' as any,
         }),
+        userTimeZone: 'Europe/Paris',
       });
 
       expect(result).toMatchSnapshot();
@@ -157,11 +158,15 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
           groupByFieldMetadataId: relationField.id,
           groupBySubFieldName: 'createdAt',
         }),
+        userTimeZone: 'Europe/Paris',
       });
 
       expect(result.groupBy[0]).toEqual({
         company: {
-          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.DAY,
+            timeZone: 'Europe/Paris',
+          },
         },
       });
     });

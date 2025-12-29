@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -15,10 +19,10 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'calendarEvent'>, 'context'>): Record<
-  AllStandardObjectFieldName<'calendarEvent'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'calendarEvent', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'calendarEvent'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -50,7 +54,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -69,7 +73,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -87,7 +91,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -104,6 +108,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Title',
       icon: 'IconH1',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -120,6 +125,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Is canceled',
       icon: 'IconCalendarCancel',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -137,6 +143,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Is Full Day',
       icon: 'IconHours24',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -154,6 +161,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Start Date',
       icon: 'IconCalendarClock',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -170,6 +178,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'End Date',
       icon: 'IconCalendarClock',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -186,6 +195,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Creation DateTime',
       icon: 'IconCalendarPlus',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -202,6 +212,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Update DateTime',
       icon: 'IconCalendarCog',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -218,6 +229,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Description',
       icon: 'IconFileDescription',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -234,6 +246,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Location',
       icon: 'IconMapPin',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -250,6 +263,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'iCal UID',
       icon: 'IconKey',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -266,6 +280,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Conference Solution',
       icon: 'IconScreenShare',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -282,6 +297,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Meet Link',
       icon: 'IconLink',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -299,6 +315,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Calendar Channel Event Associations',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarChannelEventAssociation',
       targetFieldName: 'calendarEvent',
       settings: {
@@ -321,6 +338,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       description: 'Event Participants',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'calendarEvent',
       settings: {

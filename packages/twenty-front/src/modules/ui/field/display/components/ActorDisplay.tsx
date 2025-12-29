@@ -1,5 +1,6 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarChip, Chip } from 'twenty-ui/components';
@@ -76,6 +77,7 @@ export const ActorDisplay = ({
   return (
     <Chip
       label={name ?? ''}
+      emptyLabel={t`Untitled`}
       leftComponent={
         <AvatarChip
           placeholderColorSeed={workspaceMemberId ?? undefined}

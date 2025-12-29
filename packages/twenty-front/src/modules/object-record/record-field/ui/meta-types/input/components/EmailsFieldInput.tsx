@@ -109,7 +109,7 @@ export const EmailsFieldInput = () => {
       onEnter={handleEnter}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
-      placeholder="Email"
+      placeholder={t`Email`}
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
       renderItem={({

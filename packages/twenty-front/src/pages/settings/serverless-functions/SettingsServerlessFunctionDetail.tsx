@@ -97,10 +97,10 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const tabs = [
-    { id: 'editor', title: 'Editor', Icon: IconCode },
-    { id: 'triggers', title: 'Triggers', Icon: IconBolt },
-    { id: 'test', title: 'Test', Icon: IconTestPipe },
-    { id: 'settings', title: 'Settings', Icon: IconSettings },
+    { id: 'editor', title: t`Editor`, Icon: IconCode },
+    { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
+    { id: 'test', title: t`Test`, Icon: IconTestPipe },
+    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
   const flattenedCode = flattenSources(formValues.code);
@@ -162,7 +162,7 @@ export const SettingsServerlessFunctionDetail = () => {
         title={formValues.name}
         links={[
           {
-            children: 'Workspace',
+            children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
@@ -171,9 +171,14 @@ export const SettingsServerlessFunctionDetail = () => {
           },
           {
             children: `${applicationName}`,
-            href: getSettingsPath(SettingsPath.ApplicationDetail, {
-              applicationId,
-            }),
+            href: getSettingsPath(
+              SettingsPath.ApplicationDetail,
+              {
+                applicationId,
+              },
+              undefined,
+              'content',
+            ),
           },
           { children: `${serverlessFunction?.name}` },
         ]}

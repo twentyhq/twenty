@@ -7,8 +7,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutSelectedCellsComponentState } from '../states/pageLayoutSelectedCellsComponentState';
-import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
+import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
+import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
 
 export const useEndPageLayoutDragSelection = (
   pageLayoutIdFromProps?: string,
@@ -52,6 +52,7 @@ export const useEndPageLayoutDragSelection = (
 
             navigatePageLayoutCommandMenu({
               commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+              resetNavigationStack: true,
             });
           }
         }

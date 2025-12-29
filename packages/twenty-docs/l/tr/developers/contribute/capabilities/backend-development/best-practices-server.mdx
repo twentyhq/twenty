@@ -1,0 +1,22 @@
+---
+title: En İyi Uygulamalar
+---
+
+Bu belge, arka uçta çalışırken uymanız gereken en iyi uygulamaları açıklar.
+
+## Modüler bir yaklaşım izleyin
+
+The backend follows a modular approach, which is a fundamental principle when working with NestJS. Kodunuzu temiz ve düzenli bir kod tabanı sağlamak için yeniden kullanılabilir modüllere ayırdığınızdan emin olun.
+Her modül belirli bir özellik veya işlevselliği kapsamalı ve iyi tanımlanmış bir kapsama sahip olmalıdır. Bu modüler yaklaşım, sorumlulukların net bir şekilde ayrılmasını sağlar ve gereksiz karmaşıklıkları ortadan kaldırır.
+
+## Expose services to use in modules
+
+Her zaman kod okunabilirliğini ve bakım yapılabilirliğini artıran, net ve tek bir sorumluluğa sahip hizmetler oluşturun. Hizmetlerin adlarını açıklayıcı ve tutarlı bir şekilde adlandırın.
+
+Diğer modüllerde kullanmak istediğiniz hizmetleri dışa açmalısınız. Hizmetleri diğer modüllere dışa açmak, NestJS'nin güçlü bağımlılık enjeksiyonu sistemi sayesinde mümkündür ve bileşenler arasında gevşek bağlılığı teşvik eder.
+
+## `any` tipini kullanmaktan kaçının
+
+Bir değişkeni `any` olarak tanımladığınızda, TypeScript'in tür denetleyicisi herhangi bir tür denetimi yapmaz ve değişkene herhangi bir türde değer atamanızı mümkün kılar. TypeScript, değere göre değişkenin türünü belirlemek için tür çıkarımı kullanır. `any` olarak tanımlandığında, TypeScript türü artık çıkaramaz. Bu, geliştirme sırasında türle ilgili hataları yakalamayı zorlaştırır, çalışma zamanı hatalarına yol açar ve kodun bakım yapılabilirliğini, güvenilirliğini ve başkaları tarafından anlaşılabilirliğini azaltır.
+
+Bu nedenle her şeyin bir türü olması gerekir. Bu yüzden, ad ve soyadı alanları olan yeni bir nesne oluşturuyorsanız, nesnenin yapısını tanımlayan ve ad ile soyadı alanlarını içeren bir arayüz veya tür tanımlamalısınız.

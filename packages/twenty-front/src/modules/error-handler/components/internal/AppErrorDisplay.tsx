@@ -12,7 +12,7 @@ import {
 
 export const AppErrorDisplay = ({
   resetErrorBoundary,
-  title = 'Sorry, something went wrong',
+  title = t`Sorry, something went wrong`,
 }: AppErrorDisplayProps) => {
   return (
     <AnimatedPlaceholderEmptyContainer>

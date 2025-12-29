@@ -87,6 +87,8 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected abstract readonly operationName: CommonQueryNames;
 
+  protected readonly isReadOnly: boolean = false;
+
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -334,14 +336,14 @@ export abstract class CommonBaseQueryRunnerService<
       intersectionOf: [roleId],
     };
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
+    const globalWorkspaceDataSource = this.isReadOnly
+      ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
+      : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const repository = globalWorkspaceDataSource.getRepository(
       queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
     );
-
-    const globalWorkspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     return {
       ...queryRunnerContext,

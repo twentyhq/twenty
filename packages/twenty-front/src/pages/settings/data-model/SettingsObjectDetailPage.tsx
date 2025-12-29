@@ -59,6 +59,7 @@ export const SettingsObjectDetailPage = () => {
   const theme = useTheme();
 
   const { objectNamePlural = '' } = useParams();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
@@ -167,7 +168,10 @@ export const SettingsObjectDetailPage = () => {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
+          {
+            children: t`Objects`,
+            href: getSettingsPath(SettingsPath.Objects),
+          },
           {
             children: objectMetadataItem.labelPlural,
           },

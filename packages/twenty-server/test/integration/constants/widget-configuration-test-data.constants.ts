@@ -1,7 +1,8 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout/enums/axis-name-display.enum';
-import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';
@@ -9,22 +10,25 @@ export const TEST_FIELD_METADATA_ID_3 = '20202020-3333-4333-a333-333333333333';
 export const TEST_FIELD_METADATA_ID_4 = '20202020-4444-4444-a444-444444444444';
 
 export const TEST_IFRAME_CONFIG = {
+  configurationType: WidgetConfigurationType.IFRAME,
   url: 'https://example.com/dashboard',
-};
+} as const;
 
 export const TEST_STANDALONE_RICH_TEXT_CONFIG = {
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
   body: {
     blocknote:
       '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}',
     markdown: '# Hello world',
   },
-};
+} as const;
 
 export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL = {
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
   body: {
     markdown: 'Simple text',
   },
-};
+} as const;
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
 
@@ -33,6 +37,7 @@ export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
 };
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
   body: {
     blocknote: 'valid',
     markdown: 'valid',
@@ -41,11 +46,12 @@ export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
 };
 
 export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
+  configurationType: WidgetConfigurationType.IFRAME,
   url: 'https://app.twenty.com/analytics',
-};
+} as const;
 
 export const TEST_NUMBER_CHART_CONFIG = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
@@ -55,14 +61,15 @@ export const TEST_NUMBER_CHART_CONFIG = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   displayDataLabel: false,
 };
 
 export const TEST_VERTICAL_BAR_CHART_CONFIG = {
-  graphType: GraphType.VERTICAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.VERTICAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -77,7 +84,8 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG = {
 };
 
 export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.VERTICAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.VERTICAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -87,7 +95,8 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
-  graphType: GraphType.HORIZONTAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.HORIZONTAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -102,7 +111,8 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
 };
 
 export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.HORIZONTAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.HORIZONTAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -112,7 +122,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_LINE_CHART_CONFIG = {
-  graphType: GraphType.LINE,
+  configurationType: WidgetConfigurationType.LINE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.AVG,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -129,7 +139,7 @@ export const TEST_LINE_CHART_CONFIG = {
 };
 
 export const TEST_LINE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.LINE,
+  configurationType: WidgetConfigurationType.LINE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.MAX,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -139,7 +149,7 @@ export const TEST_LINE_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_PIE_CHART_CONFIG = {
-  graphType: GraphType.PIE,
+  configurationType: WidgetConfigurationType.PIE_CHART,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.SUM,
@@ -161,7 +171,7 @@ export const TEST_PIE_CHART_CONFIG = {
 };
 
 export const TEST_PIE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.PIE,
+  configurationType: WidgetConfigurationType.PIE_CHART,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.COUNT,
@@ -170,7 +180,7 @@ export const TEST_PIE_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_GAUGE_CHART_CONFIG = {
-  graphType: GraphType.GAUGE,
+  configurationType: WidgetConfigurationType.GAUGE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   description: 'Completion percentage',
@@ -187,7 +197,7 @@ export const TEST_GAUGE_CHART_CONFIG = {
 };
 
 export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.GAUGE,
+  configurationType: WidgetConfigurationType.GAUGE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT_TRUE,
   displayDataLabel: false,
@@ -202,29 +212,29 @@ export const INVALID_IFRAME_CONFIG_EMPTY_URL = {
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_BAD_UUID = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
   aggregateFieldMetadataId: 'not-a-uuid',
   aggregateOperation: AggregateOperations.COUNT,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_INVALID_OPERATION = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: 'INVALID_OP' as any,
 };
 
 export const INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY = {
-  graphType: GraphType.VERTICAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
 };
 
 export const INVALID_VERTICAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
-  graphType: GraphType.VERTICAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -232,13 +242,13 @@ export const INVALID_VERTICAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
 };
 
 export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY = {
-  graphType: GraphType.HORIZONTAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
 };
 
 export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
-  graphType: GraphType.HORIZONTAL_BAR,
+  configurationType: WidgetConfigurationType.BAR_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -246,7 +256,7 @@ export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
 };
 
 export const CONFIG_TYPE_MISMATCH_IFRAME_WITH_GRAPH = {
-  graphType: GraphType.AGGREGATE,
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
   url: 'https://example.com',
 };
 

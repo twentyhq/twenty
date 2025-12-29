@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { getPageLayoutTabListInitialActiveTabId } from '../getPageLayoutTabListInitialActiveTabId';
+import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getPageLayoutTabListInitialActiveTabId';
 
 describe('getPageLayoutTabListInitialActiveTabId', () => {
   const createMockTab = (id: string): PageLayoutTab => ({

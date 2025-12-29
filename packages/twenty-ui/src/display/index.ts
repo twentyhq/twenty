@@ -28,6 +28,7 @@ export type {
   ColorSampleProps,
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
+export { CommandBlock } from './command-block/components/CommandBlock';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -228,6 +229,7 @@ export {
   IconFileCheck,
   IconFileExport,
   IconFileImport,
+  IconFileInfo,
   IconFilePencil,
   IconFileText,
   IconFileUpload,
@@ -422,6 +424,7 @@ export {
   IconTimeDuration60,
   IconTimelineEvent,
   IconTool,
+  IconTransform,
   IconTrash,
   IconTrashOff,
   IconTrashX,

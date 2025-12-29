@@ -35,9 +35,9 @@ import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { type ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils/loggerLink';
-import { StreamingRestLink } from '../utils/streamingRestLink';
+import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { loggerLink } from '@/apollo/utils/loggerLink';
+import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -247,8 +247,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   console.log('UNAUTHENTICATED, triggering token renewal');
                   return handleTokenRenewal(operation, forward);
                 }
+                case 'NOT_FOUND':
                 case 'BAD_USER_INPUT':
-                case 'FORBIDDEN': {
+                case 'FORBIDDEN':
+                case 'CONFLICT':
+                case 'METADATA_VALIDATION_FAILED': {
                   return;
                 }
                 case 'USER_INPUT_ERROR': {

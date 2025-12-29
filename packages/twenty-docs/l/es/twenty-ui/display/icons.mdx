@@ -1,5 +1,5 @@
 ---
-title: Iconos
+title: Icons
 image: /images/user-guide/objects/objects.png
 ---
 
@@ -7,77 +7,67 @@ image: /images/user-guide/objects/objects.png
   <img src="/images/user-guide/objects/objects.png" alt="Header" />
 </Frame>
 
-Una lista de iconos utilizados en toda nuestra aplicación.
+A list of icons used throughout our app.
 
-## Iconos Tabler
+## Tabler Icons
 
-Usamos iconos Tabler para React en toda la aplicación.
+We use Tabler icons for React throughout the app.
 
 <Tabs>
+  <Tab title="Installation">
+    <br />
 
-<Tab title="Installation"><br/>
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
 
-```
-yarn add @tabler/icons-react
-```
+  <Tab title="Props">
+    You can import each icon as a component. Here's an example:
 
-</Tab>
+    <br />
 
-<Tab title="Props">
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
 
-Puede importar cada icono como un componente. Here's an example: <br />
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconArrowLeft } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return <IconArrowLeft color="red" size={48} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| "Props" | Tipo     | Descripción                               | Predeterminado |
-| ------- | -------- | ----------------------------------------- | -------------- |
-| tamaño  | número   | La altura y el ancho del icono en píxeles | 24             |
-| color   | "cadena" | El color de los iconos                    | currentColor   |
-| trazo   | número   | El ancho del trazo del icono en píxeles   | 2              |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props  | Type   | Description                                | Default      |
+    | ------ | ------ | ------------------------------------------ | ------------ |
+    | size   | number | The height and width of the icon in pixels | 24           |
+    | color  | string | The color of the icons                     | currentColor |
+    | stroke | number | The stroke width of the icon in pixels     | 2            |
+  </Tab>
 </Tabs>
 
-## Iconos Personalizados
+## Custom Icons
 
-Además de los iconos Tabler, la aplicación también utiliza algunos iconos personalizados.
+In addition to Tabler icons, the app also uses some custom icons.
 
-### Icono de Libreta de Direcciones
+### Icon Address Book
 
-Muestra un icono de libreta de direcciones.
+Displays an address book icon.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconAddressBook } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return <IconAddressBook size={24} stroke={2} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| "Props" | Tipo   | Descripción                               | Predeterminado |
-| ------- | ------ | ----------------------------------------- | -------------- |
-| tamaño  | número | La altura y el ancho del icono en píxeles | 24             |
-| trazo   | número | El ancho del trazo del icono en píxeles   | 2              |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props  | Type   | Description                                | Default |
+    | ------ | ------ | ------------------------------------------ | ------- |
+    | size   | number | The height and width of the icon in pixels | 24      |
+    | stroke | number | The stroke width of the icon in pixels     | 2       |
+  </Tab>
 </Tabs>

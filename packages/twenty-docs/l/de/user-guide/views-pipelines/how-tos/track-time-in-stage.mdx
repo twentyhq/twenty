@@ -1,0 +1,231 @@
+---
+title: Verfolgen Sie, wie lange Opportunities in jeder Phase bleiben
+description: Überwachen Sie die Deal-Geschwindigkeit, indem Sie nachverfolgen, wann Opportunities jede Phase betreten.
+---
+
+<Tip>
+  Dies ist ein Beispiel dafür, wie man mit Workflows [Formelfelder](/l/de/user-guide/workflows/how-tos/crm-automations/formula-fields) erstellt – konkret Datumsberechnungen.
+</Tip>
+
+Das Nachverfolgen, wann Opportunities eine Phase betreten, hilft, Engpässe zu erkennen und die Deal-Geschwindigkeit zu messen.
+
+Diese Anleitung führt Sie durch das Einrichten benutzerdefinierter Felder und eines Workflows, um automatisch zu erfassen, wann eine Opportunity in eine Phase wechselt, und zu berechnen, wie viele Tage sie in der vorherigen Phase verbracht hat.
+
+## Schritt 1: Benutzerdefinierte Felder erstellen
+
+Für jede Phase benötigen Sie zwei Feldtypen:
+
+* **Datums- und Uhrzeitfelder**: Erfassen, wann die Opportunity die jeweilige Phase betreten hat
+* **Zahlenfelder**: Speichern, wie viele Tage die Opportunity in jeder Phase verbracht hat
+
+### Erstellen Sie die Felder "Last Entered"
+
+1. Gehen Sie zu **Settings → Data Model → Opportunities**
+2. Klicken Sie für jede Phase auf **+ Add Field** und konfigurieren Sie:
+   * **Name**: Last Entered [Phasenname] (z. B. "Last Entered New", "Last Entered Qualified")
+   * **Type**: Date & Time
+   * **Description**: Zeitstempel, wann die Opportunity diese Phase betreten hat
+3. Klicken Sie auf **Speichern**
+
+Erstellen Sie diese Felder:
+
+* Last Entered New
+* Last Entered Qualified
+* Last Entered Meeting
+* Last Entered Proposal
+* Last Entered Negotiation
+* Last Entered Closed Won
+* Last Entered Closed Lost
+
+### Erstellen Sie die Felder "Days in Stage"
+
+1. Klicken Sie für jede Phase auf **+ Add Field** und konfigurieren Sie:
+   * **Name**: Days in [Phasenname] (z. B. "Days in New", "Days in Qualified")
+   * **Type**: Number
+   * **Description**: Anzahl der in dieser Phase verbrachten Tage
+2. Klicken Sie auf **Speichern**
+
+Erstellen Sie diese Felder:
+
+* Days in New
+* Days in Qualified
+* Days in Meeting
+* Days in Proposal
+* Days in Negotiation
+
+<Note>
+  Sie benötigen keine "Days in"-Felder für Closed Won und Closed Lost, da dies finale Phasen sind.
+</Note>
+
+### Optional: Felder schreibgeschützt machen
+
+Wenn Benutzer diese berechneten Felder nicht manuell bearbeiten sollen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Rolle zum Konfigurieren auswählen
+3. Suchen Sie das Objekt Opportunities
+4. Setzen Sie die Felder "Last Entered" und "Days in" auf schreibgeschützt
+
+## Schritt 2: Workflow erstellen
+
+Dieser einzelne Workflow übernimmt beide Aufgaben:
+
+* Erfasst den Zeitstempel beim Eintritt in eine neue Phase
+* Berechnet die in der vorherigen Phase verbrachten Tage
+
+### Workflow erstellen
+
+1. Gehen Sie zu **Workflows**
+2. Klicken Sie auf **+ New Workflow**
+3. Nennen Sie ihn "Track Stage Time"
+
+### Trigger konfigurieren
+
+1. Fügen Sie einen **Record Updated**-Trigger hinzu
+2. Wählen Sie **Opportunities** als Objekt aus
+3. Filtern nach: **Stage**-Feld wird aktualisiert
+
+### Verzweigungen für jede Phase hinzufügen
+
+<Note>
+  Um eine neue Verzweigung zu erstellen, klicken Sie mit der rechten Maustaste auf den Workflow-Canvas und klicken Sie auf **New action**. Verknüpfen Sie anschließend diese Aktion mit dem vorherigen Knoten, indem Sie den Pfeil vom vorherigen Knoten zu dieser neuen Aktion ziehen.
+</Note>
+
+---
+
+**Branch 1: Stage = New (erste Phase)**
+
+Da dies die erste Phase ist, erfassen wir nur den Eintrittszeitstempel – es gibt keine vorherige Phase zu berechnen.
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Stage = New
+2. Fügen Sie eine **Code**-Aktion hinzu:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Feld: Last Entered New
+   * Wert: `now` aus dem Code-Knoten
+
+---
+
+**Branch 2: Stage = Qualified**
+
+Beim Wechsel zu Qualified den Eintrittszeitpunkt erfassen UND die in New verbrachten Tage berechnen.
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Stage = Qualified
+2. Fügen Sie eine **Code**-Aktion hinzu:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Konfigurieren Sie die Eingabe des Code-Knotens: Ordnen Sie `lastEnteredPreviousStage` dem Feld **Last Entered New** zu
+4. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Zu aktualisierende Felder:
+     * Last Entered Qualified = `now`
+     * Days in New = `daysInPreviousStage`
+
+---
+
+**Branch 3: Stage = Meeting**
+
+Beim Wechsel zu Meeting den Eintrittszeitpunkt erfassen UND die in Qualified verbrachten Tage berechnen.
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Stage = Meeting
+2. Fügen Sie eine **Code**-Aktion hinzu:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Konfigurieren Sie die Eingabe des Code-Knotens: Ordnen Sie `lastEnteredPreviousStage` dem Feld **Last Entered Qualified** zu
+4. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Zu aktualisierende Felder:
+     * Last Entered Meeting = `now`
+     * Days in Qualified = `daysInPreviousStage`
+
+---
+
+**Für die verbleibenden Phasen fortfahren:**
+
+| Phase       | Datensätze               | Berechnet           |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
+| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+
+Die Verzweigungen müssen nicht wieder zusammengeführt werden – jede läuft unabhängig, wenn ihre Phasenbedingung erfüllt ist.
+
+## Schritt 3: Zeit in der Phase analysieren
+
+Mit erfassten Zeitstempeln und Tageszahlen können Sie nun die Deal-Geschwindigkeit analysieren.
+
+### Eine Ansicht "Slow Deals" erstellen
+
+1. Erstellen Sie eine Tabellenansicht der Opportunities
+2. Spalten hinzufügen: Name, Phase, Tage in [vorheriger Phase], Betrag
+3. Nach dem Feld "Days in" sortieren (absteigend)
+4. Nach Phase filtern, um sich jeweils auf eine Phase zu konzentrieren
+
+Deals oben haben die meiste Zeit in der vorherigen Phase verbracht.
+
+### Aggregationen verwenden
+
+In Ihrer Pipeline-Kanban-Ansicht:
+
+1. Klicken Sie auf die Zahl neben einem Phasennamen
+2. Wählen Sie **Average** aus
+3. Wählen Sie ein "Days in"-Feld
+
+Dies zeigt die durchschnittliche Zeit, die Deals in jeder Phase verbringen.
+
+## Zusammenfassung
+
+| Komponente                    | Zweck                                                             |
+| ----------------------------- | ----------------------------------------------------------------- |
+| **Last Entered-Felder**       | Speichern, wann die Opportunity jede Phase betreten hat           |
+| **Days in-Felder**            | Speichern, wie viele Tage in jeder Phase verbracht wurden         |
+| **Workflow**                  | Erfasst den Zeitstempel UND berechnet die Tage in einem Durchlauf |
+| **Ansichten & Aggregationen** | Deal-Geschwindigkeit analysieren und Engpässe identifizieren      |
+
+## Verwandt
+
+* [Workflows](/l/de/user-guide/workflows/overview) — Grundlagen der Automatisierung
+* [So erstellen Sie benutzerdefinierte Felder](/l/de/user-guide/data-model/how-tos/create-custom-fields) — Feldkonfiguration
+* [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Aggregationen

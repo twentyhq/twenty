@@ -1,0 +1,81 @@
+---
+title: Zapier App
+---
+
+Snadno synchronizujte Twenty s více než 3000 aplikacemi pomocí [Zapier](https://zapier.com/). Automatizujte úkoly, zvyšte produktivitu a zlepšete vztahy se zákazníky!
+
+## O Zapier
+
+Zapier je nástroj, který umožňuje automatizovat pracovní postupy připojením aplikací, které váš tým používá každý den. Základním konceptem Zapier je automatizace pracovních postupů, nazývaných Zaps, které zahrnují spouštěče a akce.
+
+Více o tom, jak Zapier funguje, se dozvíte [zde](https://zapier.com/how-it-works).
+
+## Nastavení
+
+### Krok 1: Nainstalujte balíčky Zapier
+
+```bash
+cd packages/twenty-zapier\n\nyarn
+```
+
+### Krok 2: Přihlaste se pomocí CLI
+
+Použijte své Zapier přihlašovací údaje k přihlášení pomocí CLI:
+
+```bash
+zapier login
+```
+
+### Krok 3: Nastavte proměnné prostředí
+
+Z adresáře `packages/twenty-zapier` spusťte:
+
+```bash
+cp .env.example .env
+```
+
+Spusťte aplikaci lokálně, přejděte na [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), a vygenerujte klíč API.
+
+Nahraďte hodnotu **YOUR_API_KEY** v souboru `.env` klíčem API, který jste právě vygenerovali.
+
+## Vývoj
+
+<Warning>
+  Ujistěte se, že před jakýmkoli příkazem `zapier` spustíte `yarn build`.
+</Warning>
+
+### Testovat
+
+```bash
+yarn test
+```
+
+### Linter
+
+```bash
+yarn format
+```
+
+### Sledování a kompilace při úpravě kódu
+
+```bash
+yarn watch
+```
+
+### Ověřte svou aplikaci Zapier
+
+```bash
+yarn validate
+```
+
+### Nasazení vaší aplikace Zapier
+
+```bash
+yarn deploy
+```
+
+### Seznam všech příkazů Zapier CLI
+
+```bash
+zapier
+```

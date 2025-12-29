@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'messageFolder'>, 'context'>): Record<
-  AllStandardObjectFieldName<'messageFolder'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'messageFolder', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'messageFolder'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -54,7 +55,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -73,7 +74,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -91,7 +92,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -108,6 +109,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Folder name',
       icon: 'IconFolder',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -124,6 +126,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Sync Cursor',
       icon: 'IconHash',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -140,6 +143,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Is Sent Folder',
       icon: 'IconCheck',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -157,6 +161,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Is Synced',
       icon: 'IconCheck',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -174,6 +179,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Parent Folder ID',
       icon: 'IconFolder',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -190,6 +196,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'External ID',
       icon: 'IconHash',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -206,6 +213,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Pending action for folder sync',
       icon: 'IconReload',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'NONE'",
       options: [
         {
@@ -233,6 +241,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Message Channel',
       icon: 'IconMessage',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'messageChannel',
       targetFieldName: 'messageFolders',
       settings: {

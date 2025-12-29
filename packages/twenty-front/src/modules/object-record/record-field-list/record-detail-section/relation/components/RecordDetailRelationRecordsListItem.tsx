@@ -12,6 +12,10 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
+import {
+  RecordFieldsScopeContextProvider,
+  useRecordFieldsScopeContextOrThrow,
+} from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListItemContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListItemContainer';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -30,6 +34,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import {
   computeMorphRelationFieldName,
@@ -97,6 +103,7 @@ export const RecordDetailRelationRecordsListItem = ({
   relationObjectMetadataNameSingular,
   relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const {
     fieldDefinition,
     recordId,
@@ -160,6 +167,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
   const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
@@ -263,14 +271,14 @@ export const RecordDetailRelationRecordsListItem = ({
                 <DropdownMenuItemsContainer>
                   <MenuItem
                     LeftIcon={IconUnlink}
-                    text="Detach"
+                    text={t`Detach`}
                     onClick={handleDetach}
                   />
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
                       <MenuItem
                         LeftIcon={IconTrash}
-                        text="Delete"
+                        text={t`Delete`}
                         accent="danger"
                         onClick={handleDelete}
                       />
@@ -282,30 +290,36 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <RecordFieldList
-          instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
-          objectNameSingular={relationObjectMetadataNameSingular}
-          objectRecordId={relationRecord.id}
-          showDuplicatesSection={false}
-          showRelationSections={false}
-          excludeCreatedAtAndUpdatedAt={true}
-          excludeFieldMetadataIds={[relationFieldMetadataId]}
-        />
+        <RecordFieldsScopeContextProvider
+          value={{
+            scopeInstanceId: `record-detail-relation-${relationRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`,
+          }}
+        >
+          <RecordFieldList
+            instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
+            objectNameSingular={relationObjectMetadataNameSingular}
+            objectRecordId={relationRecord.id}
+            showDuplicatesSection={false}
+            showRelationSections={false}
+            excludeCreatedAtAndUpdatedAt={true}
+            excludeFieldMetadataIds={[relationFieldMetadataId]}
+          />
+        </RecordFieldsScopeContextProvider>
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
           modalId={getDeleteRelationModalId(relationRecord.id)}
-          title={`Delete Related ${relationObjectTypeName}`}
+          title={t`Delete Related ${relationObjectTypeName}`}
           subtitle={
-            <>
+            <Trans>
               Are you sure you want to delete this related{' '}
               {relationObjectMetadataNameSingular}?
               <br />
               This action will break all its relationships with other objects.
-            </>
+            </Trans>
           }
           onConfirmClick={handleConfirmDelete}
-          confirmButtonText={`Delete ${relationObjectTypeName}`}
+          confirmButtonText={t`Delete ${relationObjectTypeName}`}
         />,
         document.body,
       )}

@@ -51,6 +51,7 @@ export const buildMessageChannelMessageAssociationStandardFlatIndexMetadatas =
         indexName: 'messageChannelIdMessageIdUniqueIndex',
         relatedFieldNames: ['messageChannel', 'message'],
         isUnique: true,
+        indexWhereClause: '"deletedAt" IS NULL',
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

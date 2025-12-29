@@ -1,9 +1,17 @@
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import { Key } from 'ts-key-enum';
+import { useRef, useState } from 'react';
+import { type IconComponent } from 'twenty-ui/display';
 
 type CommandMenuItemTextInputProps = {
+  id: string;
+  label: string;
+  Icon?: IconComponent;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -11,55 +19,89 @@ type CommandMenuItemTextInputProps = {
 
 const StyledRightAlignedTextInput = styled(TextInput)`
   input {
-    :focus {
-      color: ${({ theme }) => theme.font.color.primary};
-    }
-    color: ${({ theme }) => theme.font.color.tertiary};
     text-align: right;
   }
 `;
 
 export const CommandMenuItemTextInput = ({
+  id,
+  label,
+  Icon,
   value,
   onChange,
   placeholder,
 }: CommandMenuItemTextInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
 
-  const handleChange = (text: string) => {
-    setDraftValue(text);
-  };
-
-  const handleCommit = () => {
-    onChange(draftValue);
-  };
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     event.target.select();
+    pushFocusItemToFocusStack({
+      focusId,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: focusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
   };
 
   const handleBlur = () => {
-    handleCommit();
+    removeFocusItemFromFocusStackById({ focusId });
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === Key.Enter || event.key === Key.Escape) {
-      event.stopPropagation();
-      handleCommit();
-    } else {
-      event.stopPropagation();
-    }
+  const handleEscape = () => {
+    setDraftValue(value);
+    inputRef.current?.blur();
+  };
+
+  const handleEnter = () => {
+    onChange(draftValue);
+    inputRef.current?.blur();
+  };
+
+  const handleClickOutside = () => {
+    onChange(draftValue);
+  };
+
+  useRegisterInputEvents<string>({
+    focusId,
+    inputRef: inputRef,
+    inputValue: draftValue,
+    onEscape: handleEscape,
+    onEnter: handleEnter,
+    onClickOutside: handleClickOutside,
+  });
+
+  const focusInput = () => {
+    inputRef.current?.focus();
   };
 
   return (
-    <StyledRightAlignedTextInput
-      value={draftValue}
-      sizeVariant="sm"
-      onChange={handleChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      placeholder={placeholder}
+    <CommandMenuItem
+      id={id}
+      label={label}
+      Icon={Icon}
+      onClick={focusInput}
+      RightComponent={
+        <StyledRightAlignedTextInput
+          ref={inputRef}
+          value={draftValue}
+          sizeVariant="sm"
+          onChange={setDraftValue}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          textClickOutsideId={focusId}
+        />
+      }
     />
   );
 };

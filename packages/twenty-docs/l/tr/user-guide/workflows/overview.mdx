@@ -1,0 +1,80 @@
+---
+title: İş Akışları
+description: Learn how to build automations in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="İş Akışları" />
+</Frame>
+
+## İş Akışları Neden Önemlidir?
+
+Twenty, kullanıcılarına maksimum esneklik sağlamak için tasarlandı. İş süreçlerinizi katı, önceden oluşturulmuş özelliklere uyarlamak yerine, iş akışları, benzersiz iş kullanım durumlarınızı en iyi destekleyen CRM'yi oluşturmanıza olanak tanır.
+
+İş akışları, bu otomasyonları oluşturmak için Twenty'nin uygulama içi özelliğidir. They give you the building blocks to create exactly what your business needs, when it needs it.
+
+## İş akışlarıyla ne yapabilirim?
+
+İki ana amaç için otomasyonlar oluşturmanızı öneririz:
+
+1. **Ekibinizin günlük işlerini kolaylaştırmak için iç otomasyonlar**: Ekibinizin yavaşlamasına neden olan manuel giriş ve tekrarlanan görevleri azaltın.
+2. **Verileri içeri ve dışarı getirin**: Twenty'yi API çağrıları ve webhooks aracılığıyla veritabanınıza ve diğer araçlara bağlayın.
+
+## Building Your First Workflow
+
+### Step 1: Create a New Workflow
+
+1. Go to **Workflows** accessible below the other objects
+2. Click **+ New Record**
+3. Give your workflow a name
+
+### Step 2: Add a Trigger
+
+Every workflow starts with a trigger. Choose from:
+
+* **Record events**: When a record is created, updated, or deleted
+* **Schedule**: Run at specific times (daily, weekly, etc.)
+* **Manual**: Triggered by a user action
+* **Webhook**: Triggered by a webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Step 3: Add Actions
+
+After your trigger, add one or more actions:
+
+* **Create Record**: Add new records to any object
+* **Update Record**: Modify existing record data
+* **Delete Record**: Remove records from objects
+* **Search Records**: Find records matching criteria
+* **Upsert Record**: Create or update based on matching criteria
+* **Iterator**: Loop through arrays of records
+* **Filter**: Control which records proceed
+* **Delay**: Wait before continuing (duration or scheduled date)
+* **Send Email**: Send emails via your connected account
+* **Code**: Run custom JavaScript
+* **HTTP Request**: Call external APIs
+* **Form**: Get inputs from users within Twenty UI at the time of execution
+* **AI Agent** (Coming soon): Run intelligent AI tasks
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Step 4: Test and Activate
+
+1. Use the **Test** button to run your workflow with sample data
+2. Review the results to ensure it works as expected
+3. Toggle the workflow **Active** when ready
+
+## İş Akışı En İyi Uygulamaları
+
+* **Adım isimlerini düzenleyin**: Her biri ne yaptığını açıkça tanımlamak için iş akışı adımlarınızı yeniden adlandırın. Bakım açısından yardımcı olur ve iş arkadaşlarına devretmeyi kolaylaştırır
+* **Önceki adım verilerinden yararlanın**: İş akışınızdaki herhangi bir önceki adım tarafından döndürülen kayıtlardan alanları kullanabilirsiniz
+* **Basit başlayın**: Temel iş akışlarıyla başlayın ve sistemle daha rahat hale geldikçe zamanla karmaşıklık ekleyin
+* **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+
+## Sonraki Adımlar
+
+* [Workflow Triggers](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Automations](/l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

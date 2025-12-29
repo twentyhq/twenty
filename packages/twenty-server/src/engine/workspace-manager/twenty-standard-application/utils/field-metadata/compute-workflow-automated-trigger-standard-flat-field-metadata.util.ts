@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -20,7 +21,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'workflowAutomatedTrigger'>,
+  CreateStandardFieldArgs<'workflowAutomatedTrigger', FieldMetadataType>,
   'context'
 >): Record<
   AllStandardObjectFieldName<'workflowAutomatedTrigger'>,
@@ -57,7 +58,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -76,7 +77,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -94,7 +95,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -111,6 +112,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'The workflow automated trigger type',
       icon: 'IconSettingsAutomation',
       isNullable: false,
+      isUIReadOnly: true,
       options: [
         {
           value: 'DATABASE_EVENT',
@@ -136,6 +138,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'The workflow automated trigger settings',
       icon: 'IconSettings',
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -153,6 +156,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'WorkflowAutomatedTrigger workflow',
       icon: 'IconSettingsAutomation',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'automatedTriggers',
       settings: {

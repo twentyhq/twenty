@@ -1,0 +1,325 @@
+---
+title: Cele mai bune practici
+---
+
+Acest document prezintă cele mai bune practici pe care ar trebui să le urmați atunci când lucrați la frontend.
+
+## Managementul stării
+
+React și Recoil se ocupă de managementul stării în cod.
+
+### Folosiți `useRecoilState` pentru a stoca starea
+
+It's good practice to create as many atoms as you need to store your state.
+
+<Warning>
+  It's better to use extra atoms than trying to be too concise with props drilling.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Nu folosiți `useRef` pentru a stoca starea
+
+Evitați utilizarea `useRef` pentru a stoca starea.
+
+Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau `useRecoilState`.
+
+See [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+
+## Managing re-renders
+
+Re-render-urile pot fi greu de gestionat în React.
+
+Aici sunt câteva reguli de urmat pentru a evita re-render-urile inutile.
+
+Keep in mind that you can **always** avoid re-renders by understanding their cause.
+
+### Lucrați la nivelul rădăcinii
+
+Avoiding re-renders in new features is now made easy by eliminating them at the root level.
+
+Componenta secundară `PageChangeEffect` conține doar un `useEffect` ce deține toată logica de execuție la o schimbare de pagină.
+
+În acest fel știți că există doar un loc care poate declanșa un re-render.
+
+### Gândiți-vă de două ori înainte de a adăuga `useEffect` în baza de cod
+
+Re-render-urile sunt adesea cauzate de `useEffect` inutile.
+
+Ar trebui să vă gândiți dacă aveți nevoie de `useEffect` sau dacă puteți muta logica într-o funcție de handler de eveniment.
+
+Vă va fi, în general, ușor să mutați logica într-o funcție `handleClick` sau `handleChange`.
+
+De asemenea, le puteți găsi în biblioteci precum Apollo: `onCompleted`, `onError`, etc.
+
+### Folosiți o componentă adiacentă pentru a extrage `useEffect` sau logica de interogare de date
+
+Dacă simțiți nevoia să adăugați un `useEffect` în componenta rădăcină, ar trebui să luați în considerare extragerea sa într-o componentă secundară.
+
+Puteți aplica același principiu pentru logica de interogare de date, folosind hooks cu Apollo.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Folosiți stări de familie și selectoare de familie cu recoil
+
+Stările și selectoarele de familie cu recoil sunt o metodă excelentă de a evita re-render-urile.
+
+Sunt utile când trebuie să stocați o listă de elemente.
+
+### Nu ar trebui să folosiți `React.memo(MyComponent)`
+
+Evitați utilizarea `React.memo()` deoarece nu rezolvă cauza re-render-ului, ci întrerupe lanțul re-render, ceea ce poate duce la comportamente neașteptate și face codul foarte greu de refactorizat.
+
+### Limitați utilizarea `useCallback` sau `useMemo`
+
+Acestea sunt adesea inutile și vor face codul mai greu de citit și menținut pentru un câștig în performanță care nu este sesizabil.
+
+## Console.logs
+
+Instrucțiunile `console.log` sunt valoroase în timpul dezvoltării, oferind informații în timp real despre valorile variabilelor și fluxul de cod. Totuși, lăsându-le în codul de producție pot duce la mai multe probleme:
+
+1. **Performanță**: Logările excesive pot afecta performanța de execuție, în special în aplicațiile pe partea de client.
+
+2. **Siguranță**: Logarea datelor sensibile poate expune informații critice oricui inspectează consola browser-ului.
+
+3. **Claritate**: Umplerea consolei cu logări poate ascunde avertismente sau erori importante pe care dezvoltatorii sau uneltele le trebuie să le vadă.
+
+4. **Profesionalism**: Utilizatorii finali sau clienții care verifică consola și văd o multitudine de instrucțiuni de log s-ar putea să pună la îndoială calitatea și finisajul codului.
+
+Asigurați-vă că eliminați toate `console.log`-urile înainte de a trimite codul în producție.
+
+## Denumiri
+
+### Denumire de variabilă
+
+Denumirile variabilelor trebuie să descrie cu precizie scopul sau funcția variabilei.
+
+#### Problema cu denumirile generice
+
+Denumirile generice în programare nu sunt ideale deoarece nu au specificitate, ducând la ambiguitate și la reducerea lizibilității codului. Astfel de denumiri nu reușesc să transmită scopul variabilei sau funcției, ceea ce îngreunează înțelegerea intenției codului de către dezvoltatori fără o investigație mai profundă. Acest lucru poate duce la creșterea timpului de depanare, la o mai mare susceptibilitate la erori și dificultăți în întreținere și colaborare. Între timp, denumirile descriptive fac codul auto-explicativ și mai ușor de navigat, îmbunătățind calitatea codului și productivitatea dezvoltatorilor.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Câteva cuvinte de evitat în denumirile de variabile
+
+* dummy
+
+### Handlere de evenimente
+
+Numele handlerelor de evenimente ar trebui să înceapă cu `handle`, în timp ce `on` este un prefix folosit pentru a denumi evenimentele în prop-urile componentelor.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Props opționale
+
+Evitați să transmiteți valoarea implicită pentru un props opțional.
+
+**EXEMPLU**
+
+Țineți cont de componenta `EmailField` definită mai jos:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Utilizare**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Componentă ca props
+
+Încercați, pe cât posibil, să transmiteți componente neinstanțiate ca props, astfel încât copiii să poată decide singuri de ce props au nevoie să transmită.
+
+Cel mai frecvent exemplu pentru aceasta sunt componentele de pictograme:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+Pentru ca React să înțeleagă că componenta este o componentă, trebuie să folosești PascalCase, pentru a o instanția ulterior cu `<MyIcon>`
+
+## Prop Drilling: Păstrați-l Minimal
+
+Prop drilling, în contextul React, se referă la practica de a transmite variabile de stare și setatorii acestora prin multe straturi de componente, chiar dacă componentele intermediare nu le folosesc. Deși uneori necesar, prop drilling excesiv poate duce la:
+
+1. **Citibilitate Scăzută**: Urmărirea de unde provine un prop sau unde este utilizat poate deveni complexă într-o structură de componente foarte profundă.
+
+2. **Provocări de Mentenanță**: Schimbările în structura props a unei componente pot necesita ajustări în mai multe componente, chiar dacă acestea nu utilizează direct prop-ul.
+
+3. **Reutilizabilitate Redusă a Componentelor**: O componentă ce primește multe props doar pentru a le transmite mai departe devine mai puțin de uz general și mai greu de reutilizat în contexte diferite.
+
+Dacă simțiți că folosiți prea mult prop drilling, consultați [cele mai bune practici de gestionare a stării](#state-management).
+
+## Importuri
+
+Când importați, optați pentru pseudonimele desemnate în loc să specificați căi complete sau relative.
+
+**Pseudonimele**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Utilizare**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Validarea Schemelor
+
+[Zod](https://github.com/colinhacks/zod) este validatorul de scheme pentru obiectele netipizate:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Schimbări Majore
+
+Efectuați întotdeauna teste manuale temeinice înainte de a continua pentru a garanta că modificările nu au cauzat întreruperi în altă parte, având în vedere că testele nu au fost încă integrate extensiv.

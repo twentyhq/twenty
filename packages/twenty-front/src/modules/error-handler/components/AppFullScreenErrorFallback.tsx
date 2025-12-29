@@ -2,6 +2,7 @@ import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDis
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 type AppFullScreenErrorFallbackProps = AppErrorDisplayProps;
 
@@ -18,7 +19,7 @@ const StyledContainer = styled.div`
 export const AppFullScreenErrorFallback = ({
   error,
   resetErrorBoundary,
-  title = 'Sorry, something went wrong',
+  title = t`Sorry, something went wrong`,
 }: AppFullScreenErrorFallbackProps) => {
   return (
     <StyledContainer>

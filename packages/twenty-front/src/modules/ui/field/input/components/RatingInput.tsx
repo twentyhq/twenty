@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
@@ -60,7 +61,7 @@ export const RatingInput = ({
   return (
     <StyledContainer
       role="slider"
-      aria-label="Rating"
+      aria-label={t`Rating`}
       aria-valuemax={RATING_VALUES.length}
       aria-valuemin={1}
       aria-valuenow={selectedIndex + 1}

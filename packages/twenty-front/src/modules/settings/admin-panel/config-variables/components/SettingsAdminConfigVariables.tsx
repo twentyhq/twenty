@@ -50,7 +50,7 @@ export const SettingsAdminConfigVariables = () => {
 
   const groupOptions = useMemo(
     () => [
-      { value: 'all', label: 'All Groups' },
+      { value: 'all', label: t`All Groups` },
       ...allGroups.map((group) => ({
         value: group.name,
         label: group.name,

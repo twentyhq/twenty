@@ -4,26 +4,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout/enums/axis-name-display.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
+import { type SeederFlatPageLayoutWidget } from 'src/engine/workspace-manager/dev-seeder/core/types/seeder-flat-page-layout-widget.type';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
-
-type PageLayoutWidgetDataSeed = {
-  id: string;
-  pageLayoutTabId: string;
-  title: string;
-  type: WidgetType;
-  gridPosition: {
-    row: number;
-    column: number;
-    rowSpan: number;
-    columnSpan: number;
-  };
-  configuration: Record<string, unknown> | null;
-  objectMetadataId: string | null;
-};
 
 const getFieldId = (
   object: ObjectMetadataEntity | undefined,
@@ -35,7 +23,7 @@ const getFieldId = (
 export const getPageLayoutWidgetDataSeedsV2 = (
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
-): PageLayoutWidgetDataSeed[] => {
+): SeederFlatPageLayoutWidget[] => {
   const opportunityObject = objectMetadataItems.find(
     (obj) => obj.standardId === STANDARD_OBJECT_IDS.opportunity,
   );
@@ -65,7 +53,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
     // LINE chart: Revenue Forecast (Sales Overview)
     isDefined(opportunityAmountFieldId) &&
     isDefined(opportunityCloseDateFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.SALES_REVENUE_FORECAST,
@@ -78,23 +66,23 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
           configuration: {
-            graphType: 'LINE',
+            configurationType: WidgetConfigurationType.LINE_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
-            primaryAxisOrderBy: 'FIELD_ASC',
+            primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: opportunityObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
 
     // LINE chart: New Customers Over Time (Customer Overview)
     isDefined(companyIdFieldId) && isDefined(companyCreatedAtFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_NEW_OVER_TIME,
@@ -107,23 +95,23 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
           configuration: {
-            graphType: 'LINE',
+            configurationType: WidgetConfigurationType.LINE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataId: companyCreatedAtFieldId,
-            primaryAxisOrderBy: 'FIELD_ASC',
+            primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
 
     // PIE chart: Revenue Distribution (Customer Analytics)
     isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_REVENUE_DISTRIBUTION,
@@ -136,22 +124,22 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
           configuration: {
-            graphType: 'PIE',
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             groupByFieldMetadataId: companyNameFieldId,
-            orderBy: 'VALUE_DESC',
+            orderBy: GraphOrderBy.VALUE_DESC,
             displayDataLabel: true,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
 
     // GAUGE chart: Average ARR (Customer Analytics)
     isDefined(companyArrFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_AVERAGE_ARR,
@@ -164,7 +152,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
           configuration: {
-            graphType: 'GAUGE',
+            configurationType: WidgetConfigurationType.GAUGE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
@@ -172,12 +160,12 @@ export const getPageLayoutWidgetDataSeedsV2 = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
 
     // PIE chart: Companies by LinkedIn (Customer Overview)
     isDefined(companyIdFieldId) && isDefined(companyLinkedinLinkFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_LINKEDIN_DISTRIBUTION,
@@ -190,22 +178,22 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
           configuration: {
-            graphType: 'PIE',
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             groupByFieldMetadataId: companyLinkedinLinkFieldId,
-            orderBy: 'VALUE_DESC',
+            orderBy: GraphOrderBy.VALUE_DESC,
             displayDataLabel: true,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
 
     // PIE chart: Contact Roles (Team Metrics)
     isDefined(personIdFieldId) && isDefined(personJobTitleFieldId)
-      ? {
+      ? ({
           id: generateSeedId(
             workspaceId,
             PAGE_LAYOUT_WIDGET_SEEDS.TEAM_CONTACT_ROLES,
@@ -218,17 +206,17 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
           configuration: {
-            graphType: 'PIE',
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             groupByFieldMetadataId: personJobTitleFieldId,
-            orderBy: 'VALUE_DESC',
+            orderBy: GraphOrderBy.VALUE_DESC,
             displayDataLabel: true,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: personObject?.id ?? null,
-        }
+        } satisfies SeederFlatPageLayoutWidget)
       : null,
   ].filter(isDefined);
 };

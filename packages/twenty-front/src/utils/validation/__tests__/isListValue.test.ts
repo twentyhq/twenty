@@ -1,4 +1,4 @@
-import { isListValue } from '../isListValue';
+import { isListValue } from '~/utils/validation/isListValue';
 
 describe('isListValue', () => {
   it('should detect list values', () => {

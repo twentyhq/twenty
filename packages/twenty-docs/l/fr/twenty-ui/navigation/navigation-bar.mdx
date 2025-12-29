@@ -1,5 +1,5 @@
 ---
-title: Barre de navigation
+title: Navigation Bar
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -7,46 +7,43 @@ image: /images/user-guide/table-views/table.png
   <img src="/images/user-guide/table-views/table.png" alt="Header" />
 </Frame>
 
-Rend une barre de navigation qui contient plusieurs composants `NavigationBarItem`.
+Renders a navigation bar that contains multiple `NavigationBarItem` components.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-```jsx
-import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
 
-   const navigationItems = [
-     {
-       name: "Home",
-       Icon: IconHome,
-       onClick: () => console.log("Home clicked"),
-     },
-     {
-       name: "Profile",
-       Icon: IconUser,
-       onClick: () => console.log("Profile clicked"),
-     },
-     {
-       name: "Settings",
-       Icon: IconSettings,
-       onClick: () => console.log("Settings clicked"),
-     },
-   ];
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
 
-  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Propriétés     | Type    | Description                                                                                                                                                                                                                                   |
-| -------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| activeItemName | chaîne  | Le nom de l'élément de navigation actuellement actif.                                                                                                                                                                         |
-| éléments       | tableau | Un tableau d'objets représentant chaque élément de navigation. Chaque objet contient le `nom` de l'élément, le composant `Icon` à afficher, et une fonction `onClick` à appeler lorsque l'élément est cliqué. |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type   | Description                                                                                                                                                                                          |
+    | -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | string | The name of the currently active navigation item                                                                                                                                                     |
+    | items          | array  | An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked |
+  </Tab>
 </Tabs>

@@ -1,0 +1,76 @@
+---
+title: Workflow Credits
+description: Understand workflow credit consumption and management.
+---
+
+Creditele fluxului de lucru stimulează automatizările dvs. în Twenty. Înțelegerea modului în care funcționează vă ajută să optimizați costurile și să gestionați eficient bugetul de automatizare.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## Cum funcționează consumul de credite
+
+Creditele sunt consumate când fluxurile de lucru se execută, nu atunci când le creați. Fiecare acțiune a fluxului de lucru consumă credite în funcție de complexitatea sa:
+
+### Consumul de credite în funcție de tipul de acțiune
+
+* **Operațiuni interne de bază**: Consum foarte mic de credite
+  * Căutați Înregistrări
+  * Creează înregistrare
+  * Actualizați Înregistrarea
+  * Ștergeți Înregistrarea
+  * Acțiuni de formular
+
+* **Operațiuni complexe**: Consum mai ridicat de credite
+  * Acțiuni de cod (execuție JavaScript)
+  * Solicitări HTTP către servicii externe
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### Deducere în timp real
+
+Creditele sunt retrase în timp real pe măsură ce fluxurile de lucru se execută. Acest lucru înseamnă:
+
+* Fluxurile de lucru în ciornă nu consumă credite
+* Numai fluxurile de lucru active, rulate utilizează alocarea dvs. de credite
+* Fluxurile de lucru eșuate consumă totuși credite pentru pașii finalizați
+
+## Gestionarea creditelor
+
+### Verificați utilizarea creditelor
+
+1. Accesați **Setări → Facturare**
+2. Vizualizați consumul dvs. actual de credite și soldul rămas
+3. Monitorizați modelele de utilizare pentru a optimiza fluxurile de lucru
+
+### Achiziționarea de credite suplimentare
+
+Dacă aveți nevoie de mai multe credite decât alocarea planificată:
+
+1. Accesați **Setări → Facturare**
+2. Faceți clic pe opțiunea de a achiziționa credite suplimentare. Sunt disponibile pachete de diferite dimensiuni.
+3. Creditele sunt adăugate la soldul dvs. actual
+
+## Cele mai bune practici
+
+* **Procesare loturi**: Utilizați operațiuni în masă și acțiuni cu Iteratoare eficient
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* Optimizați acțiunile de cod pentru eficiență
+* Batch operations to reduce individual action calls

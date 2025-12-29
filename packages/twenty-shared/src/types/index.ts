@@ -12,6 +12,7 @@ export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
+export type { ArraySortDirection } from './ArraySortDirection';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,
