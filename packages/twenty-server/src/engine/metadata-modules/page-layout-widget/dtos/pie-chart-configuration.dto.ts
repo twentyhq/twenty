@@ -69,6 +69,7 @@ export class PieChartConfigurationDTO {
 
   @Field(() => [String], { nullable: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   manualSortOrder?: string[];
 

@@ -70,6 +70,7 @@ export class BarChartConfigurationDTO {
 
   @Field(() => [String], { nullable: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   primaryAxisManualSortOrder?: string[];
 
@@ -98,6 +99,7 @@ export class BarChartConfigurationDTO {
 
   @Field(() => [String], { nullable: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   secondaryAxisManualSortOrder?: string[];
 

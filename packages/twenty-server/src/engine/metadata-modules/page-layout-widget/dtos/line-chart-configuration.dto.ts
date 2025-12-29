@@ -71,6 +71,7 @@ export class LineChartConfigurationDTO {
 
   @Field(() => [String], { nullable: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   primaryAxisManualSortOrder?: string[];
 
@@ -99,6 +100,7 @@ export class LineChartConfigurationDTO {
 
   @Field(() => [String], { nullable: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   secondaryAxisManualSortOrder?: string[];
 
