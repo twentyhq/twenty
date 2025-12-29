@@ -6462,6 +6462,11 @@ msgstr "Jy het nie toestemming om hierdie werkvloei-aksie uit te voer nie."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Jy het nie toestemming om hierdie velde op te dateer nie: {fieldsList}. Kontak asseblief jou werkruimte administrateur."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."

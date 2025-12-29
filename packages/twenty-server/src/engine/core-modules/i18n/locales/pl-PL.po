@@ -6462,6 +6462,11 @@ msgstr "Nie masz uprawnień do wykonania tej akcji przepływu pracy."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Nie masz uprawnień do aktualizacji tych pól: {fieldsList}. Proszę skontaktować się z administratorem obszaru roboczego."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
