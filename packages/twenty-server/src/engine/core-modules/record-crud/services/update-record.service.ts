@@ -166,6 +166,8 @@ export class UpdateRecordService {
                 updatedBy: updatedBy ?? {
                   source: FieldActorSource.WORKFLOW,
                   name: 'Workflow',
+                  workspaceMemberId: null,
+                  context: {},
                 },
               },
               undefined,
