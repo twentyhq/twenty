@@ -1,6 +1,6 @@
-import { Column, JoinColumn, ManyToOne, Relation } from 'typeorm';
-
 import { Field } from '@nestjs/graphql';
+
+import { Column, JoinColumn, ManyToOne, Relation } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,4 +16,3 @@ export abstract class ExposedWorkspaceRelatedEntity extends WorkspaceRelatedEnti
   @JoinColumn({ name: 'workspaceId' })
   override workspace: Relation<WorkspaceEntity>;
 }
-
