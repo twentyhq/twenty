@@ -2,6 +2,11 @@ import { RecordCalendarMonthBodyDay } from '@/object-record/record-calendar/mont
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
 import { eachDayOfInterval, endOfWeek } from 'date-fns';
+import { type Temporal } from 'temporal-polyfill';
+import {
+  turnJSDateToPlainDate,
+  turnPlainDateToShiftedDateInSystemTimeZone,
+} from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,7 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 type RecordCalendarMonthBodyWeekProps = {
-  startDayOfWeek: Date;
+  startDayOfWeek: Temporal.PlainDate;
 };
 
 export const RecordCalendarMonthBodyWeek = ({
@@ -23,8 +28,8 @@ export const RecordCalendarMonthBodyWeek = ({
   const { weekStartsOnDayIndex } = useRecordCalendarMonthContextOrThrow();
 
   const daysOfWeek = eachDayOfInterval({
-    start: startDayOfWeek,
-    end: endOfWeek(startDayOfWeek, {
+    start: turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek),
+    end: endOfWeek(turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek), {
       weekStartsOn: weekStartsOnDayIndex,
     }),
   });
@@ -32,7 +37,10 @@ export const RecordCalendarMonthBodyWeek = ({
   return (
     <StyledContainer>
       {daysOfWeek.map((day, index) => (
-        <RecordCalendarMonthBodyDay key={`day-${index}`} day={day} />
+        <RecordCalendarMonthBodyDay
+          key={`day-${index}`}
+          day={turnJSDateToPlainDate(day)}
+        />
       ))}
     </StyledContainer>
   );

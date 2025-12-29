@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
@@ -9,9 +10,11 @@ import {
   WidgetConfigurationType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
-import { transformTwoDimensionalGroupByToBarChartData } from '../transformTwoDimensionalGroupByToBarChartData';
+import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 
 describe('transformTwoDimensionalGroupByToBarChartData', () => {
+  const userTimezone = 'Europe/Paris';
+
   const mockGroupByFieldX = {
     id: 'field-x',
     name: 'createdAt',
@@ -87,6 +90,8 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
       configuration: mockConfiguration,
       aggregateOperation: 'sumAmount',
       objectMetadataItem: mockObjectMetadataItem,
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result.keys).toEqual(['SCREENING', 'PROPOSAL', 'NEW', 'CUSTOMER']);

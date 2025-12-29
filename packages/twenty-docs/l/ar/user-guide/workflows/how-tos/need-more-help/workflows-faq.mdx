@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: الأسئلة الشائعة حول سير العمل
+description: الأسئلة الشائعة حول سير العمل في Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="لماذا لا أستطيع تفعيل سير عمل؟">
+    من المحتمل أن تكون مشكلة أذونات. تحتاج إلى صلاحية الوصول إلى سير العمل لإنشائها وتفعيلها.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **الحل**: تواصل مع مسؤول مساحة العمل لمنحك صلاحية الوصول إلى سير العمل ضمن **الإعدادات → الأدوار**.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    إذا لم ترَ قسم سير العمل إطلاقاً في الشريط الجانبي لديك، فهذا يؤكد أنها مشكلة أذونات.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="لماذا لا أرى زر سير العمل اليدوي في شريط التنقل العلوي؟">
+    تظهر عمليات سير العمل اليدوية في شريط التنقل فقط إذا تم إعدادها بشكل صحيح:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. يجب أن يكون سير العمل **مفعَّلاً** (ليس في وضع المسودة)
+    2. يجب تعيين موضع شريط التنقل إلى **Pinned**
+    3. بالنسبة لمشغلات Single/Bulk، يجب أن تكون في صفحة الكائن الصحيحة
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **للتحقق**: افتح سير العمل → انقر المشغل → تأكد من أن "Navbar placement" معيّن إلى "Pinned".
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    يمكنك دائماً الوصول إلى عمليات سير العمل اليدوية عبر **Cmd + K** (أو **Ctrl + K**) بغض النظر عن إعدادات شريط التنقل.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | النوع | Records Required | عمليات تشغيل سير العمل |
+  <Accordion title="ما الفرق بين المشغلات اليدوية Single وGlobal وBulk؟">
+    | النوع | السجلات المطلوبة | عمليات تشغيل سير العمل |
     | ----- | ---------------- | ---------------------- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | لا شيء | مرة واحدة، دون إدخال سجل |
+    \| **Single** | واحد أو أكثر محدد | مرة لكل سجل محدد |
+    \| **Bulk** | واحد أو أكثر محدد | مرة واحدة، مع جميع السجلات كمصفوفة |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: استخدمه عندما لا يحتاج سير العمل إلى سياق أي سجل (مثال: إنشاء تقرير)
+    * **Single**: استخدمه عندما تريد معالجة كل سجل محدد بشكل مستقل (مثال: إرسال رسائل بريد إلكتروني فردية)
+    * **Bulk**: استخدمه عندما تحتاج إلى معالجة السجلات معاً أو تحسين استخدام الرصيد (يتطلب إجراء Iterator)
 
-    See [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers) for details.
+    راجع [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers) للحصول على التفاصيل.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. ماذا يجب أن أفعل؟">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="لا أرى عقدة If/Else. ماذا يجب أن أفعل؟">
+    عقدة If/Else صريحة غير متاحة بعد، لكنها ضمن خارطة الطريق لدينا.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **الحل المؤقت الحالي**: أنشئ عدة فروع من خطوتك، يبدأ كل منها بإجراء **Filter**:
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    فقط الفرع الذي يمر فيه شرط التصفية سيُنفِّذ إجراءاته اللاحقة.
 
-    See [How to Use Branches](/l/ar/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    راجع [كيفية استخدام الفروع](/l/ar/user-guide/workflows/capabilities/workflow-branches) للحصول على دليل خطوة بخطوة.
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="هل تعمل فروع سير العمل بالتوازي؟">
+    **نعم**، تعمل الفروع بالتوازي افتراضياً.
 
-    If you want only one branch to execute:
+    إذا كنت تريد تنفيذ فرع واحد فقط:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * أضف إجراء **Filter** في بداية كل فرع
+    * عيّن شروطاً متعاكسة (مثال: Branch A: status = "Open", Branch B: status ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    الفروع التي لا تستوفي شرط التصفية تتوقف عن التنفيذ، بينما تستمر الفروع الأخرى.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="هل يمكنني دمج الفروع معاً مرة أخرى؟">
+    **نعم**. بعد اكتمال فروعك المتوازية، يمكنك إضافة خطوة يتصل بها الفرعان.
 
-    In the workflow editor:
+    في محرر سير العمل:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. أكمل إجراءات الفروع
+    2. أضف خطوة جديدة بعد الفروع
+    3. اسحب الاتصالات من نهاية كل فرع إلى هذه الخطوة الجديدة
 
-    The merged step will execute after all connected branches complete.
+    ستُنفَّذ الخطوة المدمجة بعد اكتمال جميع الفروع المتصلة.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="ما الحد الأقصى لنتائج Search Records؟">
+    **تعيد Search Records بحد أقصى 200 سجل.**
 
-    If you need to process more:
+    إذا كنت بحاجة إلى معالجة المزيد:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * أضف عوامل تصفية أكثر تحديداً لتقليل النتائج
+    * استخدم سير عمل مجدولاً للمعالجة على دفعات
+    * فكّر في استخدام الـAPI للعمليات المجمّعة
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    بالنسبة لمعظم سير العمل، يكفي 200 سجل. إذا بلغت هذا الحد بشكل متكرر، فكر في إعادة هيكلة الأتمتة لديك.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="هل يمكنني إضافة CC إلى الأشخاص في رسائل البريد الخاصة بسير العمل؟">
+    **ليس بعد.** حقولا CC وBCC لإجراء Send Email على خارطة الطريق لدينا.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **الحل المؤقت الحالي**: أضف عدة إجراءات Send Email للإرسال إلى مستلمين إضافيين، أو استخدم HTTP Request للإرسال عبر خدمة بريد إلكتروني خارجية تدعم CC.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="كيف أستخدم مخرجات الخطوات السابقة؟">
+    كل إجراء ينتج بيانات مخرجات يمكن استخدامها في الخطوات اللاحقة.
 
-    **To reference previous step data**:
+    **للإشارة إلى بيانات الخطوات السابقة**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * استخدم أداة اختيار المتغير عند تكوين حقل
+    * أو اكتب `{{stepName.fieldName}}` مباشرةً
 
     **أمثلة**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * بيانات المشغل: `{{trigger.object.email}}`
+    * نتائج البحث: `{{searchRecords[0].name}}`
+    * مخرجات الكود: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    مرّر المؤشر فوق أي حقل في تكوين الإجراء لرؤية المتغيرات المتاحة من الخطوات السابقة.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="لماذا يفشل Iterator لدي؟">
+    **Iterator يتطلب مُدخلًا من نوع مصفوفة.** مشكلات شائعة:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **المدخل ليس مصفوفة**: تأكد من أنك تمرر نتائج من Search Records أو إجراء آخر يُرجع مصفوفة
+    2. **المصفوفة فارغة**: أضف عامل تصفية قبل Iterator للتحقق من `{{searchRecords.length}} > 0`
+    3. **تم اختيار متغير خاطئ**: تأكد من اختيارك للمصفوفة نفسها، وليس سجلاً واحداً
 
-    **Correct setup**:
+    **الإعداد الصحيح**:
 
-    1. Search Records (returns array)
+    1. Search Records (تُرجع مصفوفة)
     2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    3. Iterator: اختر `{{searchRecords}}`
+    4. الإجراءات داخل Iterator تستخدم `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="ما أقصى وقت تنفيذ لإجراءات Code؟">
+    إجراءات Code (دوال بلا خادم) لديها **مهلة افتراضية قدرها 5 دقائق** (300 ثانية).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    أقصى مهلة يمكن ضبطها هي **15 دقيقة** (900 ثانية).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    إذا تجاوز الكود هذا الحد، سيفشل الإجراء بخطأ انتهاء المهلة.
 
-    **Tips to avoid timeouts**:
+    **نصائح لتجنب انتهاء المهلة**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * قسّم العمليات الكبيرة إلى أجزاء أصغر باستخدام Iterator
+    * تجنب العمليات الحسابية الثقيلة؛ استخدم خدمات خارجية عبر HTTP Request للمعالجة المكثفة
+    * حسّن الكود لديك لتقليل وقت التنفيذ
+    * إذا كنت بحاجة إلى معالجة أطول، ففكّر في استخدام سير عمل مجدول يعالج البيانات على دفعات
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="كيف أقرأ تشغيلات سير العمل؟">
+    تعرض تشغيلات سير العمل سجل التنفيذ وتساعدك على تصحيح المشكلات.
 
-    **Access runs**:
+    **الوصول إلى التشغيلات**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * في محرر سير العمل → لوحة **التشغيلات** على اليمين
+    * أو انتقل إلى **تشغيلات سير العمل** في الشريط الجانبي
 
-    **Understanding a run**:
+    **فهم التشغيل**:
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **الحالة**: قيد التشغيل، مكتمل، فشل، في الانتظار
+    * **الخطوات**: اطّلِع على الخطوات التي تم تنفيذها ومخرجاتها
+    * **الأخطاء**: انقر الخطوات الفاشلة لرؤية رسائل الخطأ
+    * **البيانات**: اعرض بيانات الإدخال/الإخراج في كل خطوة
 
-    See [Workflow Runs](/l/ar/user-guide/workflows/capabilities/workflow-runs) for details.
+    راجع [تشغيلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-runs) للحصول على التفاصيل.
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="لماذا لا أرى تشغيلات سير العمل الخاصة بي؟">
+    قد تفشل تشغيلات سير العمل فوراً بسبب حدود المعدل.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **حد صارم: 5,000 عملية تشغيل في الساعة لكل مساحة عمل.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    إذا تجاوزت هذا الحد، ستُعلَّم عمليات التشغيل فوراً كفاشلة ولن تظهر في قائمة التشغيلات كما هو متوقع.
 
-    **Common scenarios that hit this limit**:
+    **سيناريوهات شائعة تصل إلى هذا الحد**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * اختيار أكثر من 5,000 سجل باستخدام مشغل يدوي Single
+    * تشغيل عدة سير عمل بالتزامن عبر مساحة العمل
+    * مشغلات آلية عالية التكرار (مثال: Record Updated على كائن مزدحم)
 
     **حلول**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * استخدم مشغلات **Bulk** بدلاً من Single لمعالجة العديد من السجلات في تشغيل واحد
+    * وزّع العمليات الدفعية الكبيرة زمنياً
+    * استخدم عوامل تصفية لتقليل تكرار المشغل
+    * قم بجدولة سير العمل الثقيلة خلال ساعات خارج أوقات الذروة
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="ما هي حدود معدل سير العمل؟">
+    لدى Twenty حدّان للمعدل لضمان استقرار النظام:
 
-    | Limit | القيمة | Behavior |
-    | ----- | ------ | -------- |
+    | الحد | القيمة | السلوك |
+    | ---- | ------ | ------ |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **حد مرن** | 100 تشغيل/دقيقة | تُصفّ في قائمة الانتظار بحالة "Not Started" وتُعالَج تدريجياً |
+    \| **حد صارم** | 5,000 تشغيل/ساعة | تفشل التشغيلات فوراً |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **الحد المرن (100/دقيقة)**: لن تفشل سير العمل لديك—ستنتظر فقط في قائمة الانتظار وتُعالَج بمرور الوقت. يمكنك تشغيل أكثر من 100 سجل؛ سيكون التنفيذ أبطأ.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **الحد الصارم (5,000/ساعة)**: ينطبق هذا على مساحة العمل بالكامل. إذا تجاوز مجموع تشغيلات جميع سير العمل لديك 5,000 تشغيل في ساعة واحدة، فسوف تفشل التشغيلات الإضافية فوراً.
 
-    **Tips to stay within limits**:
+    **نصائح للبقاء ضمن الحدود**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * استخدم مشغلات Bulk مع Iterator بدلاً من مشغلات Single للدفعات الكبيرة
+    * ادمج الأتمتة ذات الصلة في عدد أقل من سير العمل
+    * استخدم سير عمل مجدولة لتوزيع الحمل بمرور الوقت
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="هل يمكنني إعادة محاولة تشغيل سير عمل فاشل؟">
+    **لا، لا توجد حالياً وظيفة إعادة المحاولة التلقائية.**
 
-    If a workflow run fails, you'll need to:
+    إذا فشل تشغيل سير عمل، فستحتاج إلى:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. راجع الخطأ في **الإعدادات → سير العمل → [سير العمل الخاص بك] → التشغيلات**
+    2. أصلِح المشكلة (البيانات، الإعداد، أو الخدمة الخارجية)
+    3. قم بتشغيل سير العمل يدوياً مرة أخرى على السجل/السجلات المتأثرة
 
-    **Tips to reduce failures**:
+    **نصائح لتقليل حالات الفشل**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * أضف عقد **Filter** للتحقق من البيانات قبل الإجراءات
+    * استخدم **Search Records** للتحقق مما إذا كانت السجلات ذات الصلة موجودة
+    * اختبر بدقة باستخدام عدد قليل من السجلات قبل العمليات المجمّعة
 
-    Automatic retry functionality is on our roadmap for a future release.
+    وظيفة إعادة المحاولة التلقائية ضمن خارطة الطريق لإصدار مستقبلي.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="هل يجب إلغاء تفعيل سير العمل قبل استيراد CSV؟">
+    **نعم، إذا كانت سير العمل لديك تُشغَّل بإنشاء السجلات أو تحديثها.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    عند استيراد البيانات عبر CSV، يمكن لكل سجل يتم إنشاؤه أو تحديثه تشغيل سير العمل. قد يؤدي الاستيراد الكبير (آلاف السجلات) إلى:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * بلوغ حد 5,000 تشغيل/ساعة
+    * استهلاك قدر كبير من اعتمادات سير العمل
+    * إرسال رسائل بريد إلكتروني أو إشعارات غير متوقعة
+    * إنشاء مهام أو سجلات مكررة
 
-    **Before a mass import**:
+    **قبل الاستيراد الكمي**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. اذهب إلى **الإعدادات → سير العمل**
+    2. حدّد سير العمل المُشغَّلة بواسطة الكائن الذي تقوم باستيراده
+    3. **عطِّلها** مؤقتاً
+    4. شغّل استيراد CSV الخاص بك
+    5. **أعد تفعيل** سير العمل عند الانتهاء
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **بديل**: إذا كنت تحتاج إلى أن تعمل سير العمل على البيانات المستوردة، فقم بالاستيراد على دفعات أصغر للبقاء ضمن حدود المعدل.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="كيف أرتّب مخطط سير العمل؟">
+    إذا بدا مخطط سير العمل لديك فوضوياً مع تشتت العقد، فيمكنك تنظيمه تلقائياً:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. انقر بزر الفأرة الأيمن في أي مكان على مخطط سير العمل
+    2. انقر **Tidy up workflow**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    سيؤدي ذلك إلى إعادة ترتيب جميع العقد تلقائياً في مخطط نظيف ومنظم.
   </Accordion>
 </AccordionGroup>

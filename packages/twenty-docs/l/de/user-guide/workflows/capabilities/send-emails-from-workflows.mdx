@@ -1,149 +1,149 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: E-Mails über Workflows senden
+description: Senden Sie personalisierte E-Mails automatisch mit Workflow-Aktionen.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Senden Sie automatisch E-Mails, wenn bestimmte Ereignisse in Ihrem CRM auftreten—heißen Sie neue Kontakte willkommen, führen Sie Nachfassaktionen bei Verkaufschancen durch oder benachrichtigen Sie Teammitglieder.
 
 ## Voraussetzungen
 
-Before you can send emails from workflows:
+Bevor Sie E-Mails aus Workflows senden können:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Verbinden Sie ein E-Mail-Konto unter **Einstellungen → Konten**
+2. Stellen Sie sicher, dass für das Konto Sendeberechtigungen aktiviert sind
 
-## Basic Email Workflow
+## Grundlegender E-Mail-Workflow
 
-### Example: Welcome Email for New Contacts
+### Beispiel: Willkommens-E-Mail für neue Kontakte
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Ziel**: Senden Sie eine Willkommens-E-Mail, wenn eine neue Person zum CRM hinzugefügt wird.
 
 **Einrichtung**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Workflow erstellen**: Gehen Sie zu **Einstellungen → Workflows** und klicken Sie auf **+ Neuer Workflow**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Auslöser hinzufügen**: Wählen Sie **Datensatz wird erstellt** → **Personen**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Aktion "E-Mail senden" hinzufügen**:
+   * Klicken Sie auf **+**, um eine Aktion hinzuzufügen
+   * Wählen Sie **E-Mail senden**
+   * Konfigurieren Sie die E-Mail:
 
 | Feld        | Wert                                   |
 | ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Willkommen bei {{Your Company Name}}` |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| **An**      | `{{trigger.object.email}}`             |
+| **Betreff** | `Willkommen bei {{Your Company Name}}` |
+| **Inhalt**  | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Testen und aktivieren**: Testen Sie mit einem Beispieldatensatz und aktivieren Sie anschließend
 
-## Using Variables in Emails
+## Variablen in E-Mails verwenden
 
-Reference data from previous steps using `{{variable}}` syntax:
+Verweisen Sie mit der Syntax `{{variable}}` auf Daten aus vorherigen Schritten:
 
 ```text
-Hi {{trigger.object.firstName}},
+Hallo {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+Vielen Dank, dass Sie mit uns Kontakt aufgenommen haben!
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+Ihr Unternehmen, {{trigger.object.company.name}}, ist jetzt in unserem System.
 
-Best regards,
-The Team
+Mit freundlichen Grüßen,
+Das Team
 ```
 
-### Available Variables from Triggers
+### Verfügbare Variablen aus Auslösern
 
-| Auslöser-Typ               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Auslöser-Typ                        | Häufige Variablen                      |
+| ----------------------------------- | -------------------------------------- |
+| **Datensatz erstellt/aktualisiert** | `{{trigger.object.fieldName}}`         |
+| **Manuell**                         | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                         | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Erweitert: Bedingte E-Mails
 
-### Example: Different Emails Based on Lead Source
+### Beispiel: Unterschiedliche E-Mails basierend auf der Lead-Quelle
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**Einrichtung**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Ziel**: Senden Sie unterschiedliche Willkommens-E-Mails, je nachdem, woher der Lead stammt.
 
 **Einrichtung**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Auslöser**: Datensatz wird erstellt (Personen)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Aktion "Filter" hinzufügen**:
+   * Bedingung: `{{trigger.object.source}}` ist gleich `"Website"`
+   * Wenn wahr → mit der Website-Willkommens-E-Mail fortfahren
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Verzweigung für andere Quellen**:
+   * Erstellen Sie parallele Verzweigungen für verschiedene Quellen
+   * Jede Verzweigung hat ihre eigene Aktion "E-Mail senden"
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## E-Mails an mehrere Empfänger senden
 
-## Scheduled Follow-up Emails
+### Beispiel: Team benachrichtigen, wenn ein Deal abgeschlossen wird
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Ziel**: Senden Sie E-Mails an den Vertriebsmitarbeiter und dessen Manager, wenn eine Verkaufschance gewonnen wird.
 
 **Einrichtung**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Auslöser**: Datensatz wird aktualisiert (Chancen, Phase = "Closed Won")
 
-2. **Delay action**: Wait 3 days
+2. **Datensätze durchsuchen**: Finden Sie den Manager des Eigentümers der Verkaufschance
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **E-Mail senden #1**: An den Eigentümer der Verkaufschance
+   * An: `{{trigger.object.owner.email}}`
+   * Betreff: `Glückwunsch zum Abschluss von {{trigger.object.name}}!`
+
+4. **E-Mail senden #2**: An den Manager
+   * An: `{{searchRecords.manager.email}}`
+   * Betreff: `Deal gewonnen: {{trigger.object.name}}`
+
+## Geplante Nachfass-E-Mails
+
+### Beispiel: 3 Tage nach der Besprechung nachfassen
+
+**Ziel**: Senden Sie 3 Tage, nachdem eine Besprechung protokolliert wurde, eine Nachfass-E-Mail.
+
+**Einrichtung**:
+
+1. **Auslöser**: Datensatz wird erstellt (Aktivitäten, Typ = "Besprechung")
+
+2. **Verzögerungsaktion**: 3 Tage warten
+
+3. **E-Mail senden**:
+   * An: Besprechungsteilnehmer
+   * Betreff: Rückmeldung zu unserem Gespräch
+   * Text: Verweisen Sie auf Besprechungsdetails aus dem Auslöser
 
 ## Beste Praktiken
 
-### Email Content
+### E-Mail-Inhalt
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* Formulieren Sie Betreffzeilen prägnant und relevant
+* Personalisieren Sie mit dem Namen des Empfängers
+* Fügen Sie eine klare Handlungsaufforderung hinzu
+* Testen Sie E-Mails vor der Aktivierung
 
-### Deliverability
+### Zustellbarkeit
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* Senden Sie nicht zu viele E-Mails in zu kurzer Zeit
+* Verwenden Sie professionelle E-Mail-Signaturen
+* Vermeiden Sie Spam-Trigger-Wörter
+* Stellen Sie sicher, dass Marketing-E-Mails eine Abmeldemöglichkeit enthalten
 
 ### Fehlerbehebung
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* Überprüfen Sie, dass das E-Mail-Konto verbunden und aktiv ist
+* Prüfen Sie, ob die E-Mail-Adresse des Empfängers gültig ist
+* Überprüfen Sie Workflow-Ausführungen auf Fehlermeldungen
+* Testen Sie zunächst mit Ihrer eigenen E-Mail-Adresse
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **Bald verfügbar**: E-Mail-Anhänge werden im Q1 2026 verfügbar sein.
 </Note>
 
-## Related
+## Verwandt
 
-* [Workflow Triggers](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)

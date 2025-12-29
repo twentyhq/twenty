@@ -4,8 +4,8 @@ import {
   WidgetConfigurationType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
-import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { addWidgetToTab } from '../addWidgetToTab';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {

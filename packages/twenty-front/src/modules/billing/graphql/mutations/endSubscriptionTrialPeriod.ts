@@ -5,6 +5,7 @@ export const END_SUBSCRIPTION_TRIAL_PERIOD = gql`
     endSubscriptionTrialPeriod {
       status
       hasPaymentMethod
+      billingPortalUrl
     }
   }
 `;

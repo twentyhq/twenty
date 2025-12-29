@@ -17,9 +17,9 @@ import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/se
 import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
+import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
 import { BarChartLayout } from '~/generated/graphql';
-import { getBarChartSettings } from '../getBarChartSettings';
 
 describe('getBarChartSettings', () => {
   describe('Vertical bar chart', () => {

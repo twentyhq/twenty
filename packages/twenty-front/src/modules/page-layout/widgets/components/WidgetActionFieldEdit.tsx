@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldContext,
   type GenericFieldContextType,
@@ -22,7 +23,7 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { useCurrentWidget } from '../hooks/useCurrentWidget';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 
 export const WidgetActionFieldEdit = () => {
   const widget = useCurrentWidget();
@@ -70,20 +71,23 @@ export const WidgetActionFieldEdit = () => {
   const isRelationField =
     isFieldRelation(fieldDefinition) || isFieldMorphRelation(fieldDefinition);
 
-  if (isRelationField) {
-    return (
-      <FieldWidgetRelationEditAction
-        fieldDefinition={fieldDefinition}
-        recordId={targetRecord.id}
-      />
-    );
-  }
-
   const instanceId = getFieldWidgetInstanceId({
+    widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem.name,
     isInRightDrawer,
   });
+
+  if (isRelationField) {
+    return (
+      <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+        <FieldWidgetRelationEditAction
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
+        />
+      </RecordFieldsScopeContextProvider>
+    );
+  }
 
   const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
     recordId: targetRecord.id,
@@ -113,14 +117,16 @@ export const WidgetActionFieldEdit = () => {
   } satisfies GenericFieldContextType;
 
   return (
-    <RecordFieldComponentInstanceContext.Provider
-      value={{
-        instanceId: recordFieldInputInstanceId,
-      }}
-    >
-      <FieldContext.Provider value={fieldContextValue}>
-        <FieldWidgetEditAction />
-      </FieldContext.Provider>
-    </RecordFieldComponentInstanceContext.Provider>
+    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: recordFieldInputInstanceId,
+        }}
+      >
+        <FieldContext.Provider value={fieldContextValue}>
+          <FieldWidgetEditAction />
+        </FieldContext.Provider>
+      </RecordFieldComponentInstanceContext.Provider>
+    </RecordFieldsScopeContextProvider>
   );
 };

@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: Întrebări frecvente despre fluxuri de lucru
+description: Întrebări frecvente despre fluxurile de lucru din Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="De ce nu pot activa un flux de lucru?">
+    Este probabil o problemă de permisiuni. Aveți nevoie de acces la fluxuri de lucru pentru a le crea și activa.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **Soluție**: Contactați administratorul spațiului de lucru pentru a vă acorda acces la fluxuri de lucru în **Setări → Roluri**.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    Dacă nu vedeți deloc secțiunea Fluxuri de lucru în bara laterală, acest lucru confirmă că este o problemă de permisiuni.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="De ce nu văd butonul fluxului de lucru manual în bara de navigare de sus?">
+    Fluxurile de lucru manuale apar în bara de navigare doar dacă sunt configurate corect:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. Fluxul de lucru trebuie să fie **activat** (nu în modul de schiță)
+    2. Poziționarea în bara de navigare trebuie setată la **Pinned**
+    3. Pentru declanșatoarele Single/Bulk, trebuie să vă aflați pe pagina obiectului corect
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **Pentru a verifica**: Deschideți fluxul de lucru → faceți clic pe declanșator → verificați că "Navbar placement" este setat la "Pinned".
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    Puteți accesa oricând fluxurile de lucru manuale prin **Cmd + K** (sau **Ctrl + K**), indiferent de setările barei de navigare.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Tip | Records Required | Rulările fluxului de lucru |
-    | --- | ---------------- | -------------------------- |
+  <Accordion title="Care este diferența dintre declanșatoarele manuale Single, Global și Bulk?">
+    | Tip | Înregistrări necesare | Rulările fluxului de lucru |
+    | --- | --------------------- | -------------------------- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | Niciuna | O dată, fără input de înregistrare |
+    \| **Single** | Una sau mai multe selectate | O dată pentru fiecare înregistrare selectată |
+    \| **Bulk** | Una sau mai multe selectate | O dată, cu toate înregistrările ca un array |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: Utilizați când fluxul de lucru nu are nevoie de context de înregistrare (de ex., generarea unui raport)
+    * **Single**: Utilizați când doriți să procesați fiecare înregistrare selectată independent (de ex., trimiteți e-mailuri individuale)
+    * **Bulk**: Utilizați când aveți nevoie să procesați înregistrările împreună sau să optimizați utilizarea creditelor (necesită acțiunea Iterator)
 
-    See [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers) for details.
+    Consultați [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers) pentru detalii.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. Ce ar trebui să fac?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="Nu văd un nod If/Else. Ce ar trebui să fac?">
+    Un nod If/Else explicit nu este încă disponibil, dar se află pe foaia noastră de parcurs.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **Soluție temporară**: Creați mai multe ramuri din pasul dvs., fiecare începând cu o acțiune **Filter**:
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    Doar ramura în care condiția filtrului este îndeplinită își va executa acțiunile următoare.
 
-    See [How to Use Branches](/l/ro/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    Consultați [Cum să utilizați ramurile](/l/ro/user-guide/workflows/capabilities/workflow-branches) pentru un ghid pas cu pas.
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="Rulează ramurile fluxului de lucru în paralel?">
+    **Da**, ramurile rulează în paralel în mod implicit.
 
-    If you want only one branch to execute:
+    Dacă doriți ca doar o singură ramură să se execute:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * Adăugați o acțiune **Filter** la începutul fiecărei ramuri
+    * Setați condiții opuse (de ex., Ramura A: status = "Open", Ramura B: status ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    Ramurile care nu îndeplinesc condiția filtrului se opresc din execuție, în timp ce altele continuă.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="Pot să îmbin din nou ramurile?">
+    **Da**. După ce ramurile paralele se finalizează, puteți adăuga un pas la care se conectează ambele ramuri.
 
-    In the workflow editor:
+    În editorul de fluxuri de lucru:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. Finalizați acțiunile din ramuri
+    2. Adăugați un pas nou după ramuri
+    3. Trageți conexiuni de la finalul fiecărei ramuri către acest pas nou
 
-    The merged step will execute after all connected branches complete.
+    Pasul îmbinat se va executa după ce toate ramurile conectate se finalizează.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Care este limita rezultatelor pentru Search Records?">
+    **Search Records returnează maximum 200 de înregistrări.**
 
-    If you need to process more:
+    Dacă aveți nevoie să procesați mai multe:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * Adăugați filtre mai specifice pentru a reduce rezultatele
+    * Utilizați fluxuri de lucru programate pentru a procesa în loturi
+    * Luați în considerare utilizarea API-ului pentru operațiuni în masă
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    Pentru majoritatea fluxurilor de lucru, 200 de înregistrări sunt suficiente. Dacă atingeți frecvent această limită, luați în considerare restructurarea automatizării.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="Pot adăuga persoane în CC în e-mailurile fluxurilor de lucru?">
+    **Încă nu.** Câmpurile CC și BCC pentru acțiunea Send Email se află pe foaia noastră de parcurs.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **Soluție temporară**: Adăugați mai multe acțiuni Send Email pentru a trimite către destinatari suplimentari sau utilizați un HTTP Request pentru a trimite printr-un serviciu extern de e-mail care acceptă CC.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="Cum folosesc rezultatele din pașii anteriori?">
+    Fiecare acțiune produce date de ieșire care pot fi utilizate în pașii următori.
 
-    **To reference previous step data**:
+    **Pentru a face referire la datele din pașii anteriori**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * Utilizați selectorul de variabile când configurați un câmp
+    * Sau tastați direct `{{stepName.fieldName}}`
 
     **Exemple**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * Datele declanșatorului: `{{trigger.object.email}}`
+    * Rezultatele căutării: `{{searchRecords[0].name}}`
+    * Rezultatul codului: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    Treceți cursorul peste orice câmp din configurația acțiunii pentru a vedea variabilele disponibile din pașii anteriori.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="De ce eșuează Iteratorul?">
+    **Iterator necesită un input de tip array.** Probleme frecvente:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **Inputul nu este un array**: Asigurați-vă că transmiteți rezultate din Search Records sau dintr-o altă acțiune care returnează un array
+    2. **Array-ul este gol**: Adăugați un filtru înainte de Iterator pentru a verifica `{{searchRecords.length}} > 0`
+    3. **Variabilă selectată greșit**: Asigurați-vă că selectați array-ul în sine, nu o singură înregistrare
 
-    **Correct setup**:
+    **Configurare corectă**:
 
-    1. Search Records (returns array)
+    1. Search Records (returnează un array)
     2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    3. Iterator: selectați `{{searchRecords}}`
+    4. Acțiunile din interiorul iteratorului folosesc `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Care este timpul maxim de execuție pentru acțiunile Code?">
+    Acțiunile Code (funcții serverless) au un **timeout implicit de 5 minute** (300 de secunde).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    Timeoutul maxim configurabil este de **15 minute** (900 de secunde).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    Dacă codul depășește această limită, acțiunea va eșua cu o eroare de timeout.
 
-    **Tips to avoid timeouts**:
+    **Sfaturi pentru a evita timeout-urile**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * Împărțiți operațiunile mari în bucăți mai mici folosind Iterator
+    * Evitați calculele grele; utilizați servicii externe prin HTTP Request pentru procesări intensive
+    * Optimizați codul pentru a reduce timpul de execuție
+    * Dacă aveți nevoie de procesare mai lungă, luați în considerare utilizarea fluxurilor de lucru programate care procesează datele în loturi
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="Cum citesc rulările fluxului de lucru?">
+    Rulările fluxului de lucru afișează istoricul execuției și vă ajută să depanați problemele.
 
-    **Access runs**:
+    **Accesarea rulărilor**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * În editorul de fluxuri de lucru → panoul **Runs** din dreapta
+    * Sau accesați **Rulări ale fluxurilor de lucru** în bara laterală
 
-    **Understanding a run**:
+    **Înțelegerea unei rulări**:
 
     * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **Pași**: Vedeți ce pași au fost executați și rezultatul lor
+    * **Erori**: Faceți clic pe pașii eșuați pentru a vedea mesajele de eroare
+    * **Date**: Vizualizați datele de intrare/ieșire la fiecare pas
 
-    See [Workflow Runs](/l/ro/user-guide/workflows/capabilities/workflow-runs) for details.
+    Consultați [Rulări ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-runs) pentru detalii.
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="De ce nu văd rulările fluxului meu de lucru?">
+    Rulările fluxului de lucru ar putea eșua imediat din cauza limitelor de rată.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **Limită hard: 5.000 de rulări pe oră per spațiu de lucru.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    Dacă depășiți această limită, fluxurile de lucru sunt marcate imediat ca eșuate și nu vor apărea în lista de rulări, așa cum v-ați aștepta.
 
-    **Common scenarios that hit this limit**:
+    **Scenarii comune care ating această limită**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * Selectarea a mai mult de 5.000 de înregistrări cu un declanșator manual Single
+    * Mai multe fluxuri de lucru care rulează simultan în spațiul dvs. de lucru
+    * Declanșatoare automate cu frecvență ridicată (de ex., Record Updated pe un obiect aglomerat)
 
     **Soluții**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * Utilizați declanșatoare **Bulk** în loc de Single pentru a procesa multe înregistrări într-o singură rulare
+    * Eșalonați în timp operațiunile mari efectuate în loturi
+    * Folosiți filtre pentru a reduce frecvența declanșărilor
+    * Programați fluxurile de lucru intensive în afara orelor de vârf
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="Care sunt limitele de rată pentru fluxurile de lucru?">
+    Twenty are două limite de rată pentru a asigura stabilitatea sistemului:
 
-    | Limit | Valoare | Behavior |
-    | ----- | ------- | -------- |
+    | Limită | Valoare | Comportament |
+    | ------ | ------- | ------------ |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Limită soft** | 100 rulări/minut | Rulările se pun în coadă cu statusul "Not Started", procesate treptat |
+    \| **Limită hard** | 5.000 rulări/oră | Rulările eșuează imediat |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Limită soft (100/min)**: Fluxurile dvs. de lucru nu vor eșua — doar așteaptă în coadă și sunt procesate în timp. Puteți declanșa mai mult de 100 de înregistrări; execuția va fi mai lentă.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Limită hard (5.000/oră)**: Se aplică întregului dvs. spațiu de lucru. Dacă toate fluxurile dvs. de lucru cumulate depășesc 5.000 de rulări într-o oră, rulările suplimentare vor eșua imediat.
 
-    **Tips to stay within limits**:
+    **Sfaturi pentru a rămâne în limite**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * Utilizați declanșatoare Bulk cu Iterator în locul declanșatoarelor Single pentru loturi mari
+    * Combinați automatizările înrudite în mai puține fluxuri de lucru
+    * Utilizați fluxuri de lucru programate pentru a distribui încărcarea în timp
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="Pot reîncerca o rulare de flux de lucru eșuată?">
+    **Nu, momentan nu există o funcționalitate de reîncercare automată.**
 
-    If a workflow run fails, you'll need to:
+    Dacă o rulare de flux de lucru eșuează, va trebui să:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. Examinați eroarea în **Setări → Workflows → [Workflow-ul dvs.] → Runs**
+    2. Remediați problema (date, configurație sau serviciu extern)
+    3. Declanșați manual din nou fluxul de lucru pe înregistrarea/înregistrările afectate
 
-    **Tips to reduce failures**:
+    **Sfaturi pentru a reduce eșecurile**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * Adăugați noduri **Filter** pentru a valida datele înaintea acțiunilor
+    * Utilizați **Search Records** pentru a verifica dacă există înregistrări asociate
+    * Testați temeinic cu câteva înregistrări înainte de operațiuni în masă
 
-    Automatic retry functionality is on our roadmap for a future release.
+    Funcționalitatea de reîncercare automată este pe foaia noastră de parcurs pentru o versiune viitoare.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="Ar trebui să dezactivez fluxurile de lucru înainte de importurile CSV?">
+    **Da, dacă fluxurile dvs. de lucru sunt declanșate de crearea sau actualizarea înregistrărilor.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    Când importați date prin CSV, fiecare înregistrare creată sau actualizată poate declanșa fluxuri de lucru. Un import mare (mii de înregistrări) ar putea:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * Atinge limita de 5.000 de rulări/oră
+    * Consumă un număr semnificativ de credite de flux de lucru
+    * Trimite e-mailuri sau notificări neașteptate
+    * Creează sarcini sau înregistrări duplicate
 
-    **Before a mass import**:
+    **Înaintea unui import în masă**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. Accesați **Setări → Fluxuri de lucru**
+    2. Identificați fluxurile de lucru declanșate de obiectul pe care îl importați
+    3. **Dezactivați**-le temporar
+    4. Rulați importul CSV
+    5. **Reactivați** fluxurile de lucru când ați terminat
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **Alternativă**: Dacă aveți nevoie ca fluxurile de lucru să ruleze pe datele importate, importați în loturi mai mici pentru a rămâne în limitele de rată.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="Cum îmi curăț aspectul fluxului de lucru?">
+    Dacă planșa fluxului de lucru arată dezordonată, cu noduri împrăștiate, o puteți organiza automat:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. Faceți clic dreapta oriunde pe planșa fluxului de lucru
+    2. Faceți clic pe **Aranjează fluxul de lucru**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    Acest lucru va rearanja automat toate nodurile într-un aspect curat și organizat.
   </Accordion>
 </AccordionGroup>

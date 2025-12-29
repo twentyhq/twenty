@@ -7,6 +7,7 @@ import { Select } from '@/ui/input/components/Select';
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -26,14 +27,20 @@ const StyledCustomDatePickerHeader = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledSeparator = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: 1px;
+  width: 100%;
+`;
+
 const years = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 50 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
 type DateTimePickerHeaderProps = {
-  date: Date;
-  onChange?: (date: Date | null) => void;
+  date: Temporal.ZonedDateTime | null;
+  onChange?: (date: Temporal.ZonedDateTime | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
   onAddMonth: () => void;
@@ -59,7 +66,12 @@ export const DateTimePickerHeader = ({
 
   return (
     <>
-      {!hideInput && <DateTimePickerInput date={date} onChange={onChange} />}
+      {!hideInput && (
+        <>
+          <DateTimePickerInput date={date} onChange={onChange} />
+          <StyledSeparator />
+        </>
+      )}
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{
@@ -70,7 +82,7 @@ export const DateTimePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={date.getMonth()}
+            value={date?.month ?? undefined}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -82,7 +94,7 @@ export const DateTimePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={date.getFullYear()}
+            value={date?.year}
             options={years}
             fullWidth
           />

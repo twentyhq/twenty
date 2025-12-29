@@ -123,6 +123,7 @@ const computeValueFromFilterText = (
   }
 };
 
+// TODO: fix this with Temporal
 const computeValueFromFilterDate = (
   operand: RecordFilterToRecordInputOperand<'DATE_TIME'>,
   value: string,

@@ -3,7 +3,7 @@ import { createClient } from 'graphql-sse';
 
 import { DatabaseEventAction } from '~/generated/graphql';
 import { getTokenPair } from '~/modules/apollo/utils/getTokenPair';
-import { useOnDbEvent } from '../useOnDbEvent';
+import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 
 jest.mock('~/modules/apollo/utils/getTokenPair');
 jest.mock('graphql-sse');

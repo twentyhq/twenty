@@ -8,6 +8,7 @@ import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/use
 import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { generateGroupByQueryVariablesFromBarOrLineChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarOrLineChartConfiguration';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
@@ -33,6 +34,8 @@ export const useGraphWidgetGroupByQuery = ({
       objectMetadataItemId,
       configuration,
     });
+
+  const { userTimezone } = useUserTimezone();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -68,6 +71,7 @@ export const useGraphWidgetGroupByQuery = ({
         aggregateOperation: aggregateOperation,
         limit,
         firstDayOfTheWeek: calendarStartDay,
+        userTimeZone: userTimezone,
       })
     : generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
         objectMetadataItem,
@@ -78,6 +82,7 @@ export const useGraphWidgetGroupByQuery = ({
         aggregateOperation: aggregateOperation,
         limit,
         firstDayOfTheWeek: calendarStartDay,
+        userTimeZone: userTimezone,
       });
 
   const variables = {

@@ -1,92 +1,92 @@
 ---
 title: Rulările fluxului de lucru
-description: Monitor and manage workflow executions.
+description: Monitorizați și gestionați execuțiile fluxurilor de lucru.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## Despre Rulări
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+O **rulare** este o înregistrare a execuției unui flux de lucru. De fiecare dată când un flux de lucru este declanșat—fie de un eveniment al unei înregistrări, de o planificare, o acțiune manuală sau un webhook—se creează o nouă rulare.
 
-## Viewing Runs
+## Vizualizarea Rulărilor
 
-### From the Workflow Editor
+### Din editorul de fluxuri de lucru
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. Deschideți fluxul de lucru pe care doriți să îl monitorizați
+2. Faceți clic pe panoul **Rulări** din partea dreaptă
+3. Vedeți o listă cu rulările recente și starea lor
 
-### From the Workflow Runs View
+### Din vizualizarea Rulări ale fluxurilor de lucru
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. Accesați **Rulări ale fluxurilor de lucru** în bara laterală
+2. Vizualizați rulările din toate fluxurile de lucru
+3. Filtrați după stare, flux de lucru sau dată
 
-## Run Statuses
+## Stările rulărilor
 
-| Status         | Descriere                                                                |
-| -------------- | ------------------------------------------------------------------------ |
-| **Se execută** | Workflow is currently executing                                          |
-| **Completed**  | Workflow finished successfully                                           |
-| **Failed**     | Workflow encountered an error and stopped                                |
-| **Waiting**    | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Status           | Descriere                                                                                          |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| **Se execută**   | Fluxul de lucru se execută în prezent                                                              |
+| **Completat**    | Fluxul de lucru s-a finalizat cu succes                                                            |
+| **Eșuat**        | Fluxul de lucru a întâmpinat o eroare și s-a oprit                                                 |
+| **În așteptare** | Fluxul de lucru este în pauză (de ex., așteaptă o acțiune Întârziere sau trimiterea unui formular) |
 
-## Run Details
+## Detalii despre rulare
 
-Click on any run to see:
+Faceți clic pe orice rulare pentru a vedea:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **Stare**: Starea curentă a rulării
+* **Pornită la**: Când a început rularea
+* **Durată**: Cât a durat rularea
+* **Date ale declanșatorului**: Datele de intrare care au pornit fluxul de lucru
+* **Ieșirile pașilor**: Datele returnate de fiecare pas
+* **Mesaje de eroare**: Dacă rularea a eșuat, ce a mers prost
 
-## Step-by-Step Execution
+## Execuție pas cu pas
 
-Each run shows the progression through your workflow:
+Fiecare rulare afișează progresul în fluxul dvs. de lucru:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. Vedeți care pași s-au finalizat cu succes
+2. Identificați unde au apărut eșecurile
+3. Vizualizați datele transmise între pași
+4. Depanați problemele examinând intrările și ieșirile pașilor
 
-## Error Handling
+## Gestionarea erorilor
 
-When a run fails:
+Când o rulare eșuează:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
+1. Deschideți rularea eșuată
+2. Găsiți pasul care a cauzat eșecul
+3. Verificați mesajul de eroare pentru detalii
+4. Probleme comune:
+   * Lipsesc câmpuri obligatorii
    * Format de date invalid
-   * External API errors
-   * Permission issues
+   * Erori ale API-urilor externe
+   * Probleme de permisiuni
 
-## Re-running Workflows
+## Rularea din nou a fluxurilor de lucru
 
-If a run fails, you can:
+Dacă o rulare eșuează, puteți:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* Remediați problema de bază și așteptați următorul declanșator
+* Pentru fluxurile de lucru manuale, declanșați din nou cu aceleași date sau cu date actualizate
+* Revizuiți logica fluxului de lucru pentru a preveni eșecuri viitoare
 
-## Performance Tips
+## Sfaturi privind performanța
 
-### Managing Run History
+### Gestionarea istoricului rulărilor
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* Rulările sunt păstrate pentru referință istorică
+* Rulările foarte vechi pot fi arhivate automat
+* Exportați datele rulărilor dacă trebuie să păstrați înregistrări
 
-### Monitoring Best Practices
+### Cele mai bune practici de monitorizare
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* Verificați regulat rulările după activarea unor fluxuri de lucru noi
+* Analizați rulările eșuate pentru a identifica tipare
 
-## Related
+## Conexe
 
-* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/ro/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Depanarea fluxurilor de lucru](/l/ro/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

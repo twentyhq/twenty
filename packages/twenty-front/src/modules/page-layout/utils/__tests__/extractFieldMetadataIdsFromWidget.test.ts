@@ -1,3 +1,4 @@
+import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import {
   type PageLayoutWidget,
   WidgetType,
@@ -15,7 +16,6 @@ import {
   TEST_OBJECT_METADATA_ID,
   TEST_PIE_CHART_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { extractFieldMetadataIdsFromWidget } from '../extractFieldMetadataIdsFromWidget';
 
 const createMockWidget = (
   overrides: Partial<Omit<PageLayoutWidget, 'configuration'>> & {

@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: Creați câmpuri de relație
+description: Ghid pas cu pas pentru conectarea obiectelor cu câmpuri de relație.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+Câmpurile de relație conectează înregistrări din obiecte diferite — de exemplu, legând Persoane de Companii.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **Numele relațiilor nu pot fi schimbate după creare** (afectează API-ul). Planificați cu atenție denumirile.
 </Note>
 
 ## Înainte de a începe
 
-Decide:
+Decideți:
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* Ce obiecte conectați? (de ex., Persoane → Companii)
+* Care este partea „unu”? (de ex., Companie)
+* Care este partea „mulți”? (de ex., Persoane — multe persoane lucrează la o singură companie)
+* Cum ar trebui să se numească câmpul pe fiecare parte?
 
-See [Relation Fields](/l/ro/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+Consultați [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) pentru explicații despre tipurile de relații.
 
-## Steps
+## Pași
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul în care doriți relația (de obicei partea „mulți”)
+3. Faceți clic pe **+ Adaugă câmp**
+4. Selectați **Relație** ca tip de câmp
+5. Alegeți **obiectul țintă**
+6. Selectați **Unu-la-mulți** sau **Mulți-la-unu**
+7. Introduceți nume de câmp pentru **ambele părți** ale relației
 8. Faceți clic pe **Salvare**
 
-## Example: People → Companies
+## Exemplu: Persoane → Companii
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* Accesați **Setări → Model de date → Persoane**
+* Adăugați un câmp Relație
+* Țintă: **Companii**
+* Tip: **Mulți-la-unu**
+* Câmp pe Persoane: **Companie**
+* Câmp pe Companii: **Angajați**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+Acum fiecare persoană poate fi legată de o companie, iar fiecare companie își afișează persoanele.
 
-## Deleting a Relation
+## Ștergerea unei relații
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Accesați **Setări → Model de date**
+2. Găsiți câmpul de relație
+3. Faceți clic pe **⋮ → Dezactivează**
 
-Links are preserved but hidden. Reactivate to restore.
+Legăturile sunt păstrate, dar ascunse. Reactivați pentru a restabili.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **Ștergerea unei relații nu șterge înregistrările.** Doar legătura dintre ele este eliminată.
 </Note>
 
-## Related
+## Conexe
 
-* [Relation Fields](/l/ro/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) — tipuri și limitări
+* [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — import în masă a înregistrărilor legate

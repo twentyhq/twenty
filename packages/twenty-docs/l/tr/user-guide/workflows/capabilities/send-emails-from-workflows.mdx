@@ -1,149 +1,149 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: İş Akışları Aracılığıyla E-posta Gönderme
+description: İş akışı eylemlerini kullanarak kişiselleştirilmiş e-postaları otomatik olarak gönderin.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+CRM'inizde belirli olaylar gerçekleştiğinde e-postaları otomatik olarak gönderin—yeni kişilere hoş geldiniz e-postası gönderin, fırsatları takip edin veya ekip üyelerini bilgilendirin.
 
 ## Ön Gereksinimler
 
-Before you can send emails from workflows:
+İş akışlarından e-posta göndermeden önce:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. **Ayarlar → Hesaplar** altında bir e-posta hesabı bağlayın
+2. Hesabın gönderme izinlerinin etkin olduğundan emin olun
 
-## Basic Email Workflow
+## Temel E-posta İş Akışı
 
-### Example: Welcome Email for New Contacts
+### Örnek: Yeni Kişiler için Hoş Geldiniz E-postası
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Amaç**: CRM'e yeni bir kişi eklendiğinde bir hoş geldiniz e-postası gönderin.
 
 **Kurulum**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **İş akışı oluşturun**: **Ayarlar → İş Akışları** bölümüne gidin ve **+ Yeni İş Akışı**'na tıklayın
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Tetikleyici ekleyin**: **Kayıt Oluşturuldu** → **Kişiler** öğelerini seçin
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **E-posta Gönder eylemini ekleyin**:
+   * Bir eylem eklemek için **+**'a tıklayın
+   * **E-posta Gönder**'i seçin
+   * E-postayı yapılandırın:
 
-| Alan        | Değer                                  |
-| ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `{{Your Company Name}}'e Hoş Geldiniz` |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| Alan      | Değer                                       |
+| --------- | ------------------------------------------- |
+| **Kime**  | `{{trigger.object.email}}`                  |
+| **Konu**  | `{{Your Company Name}}'e Hoş Geldiniz`      |
+| **Gövde** | `Merhaba {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Test edin ve etkinleştirin**: Örnek bir kayıtla test edin, ardından etkinleştirin
 
-## Using Variables in Emails
+## E-postalarda Değişkenlerin Kullanımı
 
-Reference data from previous steps using `{{variable}}` syntax:
+`{{variable}}` söz dizimini kullanarak önceki adımlardaki verilere başvurun:
 
 ```text
-Hi {{trigger.object.firstName}},
+Merhaba {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+Bizimle iletişime geçtiğiniz için teşekkür ederiz!
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+Şirketiniz, {{trigger.object.company.name}}, artık sistemimizde.
 
-Best regards,
-The Team
+Saygılarımızla,
+Ekip
 ```
 
-### Available Variables from Triggers
+### Tetikleyicilerden Kullanılabilir Değişkenler
 
-| Tetikleyici Türü           | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Tetikleyici Türü                  | Yaygın Değişkenler                     |
+| --------------------------------- | -------------------------------------- |
+| **Kayıt Oluşturuldu/Güncellendi** | `{{trigger.object.fieldName}}`         |
+| **Manuel**                        | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                       | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Gelişmiş: Koşullu E-postalar
 
-### Example: Different Emails Based on Lead Source
+### Örnek: Potansiyel Müşteri Kaynağına Göre Farklı E-postalar
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**Kurulum**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Amaç**: Potansiyel müşterinin geldiği kaynağa göre farklı hoş geldiniz e-postaları gönderin.
 
 **Kurulum**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Tetikleyici**: Kayıt Oluşturuldu (Kişiler)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Filtre eylemi ekleyin**:
+   * Koşul: `{{trigger.object.source}}` `"Website"` değerine eşittir
+   * Doğruysa → web sitesi hoş geldiniz e-postasıyla devam edin
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Diğer kaynaklar için dal**:
+   * Farklı kaynaklar için paralel dallar oluşturun
+   * Her dalın kendi E-posta Gönder eylemi vardır
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## Birden Fazla Alıcıya E-posta Gönderme
 
-## Scheduled Follow-up Emails
+### Örnek: Fırsat Kapandığında Ekibi Bilgilendirin
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Amaç**: Bir fırsat kazanıldığında satış temsilcisine ve yöneticisine e-posta gönderin.
 
 **Kurulum**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Tetikleyici**: Kayıt Güncellendi (Fırsatlar, Aşama = "Closed Won")
 
-2. **Delay action**: Wait 3 days
+2. **Kayıtları Ara**: Fırsat sahibinin yöneticisini bulun
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **E-posta Gönder #1**: Fırsat sahibine
+   * Kime: `{{trigger.object.owner.email}}`
+   * Konu: `{{trigger.object.name}} fırsatını kapattığınız için tebrikler!`
+
+4. **E-posta Gönder #2**: Yöneticiye
+   * Kime: `{{searchRecords.manager.email}}`
+   * Konu: `Fırsat Kazanıldı: {{trigger.object.name}}`
+
+## Zamanlanmış Takip E-postaları
+
+### Örnek: Toplantıdan 3 Gün Sonra Takip
+
+**Amaç**: Bir toplantı kaydedildikten 3 gün sonra bir takip e-postası gönderin.
+
+**Kurulum**:
+
+1. **Tetikleyici**: Kayıt Oluşturuldu (Aktiviteler, Tür = "Toplantı")
+
+2. **Gecikme eylemi**: 3 gün bekleyin
+
+3. **E-posta Gönder**:
+   * Kime: Toplantı katılımcısı
+   * Konu: Görüşmemize ilişkin takip
+   * Gövde: Tetikleyiciden toplantı ayrıntılarına referans verin
 
 ## En İyi Uygulamalar
 
-### Email Content
+### E-posta İçeriği
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* Konu satırlarını öz ve ilgili tutun
+* Alıcının adıyla kişiselleştirin
+* Açık bir harekete geçirici mesaj ekleyin
+* Etkinleştirmeden önce e-postaları test edin
 
-### Deliverability
+### Teslim Edilebilirlik
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* Çok kısa sürede çok fazla e-posta göndermeyin
+* Profesyonel e-posta imzaları kullanın
+* Spam tetikleyici kelimelerden kaçının
+* Pazarlama e-postalarında abonelikten çıkma seçeneklerinin bulunduğundan emin olun
 
 ### Sorun Giderme
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* E-posta hesabının bağlı ve aktif olduğunu doğrulayın
+* Alıcının e-posta adresinin geçerli olduğunu kontrol edin
+* Hata mesajları için iş akışı çalıştırmalarını gözden geçirin
+* Önce kendi e-posta adresinizle test edin
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **Yakında**: E-posta ekleri 2026'nın 1. çeyreğinde kullanılabilir olacak.
 </Note>
 
-## Related
+## İlgili
 
-* [Workflow Triggers](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)

@@ -5,7 +5,7 @@ import {
   WidgetType,
   type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
-import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
+import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
   const mockWidgets: PageLayoutWidget[] = [

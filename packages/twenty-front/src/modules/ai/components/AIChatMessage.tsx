@@ -7,7 +7,7 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
-import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
+import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -194,7 +194,7 @@ export const AIChatMessage = ({
               ))}
             </StyledFilesContainer>
           )}
-          {showError && <AIChatErrorMessage error={error} />}
+          {showError && <AIChatErrorRenderer error={error} />}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

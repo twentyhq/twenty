@@ -1,5 +1,5 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
-import { createFolderHeaderDroppableId } from '../createFolderHeaderDroppableId';
+import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 
 describe('createFolderHeaderDroppableId', () => {
   it('should create a valid folder header droppable id', () => {

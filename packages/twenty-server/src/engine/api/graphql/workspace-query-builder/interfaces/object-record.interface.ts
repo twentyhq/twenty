@@ -29,6 +29,7 @@ export type ObjectRecordGroupByForDateField = Partial<{
   [Property in keyof ObjectRecord]: {
     granularity: ObjectRecordGroupByDateGranularity;
     weekStartDay?: FirstDayOfTheWeek;
+    timeZone?: string;
   };
 }>;
 
