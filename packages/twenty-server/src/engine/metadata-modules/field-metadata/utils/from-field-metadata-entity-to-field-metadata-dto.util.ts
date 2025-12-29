@@ -13,11 +13,13 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     isNullable,
     isUnique,
     settings,
+    applicationId,
     ...rest
   } = fieldMetadataEntity;
 
   return {
     ...rest,
+    applicationId: applicationId ?? undefined,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     description: description ?? undefined,
