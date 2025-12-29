@@ -17,10 +17,14 @@ export const validateNumberFieldOrThrow = (
     (typeof value === 'number' &&
       (isNaN(value) || value === Infinity || value === -Infinity))
   ) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid number value ${inspect(value)} for field "${fieldName}"`,
+      `Invalid number value ${inspectedValue} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-      { userFriendlyMessage: msg`Invalid value for number.` },
+      {
+        userFriendlyMessage: msg`Invalid value for number: "${inspectedValue}"`,
+      },
     );
   }
 

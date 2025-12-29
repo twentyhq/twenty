@@ -13,10 +13,12 @@ export const validateTextFieldOrThrow = (
   fieldName: string,
 ): string | null => {
   if (typeof value !== 'string' && !isNull(value)) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid string value ${inspect(value)} for text field "${fieldName}"`,
+      `Invalid string value ${inspectedValue} for text field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-      { userFriendlyMessage: msg`Invalid value for text.` },
+      { userFriendlyMessage: msg`Invalid value: "${inspectedValue}"` },
     );
   }
 

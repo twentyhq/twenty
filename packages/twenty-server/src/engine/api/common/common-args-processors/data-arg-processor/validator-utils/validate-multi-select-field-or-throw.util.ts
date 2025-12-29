@@ -34,10 +34,14 @@ export const validateMultiSelectFieldOrThrow = (
       : [preValidatedValue]
     ).some((item) => !options.includes(item))
   ) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid value ${inspect(value)} for multi select field "${fieldName}"`,
+      `Invalid value ${inspectedValue} for multi select field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-      { userFriendlyMessage: msg`Invalid value for multi-select.` },
+      {
+        userFriendlyMessage: msg`Invalid value for multi-select: "${inspectedValue}"`,
+      },
     );
   }
 

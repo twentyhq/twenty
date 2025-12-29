@@ -21,9 +21,11 @@ export const validateDateAndDateTimeFieldOrThrow = (
     if (!isNaN(date.getTime())) return value;
   }
 
+  const inspectedValue = inspect(value);
+
   throw new CommonQueryRunnerException(
-    `Invalid value ${inspect(value)} for date or date-time field "${fieldName}"`,
+    `Invalid value ${inspectedValue} for date or date-time field "${fieldName}"`,
     CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-    { userFriendlyMessage: msg`Invalid value for date.` },
+    { userFriendlyMessage: msg`Invalid value for date: "${inspectedValue}"` },
   );
 };

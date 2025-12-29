@@ -27,10 +27,14 @@ export const validateRatingAndSelectFieldOrThrow = (
   }
 
   if (!isNull(preValidatedValue) && !options.includes(preValidatedValue)) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid value ${inspect(value)} for field "${fieldName}"`,
+      `Invalid value ${inspectedValue} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-      { userFriendlyMessage: msg`Invalid value for select.` },
+      {
+        userFriendlyMessage: msg`Invalid value for select: "${inspectedValue}"`,
+      },
     );
   }
 
