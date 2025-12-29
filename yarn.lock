@@ -57036,6 +57036,8 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-plugin-svgr: "npm:^4.3.0"
     zod: "npm:^4.1.11"
+  peerDependencies:
+    monaco-editor: ">= 0.25.0 < 1"
   languageName: unknown
   linkType: soft
 

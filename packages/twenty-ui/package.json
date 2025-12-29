@@ -42,6 +42,9 @@
     "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
   },
+  "peerDependencies": {
+    "monaco-editor": ">= 0.25.0 < 1"
+  },
   "scripts": {
     "build": "npx vite build"
   },
