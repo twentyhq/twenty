@@ -129,6 +129,5 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
 } as const satisfies {
   [TName in AllMetadataName]: {
     [P in ExtractEntityRelatedEntityProperties<MetadataEntity<TName>>]: true;
-    // TODO remove once viewSorts and viewFilterGroups have been migrated to v2
-  } & Partial<Record<keyof MetadataEntity<TName>, true>>;
+  };
 };

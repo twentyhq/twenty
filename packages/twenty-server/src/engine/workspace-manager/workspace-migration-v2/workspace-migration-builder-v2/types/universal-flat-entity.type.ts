@@ -18,6 +18,9 @@ export type UniversalFlatEntityFrom<TEntity extends SyncableEntity> = Omit<
     [P in ExtractEntityManyToOneEntityRelationProperties<TEntity> &
       string as `${RemoveSuffix<P, 's'>}UniversalIdentifier`]: string;
   } & {
-    [P in ExtractEntityOneToManyEntityRelationProperties<TEntity> &
+    [P in ExtractEntityOneToManyEntityRelationProperties<
+      TEntity,
+      SyncableEntity
+    > &
       string as `${RemoveSuffix<P, 's'>}UniversalIdentifiers`]: string[];
   };
