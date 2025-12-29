@@ -12,6 +12,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -79,6 +81,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -443,6 +446,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.IF_ELSE: {
+        const isIfElseEnabled = await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_IF_ELSE_ENABLED,
+          workspaceId,
+        );
+
+        if (!isIfElseEnabled) {
+          throw new WorkflowVersionStepException(
+            'If/Else feature is not enabled for this workspace',
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
         const { ifEmptyNode, elseEmptyNode, ifFilterGroupId, branches } =
           await this.createEmptyNodesForIfElseStep({
             workflowVersionId,
