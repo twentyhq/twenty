@@ -2,12 +2,75 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  hasJunctionConfig,
+  hasJunctionMorphId,
+  hasJunctionTargetRelationFieldIds,
+} from '@/object-record/record-field/ui/utils/isJunctionRelation';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type GenerateJunctionRelationGqlFieldsArgs = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
+};
+
+// Build GraphQL fields for a single morph field's target object
+const buildMorphFieldTargetFields = (
+  morphField: FieldMetadataItem,
+  objectMetadataItems: ObjectMetadataItem[],
+): RecordGqlFields => {
+  const targetObjectMetadata = objectMetadataItems.find(
+    (item) => item.id === morphField.relation?.targetObjectMetadata.id,
+  );
+
+  if (!isDefined(targetObjectMetadata)) {
+    return {};
+  }
+
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
+
+  return {
+    [morphField.name]: {
+      id: true,
+      ...(isDefined(labelIdentifierFieldMetadataItem)
+        ? { [labelIdentifierFieldMetadataItem.name]: true }
+        : {}),
+    },
+  };
+};
+
+const buildRegularRelationFields = (
+  targetField: FieldMetadataItem,
+  objectMetadataItems: ObjectMetadataItem[],
+): RecordGqlFields | null => {
+  if (
+    targetField.type !== FieldMetadataType.RELATION ||
+    !isDefined(targetField.relation)
+  ) {
+    return null;
+  }
+
+  const targetObjectMetadata = objectMetadataItems.find(
+    (item) => item.id === targetField.relation?.targetObjectMetadata.id,
+  );
+
+  if (!isDefined(targetObjectMetadata)) {
+    return null;
+  }
+
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
+
+  return {
+    [targetField.name]: {
+      id: true,
+      ...(isDefined(labelIdentifierFieldMetadataItem)
+        ? { [labelIdentifierFieldMetadataItem.name]: true }
+        : {}),
+    },
+  };
 };
 
 // Generates GraphQL fields for a junction relation, including the nested target objects
@@ -16,18 +79,12 @@ export const generateJunctionRelationGqlFields = ({
   fieldMetadataItem,
   objectMetadataItems,
 }: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields | null => {
-  const settings = fieldMetadataItem.settings as {
-    junctionTargetRelationFieldIds?: string[];
-  };
+  const settings = fieldMetadataItem.settings;
 
-  if (
-    !isDefined(settings?.junctionTargetRelationFieldIds) ||
-    settings.junctionTargetRelationFieldIds.length === 0
-  ) {
+  if (!hasJunctionConfig(settings)) {
     return null;
   }
 
-  // Find the junction object metadata (target of the ONE_TO_MANY relation)
   const junctionObjectMetadata = objectMetadataItems.find(
     (item) => item.id === fieldMetadataItem.relation?.targetObjectMetadata.id,
   );
@@ -36,72 +93,53 @@ export const generateJunctionRelationGqlFields = ({
     return null;
   }
 
-  // Build fields for each junction target relation
   let junctionTargetFields: RecordGqlFields = {};
 
-  for (const targetFieldId of settings.junctionTargetRelationFieldIds) {
-    const targetField = junctionObjectMetadata.fields.find(
-      (field) => field.id === targetFieldId,
+  // Handle morph-based junction (junctionMorphId)
+  if (hasJunctionMorphId(settings)) {
+    const morphFields = junctionObjectMetadata.fields.filter(
+      (field) => field.morphId === settings.junctionMorphId,
     );
 
-    if (!isDefined(targetField)) {
-      continue;
+    for (const morphField of morphFields) {
+      Object.assign(
+        junctionTargetFields,
+        buildMorphFieldTargetFields(morphField, objectMetadataItems),
+      );
     }
-
-    // Handle MORPH_RELATION fields (polymorphic - targets multiple object types)
-    if (targetField.type === FieldMetadataType.MORPH_RELATION) {
-      // For MORPH, include ALL active non-system object fields
-      for (const objectMetadataItem of objectMetadataItems) {
-        if (!objectMetadataItem.isActive || objectMetadataItem.isSystem) {
-          continue;
-        }
-
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
-        // Include the nested target object with its identifier fields
-        junctionTargetFields[objectMetadataItem.nameSingular] = {
-          id: true,
-          ...(isDefined(labelIdentifierFieldMetadataItem)
-            ? { [labelIdentifierFieldMetadataItem.name]: true }
-            : {}),
-        };
-        // Also include the ID field
-        junctionTargetFields[`${objectMetadataItem.nameSingular}Id`] = true;
-      }
-      continue;
-    }
-
-    // Handle regular RELATION fields (single target)
-    if (
-      targetField.type !== FieldMetadataType.RELATION ||
-      !isDefined(targetField.relation)
-    ) {
-      continue;
-    }
-
-    // Get the actual target object metadata
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === targetField.relation?.targetObjectMetadata.id,
-    );
-
-    if (!isDefined(targetObjectMetadata)) {
-      continue;
-    }
-
-    const labelIdentifierFieldMetadataItem =
-      getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
-
-    // Include the nested target object with its identifier fields
-    junctionTargetFields[targetField.name] = {
-      id: true,
-      ...(isDefined(labelIdentifierFieldMetadataItem)
-        ? { [labelIdentifierFieldMetadataItem.name]: true }
-        : {}),
-    };
   }
 
-  // Get the junction object's label identifier
+  // Handle field ID-based junction (junctionTargetRelationFieldIds)
+  if (hasJunctionTargetRelationFieldIds(settings)) {
+    for (const targetFieldId of settings.junctionTargetRelationFieldIds) {
+      const targetField = junctionObjectMetadata.fields.find(
+        (field) => field.id === targetFieldId,
+      );
+
+      if (!isDefined(targetField)) {
+        continue;
+      }
+
+      // For MORPH_RELATION fields referenced by ID, build fields for their target
+      if (targetField.type === FieldMetadataType.MORPH_RELATION) {
+        Object.assign(
+          junctionTargetFields,
+          buildMorphFieldTargetFields(targetField, objectMetadataItems),
+        );
+        continue;
+      }
+
+      const regularFields = buildRegularRelationFields(
+        targetField,
+        objectMetadataItems,
+      );
+
+      if (isDefined(regularFields)) {
+        Object.assign(junctionTargetFields, regularFields);
+      }
+    }
+  }
+
   const junctionLabelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(junctionObjectMetadata);
 
@@ -114,7 +152,7 @@ export const generateJunctionRelationGqlFields = ({
   };
 };
 
-// Check if a field is a junction relation (has junctionTargetRelationFieldIds configured)
+// Check if a field is a junction relation (has junction config)
 export const isJunctionRelationField = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'settings'>,
 ): boolean => {
@@ -122,12 +160,5 @@ export const isJunctionRelationField = (
     return false;
   }
 
-  const settings = fieldMetadataItem.settings as {
-    junctionTargetRelationFieldIds?: string[];
-  };
-
-  return (
-    isDefined(settings?.junctionTargetRelationFieldIds) &&
-    settings.junctionTargetRelationFieldIds.length > 0
-  );
+  return hasJunctionConfig(fieldMetadataItem.settings);
 };

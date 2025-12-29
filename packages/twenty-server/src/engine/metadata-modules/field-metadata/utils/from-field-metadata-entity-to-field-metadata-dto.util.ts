@@ -13,6 +13,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     isNullable,
     isUnique,
     settings,
+    morphId,
     ...rest
   } = fieldMetadataEntity;
 
@@ -26,5 +27,6 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     isNullable: isNullable ?? false,
     isUnique: isUnique ?? false,
     settings: settings ?? undefined,
+    morphId: morphId ?? undefined,
   };
 };

@@ -1,5 +1,4 @@
 import { useRecoilCallback } from 'recoil';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -12,9 +11,10 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import {
   type FieldRelationFromManyValue,
   type FieldRelationMetadata,
-  type FieldRelationMetadataSettings,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/findJunctionRecordByTargetId';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -33,41 +33,25 @@ export const useUpdateJunctionRelationFromCell = ({
 }: UseUpdateJunctionRelationFromCellArgs) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Use fieldMetadataItem.settings which has the actual saved settings from the database
-  const settings = fieldMetadataItem.settings as FieldRelationMetadataSettings;
-
-  // Get junction object metadata
-  const junctionObjectMetadataId =
-    fieldDefinition.metadata.relationObjectMetadataId;
-  const junctionObjectMetadata = objectMetadataItems.find(
-    (item) => item.id === junctionObjectMetadataId,
-  );
-
   // Get source object metadata (the object that has this field)
   const sourceObjectMetadata = objectMetadataItems.find(
     (item) =>
       item.nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
   );
 
-  // Get target field info from junction
-  const targetFieldId = settings?.junctionTargetRelationFieldIds?.[0];
-  const targetField = junctionObjectMetadata?.fields.find(
-    (field) => field.id === targetFieldId,
-  );
+  // Get junction config using shared utility
+  const junctionConfig = getJunctionConfig({
+    settings: fieldMetadataItem.settings,
+    relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    sourceObjectMetadataId: sourceObjectMetadata?.id,
+    objectMetadataItems,
+  });
 
-  // Check if the target field is a MORPH_RELATION (polymorphic)
-  const isMorphRelation =
-    targetField?.type === FieldMetadataType.MORPH_RELATION;
-
-  // Find the source field on junction (the field that points back to the source object)
-  // This is the inverse of the current ONE_TO_MANY relation
-  const sourceFieldOnJunction = junctionObjectMetadata?.fields.find(
-    (field) =>
-      field.type === 'RELATION' &&
-      isDefined(sourceObjectMetadata) &&
-      field.relation?.targetObjectMetadata.id === sourceObjectMetadata.id &&
-      field.id !== targetFieldId,
-  );
+  const junctionObjectMetadata = junctionConfig?.junctionObjectMetadata;
+  const targetField = junctionConfig?.targetField;
+  const morphFields = junctionConfig?.morphFields;
+  const isMorphRelation = junctionConfig?.isMorphRelation ?? false;
+  const sourceFieldOnJunction = junctionConfig?.sourceField;
 
   // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
   const junctionObjectNameSingular =
@@ -90,188 +74,133 @@ export const useUpdateJunctionRelationFromCell = ({
       async ({ morphItem }: { morphItem: RecordPickerPickableMorphItem }) => {
         if (
           !isDefined(junctionObjectMetadata) ||
-          !isDefined(targetField) ||
           !isDefined(sourceFieldOnJunction)
         ) {
           return;
         }
 
+        // For morph relations, need morphFields; for regular, need targetField
+        if (isMorphRelation && !isDefined(morphFields)) {
+          return;
+        }
+        if (!isMorphRelation && !isDefined(targetField)) {
+          return;
+        }
+
         const sourceFieldName = sourceFieldOnJunction.name;
+        const fieldName = fieldDefinition.metadata.fieldName;
+        const junctionObjectName = junctionObjectMetadata.nameSingular;
 
-        // For MORPH relations, determine the target field name from the picked object
-        // For regular relations, use the known target field name
-        let targetFieldName: string;
-
-        if (isMorphRelation) {
-          // Find the picked object metadata to get its name
-          const pickedObjectMetadata = objectMetadataItems.find(
-            (item) => item.id === morphItem.objectMetadataId,
+        // For MORPH relations, find the target field name from morphFields based on picked object
+        let targetFieldName: string | undefined;
+        if (isMorphRelation && isDefined(morphFields)) {
+          const matchingMorphField = morphFields.find(
+            (field) =>
+              field.relation?.targetObjectMetadata.id ===
+              morphItem.objectMetadataId,
           );
-          if (!isDefined(pickedObjectMetadata)) {
-            return;
-          }
-          targetFieldName = pickedObjectMetadata.nameSingular;
-        } else {
+          targetFieldName = matchingMorphField?.name;
+        } else if (isDefined(targetField)) {
           targetFieldName = targetField.name;
+        }
+
+        if (!isDefined(targetFieldName)) {
+          return;
         }
 
         // Read current junction records from the store (always fresh)
         const currentJunctionRecords =
           snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName: fieldDefinition.metadata.fieldName,
-              }),
-            )
+            .getLoadable<
+              FieldRelationValue<FieldRelationFromManyValue>
+            >(recordStoreFamilySelector({ recordId, fieldName }))
             .getValue() ?? [];
 
         // morphItem.isSelected represents the NEW state (what the user wants)
-        // isSelected=true means user wants to SELECT (create junction)
-        // isSelected=false means user wants to DESELECT (delete junction)
         if (!morphItem.isSelected) {
-          // DESELECT: Find and delete the junction record
-          let junctionRecordToDelete;
+          const junctionRecordToDelete = findJunctionRecordByTargetId({
+            junctionRecords: currentJunctionRecords,
+            targetRecordId: morphItem.recordId,
+            targetFieldName,
+          });
 
-          if (isMorphRelation) {
-            // For MORPH: scan all possible target fields to find the junction record
-            junctionRecordToDelete = currentJunctionRecords.find(
-              (junctionRecord) => {
-                for (const objectMetadataItem of objectMetadataItems) {
-                  if (
-                    !objectMetadataItem.isActive ||
-                    objectMetadataItem.isSystem
-                  ) {
-                    continue;
-                  }
-                  // Check embedded object
-                  const targetObject =
-                    junctionRecord[objectMetadataItem.nameSingular];
-                  if (
-                    isDefined(targetObject) &&
-                    typeof targetObject === 'object' &&
-                    'id' in targetObject &&
-                    (targetObject as { id: string }).id === morphItem.recordId
-                  ) {
-                    return true;
-                  }
-                  // Check ID field
-                  const targetId =
-                    junctionRecord[`${objectMetadataItem.nameSingular}Id`];
-                  if (targetId === morphItem.recordId) {
-                    return true;
-                  }
-                }
-                return false;
-              },
-            );
-          } else {
-            // For regular RELATION: use the known target field name
-            junctionRecordToDelete = currentJunctionRecords.find(
-              (junctionRecord) => {
-                // Try embedded object first
-                const targetObject = junctionRecord[targetFieldName];
-                if (
-                  isDefined(targetObject) &&
-                  typeof targetObject === 'object' &&
-                  'id' in targetObject &&
-                  (targetObject as { id: string }).id === morphItem.recordId
-                ) {
-                  return true;
-                }
-                // Fall back to ID field
-                const targetId = junctionRecord[`${targetFieldName}Id`];
-                return targetId === morphItem.recordId;
-              },
-            );
+          if (!isDefined(junctionRecordToDelete)) {
+            return;
           }
 
-          if (isDefined(junctionRecordToDelete)) {
-            await deleteJunctionRecord(junctionRecordToDelete.id);
+          await deleteJunctionRecord(junctionRecordToDelete.id);
 
-            // Update the record store
-            const currentFieldValue = snapshot
-              .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-                recordStoreFamilySelector({
-                  recordId,
-                  fieldName: fieldDefinition.metadata.fieldName,
-                }),
-              )
-              .getValue();
+          const currentFieldValue = snapshot
+            .getLoadable<
+              FieldRelationValue<FieldRelationFromManyValue>
+            >(recordStoreFamilySelector({ recordId, fieldName }))
+            .getValue();
 
-            if (
-              isDefined(currentFieldValue) &&
-              Array.isArray(currentFieldValue)
-            ) {
-              const updatedJunctionRecords = currentFieldValue.filter(
-                (record) => record.id !== junctionRecordToDelete.id,
-              );
+          if (
+            !isDefined(currentFieldValue) ||
+            !Array.isArray(currentFieldValue)
+          ) {
+            return;
+          }
 
-              set(recordStoreFamilyState(recordId), (currentRecord) => {
-                if (!isDefined(currentRecord)) {
-                  return currentRecord;
-                }
-                return {
-                  ...currentRecord,
-                  [fieldDefinition.metadata.fieldName]: updatedJunctionRecords,
-                };
-              });
+          const updatedJunctionRecords = currentFieldValue.filter(
+            (record) => record.id !== junctionRecordToDelete.id,
+          );
+
+          set(recordStoreFamilyState(recordId), (currentRecord) => {
+            if (!isDefined(currentRecord)) {
+              return currentRecord;
             }
-          }
+            return {
+              ...currentRecord,
+              [fieldName]: updatedJunctionRecords,
+            };
+          });
         } else {
-          // SELECT: Create a new junction record
-          // Get the target record from the search store (contains full record data)
           const searchRecord = snapshot
             .getLoadable(searchRecordStoreFamilyState(morphItem.recordId))
             .getValue();
 
-          if (!isDefined(searchRecord) || !isDefined(searchRecord?.record)) {
+          if (!isDefined(searchRecord?.record)) {
             return;
           }
 
           const targetRecord = searchRecord.record;
-
           const newJunctionId = v4();
           const now = new Date().toISOString();
 
-          // Build the junction record with embedded target record (like activity targets do)
           const junctionRecordForStore = {
             id: newJunctionId,
             createdAt: now,
             updatedAt: now,
-            __typename: getObjectTypename(junctionObjectMetadata.nameSingular),
+            __typename: getObjectTypename(junctionObjectName),
             [`${sourceFieldName}Id`]: recordId,
             [`${targetFieldName}Id`]: morphItem.recordId,
-            // Embed the full target record so display works
             [targetFieldName]: targetRecord,
           };
 
-          // For the API, we only send the IDs
           const newJunctionRecordForApi = {
             id: newJunctionId,
             [`${sourceFieldName}Id`]: recordId,
             [`${targetFieldName}Id`]: morphItem.recordId,
           };
 
-          // Optimistically update the store
           set(recordStoreFamilyState(recordId), (currentRecord) => {
             if (!isDefined(currentRecord)) {
               return currentRecord;
             }
 
-            const currentFieldValue =
-              currentRecord[fieldDefinition.metadata.fieldName];
+            const currentFieldValue = currentRecord[fieldName];
             const updatedJunctionRecords = Array.isArray(currentFieldValue)
               ? [...currentFieldValue, junctionRecordForStore]
               : [junctionRecordForStore];
 
             return {
               ...currentRecord,
-              [fieldDefinition.metadata.fieldName]: updatedJunctionRecords,
+              [fieldName]: updatedJunctionRecords,
             };
           });
 
-          // Then create in the backend
           await createJunctionRecord(newJunctionRecordForApi);
         }
       },
@@ -281,6 +210,7 @@ export const useUpdateJunctionRelationFromCell = ({
       fieldDefinition.metadata.fieldName,
       isMorphRelation,
       junctionObjectMetadata,
+      morphFields,
       objectMetadataItems,
       recordId,
       sourceFieldOnJunction,
@@ -289,9 +219,7 @@ export const useUpdateJunctionRelationFromCell = ({
   );
 
   const isJunctionConfigValid =
-    isDefined(junctionObjectMetadata) &&
-    isDefined(targetField) &&
-    isDefined(sourceFieldOnJunction);
+    isDefined(junctionConfig) && isDefined(sourceFieldOnJunction);
 
   return {
     updateJunctionRelationFromCell,

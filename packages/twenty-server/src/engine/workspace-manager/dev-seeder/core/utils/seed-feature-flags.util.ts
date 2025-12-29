@@ -86,6 +86,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

@@ -5,20 +5,18 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
-import { type FieldRelationMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/utils/isJunctionRelation';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/extractTargetRecordsFromJunction';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/isJunctionRelation';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';
 import { isArray } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -48,48 +46,23 @@ export const RelationFromManyFieldDisplay = () => {
     fieldMetadataId: fieldDefinition.fieldMetadataId,
     objectMetadataItems,
   });
-  const settings = fieldMetadataItem?.settings as FieldRelationMetadataSettings;
-  const isJunctionRelation = hasJunctionTargetRelationFieldIds(settings);
+  const isJunctionRelation = hasJunctionConfig(fieldMetadataItem?.settings);
 
   // Get junction config for display
-  const junctionConfig = useMemo(() => {
-    if (!isJunctionRelation || !settings) {
-      return null;
-    }
-    const junctionObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === fieldDefinition.metadata.relationObjectMetadataId,
-    );
-    if (!junctionObjectMetadata) return null;
-
-    const targetFieldId = settings.junctionTargetRelationFieldIds?.[0];
-    const targetField = junctionObjectMetadata.fields.find(
-      (field) => field.id === targetFieldId,
-    );
-    if (!targetField) return null;
-
-    // Check if target field is a MORPH_RELATION (polymorphic)
-    const isMorphRelation =
-      targetField.type === FieldMetadataType.MORPH_RELATION;
-
-    // For regular relations, get the single target object
-    let targetObjectMetadata;
-    if (!isMorphRelation && isDefined(targetField.relation)) {
-      targetObjectMetadata = objectMetadataItems.find(
-        (item) => item.id === targetField.relation?.targetObjectMetadata.id,
-      );
-    }
-
-    return {
-      targetField,
-      targetObjectMetadata,
-      isMorphRelation,
-    };
-  }, [
-    isJunctionRelation,
-    objectMetadataItems,
-    fieldDefinition.metadata.relationObjectMetadataId,
-    settings,
-  ]);
+  const junctionConfig = useMemo(
+    () =>
+      getJunctionConfig({
+        settings: fieldMetadataItem?.settings,
+        relationObjectMetadataId:
+          fieldDefinition.metadata.relationObjectMetadataId,
+        objectMetadataItems,
+      }),
+    [
+      fieldMetadataItem?.settings,
+      fieldDefinition.metadata.relationObjectMetadataId,
+      objectMetadataItems,
+    ],
+  );
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     '',
@@ -104,7 +77,7 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
-  if (!isDefined(!relationObjectNameSingular)) {
+  if (!isDefined(relationObjectNameSingular)) {
     return null;
   }
 
@@ -125,103 +98,70 @@ export const RelationFromManyFieldDisplay = () => {
       fieldName === 'noteTargets'
         ? CoreObjectNameSingular.Note
         : CoreObjectNameSingular.Task;
-
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
 
-    return isFocused ? (
-      <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          ?.map((record) => {
-            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
-              return undefined;
-            }
-            return (
-              <RecordChip
-                key={record.id}
-                objectNameSingular={objectNameSingular}
-                record={record[relationFieldName]}
-                forceDisableClick={disableChipClick}
-              />
-            );
-          })
-          .filter(isDefined)}
-      </ExpandableList>
-    ) : (
-      <StyledContainer>
-        {fieldValue
-          ?.map((record) => {
-            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
-              return undefined;
-            }
-            return (
-              <RecordChip
-                key={record.id}
-                objectNameSingular={objectNameSingular}
-                record={record[relationFieldName]}
-                forceDisableClick={disableChipClick}
-              />
-            );
-          })
-          .filter(isDefined)}
-      </StyledContainer>
-    );
-  } else if (isJunctionRelation && isDefined(junctionConfig)) {
-    // Junction relation: display target objects extracted from junction records
-    const { targetField, targetObjectMetadata, isMorphRelation } =
-      junctionConfig;
+    const chips = fieldValue
+      .map((record) => {
+        if (!isDefined(record) || !isDefined(record[relationFieldName])) {
+          return undefined;
+        }
+        return (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={objectNameSingular}
+            record={record[relationFieldName]}
+            forceDisableClick={disableChipClick}
+          />
+        );
+      })
+      .filter(isDefined);
 
-    if (!targetField) {
-      return null;
+    if (isFocused) {
+      return (
+        <ExpandableList isChipCountDisplayed={isFocused}>
+          {chips}
+        </ExpandableList>
+      );
     }
 
-    // For regular relations, we need the target object metadata
+    return <StyledContainer>{chips}</StyledContainer>;
+  }
+
+  if (isJunctionRelation && isDefined(junctionConfig)) {
+    const { targetField, morphFields, targetObjectMetadata, isMorphRelation } =
+      junctionConfig;
+
+    // For regular relations, require target object metadata
     if (!isMorphRelation && !targetObjectMetadata) {
       return null;
     }
 
-    // Extract target records from junction records
-    const targetRecordsWithMetadata: Array<{
-      record: ObjectRecord;
-      objectMetadata: ObjectMetadataItem;
-    }> = [];
-
-    for (const junctionRecord of fieldValue) {
-      if (!isDefined(junctionRecord)) continue;
-
-      if (isMorphRelation) {
-        // For MORPH: scan all object metadata to find which field is populated
-        for (const objectMetadataItem of objectMetadataItems) {
-          if (!objectMetadataItem.isActive || objectMetadataItem.isSystem) {
-            continue;
-          }
-          const targetObject = junctionRecord[objectMetadataItem.nameSingular];
-          if (
-            isDefined(targetObject) &&
-            typeof targetObject === 'object' &&
-            'id' in targetObject
-          ) {
-            targetRecordsWithMetadata.push({
-              record: targetObject as ObjectRecord,
-              objectMetadata: objectMetadataItem,
-            });
-            break;
-          }
-        }
-      } else {
-        // For regular RELATION: use the known target field name
-        const targetObject = junctionRecord[targetField.name];
-        if (
-          isDefined(targetObject) &&
-          typeof targetObject === 'object' &&
-          isDefined(targetObjectMetadata)
-        ) {
-          targetRecordsWithMetadata.push({
-            record: targetObject as ObjectRecord,
-            objectMetadata: targetObjectMetadata,
-          });
-        }
-      }
+    // For morph relations, require morphFields
+    if (isMorphRelation && !isDefined(morphFields)) {
+      return null;
     }
+
+    const extractedRecords = extractTargetRecordsFromJunction({
+      junctionRecords: fieldValue,
+      morphFields,
+      targetField,
+      targetObjectMetadataId: targetObjectMetadata?.id,
+      objectMetadataItems,
+      isMorphRelation,
+      includeRecord: true,
+    });
+
+    const targetRecordsWithMetadata = extractedRecords
+      .map((extracted) => {
+        const objectMetadata = objectMetadataItems.find(
+          (item) => item.id === extracted.objectMetadataId,
+        );
+        if (!objectMetadata || !extracted.record) {
+          return null;
+        }
+        return { record: extracted.record, objectMetadata };
+      })
+      .filter(isDefined);
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
@@ -236,7 +176,9 @@ export const RelationFromManyFieldDisplay = () => {
         ))}
       </ExpandableList>
     );
-  } else if (isRelationFromActivityTargets) {
+  }
+
+  if (isRelationFromActivityTargets) {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {activityTargetObjectRecords.filter(isDefined).map((record) => (
@@ -249,22 +191,22 @@ export const RelationFromManyFieldDisplay = () => {
         ))}
       </ExpandableList>
     );
-  } else {
-    return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue?.filter(isDefined).map((record) => {
-          const recordChipData = generateRecordChipData(record);
-          return (
-            <RecordChip
-              key={recordChipData.recordId}
-              objectNameSingular={recordChipData.objectNameSingular}
-              record={record}
-              forceDisableClick={disableChipClick}
-              triggerEvent={triggerEvent}
-            />
-          );
-        })}
-      </ExpandableList>
-    );
   }
+
+  return (
+    <ExpandableList isChipCountDisplayed={isFocused}>
+      {fieldValue.filter(isDefined).map((record) => {
+        const recordChipData = generateRecordChipData(record);
+        return (
+          <RecordChip
+            key={recordChipData.recordId}
+            objectNameSingular={recordChipData.objectNameSingular}
+            record={record}
+            forceDisableClick={disableChipClick}
+            triggerEvent={triggerEvent}
+          />
+        );
+      })}
+    </ExpandableList>
+  );
 };

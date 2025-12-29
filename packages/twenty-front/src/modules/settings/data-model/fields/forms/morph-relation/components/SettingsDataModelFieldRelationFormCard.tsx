@@ -12,8 +12,10 @@ import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-mo
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { type FeatureFlagKey } from '~/generated/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldRelationFormCardProps = {
@@ -32,6 +34,9 @@ export const SettingsDataModelFieldRelationFormCard = ({
       SettingsDataModelFieldEditFormValues
   >();
   const isMobile = useIsMobile();
+  const isJunctionRelationsEnabled = useIsFeatureEnabled(
+    'IS_JUNCTION_RELATIONS_ENABLED' as FeatureFlagKey,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -113,9 +118,11 @@ export const SettingsDataModelFieldRelationFormCard = ({
             existingFieldMetadataId={existingFieldMetadataId}
             disabled={disabled}
           />
-          <SettingsDataModelFieldRelationJunctionForm
-            objectNameSingular={objectNameSingular}
-          />
+          {isJunctionRelationsEnabled && (
+            <SettingsDataModelFieldRelationJunctionForm
+              objectNameSingular={objectNameSingular}
+            />
+          )}
         </>
       }
     />

@@ -4,6 +4,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
@@ -16,7 +17,6 @@ import {
   type FieldMetadata,
   type FieldRelationFromManyValue,
   type FieldRelationMetadata,
-  type FieldRelationMetadataSettings,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -24,7 +24,7 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { hasJunctionTargetRelationFieldIds } from '@/object-record/record-field/ui/utils/isJunctionRelation';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/isJunctionRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -68,6 +68,15 @@ export const useOpenFieldInputEditMode = () => {
           .getLoadable(objectMetadataItemsState)
           .getValue();
 
+        const currentWorkspace = snapshot
+          .getLoadable(currentWorkspaceState)
+          .getValue();
+
+        const isJunctionRelationsEnabled =
+          currentWorkspace?.featureFlags?.find(
+            (flag) => (flag.key as string) === 'IS_JUNCTION_RELATIONS_ENABLED',
+          )?.value ?? false;
+
         // Get the actual field metadata item with saved settings from the database
         const { fieldMetadataItem } = getFieldMetadataItemById({
           fieldMetadataId: fieldDefinition.fieldMetadataId,
@@ -75,12 +84,17 @@ export const useOpenFieldInputEditMode = () => {
         });
 
         // Check for metadata-driven junction relation (many-to-many through junction)
+        // Only use junction behavior if feature flag is enabled
         const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
-        const hasJunctionConfig = hasJunctionTargetRelationFieldIds(
-          fieldMetadataItem?.settings as FieldRelationMetadataSettings,
+        const fieldHasJunctionConfig = hasJunctionConfig(
+          fieldMetadataItem?.settings,
         );
 
-        if (isOneToMany && hasJunctionConfig) {
+        if (
+          isJunctionRelationsEnabled &&
+          isOneToMany &&
+          fieldHasJunctionConfig
+        ) {
           openJunctionRelationFieldInput({
             fieldDefinition:
               fieldDefinition as FieldDefinition<FieldRelationMetadata>,

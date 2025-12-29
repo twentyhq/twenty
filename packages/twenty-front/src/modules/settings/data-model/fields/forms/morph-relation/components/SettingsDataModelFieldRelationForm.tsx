@@ -55,8 +55,11 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
-  // Junction configuration for many-to-many relations
+  // Junction configuration for many-to-many relations (mutually exclusive)
+  // For regular RELATION fields on junction
   junctionTargetRelationFieldIds: z.array(z.uuid()).optional(),
+  // For MORPH_RELATION fields on junction
+  junctionMorphId: z.string().uuid().optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<

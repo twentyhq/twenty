@@ -22,26 +22,127 @@ export const validateJunctionTargetRelationFieldIds = ({
   const errors: FlatFieldMetadataValidationError[] = [];
   const settings = flatFieldMetadata.settings;
 
-  if (!isDefined(settings.junctionTargetRelationFieldIds)) {
+  const hasFieldIds =
+    isDefined(settings.junctionTargetRelationFieldIds) &&
+    settings.junctionTargetRelationFieldIds.length > 0;
+  const hasMorphId =
+    isDefined(settings.junctionMorphId) && settings.junctionMorphId.length > 0;
+
+  // No junction config set - nothing to validate
+  if (!hasFieldIds && !hasMorphId) {
     return errors;
   }
 
-  const junctionTargetRelationFieldIds =
-    settings.junctionTargetRelationFieldIds;
+  // Validate mutual exclusivity
+  if (hasFieldIds && hasMorphId) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message:
+        'Cannot set both junctionTargetRelationFieldIds and junctionMorphId',
+      userFriendlyMessage: msg`Cannot set both junction field IDs and junction morph ID`,
+    });
 
-  // junctionTargetRelationFieldIds should only be set on ONE_TO_MANY relations
+    return errors;
+  }
+
+  // Junction config should only be set on ONE_TO_MANY relations
   if (settings.relationType !== RelationType.ONE_TO_MANY) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message:
-        'junctionTargetRelationFieldIds can only be set on ONE_TO_MANY relations',
+        'Junction configuration can only be set on ONE_TO_MANY relations',
       userFriendlyMessage: msg`Junction configuration is only valid for ONE_TO_MANY relations`,
     });
 
     return errors;
   }
 
-  // Validate each junction target field ID
+  // Validate junctionMorphId if set
+  if (hasMorphId) {
+    errors.push(
+      ...validateJunctionMorphId({
+        flatFieldMetadata,
+        flatFieldMetadataMaps,
+        junctionMorphId: settings.junctionMorphId!,
+      }),
+    );
+  }
+
+  // Validate junctionTargetRelationFieldIds if set
+  if (hasFieldIds) {
+    errors.push(
+      ...validateJunctionFieldIds({
+        flatFieldMetadata,
+        flatFieldMetadataMaps,
+        junctionTargetRelationFieldIds:
+          settings.junctionTargetRelationFieldIds!,
+      }),
+    );
+  }
+
+  return errors;
+};
+
+type ValidateJunctionMorphIdArgs = {
+  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  junctionMorphId: string;
+};
+
+const validateJunctionMorphId = ({
+  flatFieldMetadata,
+  flatFieldMetadataMaps,
+  junctionMorphId,
+}: ValidateJunctionMorphIdArgs): FlatFieldMetadataValidationError[] => {
+  const errors: FlatFieldMetadataValidationError[] = [];
+
+  if (!isValidUuid(junctionMorphId)) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: `Invalid junction morph ID: ${junctionMorphId}`,
+      userFriendlyMessage: msg`Invalid junction morph ID`,
+      value: junctionMorphId,
+    });
+
+    return errors;
+  }
+
+  // Find morph fields with this morphId on the junction object
+  const junctionObjectId = flatFieldMetadata.relationTargetObjectMetadataId;
+  const morphFieldsOnJunction = Object.values(
+    flatFieldMetadataMaps.byId,
+  ).filter(
+    (field) =>
+      isDefined(field) &&
+      field.objectMetadataId === junctionObjectId &&
+      field.morphId === junctionMorphId,
+  );
+
+  if (morphFieldsOnJunction.length === 0) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: `No morph fields found with morphId: ${junctionMorphId} on junction object`,
+      userFriendlyMessage: msg`No morph fields found with the specified morph ID`,
+      value: junctionMorphId,
+    });
+  }
+
+  return errors;
+};
+
+type ValidateJunctionFieldIdsArgs = {
+  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  junctionTargetRelationFieldIds: string[];
+};
+
+const validateJunctionFieldIds = ({
+  flatFieldMetadata,
+  flatFieldMetadataMaps,
+  junctionTargetRelationFieldIds,
+}: ValidateJunctionFieldIdsArgs): FlatFieldMetadataValidationError[] => {
+  const errors: FlatFieldMetadataValidationError[] = [];
+
   for (const fieldId of junctionTargetRelationFieldIds) {
     if (!isValidUuid(fieldId)) {
       errors.push({
