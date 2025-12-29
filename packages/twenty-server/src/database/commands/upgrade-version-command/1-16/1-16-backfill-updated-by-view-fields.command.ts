@@ -197,21 +197,37 @@ export class BackfillUpdatedByViewFieldsCommand extends ActiveOrSuspendedWorkspa
       size: number;
     }> = [];
 
+    const viewIds = viewsToProcess.map((view) => view.viewId);
+
+    const allViewFields = await this.viewFieldRepository.find({
+      where: {
+        workspaceId,
+        viewId: In(viewIds),
+        deletedAt: IsNull(),
+      },
+      order: { position: 'ASC' },
+      relations: ['fieldMetadata'],
+    });
+
+    const viewFieldsByViewId = allViewFields.reduce(
+      (acc, viewField) => {
+        if (!acc[viewField.viewId]) {
+          acc[viewField.viewId] = [];
+        }
+        acc[viewField.viewId].push(viewField);
+
+        return acc;
+      },
+      {} as Record<string, ViewFieldEntity[]>,
+    );
+
     for (const {
       viewId,
       viewName,
       updatedByFieldMetadataId,
       createdByFieldMetadataId,
     } of viewsToProcess) {
-      const existingViewFields = await this.viewFieldRepository.find({
-        where: {
-          workspaceId,
-          viewId,
-          deletedAt: IsNull(),
-        },
-        order: { position: 'ASC' },
-        relations: ['fieldMetadata'],
-      });
+      const existingViewFields = viewFieldsByViewId[viewId] ?? [];
 
       const updatedByViewFieldExists = existingViewFields.some(
         (viewField) => viewField.fieldMetadataId === updatedByFieldMetadataId,
