@@ -10,4 +10,3 @@ export abstract class WorkspaceBoundEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 }
-
