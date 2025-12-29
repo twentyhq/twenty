@@ -147,96 +147,96 @@ Când mapați coloana companiei:
 <Warning>
   **Mapați un singur identificator unic pentru relații.**
 
-  Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
+  Nu mapați atât `companyId`, cât și `companyDomain`. Alegeți una — de preferat domeniul, deoarece este ușor de citit de către oameni.
 </Warning>
 
-## Step 5: Map Select Field Values
+## Pasul 5: Mapați valorile câmpurilor Select
 
-If you have Select or Multi-Select fields (like Lead Source):
+Dacă aveți câmpuri Select sau Multi-Select (cum ar fi Sursa leadului):
 
-1. Twenty shows your values alongside existing options
-2. Match each value in your file to a Twenty option
-3. Or create new options if needed
+1. Twenty afișează valorile dvs. alături de opțiunile existente
+2. Asociați fiecare valoare din fișierul dvs. cu o opțiune Twenty
+3. Sau creați opțiuni noi, dacă este necesar
 
 <Note>
-  Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+  Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
 </Note>
 
-## Step 6: Review and Fix Errors
+## Pasul 6: Revizuiți și remediați erorile
 
-Before completing the import, Twenty validates your data:
+Înainte de a finaliza importul, Twenty vă validează datele:
 
-1. Click **Next Steps**
-2. Rows with errors are highlighted in **yellow**
-3. **Fix errors directly** — click a cell and edit the value
-4. **Remove problematic rows** — click the X to skip that row
+1. Faceți clic pe **Pașii următori**
+2. Rândurile cu erori sunt evidențiate cu **galben**
+3. **Remediați erorile direct** — faceți clic pe o celulă și editați valoarea
+4. **Eliminați rândurile problematice** — faceți clic pe X pentru a sări peste acel rând
 
-### Common Contact Import Errors
+### Erori frecvente la importul contactelor
 
-| Eroare                     | Cause                                  | Solution                                    |
-| -------------------------- | -------------------------------------- | ------------------------------------------- |
-| **Duplicate email**        | Email already exists in Twenty or file | Remove duplicate or update existing record  |
-| **Invalid email format**   | Email format incorrect                 | Fix to `name@domain.com`                    |
-| **Relation not found**     | Company doesn't exist                  | Import Companies first or fix the reference |
-| **Missing required field** | Required field is empty                | Fill in the value or remove the row         |
+| Eroare                       | Cauză                                       | Soluție                                                      |
+| ---------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
+| **Email duplicat**           | Emailul există deja în Twenty sau în fișier | Eliminați duplicatul sau actualizați înregistrarea existentă |
+| **Format de email invalid**  | Formatul emailului este incorect            | Corectați la `name@domain.com`                               |
+| **Relația nu a fost găsită** | Compania nu există                          | Importați mai întâi Companiile sau corectați referința       |
+| **Câmp obligatoriu lipsă**   | Câmpul obligatoriu este gol                 | Completați valoarea sau eliminați rândul                     |
 
-## Step 7: Complete the Import
+## Pasul 7: Finalizați importul
 
-1. Review the import summary
-2. Click **Confirm** to import
-3. Wait for the import to complete
-4. Verify by checking a few records and their Company links
+1. Revizuiți rezumatul importului
+2. Faceți clic pe **Confirmă** pentru a importa
+3. Așteptați finalizarea importului
+4. Verificați examinând câteva înregistrări și linkurile lor către Companie
 
-## After Importing Contacts
+## După importarea contactelor
 
-Your contacts are now in Twenty! Next steps:
+Contactele dvs. sunt acum în Twenty! Pașii următori:
 
-1. **Verify Company links** — open a few People records to confirm they're linked to the right Company
-2. **Import Opportunities** — if needed, link them to People and Companies
-3. **Set up email sync** — connect your mailbox to see email history on contact records
+1. **Verificați linkurile către Companie** — deschideți câteva înregistrări de tip Persoană pentru a confirma că sunt legate de Compania corectă
+2. **Importați Oportunități** — dacă este nevoie, legați-le de Persoane și Companii
+3. **Configurați sincronizarea emailului** — conectați căsuța poștală pentru a vedea istoricul emailurilor în înregistrările de contact
 
-## Updating Existing Contacts
+## Actualizarea contactelor existente
 
-To update contacts instead of creating new ones:
+Pentru a actualiza contactele în loc să creați unele noi:
 
-1. Include the `email` or `id` column in your file
-2. Twenty matches records by this unique identifier
-3. Existing contacts are updated; new ones are created
+1. Includeți coloana `email` sau `id` în fișierul dvs.
+2. Twenty potrivește înregistrările după acest identificator unic
+3. Contactele existente sunt actualizate; cele noi sunt create
 
-See [How to Update Existing Records](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) for details.
+Consultați [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) pentru detalii.
 
-## FAQ
+## Întrebări frecvente
 
 <AccordionGroup>
-  <Accordion title="Why can't two People have the same email?">
-    Email is a unique identifier in Twenty. This prevents duplicate contacts and ensures email sync correctly links emails to the right person.
+  <Accordion title="De ce nu pot două Persoane să aibă același email?">
+    Emailul este un identificator unic în Twenty. Acest lucru previne contactele duplicate și asigură că sincronizarea emailului leagă corect emailurile de persoana potrivită.
   </Accordion>
 
-  <Accordion title="What if I have people without an email?">
-    You can leave the email empty. However, we recommend adding emails when possible for better data quality and email sync functionality.
+  <Accordion title="Ce fac dacă am Persoane fără email?">
+    Puteți lăsa câmpul email necompletat. Totuși, recomandăm să adăugați emailuri când este posibil, pentru o calitate mai bună a datelor și pentru o funcționalitate mai bună a sincronizării emailului.
   </Accordion>
 
-  <Accordion title="How do I link People to Companies during import?">
-    Add a column with the Company's domain (e.g., `https://acme.com`) or ID. During mapping, connect this column to the Company relation field.
+  <Accordion title="Cum leg Persoanele de Companii în timpul importului?">
+    Adăugați o coloană cu domeniul Companiei (de ex., `https://acme.com`) sau ID-ul. În timpul mapării, conectați această coloană la câmpul de relație al Companiei.
   </Accordion>
 
-  <Accordion title="What if the Company doesn't exist yet?">
-    Import Companies first, then import People. The Company must exist before you can reference it.
+  <Accordion title="Ce fac dacă Compania nu există încă?">
+    Importați mai întâi Companiile, apoi importați Persoanele. Compania trebuie să existe înainte de a o putea referi.
   </Accordion>
 
-  <Accordion title="Can I import the ID from my previous CRM?">
-    Da! Create a custom field marked as "unique" in your data model to store the external ID. Note: the field name `id` is reserved for Twenty's internal ID.
+  <Accordion title="Pot importa ID-ul din CRM-ul meu anterior?">
+    Da! Creați un câmp personalizat marcat ca "unic" în modelul dvs. de date pentru a stoca ID-ul extern. Notă: numele câmpului `id` este rezervat pentru ID-ul intern al Twenty.
   </Accordion>
 
-  <Accordion title="How do I fix 'relation not found' errors?">
-    The Company you're referencing doesn't exist. Either import the Company first, or check that the domain/ID exactly matches an existing Company.
+  <Accordion title="Cum remediez erorile 'relation not found'?">
+    Compania la care faceți referire nu există. Importați mai întâi Compania sau verificați că domeniul/ID-ul corespunde exact unei Companii existente.
   </Accordion>
 </AccordionGroup>
 
 ## Depanare
 
-Having issues? Check:
+Aveți probleme? Verificați:
 
-* [How to Fix Import Errors](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
-* [How to Import Relations](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Field Mapping Reference](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+* [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Referință pentru maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping)

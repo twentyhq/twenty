@@ -1,149 +1,149 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: إرسال رسائل البريد الإلكتروني عبر سير العمل
+description: أرسل رسائل بريد إلكتروني مُخصّصة تلقائياً باستخدام إجراءات سير العمل.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+أرسل رسائل البريد الإلكتروني تلقائياً عند حدوث أحداث معيّنة في نظام إدارة علاقات العملاء (CRM) لديك—رحّب بجهات الاتصال الجديدة، وتابع الفرص، أو أخطر أعضاء الفريق.
 
-## Prerequisites
+## المتطلبات الأساسية
 
-Before you can send emails from workflows:
+قبل أن تتمكن من إرسال رسائل البريد الإلكتروني من سير العمل:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. وصّل حساب بريد إلكتروني ضمن **الإعدادات → الحسابات**
+2. تأكد من أن الحساب لديه أذونات إرسال مفعّلة
 
-## Basic Email Workflow
+## سير عمل أساسي للبريد الإلكتروني
 
-### Example: Welcome Email for New Contacts
+### مثال: رسالة ترحيب لجهات الاتصال الجديدة
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**الهدف**: إرسال رسالة ترحيب عند إضافة شخص جديد إلى نظام إدارة علاقات العملاء (CRM).
 
 **الإعداد**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **إنشاء سير عمل**: انتقل إلى **الإعدادات → سير العمل** ثم انقر **+ سير عمل جديد**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **إضافة مشغّل**: اختر **تم إنشاء سجل** → **الأشخاص**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **إضافة إجراء إرسال بريد إلكتروني**:
+   * انقر **+** لإضافة إجراء
+   * اختر **إرسال بريد إلكتروني**
+   * قم بتهيئة البريد الإلكتروني:
 
 | الحقل       | القيمة                                 |
 | ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `مرحبا بك في {{Your Company Name}}`    |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| **إلى**     | `{{trigger.object.email}}`             |
+| **الموضوع** | `مرحبا بك في {{Your Company Name}}`    |
+| **المحتوى** | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **الاختبار والتفعيل**: اختبر باستخدام سجل عينة، ثم فعِّل
 
-## Using Variables in Emails
+## استخدام المتغيرات في رسائل البريد الإلكتروني
 
-Reference data from previous steps using `{{variable}}` syntax:
+استدعِ البيانات من الخطوات السابقة باستخدام صيغة `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+مرحباً {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+شكراً لتواصلك معنا!
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+تم الآن إدراج شركتك، {{trigger.object.company.name}}، في نظامنا.
 
-Best regards,
-The Team
+أطيب التحيات،
+الفريق
 ```
 
-### Available Variables from Triggers
+### المتغيرات المتاحة من المشغّلات
 
-| نوع المُحفِز               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| نوع المُحفِز             | المتغيرات الشائعة                      |
+| ------------------------ | -------------------------------------- |
+| **تم إنشاء/تحديث السجل** | `{{trigger.object.fieldName}}`         |
+| **يدوي**                 | `{{trigger.selectedRecord.fieldName}}` |
+| **الويب هوك**            | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## متقدم: رسائل بريد إلكتروني مشروطة
 
-### Example: Different Emails Based on Lead Source
+### مثال: رسائل بريد إلكتروني مختلفة بناءً على مصدر العميل المحتمل
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**الإعداد**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**الهدف**: إرسال رسائل ترحيب مختلفة بناءً على مصدر قدوم العميل المحتمل.
 
 **الإعداد**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **المشغّل**: تم إنشاء سجل (الأشخاص)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **إضافة إجراء تصفية**:
+   * الشرط: `{{trigger.object.source}}` يساوي `"Website"`
+   * إذا كان صحيحاً → المتابعة إلى رسالة الترحيب الخاصة بالموقع الإلكتروني
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **فرع للمصادر الأخرى**:
+   * أنشئ فروعاً متوازية لمصادر مختلفة
+   * لكل فرع إجراء إرسال بريد إلكتروني خاص به
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## إرسال رسائل البريد الإلكتروني إلى عدة مستلمين
 
-## Scheduled Follow-up Emails
+### مثال: إشعار الفريق عند إغلاق الصفقة
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**الهدف**: إرسال بريد إلكتروني إلى مندوب المبيعات ومديره عند ربح فرصة.
 
 **الإعداد**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **المشغّل**: تم تحديث السجل (الفرص، المرحلة = "Closed Won")
 
-2. **Delay action**: Wait 3 days
+2. **البحث في السجلات**: اعثر على مدير مالك الفرصة
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **إرسال بريد إلكتروني #1**: إلى مالك الفرصة
+   * إلى: `{{trigger.object.owner.email}}`
+   * الموضوع: `تهانينا على إغلاق {{trigger.object.name}}!`
+
+4. **إرسال بريد إلكتروني #2**: إلى المدير
+   * إلى: `{{searchRecords.manager.email}}`
+   * الموضوع: `تم ربح الصفقة: {{trigger.object.name}}`
+
+## رسائل متابعة مجدولة
+
+### مثال: متابعة بعد 3 أيام من الاجتماع
+
+**الهدف**: إرسال رسالة متابعة عبر البريد الإلكتروني بعد 3 أيام من تسجيل اجتماع.
+
+**الإعداد**:
+
+1. **المشغّل**: تم إنشاء سجل (الأنشطة، النوع = "اجتماع")
+
+2. **إجراء تأخير**: الانتظار 3 أيام
+
+3. **إرسال البريد الإلكتروني**:
+   * إلى: مشارك الاجتماع
+   * الموضوع: متابعة لمحادثتنا
+   * المحتوى: الإشارة إلى تفاصيل الاجتماع من المشغّل
 
 ## أفضل الممارسات
 
-### Email Content
+### محتوى البريد الإلكتروني
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* اجعل سطور الموضوع موجزة وذات صلة
+* خصص الرسالة باسم المستلم
+* ضمّن دعوة واضحة للإجراء
+* اختبر رسائل البريد الإلكتروني قبل التفعيل
 
-### Deliverability
+### قابلية التسليم
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* لا ترسل عدداً كبيراً من الرسائل بسرعة كبيرة
+* استخدم تواقيع بريد إلكتروني احترافية
+* تجنب كلمات تُحفّز مرشحات البريد العشوائي
+* احرص على توفير خيارات إلغاء الاشتراك لرسائل التسويق الإلكترونية
 
 ### استكشاف الأخطاء وإصلاحها
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* تحقّق من أن حساب البريد الإلكتروني متصل وفعّال
+* تحقّق من صحة عنوان البريد الإلكتروني للمستلم
+* راجِع عمليات تشغيل سير العمل بحثاً عن رسائل الخطأ
+* اختبر باستخدام عنوان بريدك الإلكتروني أولاً
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **قريباً**: ستكون مرفقات البريد الإلكتروني متاحة في الربع الأول من 2026.
 </Note>
 
-## Related
+## ذات صلة
 
-* [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)

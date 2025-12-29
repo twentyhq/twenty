@@ -67,7 +67,7 @@ msgstr ": Przeszłość"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": Dzisiaj{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, one {{1} zadanie nie mogło zostać ponowione} few {{2} zada
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} dzień} few {{days} dni} many {{days} dni} other {{days} dnia}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} rok} few {{years} lata} many {{years} lat} other {{years} roku}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{currentRank} z {totalCount} w {objectLabelPlural}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dzień} few {{days} dni} many {{days} dni} other {{days} dni}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1067,7 +1074,7 @@ msgstr "Po upływie określonego czasu"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "Po lub równe"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1162,7 +1169,7 @@ msgstr ""
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr ""
+msgstr "AI nie jest skonfigurowane. Ustaw w swoim środowisku OPENAI_API_KEY, ANTHROPIC_API_KEY lub XAI_API_KEY."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1912,6 +1919,11 @@ msgstr "Tło"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
 msgstr "Kolory tła"
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
 
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
@@ -2745,7 +2757,7 @@ msgstr "Automatyczne tworzenie kontaktów"
 #. js-lingui-id: cByGGA
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Contact your admin to continue using Workflow or AI features."
-msgstr ""
+msgstr "Skontaktuj się ze swoim administratorem, aby nadal korzystać z funkcji przepływów pracy lub AI."
 
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3172,12 +3184,12 @@ msgstr "Kredyty według okresu"
 #. js-lingui-id: EABlI0
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
-msgstr ""
+msgstr "Kredyty zostały wyczerpane. Skontaktuj się z administratorem przestrzeni roboczej, aby dokonać uaktualnienia."
 
 #. js-lingui-id: JIXvMy
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
-msgstr ""
+msgstr "Kredyty zostały wyczerpane. Zaktualizuj swój plan, aby uzyskać więcej kredytów."
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4450,12 +4462,12 @@ msgstr "Włącz funkcje specyficzne dla modelu"
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End Trial Period"
-msgstr ""
+msgstr "Zakończ okres próbny"
 
 #. js-lingui-id: QEUZoG
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End trial period to continue using Workflow or AI features."
-msgstr ""
+msgstr "Zakończ okres próbny, aby nadal korzystać z funkcji przepływów pracy lub AI."
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5560,7 +5572,7 @@ msgstr "Czwarty"
 #. js-lingui-id: aUj1gh
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
-msgstr ""
+msgstr "Kredyty z darmowego okresu próbnego zostały wyczerpane. Wykup teraz subskrypcję, aby nadal korzystać z funkcji AI."
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5581,7 +5593,7 @@ msgstr "Pełny dostęp"
 #. js-lingui-id: xANKBj
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
-msgstr ""
+msgstr "Funkcje"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -6241,7 +6253,7 @@ msgstr "Zainstaluj i zarządzaj aplikacjami"
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
-msgstr ""
+msgstr "Zainstalowane aplikacje"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6366,12 +6378,12 @@ msgstr "Nieprawidłowa liczba"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "Nieprawidłowy adres URL"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "Nieprawidłowy adres URL. Kliknij edytuj, aby skonfigurować ten widget."
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6438,7 +6450,7 @@ msgstr "Jest"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "Jest po lub równe"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6533,7 +6545,7 @@ msgstr "Jest względny"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "Jest dzisiaj{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6861,7 +6873,7 @@ msgstr ""
 #. js-lingui-id: 5Kn+XX
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
-msgstr ""
+msgstr "Wyświetl zainstalowane aplikacje. Użyj filtra, aby wyszukać konkretną aplikację"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7053,7 +7065,7 @@ msgstr "Zarządzaj przepływami pracy"
 #. js-lingui-id: cbzOP7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Manage your app"
-msgstr ""
+msgstr "Zarządzaj swoją aplikacją"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -8153,6 +8165,7 @@ msgstr "Format liczb"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "Liczba miejsc po przecinku"
 
@@ -8237,7 +8250,7 @@ msgstr "Ustawienia uprawnień obiektów i pól"
 #. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects managed by this app"
-msgstr ""
+msgstr "Obiekty zarządzane przez tę aplikację"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -9124,7 +9137,7 @@ msgstr "Przeczytaj listę zmian"
 #. js-lingui-id: ibPuCP
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Read documentation"
-msgstr ""
+msgstr "Przeczytaj dokumentację"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9590,6 +9603,11 @@ msgstr "Rola została zaktualizowana pomyślnie"
 msgid "Roles"
 msgstr "Role"
 
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
+
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -9748,7 +9766,7 @@ msgstr "Szukaj agenta..."
 #. js-lingui-id: fGTI3o
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
-msgstr ""
+msgstr "Wyszukaj aplikację"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10201,7 +10219,7 @@ msgstr "funkcja bezserwerowa"
 #. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions powering this app"
-msgstr ""
+msgstr "Funkcje bezserwerowe obsługujące tę aplikację"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -11449,6 +11467,11 @@ msgstr "Generowanie narzędzia"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11876,7 +11899,7 @@ msgstr "Aktualizacja"
 #. js-lingui-id: 7aHRdp
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "Zaktualizuj plan"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12111,7 +12134,7 @@ msgstr "Zobacz szczegóły płatności"
 #. js-lingui-id: SXCuo2
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
-msgstr ""
+msgstr "Wyświetl dokumentację"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12593,7 +12616,7 @@ msgstr "Nie masz uprawnień do tworzenia rekordów dla tego obiektu"
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
-msgstr ""
+msgstr "Możesz utworzyć prywatną aplikację albo udostępnić ją innym"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

@@ -4,7 +4,6 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import graphqlTypeJson from 'graphql-type-json';
-import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -14,14 +13,33 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import type Stripe from 'stripe';
+
+// Serialized types for JSONB storage - uses Stripe's enum types but normalizes expandable fields
+// These avoid TypeORM's DeepPartialEntity issues with Stripe's expandable object types (e.g. Stripe.Account)
+export type AutomaticTaxJson = {
+  disabled_reason: Stripe.Subscription.AutomaticTax['disabled_reason'];
+  enabled: boolean;
+  liability: {
+    type: Stripe.Subscription.AutomaticTax.Liability.Type;
+    account?: string; // Normalized: always string ID, never expanded Stripe.Account
+  } | null;
+};
+
+export type CancellationDetailsJson = {
+  comment: string | null;
+  feedback: Stripe.Subscription.CancellationDetails.Feedback | null;
+  reason: Stripe.Subscription.CancellationDetails.Reason | null;
+};
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -136,10 +154,10 @@ export class BillingSubscriptionEntity {
   canceledAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  automaticTax: Stripe.Subscription.AutomaticTax | null;
+  automaticTax: AutomaticTaxJson | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  cancellationDetails: Stripe.Subscription.CancellationDetails | null;
+  cancellationDetails: CancellationDetailsJson | null;
 
   @Column({
     nullable: false,

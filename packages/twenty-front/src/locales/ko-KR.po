@@ -67,7 +67,7 @@ msgstr ": 과거"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": 오늘{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, other {{2}개의 작업을 재시도할 수 없습니다}}"
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, other {{days}일}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, other {{years}년}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{objectLabelPlural}에서 {totalCount}개 중 {currentRank}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days}일}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1067,7 +1074,7 @@ msgstr "설정된 시간 이후"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "이후 또는 같음"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1119,7 +1126,7 @@ msgstr "에이전트들"
 #. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
-msgstr ""
+msgstr "이 앱을 구동하는 에이전트"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1162,7 +1169,7 @@ msgstr ""
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr ""
+msgstr "AI가 구성되지 않았습니다. 환경에 OPENAI_API_KEY, ANTHROPIC_API_KEY 또는 XAI_API_KEY를 설정하세요."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1913,6 +1920,11 @@ msgstr "배경"
 msgid "Background Colors"
 msgstr "배경색"
 
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
+
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
@@ -2515,7 +2527,7 @@ msgstr "명령 메뉴"
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Commands copied to clipboard"
-msgstr ""
+msgstr "명령어가 클립보드에 복사되었습니다"
 
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2745,7 +2757,7 @@ msgstr "연락처 자동 생성"
 #. js-lingui-id: cByGGA
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Contact your admin to continue using Workflow or AI features."
-msgstr ""
+msgstr "워크플로 또는 AI 기능을 계속 사용하려면 관리자에게 문의하세요."
 
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2852,7 +2864,7 @@ msgstr "코드 복사"
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Copy commands"
-msgstr ""
+msgstr "명령어 복사"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3021,7 +3033,7 @@ msgstr "워크스페이스 만들기"
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Create an application"
-msgstr ""
+msgstr "응용 프로그램 생성"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3172,12 +3184,12 @@ msgstr "기간별 크레딧"
 #. js-lingui-id: EABlI0
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
-msgstr ""
+msgstr "크레딧이 소진되었습니다. 업그레이드를 위해 워크스페이스 관리자에게 문의하세요."
 
 #. js-lingui-id: JIXvMy
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
-msgstr ""
+msgstr "크레딧이 소진되었습니다. 더 많은 크레딧을 받으려면 요금제를 업그레이드하세요."
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4450,12 +4462,12 @@ msgstr "모델별 기능 활성화"
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End Trial Period"
-msgstr ""
+msgstr "체험 기간 종료"
 
 #. js-lingui-id: QEUZoG
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End trial period to continue using Workflow or AI features."
-msgstr ""
+msgstr "워크플로 또는 AI 기능을 계속 사용하려면 체험 기간을 종료하세요."
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5560,7 +5572,7 @@ msgstr "넷째"
 #. js-lingui-id: aUj1gh
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
-msgstr ""
+msgstr "무료 체험 크레딧이 소진되었습니다. AI 기능을 계속 사용하려면 지금 구독하세요."
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5581,7 +5593,7 @@ msgstr "전체 접근"
 #. js-lingui-id: xANKBj
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
-msgstr ""
+msgstr "기능"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -6241,7 +6253,7 @@ msgstr "애플리케이션 설치 및 관리"
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
-msgstr ""
+msgstr "설치된 애플리케이션"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6366,12 +6378,12 @@ msgstr "유효하지 않은 숫자입니다"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "잘못된 URL"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "잘못된 URL입니다. 이 위젯을 설정하려면 편집을 클릭하세요."
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6438,7 +6450,7 @@ msgstr "임"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "이후 또는 같음"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6533,7 +6545,7 @@ msgstr "상대적임"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "오늘{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6861,7 +6873,7 @@ msgstr ""
 #. js-lingui-id: 5Kn+XX
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
-msgstr ""
+msgstr "설치된 애플리케이션 목록입니다. 특정 애플리케이션을 검색하려면 필터를 사용하세요."
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7053,7 +7065,7 @@ msgstr "워크플로우 관리"
 #. js-lingui-id: cbzOP7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Manage your app"
-msgstr ""
+msgstr "앱 관리"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -8153,6 +8165,7 @@ msgstr "숫자 형식"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "소수점 자리수"
 
@@ -8237,7 +8250,7 @@ msgstr "객체 및 필드 권한 설정"
 #. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects managed by this app"
-msgstr ""
+msgstr "이 앱에서 관리하는 객체"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -9124,7 +9137,7 @@ msgstr "변경 로그 보기"
 #. js-lingui-id: ibPuCP
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Read documentation"
-msgstr ""
+msgstr "문서 읽기"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9590,6 +9603,11 @@ msgstr "역할이 성공적으로 업데이트되었습니다."
 msgid "Roles"
 msgstr "역할"
 
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
+
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -9748,7 +9766,7 @@ msgstr "에이전트를 검색하세요..."
 #. js-lingui-id: fGTI3o
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
-msgstr ""
+msgstr "애플리케이션 검색"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10201,7 +10219,7 @@ msgstr "서버리스 함수"
 #. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions powering this app"
-msgstr ""
+msgstr "이 앱을 구동하는 서버리스 함수"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -11449,6 +11467,11 @@ msgstr "도구 생성"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11876,7 +11899,7 @@ msgstr "업그레이드"
 #. js-lingui-id: 7aHRdp
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "요금제 업그레이드"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12111,7 +12134,7 @@ msgstr "청구 세부 정보 보기"
 #. js-lingui-id: SXCuo2
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
-msgstr ""
+msgstr "문서 보기"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12593,7 +12616,7 @@ msgstr "이 개체에 기록을 생성할 수 있는 권한이 없습니다"
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
-msgstr ""
+msgstr "개인용 앱을 만들거나 다른 사람과 공유할 수 있습니다."
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
