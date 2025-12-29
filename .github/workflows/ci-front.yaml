@@ -130,7 +130,7 @@ jobs:
         run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     timeout-minutes: 30
-    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
+    if: false
     needs: front-sb-build
     runs-on: depot-ubuntu-24.04-8
     env:
@@ -339,7 +339,6 @@ jobs:
         changed-files-check,
         front-task,
         front-build,
-        front-chromatic-deployment,
         merge-reports-and-check-coverage,
         front-sb-test,
         front-sb-build,
