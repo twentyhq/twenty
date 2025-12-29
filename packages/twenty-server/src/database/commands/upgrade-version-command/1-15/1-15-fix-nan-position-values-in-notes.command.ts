@@ -14,7 +14,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 @Command({
   name: 'upgrade:1-15:fix-nan-position-values-in-notes',
-  description: 'Fix NaN position values in notes by replacing them with 0',
+  description: 'Fix NaN position values in notes by replacing them with 2',
 })
 export class FixNanPositionValuesInNotesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(
