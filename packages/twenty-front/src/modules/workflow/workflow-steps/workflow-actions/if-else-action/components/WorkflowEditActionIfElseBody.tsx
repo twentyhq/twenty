@@ -94,14 +94,52 @@ export const WorkflowEditActionIfElseBody = ({
       return;
     }
 
+    const updatedStepFilterGroups = newFilterSettings.stepFilterGroups ?? [];
+    const updatedStepFilters = newFilterSettings.stepFilters ?? [];
+
+    const existingBranchFilterGroupIds = new Set(
+      branches.map((b) => b.filterGroupId).filter(isDefined),
+    );
+
+    const remainingFilterGroupIds = new Set(
+      updatedStepFilterGroups.map((g) => g.id),
+    );
+
+    const branchesToDelete = branches.filter((branch, branchIndex) => {
+      const isIfBranch = branchIndex === 0;
+      const isElseBranch =
+        branchIndex === branches.length - 1 && !isDefined(branch.filterGroupId);
+
+      if (isIfBranch || isElseBranch) {
+        return false;
+      }
+
+      return (
+        isDefined(branch.filterGroupId) &&
+        existingBranchFilterGroupIds.has(branch.filterGroupId) &&
+        !remainingFilterGroupIds.has(branch.filterGroupId)
+      );
+    });
+
+    let updatedBranches = branches;
+    if (branchesToDelete.length > 0) {
+      updatedBranches = branches.filter(
+        (branch) => !branchesToDelete.includes(branch),
+      );
+    }
+
+    setCurrentStepFilterGroups(updatedStepFilterGroups);
+    setCurrentStepFilters(updatedStepFilters);
+
     actionOptions.onActionUpdate({
       ...action,
       settings: {
         ...action.settings,
         input: {
           ...action.settings.input,
-          stepFilterGroups: newFilterSettings.stepFilterGroups ?? [],
-          stepFilters: newFilterSettings.stepFilters ?? [],
+          stepFilterGroups: updatedStepFilterGroups,
+          stepFilters: updatedStepFilters,
+          branches: updatedBranches,
         },
       },
     });
