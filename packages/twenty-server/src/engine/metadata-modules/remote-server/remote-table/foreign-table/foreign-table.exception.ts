@@ -30,7 +30,8 @@ export class ForeignTableException extends CustomException<ForeignTableException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? getForeignTableExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ??
+        getForeignTableExceptionUserFriendlyMessage(code),
     });
   }
 }

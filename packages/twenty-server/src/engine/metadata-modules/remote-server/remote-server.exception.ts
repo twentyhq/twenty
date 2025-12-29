@@ -39,7 +39,8 @@ export class RemoteServerException extends CustomException<RemoteServerException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? getRemoteServerExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ??
+        getRemoteServerExceptionUserFriendlyMessage(code),
     });
   }
 }
