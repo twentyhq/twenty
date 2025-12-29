@@ -177,6 +177,10 @@ export const SettingsObjectFieldItemTableRow = ({
       ? relationObjectMetadataItem?.labelSingular
       : relationObjectMetadataItem?.labelPlural;
 
+  console.log(fieldMetadataItem.name, {
+    app: fieldMetadataItem.applicationId,
+    custom: fieldMetadataItem.isCustom,
+  });
   return (
     <StyledObjectFieldTableRow
       onClick={mode === 'view' ? navigateToFieldEdit : undefined}
@@ -204,9 +208,8 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsItemTypeTag
           item={{
+            applicationId: fieldMetadataItem.applicationId,
             isCustom: fieldMetadataItem.isCustom ?? undefined,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
           }}
         />
       </TableCell>
