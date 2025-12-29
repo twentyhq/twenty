@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -26,7 +25,6 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
     WorkflowCommonModule,
     AiAgentRoleModule,
     WorkspaceCacheModule,
-    FeatureFlagModule,
     NestjsQueryTypeOrmModule.forFeature([
       ObjectMetadataEntity,
       AgentEntity,
