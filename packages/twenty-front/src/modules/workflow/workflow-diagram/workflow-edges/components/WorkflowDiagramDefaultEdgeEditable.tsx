@@ -107,6 +107,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             sourceX={sourceX}
             sourceY={sourceY}
             position={data.labelOptions.position}
+            centerX={labelX}
+            centerY={labelY}
           >
             <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
           </WorkflowDiagramEdgeLabelContainer>
