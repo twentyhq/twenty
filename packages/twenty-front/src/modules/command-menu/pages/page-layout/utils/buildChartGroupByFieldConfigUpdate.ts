@@ -1,8 +1,6 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
-import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,9 +38,18 @@ export const buildChartGroupByFieldConfigUpdate = <
     [subFieldNameKey]: subFieldName,
   };
 
-  const isBarChart = isBarChartConfiguration(configuration);
-  const isLineChart = isLineChartConfiguration(configuration);
-  const isPieChart = isPieChartConfiguration(configuration);
+  const isBarChart = isWidgetConfigurationOfType(
+    configuration,
+    'BarChartConfiguration',
+  );
+  const isLineChart = isWidgetConfigurationOfType(
+    configuration,
+    'LineChartConfiguration',
+  );
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
 
   if (isPrimaryAxis) {
     const existingOrderBy =

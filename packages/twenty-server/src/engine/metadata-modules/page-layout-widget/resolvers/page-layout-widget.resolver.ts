@@ -26,7 +26,6 @@ import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-la
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
-import { injectWidgetConfigurationDiscriminator } from 'src/engine/metadata-modules/page-layout-widget/utils/inject-widget-configuration-discriminator.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
@@ -109,9 +108,6 @@ export class PageLayoutWidgetResolver {
 
   @ResolveField(() => WidgetConfiguration, { nullable: true })
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
-    return injectWidgetConfigurationDiscriminator(
-      widget.type,
-      widget.configuration,
-    );
+    return widget.configuration;
   }
 }

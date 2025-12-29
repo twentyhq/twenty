@@ -28,7 +28,7 @@ export const widgetTypeSchema = z.enum([
 
 // Graph configuration schema for AGGREGATE type (KPI numbers)
 const aggregateChartConfigSchema = z.object({
-  graphType: z.literal(GraphType.AGGREGATE),
+  graphType: z.literal(GraphType.AGGREGATE_CHART),
   aggregateFieldMetadataId: z
     .string()
     .uuid()
@@ -47,7 +47,7 @@ const aggregateChartConfigSchema = z.object({
 
 // Graph configuration schema for BAR charts
 const barChartConfigSchema = z.object({
-  graphType: z.enum([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR]),
+  graphType: z.literal(GraphType.BAR_CHART),
   aggregateFieldMetadataId: z
     .string()
     .uuid()
@@ -63,12 +63,17 @@ const barChartConfigSchema = z.object({
     .optional(),
   displayDataLabel: z.boolean().optional().default(false),
   displayLegend: z.boolean().optional().default(true),
+  layout: z
+    .enum(['VERTICAL', 'HORIZONTAL'])
+    .optional()
+    .default('VERTICAL')
+    .describe('Layout orientation for bar charts'),
   filter: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Graph configuration schema for LINE charts
 const lineChartConfigSchema = z.object({
-  graphType: z.literal(GraphType.LINE),
+  graphType: z.literal(GraphType.LINE_CHART),
   aggregateFieldMetadataId: z.string().uuid(),
   aggregateOperation: z.nativeEnum(AggregateOperations),
   primaryAxisGroupByFieldMetadataId: z.string().uuid(),
@@ -82,7 +87,7 @@ const lineChartConfigSchema = z.object({
 
 // Graph configuration schema for PIE charts
 const pieChartConfigSchema = z.object({
-  graphType: z.literal(GraphType.PIE),
+  graphType: z.literal(GraphType.PIE_CHART),
   aggregateFieldMetadataId: z.string().uuid(),
   aggregateOperation: z.nativeEnum(AggregateOperations),
   groupByFieldMetadataId: z.string().uuid().describe('Field UUID to slice by'),
@@ -116,4 +121,4 @@ export const widgetConfigurationSchema = z
   .describe('Widget configuration - structure depends on widget type');
 
 // Export enums for documentation
-export { AggregateOperations, GraphType };
+export { AggregateOperations, GraphType as GraphType };

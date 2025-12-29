@@ -1,10 +1,10 @@
 import { GraphDataLabel } from '@/page-layout/widgets/graph/components/GraphDataLabel';
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeBarChartGroupedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartGroupedLabels';
 import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import { type BarCustomLayerProps, type BarDatum } from '@nivo/bar';
+import { BarChartLayout } from '~/generated/graphql';
 
 type CustomTotalsLayerProps = Pick<BarCustomLayerProps<BarDatum>, 'bars'> & {
   formatValue?: (value: number) => string;
