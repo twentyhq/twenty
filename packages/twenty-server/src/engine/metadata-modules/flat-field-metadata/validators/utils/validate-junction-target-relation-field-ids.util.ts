@@ -26,7 +26,8 @@ export const validateJunctionTargetRelationFieldIds = ({
     return errors;
   }
 
-  const junctionTargetRelationFieldIds = settings.junctionTargetRelationFieldIds;
+  const junctionTargetRelationFieldIds =
+    settings.junctionTargetRelationFieldIds;
 
   // junctionTargetRelationFieldIds should only be set on ONE_TO_MANY relations
   if (settings.relationType !== RelationType.ONE_TO_MANY) {
@@ -93,7 +94,8 @@ export const validateJunctionTargetRelationFieldIds = ({
     }
 
     // MORPH_RELATION fields are polymorphic and don't require MANY_TO_ONE check
-    const isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
+    const isMorphRelation =
+      targetField.type === FieldMetadataType.MORPH_RELATION;
 
     if (!isMorphRelation) {
       // For regular RELATION fields, must be MANY_TO_ONE

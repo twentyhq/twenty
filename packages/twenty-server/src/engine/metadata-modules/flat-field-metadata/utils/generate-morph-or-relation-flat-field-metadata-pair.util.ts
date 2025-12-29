@@ -80,7 +80,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const { relationCreationPayload } = createFieldInput;
 
   const junctionTargetRelationFieldIds =
-    extractJunctionTargetRelationFieldIdsFromSettings(createFieldInput.settings);
+    extractJunctionTargetRelationFieldIdsFromSettings(
+      createFieldInput.settings,
+    );
 
   const sourceFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({

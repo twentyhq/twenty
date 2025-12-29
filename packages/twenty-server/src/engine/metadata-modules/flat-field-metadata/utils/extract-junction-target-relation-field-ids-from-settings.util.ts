@@ -18,7 +18,8 @@ export const extractJunctionTargetRelationFieldIdsFromSettings = (
     return undefined;
   }
 
-  const junctionTargetRelationFieldIds = settings.junctionTargetRelationFieldIds;
+  const junctionTargetRelationFieldIds =
+    settings.junctionTargetRelationFieldIds;
 
   if (!Array.isArray(junctionTargetRelationFieldIds)) {
     return undefined;
@@ -31,4 +32,3 @@ export const extractJunctionTargetRelationFieldIdsFromSettings = (
 
   return junctionTargetRelationFieldIds;
 };
-
