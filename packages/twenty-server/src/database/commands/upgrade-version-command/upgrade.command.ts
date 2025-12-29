@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -18,6 +18,8 @@ import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-co
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-delete-removed-agents.command';
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
+import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
+import { BackfillUpdatedByViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-view-fields.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -49,6 +51,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.14 Commands
     protected readonly updateCreatedByEnumCommand: UpdateCreatedByEnumCommand,
     protected readonly deleteRemovedAgentsCommand: DeleteRemovedAgentsCommand,
+
+    // 1.15 Commands
+    protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
+    protected readonly backfillUpdatedByViewFieldsCommand: BackfillUpdatedByViewFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -75,10 +81,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.deleteRemovedAgentsCommand,
     ];
 
+    const commands_1150: VersionCommands = [
+      this.backfillUpdatedByFieldCommand,
+      this.backfillUpdatedByViewFieldsCommand,
+    ];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
       '1.14.0': commands_1140,
+      '1.15.0': commands_1150,
     };
   }
 
