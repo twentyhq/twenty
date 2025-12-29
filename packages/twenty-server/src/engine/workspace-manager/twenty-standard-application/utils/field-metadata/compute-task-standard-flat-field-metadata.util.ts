@@ -235,7 +235,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       description: 'The workspace member who last updated the record',
       icon: 'IconUserCircle',
       isUIReadOnly: true,
-      isNullable: true,
+      isNullable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

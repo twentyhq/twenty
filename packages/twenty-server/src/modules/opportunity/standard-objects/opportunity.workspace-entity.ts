@@ -137,9 +137,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCircle',
     description: msg`The workspace member who last updated the record`,
   })
-  @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()
-  updatedBy: ActorMetadata | null;
+  updatedBy: ActorMetadata;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
