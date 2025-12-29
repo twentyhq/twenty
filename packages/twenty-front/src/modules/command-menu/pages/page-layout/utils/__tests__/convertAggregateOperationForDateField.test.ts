@@ -1,9 +1,9 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { TEST_BAR_CHART_CONFIGURATION } from '~/testing/mock-data/widget-configurations';
-import { convertAggregateOperationForDateField } from '../convertAggregateOperationForDateField';
 
 const createMockObjectMetadataItem = (
   fields: { id: string; type: FieldMetadataType }[],

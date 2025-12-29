@@ -1,3 +1,4 @@
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import {
   ALL_CHART_CONFIGURATIONS,
   TEST_BAR_CHART_CONFIGURATION,
@@ -5,7 +6,6 @@ import {
   TEST_PIE_CHART_CONFIGURATION,
   TEST_STANDALONE_RICH_TEXT_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { isWidgetConfigurationOfType } from '../isWidgetConfigurationOfType';
 
 describe('isWidgetConfigurationOfType', () => {
   it('returns true when __typename matches', () => {

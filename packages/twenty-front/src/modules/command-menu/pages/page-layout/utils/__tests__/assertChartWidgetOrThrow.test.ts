@@ -1,10 +1,10 @@
+import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
 import {
   ALL_CHART_CONFIGURATIONS,
   createTestWidget,
   TEST_BAR_CHART_CONFIGURATION,
   TEST_IFRAME_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { assertChartWidgetOrThrow } from '../assertChartWidgetOrThrow';
 
 describe('assertChartWidgetOrThrow', () => {
   it('does not throw for valid chart widget', () => {

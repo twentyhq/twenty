@@ -1,3 +1,4 @@
+import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
 import {
   createTestWidget,
   TEST_BAR_CHART_CONFIGURATION,
@@ -6,7 +7,6 @@ import {
   TEST_LINE_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { isChartWidget } from '../isChartWidget';
 
 describe('isChartWidget', () => {
   it('returns true for widget with BarChartConfiguration', () => {

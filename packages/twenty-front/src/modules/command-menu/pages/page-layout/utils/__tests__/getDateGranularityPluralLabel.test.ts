@@ -1,5 +1,5 @@
+import { getDateGranularityPluralLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { getDateGranularityPluralLabel } from '../getDateGranularityPluralLabel';
 
 describe('getDateGranularityPluralLabel', () => {
   it('returns "days" for DAY granularity', () => {

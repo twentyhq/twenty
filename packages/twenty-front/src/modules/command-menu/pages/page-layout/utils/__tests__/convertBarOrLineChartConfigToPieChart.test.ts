@@ -1,10 +1,10 @@
+import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { type BarChartConfiguration } from '~/generated/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_LINE_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { convertBarOrLineChartConfigToPieChart } from '../convertBarOrLineChartConfigToPieChart';
 
 describe('convertBarOrLineChartConfigToPieChart', () => {
   it('maps bar chart fields to pie chart equivalents', () => {

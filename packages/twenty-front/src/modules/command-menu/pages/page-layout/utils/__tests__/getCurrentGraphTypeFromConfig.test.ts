@@ -1,5 +1,6 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
+import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
@@ -8,7 +9,6 @@ import {
   TEST_LINE_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { getCurrentGraphTypeFromConfig } from '../getCurrentGraphTypeFromConfig';
 
 describe('getCurrentGraphTypeFromConfig', () => {
   it('returns VERTICAL_BAR for bar chart with vertical layout', () => {

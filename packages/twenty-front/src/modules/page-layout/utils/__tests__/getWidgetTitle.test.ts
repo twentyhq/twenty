@@ -1,3 +1,4 @@
+import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
@@ -8,7 +9,6 @@ import {
   TEST_PIE_CHART_CONFIGURATION,
   TEST_STANDALONE_RICH_TEXT_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { getWidgetTitle } from '../getWidgetTitle';
 
 describe('getWidgetTitle', () => {
   it('returns correct title for aggregate chart', () => {

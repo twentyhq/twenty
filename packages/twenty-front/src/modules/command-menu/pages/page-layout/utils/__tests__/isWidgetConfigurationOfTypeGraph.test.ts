@@ -1,10 +1,10 @@
+import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import {
   ALL_CHART_CONFIGURATIONS,
   TEST_FIELDS_CONFIGURATION,
   TEST_IFRAME_CONFIGURATION,
   TEST_STANDALONE_RICH_TEXT_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
-import { isWidgetConfigurationOfTypeGraph } from '../isWidgetConfigurationOfTypeGraph';
 
 describe('isWidgetConfigurationOfTypeGraph', () => {
   it('returns true for all chart configurations', () => {
