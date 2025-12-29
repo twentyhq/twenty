@@ -26,6 +26,17 @@ import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
+const StyledSearchAndFilterContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+const StyledSearchInput = styled(SettingsTextInput)`
+  flex: 1;
+`;
+
 const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTableItem> =
   {
     tableId: 'settingsObjectDetail',
@@ -54,17 +65,6 @@ const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTa
       orderBy: 'AscNullsLast',
     },
   };
-
-const StyledSearchAndFilterContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-const StyledSearchInput = styled(SettingsTextInput)`
-  flex: 1;
-`;
 
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: ObjectMetadataItem;
