@@ -2,11 +2,11 @@ import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
-import { STANDARD_OBJECTS } from 'src/engine/core-modules/application/constants/standard-object.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CALENDAR_EVENT_STANDARD_FIELD_IDS,
@@ -42,7 +42,6 @@ export const calendarEventsAllView = ({
     key: 'INDEX',
     position: 0,
     icon: 'IconCalendar',
-    kanbanFieldMetadataId: '',
     calendarFieldMetadataId:
       calendarEventObjectMetadata.fields.find(
         (field) =>

@@ -1,0 +1,173 @@
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
+
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+
+export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
+  now,
+  objectName,
+  workspaceId,
+  standardObjectMetadataRelatedEntityIds,
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<
+  CreateStandardFieldArgs<'workflowAutomatedTrigger', FieldMetadataType>,
+  'context'
+>): Record<
+  AllStandardObjectFieldName<'workflowAutomatedTrigger'>,
+  FlatFieldMetadata
+> => ({
+  id: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'id',
+      type: FieldMetadataType.UUID,
+      label: 'Id',
+      description: 'Id',
+      icon: 'Icon123',
+      isSystem: true,
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'uuid',
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  createdAt: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'createdAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Creation date',
+      description: 'Creation date',
+      icon: 'IconCalendar',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  updatedAt: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'updatedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Last update',
+      description: 'Last time the record was changed',
+      icon: 'IconCalendarClock',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  deletedAt: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'deletedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Deleted at',
+      description: 'Date when the record was deleted',
+      icon: 'IconCalendarMinus',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  type: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'type',
+      type: FieldMetadataType.SELECT,
+      label: 'Automated Trigger Type',
+      description: 'The workflow automated trigger type',
+      icon: 'IconSettingsAutomation',
+      isNullable: false,
+      isUIReadOnly: true,
+      options: [
+        {
+          value: 'DATABASE_EVENT',
+          label: 'Database Event',
+          position: 0,
+          color: 'green',
+        },
+        { value: 'CRON', label: 'Cron', position: 1, color: 'blue' },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  settings: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'settings',
+      type: FieldMetadataType.RAW_JSON,
+      label: 'Settings',
+      description: 'The workflow automated trigger settings',
+      icon: 'IconSettings',
+      isNullable: false,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  workflow: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'workflow',
+      label: 'Workflow',
+      description: 'WorkflowAutomatedTrigger workflow',
+      icon: 'IconSettingsAutomation',
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'workflow',
+      targetFieldName: 'automatedTriggers',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+});

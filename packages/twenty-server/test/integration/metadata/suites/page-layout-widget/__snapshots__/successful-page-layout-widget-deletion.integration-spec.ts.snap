@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout widget deletion should succeed should soft delete and restore a page layout widget 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": Any<String>,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Widget To Delete",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget deletion should succeed should soft delete and restore a page layout widget 2`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Widget To Delete",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;

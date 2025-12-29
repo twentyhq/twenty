@@ -40,6 +40,7 @@ export const useUpdateActivityTargetFromCell = ({
       joinObjectNameSingular === ''
         ? activityObjectNameSingular
         : joinObjectNameSingular,
+    shouldMatchRootQueryFilter: true,
   });
 
   const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({

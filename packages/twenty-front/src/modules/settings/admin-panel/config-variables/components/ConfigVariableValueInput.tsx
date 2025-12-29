@@ -41,7 +41,7 @@ export const ConfigVariableValueInput = ({
           options={variable.options}
           disabled={disabled}
           placeholder={
-            disabled ? 'Undefined' : t`Enter a value to store in database`
+            disabled ? t`Undefined` : t`Enter a value to store in database`
           }
         />
       ) : (

@@ -9,8 +9,8 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
-import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,

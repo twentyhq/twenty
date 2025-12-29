@@ -7,7 +7,7 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { classifyMetadataError } from '../utils/classify-metadata-error.util';
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -25,6 +25,10 @@ export const useMetadataErrorHandler = () => {
     routeTrigger: t`route trigger`,
     role: t`role`,
     roleTarget: t`role target`,
+    agent: t`agent`,
+    pageLayout: t`page layout`,
+    pageLayoutTab: t`page layout tab`,
+    pageLayoutWidget: t`page layout widget`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(

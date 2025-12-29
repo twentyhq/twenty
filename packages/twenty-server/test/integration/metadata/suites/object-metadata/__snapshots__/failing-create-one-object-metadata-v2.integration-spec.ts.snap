@@ -5,6 +5,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -67,6 +68,22 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -226,7 +243,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -325,6 +342,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
+              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -337,6 +355,9 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -589,17 +610,42 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -622,6 +668,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -684,6 +731,22 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -843,7 +906,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -942,6 +1005,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
+              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -954,6 +1018,9 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -1206,17 +1273,42 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -1250,6 +1342,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -1312,6 +1405,22 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -1471,7 +1580,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -1570,6 +1679,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
+              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -1582,6 +1692,9 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -1834,17 +1947,42 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -1867,6 +2005,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -1929,6 +2068,22 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2088,7 +2243,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2187,6 +2342,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
+              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -2199,6 +2355,9 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -2451,17 +2610,42 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -2495,6 +2679,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -2557,6 +2742,22 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2716,7 +2917,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2828,6 +3029,9 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -3080,17 +3284,42 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -3113,6 +3342,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -3175,6 +3405,22 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -3334,7 +3580,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -3446,6 +3692,9 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -3698,17 +3947,42 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -3731,6 +4005,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -3793,6 +4068,22 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -3948,7 +4239,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is too long",
               "userFriendlyMessage": "Name is too long",
-              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "value": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -3958,7 +4249,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -4081,6 +4372,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
               "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
@@ -4093,6 +4385,9 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -4345,17 +4640,42 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -4378,6 +4698,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -4440,6 +4761,22 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -4599,7 +4936,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -4698,6 +5035,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "μ",
             },
           ],
@@ -4710,6 +5048,9 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -4962,17 +5303,42 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -4995,6 +5361,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -5057,6 +5424,22 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5216,7 +5599,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5314,7 +5697,8 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "users",
             },
           ],
@@ -5327,6 +5711,9 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -5579,17 +5966,42 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -5623,6 +6035,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -5685,6 +6098,22 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5844,7 +6273,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5943,11 +6372,13 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],
@@ -5960,6 +6391,9 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -6212,17 +6646,42 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -6245,6 +6704,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -6307,6 +6767,22 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -6462,13 +6938,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
               "code": "INVALID_FIELD_INPUT",
               "message": "Name should be in camelCase",
               "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
+              "value": "targetA a",
             },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "a a",
+              "value": "targetA a",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -6478,7 +6954,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "a a",
+            "name": "targetA a",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -6625,11 +7101,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "a a",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "a a",
             },
           ],
@@ -6642,6 +7120,9 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -6894,17 +7375,42 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -6927,6 +7433,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -6989,6 +7496,22 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -7141,18 +7664,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
-              "value": "",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "",
-            },
-            {
               "code": "OBJECT_METADATA_NOT_FOUND",
               "message": "Relation target object metadata not found",
               "userFriendlyMessage": "Object targeted by the relation not found",
@@ -7160,7 +7671,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "",
+            "name": "target",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -7307,11 +7818,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
               "value": "",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "",
             },
           ],
@@ -7324,6 +7837,9 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -7576,17 +8092,42 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -7609,6 +8150,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -7686,1296 +8228,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "deletedAt",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "createdBy",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "position",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "searchVector",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "timelineActivities",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "favorites",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "attachments",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "noteTargets",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "taskTargets",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-      ],
-      "index": [
-        {
-          "errors": [
-            {
-              "code": "INDEX_OBJECT_NOT_FOUND",
-              "message": "Could not find index related object metadata",
-              "userFriendlyMessage": "Index related object not found",
-            },
-            {
-              "code": "INDEX_FIELD_NOT_FOUND",
-              "message": "Could not find index field related field metadata",
-              "userFriendlyMessage": "Field referenced in index does not exist",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "IDX_e895f7d7a9fc30bad070509afab",
-          },
-          "status": "fail",
-          "type": "create_index",
-        },
-      ],
-      "objectMetadata": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "namePlural": "listingas",
-            "nameSingular": "μ",
-          },
-          "status": "fail",
-          "type": "create_object",
-        },
-      ],
-      "role": [],
-      "roleTarget": [],
-      "routeTrigger": [],
-      "serverlessFunction": [],
-      "view": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Object metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view",
-        },
-      ],
-      "viewField": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-      ],
-      "viewFilter": [],
-      "viewGroup": [],
-    },
-    "message": "Validation failed for 0 object(s) and 0 field(s)",
-    "summary": {
-      "invalidCronTrigger": 0,
-      "invalidDatabaseEventTrigger": 0,
-      "invalidFieldMetadata": 0,
-      "invalidIndex": 0,
-      "invalidObjectMetadata": 0,
-      "invalidRole": 0,
-      "invalidRoleTarget": 0,
-      "invalidRouteTrigger": 0,
-      "invalidServerlessFunction": 0,
-      "invalidView": 0,
-      "invalidViewField": 0,
-      "invalidViewFilter": 0,
-      "invalidViewGroup": 0,
-      "totalErrors": 0,
-    },
-    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
-  },
-  "message": "Multiple validation errors occurred while creating object",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`Object metadata creation should fail v2 when nameSingular is a reserved keyword 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "cronTrigger": [],
-      "databaseEventTrigger": [],
-      "fieldMetadata": [
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "id",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "name",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "createdAt",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "updatedAt",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "deletedAt",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "createdBy",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "position",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "searchVector",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "timelineActivities",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "favorites",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "attachments",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "noteTargets",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "taskTargets",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "user",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "user",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "user",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "user",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "user",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-      ],
-      "index": [
-        {
-          "errors": [
-            {
-              "code": "INDEX_OBJECT_NOT_FOUND",
-              "message": "Could not find index related object metadata",
-              "userFriendlyMessage": "Index related object not found",
-            },
-            {
-              "code": "INDEX_FIELD_NOT_FOUND",
-              "message": "Could not find index field related field metadata",
-              "userFriendlyMessage": "Field referenced in index does not exist",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "IDX_00aaf7dba3ae2d70218bdebd383",
-          },
-          "status": "fail",
-          "type": "create_index",
-        },
-      ],
-      "objectMetadata": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "value": "user",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "namePlural": "listingas",
-            "nameSingular": "user",
-          },
-          "status": "fail",
-          "type": "create_object",
-        },
-      ],
-      "role": [],
-      "roleTarget": [],
-      "routeTrigger": [],
-      "serverlessFunction": [],
-      "view": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Object metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view",
-        },
-      ],
-      "viewField": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "viewId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_view_field",
-        },
-      ],
-      "viewFilter": [],
-      "viewGroup": [],
-    },
-    "message": "Validation failed for 0 object(s) and 0 field(s)",
-    "summary": {
-      "invalidCronTrigger": 0,
-      "invalidDatabaseEventTrigger": 0,
-      "invalidFieldMetadata": 0,
-      "invalidIndex": 0,
-      "invalidObjectMetadata": 0,
-      "invalidRole": 0,
-      "invalidRoleTarget": 0,
-      "invalidRouteTrigger": 0,
-      "invalidServerlessFunction": 0,
-      "invalidView": 0,
-      "invalidViewField": 0,
-      "invalidViewFilter": 0,
-      "invalidViewGroup": 0,
-      "totalErrors": 0,
-    },
-    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
-  },
-  "message": "Multiple validation errors occurred while creating object",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`Object metadata creation should fail v2 when nameSingular is an empty string 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "nameSingular has failed the name validation check, nameSingular should not be empty",
-  "name": "UserInputError",
-}
-`;
-
-exports[`Object metadata creation should fail v2 when nameSingular is not camelCased 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "cronTrigger": [],
-      "databaseEventTrigger": [],
-      "fieldMetadata": [
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "id",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "name",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "createdAt",
-            "objectMetadataId": Any<String>,
-          },
-          "status": "fail",
-          "type": "create_field",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "updatedAt",
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9131,13 +8384,13 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
               "code": "INVALID_FIELD_INPUT",
               "message": "Name should be in camelCase",
               "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
+              "value": "targetΜ",
             },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "Not_Camel_Case",
+              "value": "targetΜ",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -9147,7 +8400,1404 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "Not_Camel_Case",
+            "name": "targetΜ",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "μ",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "μ",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "μ",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "μ",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_e895f7d7a9fc30bad070509afab",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "namePlural": "listingas",
+            "nameSingular": "μ",
+          },
+          "status": "fail",
+          "type": "create_object",
+        },
+      ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view",
+        },
+      ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is a reserved keyword 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "id",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "name",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "createdAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "deletedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "createdBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "position",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "searchVector",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "timelineActivities",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "favorites",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "attachments",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "noteTargets",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "taskTargets",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetUser",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "value": "user",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "user",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "value": "user",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "user",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "value": "user",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "user",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "value": "user",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "user",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_00aaf7dba3ae2d70218bdebd383",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "value": "user",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "namePlural": "listingas",
+            "nameSingular": "user",
+          },
+          "status": "fail",
+          "type": "create_object",
+        },
+      ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view",
+        },
+      ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
+      ],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is an empty string 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "nameSingular has failed the name validation check, nameSingular should not be empty",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is not camelCased 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "id",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "name",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "createdAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "deletedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "createdBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "position",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "searchVector",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "timelineActivities",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "favorites",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "attachments",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "noteTargets",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "taskTargets",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "targetNot_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "targetNot_Camel_Case",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetNot_Camel_Case",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9294,11 +9944,13 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],
@@ -9311,6 +9963,9 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -9563,17 +10218,42 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -9596,6 +10276,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -9658,6 +10339,22 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9817,7 +10514,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9929,6 +10626,9 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -10181,17 +10881,42 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -10214,6 +10939,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -10276,6 +11002,22 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -10435,7 +11177,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -10547,6 +11289,9 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -10799,17 +11544,42 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

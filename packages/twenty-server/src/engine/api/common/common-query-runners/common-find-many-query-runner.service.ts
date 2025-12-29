@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import {
+  QUERY_MAX_RECORDS,
+  QUERY_MAX_RECORDS_FROM_RELATION,
+} from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -40,6 +43,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   CommonFindManyOutput
 > {
   protected readonly operationName = CommonQueryNames.FIND_MANY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
@@ -168,7 +172,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
           FindOptionsRelations<ObjectLiteral>
         >,
         aggregate: args.selectedFieldsResult.aggregate,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,

@@ -5,6 +5,7 @@ import { type AvailableWorkspace } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
+import { t } from '@lingui/core/macro';
 import React from 'react';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
@@ -44,7 +45,7 @@ export const AvailableWorkspaceItem = ({
       }}
     >
       <MenuItemSelectAvatar
-        text={availableWorkspace.displayName ?? '(No name)'}
+        text={availableWorkspace.displayName ?? t`(No name)`}
         avatar={
           <Avatar
             placeholder={availableWorkspace.displayName || ''}

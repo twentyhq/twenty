@@ -1,0 +1,143 @@
+---
+title: Genera un preventivo o una fattura da Twenty
+description: Crea automaticamente fatture negli strumenti esterni quando le opportunità vengono chiuse.
+---
+
+Invia automaticamente i dati dell'opportunità al tuo sistema di fatturazione (Stripe, QuickBooks, Xero, ecc.) quando un'opportunità è chiusa come vinta.
+
+## Struttura del flusso di lavoro
+
+1. **Trigger**: Il Record è Aggiornato (Opportunità)
+2. **Filtro**: Fase = Closed Won
+3. **Search Record**: Recupera i dettagli dell'azienda
+4. **Code** (opzionale): Formatta il payload
+5. **HTTP Request**: Invia al sistema di fatturazione
+
+## Passaggio 1: Configura il trigger
+
+1. Crea un nuovo flusso di lavoro
+2. Seleziona il trigger **Record is Updated**
+3. Scegli **Opportunity** come oggetto
+
+## Passaggio 2: Filtra per Closed Won
+
+Aggiungi un'azione **Filtro** per proseguire solo quando l'opportunità è chiusa come vinta:
+
+| Impostazione   | Valore                                  |
+| -------------- | --------------------------------------- |
+| **Campo**      | Fase                                    |
+| **Condizione** | Uguale a                                |
+| **Valore**     | `CLOSED_WON` (o il nome della tua fase) |
+
+<Tip>
+  Il trigger si attiva a ogni aggiornamento di un'Opportunità. Il filtro garantisce che il flusso di lavoro prosegua solo quando la fase cambia in Closed Won.
+</Tip>
+
+## Passaggio 3: Ottieni i dettagli dell'azienda
+
+Il record Opportunity potrebbe non includere tutti i campi dell'azienda necessari per la fattura. Aggiungi un'azione **Search Record**:
+
+| Impostazione           | Valore                                     |
+| ---------------------- | ------------------------------------------ |
+| **Oggetto**            | Azienda                                    |
+| **Corrispondenza per** | ID uguale a `{{trigger.object.companyId}}` |
+
+Questo recupera il record completo dell'azienda con indirizzo di fatturazione, partita IVA, ecc.
+
+## Passaggio 4: Formatta il payload (opzionale)
+
+Se il tuo sistema di fatturazione richiede un formato specifico, aggiungi un'azione **Code**:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Passaggio 5: Invia al sistema di fatturazione
+
+Aggiungi un'azione **HTTP Request**:
+
+| Impostazione     | Valore                                          |
+| ---------------- | ----------------------------------------------- |
+| **Metodo**       | POST                                            |
+| **URL**          | L'endpoint API del tuo sistema di fatturazione  |
+| **Intestazioni** | `Authorization: Bearer YOUR_API_KEY`            |
+| **Corpo**        | `{{code.invoice}}` o mappa direttamente i campi |
+
+### Esempio: Fattura Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Esempio: Fattura QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Riepilogo completo del flusso di lavoro
+
+| Passaggio | Azione                  | Scopo                                                     |
+| --------- | ----------------------- | --------------------------------------------------------- |
+| 1         | Trigger: Record Updated | Si attiva a ogni modifica di un'Opportunità               |
+| 2         | Filtro                  | Procedi solo se Fase = Closed Won                         |
+| 3         | Search Record           | Ottieni tutti i dettagli dell'azienda per la fatturazione |
+| 4         | Codice                  | Formatta i dati per l'API di fatturazione                 |
+| 5         | Richiesta HTTP          | Crea la fattura in un sistema esterno                     |
+
+## Suggerimenti
+
+* **Memorizza gli ID esterni**: Salva l'ID della fattura restituito dall'API nell'Opportunity utilizzando un'azione **Update Record**
+* **Gestione degli errori**: Aggiungi un ramo per inviare una notifica se la richiesta HTTP non riesce
+* **Prima prova**: Usa la modalità sandbox/test del tuo sistema di fatturazione prima di andare in produzione
+
+## Correlati
+
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Automazioni Closed Won](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

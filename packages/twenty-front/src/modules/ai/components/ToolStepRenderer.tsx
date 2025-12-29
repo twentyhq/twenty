@@ -6,6 +6,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
+import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
@@ -53,10 +54,34 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
   transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  justify-content: space-between;
+  width: 100%;
 
   &:hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledToolName = styled.span`
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  color: ${({ theme }) => theme.font.color.light};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(0.5)}
+    ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLeftContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRightContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDisplayMessage = styled.span`
@@ -117,22 +142,54 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
+  if (toolName === 'code_interpreter') {
+    const codeInput = toolInput as { code?: string } | undefined;
+    const codeOutput = output as {
+      result?: {
+        stdout?: string;
+        stderr?: string;
+        exitCode?: number;
+        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+      };
+    } | null;
+
+    const isRunning = !output && !hasError;
+
+    return (
+      <CodeExecutionDisplay
+        code={codeInput?.code ?? ''}
+        stdout={codeOutput?.result?.stdout ?? ''}
+        stderr={codeOutput?.result?.stderr || errorText || ''}
+        exitCode={codeOutput?.result?.exitCode}
+        files={codeOutput?.result?.files}
+        isRunning={isRunning}
+      />
+    );
+  }
+
   if (!output && !hasError) {
     return (
       <StyledContainer>
-        <StyledLoadingContainer>
-          <ShimmeringText>
-            <StyledDisplayMessage>
-              {getToolDisplayMessage(input, toolName, false)}
-            </StyledDisplayMessage>
-          </ShimmeringText>
-        </StyledLoadingContainer>
+        <StyledToggleButton isExpandable={false}>
+          <StyledLeftContent>
+            <StyledLoadingContainer>
+              <ShimmeringText>
+                <StyledDisplayMessage>
+                  {getToolDisplayMessage(input, toolName, false)}
+                </StyledDisplayMessage>
+              </ShimmeringText>
+            </StyledLoadingContainer>
+          </StyledLeftContent>
+          <StyledRightContent>
+            <StyledToolName>{toolName}</StyledToolName>
+          </StyledRightContent>
+        </StyledToggleButton>
       </StyledContainer>
     );
   }
 
   const displayMessage = hasError
-    ? 'Tool execution failed'
+    ? t`Tool execution failed`
     : output &&
         typeof output === 'object' &&
         'message' in output &&
@@ -153,16 +210,21 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
         onClick={() => setIsExpanded(!isExpanded)}
         isExpandable={isExpandable}
       >
-        <StyledIconTextContainer>
-          <ToolIcon size={theme.icon.size.sm} />
-          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
-        </StyledIconTextContainer>
-        {isExpandable &&
-          (isExpanded ? (
-            <IconChevronUp size={theme.icon.size.sm} />
-          ) : (
-            <IconChevronDown size={theme.icon.size.sm} />
-          ))}
+        <StyledLeftContent>
+          <StyledIconTextContainer>
+            <ToolIcon size={theme.icon.size.sm} />
+            <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+          </StyledIconTextContainer>
+        </StyledLeftContent>
+        <StyledRightContent>
+          <StyledToolName>{toolName}</StyledToolName>
+          {isExpandable &&
+            (isExpanded ? (
+              <IconChevronUp size={theme.icon.size.sm} />
+            ) : (
+              <IconChevronDown size={theme.icon.size.sm} />
+            ))}
+        </StyledRightContent>
       </StyledToggleButton>
 
       {isExpandable && (
@@ -177,13 +239,13 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     isActive={activeTab === 'output'}
                     onClick={() => setActiveTab('output')}
                   >
-                    Output
+                    {t`Output`}
                   </StyledTab>
                   <StyledTab
                     isActive={activeTab === 'input'}
                     onClick={() => setActiveTab('input')}
                   >
-                    Input
+                    {t`Input`}
                   </StyledTab>
                 </StyledTabContainer>
 

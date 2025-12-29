@@ -38,8 +38,8 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
       rawCreateServerlessFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     universalIdentifier:
       rawCreateServerlessFunctionInput.universalIdentifier ?? id,
-    createdAt: currentDate,
-    updatedAt: currentDate,
+    createdAt: currentDate.toISOString(),
+    updatedAt: currentDate.toISOString(),
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],

@@ -12,8 +12,6 @@ import {
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -43,7 +41,6 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
-import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
@@ -58,8 +55,6 @@ export class ViewResolver {
     private readonly viewSortService: ViewSortService,
     private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly viewV2Service: ViewV2Service,
 
     private readonly viewFieldV2Service: ViewFieldV2Service,
   ) {}
@@ -155,27 +150,11 @@ export class ViewResolver {
 
     input.visibility = visibility;
 
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewV2Service.createOne({
-        createViewInput: input,
-        workspaceId: workspace.id,
-        createdByUserWorkspaceId: userWorkspaceId ?? '',
-      });
-    }
-
-    const createdView = await this.viewService.create({
-      ...input,
+    return await this.viewService.createOne({
+      createViewInput: input,
       workspaceId: workspace.id,
-      createdByUserWorkspaceId: userWorkspaceId ?? '',
+      createdByUserWorkspaceId: userWorkspaceId,
     });
-
-    return createdView;
   }
 
   @Mutation(() => ViewDTO)
@@ -186,21 +165,11 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewV2Service.updateOne({
-        updateViewInput: { ...input, id },
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
-    }
-
-    return this.viewService.update(id, workspace.id, input, userWorkspaceId);
+    return await this.viewService.updateOne({
+      updateViewInput: { ...input, id },
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => Boolean)
@@ -209,22 +178,10 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const deletedView = await this.viewV2Service.deleteOne({
-        deleteViewInput: { id },
-        workspaceId: workspace.id,
-      });
-
-      return isDefined(deletedView);
-    }
-
-    const deletedView = await this.viewService.delete(id, workspace.id);
+    const deletedView = await this.viewService.deleteOne({
+      deleteViewInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return isDefined(deletedView);
   }
@@ -235,22 +192,10 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const deletedView = await this.viewV2Service.destroyOne({
-        destroyViewInput: { id },
-        workspaceId: workspace.id,
-      });
-
-      return isDefined(deletedView);
-    }
-
-    const deletedView = await this.viewService.destroy(id, workspace.id);
+    const deletedView = await this.viewService.destroyOne({
+      destroyViewInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return isDefined(deletedView);
   }

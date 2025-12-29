@@ -2,18 +2,38 @@ import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/us
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { isDefined } from 'twenty-shared/utils';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 // do we need to test this?
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {
-  const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: targetableObject.targetObjectNameSingular,
-  });
+  const isTimelineActivityMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
+  );
+
+  const targetableObjectFieldIdName = isTimelineActivityMigrated
+    ? `target${capitalize(targetableObject.targetObjectNameSingular)}Id`
+    : getActivityTargetObjectFieldIdName({
+        nameSingular: targetableObject.targetObjectNameSingular,
+      });
+
+  const { objectMetadataItem: timelineActivityMetadata } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+    });
+
+  const hasTimelineActivityField = timelineActivityMetadata.fields.some(
+    (field) =>
+      field.relation?.targetObjectMetadata?.nameSingular ===
+      targetableObject.targetObjectNameSingular,
+  );
 
   const { recordGqlFields: depthOneRecordGqlFields } =
     useGenerateDepthRecordGqlFieldsFromObject({
@@ -26,6 +46,7 @@ export const useTimelineActivities = (
     loading: loadingTimelineActivities,
     fetchMoreRecords,
   } = useFindManyRecords<TimelineActivity>({
+    skip: !hasTimelineActivityField,
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -46,10 +67,9 @@ export const useTimelineActivities = (
     .map((timelineActivity) => timelineActivity.linkedRecordId)
     .filter(isDefined);
 
-  const { loading: loadingLinkedObjectsTitle } =
-    useLinkedObjectsTitle(activityIds);
+  useLinkedObjectsTitle(activityIds);
 
-  const loading = loadingTimelineActivities || loadingLinkedObjectsTitle;
+  const loading = loadingTimelineActivities;
 
   return {
     timelineActivities,

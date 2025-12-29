@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Select } from '@/ui/input/components/Select';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
@@ -55,7 +56,7 @@ export const SettingsDatabaseEventsForm = ({
   const { getIcon } = useIcons();
 
   const objectOptions: SelectOption<string>[] = [
-    { label: 'All Objects', value: '*', Icon: IconNorthStar },
+    { label: t`All Objects`, value: '*', Icon: IconNorthStar },
     ...objectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
@@ -64,10 +65,10 @@ export const SettingsDatabaseEventsForm = ({
   ];
 
   const actionOptions: SelectOption<string>[] = [
-    { label: 'All', value: '*', Icon: IconNorthStar },
-    { label: 'Created', value: 'created', Icon: IconPlus },
-    { label: 'Updated', value: 'updated', Icon: IconBox },
-    { label: 'Deleted', value: 'deleted', Icon: IconTrash },
+    { label: t`All`, value: '*', Icon: IconNorthStar },
+    { label: t`Created`, value: 'created', Icon: IconPlus },
+    { label: t`Updated`, value: 'updated', Icon: IconBox },
+    { label: t`Deleted`, value: 'deleted', Icon: IconTrash },
   ];
 
   return (
@@ -82,7 +83,7 @@ export const SettingsDatabaseEventsForm = ({
               updateOperation?.(index, 'object', newValue)
             }
             fullWidth
-            emptyOption={{ label: 'Object', value: null }}
+            emptyOption={{ label: t`Object`, value: null }}
             disabled={disabled}
           />
           <Select

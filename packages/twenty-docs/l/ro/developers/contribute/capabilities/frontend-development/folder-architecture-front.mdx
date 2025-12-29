@@ -1,0 +1,109 @@
+---
+title: Arhitectura Folderului
+info: O privire detaliată asupra arhitecturii folderului nostru
+---
+
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+
+Respectând convenția de arhitectură a folderului, este mai ușor să găsești fișierele legate de funcționalități specifice și să te asiguri că aplicația este scalabilă și ușor de întreținut.
+
+```
+front
+└───modul
+│   └───modul1
+│   │   └───submodul1
+│   └───modul2
+│   └───ui
+│   │   └───afișaj
+│   │   └───intrări
+│   │   │   └───butoane
+│   │   └───...
+└───pagini
+└───...
+```
+
+## Pagini
+
+Include componentele de nivel superior definite de rutele aplicației. Importă componente de nivel mai scăzut din folderul de module (mai multe detalii mai jos).
+
+## Module
+
+Fiecare modul reprezintă o funcționalitate sau un grup de funcționalități, cuprinzând componentele, stările și logica operațională specifice.
+Toate ar trebui să urmeze structura de mai jos. Poți introduce module în cadrul altor module (denumite submodule), iar aceleași reguli se vor aplica.
+
+```
+modul1
+  └───componente
+  │   └───componentă1
+  │   └───componentă2
+  └───constante
+  └───contexturi
+  └───graphql
+  │   └───fragmente
+  │   └───interogări
+  │   └───mutații
+  └───cârlige
+  │   └───interne
+  └───stări
+  │   └───selectorii
+  └───tipuri
+  └───unelte
+```
+
+### Contexturi
+
+Un context este o modalitate de a transmite date prin arborele de componente fără a fi necesar să transmiți manual proprietățile la fiecare nivel.
+
+Vezi [React Context](https://react.dev/reference/react#context-hooks) pentru mai multe detalii.
+
+### GraphQL
+
+Include fragmente, interogări și mutații.
+
+Vezi [GraphQL](https://graphql.org/learn/) pentru mai multe detalii.
+
+* Fragmente
+
+Un fragment este o bucată reutilizabilă dintr-o interogare, pe care o poți folosi în diferite locuri. Folosind fragmente este mai ușor să eviți duplicarea codului.
+
+Vezi [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) pentru mai multe detalii.
+
+* Interogări
+
+Vezi [GraphQL Queries](https://graphql.org/learn/queries/) pentru mai multe detalii.
+
+* Mutații
+
+Vezi [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) pentru mai multe detalii.
+
+### Hook-uri
+
+Vezi [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) pentru mai multe detalii.
+
+### Stări
+
+Conține logica de gestionare a stării. [RecoilJS](https://recoiljs.org) gestionează aceasta.
+
+* Selectori: Vezi [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) pentru mai multe detalii.
+
+Managementul de stare încorporat în React gestionează încă starea în cadrul unei componente.
+
+### Unelte
+
+Ar trebui să conțină doar funcții pure, reutilizabile. În caz contrar, creează hook-uri personalizate în folderul `hooks`.
+
+## UI
+
+Conține toate componentele UI reutilizabile folosite în aplicație.
+
+Acest folder poate conține subfoldere, precum `data`, `afișaj`, `feedback` și `intrare` pentru tipuri specifice de componente. Fiecare componentă ar trebui să fie autonomă și reutilizabilă, astfel încât să o poți folosi în diferite părți ale aplicației.
+
+Prin separarea componentelor UI de celelalte componente din folderul `modules`, este mai ușor să menții un design consistent și să faci modificări la interfața grafică fără a afecta alte părți (logica de afaceri) ale codului.
+
+## Interfață și dependențe
+
+Poți importa codul altor module din orice modul, cu excepția folderului `ui`. Acest lucru va menține codul ușor de testat.
+
+### Intern
+
+Fiecare parte (hook-uri, stări, ...) dintr-un modul poate avea un folder `intern`, care conține părți care sunt doar utilizate în cadrul modulului.

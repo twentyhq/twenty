@@ -15,14 +15,15 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -31,7 +32,7 @@ describe('WorkspaceManagerService', () => {
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
-  let roleTargetsRepository: Repository<RoleTargetsEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
   let objectMetadataService: ObjectMetadataService;
@@ -83,7 +84,7 @@ describe('WorkspaceManagerService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             delete: jest.fn(),
           },
@@ -131,6 +132,12 @@ describe('WorkspaceManagerService', () => {
           },
         },
         {
+          provide: TwentyStandardApplicationService,
+          useValue: {
+            synchronizeTwentyStandardApplicationOrThrow: jest.fn(),
+          },
+        },
+        {
           provide: AgentService,
           useValue: {
             createOneAgent: jest
@@ -139,7 +146,7 @@ describe('WorkspaceManagerService', () => {
           },
         },
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
             getDataSourceForWorkspace: jest.fn().mockResolvedValue({
               transaction: jest.fn(),
@@ -165,8 +172,8 @@ describe('WorkspaceManagerService', () => {
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
-    roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity),
+    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
+      getRepositoryToken(RoleTargetEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
@@ -192,7 +199,7 @@ describe('WorkspaceManagerService', () => {
       expect(dataSourceRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(roleTargetsRepository.delete).toHaveBeenCalledWith({
+      expect(roleTargetRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(roleRepository.delete).toHaveBeenCalledWith({

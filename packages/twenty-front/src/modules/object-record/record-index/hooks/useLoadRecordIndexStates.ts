@@ -6,13 +6,14 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
-import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataItemComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -48,6 +49,10 @@ export const useLoadRecordIndexStates = () => {
     useSetRecoilComponentState(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
+
+  const setRecordIndexShouldHideEmptyRecordGroups = useSetRecoilComponentState(
+    recordIndexShouldHideEmptyRecordGroupsComponentState,
+  );
 
   const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilState(
     recordIndexCalendarFieldMetadataIdState,
@@ -178,11 +183,12 @@ export const useLoadRecordIndexStates = () => {
 
         onViewFieldsChange(view.viewFields, objectMetadataItem);
 
-        setRecordGroupsFromViewGroups(
-          view.id,
-          view.viewGroups,
+        setRecordGroupsFromViewGroups({
+          viewId: view.id,
+          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
+          viewGroups: view.viewGroups,
           objectMetadataItem,
-        );
+        });
 
         setContextStoreTargetedRecordsRuleComponentState((prev) => ({
           ...prev,
@@ -199,9 +205,11 @@ export const useLoadRecordIndexStates = () => {
           view.calendarFieldMetadataId ?? null,
         );
 
-        if (isDefined(view.viewGroups?.[0]?.fieldMetadataId)) {
+        setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
+
+        if (isDefined(view.mainGroupByFieldMetadataId)) {
           const recordIndexGroupFieldMetadataItemId =
-            view.viewGroups?.[0]?.fieldMetadataId;
+            view.mainGroupByFieldMetadataId;
 
           const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
             getFieldMetadataItemByIdOrThrow(
@@ -242,6 +250,7 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexViewType,
       setRecordIndexOpenRecordIn,
       setRecordIndexCalendarFieldMetadataIdState,
+      setRecordIndexShouldHideEmptyRecordGroups,
       setRecordIndexGroupAggregateFieldMetadataItem,
       setRecordIndexGroupAggregateOperation,
       getFieldMetadataItemByIdOrThrow,

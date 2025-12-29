@@ -4,7 +4,8 @@ import chunk from 'lodash.chunk';
 import { In, IsNull } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -14,7 +15,7 @@ import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/uti
 export class MessagingMessageCleanerService {
   private readonly logger = new Logger(MessagingMessageCleanerService.name);
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
@@ -26,183 +27,197 @@ export class MessagingMessageCleanerService {
     messageExternalIds: string[];
     messageChannelId: string;
   }) {
-    const messageRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageWorkspaceEntity>(
-        workspaceId,
-        'message',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannelMessageAssociationRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
-        workspaceId,
-        'messageChannelMessageAssociation',
-      );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+            workspaceId,
+            'message',
+          );
 
-    const messageThreadRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
-        workspaceId,
-        'messageThread',
-      );
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
 
-    const messageExternalIdsChunks = chunk(messageExternalIds, 500);
+        const messageThreadRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+            workspaceId,
+            'messageThread',
+          );
 
-    for (const messageExternalIdsChunk of messageExternalIdsChunks) {
-      const messageChannelMessageAssociationsToDelete =
-        await messageChannelMessageAssociationRepository.find({
-          where: {
-            messageExternalId: In(messageExternalIdsChunk),
-            messageChannelId,
-          },
-        });
+        const messageExternalIdsChunks = chunk(messageExternalIds, 500);
 
-      if (messageChannelMessageAssociationsToDelete.length <= 0) {
-        continue;
-      }
+        for (const messageExternalIdsChunk of messageExternalIdsChunks) {
+          const messageChannelMessageAssociationsToDelete =
+            await messageChannelMessageAssociationRepository.find({
+              where: {
+                messageExternalId: In(messageExternalIdsChunk),
+                messageChannelId,
+              },
+            });
 
-      await messageChannelMessageAssociationRepository.delete(
-        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-      );
+          if (messageChannelMessageAssociationsToDelete.length <= 0) {
+            continue;
+          }
 
-      this.logger.log(
-        `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageAssociationsToDelete.length} message channel message associations`,
-      );
+          await messageChannelMessageAssociationRepository.delete(
+            messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+          );
 
-      const orphanMessages = await messageRepository.find({
-        where: {
-          id: In(
-            messageChannelMessageAssociationsToDelete.map(
-              ({ messageId }) => messageId,
-            ),
-          ),
-          messageChannelMessageAssociations: {
-            id: IsNull(),
-          },
-        },
-      });
+          this.logger.log(
+            `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageAssociationsToDelete.length} message channel message associations`,
+          );
 
-      if (orphanMessages.length <= 0) {
-        continue;
-      }
+          const orphanMessages = await messageRepository.find({
+            where: {
+              id: In(
+                messageChannelMessageAssociationsToDelete.map(
+                  ({ messageId }) => messageId,
+                ),
+              ),
+              messageChannelMessageAssociations: {
+                id: IsNull(),
+              },
+            },
+          });
 
-      this.logger.log(
-        `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
-      );
+          if (orphanMessages.length <= 0) {
+            continue;
+          }
 
-      await messageRepository.delete(orphanMessages.map(({ id }) => id));
+          this.logger.log(
+            `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
+          );
 
-      const orphanMessageThreads = await messageThreadRepository.find({
-        where: {
-          id: In(orphanMessages.map(({ messageThreadId }) => messageThreadId)),
-          messages: {
-            id: IsNull(),
-          },
-        },
-      });
+          await messageRepository.delete(orphanMessages.map(({ id }) => id));
 
-      if (orphanMessageThreads.length <= 0) {
-        continue;
-      }
+          const orphanMessageThreads = await messageThreadRepository.find({
+            where: {
+              id: In(
+                orphanMessages.map(({ messageThreadId }) => messageThreadId),
+              ),
+              messages: {
+                id: IsNull(),
+              },
+            },
+          });
 
-      this.logger.log(
-        `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
-      );
+          if (orphanMessageThreads.length <= 0) {
+            continue;
+          }
 
-      await messageThreadRepository.delete(
-        orphanMessageThreads.map(({ id }) => id),
-      );
-    }
+          this.logger.log(
+            `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
+          );
+
+          await messageThreadRepository.delete(
+            orphanMessageThreads.map(({ id }) => id),
+          );
+        }
+      },
+    );
   }
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
-    const messageThreadRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
-        workspaceId,
-        'messageThread',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageWorkspaceEntity>(
-        workspaceId,
-        'message',
-      );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageThreadRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+            workspaceId,
+            'messageThread',
+          );
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+            workspaceId,
+            'message',
+          );
 
-    await workspaceDataSource.transaction(
-      async (transactionManager: WorkspaceEntityManager) => {
-        await deleteUsingPagination(
-          workspaceId,
-          500,
-          async (
-            limit: number,
-            offset: number,
-            _workspaceId: string,
-            transactionManager: WorkspaceEntityManager,
-          ) => {
-            const nonAssociatedMessages = await messageRepository.find(
-              {
-                where: {
-                  messageChannelMessageAssociations: {
-                    id: IsNull(),
+        const workspaceDataSource =
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+        await workspaceDataSource.transaction(
+          async (transactionManager: WorkspaceEntityManager) => {
+            await deleteUsingPagination(
+              workspaceId,
+              500,
+              async (
+                limit: number,
+                offset: number,
+                _workspaceId: string,
+                transactionManager: WorkspaceEntityManager,
+              ) => {
+                const nonAssociatedMessages = await messageRepository.find(
+                  {
+                    where: {
+                      messageChannelMessageAssociations: {
+                        id: IsNull(),
+                      },
+                    },
+                    take: limit,
+                    skip: offset,
+                    relations: ['messageChannelMessageAssociations'],
                   },
-                },
-                take: limit,
-                skip: offset,
-                relations: ['messageChannelMessageAssociations'],
+                  transactionManager,
+                );
+
+                return nonAssociatedMessages.map(({ id }) => id);
+              },
+              async (
+                ids: string[],
+                workspaceId: string,
+                transactionManager?: WorkspaceEntityManager,
+              ) => {
+                this.logger.log(
+                  `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
+                );
+                await messageRepository.delete(ids, transactionManager);
               },
               transactionManager,
             );
 
-            return nonAssociatedMessages.map(({ id }) => id);
-          },
-          async (
-            ids: string[],
-            workspaceId: string,
-            transactionManager?: WorkspaceEntityManager,
-          ) => {
-            this.logger.log(
-              `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
-            );
-            await messageRepository.delete(ids, transactionManager);
-          },
-          transactionManager,
-        );
-
-        await deleteUsingPagination(
-          workspaceId,
-          500,
-          async (
-            limit: number,
-            offset: number,
-            _workspaceId: string,
-            transactionManager?: WorkspaceEntityManager,
-          ) => {
-            const orphanThreads = await messageThreadRepository.find(
-              {
-                where: {
-                  messages: {
-                    id: IsNull(),
+            await deleteUsingPagination(
+              workspaceId,
+              500,
+              async (
+                limit: number,
+                offset: number,
+                _workspaceId: string,
+                transactionManager?: WorkspaceEntityManager,
+              ) => {
+                const orphanThreads = await messageThreadRepository.find(
+                  {
+                    where: {
+                      messages: {
+                        id: IsNull(),
+                      },
+                    },
+                    take: limit,
+                    skip: offset,
                   },
-                },
-                take: limit,
-                skip: offset,
+                  transactionManager,
+                );
+
+                return orphanThreads.map(({ id }) => id);
+              },
+              async (
+                ids: string[],
+                _workspaceId: string,
+                transactionManager?: WorkspaceEntityManager,
+              ) => {
+                await messageThreadRepository.delete(ids, transactionManager);
               },
               transactionManager,
             );
-
-            return orphanThreads.map(({ id }) => id);
           },
-          async (
-            ids: string[],
-            _workspaceId: string,
-            transactionManager?: WorkspaceEntityManager,
-          ) => {
-            await messageThreadRepository.delete(ids, transactionManager);
-          },
-          transactionManager,
         );
       },
     );

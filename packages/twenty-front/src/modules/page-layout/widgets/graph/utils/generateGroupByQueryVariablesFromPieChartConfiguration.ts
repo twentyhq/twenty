@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -23,6 +23,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
+  userTimeZone,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
@@ -30,6 +31,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   aggregateOperation?: string;
   limit?: number;
   firstDayOfTheWeek?: number;
+  userTimeZone?: string;
 }) => {
   const groupByFieldId = chartConfiguration.groupByFieldMetadataId;
   const groupBySubFieldName =
@@ -48,11 +50,11 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
 
   const isFieldDate = isFieldMetadataDateKind(groupByField.type);
 
-  const isNestedDate = isNestedFieldDateType(
-    groupByField,
-    groupBySubFieldName,
+  const isNestedDate = isRelationNestedFieldDateKind({
+    relationField: groupByField,
+    relationNestedFieldName: groupBySubFieldName,
     objectMetadataItems,
-  );
+  });
 
   const shouldApplyDateGranularity = isFieldDate || isNestedDate;
 
@@ -65,6 +67,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         : undefined,
       firstDayOfTheWeek,
       isNestedDateField: isNestedDate,
+      timeZone: userTimeZone,
     }),
   ];
 

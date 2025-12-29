@@ -1,0 +1,35 @@
+---
+title: Kann ich die E-Mail-Aktivität für alle Objekte nachverfolgen?
+description: So funktioniert die Nachverfolgung der E-Mail-Aktivität über verschiedene Objekte hinweg.
+---
+
+## Unterstützte Objekte
+
+Die E-Mail-Aktivität ist derzeit für **drei Standardobjekte** verfügbar:
+
+| Objekt            | Was Sie sehen                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| **Personen**      | Alle mit diesem bestimmten Kontakt ausgetauschten E-Mails                          |
+| **Unternehmen**   | Alle E-Mails mit Personen aus diesem Unternehmen (basierend auf der E-Mail-Domain) |
+| **Opportunities** | E-Mails, die sich auf das mit der Verkaufschance verknüpfte Unternehmen beziehen   |
+
+## Warum nur diese Objekte?
+
+Personen, Unternehmen und Verkaufschancen sind die zentralen Beziehungsobjekte, bei denen E-Mail-Kontext den größten Mehrwert bietet. E-Mail-Threads werden automatisch verknüpft basierend auf:
+
+* **E-Mail-Adresse** → Abgleich mit Personendatensätzen
+* **E-Mail-Domain** → Abgleich mit Unternehmensdatensätzen
+* **Unternehmensbeziehung** → verknüpft mit Verkaufschancen
+
+## Benutzerdefinierte Objekte
+
+**E-Mail-Tracking ist nicht für benutzerdefinierte Objekte verfügbar** zurzeit.
+
+Wenn Sie E-Mail-Kontext bei einem benutzerdefinierten Objekt benötigen, ziehen Sie Folgendes in Betracht:
+
+* Verwenden Sie ein Beziehungsfeld, um Ihr benutzerdefiniertes Objekt mit Personen oder Unternehmen zu verknüpfen
+* Den E-Mail-Verlauf im verknüpften Personen-/Unternehmensdatensatz anzeigen
+
+## Zukünftige Pläne
+
+Die Erweiterung der E-Mail-Sichtbarkeit auf benutzerdefinierte Objekte wird in Betracht gezogen. Teilen Sie Ihren Anwendungsfall in unseren [GitHub-Diskussionen](https://github.com/twentyhq/twenty/discussions), um die Priorisierung dieser Funktion zu unterstützen.

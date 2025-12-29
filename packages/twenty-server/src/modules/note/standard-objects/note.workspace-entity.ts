@@ -1,17 +1,17 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
   type RichTextV2Metadata,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -94,6 +94,16 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Relations`,
@@ -127,6 +137,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the note.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetNote',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

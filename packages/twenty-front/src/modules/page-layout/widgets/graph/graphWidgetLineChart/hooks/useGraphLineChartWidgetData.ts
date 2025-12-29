@@ -1,9 +1,12 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useMemo } from 'react';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -34,6 +37,7 @@ export const useGraphLineChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const limit = getLineChartQueryLimit(configuration);
 
@@ -48,15 +52,29 @@ export const useGraphLineChartWidgetData = ({
     limit,
   });
 
+  const { userTimezone } = useUserTimezone();
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+
   const transformedData = useMemo(
     () =>
       transformGroupByDataToLineChartData({
         groupByData,
         objectMetadataItem,
+        objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
+        firstDayOfTheWeek: userFirstDayOfTheWeek,
       }),
-    [groupByData, objectMetadataItem, configuration, aggregateOperation],
+    [
+      groupByData,
+      objectMetadataItem,
+      objectMetadataItems,
+      configuration,
+      aggregateOperation,
+      userTimezone,
+      userFirstDayOfTheWeek,
+    ],
   );
 
   return {

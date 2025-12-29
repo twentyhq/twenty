@@ -22,9 +22,6 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
-import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
-import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
-import { ResetMessageFolderService } from 'src/engine/core-modules/auth/services/reset-message-folder.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
@@ -62,8 +59,11 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 import { TwoFactorAuthenticationMethodEntity } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
@@ -88,6 +88,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       UserEntity,
       AppTokenEntity,
       ApiKeyEntity,
+      ApplicationEntity,
       FeatureFlagEntity,
       WorkspaceSSOIdentityProviderEntity,
       KeyValuePairEntity,
@@ -142,9 +143,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     // So far, it's not possible to have controllers in business modules
     // which forces us to have these services in the auth module
     // TODO: Move these calendar, message, and connected account services to the business modules once possible
-    ResetMessageChannelService,
-    ResetCalendarChannelService,
-    ResetMessageFolderService,
+    MessageChannelSyncStatusService,
+    CalendarChannelSyncStatusService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
@@ -152,6 +152,12 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     TransientTokenService,
     AuthSsoService,
   ],
-  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
+  exports: [
+    AccessTokenService,
+    LoginTokenService,
+    RefreshTokenService,
+    CreateMessageChannelService,
+    CreateCalendarChannelService,
+  ],
 })
 export class AuthModule {}

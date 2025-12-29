@@ -15,8 +15,8 @@ import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -25,17 +25,16 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
@@ -56,11 +55,9 @@ export interface FormatResult {
 
 export abstract class RestApiBaseHandler {
   @Inject()
-  protected readonly twentyORMManager: TwentyORMManager;
-  @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
-  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
@@ -94,11 +91,18 @@ export abstract class RestApiBaseHandler {
     let roleId: string;
 
     if (isDefined(authContext.apiKey)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );
     } else {
+      if (!isDefined(authContext.userWorkspaceId)) {
+        throw new PermissionsException(
+          'No user workspace ID found in authentication context',
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        );
+      }
+
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,

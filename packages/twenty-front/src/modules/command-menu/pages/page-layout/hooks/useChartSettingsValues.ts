@@ -9,7 +9,7 @@ import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/util
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { plural } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -163,14 +163,39 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE:
       case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
-        const hasAggregateLabel = isDefined(aggregateField?.label);
-        const hasAggregateOperation = isDefined(aggregateOperation);
+        if (
+          configuration.__typename === 'AggregateChartConfiguration' &&
+          isDefined(configuration.ratioAggregateConfig)
+        ) {
+          const ratioField = objectMetadataItem?.fields.find(
+            (field) =>
+              field.id === configuration.ratioAggregateConfig?.fieldMetadataId,
+          );
 
-        return `${aggregateField?.label ?? ''}${
-          hasAggregateLabel && hasAggregateOperation
-            ? ` (${getAggregateOperationLabel(aggregateOperation)})`
-            : ''
-        }`;
+          const optionValue = configuration.ratioAggregateConfig.optionValue;
+          const getBooleanLabel = (value: string) =>
+            value === 'true' ? t`True` : t`False`;
+
+          const ratioOptionLabel =
+            ratioField?.options?.find((option) => option.value === optionValue)
+              ?.label ??
+            (ratioField?.type === 'BOOLEAN'
+              ? getBooleanLabel(optionValue)
+              : capitalize(optionValue));
+
+          return [aggregateField?.label, `(${t`Ratio`}: ${ratioOptionLabel})`]
+            .filter(isDefined)
+            .join(' ');
+        }
+
+        const operationLabel =
+          isDefined(aggregateField?.label) && isDefined(aggregateOperation)
+            ? `(${getAggregateOperationLabel(aggregateOperation)})`
+            : undefined;
+
+        return [aggregateField?.label, operationLabel]
+          .filter(isDefined)
+          .join(' ');
       }
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
@@ -224,10 +249,14 @@ export const useChartSettingsValues = ({
         return configuration.__typename === 'LineChartConfiguration'
           ? configuration.isStacked !== false
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE:
+        return isBarOrLineChart ? (configuration.isCumulative ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
+      case CHART_CONFIGURATION_SETTING_IDS.HIDE_EMPTY_CATEGORY:
+        return isPieChart ? (configuration.hideEmptyCategory ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
         return isBarOrLineChart
           ? (configuration.rangeMin?.toString() ?? '')

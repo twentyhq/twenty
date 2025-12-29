@@ -1,11 +1,16 @@
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -185,25 +190,23 @@ describe('Standard field metadata update should succeed', () => {
     );
   });
 
-  it.failing(
-    'Should deactivate and reactivate standard field successfully',
-    async () => {
-      const deletedAtField = opportunityObjectFields.find(
-        (field) => field.name === 'deletedAt',
-      );
+  it('Should deactivate and reactivate standard field successfully', async () => {
+    const deletedAtField = opportunityObjectFields.find(
+      (field) => field.name === 'deletedAt',
+    );
 
-      jestExpectToBeDefined(deletedAtField);
-      expect(deletedAtField.isActive).toBe(true);
+    jestExpectToBeDefined(deletedAtField);
+    expect(deletedAtField.isActive).toBe(true);
 
-      const { data: firstUpdateData } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: deletedAtField.id,
-          updatePayload: {
-            isActive: false,
-          },
+    const { data: firstUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: false,
         },
-        expectToFail: false,
-        gqlFields: `
+      },
+      expectToFail: false,
+      gqlFields: `
           id
           name
           label
@@ -219,19 +222,19 @@ describe('Standard field metadata update should succeed', () => {
             icon
           }
         `,
-      });
+    });
 
-      expect(firstUpdateData.updateOneField.isActive).toBe(false);
+    expect(firstUpdateData.updateOneField.isActive).toBe(false);
 
-      const { data: secondUpdateData } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: deletedAtField.id,
-          updatePayload: {
-            isActive: true,
-          },
+    const { data: secondUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: true,
         },
-        expectToFail: false,
-        gqlFields: `
+      },
+      expectToFail: false,
+      gqlFields: `
           id
           name
           label
@@ -247,9 +250,130 @@ describe('Standard field metadata update should succeed', () => {
             icon
           }
         `,
-      });
+    });
 
-      expect(secondUpdateData.updateOneField.isActive).toBe(true);
-    },
-  );
+    expect(secondUpdateData.updateOneField.isActive).toBe(true);
+  });
+});
+
+describe('Standard field isUnique update should succeed', () => {
+  let nameFieldMetadata: FieldMetadataDTO | undefined;
+  let customObjectId: string;
+
+  beforeEach(async () => {
+    const customObject = {
+      labelSingular: `Test Unique Standard Field`,
+      labelPlural: `Test Unique Standard Fields`,
+      namePlural: `testUniqueStandardField`,
+      nameSingular: `testUniqueStandardFields`,
+      description: 'Test unique standard field for isUnique update',
+      icon: 'IconBox',
+      isLabelSyncedWithName: false,
+    };
+
+    const { data } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: customObject,
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    customObjectId = data.createOneObject.id;
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 100 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+          label
+          isUnique
+          isActive
+          isCustom
+          type
+        }
+      `,
+    });
+
+    const customObjectWithFields = objects.find((o) => o.id === customObjectId);
+
+    jestExpectToBeDefined(customObjectWithFields?.fieldsList);
+
+    nameFieldMetadata = customObjectWithFields.fieldsList?.find(
+      (field) => field.name === 'name',
+    );
+  });
+
+  afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: customObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+
+    await deleteOneObjectMetadata({
+      input: {
+        idToDelete: customObjectId,
+      },
+    });
+  });
+
+  // TODO: Enable this test once isUnique set as editable on standard fields
+  it.failing('should set isUnique to true on standard field', async () => {
+    jestExpectToBeDefined(nameFieldMetadata);
+
+    const { data } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: nameFieldMetadata.id,
+        updatePayload: {
+          isUnique: true,
+        },
+      },
+      expectToFail: false,
+      gqlFields: `
+        id
+        name
+        label
+        isUnique
+        isActive
+        isCustom
+      `,
+    });
+
+    expect(data.updateOneField.id).toBe(nameFieldMetadata.id);
+    expect(data.updateOneField.name).toBe('name');
+    expect(data.updateOneField.isUnique).toBe(true);
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const customObject = objects.find((obj) => obj.id === customObjectId);
+
+    jestExpectToBeDefined(customObject);
+
+    const nameFieldIndex = customObject.indexMetadataList.find((index) =>
+      index.indexFieldMetadataList.some(
+        (indexField) =>
+          isDefined(nameFieldMetadata) &&
+          indexField.fieldMetadataId === nameFieldMetadata.id,
+      ),
+    );
+
+    jestExpectToBeDefined(nameFieldIndex);
+    expect(nameFieldIndex.isUnique).toBe(true);
+    expect(nameFieldIndex.isCustom).toBe(true);
+  });
 });

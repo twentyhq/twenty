@@ -34,7 +34,7 @@ import {
   CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
@@ -71,6 +71,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
@@ -158,6 +159,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         queryRunnerContext,
         orderByForRecords: args.orderByForRecords ?? [],
         groupLimit: args.limit,
+        offsetForRecords: args.offsetForRecords,
       });
     }
 
@@ -251,7 +253,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       recordFilters,
       recordFilterGroups: recordFilterGroups,
       fields,
-      filterValueDependencies: {},
+      filterValueDependencies: {
+        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+      },
     });
 
     let view: ViewEntity | null = viewFilters[0]?.view;
@@ -321,7 +325,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
@@ -398,5 +402,20 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatFieldMetadataMaps,
       ),
     };
+  }
+
+  protected override computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<GroupByQueryArgs>,
+  ): number {
+    const groupByQueryComplexity = 1;
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
+    return (args.includeRecords ?? false)
+      ? groupByQueryComplexity +
+          selectedFieldsComplexity * getGroupLimit(args.limit)
+      : groupByQueryComplexity;
   }
 }

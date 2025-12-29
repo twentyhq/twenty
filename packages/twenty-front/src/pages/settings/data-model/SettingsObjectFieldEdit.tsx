@@ -77,6 +77,7 @@ export const SettingsObjectFieldEdit = () => {
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
@@ -119,6 +120,7 @@ export const SettingsObjectFieldEdit = () => {
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
+      settings: fieldMetadataItem?.settings,
     },
   });
 

@@ -1,29 +1,28 @@
+import { ChartAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
+import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
+import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
+import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
+import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/types/AggregateChartOperation';
+import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel';
+import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAvailableAggregateOperationsForAggregateChart';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { GraphType, type AggregateOperations } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -34,25 +33,31 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   setIsSubMenuOpen: (isSubMenuOpen: boolean) => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOptionValueMenuOpen, setIsOptionValueMenuOpen] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !==
-      'AggregateChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
-  ) {
+  const configuration = widgetInEditMode?.configuration;
+
+  const isAggregateChart = isWidgetConfigurationOfType(
+    configuration,
+    'AggregateChartConfiguration',
+  );
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
+
+  if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentAggregateOperation =
-    widgetInEditMode.configuration.aggregateOperation;
-
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const selectedField = sourceObjectMetadataItem?.fields.find(
@@ -63,25 +68,20 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  const selectedItemId = useRecoilComponentValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const availableAggregateOperations = selectedField
-    ? getAvailableAggregateOperationsForFieldMetadataType({
-        fieldMetadataType: selectedField.type,
-      })
+  const availableAggregateOperations: AggregateChartOperation[] = selectedField
+    ? isAggregateChart
+      ? getAvailableAggregateOperationsForAggregateChart({
+          fieldMetadataType: selectedField.type,
+        })
+      : getAvailableAggregateOperationsForFieldMetadataType({
+          fieldMetadataType: selectedField.type,
+        })
     : [];
-
-  const isAggregateOrGaugeChart =
-    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE ||
-    widgetInEditMode.configuration.graphType === GraphType.GAUGE;
 
   const filteredAggregateOperations = availableAggregateOperations.filter(
     (operation) => {
       return (
-        isAggregateOrGaugeChart ||
+        isAggregateChart ||
         (operation !== DateAggregateOperations.EARLIEST &&
           operation !== DateAggregateOperations.LATEST)
       );
@@ -91,7 +91,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const aggregateOperationsWithLabels = filteredAggregateOperations.map(
     (operation) => ({
       operation,
-      label: getAggregateOperationLabel(operation),
+      label: getAggregateChartOperationLabel(operation),
     }),
   );
 
@@ -101,26 +101,22 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     getSearchableValues: (item) => [item.label],
   });
 
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
-
   if (!isDefined(sourceObjectMetadataItem) || !isDefined(selectedField)) {
     return null;
   }
 
-  const handleSelectAggregateOperation = (
-    aggregateOperation: AggregateOperations,
-  ) => {
-    updateCurrentWidgetConfig({
-      configToUpdate: {
-        aggregateFieldMetadataId: currentFieldMetadataId,
-        aggregateOperation,
-      },
-    });
-    closeDropdown();
+  const handleSelectRatio = () => {
+    setIsOptionValueMenuOpen(true);
   };
+
+  if (isOptionValueMenuOpen) {
+    return (
+      <ChartRatioOptionValueSelectionDropdownContent
+        currentFieldMetadataId={currentFieldMetadataId}
+        setIsOptionValueMenuOpen={setIsOptionValueMenuOpen}
+      />
+    );
+  }
 
   return (
     <>
@@ -150,37 +146,22 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
             (item) => item.operation,
           )}
         >
-          {filteredAggregateOperationsWithLabels.map((item) => (
-            <SelectableListItem
-              key={item.operation}
-              itemId={item.operation}
-              onEnter={() => {
-                handleSelectAggregateOperation(
-                  convertExtendedAggregateOperationToAggregateOperation(
-                    item.operation,
-                  ),
-                );
-              }}
-            >
-              <MenuItemSelect
-                text={item.label}
-                selected={
-                  currentAggregateOperation ===
-                  convertExtendedAggregateOperationToAggregateOperation(
-                    item.operation,
-                  )
-                }
-                focused={selectedItemId === item.operation}
-                onClick={() => {
-                  handleSelectAggregateOperation(
-                    convertExtendedAggregateOperationToAggregateOperation(
-                      item.operation,
-                    ),
-                  );
-                }}
+          {filteredAggregateOperationsWithLabels.map((item) =>
+            item.operation === DASHBOARD_AGGREGATE_OPERATION_RATIO ? (
+              <ChartRatioAggregateOperationSelectableListItem
+                key={item.operation}
+                label={item.label}
+                onSelect={handleSelectRatio}
               />
-            </SelectableListItem>
-          ))}
+            ) : (
+              <ChartAggregateOperationSelectableListItem
+                key={item.operation}
+                operation={item.operation}
+                label={item.label}
+                currentFieldMetadataId={currentFieldMetadataId}
+              />
+            ),
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </>

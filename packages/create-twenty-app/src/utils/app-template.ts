@@ -2,6 +2,8 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
+const SOURCE_FOLDER = 'src';
+
 export const copyBaseApplicationProject = async ({
   appName,
   appDisplayName,
@@ -13,26 +15,31 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
+  await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
+
   await createPackageJson({ appName, appDirectory });
+
+  await createGitignore(appDirectory);
 
   await createYarnLock(appDirectory);
 
-  await createYarnRc(appDirectory);
+  const sourceFolderPath = join(appDirectory, SOURCE_FOLDER);
 
-  await createNvmRc(appDirectory);
+  await fs.ensureDir(sourceFolderPath);
 
-  await createTsConfig(appDirectory);
+  const defaultServerlessFunctionRoleUniversalIdentifier = v4();
+
+  await createDefaultServerlessFunctionRoleConfig({
+    displayName: appDisplayName,
+    appDirectory: sourceFolderPath,
+    defaultServerlessFunctionRoleUniversalIdentifier,
+  });
 
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
-    appDirectory,
-  });
-
-  await createReadmeContent({
-    displayName: appDisplayName,
-    appDescription,
-    appDirectory,
+    appDirectory: sourceFolderPath,
+    defaultServerlessFunctionRoleUniversalIdentifier,
   });
 };
 
@@ -43,65 +50,82 @@ const createYarnLock = async (appDirectory: string) => {
 
   await fs.writeFile(join(appDirectory, 'yarn.lock'), yarnLockContent);
 };
+const createGitignore = async (appDirectory: string) => {
+  const gitignoreContent = `# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-const createYarnRc = async (appDirectory: string) => {
-  const yarnRcContent = `nodeLinker: node-modules
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn
+
+# codegen
+generated
+
+# testing
+/coverage
+
+# dev
+/dist/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# typescript
+*.tsbuildinfo
 `;
 
-  await fs.writeFile(join(appDirectory, '.yarnrc.yml'), yarnRcContent);
+  await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
 };
 
-const createNvmRc = async (appDirectory: string) => {
-  const nvmRcContent = `24.5.0
+const createDefaultServerlessFunctionRoleConfig = async ({
+  displayName,
+  appDirectory,
+  defaultServerlessFunctionRoleUniversalIdentifier,
+}: {
+  displayName: string;
+  appDirectory: string;
+  defaultServerlessFunctionRoleUniversalIdentifier: string;
+}) => {
+  const content = `import { type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
+  label: '${displayName} default function role',
+  description: '${displayName} default function role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: true,
+  canDestroyAllObjectRecords: false,
+};
 `;
 
-  await fs.writeFile(join(appDirectory, '.nvmrc'), nvmRcContent);
-};
-
-const createTsConfig = async (appDirectory: string) => {
-  const tsConfigJson = {
-    compileOnSave: false,
-    compilerOptions: {
-      sourceMap: true,
-      declaration: true,
-      outDir: './dist',
-      rootDir: '.',
-      moduleResolution: 'node',
-      allowSyntheticDefaultImports: true,
-      emitDecoratorMetadata: true,
-      experimentalDecorators: true,
-      importHelpers: true,
-      allowUnreachableCode: false,
-      strictNullChecks: true,
-      alwaysStrict: true,
-      noImplicitAny: true,
-      strictBindCallApply: false,
-      target: 'es2018',
-      module: 'esnext',
-      lib: ['es2020', 'dom'],
-      skipLibCheck: true,
-      skipDefaultLibCheck: true,
-      resolveJsonModule: true,
-    },
-
-    exclude: ['node_modules', 'dist', '**/*.test.ts', '**/*.spec.ts'],
-  };
-
-  await fs.writeFile(
-    join(appDirectory, 'tsconfig.json'),
-    JSON.stringify(tsConfigJson, null, 2),
-    'utf8',
-  );
+  await fs.writeFile(join(appDirectory, 'role.config.ts'), content);
 };
 
 const createApplicationConfig = async ({
   displayName,
   description,
   appDirectory,
+  defaultServerlessFunctionRoleUniversalIdentifier,
 }: {
   displayName: string;
   description?: string;
   appDirectory: string;
+  defaultServerlessFunctionRoleUniversalIdentifier: string;
 }) => {
   const content = `import { type ApplicationConfig } from 'twenty-sdk';
 
@@ -109,6 +133,7 @@ const config: ApplicationConfig = {
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
+  functionRoleUniversalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
 };
 
 export default config;
@@ -126,7 +151,7 @@ const createPackageJson = async ({
 }) => {
   const packageJson = {
     name: appName,
-    version: '0.0.1',
+    version: '0.1.0',
     license: 'MIT',
     engines: {
       node: '^24.5.0',
@@ -139,15 +164,21 @@ const createPackageJson = async ({
       dev: 'twenty app dev',
       generate: 'twenty app generate',
       sync: 'twenty app sync',
+      logs: 'twenty app logs',
       uninstall: 'twenty app uninstall',
+      help: 'twenty help',
       auth: 'twenty auth login',
+      lint: 'eslint',
+      'lint-fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.1.0',
+      'twenty-sdk': '0.2.4',
     },
     devDependencies: {
-      '@types/node': '^24.7.2',
       typescript: '^5.9.3',
+      '@types/node': '^24.7.2',
+      eslint: '^9.32.0',
+      'typescript-eslint': '^8.50.0',
     },
   };
 
@@ -156,21 +187,4 @@ const createPackageJson = async ({
     JSON.stringify(packageJson, null, 2),
     'utf8',
   );
-};
-
-const createReadmeContent = async ({
-  displayName,
-  appDescription,
-  appDirectory,
-}: {
-  displayName: string;
-  appDescription: string;
-  appDirectory: string;
-}) => {
-  const readmeContent = `# ${displayName}
-
-${appDescription}
-`;
-
-  await fs.writeFile(join(appDirectory, 'README.md'), readmeContent);
 };

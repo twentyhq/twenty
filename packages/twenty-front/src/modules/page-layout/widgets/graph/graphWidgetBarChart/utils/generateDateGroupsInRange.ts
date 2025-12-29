@@ -1,10 +1,15 @@
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+
+import { type Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isPlainDateBeforeOrEqual,
+} from 'twenty-shared/utils';
 
 type GenerateDateRangeParams = {
-  startDate: Date;
-  endDate: Date;
+  startDate: Temporal.PlainDate;
+  endDate: Temporal.PlainDate;
   granularity:
     | ObjectRecordGroupByDateGranularity.DAY
     | ObjectRecordGroupByDateGranularity.WEEK
@@ -14,7 +19,7 @@ type GenerateDateRangeParams = {
 };
 
 type GenerateDateRangeResult = {
-  dates: Date[];
+  dates: Temporal.PlainDate[];
   wasTruncated: boolean;
 };
 
@@ -23,41 +28,41 @@ export const generateDateGroupsInRange = ({
   endDate,
   granularity,
 }: GenerateDateRangeParams): GenerateDateRangeResult => {
-  const dates: Date[] = [];
+  const dates: Temporal.PlainDate[] = [];
 
   let iterations = 0;
   let wasTruncated = false;
 
-  let currentDateCursor = new Date(startDate);
+  let currentDateCursor = startDate;
 
-  while (currentDateCursor <= endDate) {
-    if (iterations >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+  while (isPlainDateBeforeOrEqual(currentDateCursor, endDate)) {
+    if (iterations >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS) {
       wasTruncated = true;
       break;
     }
 
-    dates.push(new Date(currentDateCursor));
+    dates.push(currentDateCursor);
     iterations++;
 
     switch (granularity) {
       case ObjectRecordGroupByDateGranularity.DAY:
-        currentDateCursor.setDate(currentDateCursor.getDate() + 1);
+        currentDateCursor = currentDateCursor.add({ days: 1 });
         break;
 
       case ObjectRecordGroupByDateGranularity.WEEK:
-        currentDateCursor.setDate(currentDateCursor.getDate() + 7);
+        currentDateCursor = currentDateCursor.add({ weeks: 1 });
         break;
 
       case ObjectRecordGroupByDateGranularity.MONTH:
-        currentDateCursor.setMonth(currentDateCursor.getMonth() + 1);
+        currentDateCursor = currentDateCursor.add({ months: 1 });
         break;
 
       case ObjectRecordGroupByDateGranularity.QUARTER:
-        currentDateCursor.setMonth(currentDateCursor.getMonth() + 3);
+        currentDateCursor = currentDateCursor.add({ months: 3 });
         break;
 
       case ObjectRecordGroupByDateGranularity.YEAR:
-        currentDateCursor.setFullYear(currentDateCursor.getFullYear() + 1);
+        currentDateCursor = currentDateCursor.add({ years: 1 });
         break;
 
       default:

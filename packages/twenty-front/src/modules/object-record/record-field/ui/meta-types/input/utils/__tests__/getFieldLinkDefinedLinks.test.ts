@@ -1,5 +1,5 @@
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getFieldLinkDefinedLinks } from '../getFieldLinkDefinedLinks';
 
 describe('getFieldLinkDefinedLinks', () => {
   describe('Field value', () => {

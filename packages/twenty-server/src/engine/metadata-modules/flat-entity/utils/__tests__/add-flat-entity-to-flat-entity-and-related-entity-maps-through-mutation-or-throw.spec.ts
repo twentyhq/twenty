@@ -27,7 +27,7 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
       applicationId,
     });
 
-    const mockFieldMEtadata = getFlatFieldMetadataMock({
+    const mockFieldMetadata = getFlatFieldMetadataMock({
       objectMetadataId,
       id: '202020-71a3-4856-a3d0-d08cea0ecec6',
       type: FieldMetadataType.DATE,
@@ -35,9 +35,9 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
       applicationId,
       universalIdentifier: 'field-universal-1',
       viewFieldIds: [],
-      viewGroupIds: [],
       viewFilterIds: [],
       calendarViewIds: [],
+      mainGroupByFieldMetadataViewIds: [],
     });
 
     const mockView: Pick<FlatView, 'id'> & Partial<FlatView> = {
@@ -49,13 +49,13 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
       viewFilterIds: [],
       viewGroupIds: [],
       applicationId,
-      calendarFieldMetadataId: mockFieldMEtadata.id,
+      calendarFieldMetadataId: mockFieldMetadata.id,
     };
 
     const flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<'view'> =
       {
         flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: mockFieldMEtadata,
+          flatEntity: mockFieldMetadata,
           flatEntityMaps: createEmptyFlatEntityMaps(),
         }),
         flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
@@ -85,7 +85,7 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
 
     expect(
       flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps.byId[
-        mockFieldMEtadata.id
+        mockFieldMetadata.id
       ],
     ).toMatchObject<Partial<FlatFieldMetadata>>({
       calendarViewIds: [mockView.id],

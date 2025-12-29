@@ -1,0 +1,332 @@
+---
+title: Místní nastavení
+description: Průvodce pro přispěvatele (nebo zvídavé vývojáře), kteří chtějí spustit Twenty lokálně.
+---
+
+## Předpoklady
+
+<Tabs>
+  <Tab title="Linux a MacOS">
+    Než nainstalujete a použijete Twenty, ujistěte se, že máte na svém počítači nainstalovány následující balíčky:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm` nebude fungovat, měli byste místo něj použít `yarn`. Yarn je nyní součástí Node.js, takže jej nemusíte instalovat samostatně.
+      Musíte pouze spustit `corepack enable`, abyste povolili Yarn, pokud jste to ještě neudělali.
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    1. Nainstalujte WSL
+       Otevřete PowerShell jako správce a spusťte:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Nyní byste měli vidět výzvu k restartování počítače. Pokud ne, restartujte jej ručně.
+
+    Při restartu se otevře okno PowerShell a nainstaluje Ubuntu. Tento proces může chvíli trvat.
+    Zobrazí se výzva k vytvoření uživatelského jména a hesla pro vaši instalaci Ubuntu.
+
+    2. Nainstalujte a nastavte git
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Vaše Jméno"
+
+    git config --global user.email "vasemail@domena.com"
+    ```
+
+    3. Nainstalujte nvm, node.js a yarn
+
+    <Warning>
+      Použijte `nvm` pro instalaci správné verze `node`. `nvmrc` zajišťuje, že všichni přispěvatelé používají stejnou verzi.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    Zavřete a znovu otevřete terminál, abyste použili nvm. Potom spusťte následující příkazy.
+
+    ```bash
+
+    nvm install # instaluje doporučenou verzi node
+
+    nvm use # používá doporučenou verzi node
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Krok 1: Git Clone
+
+V terminálu spusťte následující příkaz.
+
+<Tabs>
+  <Tab title="SSH (Doporučeno)">
+    Pokud jste ještě nenastavili SSH klíče, můžete se naučit, jak to udělat, [zde](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## Krok 2: Umístěte se na kořen
+
+```bash
+cd twenty
+```
+
+Všechny příkazy v následujících krocích byste měli provádět z kořene projektu.
+
+## Krok 3: Nastavení PostgreSQL databáze
+
+<Tabs>
+  <Tab title="Linux">
+    **Možnost 1 (doporučeno):** Pro lokalní vytvoření databáze:
+    Použijte následující odkaz pro instalaci PostgreSQL na vašem Linuxovém stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Poznámka: Možná budete potřebovat přidat `sudo -u postgres` k příkazu před `psql`, abyste předešli chybám s oprávněními.
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Možnost 1 (doporučeno):** Pro lokalní vytvoření databáze pomocí `brew`:
+
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Můžete zjistit, zda PostgreSQL server běží, spuštěním:
+
+    ```bash
+      brew services list
+    ```
+
+    Instalátor nemusí automaticky vytvořit uživatele `postgres` při instalaci
+    přes Homebrew na MacOS. Místo toho vytvoří PostgreSQL roli, která odpovídá vašemu uživatelskému jménu v MacOS (např. "john").
+    Pro zkontrolování a vytvoření uživatele `postgres`, pokud je to nutné, postupujte takto:
+
+    ```bash
+      # Připojit se k PostgreSQL
+      psql postgres
+      nebo
+      psql -U $(whoami) -d postgres
+    ```
+
+    Po zobrazení výzvy psql (postgres=#) spusťte:
+
+    ```bash
+     # Seznam existujících PostgreSQL rolí
+     \du
+    ```
+
+    Zobrazí se výstup podobný tomuto:
+
+    ```bash
+     Jméno role | Vlastnosti  | Členem
+     -----------+-------------+-----------
+     john      | Superuživatel | {}
+    ```
+
+    Pokud nevidíte roli `postgres`, pokračujte na další krok.
+    Vytvořte uživatelskou roli `postgres` ručně:
+
+    ```bash
+     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    Tím vytvoříte superuživatelskou roli pojmenovanou `postgres` s přístupovými právy.
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Všechny následující kroky je třeba provádět v terminálu WSL (v rámci vaší virtuálního stroje).
+
+    **Možnost 1:** Pro lokalní vytvoření PostgreSQL:
+    Použijte následující odkaz pro instalaci PostgreSQL na vašem Linuxovém virtuálním stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Poznámka: Možná budete potřebovat přidat `sudo -u postgres` k příkazu před `psql`, abyste předešli chybám s oprávněními.
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+    Používání Dockeru na WSL přidává další vrstvu složitosti.
+    Použijte tuto možnost pouze pokud si jste jisti extra kroky včetně zapnutí [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Nyní můžete přistupovat k databázi na [localhost:5432](localhost:5432), s uživatelem `postgres` a heslem `postgres`.
+
+## Krok 4: Nastavení Redis databáze (cache)
+
+Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího výkonu.
+
+<Tabs>
+  <Tab title="Linux">
+    **Možnost 1:** Pro lokalní vytvoření Redis:
+    Použijte následující odkaz pro instalaci Redis na vašem Linuxovém stroji: [Instalace Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Možnost 1 (doporučeno):** Pro lokalní vytvoření Redis pomocí `brew`:
+
+    ```bash
+    brew install redis
+    ```
+
+    Spusťte redis server:
+    `brew services start redis`
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    **Možnost 1:** Pro lokalní vytvoření Redis:
+    Použijte následující odkaz pro instalaci Redis na vašem Linuxovém virtuálním stroji: [Instalace Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Možnost 2:** Pokud máte nainstalován docker:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Pokud potřebujete GUI klienta, doporučujeme [redis insight](https://redis.io/insight/) (dostupná je bezplatná verze)
+
+## Krok 5: Nastavení proměnných prostředí
+
+Použijte proměnné prostředí nebo `.env` soubory, abyste nakonfigurovali váš projekt. Více informací [zde](/l/cs/developers/self-host/capabilities/setup)
+
+Zkopírujte soubory `.env.example` v `/front` a `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/cs/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
+## Krok 6: Instalace závislostí
+
+Pro sestavení Twenty serveru a zavedení některých dat do vaší databáze spusťte následující příkaz:
+
+```bash
+yarn
+```
+
+Všimněte si, že `npm` nebo `pnpm` nebudou fungovat.
+
+## Krok 7: Spuštění projektu
+
+<Tabs>
+  <Tab title="Linux">
+    V závislosti na vaší Linuxové distribuci mohl být Redis server spuštěn automaticky.
+    Pokud ne, zkontrolujte [instalační průvodce Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pro vaši distribuci.
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redis by již měl být spuštěn. Pokud ne, spusťte:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    V závislosti na vaší Linuxové distribuci mohl být Redis server spuštěn automaticky.
+    Pokud ne, zkontrolujte [instalační průvodce Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pro vaši distribuci.
+  </Tab>
+</Tabs>
+
+Nastavte svou databázi pomocí následujícího příkazu:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Spusťte server, pracovní proces a frontendové služby:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternativně můžete spustit všechny služby najednou:
+
+```bash
+npx nx start
+```
+
+## Krok 8: Použijte Twenty
+
+**Frontend**
+
+Frontend Twenty bude spuštěný na [http://localhost:3001](http://localhost:3001).
+Můžete se přihlásit pomocí výchozího demo účtu: `tim@apple.dev` (heslo: `tim@apple.dev`)
+
+**Backend**
+
+* Server Twenty poběží na [http://localhost:3000](http://localhost:3000)
+* K GraphQL API se dostanete na [http://localhost:3000/graphql](http://localhost:3000/graphql)
+* K REST API je přístup na [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Řešení potíží
+
+Pokud narazíte na jakýkoli problém, zkontrolujte sekci [Řešení potíží](/l/cs/developers/self-host/capabilities/troubleshooting) pro možná řešení.

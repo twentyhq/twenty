@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -5,12 +6,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter(
-    (key) => key !== './style.css' && key !== '.' && !key.startsWith('./src/'),
-  )
+  .filter((key) => key !== '.' && !key.startsWith('./src/'))
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
-const entries = ['src/index.ts', ...moduleEntries];
+const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -32,8 +31,23 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   }
   return `${moduleDirectory}.${extension}`;
 };
+
+const copySharedDist = () => {
+  return {
+    name: 'copy-twenty-shared-dist',
+    closeBundle: async () => {
+      const sharedDist = path.resolve(__dirname, '../twenty-shared/dist');
+      const vendorDist = path.resolve(__dirname, 'dist/vendor/twenty-shared');
+
+      await fs.remove(vendorDist);
+      await fs.ensureDir(path.dirname(vendorDist));
+      await fs.copy(sharedDist, vendorDist);
+    },
+  };
+};
+
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.json');
+  const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
   return {
     root: __dirname,
@@ -42,10 +56,29 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
+      copySharedDist(),
       dts({
         entryRoot: './src',
         tsconfigPath: tsConfigPath,
         exclude: ['vite.config.ts'],
+        beforeWriteFile: (filePath, content) => {
+          const fromDir = path.dirname(filePath);
+          const vendorDir = path.resolve(process.cwd(), 'dist/vendor');
+
+          let rel = path
+            .relative(fromDir, vendorDir)
+            .split(path.sep)
+            .join(path.posix.sep);
+          if (!rel.startsWith('.')) rel = `./${rel}`;
+
+          return {
+            filePath,
+            content: content.replace(
+              /(from\s+["'])twenty-shared(\/[^"']*)?(["'])/g,
+              `$1${rel}/twenty-shared$2$3`,
+            ),
+          };
+        },
       }),
     ],
     build: {

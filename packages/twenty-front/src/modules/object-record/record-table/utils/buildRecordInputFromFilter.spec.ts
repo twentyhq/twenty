@@ -140,6 +140,11 @@ describe('buildValueFromFilter', () => {
         expected: 5,
       },
       {
+        operand: ViewFilterOperand.IS_NOT,
+        value: '5',
+        expected: undefined,
+      },
+      {
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '5',
         expected: 6,

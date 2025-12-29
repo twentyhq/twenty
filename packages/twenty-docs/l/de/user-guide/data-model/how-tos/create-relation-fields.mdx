@@ -1,0 +1,60 @@
+---
+title: Relationsfelder erstellen
+description: Schritt-für-Schritt-Anleitung zum Verbinden von Objekten mit Relationsfeldern.
+---
+
+Relationsfelder verbinden Datensätze aus verschiedenen Objekten — zum Beispiel Personen mit Unternehmen.
+
+<Note>
+  **Relationsnamen können nach dem Erstellen nicht geändert werden** (sie wirken sich auf die API aus). Planen Sie Ihre Namen sorgfältig.
+</Note>
+
+## Bevor Sie beginnen
+
+Entscheiden Sie:
+
+* Welche Objekte verbinden Sie? (z. B. Personen → Unternehmen)
+* Welche ist die "One"-Seite? (z. B. Unternehmen)
+* Welche ist die "Many"-Seite? (z. B. Personen — viele Personen arbeiten bei einem Unternehmen)
+* Wie soll das Feld auf beiden Seiten heißen?
+
+Siehe [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) für Erläuterungen zu Relationstypen.
+
+## Schritte
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt aus, in dem Sie die Relation benötigen (typischerweise die "Many"-Seite)
+3. Klicken Sie auf **+ Feld hinzufügen**
+4. Wählen Sie **Relation** als Feldtyp aus
+5. Wählen Sie das **Zielobjekt** aus
+6. Wählen Sie **One-to-Many** oder **Many-to-One**
+7. Geben Sie Feldnamen für **beide Seiten** der Relation ein
+8. Klicken Sie auf **Speichern**
+
+## Beispiel: Personen → Unternehmen
+
+* Gehen Sie zu **Einstellungen → Datenmodell → Personen**
+* Fügen Sie ein Relationsfeld hinzu
+* Ziel: **Unternehmen**
+* Typ: **Many-to-One**
+* Feld bei Personen: **Unternehmen**
+* Feld bei Unternehmen: **Mitarbeitende**
+
+Jetzt kann jede Person mit einem Unternehmen verknüpft werden, und jedes Unternehmen zeigt seine Mitarbeitenden.
+
+## Eine Relation löschen
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Suchen Sie das Relationsfeld
+3. Klicken Sie auf **⋮ → Deaktivieren**
+
+Verknüpfungen bleiben erhalten, sind jedoch verborgen. Reaktivieren, um wiederherzustellen.
+
+<Note>
+  **Das Löschen einer Relation löscht keine Datensätze.** Es wird nur die Verknüpfung zwischen ihnen entfernt.
+</Note>
+
+## Verwandt
+
+* [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) — Typen und Einschränkungen
+* [Relationen importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — verknüpfte Datensätze im Stapel importieren

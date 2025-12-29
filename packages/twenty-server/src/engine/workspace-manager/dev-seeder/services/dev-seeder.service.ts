@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,7 +19,7 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
 @Injectable()
 export class DevSeederService {
@@ -32,11 +28,9 @@ export class DevSeederService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+    private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -61,9 +55,10 @@ export class DevSeederService {
         workspaceId,
       );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatApplicationMaps', 'featureFlagsMap'],
+    );
 
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
@@ -71,39 +66,22 @@ export class DevSeederService {
         schemaName,
       );
 
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    const twentyStandardApplication =
-      await this.applicationService.findByUniversalIdentifier({
-        workspaceId,
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      });
-
-    if (!isDefined(twentyStandardApplication)) {
-      throw new Error(
-        'Seeder failed to find twenty standard application, should never occur',
-      );
-    }
-
-    const { twentyStandardFlatApplication } =
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
         },
       );
 
-    await this.workspaceSyncMetadataService.synchronize({
-      workspaceId: workspaceId,
-      dataSourceId: dataSourceMetadata.id,
-      featureFlags,
-    });
+    await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
+      {
+        workspaceId,
+      },
+    );
 
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
-      featureFlags,
-      twentyStandardFlatApplication,
     });
 
     await this.devSeederMetadataService.seedRelations({
@@ -112,11 +90,21 @@ export class DevSeederService {
 
     await this.devSeederPermissionsService.initPermissions({
       workspaceId,
-      twentyStandardApplication,
+      twentyStandardFlatApplication,
     });
 
-    await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
-    await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
+    await seedPageLayouts(
+      this.coreDataSource,
+      'core',
+      workspaceId,
+      workspaceCustomFlatApplication.id,
+    );
+    await seedPageLayoutTabs({
+      applicationId: workspaceCustomFlatApplication.id,
+      workspaceId,
+      dataSource: this.coreDataSource,
+      schemaName: 'core',
+    });
 
     const objectMetadataRepository =
       this.coreDataSource.getRepository(ObjectMetadataEntity);
@@ -125,10 +113,8 @@ export class DevSeederService {
       relations: { fields: true },
     });
 
-    const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
-      workspaceId,
-    );
+    const isDashboardV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     await seedPageLayoutWidgets({
       dataSource: this.coreDataSource,
@@ -136,17 +122,15 @@ export class DevSeederService {
       workspaceId,
       objectMetadataItems,
       isDashboardV2Enabled,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
       workspaceId,
-      featureFlags,
+      featureFlags: featureFlagsMap,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId,
-    });
   }
 }

@@ -18,13 +18,11 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
-import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -32,10 +30,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([RoleTargetsEntity]),
+    TypeOrmModule.forFeature([RoleTargetEntity]),
     UserRoleModule,
     ApiKeyModule,
-    WorkspacePermissionsCacheModule,
     FileModule,
     ViewModule,
     ViewFilterModule,
@@ -44,7 +41,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     RecordPositionModule,
     RecordTransformerModule,
-    GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
   ],

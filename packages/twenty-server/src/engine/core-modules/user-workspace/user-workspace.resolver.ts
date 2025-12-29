@@ -9,11 +9,10 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Resolver()
@@ -21,10 +20,7 @@ export class UserWorkspaceResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Mutation(() => SignedFileDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
-  )
+  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })

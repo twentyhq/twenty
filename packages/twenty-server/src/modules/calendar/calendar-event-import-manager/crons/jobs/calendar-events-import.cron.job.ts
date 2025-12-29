@@ -48,8 +48,11 @@ export class CalendarEventsImportCronJob {
       try {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
+        const now = new Date().toISOString();
+
         const [calendarChannels] = await this.coreDataSource.query(
-          `UPDATE ${schemaName}."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}' WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
+          `UPDATE ${schemaName}."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
+           WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
         );
 
         for (const calendarChannel of calendarChannels) {

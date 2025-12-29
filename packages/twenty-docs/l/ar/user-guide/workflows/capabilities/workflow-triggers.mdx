@@ -1,0 +1,136 @@
+---
+title: محفزات سير العمل
+description: Learn about the different triggers that start your workflows.
+---
+
+## About Triggers
+
+تبدأ سير العمل دائمًا بمحفز واحد يحدد متى ينبغي تشغيل الأتمتة.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+
+  * أعضاء مساحة العمل
+  * Calendar Events
+  * Messages (Emails)
+  * Tasks, Notes, and many other system objects
+
+  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+</Tip>
+
+## إنشاء سجل
+
+يبدأ سير العمل عندما يتم إنشاء سجل جديد في كائن محدد (أشخاص أو شركات أو فرص أو أي كائن مخصص).
+
+**التكوين**: حدد نوع الكائن لمراقبة السجلات الجديدة.
+
+<Note>
+  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+</Note>
+
+## تحديث السجل
+
+يبدأ سير العمل عندما يتم إجراء تغييرات على سجل موجود.
+
+**التكوين**:
+
+* اختر نوع الكائن
+* اختر الحقول التي تريد مراقبتها للتغييرات بشكل اختياري
+
+## تحديث أو إنشاء سجل
+
+يبدأ سير العمل عندما يتم إنشاء أو تحديث سجل في كائن محدد.
+
+**أهمية الموضوع**: هذا المحفز مهم بشكل خاص لأن السجلات التي تنشأ بطرق مختلفة تتصرف بشكل مختلف:
+
+* **استيراد API/CSV**: يتم إنشاء السجلات مع ملء جميع الحقول فورًا
+* **الإنشاء اليدوي**: يتم إنشاء السجلات أولاً، ثم يتم إضافة الحقول في التحديثات اللاحقة
+
+**التكوين**:
+
+* اختر نوع الكائن لمراقبته
+* اختر الحقول التي تريد مراقبتها للتغييرات بشكل اختياري
+* سيتم تشغيل سير العمل في كل من الإنشاء الأولي وأي تحديثات لاحقة
+
+## حذف السجل
+
+يبدأ سير العمل عندما يتم إزالة سجل من كائن.
+
+**التكوين**: حدد نوع الكائن لمراقبة عمليات الحذف.
+
+## Manual Trigger
+
+يبدأ سير العمل عندما يتم تشغيله بواسطة إجراء المستخدم. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**إعداد التوفر**:
+اختر كيفية التعامل مع تحديد السجل في سير العمل:
+
+* **العالمي**: لا يتطلب أي سجل لتشغيل سير العمل هذا. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+
+* **مفرد**: سيتم تمرير السجل (السجلات) المحددة إلى سير العمل الخاص بك. تم تكوين هذا لكائن معين. يمكن اختيار عدة سجلات قبل إطلاق سير العمل. The workflow will run from beginning to end as many times as there are records selected.
+
+  <Note>
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+  </Note>
+
+* **الاختيار الشامل**: سيتم تمرير السجل/السجلات المحددة إلى سير العمل الخاص بك. تم تكوين هذا لكائن معين. يمكن اختيار عدة سجلات قبل إطلاق سير العمل. سيتم تشغيل سير العمل مرة واحدة، مما يوفر القائمة الكاملة للسجلات كمدخلات. This means the workflow needs to contain an [Iterator action](/l/ar/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  This is more advanced, and best for people who want to optimize the number of workflow runs.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**تكوين إضافي**:
+
+* حدد الكائن المستهدف (للتوفر الفردي والشامل)
+* اختر رمز الأمر لتفعيل سير العمل
+* قم بتكوين موضع شريط التنقل (مثبت أو غير مثبت)
+
+**طرق الوصول**:
+
+* `Cmd+K` menu to find and launch manual workflows
+* زر مخصص في شريط التنقل العلوي (إذا تم تكوينه)
+
+## Time-Based Trigger: On a Schedule
+
+يبدأ سير العمل على أساس دوري تحدده.
+
+**التكوين**:
+
+* اختر وحدة الوقت (الدقائق، الساعات، الأيام)
+* أدخل قيمة أو استخدم تعبيرات كرون مخصصة للجدولة المتقدمة
+
+<Note>
+  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+</Note>
+
+## External Trigger: Webhook
+
+يبدأ سير العمل عندما يتم استقبال طلب GET أو POST من خدمة خارجية.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**التكوين**:
+
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
+
+## Choosing the Right Trigger
+
+| Use Case                    | Recommended Trigger      |
+| --------------------------- | ------------------------ |
+| New leads need processing   | إنشاء سجل                |
+| Data changes need sync      | تحديث السجل              |
+| Import/manual data handling | تحديث أو إنشاء سجل       |
+| Cleanup after deletion      | حذف السجل                |
+| User-initiated action       | التشغيل يدويًا           |
+| Recurring reports           | بجدول زمني               |
+| External integration        | Webhook or On a Schedule |

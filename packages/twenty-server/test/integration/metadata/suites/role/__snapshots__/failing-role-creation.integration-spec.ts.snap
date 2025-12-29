@@ -5,11 +5,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -37,11 +41,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -64,11 +72,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -96,11 +108,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -123,11 +139,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -155,11 +175,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -182,11 +206,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -214,11 +242,15 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -241,11 +273,15 @@ exports[`Role creation should fail when label already exists 1`] = `
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -273,11 +309,15 @@ exports[`Role creation should fail when label already exists 1`] = `
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

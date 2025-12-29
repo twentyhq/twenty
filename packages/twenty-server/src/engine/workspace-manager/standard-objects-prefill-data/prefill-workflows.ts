@@ -54,6 +54,9 @@ export const prefillWorkflows = async (
       'createdByWorkspaceMemberId',
       'createdByName',
       'createdByContext',
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
     ])
     .orIgnore()
     .values([
@@ -67,6 +70,9 @@ export const prefillWorkflows = async (
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
         createdByContext: {},
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
     ])
     .returning('*')
@@ -229,7 +235,6 @@ export const prefillWorkflows = async (
                     flatObjectMetadataMaps,
                     flatFieldMetadataMaps,
                   },
-                  depth: 0,
                 }),
               },
               errorHandlingOptions: {
@@ -272,7 +277,6 @@ export const prefillWorkflows = async (
                     flatObjectMetadataMaps,
                     flatFieldMetadataMaps,
                   },
-                  depth: 0,
                 }),
               },
               errorHandlingOptions: {

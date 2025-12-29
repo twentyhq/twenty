@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -13,9 +15,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
@@ -32,7 +34,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 @Resolver()
 export class WorkspaceInvitationResolver {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
   ) {}
 
@@ -54,18 +56,26 @@ export class WorkspaceInvitationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
   ) {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-      where: {
-        userId: user.id,
-      },
-    });
+    const workspaceMember =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspace.id,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workspaceMemberRepository.findOneOrFail({
+            where: {
+              userId: user.id,
+            },
+          });
+        },
+      );
 
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,
@@ -86,18 +96,26 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-      where: {
-        userId: user.id,
-      },
-    });
+    const workspaceMember =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspace.id,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workspaceMemberRepository.findOneOrFail({
+            where: {
+              userId: user.id,
+            },
+          });
+        },
+      );
 
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,

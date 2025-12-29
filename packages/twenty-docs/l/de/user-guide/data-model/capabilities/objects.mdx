@@ -1,0 +1,91 @@
+---
+title: Objekte
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standard Objects
+
+Standardobjekte sind vordefinierte Entitäten in Ihrem Arbeitsbereich, um Ihnen den Einstieg zu erleichtern. Sie sind Teil eines gemeinsamen Datenmodells, das allen Nutzern von Twenty zugänglich ist. Sie können sie so verwenden, wie sie sind, anpassen oder deaktivieren.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Personen
+
+Das `Personen`-Objekt speichert Ihre Kontakte. Es umfasst Kontaktdaten und Interaktionshistorie, sodass Sie alle Ihre Kundeninteraktionen an einem Ort sehen können.
+
+### Unternehmen
+
+Das `Unternehmen`-Objekt speichert Ihre Geschäftskonten. Es umfasst Details wie Branche, Größe und Standort. Companies connect to both `People` and `Opportunities` objects.
+
+### Opportunities
+
+The `Opportunities` object stores deal-related data. Es verfolgt den Fortschritt potenzieller Verkäufe, vom Interessenten bis zum Abschluss, und zeichnet Phasen, Deal-Größen, zugehörige Konten und erwartetes Abschlussdatum auf. Sie können Ihre Verkaufspipeline in einem Kanban-Layout anzeigen.
+
+### Notizen
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Aufgaben
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## Benutzerdefinierte Objekte
+
+Benutzerdefinierte Objekte lassen Sie Informationen speichern, die einzigartig für Ihre Organisation sind und die Standardobjekte nicht verarbeiten können. Wenn Sie zum Beispiel SpaceX sind, möchten Sie vielleicht ein benutzerdefiniertes Objekt für Raketen und Starts erstellen.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+Um ein neues benutzerdefiniertes Objekt zu erstellen:
+
+1. Gehen Sie zu Einstellungen in der Seitenleiste auf der linken Seite.
+2. Gehen Sie unter Arbeitsbereich zu Datenmodell. Hier können Sie einen Überblick über alle Ihre bestehenden Standard- und benutzerdefinierten Objekte (sowohl aktive als auch deaktivierte) sehen.
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klicken Sie oben auf `+ Neues Objekt`. Geben Sie den Namen (sowohl im Singular als auch im Plural) ein, wählen Sie ein Symbol aus und fügen Sie eine Beschreibung für Ihr benutzerdefiniertes Objekt hinzu und drücken Sie Speichern (oben rechts). Als Beispiel für ein benutzerdefiniertes Objekt wäre der Singular "Eintrag" und der Plural "Einträge" zusammen mit einer Beschreibung wie "Einträge, die Gastgeber erstellt haben, um ihre Immobilie zu präsentieren."
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## Beste Praktiken
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

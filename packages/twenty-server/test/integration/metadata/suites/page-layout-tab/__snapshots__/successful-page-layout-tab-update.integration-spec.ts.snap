@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout tab update should succeed should update page layout tab position 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 10,
+  "title": "Original Tab Title",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout tab update should succeed should update page layout tab title 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Updated Tab Title",
+  "updatedAt": Any<String>,
+}
+`;

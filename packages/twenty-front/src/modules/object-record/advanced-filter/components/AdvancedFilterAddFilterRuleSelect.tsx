@@ -1,7 +1,8 @@
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
-import { useDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useDefaultFieldMetadataItemForFilter';
+import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -14,7 +15,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -45,13 +48,18 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { defaultFieldMetadataItemForFilter } =
-    useDefaultFieldMetadataItemForFilter();
+  const { getDefaultFieldMetadataItemForFilter } =
+    useGetDefaultFieldMetadataItemForFilter();
 
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
+  const { objectMetadataItem } = useContext(AdvancedFilterContext);
+
   const handleAddFilter = () => {
+    const { defaultFieldMetadataItemForFilter } =
+      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');
     }
@@ -86,6 +94,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   };
 
   const handleAddFilterGroup = () => {
+    const { defaultFieldMetadataItemForFilter } =
+      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+
     closeDropdown(dropdownId);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
@@ -139,8 +150,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       <ActionButton
         action={{
           Icon: IconPlus,
-          label: 'Add rule',
-          shortLabel: 'Add rule',
+          label: t`Add rule`,
+          shortLabel: t`Add rule`,
           key: 'add-rule',
         }}
         onClick={handleAddFilter}
@@ -155,8 +166,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
         <ActionButton
           action={{
             Icon: IconPlus,
-            label: 'Add filter rule',
-            shortLabel: 'Add filter rule',
+            label: t`Add filter rule`,
+            shortLabel: t`Add filter rule`,
             key: 'add-filter-rule',
           }}
         />
@@ -166,13 +177,13 @@ export const AdvancedFilterAddFilterRuleSelect = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconPlus}
-              text="Add rule"
+              text={t`Add rule`}
               onClick={handleAddFilter}
             />
             {isFilterRuleGroupOptionVisible && (
               <MenuItem
                 LeftIcon={IconLibraryPlus}
-                text="Add rule group"
+                text={t`Add rule group`}
                 onClick={handleAddFilterGroup}
               />
             )}

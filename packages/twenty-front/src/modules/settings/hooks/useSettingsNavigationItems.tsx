@@ -2,30 +2,36 @@ import { SettingsPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { billingState } from '@/client-config/states/billingState';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import {
   IconApi,
-  IconApps,
+  // IconApps, // TODO: Re-enable when integrations page is ready
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconHelpCircle,
   IconHierarchy2,
   IconKey,
   IconLock,
   IconMail,
+  IconMessage,
+  IconPlug,
   IconRocket,
   IconServer,
   IconSettings,
   IconSparkles,
-  IconPuzzle2,
   IconUserCircle,
   IconUsers,
   IconWorld,
@@ -55,6 +61,8 @@ export type SettingsNavigationItem = {
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
   const { signOut } = useAuth();
+  const supportChat = useRecoilValue(supportChatState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
@@ -65,6 +73,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isApplicationEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APPLICATION_ENABLED,
   );
+  const isSupportChatConfigured =
+    supportChat?.supportDriver === 'FRONT' &&
+    isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -148,16 +159,17 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconApi,
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
-        {
-          label: t`Integrations`,
-          path: SettingsPath.Integrations,
-          Icon: IconApps,
-          isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-        },
+        // TODO: Re-enable when integrations page is ready
+        // {
+        //   label: t`Integrations`,
+        //   path: SettingsPath.Integrations,
+        //   Icon: IconApps,
+        //   isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+        // },
         {
           label: t`Applications`,
           path: SettingsPath.Applications,
-          Icon: IconPuzzle2,
+          Icon: IconPlug,
           isHidden:
             !isApplicationEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],
@@ -190,10 +202,25 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Releases`,
-          path: SettingsPath.Releases,
+          label: t`Updates`,
+          path: SettingsPath.Updates,
           Icon: IconRocket,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Support`,
+          onClick: () => window.FrontChat?.('show'),
+          Icon: IconMessage,
+          isHidden: !isSupportChatConfigured,
+        },
+        {
+          label: t`Documentation`,
+          onClick: () =>
+            window.open(
+              getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
+              '_blank',
+            ),
+          Icon: IconHelpCircle,
         },
         {
           label: t`Logout`,

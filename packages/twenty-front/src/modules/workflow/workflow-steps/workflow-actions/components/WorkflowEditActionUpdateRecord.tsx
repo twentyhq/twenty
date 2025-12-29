@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
@@ -150,11 +151,11 @@ export const WorkflowEditActionUpdateRecord = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-update-record-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           disabled={isFormDisabled}
           value={formData.objectNameSingular}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: UpdateRecordFormData = {
@@ -177,7 +178,7 @@ export const WorkflowEditActionUpdateRecord = ({
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker
             testId="workflow-update-record-object-record-id"
-            label="Record"
+            label={t`Record`}
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
@@ -190,14 +191,15 @@ export const WorkflowEditActionUpdateRecord = ({
 
         {isDefined(selectedObjectMetadataItem) && (
           <WorkflowFieldsMultiSelect
-            label="Fields to update"
-            placeholder="Select fields to update"
+            label={t`Fields to update`}
+            placeholder={t`Select fields to update`}
             objectMetadataItem={selectedObjectMetadataItem}
             handleFieldsChange={(fieldsToUpdate) =>
               handleFieldChange('fieldsToUpdate', fieldsToUpdate)
             }
             readonly={isFormDisabled ?? false}
             defaultFields={formData.fieldsToUpdate}
+            actionType="UPDATE_RECORD"
           />
         )}
 

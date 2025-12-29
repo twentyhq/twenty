@@ -12,8 +12,8 @@ import {
   beautifyPastDateRelativeToNow,
   hasDatePassed,
   parseDate,
-} from '../date-utils';
-import { logError } from '../logError';
+} from '~/utils/date-utils';
+import { logError } from '~/utils/logError';
 
 i18n.load(SOURCE_LOCALE, enMessages);
 i18n.activate(SOURCE_LOCALE);
@@ -283,11 +283,12 @@ describe('French locale tests', () => {
       expect(result).toContain('an'); // French for year
     });
 
-    it('should fall back to manual implementation for short French', () => {
+    it('should fall back to manual implementation for short format', () => {
       const date = '2025-01-01T00:00:00.000Z';
       const dateToCompareWith = '2024-01-01T00:00:00.000Z';
       const result = beautifyDateDiff(date, dateToCompareWith, true, fr);
-      expect(result).toContain('année'); // French translation from Lingui
+      // Manual implementation with Lingui translations returns French
+      expect(result).toContain('an'); // French for year (singular)
     });
 
     it('should handle mixed years and days in French', () => {

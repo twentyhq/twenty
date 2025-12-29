@@ -1,7 +1,8 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
+import { GRAPH_DEFAULT_ORDER_BY } from '@/page-layout/widgets/graph/constants/GraphDefaultOrderBy';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -26,6 +27,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
+  userTimeZone,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
@@ -33,6 +35,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   aggregateOperation?: string;
   limit?: number;
   firstDayOfTheWeek?: number;
+  userTimeZone?: string;
 }) => {
   const groupByFieldXId = chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
@@ -61,11 +64,11 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   const isFieldXDate = isFieldMetadataDateKind(groupByFieldX.type);
 
-  const isFieldXNestedDate = isNestedFieldDateType(
-    groupByFieldX,
-    groupBySubFieldNameX,
+  const isFieldXNestedDate = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: groupBySubFieldNameX,
     objectMetadataItems,
-  );
+  });
 
   const shouldApplyDateGranularityX = isFieldXDate || isFieldXNestedDate;
 
@@ -81,17 +84,18 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         : undefined,
       firstDayOfTheWeek,
       isNestedDateField: isFieldXNestedDate,
+      timeZone: userTimeZone,
     }),
   );
 
   if (isDefined(groupByFieldY)) {
     const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDate = isNestedFieldDateType(
-      groupByFieldY,
-      groupBySubFieldNameY,
+    const isFieldYNestedDate = isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: groupBySubFieldNameY,
       objectMetadataItems,
-    );
+    });
 
     const shouldApplyDateGranularityY = isFieldYDate || isFieldYNestedDate;
 
@@ -105,6 +109,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
           : undefined,
         firstDayOfTheWeek,
         isNestedDateField: isFieldYNestedDate,
+        timeZone: userTimeZone,
       }),
     );
   }
@@ -117,38 +122,36 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     | ObjectRecordOrderByForRelationField
   > = [];
 
-  if (isDefined(chartConfiguration.primaryAxisOrderBy)) {
-    orderBy.push(
-      getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.primaryAxisOrderBy,
-        groupByField: groupByFieldX,
-        groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
-        aggregateOperation,
-        dateGranularity: shouldApplyDateGranularityX
-          ? (chartConfiguration.primaryAxisDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY)
-          : undefined,
-      }),
-    );
-  }
-  if (
-    isDefined(groupByFieldY) &&
-    isDefined(chartConfiguration.secondaryAxisOrderBy)
-  ) {
+  orderBy.push(
+    getGroupByOrderBy({
+      graphOrderBy:
+        chartConfiguration.primaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
+      groupByField: groupByFieldX,
+      groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyDateGranularityX
+        ? (chartConfiguration.primaryAxisDateGranularity ??
+          GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    }),
+  );
+
+  if (isDefined(groupByFieldY)) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDateForOrderBy = isNestedFieldDateType(
-      groupByFieldY,
-      groupBySubFieldNameY,
+    const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: groupBySubFieldNameY,
       objectMetadataItems,
-    );
+    });
 
     const shouldApplyDateGranularityYForOrderBy =
       isFieldYDateForOrderBy || isFieldYNestedDateForOrderBy;
 
     orderBy.push(
       getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.secondaryAxisOrderBy,
+        graphOrderBy:
+          chartConfiguration.secondaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
         groupByField: groupByFieldY,
         groupBySubFieldName:
           chartConfiguration.secondaryAxisGroupBySubFieldName,
@@ -163,7 +166,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   return {
     groupBy,
-    ...(orderBy.length > 0 && { orderBy }),
+    orderBy,
     ...(isDefined(limit) && { limit }),
   };
 };

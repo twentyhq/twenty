@@ -7,8 +7,8 @@ import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hoo
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isMergeInProgressState } from '../states/mergeInProgressState';
-import { mergeSettingsState } from '../states/mergeSettingsState';
+import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
+import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -61,7 +61,7 @@ export const useMergeRecordsActions = ({
         message:
           error instanceof Error
             ? error.message
-            : 'Failed to merge records. Please try again.',
+            : t`Failed to merge records. Please try again.`,
       });
     } finally {
       setMergeInProgress(false);

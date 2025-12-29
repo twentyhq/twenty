@@ -10,6 +10,7 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -19,7 +20,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -32,7 +33,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           UserEntity,
           UserWorkspaceEntity,
           WorkspaceEntity,
-          RoleTargetsEntity,
+          RoleTargetEntity,
         ]),
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
         TypeORMModule,
@@ -53,6 +54,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [UserWorkspaceService, UserWorkspaceResolver],
+  providers: [
+    UserWorkspaceService,
+    UserWorkspaceResolver,
+    UploadProfilePicturePermissionGuard,
+  ],
 })
 export class UserWorkspaceModule {}

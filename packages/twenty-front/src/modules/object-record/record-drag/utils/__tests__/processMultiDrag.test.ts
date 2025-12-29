@@ -17,6 +17,7 @@ describe('processMultiDrag', () => {
       targetRecordId: 'record-4',
       selectedRecordIds,
       recordsWithPosition,
+      isDroppedAfterList: true,
     });
 
     expect(dragResult.recordUpdates).toEqual([
@@ -35,6 +36,7 @@ describe('processMultiDrag', () => {
         targetRecordId: '',
         selectedRecordIds,
         recordsWithPosition,
+        isDroppedAfterList: false,
       });
     }).toThrow('Cannot find item to move for id : ');
   });
@@ -47,6 +49,7 @@ describe('processMultiDrag', () => {
       targetRecordId: 'record-3',
       selectedRecordIds,
       recordsWithPosition,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult.recordUpdates).toEqual([
@@ -62,6 +65,7 @@ describe('processMultiDrag', () => {
       targetRecordId: 'record-3',
       selectedRecordIds,
       recordsWithPosition,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult.recordUpdates).toEqual([]);

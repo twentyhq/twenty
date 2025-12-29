@@ -5,6 +5,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useRemoveStepFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useRemoveStepFilter';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
+import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -25,7 +26,7 @@ export const WorkflowStepFilterOptionsDropdown = ({
       dropdownId={`step-filter-options-${stepFilterId}`}
       clickableComponent={
         <IconButton
-          aria-label="Step filter options"
+          aria-label={t`Step filter options`}
           variant="tertiary"
           Icon={IconDotsVertical}
           disabled={readonly}
@@ -36,7 +37,7 @@ export const WorkflowStepFilterOptionsDropdown = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconTrash}
-              text="Delete"
+              text={t`Delete`}
               onClick={() => removeStepFilter(stepFilterId)}
               accent="danger"
             />

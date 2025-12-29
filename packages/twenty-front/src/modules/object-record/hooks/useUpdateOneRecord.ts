@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -165,6 +166,11 @@ export const useUpdateOneRecord = <
           const record = data?.[mutationResponseField];
           if (!isDefined(record)) return;
 
+          const recordToUpsert = getRecordFromRecordNode({
+            recordNode: record,
+          });
+          upsertRecordsInStore({ partialRecords: [recordToUpsert] });
+
           triggerUpdateRecordOptimisticEffect({
             cache,
             objectMetadataItem,
@@ -230,9 +236,9 @@ export const useUpdateOneRecord = <
 
     const udpatedRecord = updatedRecord?.data?.[mutationResponseField] ?? null;
 
-    registerObjectOperation(objectNameSingular, {
+    registerObjectOperation(objectMetadataItem, {
       type: 'update-one',
-      result: { updatedRecord, updateInput: updateOneRecordInput },
+      result: { updateInput: updateOneRecordInput },
     });
 
     return udpatedRecord;

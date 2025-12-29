@@ -106,6 +106,7 @@ export const processGroupDrop = ({
       sourceRecordId: draggedRecordId,
       targetRecordId: targetRecord.id,
       recordsWithPosition: recordsWithPosition,
+      isDroppedAfterList,
     });
 
     if (!isDefined(singleDragResult.position)) {
@@ -125,6 +126,7 @@ export const processGroupDrop = ({
       selectedRecordIds,
       recordsWithPosition,
       targetRecordId: targetRecord.id,
+      isDroppedAfterList,
     });
 
     for (const update of multiDragResult.recordUpdates) {

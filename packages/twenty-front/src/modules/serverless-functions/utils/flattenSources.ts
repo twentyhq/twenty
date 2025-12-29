@@ -1,5 +1,5 @@
 // IA Generated
-import { type Sources } from '@/serverless-functions/types/sources.type';
+import { type Sources } from 'twenty-shared/types';
 
 type FlatSource = { path: string; content: string };
 

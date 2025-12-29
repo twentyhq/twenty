@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
@@ -200,6 +201,7 @@ export type ModalProps = React.PropsWithChildren & {
   modalVariant?: ModalVariants;
   dataGloballyPreventClickOutside?: boolean;
   shouldCloseModalOnClickOutsideOrEscape?: boolean;
+  ignoreContainer?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -223,11 +225,17 @@ export const Modal = ({
   modalVariant = 'primary',
   dataGloballyPreventClickOutside = false,
   shouldCloseModalOnClickOutsideOrEscape = true,
+  ignoreContainer = false,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
-  const isInContainer = container !== null;
+  const effectiveContainer = ignoreContainer
+    ? isDefined(document)
+      ? document.body
+      : null
+    : container;
+  const isInContainer = isDefined(container) && !ignoreContainer;
 
   const theme = useTheme();
 
@@ -300,8 +308,8 @@ export const Modal = ({
     </AnimatePresence>
   );
 
-  if (container !== null) {
-    return createPortal(modalContent, container);
+  if (isDefined(effectiveContainer)) {
+    return createPortal(modalContent, effectiveContainer);
   }
 
   return modalContent;

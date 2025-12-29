@@ -1,4 +1,7 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartGroupMode, GraphOrderBy } from '~/generated/graphql';
@@ -9,6 +12,8 @@ type BuildChartGroupByFieldConfigUpdateArgs<T extends ChartConfiguration> = {
   subFieldNameKey: keyof T;
   fieldId: string | null;
   subFieldName: string | null;
+  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItems?: ObjectMetadataItem[];
 };
 
 export const buildChartGroupByFieldConfigUpdate = <
@@ -19,6 +24,8 @@ export const buildChartGroupByFieldConfigUpdate = <
   subFieldNameKey,
   fieldId,
   subFieldName,
+  objectMetadataItem,
+  objectMetadataItems,
 }: BuildChartGroupByFieldConfigUpdateArgs<T>) => {
   const isPrimaryAxis =
     fieldMetadataIdKey === 'primaryAxisGroupByFieldMetadataId';
@@ -31,9 +38,18 @@ export const buildChartGroupByFieldConfigUpdate = <
     [subFieldNameKey]: subFieldName,
   };
 
-  const isBarChart = configuration.__typename === 'BarChartConfiguration';
-  const isLineChart = configuration.__typename === 'LineChartConfiguration';
-  const isPieChart = configuration.__typename === 'PieChartConfiguration';
+  const isBarChart = isWidgetConfigurationOfType(
+    configuration,
+    'BarChartConfiguration',
+  );
+  const isLineChart = isWidgetConfigurationOfType(
+    configuration,
+    'LineChartConfiguration',
+  );
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
 
   if (isPrimaryAxis) {
     const existingOrderBy =
@@ -44,14 +60,36 @@ export const buildChartGroupByFieldConfigUpdate = <
         ? configuration.primaryAxisDateGranularity
         : null;
 
+    const isNewFieldDateType = isFieldOrRelationNestedFieldDateKind({
+      fieldId,
+      subFieldName,
+      objectMetadataItem,
+      objectMetadataItems,
+    });
+
+    const shouldResetCumulative =
+      isDefined(fieldId) &&
+      isDefined(objectMetadataItem) &&
+      !isNewFieldDateType &&
+      (isBarChart || isLineChart);
+
+    const isCurrentOrderByValueBased =
+      existingOrderBy === GraphOrderBy.VALUE_ASC ||
+      existingOrderBy === GraphOrderBy.VALUE_DESC;
+
+    const shouldResetOrderBy = isNewFieldDateType && isCurrentOrderByValueBased;
+
+    const newOrderBy = shouldResetOrderBy
+      ? GraphOrderBy.FIELD_ASC
+      : (existingOrderBy ?? GraphOrderBy.FIELD_ASC);
+
     return {
       ...baseConfig,
-      primaryAxisOrderBy: isDefined(fieldId)
-        ? (existingOrderBy ?? GraphOrderBy.FIELD_ASC)
-        : null,
+      primaryAxisOrderBy: isDefined(fieldId) ? newOrderBy : null,
       primaryAxisDateGranularity: isDefined(fieldId)
         ? (existingDateGranularity ?? ObjectRecordGroupByDateGranularity.DAY)
         : null,
+      ...(shouldResetCumulative ? { isCumulative: false } : {}),
     };
   }
 
@@ -62,11 +100,26 @@ export const buildChartGroupByFieldConfigUpdate = <
       ? configuration.dateGranularity
       : null;
 
+    const isNewFieldDateType = isFieldOrRelationNestedFieldDateKind({
+      fieldId,
+      subFieldName,
+      objectMetadataItem,
+      objectMetadataItems,
+    });
+
+    const isCurrentOrderByValueBased =
+      existingOrderBy === GraphOrderBy.VALUE_ASC ||
+      existingOrderBy === GraphOrderBy.VALUE_DESC;
+
+    const shouldResetOrderBy = isNewFieldDateType && isCurrentOrderByValueBased;
+
+    const newOrderBy = shouldResetOrderBy
+      ? GraphOrderBy.FIELD_ASC
+      : (existingOrderBy ?? GraphOrderBy.FIELD_ASC);
+
     return {
       ...baseConfig,
-      orderBy: isDefined(fieldId)
-        ? (existingOrderBy ?? GraphOrderBy.FIELD_ASC)
-        : null,
+      orderBy: isDefined(fieldId) ? newOrderBy : null,
       dateGranularity: isDefined(fieldId)
         ? (existingDateGranularity ?? ObjectRecordGroupByDateGranularity.DAY)
         : null,

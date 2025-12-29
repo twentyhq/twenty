@@ -63,6 +63,12 @@ export class ViewDTO {
   kanbanAggregateOperationFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string | null;
+
+  @Field({ nullable: false, defaultValue: false })
+  shouldHideEmptyGroups: boolean;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })

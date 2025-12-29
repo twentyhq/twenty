@@ -1,0 +1,48 @@
+---
+title: Supported File Formats
+description: File formats supported for data import in Twenty.
+---
+
+## Supported Formats
+
+Twenty supports three file formats for import:
+
+| Format             | Extension | Notes                        |
+| ------------------ | --------- | ---------------------------- |
+| **CSV**            | .csv      | Recommended, most compatible |
+| **Excel**          | .xlsx     | Modern Excel format          |
+| **Excel (Legacy)** | .xls      | Older Excel format           |
+
+## File Requirements
+
+| Requirement      | Value                                 |
+| ---------------- | ------------------------------------- |
+| **Encoding**     | UTF-8 recommended                     |
+| **Record limit** | 10,000 records per file               |
+| **Structure**    | First row must contain column headers |
+| **Content**      | One object type per file              |
+
+## CSV Best Practices
+
+* **Delimiter**: Use comma (`,`) or semicolon (`;`)
+* **Text qualifier**: Use double quotes (`"`) for text containing commas
+* **Line endings**: Windows (CRLF) or Unix (LF) both supported
+* **Empty values**: Leave cells empty, don't use "NULL" or "N/A"
+
+## Excel Best Practices
+
+When exporting from Excel:
+
+* Remove formulas (export values only)
+* Delete empty rows at the end
+* Ensure no merged cells
+* Use the first sheet only
+
+## Large Datasets
+
+For datasets larger than 10,000 records:
+
+* Split into multiple files
+* Or use the [API import](/l/es/user-guide/data-migration/how-tos/import-data-via-api) for unlimited records
+
+<Note>For very large migrations (100,000+ records), the API is significantly faster and more reliable than CSV imports.</Note>

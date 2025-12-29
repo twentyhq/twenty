@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout widget update should succeed should update page layout widget grid position 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 3,
+    "columnSpan": 4,
+    "row": 2,
+    "rowSpan": 2,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Original Widget Title",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget update should succeed should update page layout widget title 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Updated Widget Title",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget update should succeed should update page layout widget type 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Original Widget Title",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;

@@ -8,21 +8,25 @@ import {
   type SupportedDateGranularity,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getDateGroupsFromData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 type TwoDimensionalFillParams = {
   data: GroupByRawResult[];
   keys: string[];
   dateGranularity: SupportedDateGranularity;
+  orderBy?: GraphOrderBy | null;
 };
 
 export const fillDateGapsInTwoDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
+  orderBy,
 }: TwoDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
-  const parsedDates: Date[] = [];
+  const parsedDates: Temporal.PlainDate[] = [];
   const uniqueSecondDimensionValues = new Set<DimensionValue>();
 
   for (const item of data) {
@@ -32,11 +36,7 @@ export const fillDateGapsInTwoDimensionalBarChartData = ({
       continue;
     }
 
-    const parsedDate = new Date(String(dateValue));
-
-    if (isNaN(parsedDate.getTime())) {
-      continue;
-    }
+    const parsedDate = Temporal.PlainDate.from(String(dateValue));
 
     parsedDates.push(parsedDate);
 
@@ -44,7 +44,7 @@ export const fillDateGapsInTwoDimensionalBarChartData = ({
       null) as DimensionValue;
     uniqueSecondDimensionValues.add(secondDimensionValue);
 
-    const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
+    const key = `${parsedDate.toString()}_${String(secondDimensionValue)}`;
     existingDateGroupsMap.set(key, item);
   }
 
@@ -52,14 +52,15 @@ export const fillDateGapsInTwoDimensionalBarChartData = ({
     return { data, wasTruncated: false };
   }
 
-  const { dates: allDates, wasTruncated } = getDateGroupsFromData(
+  const { dates: allDates, wasTruncated } = getDateGroupsFromData({
     parsedDates,
     dateGranularity,
-  );
+    orderBy,
+  });
 
   const filledData = allDates.flatMap((date) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {
-      const key = `${date.toISOString()}_${String(secondDimensionValue)}`;
+      const key = `${date.toString()}_${String(secondDimensionValue)}`;
       const existingDateGroup = existingDateGroupsMap.get(key);
 
       return isDefined(existingDateGroup)

@@ -25,6 +25,7 @@ import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadat
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
@@ -33,7 +34,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -59,7 +59,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         RemoteTableRelationsModule,
         IndexMetadataModule,
         PermissionsModule,
-        WorkspacePermissionsCacheModule,
         WorkspaceCacheStorageModule,
         WorkspaceDataSourceModule,
         FeatureFlagModule,
@@ -97,7 +96,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       ],
     }),
   ],
-  providers: [ObjectMetadataService, ObjectMetadataResolver],
-  exports: [ObjectMetadataService],
+  providers: [
+    ObjectMetadataService,
+    ObjectMetadataResolver,
+    ObjectMetadataToolsFactory,
+  ],
+  exports: [ObjectMetadataService, ObjectMetadataToolsFactory],
 })
 export class ObjectMetadataModule {}

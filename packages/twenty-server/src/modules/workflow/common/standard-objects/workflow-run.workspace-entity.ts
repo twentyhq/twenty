@@ -18,9 +18,9 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -94,7 +94,6 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-@WorkspaceIsObjectUIReadOnly()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
@@ -103,6 +102,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Name of the workflow run`,
     icon: 'IconSettingsAutomation',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   name: string | null;
 
@@ -113,6 +113,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workflow run enqueued at`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   enqueuedAt: Date | null;
 
@@ -123,6 +124,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workflow run started at`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   startedAt: string | null;
 
@@ -133,6 +135,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workflow run ended at`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   endedAt: string | null;
 
@@ -188,6 +191,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: "'NOT_STARTED'",
   })
+  @WorkspaceIsFieldUIReadOnly()
   status: WorkflowRunStatus;
 
   @WorkspaceField({
@@ -197,7 +201,18 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCreativeCommonsSa',
     description: msg`The executor of the workflow`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
@@ -206,6 +221,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`State of the workflow run`,
     icon: 'IconHierarchy2',
   })
+  @WorkspaceIsFieldUIReadOnly()
   state: WorkflowRunState;
 
   @WorkspaceField({
@@ -216,6 +232,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   position: number;
 
@@ -230,6 +247,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
       SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
     ),
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
@@ -246,6 +264,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'runs',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflowVersion')
@@ -261,6 +280,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'runs',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflow')
@@ -275,6 +295,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
@@ -284,8 +305,10 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the run`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetWorkflowRun',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

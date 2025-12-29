@@ -1,8 +1,9 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
@@ -29,7 +30,14 @@ import { CustomError } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailRelationSectionDropdownToOne = () => {
+type RecordDetailRelationSectionDropdownToOneProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailRelationSectionDropdownToOne = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailRelationSectionDropdownToOneProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
   assertFieldMetadata(
     FieldMetadataType.RELATION,
@@ -83,6 +91,7 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
 
   const { closeDropdown } = useCloseDropdown();
@@ -157,11 +166,13 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPencil}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPencil}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <SingleRecordPicker

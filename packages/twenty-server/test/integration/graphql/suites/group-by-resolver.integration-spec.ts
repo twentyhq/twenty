@@ -300,7 +300,7 @@ describe('group-by resolver (integration)', () => {
         },
         {
           createdAt: {
-            lte: '2025-03-03T23:59:59.999Z',
+            lt: '2025-03-04T00:00:00.000Z',
           },
         },
       ],
@@ -311,7 +311,9 @@ describe('group-by resolver (integration)', () => {
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
-          groupBy: [{ createdAt: { granularity: 'MONTH' } }],
+          groupBy: [
+            { createdAt: { granularity: 'MONTH', timeZone: 'Europe/Paris' } },
+          ],
           filter: filter2025,
         }),
       );
@@ -322,9 +324,6 @@ describe('group-by resolver (integration)', () => {
       expect(Array.isArray(groups)).toBe(true);
       expect(groups.length).toBe(2);
 
-      // Expect two groups: one with 2 records (January) and one with 1 record (March)
-      // Note: DATE_TRUNC returns dates in server timezone, which when converted to UTC
-      // may show as the previous day at 23:00 (e.g., 2024-12-31T23:00 for Jan 1 local)
       const groupWith2Records = groups.find((g: any) => g.totalCount === 2);
       const groupWith1Record = groups.find((g: any) => g.totalCount === 1);
 
@@ -393,7 +392,9 @@ describe('group-by resolver (integration)', () => {
           groupByOperationFactory({
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
-            groupBy: [{ createdAt: { granularity: 'WEEK' } }],
+            groupBy: [
+              { createdAt: { granularity: 'WEEK', timeZone: 'Europe/Paris' } },
+            ],
             gqlFields: `
               edges {
                 node {
@@ -402,6 +403,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -412,7 +414,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of monday dec 30th, 2024
         const mondayDec30thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2024-12-30T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2024-12-30'),
         );
 
         expect(mondayDec30thGroup).toBeDefined();
@@ -421,7 +423,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of monday jan 6th, 2025
         const mondayJan6thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-01-06T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-01-06'),
         );
 
         expect(mondayJan6thGroup).toBeDefined();
@@ -430,7 +432,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of monday feb 24th, 2025
         const mondayFeb24thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-02-24T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-02-24'),
         );
 
         expect(mondayFeb24thGroup).toBeDefined();
@@ -448,7 +450,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of monday march 3rd, 2025
         const mondayMarch3rdGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-03-03T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-03-03'),
         );
 
         expect(mondayMarch3rdGroup).toBeDefined();
@@ -471,7 +473,13 @@ describe('group-by resolver (integration)', () => {
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
             groupBy: [
-              { createdAt: { granularity: 'WEEK', weekStartDay: 'SUNDAY' } },
+              {
+                createdAt: {
+                  granularity: 'WEEK',
+                  weekStartDay: 'SUNDAY',
+                  timeZone: 'Europe/Paris',
+                },
+              },
             ],
             gqlFields: `
               edges {
@@ -481,6 +489,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -491,7 +500,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of sunday dec 29th, 2024
         const sundayDec29thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2024-12-29T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2024-12-29'),
         );
 
         expect(sundayDec29thGroup).toBeDefined();
@@ -502,7 +511,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of sunday jan 5th, 2025
         const sundayJan5thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-01-05T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-01-05'),
         );
 
         expect(sundayJan5thGroup).toBeDefined();
@@ -513,7 +522,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of sunday feb 23rd, 2025
         const sundayFeb23rdGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-02-23T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-02-23'),
         );
 
         expect(sundayFeb23rdGroup).toBeDefined();
@@ -526,7 +535,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of sunday march 2nd, 2025
         const sundayMarch2ndGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-03-02T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-03-02'),
         );
 
         expect(sundayMarch2ndGroup).toBeDefined();
@@ -554,7 +563,13 @@ describe('group-by resolver (integration)', () => {
             objectMetadataSingularName: 'person',
             objectMetadataPluralName: 'people',
             groupBy: [
-              { createdAt: { granularity: 'WEEK', weekStartDay: 'SATURDAY' } },
+              {
+                createdAt: {
+                  granularity: 'WEEK',
+                  weekStartDay: 'SATURDAY',
+                  timeZone: 'Europe/Paris',
+                },
+              },
             ],
             gqlFields: `
               edges {
@@ -564,6 +579,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -574,7 +590,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of saturday dec 28th, 2024
         const saturdayDec28thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2024-12-28T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2024-12-28'),
         );
 
         expect(saturdayDec28thGroup).toBeDefined();
@@ -587,7 +603,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of saturday jan 4th, 2025
         const saturdayJan4thGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-01-04T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-01-04'),
         );
 
         expect(saturdayJan4thGroup).toBeDefined();
@@ -600,7 +616,7 @@ describe('group-by resolver (integration)', () => {
 
         // Group starting week of saturday march 1st, 2025
         const saturdayMarch1stGroup = groups.find((group: any) =>
-          group.groupByDimensionValues[0].startsWith('2025-03-01T00:00:00'),
+          group.groupByDimensionValues[0].startsWith('2025-03-01'),
         );
 
         expect(saturdayMarch1stGroup).toBeDefined();
@@ -638,7 +654,7 @@ describe('group-by resolver (integration)', () => {
           },
           {
             createdAt: {
-              lte: '2025-03-03T23:59:59.999Z',
+              lt: '2025-03-04T00:00:00.000Z',
             },
           },
         ],
@@ -1146,6 +1162,7 @@ describe('group-by resolver (integration)', () => {
               },
             ],
             filter: filter2025,
+            limit: 10,
           }),
         );
 

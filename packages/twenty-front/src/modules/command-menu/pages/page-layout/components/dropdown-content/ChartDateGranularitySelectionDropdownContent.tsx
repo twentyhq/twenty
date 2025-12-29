@@ -3,6 +3,9 @@ import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/h
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
+import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -14,6 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type WidgetConfiguration } from '~/generated/graphql';
 
 type ChartDateGranularitySelectionDropdownContentProps = {
   axis?: 'primary' | 'secondary';
@@ -28,13 +32,13 @@ const getCurrentDateGranularity = ({
 }) => {
   const defaultGranularity = ObjectRecordGroupByDateGranularity.DAY;
 
-  if (configuration?.__typename === 'PieChartConfiguration') {
+  if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
     return configuration.dateGranularity || defaultGranularity;
   }
 
   const isBarOrLineChart =
-    configuration?.__typename === 'BarChartConfiguration' ||
-    configuration?.__typename === 'LineChartConfiguration';
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isBarOrLineChart) {
     return defaultGranularity;
@@ -49,29 +53,53 @@ const getCurrentDateGranularity = ({
   );
 };
 
+const isChartConfiguration = (
+  configuration:
+    | WidgetConfiguration
+    | FieldsConfiguration
+    | FieldConfiguration
+    | null
+    | undefined,
+): configuration is ChartConfiguration => {
+  return (
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'PieChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')
+  );
+};
+
 export const ChartDateGranularitySelectionDropdownContent = ({
   axis,
 }: ChartDateGranularitySelectionDropdownContentProps) => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    !isDefined(axis) &&
-    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
-  ) {
+  const configuration = widgetInEditMode?.configuration;
+
+  if (!isChartConfiguration(configuration)) {
     throw new Error('Invalid configuration type');
   }
 
-  if (
-    isDefined(axis) &&
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
-  ) {
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
+  if (!isDefined(axis) && !isPieChart) {
+    throw new Error('Invalid configuration type');
+  }
+
+  if (isDefined(axis) && !isBarOrLineChart) {
     throw new Error('Invalid configuration type');
   }
 
   const currentDateGranularity = getCurrentDateGranularity({
-    configuration: widgetInEditMode?.configuration as ChartConfiguration,
+    configuration,
     axis: axis as 'primary' | 'secondary',
   });
 

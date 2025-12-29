@@ -1,4 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useStopWorkflowRunMutation } from '~/generated-metadata/graphql';
 
@@ -9,17 +11,20 @@ export const useStopWorkflowRun = () => {
   });
   const { registerObjectOperation } = useRegisterObjectOperation();
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+  });
+
   const stopWorkflowRun = async (workflowRunId: string) => {
-    const { data } = await mutate({
+    await mutate({
       variables: {
         workflowRunId,
       },
     });
 
-    registerObjectOperation('workflowRun', {
+    registerObjectOperation(objectMetadataItem, {
       type: 'update-one',
       result: {
-        updatedRecord: data?.stopWorkflowRun,
         updateInput: { id: workflowRunId },
       },
     });

@@ -1,7 +1,8 @@
+import { t } from '@lingui/core/macro';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -17,6 +18,7 @@ import {
   AppTooltip,
   type IconComponent,
   Label,
+  OverflowingTextWithTooltip,
   type TablerIconsProps,
   TooltipDelay,
   TooltipPosition,
@@ -51,6 +53,7 @@ export type NavigationDrawerItemProps = {
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
   mouseUpNavigation?: boolean;
+  preventCollapseOnMobile?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -101,7 +104,7 @@ const StyledItem = styled('button', {
 
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
-      ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(6)})`
+      ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${props.theme.spacing(6)})`
       : `calc(100% - ${props.theme.spacing(1.5)})`};
 
   ${({ isDragging }) =>
@@ -141,11 +144,6 @@ const StyledLabelParent = styled.div`
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
-`;
-const StyledEllipsisContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
@@ -267,6 +265,7 @@ export const NavigationDrawerItem = ({
   isRightOptionsDropdownOpen,
   triggerEvent,
   mouseUpNavigation = false,
+  preventCollapseOnMobile = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -282,7 +281,7 @@ export const NavigationDrawerItem = ({
   );
 
   const handleMobileNavigation = () => {
-    if (isMobile) {
+    if (isMobile && !preventCollapseOnMobile) {
       setIsNavigationDrawerExpanded(false);
     }
   };
@@ -342,28 +341,35 @@ export const NavigationDrawerItem = ({
           )}
 
           <StyledLabelParent>
-            <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
-              {secondaryLabel && (
-                <StyledItemSecondaryLabel>
-                  {' · '}
-                  {secondaryLabel}
-                </StyledItemSecondaryLabel>
-              )}
-            </StyledEllipsisContainer>
+            <OverflowingTextWithTooltip
+              text={
+                <>
+                  <StyledItemLabel>{label}</StyledItemLabel>
+                  {secondaryLabel && (
+                    <StyledItemSecondaryLabel>
+                      {' · '}
+                      {secondaryLabel}
+                    </StyledItemSecondaryLabel>
+                  )}
+                </>
+              }
+              tooltipContent={
+                secondaryLabel ? `${label} · ${secondaryLabel}` : label
+              }
+            />
           </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label="Soon" />
+              <Pill label={t`Soon`} />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
           {isNew && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label="New" />
+              <Pill label={t`New`} />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 

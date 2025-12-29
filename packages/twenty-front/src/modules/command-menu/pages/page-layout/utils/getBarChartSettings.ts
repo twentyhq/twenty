@@ -2,6 +2,7 @@ import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/consta
 import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
+import { CUMULATIVE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/CumulativeSetting';
 import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayXSetting';
 import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
@@ -18,12 +19,12 @@ import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
+import { BarChartLayout } from '~/generated/graphql';
 
 export const getBarChartSettings = (
-  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR,
+  layout: BarChartLayout,
 ): ChartSettingsGroup[] => {
-  const isHorizontal = graphType === GraphType.HORIZONTAL_BAR;
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
   const dataDisplayXIcon = isHorizontal ? IconAxisY : IconAxisX;
   const dataDisplayYIcon = isHorizontal ? IconAxisX : IconAxisY;
@@ -40,6 +41,7 @@ export const getBarChartSettings = (
     GROUP_BY_SETTING,
     DATE_GRANULARITY_Y_SETTING,
     SORT_BY_GROUP_BY_FIELD_SETTING,
+    CUMULATIVE_SETTING,
     RANGE_MIN_SETTING,
     RANGE_MAX_SETTING,
   ];

@@ -3,20 +3,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ImapFlow } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapIncrementalSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-incremental-sync.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
+import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
-import {
-  ImapSyncCursor,
-  parseSyncCursor,
-} from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
+import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
+import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -29,165 +28,176 @@ export class ImapGetMessageListService {
 
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
-    private readonly imapIncrementalSyncService: ImapIncrementalSyncService,
-    private readonly imapMessageListFetchErrorHandler: ImapMessageListFetchErrorHandler,
+    private readonly imapSyncService: ImapSyncService,
+    private readonly errorHandler: ImapMessageListFetchErrorHandler,
   ) {}
 
-  public async getMessageLists({
+  async getMessageLists({
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    let client: ImapFlow | null = null;
+    const client = await this.imapClientProvider.getClient(connectedAccount);
 
     try {
-      client = await this.imapClientProvider.getClient(connectedAccount);
-      const result: GetMessageListsResponse = [];
+      const results: GetMessageListsResponse = [];
 
       for (const folder of messageFolders) {
-        this.logger.log(`Processing folder: ${folder.name}`);
+        const response = await this.getMessageList(client, folder);
 
-        const folderPath = folder.externalId?.split(':')[0];
-
-        if (!folderPath) {
-          this.logger.warn(`Folder ${folder.name} has no path. Skipping.`);
-          continue;
-        }
-
-        try {
-          const response = await this.getMessageList(
-            client,
-            folderPath,
-            folder,
-          );
-
-          result.push({
-            ...response,
-            folderId: folder.id,
-          });
-        } catch (error) {
-          this.logger.warn(
-            `Error fetching from folder ${folder.name}: ${error.message}. Continuing with other folders.`,
-          );
-
-          result.push({
-            messageExternalIds: [],
-            nextSyncCursor: folder.syncCursor || '',
-            previousSyncCursor: folder.syncCursor || '',
-            messageExternalIdsToDelete: [],
-            folderId: folder.id,
-          });
-        }
+        results.push({ ...response, folderId: folder.id });
       }
 
-      return result;
+      return results;
     } catch (error) {
       this.logger.error(
-        `Error getting message list: ${error.message}`,
-        error.stack,
+        `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
       );
-
-      this.imapMessageListFetchErrorHandler.handleError(error);
-
-      return messageFolders.map((folder) => ({
-        messageExternalIds: [],
-        nextSyncCursor: folder.syncCursor || '',
-        previousSyncCursor: folder.syncCursor || '',
-        messageExternalIdsToDelete: [],
-        folderId: folder.id,
-      }));
+      this.errorHandler.handleError(error);
+      throw error;
     } finally {
-      if (client) {
-        await this.imapClientProvider.closeClient(client);
-      }
+      await this.imapClientProvider.closeClient(client);
     }
   }
 
-  public async getMessageList(
+  private async getMessageList(
     client: ImapFlow,
-    folder: string,
-    messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
+    folder: MessageFolder,
   ): Promise<GetOneMessageListResponse> {
-    if (!isDefined(messageFolder.syncCursor)) {
+    const folderPath = parseMessageId(folder.externalId ?? '')?.folder;
+
+    if (!isDefined(folderPath)) {
       throw new MessageImportDriverException(
-        'Message folder sync cursor is required',
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+        `Folder ${folder.name} has no path`,
+        MessageImportDriverExceptionCode.NOT_FOUND,
       );
     }
 
-    const { messages, messageExternalUidsToDelete, syncCursor } =
-      await this.getMessagesFromFolder(
-        client,
-        folder,
-        messageFolder.syncCursor,
-      );
+    if (await this.canSkipFolderSync(client, folder)) {
+      this.logger.log(`Skipping folder ${folder.name}: no new messages`);
 
-    messages.sort((a, b) => b.uid - a.uid);
+      return {
+        messageExternalIds: [],
+        messageExternalIdsToDelete: [],
+        nextSyncCursor: folder.syncCursor ?? '',
+        previousSyncCursor: folder.syncCursor,
+        folderId: folder.id,
+      };
+    }
 
-    const messageExternalIds = messages.map(
-      (message) => `${folder}:${message.uid.toString()}`,
-    );
+    this.logger.log(`Processing folder: ${folder.name}`);
 
-    return {
-      messageExternalIds,
-      nextSyncCursor: JSON.stringify(syncCursor),
-      previousSyncCursor: messageFolder.syncCursor || '',
-      messageExternalIdsToDelete: messageExternalUidsToDelete.map((uid) =>
-        uid.toString(),
-      ),
-      folderId: undefined,
-    };
-  }
+    const previousCursor = parseSyncCursor(folder.syncCursor);
 
-  private async getMessagesFromFolder(
-    client: ImapFlow,
-    folder: string,
-    cursor?: string,
-  ): Promise<{
-    messages: { uid: number }[];
-    messageExternalUidsToDelete: number[];
-    syncCursor: ImapSyncCursor;
-  }> {
-    let lock;
+    const lock = await client.getMailboxLock(folderPath);
 
     try {
-      lock = await client.getMailboxLock(folder);
-      const mailbox = client.mailbox!;
+      const mailbox = client.mailbox;
 
-      if (typeof mailbox === 'boolean') {
-        throw new Error(`Invalid mailbox state for folder ${folder}`);
+      if (!mailbox || typeof mailbox === 'boolean') {
+        throw new MessageImportDriverException(
+          `Invalid mailbox state for folder ${folderPath}`,
+          MessageImportDriverExceptionCode.UNKNOWN,
+        );
       }
 
       const mailboxState = extractMailboxState(mailbox);
-      const previousCursor = parseSyncCursor(cursor);
 
-      const { messages, messageExternalUidsToDelete } =
-        await this.imapIncrementalSyncService.syncMessages(
-          client,
-          previousCursor,
-          mailboxState,
-          folder,
-        );
-
-      const newSyncCursor = createSyncCursor(
-        messages,
+      const { messageUids } = await this.imapSyncService.syncFolder(
+        client,
+        folderPath,
         previousCursor,
         mailboxState,
       );
 
-      return {
-        messages,
-        messageExternalUidsToDelete,
-        syncCursor: newSyncCursor,
-      };
-    } catch (err) {
-      this.logger.error(
-        `Error fetching from folder ${folder}: ${err.message}`,
-        err.stack,
+      const nextCursor = createSyncCursor(
+        messageUids.map((uid) => ({ uid })),
+        previousCursor,
+        mailboxState,
       );
 
-      throw err;
+      const messageExternalIds = messageUids
+        .sort((a, b) => b - a)
+        .map((uid) => `${folderPath}:${uid}`);
+
+      return {
+        messageExternalIds,
+        messageExternalIdsToDelete: [],
+        nextSyncCursor: JSON.stringify(nextCursor),
+        previousSyncCursor: folder.syncCursor,
+        folderId: folder.id,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error syncing folder ${folder.name}: ${error.message}`,
+      );
+      this.errorHandler.handleError(error);
+      throw error;
     } finally {
-      if (lock) lock.release();
+      lock.release();
+    }
+  }
+
+  private async canSkipFolderSync(
+    client: ImapFlow,
+    folder: MessageFolder,
+  ): Promise<boolean> {
+    const folderPath = parseMessageId(folder.externalId ?? '')?.folder;
+    const previousCursor = parseSyncCursor(folder.syncCursor);
+
+    if (!isDefined(folderPath) || !isDefined(previousCursor)) {
+      return false;
+    }
+
+    try {
+      const supportsCondstore = client.capabilities.has('CONDSTORE');
+
+      const status = await client.status(folderPath, {
+        uidNext: true,
+        uidValidity: true,
+        ...(supportsCondstore && { highestModseq: true }),
+      });
+
+      if (!isDefined(status.uidValidity)) {
+        this.logger.debug(
+          `Folder ${folderPath}: Server missing UIDVALIDITY. Sync required.`,
+        );
+
+        return false;
+      }
+
+      const uidNext = Number(status.uidNext ?? 1);
+      const uidValidity = Number(status.uidValidity);
+
+      if (previousCursor.uidValidity !== uidValidity) {
+        this.logger.debug(
+          `Folder ${folderPath}: UIDVALIDITY changed (${previousCursor.uidValidity} → ${uidValidity}). Full sync required.`,
+        );
+
+        return false;
+      }
+
+      const hasModSeqChanged =
+        isDefined(previousCursor.modSeq) &&
+        isDefined(status.highestModseq) &&
+        previousCursor.modSeq !== status.highestModseq.toString();
+
+      if (hasModSeqChanged) {
+        this.logger.debug(
+          `Folder ${folderPath}: MODSEQ changed (${previousCursor.modSeq} → ${status.highestModseq}). Sync required.`,
+        );
+
+        return false;
+      }
+
+      const maxUid = Math.max(0, uidNext - 1);
+
+      return previousCursor.highestUid >= maxUid;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to get status for folder ${folderPath}: ${error.message}`,
+      );
+
+      return false;
     }
   }
 }

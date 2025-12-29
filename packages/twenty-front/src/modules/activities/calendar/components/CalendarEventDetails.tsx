@@ -1,5 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -8,6 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -77,6 +79,7 @@ const StyledPropertyBox = styled(PropertyBox)`
 export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
@@ -141,43 +144,47 @@ export const CalendarEventDetails = ({
             }),
           }}
         >
-          <RecordInlineCell instanceIdPrefix={INPUT_ID_PREFIX} />
+          <RecordInlineCell />
         </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>
   );
 
   return (
-    <StyledContainer>
-      <StyledEventChip
-        accent={ChipAccent.TextSecondary}
-        size={ChipSize.Large}
-        variant={ChipVariant.Highlighted}
-        clickable={false}
-        leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
-        label="Event"
-      />
-      <StyledHeader>
-        <StyledTitle canceled={calendarEvent.isCanceled}>
-          {calendarEvent.title}
-        </StyledTitle>
-        <StyledCreatedAt>
-          Created{' '}
-          {beautifyPastDateRelativeToNow(
-            new Date(calendarEvent.externalCreatedAt),
+    <RecordFieldsScopeContextProvider
+      value={{ scopeInstanceId: INPUT_ID_PREFIX }}
+    >
+      <StyledContainer>
+        <StyledEventChip
+          accent={ChipAccent.TextSecondary}
+          size={ChipSize.Large}
+          variant={ChipVariant.Highlighted}
+          clickable={false}
+          leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
+          label={t`Event`}
+        />
+        <StyledHeader>
+          <StyledTitle canceled={calendarEvent.isCanceled}>
+            {calendarEvent.title}
+          </StyledTitle>
+          <StyledCreatedAt>
+            {t`Created`}{' '}
+            {beautifyPastDateRelativeToNow(
+              new Date(calendarEvent.externalCreatedAt),
+            )}
+          </StyledCreatedAt>
+        </StyledHeader>
+        <StyledFields>
+          {standardFields.slice(0, 2).map(renderField)}
+          {calendarEventParticipants && (
+            <CalendarEventParticipantsResponseStatus
+              participants={calendarEventParticipants}
+            />
           )}
-        </StyledCreatedAt>
-      </StyledHeader>
-      <StyledFields>
-        {standardFields.slice(0, 2).map(renderField)}
-        {calendarEventParticipants && (
-          <CalendarEventParticipantsResponseStatus
-            participants={calendarEventParticipants}
-          />
-        )}
-        {standardFields.slice(2).map(renderField)}
-        {customFields.map(renderField)}
-      </StyledFields>
-    </StyledContainer>
+          {standardFields.slice(2).map(renderField)}
+          {customFields.map(renderField)}
+        </StyledFields>
+      </StyledContainer>
+    </RecordFieldsScopeContextProvider>
   );
 };
