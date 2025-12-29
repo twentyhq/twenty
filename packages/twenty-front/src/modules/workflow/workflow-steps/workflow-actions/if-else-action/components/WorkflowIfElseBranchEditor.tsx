@@ -64,6 +64,7 @@ type WorkflowIfElseBranchEditorProps = {
 export const WorkflowIfElseBranchEditor = ({
   action,
   branch,
+  branchIndex,
   branchLabel,
   branchFilterGroup,
   readonly,
@@ -89,6 +90,8 @@ export const WorkflowIfElseBranchEditor = ({
     );
   }
 
+  const isIfBranch = branchIndex === 0;
+
   return (
     <WorkflowStepFilterContext.Provider
       value={{
@@ -96,6 +99,7 @@ export const WorkflowIfElseBranchEditor = ({
         readonly,
         onFilterSettingsUpdate,
         firstFilterLabel: i18n._(branchLabel),
+        isIfBranch,
       }}
     >
       <StyledBranchContainer>
