@@ -37,7 +37,7 @@ export const ChartManualSortSubMenuContent = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  // TODO: Remove this cast when we FieldsConfiguration and FieldConfiguration are in the backend
+  // TODO: Remove this cast when FieldsConfiguration and FieldConfiguration are in the backend
   const configuration = widgetInEditMode?.configuration as WidgetConfiguration;
   const options = fieldMetadataItem.options ?? [];
 
