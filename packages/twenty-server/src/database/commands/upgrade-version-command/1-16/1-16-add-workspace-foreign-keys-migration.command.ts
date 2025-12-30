@@ -39,28 +39,30 @@ export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWo
       return;
     }
 
+    if (options.dryRun) {
+      return;
+    }
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    if (!options.dryRun) {
-      try {
-        await addWorkspaceForeignKeysQueries(queryRunner);
+    try {
+      await addWorkspaceForeignKeysQueries(queryRunner);
 
-        await queryRunner.commitTransaction();
-        this.logger.log(
-          'Successfully run AddWorkspaceForeignKeysMigrationCommand',
-        );
-        this.hasRunOnce = true;
-      } catch (error) {
-        await queryRunner.rollbackTransaction();
-        this.logger.log(
-          `Rollbacking AddWorkspaceForeignKeysMigrationCommand: ${error.message}`,
-        );
-      } finally {
-        await queryRunner.release();
-      }
+      await queryRunner.commitTransaction();
+      this.logger.log(
+        'Successfully run AddWorkspaceForeignKeysMigrationCommand',
+      );
+      this.hasRunOnce = true;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.log(
+        `Rollbacking AddWorkspaceForeignKeysMigrationCommand: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 }
