@@ -90,9 +90,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.fixNanPositionValuesInNotesCommand,
     ];
 
-    const commands_1160: VersionCommands = [
-      this.backfillUpdatedByFieldCommand,
-    ];
+    const commands_1160: VersionCommands = [this.backfillUpdatedByFieldCommand];
 
     this.allCommands = {
       '1.12.0': commands_1120,

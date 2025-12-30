@@ -26,9 +26,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     ApplicationModule,
   ],
-  providers: [
-    BackfillUpdatedByFieldCommand,
-  ],
+  providers: [BackfillUpdatedByFieldCommand],
   exports: [BackfillUpdatedByFieldCommand],
 })
 export class V1_16_UpgradeVersionCommandModule {}
