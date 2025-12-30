@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   appendCommonExceptionCode,
   CustomException,
@@ -12,14 +13,18 @@ export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
   ENTITY_MALFORMED: 'ENTITY_MALFORMED',
 } as const);
 
-const flatEntityMapsExceptionUserFriendlyMessages: Record<
-  keyof typeof FlatEntityMapsExceptionCode,
-  MessageDescriptor
-> = {
-  ENTITY_ALREADY_EXISTS: msg`Entity already exists.`,
-  ENTITY_NOT_FOUND: msg`Entity not found.`,
-  ENTITY_MALFORMED: msg`Entity data is malformed.`,
-  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+const getFlatEntityMapsExceptionUserFriendlyMessage = (
+  code: keyof typeof FlatEntityMapsExceptionCode,
+) => {
+  switch (code) {
+    case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
+    case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
+    case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+    case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class FlatEntityMapsException extends CustomException<
@@ -33,7 +38,7 @@ export class FlatEntityMapsException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        flatEntityMapsExceptionUserFriendlyMessages[code],
+        getFlatEntityMapsExceptionUserFriendlyMessage(code),
     });
   }
 }

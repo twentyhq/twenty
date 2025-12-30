@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum RelationExceptionCode {
@@ -11,15 +12,19 @@ export enum RelationExceptionCode {
   MULTIPLE_JOIN_COLUMNS_FOUND = 'MULTIPLE_JOIN_COLUMNS_FOUND',
 }
 
-const relationExceptionUserFriendlyMessages: Record<
-  RelationExceptionCode,
-  MessageDescriptor
-> = {
-  [RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND]: msg`Relation object not found.`,
-  [RelationExceptionCode.RELATION_TARGET_FIELD_METADATA_ID_NOT_FOUND]: msg`Relation target field not found.`,
-  [RelationExceptionCode.RELATION_JOIN_COLUMN_ON_BOTH_SIDES]: msg`Relation has join column on both sides.`,
-  [RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN]: msg`Missing relation join column.`,
-  [RelationExceptionCode.MULTIPLE_JOIN_COLUMNS_FOUND]: msg`Multiple join columns found.`,
+const getRelationExceptionUserFriendlyMessage = (
+  code: RelationExceptionCode,
+) => {
+  switch (code) {
+    case RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND:
+    case RelationExceptionCode.RELATION_TARGET_FIELD_METADATA_ID_NOT_FOUND:
+    case RelationExceptionCode.RELATION_JOIN_COLUMN_ON_BOTH_SIDES:
+    case RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN:
+    case RelationExceptionCode.MULTIPLE_JOIN_COLUMNS_FOUND:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class RelationException extends CustomException<RelationExceptionCode> {
@@ -30,7 +35,7 @@ export class RelationException extends CustomException<RelationExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? relationExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getRelationExceptionUserFriendlyMessage(code),
     });
   }
 }

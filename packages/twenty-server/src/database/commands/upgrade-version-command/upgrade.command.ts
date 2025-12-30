@@ -18,6 +18,8 @@ import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-co
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-delete-removed-agents.command';
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
+import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
+import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -49,6 +51,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.14 Commands
     protected readonly updateCreatedByEnumCommand: UpdateCreatedByEnumCommand,
     protected readonly deleteRemovedAgentsCommand: DeleteRemovedAgentsCommand,
+
+    // 1.15 Commands
+    protected readonly migratePageLayoutWidgetConfigurationCommand: MigratePageLayoutWidgetConfigurationCommand,
+    protected readonly fixNanPositionValuesInNotesCommand: FixNanPositionValuesInNotesCommand,
   ) {
     super(
       workspaceRepository,
@@ -75,10 +81,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.deleteRemovedAgentsCommand,
     ];
 
+    const commands_1150: VersionCommands = [
+      this.migratePageLayoutWidgetConfigurationCommand,
+      this.fixNanPositionValuesInNotesCommand,
+    ];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
       '1.14.0': commands_1140,
+      '1.15.0': commands_1150,
     };
   }
 

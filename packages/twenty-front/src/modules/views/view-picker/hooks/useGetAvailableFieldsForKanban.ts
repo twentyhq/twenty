@@ -27,7 +27,8 @@ export const useGetAvailableFieldsForKanban = () => {
 
   const availableFieldsForKanban =
     objectMetadataItem?.readableFields.filter(
-      (field) => field.type === FieldMetadataType.SELECT,
+      (field) =>
+        field.type === FieldMetadataType.SELECT && field.isActive === true,
     ) ?? [];
 
   const navigate = useNavigateSettings();

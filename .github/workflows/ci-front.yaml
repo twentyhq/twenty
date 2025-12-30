@@ -57,6 +57,8 @@ jobs:
         run: df -h
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
+      - name: Front / Clean storybook-static
+        run: rm -rf packages/twenty-front/storybook-static
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Save storybook build cache

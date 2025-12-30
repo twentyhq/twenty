@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,15 @@ export enum WebhookExceptionCode {
   INVALID_TARGET_URL = 'INVALID_TARGET_URL',
 }
 
-const webhookExceptionUserFriendlyMessages: Record<
-  WebhookExceptionCode,
-  MessageDescriptor
-> = {
-  [WebhookExceptionCode.WEBHOOK_NOT_FOUND]: msg`Webhook not found.`,
-  [WebhookExceptionCode.INVALID_TARGET_URL]: msg`Invalid target URL.`,
+const getWebhookExceptionUserFriendlyMessage = (code: WebhookExceptionCode) => {
+  switch (code) {
+    case WebhookExceptionCode.WEBHOOK_NOT_FOUND:
+      return msg`Webhook not found.`;
+    case WebhookExceptionCode.INVALID_TARGET_URL:
+      return msg`Invalid target URL.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WebhookException extends CustomException<WebhookExceptionCode> {
@@ -24,7 +28,7 @@ export class WebhookException extends CustomException<WebhookExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? webhookExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getWebhookExceptionUserFriendlyMessage(code),
     });
   }
 }
