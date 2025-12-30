@@ -324,6 +324,8 @@ export const PERSON_STANDARD_FIELD_IDS = {
   jobTitle: '20202020-b0d0-415a-bef9-640a26dacd9b',
   phone: '20202020-4564-4b8b-a09f-05445f2e0bce',
   phones: '20202020-0638-448e-8825-439134618022',
+  whatsappNumber: '20202020-5438-4fbf-9bd9-0633699e5b8a',
+  whatsappId: '20202020-26c0-4387-83ad-cfccbaa4ea29',
   city: '20202020-5243-4ffb-afc5-2c675da41346',
   avatarUrl: '20202020-b8a6-40df-961c-373dc5d2ec21',
   position: '20202020-fcd5-4231-aff5-fff583eaa0b1',

@@ -60,7 +60,7 @@ export const main = async (): Promise<object> => {
 
     body = {
       ...body,
-      whatsapp: whatsappBody,
+      whatsappNumber: whatsappBody,
     };
   }
 

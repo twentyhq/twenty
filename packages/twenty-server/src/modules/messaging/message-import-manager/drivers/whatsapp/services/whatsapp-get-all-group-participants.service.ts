@@ -1,19 +1,19 @@
-import { WHATSAPP_API_ADDRESS } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/constants/whatsapp-api-address.constant';
-import { WHATSAPP_API_VERSION } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/constants/whatsapp-api-version.constant';
+import axios from 'axios';
 
-export const getAllWhatsappGroupParticipants = async (
+import { preparedWhatsappAPIAddress } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/prepared-whatsapp-api-address.util';
+
+export const getAllWhatsappGroupParticipantsService = async (
   group_id: string,
 ): Promise<string[]> => {
-  const response = await fetch(
-    WHATSAPP_API_ADDRESS.concat(WHATSAPP_API_VERSION, '/', group_id),
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer `, // TODO: add bearer token
-      },
+  const options = {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer `, // TODO: add bearer token (how to get it???)
     },
-  );
-  const data = await response.json();
+    url: preparedWhatsappAPIAddress('/', group_id),
+  };
+
+  const data = await axios.request(options);
 
   return data.data.participants.participants as string[]; // array of WhatsApp IDs
 };

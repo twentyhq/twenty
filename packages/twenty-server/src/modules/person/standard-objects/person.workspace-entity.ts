@@ -4,10 +4,10 @@ import {
   ActorMetadata,
   EmailsMetadata,
   FieldMetadataType,
-  PhonesMetadata,
-  RelationOnDeleteAction,
   type FullNameMetadata,
   type LinksMetadata,
+  PhonesMetadata,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -31,8 +31,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import {
-  getTsVectorColumnExpressionFromFields,
   type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -328,4 +328,30 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.whatsappNumber,
+    type: FieldMetadataType.PHONES,
+    label: msg`WhatsApp`,
+    description: msg`Contact's WhatsApp number`,
+    icon: 'IconBrandWhatsapp',
+    settings: {
+      maxNumberOfValues: 1,
+    },
+  })
+  @WorkspaceIsUnique()
+  @WorkspaceIsNullable()
+  whatsAppPhoneNumber: PhonesMetadata; // or string? we have no data about the landline code (+1 or others)
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.whatsappId,
+    type: FieldMetadataType.TEXT,
+    label: msg`WhatsApp ID`,
+    description: msg`Contact's WhatsApp ID`,
+    icon: 'IconTextWhatsapp',
+  })
+  @WorkspaceIsUnique()
+  @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
+  whatsAppId: string;
 }
