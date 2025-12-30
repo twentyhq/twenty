@@ -27,10 +27,10 @@ type ManagedItemTagInfo = {
 };
 
 export const getItemTagInfo = ({
-  entity: { isCustom, isRemote, applicationId },
+  item: { isCustom, isRemote, applicationId },
   workspaceCustomApplicationId,
 }: {
-  entity: {
+  item: {
     isCustom?: boolean;
     isRemote?: boolean;
     applicationId?: string | null;

@@ -4,8 +4,8 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import {
-  SettingsObjectMetadataItemTableRow,
-  StyledObjectTableRow,
+    SettingsObjectMetadataItemTableRow,
+    StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
@@ -26,11 +26,11 @@ import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconArchive,
-  IconChevronRight,
-  IconFilter,
-  IconSearch,
-  IconSettings,
+    IconArchive,
+    IconChevronRight,
+    IconFilter,
+    IconSearch,
+    IconSettings,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
@@ -91,7 +91,7 @@ export const SettingsObjectTable = ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
             objectTypeLabel: getItemTagInfo({
-              entity: objectMetadataItem,
+              item: objectMetadataItem,
               workspaceCustomApplicationId:
                 currentWorkspace?.workspaceCustomApplication?.id,
             }).labelText,
