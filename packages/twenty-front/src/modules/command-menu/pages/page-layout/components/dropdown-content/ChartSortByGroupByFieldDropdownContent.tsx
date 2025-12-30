@@ -9,8 +9,6 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
-
-import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -50,6 +48,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   if (!isDefined(widgetInEditMode?.objectMetadataId)) {
     throw new Error('No data source in chart');
   }
+
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -59,14 +58,6 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     dropdownId,
   );
 
-  if (!isBarOrLineChart) {
-    throw new Error('Invalid configuration type');
-  }
-
-  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
-    throw new Error('No data source in chart');
-  }
-
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
@@ -75,13 +66,13 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
   );
 
-  const isSecondaryAxisSelectField = isSelectFieldType(
-    secondaryAxisField?.type,
-  );
-
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode.objectMetadataId,
   });
+
+  if (!isDefined(secondaryAxisField)) {
+    return null;
+  }
 
   const handleSelectSortOption = (orderBy: GraphOrderByType) => {
     const configToUpdate: Record<string, unknown> = {
@@ -111,17 +102,9 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     closeDropdown();
   };
 
-  const chartType = isWidgetConfigurationOfType(
-    configuration,
-    'LineChartConfiguration',
-  )
-    ? 'line'
-    : 'bar';
-
   const availableOptions = filterSortOptionsByFieldType({
     options: AGGREGATE_SORT_BY_OPTIONS,
-    isSelectField: isSecondaryAxisSelectField,
-    chartType,
+    fieldType: secondaryAxisField?.type,
   });
 
   if (isSubMenuOpen && isDefined(secondaryAxisField)) {

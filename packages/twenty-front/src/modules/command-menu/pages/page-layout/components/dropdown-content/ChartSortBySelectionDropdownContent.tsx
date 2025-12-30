@@ -9,10 +9,8 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
-import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -22,7 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   type BarChartConfiguration,
@@ -107,17 +105,6 @@ export const ChartSortBySelectionDropdownContent = () => {
     return null;
   }
 
-  const isPrimaryAxisDateField =
-    isFieldMetadataDateKind(primaryAxisField?.type) ||
-    (isDefined(primaryAxisField) &&
-      isRelationNestedFieldDateKind({
-        relationField: primaryAxisField,
-        relationNestedFieldName: groupBySubFieldName ?? undefined,
-        objectMetadataItems,
-      }));
-
-  const isPrimaryAxisSelectField = isSelectFieldType(primaryAxisField?.type);
-
   const existingManualSortOrder = isPieChart
     ? configuration.manualSortOrder
     : (configuration as BarChartConfiguration | LineChartConfiguration)
@@ -162,13 +149,9 @@ export const ChartSortBySelectionDropdownContent = () => {
     closeDropdown();
   };
 
-  const chartType = isLineChart ? 'line' : isBarChart ? 'bar' : 'pie';
-
   const availableOptions = filterSortOptionsByFieldType({
     options: X_SORT_BY_OPTIONS,
-    isSelectField: isPrimaryAxisSelectField,
-    isDateField: isPrimaryAxisDateField,
-    chartType,
+    fieldType: primaryAxisField?.type,
   });
 
   if (isSubMenuOpen && isDefined(primaryAxisField)) {

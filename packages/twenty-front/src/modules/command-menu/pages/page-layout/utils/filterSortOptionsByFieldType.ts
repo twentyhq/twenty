@@ -1,5 +1,9 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated/graphql';
+
+import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 
 export type SortOption = {
   value: GraphOrderBy;
@@ -8,17 +12,16 @@ export type SortOption = {
 
 type FilterSortOptionsParams = {
   options: SortOption[];
-  isSelectField: boolean;
-  isDateField?: boolean;
-  chartType: 'bar' | 'line' | 'pie';
+  fieldType: FieldMetadataType;
 };
 
 export const filterSortOptionsByFieldType = ({
   options,
-  isSelectField,
-  isDateField = false,
-  chartType,
+  fieldType,
 }: FilterSortOptionsParams): SortOption[] => {
+  const isSelectField = isSelectFieldType(fieldType);
+  const isDateField = isFieldMetadataDateKind(fieldType);
+
   return options.filter((option) => {
     const isValueSort =
       option.value === GraphOrderBy.VALUE_ASC ||
@@ -38,11 +41,7 @@ export const filterSortOptionsByFieldType = ({
       return false;
     }
 
-    if (chartType === 'line') {
-      return !isValueSort;
-    }
-
-    if ((chartType === 'bar' || chartType === 'pie') && isDateField) {
+    if (isDateField) {
       return !isValueSort;
     }
 
