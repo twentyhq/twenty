@@ -6314,6 +6314,11 @@ msgstr "Posició del membre de l'Espai de Treball"
 msgid "Workspace Members"
 msgstr "Membres de l'Espai de Treball"
 
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
+
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace not found for customer event."
