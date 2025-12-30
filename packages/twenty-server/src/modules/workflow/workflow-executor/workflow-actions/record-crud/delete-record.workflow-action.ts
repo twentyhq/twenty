@@ -8,12 +8,12 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { type DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
@@ -61,13 +61,15 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
+    const { workspaceId } = runInfo;
+
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
     const toolOutput = await this.deleteRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecordId: workflowActionInput.objectRecordId,
-      authContext: executionContext.authContext,
+      workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       soft: true,
     });

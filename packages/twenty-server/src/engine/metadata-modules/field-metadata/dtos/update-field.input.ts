@@ -14,7 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
-import { RelationUpdatePayload } from 'twenty-shared/types';
+import { type RelationUpdatePayload } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';

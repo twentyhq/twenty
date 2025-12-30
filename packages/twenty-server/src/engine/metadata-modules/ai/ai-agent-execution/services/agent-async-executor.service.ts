@@ -6,15 +6,13 @@ import {
   generateText,
   jsonSchema,
   stepCountIs,
-  type ToolSet,
+  ToolSet,
 } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
-
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+import { Repository } from 'typeorm';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import {
   AgentException,
@@ -22,11 +20,11 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { type AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
-import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -95,13 +93,11 @@ export class AgentAsyncExecutorService {
     userPrompt,
     actorContext,
     rolePermissionConfig,
-    authContext,
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
-    authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
@@ -127,7 +123,6 @@ export class AgentAsyncExecutorService {
             ToolCategory.NATIVE_MODEL,
           ],
           rolePermissionConfig: effectiveRoleConfig,
-          authContext,
           actorContext,
           agent: agent as unknown as Parameters<
             typeof this.toolProvider.getTools

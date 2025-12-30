@@ -31,7 +31,7 @@ export interface WorkspaceMigrationColumnDefinition {
   isNullable: boolean;
   isUnique?: boolean;
 
-  defaultValue: any;
+  defaultValue: unknown;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
 }

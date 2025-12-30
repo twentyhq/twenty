@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, type Repository } from 'typeorm';
+import { type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -12,7 +12,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 @Injectable()
@@ -144,38 +144,6 @@ export class ApplicationService {
         workspaceId,
       },
     });
-  }
-
-  async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
-    application: ApplicationEntity;
-    workspace: WorkspaceEntity;
-  }> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-
-    if (!isDefined(workspace)) {
-      throw new ApplicationException(
-        `Could not find workspace ${workspaceId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    const application = await this.applicationRepository.findOne({
-      where: {
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        workspaceId,
-      },
-    });
-
-    if (!isDefined(application)) {
-      throw new ApplicationException(
-        `Could not find Twenty Standard Application for workspace ${workspaceId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return { application, workspace };
   }
 
   async createTwentyStandardApplication(

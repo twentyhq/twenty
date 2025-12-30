@@ -36,14 +36,6 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
   ): ToolSet => {
     const tools: ToolSet = {};
 
-    // Skip generating tools if no auth context is provided
-    if (!context.authContext) {
-      return tools;
-    }
-
-    // Capture authContext in a constant for use in async callbacks
-    const authContext = context.authContext;
-
     if (canRead) {
       tools[`find_${objectMetadata.namePlural}`] = {
         description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
@@ -60,7 +52,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
             orderBy,
             limit,
             offset,
-            authContext,
+            workspaceId: context.workspaceId,
             rolePermissionConfig: context.rolePermissionConfig,
           });
         },
@@ -74,7 +66,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
             objectName: objectMetadata.nameSingular,
             filter: { id: { eq: parameters.input.id } },
             limit: 1,
-            authContext,
+            workspaceId: context.workspaceId,
             rolePermissionConfig: context.rolePermissionConfig,
           });
         },
@@ -92,7 +84,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           return deps.createRecordService.execute({
             objectName: objectMetadata.nameSingular,
             objectRecord: parameters.input,
-            authContext,
+            workspaceId: context.workspaceId,
             rolePermissionConfig: context.rolePermissionConfig,
             createdBy: context.actorContext,
           });
@@ -120,7 +112,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
             objectName: objectMetadata.nameSingular,
             objectRecordId: id,
             objectRecord,
-            authContext,
+            workspaceId: context.workspaceId,
             rolePermissionConfig: context.rolePermissionConfig,
           });
         },
@@ -135,7 +127,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           return deps.deleteRecordService.execute({
             objectName: objectMetadata.nameSingular,
             objectRecordId: parameters.input.id,
-            authContext,
+            workspaceId: context.workspaceId,
             rolePermissionConfig: context.rolePermissionConfig,
             soft: true,
           });
