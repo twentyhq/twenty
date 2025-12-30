@@ -13,6 +13,17 @@ import { type AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 
+/**
+ * Union of all entities that don't have a direct `workspaceId` field
+ * (i.e., they don't extend `WorkspaceRelatedEntity`).
+ *
+ * This type is used alongside `WorkspaceRelatedEntity` to enable TypeScript
+ * to properly extract entity relation properties for dynamic typing purposes.
+ *
+ * @see ExtractEntityRelatedEntityProperties
+ * @see ExtractEntityManyToOneEntityRelationProperties
+ * @see ExtractEntityOneToManyEntityRelationProperties
+ */
 export type AllNonWorkspaceRelatedEntity =
   | AgentChatThreadEntity
   | AgentMessagePartEntity
