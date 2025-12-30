@@ -7,7 +7,6 @@ import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
-import { type IfElseSettings } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody';
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -55,7 +54,6 @@ type WorkflowIfElseBranchEditorProps = {
   branchLabel: MessageDescriptor;
   branchFilterGroup: StepFilterGroup | undefined;
   readonly: boolean;
-  onSettingsUpdate: (newSettings: IfElseSettings) => void;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
 };
 

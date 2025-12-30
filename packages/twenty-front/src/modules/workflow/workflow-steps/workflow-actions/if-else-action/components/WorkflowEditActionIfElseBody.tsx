@@ -141,24 +141,6 @@ export const WorkflowEditActionIfElseBody = ({
     });
   };
 
-  const onSettingsUpdate = (newSettings: IfElseSettings) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          stepFilterGroups: newSettings.stepFilterGroups,
-          stepFilters: newSettings.stepFilters,
-          branches: newSettings.branches,
-        },
-      },
-    });
-  };
-
   const handleAddRoute = async (event?: React.MouseEvent<HTMLElement>) => {
     if (isDefined(event)) {
       event.preventDefault();
@@ -290,7 +272,6 @@ export const WorkflowEditActionIfElseBody = ({
                 })}
                 branchFilterGroup={branchFilterGroup}
                 readonly={actionOptions.readonly === true}
-                onSettingsUpdate={onSettingsUpdate}
                 onFilterSettingsUpdate={onFilterSettingsUpdate}
               />
             </Fragment>
