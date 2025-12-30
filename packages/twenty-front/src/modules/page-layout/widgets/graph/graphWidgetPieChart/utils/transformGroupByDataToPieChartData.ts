@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
@@ -8,17 +7,11 @@ import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPi
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
-import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
-import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
-import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
+import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
-import {
-  type FirstDayOfTheWeek,
-  type ObjectRecordGroupByDateGranularity,
-} from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { type FirstDayOfTheWeek } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy, type PieChartConfiguration } from '~/generated/graphql';
 
 type TransformGroupByDataToPieChartDataParams = {
@@ -48,7 +41,6 @@ const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
 export const transformGroupByDataToPieChartData = ({
   groupByData,
   objectMetadataItem,
-  objectMetadataItems,
   configuration,
   aggregateOperation,
   userTimezone,
@@ -79,67 +71,42 @@ export const transformGroupByDataToPieChartData = ({
     return EMPTY_PIE_CHART_RESULT;
   }
 
-  const isDateField = isFieldMetadataDateKind(groupByField.type);
-  const isNestedDateField = isRelationNestedFieldDateKind({
-    relationField: groupByField,
-    relationNestedFieldName: configuration.groupBySubFieldName ?? undefined,
-    objectMetadataItems,
-  });
-
-  const dateGranularity: ObjectRecordGroupByDateGranularity | undefined =
-    isDateField || isNestedDateField
-      ? (configuration.dateGranularity ?? undefined)
-      : undefined;
-
   const filteredResults = configuration.hideEmptyCategory
     ? rawResults.filter((result) =>
         isDefined(result.groupByDimensionValues?.[0]),
       )
     : rawResults;
 
+  const { processedDataPoints, formattedToRawLookup } =
+    processOneDimensionalGroupByResults({
+      rawResults: filteredResults,
+      groupByFieldX: groupByField,
+      aggregateField,
+      configuration,
+      aggregateOperation,
+      objectMetadataItem,
+      primaryAxisSubFieldName: configuration.groupBySubFieldName,
+      userTimezone,
+      firstDayOfTheWeek,
+    });
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedResults = filteredResults.slice(
+  const limitedProcessedDataPoints = processedDataPoints.slice(
     0,
     PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
   );
-
-  const formattedValues = formatPrimaryDimensionValues({
-    groupByRawResults: limitedResults,
-    primaryAxisGroupByField: groupByField,
-    primaryAxisDateGranularity: dateGranularity,
-    primaryAxisGroupBySubFieldName:
-      configuration.groupBySubFieldName ?? undefined,
-    userTimezone,
-    firstDayOfTheWeek,
-  });
-
-  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   type PieChartDataItemWithRawValue = PieChartDataItem & {
     rawValue: string | null | undefined;
   };
 
   const unsortedDataWithRawValues: PieChartDataItemWithRawValue[] =
-    limitedResults.map((result, index) => {
-      const id = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
-      const rawValue = formattedValues[index]?.rawPrimaryDimensionValue;
-
-      const value = computeAggregateValueFromGroupByResult({
-        rawResult: result,
-        aggregateField,
-        aggregateOperation:
-          configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
-        aggregateOperationFromRawResult: aggregateOperation,
-        objectMetadataItem,
-      });
-
-      return {
-        id,
-        value,
-        color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
-        rawValue: isDefined(rawValue) ? String(rawValue) : null,
-      };
-    });
+    limitedProcessedDataPoints.map(({ xValue, rawXValue, aggregateValue }) => ({
+      id: xValue,
+      value: aggregateValue,
+      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
+      rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
+    }));
 
   const getSortedDataWithRawValues = (): PieChartDataItemWithRawValue[] => {
     if (

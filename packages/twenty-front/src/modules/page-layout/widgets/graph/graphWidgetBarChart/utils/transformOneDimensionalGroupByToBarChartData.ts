@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
@@ -8,16 +7,12 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToBarChartData';
-import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
-import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
-import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
 import {
   type FirstDayOfTheWeek,
-  isDefined,
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -64,54 +59,31 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       ? `${aggregateField.name}-aggregate`
       : aggregateField.name;
 
+  const { processedDataPoints, formattedToRawLookup } =
+    processOneDimensionalGroupByResults({
+      rawResults,
+      groupByFieldX,
+      aggregateField,
+      configuration,
+      aggregateOperation,
+      objectMetadataItem,
+      primaryAxisSubFieldName,
+      userTimezone,
+      firstDayOfTheWeek,
+    });
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedResults = rawResults.slice(
+  const limitedProcessedDataPoints = processedDataPoints.slice(
     0,
     BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
   );
 
-  const formattedValues = formatPrimaryDimensionValues({
-    groupByRawResults: limitedResults,
-    primaryAxisGroupByField: groupByFieldX,
-    primaryAxisDateGranularity:
-      configuration.primaryAxisDateGranularity ?? undefined,
-    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
-    userTimezone,
-    firstDayOfTheWeek,
-  });
-
-  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
-
-  const unsortedData: BarDatum[] = limitedResults.map((result) => {
-    const dimensionValues = result.groupByDimensionValues;
-
-    const xValue = isDefined(dimensionValues?.[0])
-      ? formatDimensionValue({
-          value: dimensionValues[0],
-          fieldMetadata: groupByFieldX,
-          dateGranularity:
-            configuration.primaryAxisDateGranularity ?? undefined,
-          subFieldName:
-            configuration.primaryAxisGroupBySubFieldName ?? undefined,
-          userTimezone,
-          firstDayOfTheWeek,
-        })
-      : '';
-
-    const aggregateValue = computeAggregateValueFromGroupByResult({
-      rawResult: result,
-      aggregateField,
-      aggregateOperation:
-        configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
-      aggregateOperationFromRawResult: aggregateOperation,
-      objectMetadataItem,
-    });
-
-    return {
+  const unsortedData: BarDatum[] = limitedProcessedDataPoints.map(
+    ({ xValue, aggregateValue }) => ({
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
-    };
-  });
+    }),
+  );
 
   const sortedData = sortChartData({
     data: unsortedData,
