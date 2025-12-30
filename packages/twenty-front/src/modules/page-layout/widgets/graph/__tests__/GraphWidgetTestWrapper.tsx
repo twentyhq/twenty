@@ -1,5 +1,5 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type ReactNode } from 'react';
 import { RecoilRoot, type MutableSnapshot } from 'recoil';
 
@@ -29,9 +29,9 @@ export const GraphWidgetTestWrapper = ({
       <PageLayoutComponentInstanceContext.Provider
         value={{ instanceId: pageLayoutInstanceId }}
       >
-        <GraphWidgetComponentInstanceContext.Provider value={{ instanceId }}>
+        <WidgetComponentInstanceContext.Provider value={{ instanceId }}>
           {children}
-        </GraphWidgetComponentInstanceContext.Provider>
+        </WidgetComponentInstanceContext.Provider>
       </PageLayoutComponentInstanceContext.Provider>
     </RecoilRoot>
   );

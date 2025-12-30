@@ -14,6 +14,7 @@ describe('computeContextStoreFilters', () => {
 
   const mockFilterValueDependencies: RecordFilterValueDependencies = {
     currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
+    timeZone: 'Europe/Paris',
   };
 
   it('should work for selection mode', () => {

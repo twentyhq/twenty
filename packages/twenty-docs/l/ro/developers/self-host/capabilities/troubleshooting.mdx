@@ -1,0 +1,227 @@
+---
+title: Depanare
+---
+
+## Depanare
+
+Dacă întâmpinați orice problemă în timp ce configurați mediul pentru dezvoltare, actualizați instanța dvs. sau găzduiți pe cont propriu,
+iată câteva soluții la problemele comune.
+
+### Găzduire proprie
+
+#### Prima instalare rezultă în `autentificare parola eșuată pentru utilizatorul "postgres"`
+
+🚨 **IMPORTANT: Această soluție este DOAR pentru instalările noi** 🚨
+Dacă aveți deja o instanță Twenty cu date de producție, **NU** urmați acești pași deoarece vor șterge permanent baza dvs. de date!
+
+În timp ce instalați Twenty pentru prima dată, este posibil să doriți să schimbați parola implicită a bazei de date.
+Parola pe care o setați în timpul primei instalări devine stocată permanent în volumul bazei de date. Dacă mai târziu încercați să schimbați această parolă în configurația dvs. fără a elimina vechiul volum, veți obține erori de autentificare deoarece baza de date folosește încă parola originală.
+
+⚠️ AVERTIZARE: Următorii pași vor ȘTERGE PERMANENT toate datele din baza de date! ⚠️
+Continuați doar dacă aceasta este o instalare recentă fără date importante.
+
+Pentru a actualiza `PG_DATABASE_PASSWORD` trebuie să:
+
+```sh
+# Actualizați PG_DATABASE_PASSWORD în .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR line breaks found [Windows]
+
+Acest lucru se datorează caracterelor de pauză de linie ale Windows și configurației git. Încercați să rulați:
+
+```
+git config --global core.autocrlf false
+```
+
+Apoi ștergeți depozitul și clonați-l din nou.
+
+#### Schema de metadate lipsă
+
+În timpul instalării Twenty, trebuie să aprovizionați baza de date postgres cu schemele, extensiile și utilizatorii corecți.
+Dacă reușiți să executați această aprovizionare, ar trebui să aveți schemele `default` și `metadata` în baza dvs. de date.
+Dacă nu, asigurați-vă că nu aveți mai mult de o instanță postgres funcționând pe computerul dvs.
+
+#### Nu se poate găsi modulul 'twenty-emails' sau declarațiile de tip corespunzătoare.
+
+Trebuie să construiți pachetul `twenty-emails` înainte de a rula inițializarea bazei de date cu `npx nx run twenty-emails:build`
+
+#### Pachetul twenty-x lipsă
+
+Asigurați-vă că rulați yarn în directorul rădăcină și apoi rulați `npx nx server:dev twenty-server`. Dacă acest lucru nu funcționează, încercați să construiți manual pachetul lipsă.
+
+#### Lint la salvare nu funcționează
+
+Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### În timpul rulării `npx nx start` sau `npx nx start twenty-front`, apare o eroare Out of memory
+
+În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` și `VITE_DISABLE_ESLINT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
+
+**If it does not work:**
+Run only the services you need, instead of `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`
+
+**If it does not work:**
+If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+
+`EROARE FATALĂ: Mark-compacts ineficiente lângă limita heap-ului Alocarea a eșuat - JavaScript heap out of memory`
+
+Soluția este să executați comanda de mai jos în terminal sau să o adăugați în profilul .bashrc pentru a se seta automat:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+Flag-ul --max-old-space-size=8192 setează o limită superioară de 8 GB pentru heap-ul Node.js; utilizarea se adaptează la cerințele aplicației.
+Referință: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**If it does not work:**
+Investigate which processes are taking you most of your machine RAM. La Twenty, am observat că unele extensii VScode consumau multă RAM, așa că le dezactivăm temporar.
+
+**If it does not work:**
+Restart your machine helps to clean up ghost processes.
+
+#### În timp ce rulați `npx nx start` apar [0] și [1] ciudate în jurnale
+
+Acest lucru este de așteptat deoarece comanda `npx nx start` rulează mai multe comenzi în fundal
+
+#### Nu sunt trimise e-mailuri
+
+De cele mai multe ori, este deoarece `worker` nu rulează în fundal. Încercați să rulați
+
+```
+npx nx worker twenty-server
+```
+
+#### Nu pot conecta contul meu Microsoft 365
+
+De cele mai multe ori, este deoarece administratorul dvs. nu a activat licența Microsoft 365 pentru contul dvs. Verificați [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Dacă aveți un cod de eroare `AADSTS50020`, probabil înseamnă că utilizați un cont personal Microsoft. Aceasta nu este încă suportată. Mai multe informații [aici](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### În timp ce rulează `yarn` apar avertismente în consolă
+
+Avertismentele informă despre tragerea de dependențe suplimentare care nu sunt specificate explicit în `package.json`, așa că atâta timp cât nu apare o eroare de întrerupere, totul ar trebui să funcționeze conform așteptărilor.
+
+#### Când utilizatorul accesează pagina de autentificare, apare o eroare despre utilizatorul neautorizat care încearcă să acceseze spațiul de lucru în jurnale
+
+Acest lucru este așteptat deoarece utilizatorul este neautorizat când este deconectat, deoarece identitatea sa nu este verificată.
+
+#### Cum să verificați dacă worker-ul dvs. rulează?
+
+* Accesați [webhook-test.com](https://webhook-test.com/) și copiați **Your Unique Webhook URL**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+
+* Deschideți aplicația Twenty, navigați la `/settings` și activați comutatorul **Avansat** în colțul din stânga jos al ecranului.
+* Creați un nou webhook.
+* Lipiți **Your Unique Webhook URL** în câmpul **Endpoint Url** din Twenty. Setați **Filtrele** pe `Companii` și `Create`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Setări webhook" />
+</div>
+
+* Accesați `/objects/companies` și creați un nou registru de companie.
+* Întoarceți-vă la [webhook-test.com](https://webhook-test.com/) și verificați dacă a fost primit un nou **POST request**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Rezultatul testului webhook" />
+</div>
+
+* Dacă este primit un **POST request**, worker-ul dvs. rulează cu succes. În caz contrar, trebuie să depanați worker-ul dvs.
+
+#### Front-end-ul nu pornește și returnează eroarea TS5042: Opțiunea 'project' nu poate fi amestecată cu fișiere sursă pe linia de comandă
+
+Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Panoul de administrare nu este accesibil
+
+Rulați `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'tine@domeniultău.com';` în containerul de baze de date pentru a obține acces la panoul de administrare.
+
+### Docker compose cu un singur click
+
+#### Nu se poate conecta
+
+Dacă nu vă puteți conecta după configurare:
+
+1. Rulați următoarele comenzi:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Reporniți containerele Docker:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Rețineți că comenzile database:reset vor șterge complet baza dvs. de date și o vor recrea de la zero.
+
+#### Probleme de conexiune în spatele unui proxy invers
+
+Dacă rulați Twenty în spatele unui proxy invers și întâmpinați probleme de conexiune:
+
+1. **Verificați SERVER_URL:**
+
+   Asigurați-vă că `SERVER_URL` din fișierul dvs. `.env` corespunde cu URL-ul dvs. de acces extern, inclusiv `https` dacă SSL este activat.
+
+2. **Verificați Setările Proxy-ului Invers:**
+
+   * Confirmați că proxy-ul invers transmite corect cererile către serverul Twenty.
+   * Asigurați-vă că headerele precum `X-Forwarded-For` și `X-Forwarded-Proto` sunt setate corect.
+
+3. **Reporniți Serviciile:**
+
+   După ce faceți schimbări, reporniți atât proxy-ul invers, cât și containerele Twenty.
+
+#### Eroare la încărcarea unei imagini - permisiune refuzată
+
+Schimbarea proprietății folderului de date pe gazdă de la root la un alt utilizator și grup rezolvă această problemă.
+
+## Obținerea de ajutor
+
+Dacă întâmpinați probleme care nu sunt acoperite în acest ghid:
+
+* Verificați jurnalele:
+
+  Vizualizați jurnalele containerului pentru mesaje de eroare:
+
+  ```bash
+  docker compose logs
+  ```
+
+* Suport Comunitar:
+
+  Contactați [comunitatea Twenty](https://github.com/twentyhq/twenty/issues) sau [canalele de suport](https://discord.gg/cx5n4Jzs57) pentru asistență.

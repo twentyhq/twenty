@@ -10,6 +10,7 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -53,6 +54,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [UserWorkspaceService, UserWorkspaceResolver],
+  providers: [
+    UserWorkspaceService,
+    UserWorkspaceResolver,
+    UploadProfilePicturePermissionGuard,
+  ],
 })
 export class UserWorkspaceModule {}

@@ -4,8 +4,8 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import {
   AggregateOperations,
   GraphOrderBy,
-  GraphType,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated/graphql';
 
@@ -30,7 +30,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               title: 'Widget 1',
               type: WidgetType.GRAPH,
               configuration: {
-                graphType: GraphType.AGGREGATE,
+                configurationType: WidgetConfigurationType.AGGREGATE_CHART,
                 aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 displayDataLabel: false,
@@ -48,7 +48,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               title: 'Widget 2',
               type: WidgetType.GRAPH,
               configuration: {
-                graphType: GraphType.PIE,
+                configurationType: WidgetConfigurationType.PIE_CHART,
                 aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 groupByFieldMetadataId: 'status',
@@ -108,6 +108,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               title: 'Rich Text',
               type: WidgetType.STANDALONE_RICH_TEXT,
               configuration: {
+                configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
                 body: { blocknote: '[]' },
               },
               gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },

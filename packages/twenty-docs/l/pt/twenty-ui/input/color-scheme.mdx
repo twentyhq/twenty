@@ -1,5 +1,5 @@
 ---
-title: Esquema de Cores
+title: Color Scheme
 image: /images/user-guide/fields/field.png
 ---
 
@@ -7,67 +7,57 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-## Cartão de Esquema de Cores
+## Color Scheme Card
 
-Representa diferentes esquemas de cores e é especialmente desenvolvido para temas claros e escuros.
+Represents different color schemes and is specially tailored for light and dark themes.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
 
-```jsx
-import { ColorSchemeCard } from "twenty-ui/display";
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-      <ColorSchemeCard
-      variant="Dark"
-      selected={true}
-      />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props            | Tipo                                     | Descrição                                                                                       | Padrão |
-| ---------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- | ------ |
-| variante         | Nome opcional para estilização adicional | A variante do esquema de cores. As opções incluem `Escuro`, `Claro` e `Sistema` | claro  |
-| selected         | booleano                                 | Se `true`, exibe uma marca de seleção para indicar o esquema de cores selecionado               |        |
-| additional props | `React.ComponentPropsWithoutRef<'div'>`  | Standard HTML `div` element props                                                               |        |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props            | Type                                    | Description                                                             | Default |
+    | ---------------- | --------------------------------------- | ----------------------------------------------------------------------- | ------- |
+    | variant          | string                                  | The color scheme variant. Options include `Dark`, `Light`, and `System` | light   |
+    | selected         | boolean                                 | If `true`, displays a checkmark to indicate the selected color scheme   |         |
+    | additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                       |         |
+  </Tab>
 </Tabs>
 
-## Seleção de Esquema de Cores
+## Color Scheme Picker
 
-Permite que os usuários escolham entre diferentes esquemas de cores.
+Allows users to choose between different color schemes.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
 
-```jsx
-import { ColorSchemePicker } from "twenty-ui/display";
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ColorSchemePicker
-  value="Dark"
-  onChange
-  />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props    | Tipo               | Descrição                                                                                    |
-| -------- | ------------------ | -------------------------------------------------------------------------------------------- |
-| valor    | `Esquema de Cores` | O esquema de cores atualmente selecionado                                                    |
-| onChange | função             | A função de callback que você deseja acionar quando um usuário seleciona um esquema de cores |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props    | Type           | Description                                                                  |
+    | -------- | -------------- | ---------------------------------------------------------------------------- |
+    | value    | `Color Scheme` | The currently selected color scheme                                          |
+    | onChange | function       | The callback function you want to trigger when a user selects a color scheme |
+  </Tab>
 </Tabs>

@@ -1,0 +1,228 @@
+---
+title: Import Relations Between Objects via CSV
+description: Complete step-by-step guide to linking records during CSV import.
+---
+
+## Übersicht
+
+This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+
+<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+
+## Understanding Relations
+
+### What is a "One-to-Many" Relation?
+
+In a one-to-many relation:
+
+* **One** Company has **many** People (employees)
+* **One** Company has **many** Opportunities
+* **One** Person has **many** Tasks
+
+The "one" side is the **parent**. The "many" side is the **child**.
+
+### Common Relations in Twenty
+
+| Beziehung                 | "One" Side (Parent) | "Many" Side (Child) |
+| ------------------------- | ------------------- | ------------------- |
+| Companies → People        | Unternehmen         | Personen            |
+| Companies → Opportunities | Unternehmen         | Opportunities       |
+| People → Tasks            | Person              | Aufgaben            |
+| People → Notes            | Person              | Notizen             |
+
+## Step 1: Identify the "One" and "Many" Sides
+
+Before importing, determine which object is the parent and which is the child.
+
+**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+
+* One Company → Many People ✓ (Company is parent)
+* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+
+## Step 2: Import the Parent Records First
+
+The parent ("one" side) must exist in Twenty before you can reference it.
+
+**Import order:**
+
+1. **Companies** first (no dependencies)
+2. **People** second (link to Companies)
+3. **Opportunities** third (link to Companies and/or People)
+4. **Tasks/Notes** (link to any of the above)
+
+<Warning>
+  **If the parent record doesn't exist, the import will fail.**
+
+  Always verify that Companies are imported before importing People with company references.
+</Warning>
+
+## Step 3: Note the Parent's Unique Identifier
+
+You need to reference the parent record using a **unique identifier**. Available options:
+
+| Parent Object                  | Available Unique Identifiers                                    |
+| ------------------------------ | --------------------------------------------------------------- |
+| **Companies**                  | `id` (UUID), `domain` (recommended), or any custom unique field |
+| **People**                     | `id` (UUID), `email`, or any custom unique field                |
+| **Arbeitsbereichsmitglieder**  | `id` (UUID), `email` (not name)                                 |
+| **Benutzerdefinierte Objekte** | `id` (UUID), or any field marked as unique                      |
+
+<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+
+### Finding the Identifier
+
+If you need the `id`:
+
+1. Export the parent records from Twenty
+2. The export includes the `id` column
+3. Use these IDs in your child records file
+
+## Step 4: Verify the Relation Field Exists
+
+Before importing, ensure the relation field exists between your objects.
+
+**To check or create:**
+
+1. Go to **Settings → Data Model**
+2. Select your child object (e.g., People)
+3. Look for a relation field pointing to the parent (e.g., Company)
+4. If it doesn't exist, create it:
+   * Click **+ Add field**
+   * Select **Relation** type
+   * Choose the parent object
+
+## Step 5: Prepare Your CSV File
+
+Add a column to your child CSV that references the parent using its unique identifier.
+
+### Example: People Linking to Companies
+
+**Your People CSV:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+The `companyDomain` column references the Company's domain.
+
+### Format Requirements
+
+| Kennung | Format         | Beispiel                               |
+| ------- | -------------- | -------------------------------------- |
+| Domäne  | URL format     | `https://acme.com`                     |
+| E-Mail  | Standard email | `john@acme.com`                        |
+| ID      | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Domain format matters!**
+
+  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+</Warning>
+
+### Important Rules
+
+1. **Exact match required** — the value must exactly match the parent record
+2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
+3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+
+## Step 6: Upload and Map the Relation
+
+1. Navigate to the child object (e.g., People)
+2. Click **⋮** → **Import records**
+3. Upload your CSV file
+4. In the field mapping step:
+   * Find your relation column (e.g., `companyDomain`)
+   * Map it to the **Company** relation field
+5. Complete the remaining mapping
+6. Review errors and confirm
+
+Twenty will automatically link each child record to the matching parent.
+
+## Step 7: Verify the Import
+
+After importing:
+
+1. Open a few child records (e.g., People)
+2. Verify the relation field shows the correct parent (e.g., Company)
+3. Open a parent record and check the related records section
+
+## Common Mistakes to Avoid
+
+| Mistake                    | Problem                                            | Solution                                                |
+| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
+| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
+| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
+| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
+| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
+| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+
+## Linking to Workspace Members
+
+When linking to Workspace Members (your team):
+
+* Use their **email address**, not their name
+* Example: `owner@yourcompany.com`, not "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What if my parent record doesn't have a domain or email?">
+    You have two options:
+
+    1. Use the Twenty `id` (export parent records to get their IDs)
+    2. Create a custom unique field in your data model to store an external ID from your previous system
+  </Accordion>
+
+  <Accordion title="Can I update relations on existing records?">
+    Ja! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  </Accordion>
+
+  <Accordion title="Can I import Many-to-Many relationships?">
+    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  </Accordion>
+
+  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
+    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  </Accordion>
+
+  <Accordion title="What happens if a parent record doesn't exist?">
+    The import will show an error for that row. Sie können entweder:
+
+    * Import the parent record first, then re-import
+    * Fix the reference value
+    * Remove the row from import
+  </Accordion>
+
+  <Accordion title="Why is my relation not linking correctly?">
+    Common causes:
+
+    * Wrong format (use `https://domain.com` for domains)
+    * Case mismatch (check exact spelling)
+    * Parent doesn't exist (import parents first)
+    * Mapping multiple identifiers (use only one)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Remember: Soft-deleted records count toward uniqueness.**
+
+  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+</Warning>
+
+## Fehlerbehebung
+
+Having issues? Check:
+
+* [How to Fix Import Errors](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [Import Relations Capabilities](/l/de/user-guide/data-migration/capabilities/import-relations)
+* [Uniqueness Constraints](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)

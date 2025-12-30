@@ -12,7 +12,10 @@ import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/bui
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
-import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import {
+  type FirstDayOfTheWeek,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -22,6 +25,8 @@ type TransformGroupByDataToPieChartDataParams = {
   objectMetadataItems: ObjectMetadataItem[];
   configuration: PieChartConfiguration;
   aggregateOperation: string;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformGroupByDataToPieChartDataResult = {
@@ -44,6 +49,8 @@ export const transformGroupByDataToPieChartData = ({
   objectMetadataItems,
   configuration,
   aggregateOperation,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformGroupByDataToPieChartDataParams): TransformGroupByDataToPieChartDataResult => {
   if (!isDefined(groupByData)) {
     return EMPTY_PIE_CHART_RESULT;
@@ -100,6 +107,8 @@ export const transformGroupByDataToPieChartData = ({
     primaryAxisDateGranularity: dateGranularity,
     primaryAxisGroupBySubFieldName:
       configuration.groupBySubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);

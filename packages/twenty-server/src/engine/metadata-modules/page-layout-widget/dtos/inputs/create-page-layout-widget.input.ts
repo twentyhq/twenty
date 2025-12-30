@@ -15,6 +15,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/grid-position.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 @InputType()
 export class CreatePageLayoutWidgetInput {
@@ -28,10 +29,10 @@ export class CreatePageLayoutWidgetInput {
   @IsNotEmpty()
   title: string;
 
-  @Field(() => WidgetType, { nullable: true, defaultValue: WidgetType.VIEW })
+  @Field(() => WidgetType, { nullable: false })
   @IsEnum(WidgetType)
   @IsOptional()
-  type?: WidgetType;
+  type: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
@@ -43,8 +44,8 @@ export class CreatePageLayoutWidgetInput {
   @Type(() => GridPositionInput)
   gridPosition: GridPositionInput;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: false })
   @IsObject()
   @IsOptional()
-  configuration?: Record<string, unknown> | null;
+  configuration: AllPageLayoutWidgetConfiguration;
 }

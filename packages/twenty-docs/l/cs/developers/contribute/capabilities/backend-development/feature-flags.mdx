@@ -1,0 +1,46 @@
+---
+title: Příznaky funkcí
+---
+
+Příznaky funkcí slouží k skrytí zkušebních funkcí. Pro Twenty jsou nastaveny na úrovni pracovního prostoru, nikoli na úrovni uživatele.
+
+## Přidání nového příznaku funkce
+
+V `FeatureFlagKey.ts` přidat příznak funkce:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Také jej přidejte do výčtu v `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Pro uplatnění příznaku funkce na **backendové** funkci použijte:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Pro uplatnění příznaku funkce na **frontendové** funkci použijte:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FUNKCEPOVOLENA');
+```
+
+## Nakonfigurujte příznaky funkcí pro nasazení
+
+Změnit odpovídající záznam v tabulce `core.featureFlag`:
+
+| id      | klíč                | workspaceId | hodnota  |
+| ------- | ------------------- | ----------- | -------- |
+| Náhodný | `IS_FUNKCEPOVOLENA` | WorkspaceID | `pravda` |

@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
-import { FieldContext } from '../contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useClearField = () => {
   const {

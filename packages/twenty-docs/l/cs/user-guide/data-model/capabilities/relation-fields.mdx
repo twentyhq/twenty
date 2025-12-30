@@ -1,0 +1,92 @@
+---
+title: Relační pole
+description: Connect records across different objects using relation fields.
+---
+
+## Types of Relations
+
+### One-to-Many
+
+One record in Object A can be linked to many records in Object B.
+
+**Example:** One Company can have many People (employees).
+
+### Many-to-One
+
+Many records in Object A can be linked to one record in Object B.
+
+**Example:** Many People can belong to one Company.
+
+### Relations to Multiple Object Types
+
+Some objects can link to multiple object types on one side of the relation.
+
+**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+</Warning>
+
+### Many-to-Many
+
+Many records in Object A can be linked to many records in Object B.
+
+**Example:** Many People can be linked to many Projects, and vice versa.
+
+<Warning>
+  **Many-to-Many is not yet supported.**
+
+  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+</Warning>
+
+## Creating a Relation Field
+
+1. Go to **Settings → Data Model**
+2. Select the object where you want to add the relation
+3. Click **+ Add Field**
+4. Select **Relation** as the field type
+5. Choose the target object(s) to relate to
+6. Configure the relation settings:
+   * **Field name on source object**: The name of the relation field on the object you're editing
+   * **Field name on destination object**: The name of the relation field that will appear on the target object
+   * Relation type (one-to-many, many-to-one)
+7. Klikněte na **Uložit**
+
+## Standard Relations
+
+Twenty comes with pre-built relations between standard objects:
+
+| From Object  | To Object   | Relation Type |
+| ------------ | ----------- | ------------- |
+| Osoby        | Společnosti | Many-to-One   |
+| Příležitosti | Společnosti | Many-to-One   |
+| Příležitosti | Osoby       | Many-to-One   |
+
+## Osvědčené postupy
+
+### Planning Relations
+
+* **Map your data model**: Plan relations before creating them
+* **Consider direction**: Think about which object "owns" the relationship
+* **Avoid circular dependencies**: Keep your data model clean
+
+### Naming Relations
+
+* **Use clear names**: Make it obvious what the relation represents
+* **Be consistent**: Use similar naming patterns across relations
+* **Consider both sides**: Name both sides of the relation appropriately
+
+### Performance
+
+* **Don't over-relate**: Too many relations can slow down your workspace
+
+## Limitations
+
+* **Deleting relations** removes the link but not the related records
+* **Circular relations** should be avoided for data integrity

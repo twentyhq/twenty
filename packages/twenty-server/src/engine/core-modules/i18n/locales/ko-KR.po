@@ -556,11 +556,6 @@ msgstr "담당자"
 msgid "Associated User Id"
 msgstr "연결된 사용자 ID"
 
-#. js-lingui-id: scLx/y
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "At least one folder must be synced."
-msgstr ""
-
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
@@ -3253,11 +3248,6 @@ msgstr "메시지 폴더"
 msgid "Message folder import policy"
 msgstr "메시지 폴더 가져오기 정책"
 
-#. js-lingui-id: aIgrkW
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "Message folder not found"
-msgstr ""
-
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3397,6 +3387,11 @@ msgstr "필수 필드 부족: '{connectFieldName}'에 대해 하나의 고유 �
 msgid "Missing required system field."
 msgstr "필수 시스템 필드가 누락되었습니다."
 
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr "날짜 기준 그룹화에 사용할 시간대가 없습니다."
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3478,7 +3473,7 @@ msgstr "이름 \"{name}\"을 사용할 수 없습니다."
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "이 이름은 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다."
+msgstr "이름 \"{name}\"은 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다."
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -5203,6 +5198,20 @@ msgstr "워크플로 버전 이름"
 msgid "The workflow version status"
 msgstr "워크플로 버전 상태"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5628,6 +5637,20 @@ msgstr "업데이트 날짜/시간"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "업데이트 필드 제한은 업데이트 가능한 객체에만 적용됩니다."
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -6291,6 +6314,11 @@ msgstr "워크스페이스 멤버 위치"
 msgid "Workspace Members"
 msgstr "워크스페이스 멤버들"
 
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
+
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace not found for customer event."
@@ -6439,6 +6467,11 @@ msgstr "이 워크플로우 작업을 수행할 권한이 없습니다."
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "다음 필드를 업데이트할 권한이 없습니다: {fieldsList}. 작업 공간 관리자에게 문의하십시오."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
@@ -6448,6 +6481,11 @@ msgstr "작업 공간 수준의 보기를 생성할 권한이 없습니다."
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "이 보기를 수정할 권한이 없습니다."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "크레딧이 모두 소진되었습니다. 계속하려면 요금제를 업그레이드해 주세요."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

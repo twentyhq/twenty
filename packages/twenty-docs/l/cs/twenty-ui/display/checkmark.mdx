@@ -4,30 +4,25 @@ image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Hlavička" />
 </Frame>
 
 Představuje úspěšnou nebo dokončenou akci.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Použití">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
 
-```jsx
-import { Checkmark } from 'twenty-ui/display';
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <Checkmark />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-Rozšiřuje `React.ComponentPropsWithoutRef<'div'>` a přijímá všechny vlastnosti běžného prvku `div`.
-
-</Tab>
-
+  <Tab title="Vlastnosti">
+    Rozšiřuje `React.ComponentPropsWithoutRef<'div'>` a přijímá všechny vlastnosti běžného prvku `div`.
+  </Tab>
 </Tabs>
 
 ## Animated Checkmark
@@ -35,35 +30,29 @@ Rozšiřuje `React.ComponentPropsWithoutRef<'div'>` a přijímá všechny vlastn
 Představuje ikonu zaškrtnutí s přidanou funkcí animace.
 
 <Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { AnimatedCheckmark } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return (
-    <AnimatedCheckmark
-      isAnimating={true}
-      color="green"
-      duration={0.5}
-      size={30}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti | Typ                | Popis                             | Výchozí     |
-| ---------- | ------------------ | --------------------------------- | ----------- |
-| animuje    | booleovská hodnota | Určuje, zda se zaškrtnutí animuje | nepravdivé  |
-| barva      | textový řetězec    | Barva zaškrtnutí                  |             |
-| trvání     | číslo              | Doba trvání animace v sekundách   | 0,5 sekundy |
-| velikost   | číslo              | Velikost zaškrtnutí               | 28 pixelů   |
-
-</Tab>
-
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ                | Popis                             | Výchozí     |
+    | ---------- | ------------------ | --------------------------------- | ----------- |
+    | animuje    | booleovská hodnota | Určuje, zda se zaškrtnutí animuje | nepravdivé  |
+    | barva      | řetězec            | Barva zaškrtnutí                  |             |
+    | trvání     | číslo              | Doba trvání animace v sekundách   | 0,5 sekundy |
+    | velikost   | číslo              | Velikost zaškrtnutí               | 28 pixelů   |
+  </Tab>
 </Tabs>

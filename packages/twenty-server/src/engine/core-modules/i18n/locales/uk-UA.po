@@ -556,11 +556,6 @@ msgstr "Виконавець"
 msgid "Associated User Id"
 msgstr "Пов’язаний ідентифікатор користувача"
 
-#. js-lingui-id: scLx/y
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "At least one folder must be synced."
-msgstr ""
-
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
@@ -3253,11 +3248,6 @@ msgstr "Папка повідомлень"
 msgid "Message folder import policy"
 msgstr "Політика імпорту папки повідомлень"
 
-#. js-lingui-id: aIgrkW
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "Message folder not found"
-msgstr ""
-
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3396,6 +3386,11 @@ msgstr "Не всі заповнено обов'язкові поля: прин�
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing required system field."
 msgstr "Відсутнє обов'язкове системне поле."
+
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr "Відсутній часовий пояс для групування за датою."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -5203,6 +5198,20 @@ msgstr "Назва версії робочого процесу"
 msgid "The workflow version status"
 msgstr "Статус версії робочого процесу"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5628,6 +5637,20 @@ msgstr "Дата й час оновлення"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Обмеження на оновлення полів застосовуються лише до об'єктів, які можна оновлювати."
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -6291,6 +6314,11 @@ msgstr "Посада учасника робочого простору"
 msgid "Workspace Members"
 msgstr "Члени робочого простору"
 
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
+
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace not found for customer event."
@@ -6439,6 +6467,11 @@ msgstr "У вас немає дозволу виконувати цю дію р�
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Ви не маєте дозволу оновлювати ці поля: {fieldsList}. Зверніться до адміністратора робочого простору."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
@@ -6448,6 +6481,11 @@ msgstr "Ви не маєте дозволу створювати перегля�
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "Ви не маєте дозволу змінювати цей перегляд."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "Ви вичерпали свої кредити. Будь ласка, оновіть свій план, щоб продовжити."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

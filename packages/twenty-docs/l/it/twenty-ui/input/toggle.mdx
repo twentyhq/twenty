@@ -4,36 +4,33 @@ image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="Intestazione" />
 </Frame>
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
 
-```jsx
-import { Toggle } from "twenty-ui/input";
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Toggle
-    value = {true}
-    onChange = {()=>console.log('On Change event')}
-    color="green"
-    toggleSize = "medium"
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props                  | Tipo     | Descrizione                                                                                                                               | Predefinito |
-| ---------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| valore                 | booleano | Lo stato attuale dell'interruttore                                                                                                        | `falso`     |
-| onChange               | funzione | Funzione di callback attivata quando lo stato dell'interruttore cambia                                                                    |             |
-| colore                 | string   | Colore dell'interruttore quando è                                                                                                         | colore blu  |
-| dimensioneInterruttore | string   | Size of the toggle, affecting both height and weight. Ha due opzioni: `small` e `medium`. | medio       |
-
-</Tab>
+  <Tab title="Proprietà">
+    | Proprietà              | Tipo     | Descrizione                                                                               | Predefinito |
+    | ---------------------- | -------- | ----------------------------------------------------------------------------------------- | ----------- |
+    | valore                 | booleano | Lo stato attuale dell'interruttore                                                        | `falso`     |
+    | onChange               | funzione | Funzione di callback attivata quando lo stato dell'interruttore cambia                    |             |
+    | colore                 | stringa  | Colore dell'interruttore quando è                                                         | colore blu  |
+    | dimensioneInterruttore | stringa  | Size of the toggle, affecting both height and weight. Ha due opzioni: `small` e `medium`. | medio       |
+  </Tab>
 </Tabs>

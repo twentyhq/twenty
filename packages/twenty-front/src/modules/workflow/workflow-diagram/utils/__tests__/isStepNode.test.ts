@@ -1,5 +1,5 @@
 import { type WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { isStepNode } from '../isStepNode';
+import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 
 describe('isStepNode', () => {
   it('should return true for trigger node', () => {

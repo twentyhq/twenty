@@ -1,4 +1,4 @@
-import { getAgentIdFromStep } from '../getAgentIdFromStep';
+import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 
 describe('getAgentIdFromStep', () => {
   it('should return undefined when stepDefinition is undefined', () => {

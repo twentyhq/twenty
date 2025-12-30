@@ -7,6 +7,10 @@ import { type LanguageModel } from 'ai';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
+  AgentException,
+  AgentExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import {
   AI_MODELS,
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
@@ -164,6 +168,13 @@ export class AiModelRegistryService {
       model = availableModels[0];
     }
 
+    if (!model) {
+      throw new AgentException(
+        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
     return model;
   }
 
@@ -179,21 +190,23 @@ export class AiModelRegistryService {
       model = availableModels[0];
     }
 
+    if (!model) {
+      throw new AgentException(
+        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
     return model;
   }
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
     if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+      // getDefaultSpeedModel/getDefaultPerformanceModel will throw AgentException if no models available
       const defaultModel =
         modelId === DEFAULT_FAST_MODEL
           ? this.getDefaultSpeedModel()
           : this.getDefaultPerformanceModel();
-
-      if (!defaultModel) {
-        throw new Error(
-          'No AI models are available. Please configure at least one provider.',
-        );
-      }
 
       const modelConfig = AI_MODELS.find(
         (model) => model.modelId === defaultModel.modelId,
@@ -220,7 +233,10 @@ export class AiModelRegistryService {
       return this.createDefaultConfigForCustomModel(registeredModel);
     }
 
-    throw new Error(`Model with ID ${modelId} not found`);
+    throw new AgentException(
+      `Model with ID ${modelId} not found`,
+      AgentExceptionCode.AGENT_EXECUTION_FAILED,
+    );
   }
 
   private createDefaultConfigForCustomModel(
@@ -252,7 +268,10 @@ export class AiModelRegistryService {
     const registeredModel = this.getModel(aiModel.modelId);
 
     if (!registeredModel) {
-      throw new Error(`Model ${aiModel.modelId} not found in registry`);
+      throw new AgentException(
+        `Model ${aiModel.modelId} not found in registry`,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
     }
 
     return registeredModel;
@@ -279,7 +298,10 @@ export class AiModelRegistryService {
     }
 
     if (!apiKey) {
-      throw new Error(`${provider.toUpperCase()} API key not configured`);
+      throw new AgentException(
+        `${provider.toUpperCase()} API key not configured. Please set the appropriate environment variable.`,
+        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
     }
   }
 }

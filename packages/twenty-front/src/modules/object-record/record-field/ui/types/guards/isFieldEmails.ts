@@ -1,7 +1,10 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldDefinition } from '../FieldDefinition';
-import { type FieldEmailsMetadata, type FieldMetadata } from '../FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import {
+  type FieldEmailsMetadata,
+  type FieldMetadata,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const isFieldEmails = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

@@ -1,5 +1,5 @@
 ---
-title: Alternar
+title: Toggle
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -8,32 +8,29 @@ image: /images/user-guide/table-views/table.png
 </Frame>
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
 
-```jsx
-import { Toggle } from "twenty-ui/input";
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Toggle
-    value = {true}
-    onChange = {()=>console.log('On Change event')}
-    color="green"
-    toggleSize = "medium"
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props           | Tipo                                     | Descrição                                                                                                                          | Padrão       |
-| --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| valor           | booleano                                 | O estado atual do alternador                                                                                                       | `falso`      |
-| onChange        | função                                   | Função de retorno de chamada acionada quando o estado do alternador muda                                                           |              |
-| cor             | Nome opcional para estilização adicional | Color of the toggle when it\                                                                                                      | s blue color |
-| alternarTamanho | Nome opcional para estilização adicional | Tamanho do alternador, afetando tanto a altura quanto o peso. Tem duas opções: `pequeno` e `médio` | médio        |
-
-</Tab>
+  <Tab title="Props">
+    | Props      | Type     | Description                                                                                 | Default      |
+    | ---------- | -------- | ------------------------------------------------------------------------------------------- | ------------ |
+    | value      | boolean  | The current state of the toggle                                                             | `false`      |
+    | onChange   | function | Callback function triggered when the toggle state changes                                   |              |
+    | color      | string   | Color of the toggle when it\                                                                | s blue color |
+    | toggleSize | string   | Size of the toggle, affecting both height and weight. Has two options: `small` and `medium` | medium       |
+  </Tab>
 </Tabs>

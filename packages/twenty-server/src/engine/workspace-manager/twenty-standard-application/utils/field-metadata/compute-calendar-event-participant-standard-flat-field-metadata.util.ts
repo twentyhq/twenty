@@ -112,6 +112,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconMail',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -128,6 +129,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Display Name',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -144,6 +146,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Is Organizer',
       icon: 'IconUser',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -161,6 +164,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Response Status',
       icon: 'IconUser',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'NEEDS_ACTION'",
       options: [
         {
@@ -195,6 +199,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Event ID',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarEvent',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -219,6 +224,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -243,6 +249,7 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Workspace Member',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'calendarEventParticipants',
       settings: {

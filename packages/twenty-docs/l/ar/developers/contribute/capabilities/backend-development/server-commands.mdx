@@ -1,0 +1,101 @@
+---
+title: الأوامر الخلفية
+---
+
+## الأوامر المفيدة
+
+يجب تنفيذ هذه الأوامر من مجلد packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### إعداد المرة الأولى
+
+```
+npx nx database:reset twenty-server # إعداد قاعدة البيانات مع بذور التطوير
+```
+
+### بدء الخادم
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### تجربة
+
+```
+npx nx run twenty-server:test:unit # تشغيل اختبارات الوحدة
+npx nx run twenty-server:test:integration # تشغيل اختبارات التكامل
+```
+
+ملاحظة: يمكنك تشغيل `npx nx run twenty-server:test:integration:with-db-reset` في حالة احتياجك لإعادة تعيين قاعدة البيانات قبل تشغيل اختبارات التكامل.
+
+### إعادة تعيين قاعدة البيانات
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### للكائنات داخل مخططات Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### لكائنات مساحة العمل
+
+لا توجد ملفات هجيرات، يتم إنشاء الهجيرات تلقائيًا لكل مساحة عمل،
+مخزنة في قاعدة البيانات، ويتم تطبيقها مع هذا الأمر
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  سيؤدي هذا إلى إسقاط قاعدة البيانات وإعادة تشغيل الهجرات والبذور.
+
+  تأكد من عمل نسخة احتياطية لأي بيانات تريد الاحتفاظ بها قبل تشغيل هذا الأمر.
+</Warning>
+
+## "التقنية المستخدمة"
+
+Twenty primarily uses NestJS for the backend.
+
+Prisma كان أول ORM استخدمناه. ولكن للسماح للمستخدمين بإنشاء الحقول والعناصر المخصصة، كان من المنطقي استخدام مستوى أقل حيث نحتاج إلى تحكم دقيق. الآن يستخدم المشروع TypeORM.
+
+إليك شكل العناصر التقنية الآن.
+
+**Core**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**قاعدة البيانات**
+
+* [Postgres](https://www.postgresql.org/)
+
+**التكاملات مع جهات خارجية**
+
+* [Sentry](https://sentry.io/welcome/) لتتبع الأخطاء
+
+**الاختبار**
+
+* [Jest](https://jestjs.io/)
+
+**الأدوات**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**التطوير**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

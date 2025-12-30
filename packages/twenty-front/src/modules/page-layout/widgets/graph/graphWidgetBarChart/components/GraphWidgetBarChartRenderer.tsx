@@ -1,5 +1,4 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
@@ -7,6 +6,9 @@ import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBa
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
@@ -24,12 +26,13 @@ const GraphWidgetBarChart = lazy(() =>
   })),
 );
 
-export const GraphWidgetBarChartRenderer = ({
-  widget,
-}: {
-  widget: PageLayoutWidget;
-}) => {
+export const GraphWidgetBarChartRenderer = () => {
+  const widget = useCurrentWidget();
+
   assertBarChartWidgetOrThrow(widget);
+
+  const { userTimezone } = useUserTimezone();
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
   const {
     data,
@@ -86,7 +89,8 @@ export const GraphWidgetBarChartRenderer = ({
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: configuration.timezone ?? undefined,
+      timezone: userTimezone,
+      firstDayOfTheWeek: userFirstDayOfTheWeek,
     });
 
     const url = getAppPath(

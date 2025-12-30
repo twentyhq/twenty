@@ -3,8 +3,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '../states/pageLayoutPersistedComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 
 export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
