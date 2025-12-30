@@ -8,11 +8,10 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
-import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
+import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { GraphOrderBy, type PieChartConfiguration } from '~/generated/graphql';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import { type PieChartConfiguration } from '~/generated/graphql';
 
 type TransformGroupByDataToPieChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
@@ -108,41 +107,17 @@ export const transformGroupByDataToPieChartData = ({
       rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
     }));
 
-  const getSortedDataWithRawValues = (): PieChartDataItemWithRawValue[] => {
-    if (
-      configuration.orderBy === GraphOrderBy.MANUAL &&
-      isDefined(configuration.manualSortOrder) &&
-      configuration.manualSortOrder.length > 0
-    ) {
-      return sortByManualOrder({
-        items: unsortedDataWithRawValues,
-        manualSortOrder: configuration.manualSortOrder,
-        getRawValue: (item) => item.rawValue,
-      });
-    }
-
-    if (
-      (configuration.orderBy === GraphOrderBy.FIELD_POSITION_ASC ||
-        configuration.orderBy === GraphOrderBy.FIELD_POSITION_DESC) &&
-      isDefined(groupByField.options) &&
-      groupByField.options.length > 0
-    ) {
-      return sortBySelectOptionPosition({
-        items: unsortedDataWithRawValues,
-        options: groupByField.options,
-        formattedToRawLookup,
-        getFormattedValue: (item) => item.id,
-        direction:
-          configuration.orderBy === GraphOrderBy.FIELD_POSITION_ASC
-            ? 'ASC'
-            : 'DESC',
-      });
-    }
-
-    return unsortedDataWithRawValues;
-  };
-
-  const sortedDataWithRawValues = getSortedDataWithRawValues();
+  const sortedDataWithRawValues = sortChartData({
+    data: unsortedDataWithRawValues,
+    orderBy: configuration.orderBy ?? undefined,
+    manualSortOrder: configuration.manualSortOrder ?? undefined,
+    formattedToRawLookup,
+    getFieldValue: (item) => item.id,
+    getNumericValue: (item) => item.value,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByField.type)
+      ? groupByField.options
+      : undefined,
+  });
 
   const data: PieChartDataItem[] = sortedDataWithRawValues.map(
     ({ rawValue: _rawValue, ...item }) => item,
