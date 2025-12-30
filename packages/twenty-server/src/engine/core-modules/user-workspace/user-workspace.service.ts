@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, IsNull, Not, Repository } from 'typeorm';
+import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -24,7 +24,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   PermissionsException,
@@ -35,7 +35,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
@@ -325,16 +325,18 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async getUserWorkspaceForUserOrThrow({
     userId,
     workspaceId,
+    relations = ['twoFactorAuthenticationMethods'],
   }: {
     userId: string;
     workspaceId: string;
+    relations?: string[];
   }): Promise<UserWorkspaceEntity> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId,
         workspaceId,
       },
-      relations: ['twoFactorAuthenticationMethods'],
+      relations,
     });
 
     if (!isDefined(userWorkspace)) {
