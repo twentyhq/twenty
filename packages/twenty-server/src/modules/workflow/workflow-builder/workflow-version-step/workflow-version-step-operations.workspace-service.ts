@@ -8,6 +8,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -53,16 +54,6 @@ const DUPLICATED_STEP_POSITION_OFFSET = 50;
 const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
   x: 174,
   y: 83,
-};
-
-const IF_ELSE_IF_BRANCH_POSITION_OFFSET = {
-  x: -200,
-  y: 120,
-};
-
-const IF_ELSE_ELSE_BRANCH_POSITION_OFFSET = {
-  x: 200,
-  y: 120,
 };
 
 @Injectable()
@@ -837,8 +828,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             input: {},
           },
           position: {
-            x: (ifElsePosition?.x ?? 0) + IF_ELSE_IF_BRANCH_POSITION_OFFSET.x,
-            y: (ifElsePosition?.y ?? 0) + IF_ELSE_IF_BRANCH_POSITION_OFFSET.y,
+            x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
+            y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.y,
           },
         };
 
@@ -852,8 +843,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             input: {},
           },
           position: {
-            x: (ifElsePosition?.x ?? 0) + IF_ELSE_ELSE_BRANCH_POSITION_OFFSET.x,
-            y: (ifElsePosition?.y ?? 0) + IF_ELSE_ELSE_BRANCH_POSITION_OFFSET.y,
+            x:
+              (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
+            y:
+              (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.y,
           },
         };
 

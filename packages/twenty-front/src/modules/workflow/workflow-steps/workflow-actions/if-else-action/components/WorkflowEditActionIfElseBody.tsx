@@ -8,6 +8,9 @@ import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filt
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { WorkflowIfElseBranchEditor } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowIfElseBranchEditor';
+import { calculateElseIfBranchPosition } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateElseIfBranchPosition';
+import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
+import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -15,13 +18,11 @@ import { Fragment } from 'react';
 import {
   type StepFilter,
   type StepFilterGroup,
-  StepLogicalOperator,
-  ViewFilterOperand,
+  type StepIfElseBranch,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -52,15 +53,11 @@ export type IfElseSettings = {
   branches: WorkflowIfElseAction['settings']['input']['branches'];
 };
 
-const IF_ELSE_IF_BRANCH_POSITION_OFFSET = {
-  x: -200,
-  y: 120,
-};
-
-const IF_ELSE_ELSE_BRANCH_POSITION_OFFSET = {
-  x: 200,
-  y: 120,
-};
+const isElseBranch = (
+  branchIndex: number,
+  totalBranches: number,
+  branch: StepIfElseBranch,
+) => branchIndex === totalBranches - 1 && !isDefined(branch.filterGroupId);
 
 export const WorkflowEditActionIfElseBody = ({
   action,
@@ -69,6 +66,7 @@ export const WorkflowEditActionIfElseBody = ({
   const branches = action.settings.input.branches;
   const stepFilterGroups = action.settings.input.stepFilterGroups ?? [];
   const stepFilters = action.settings.input.stepFilters ?? [];
+  const isReadonly = actionOptions.readonly === true;
 
   const { createStep } = useCreateStep();
 
@@ -86,43 +84,25 @@ export const WorkflowEditActionIfElseBody = ({
   );
 
   const onFilterSettingsUpdate = (newFilterSettings: FilterSettings) => {
-    if (actionOptions.readonly === true) {
+    if (isReadonly) {
       return;
     }
 
     const updatedStepFilterGroups = newFilterSettings.stepFilterGroups ?? [];
     const updatedStepFilters = newFilterSettings.stepFilters ?? [];
 
-    const existingBranchFilterGroupIds = new Set(
-      branches.map((b) => b.filterGroupId).filter(isDefined),
-    );
-
     const remainingFilterGroupIds = new Set(
       updatedStepFilterGroups.map((g) => g.id),
     );
 
-    const branchesToDelete = branches.filter((branch, branchIndex) => {
-      const isIfBranch = branchIndex === 0;
-      const isElseBranch =
-        branchIndex === branches.length - 1 && !isDefined(branch.filterGroupId);
-
-      if (isIfBranch || isElseBranch) {
-        return false;
-      }
-
-      return (
-        isDefined(branch.filterGroupId) &&
-        existingBranchFilterGroupIds.has(branch.filterGroupId) &&
-        !remainingFilterGroupIds.has(branch.filterGroupId)
-      );
-    });
-
-    let updatedBranches = branches;
-    if (branchesToDelete.length > 0) {
-      updatedBranches = branches.filter(
-        (branch) => !branchesToDelete.includes(branch),
-      );
-    }
+    const branchesToDelete = getBranchesToDelete(
+      branches,
+      remainingFilterGroupIds,
+    );
+    const updatedBranches =
+      branchesToDelete.length > 0
+        ? branches.filter((branch) => !branchesToDelete.includes(branch))
+        : branches;
 
     setCurrentStepFilterGroups(updatedStepFilterGroups);
     setCurrentStepFilters(updatedStepFilters);
@@ -147,47 +127,17 @@ export const WorkflowEditActionIfElseBody = ({
       event.stopPropagation();
     }
 
-    if (actionOptions.readonly === true) {
+    if (isReadonly) {
       return;
     }
 
-    const newFilterGroupId = v4();
-    const newFilterId = v4();
-    const newBranchId = v4();
-
-    const newFilterGroup: StepFilterGroup = {
-      id: newFilterGroupId,
-      logicalOperator: StepLogicalOperator.AND,
-      positionInStepFilterGroup: 0,
-    };
-
-    const newFilter: StepFilter = {
-      id: newFilterId,
-      type: 'unknown',
-      stepOutputKey: '',
-      operand: ViewFilterOperand.IS,
-      value: '',
-      stepFilterGroupId: newFilterGroupId,
-      positionInStepFilterGroup: 0,
-    };
-
+    const { filterGroup, filter, branchId, filterGroupId } =
+      createElseIfBranch();
     const elseIfBranchIndex = branches.length - 1;
-    const totalElseIfBranches = elseIfBranchIndex;
-
-    const positionX =
-      totalElseIfBranches > 0
-        ? IF_ELSE_IF_BRANCH_POSITION_OFFSET.x +
-          ((IF_ELSE_ELSE_BRANCH_POSITION_OFFSET.x -
-            IF_ELSE_IF_BRANCH_POSITION_OFFSET.x) *
-            elseIfBranchIndex) /
-            (totalElseIfBranches + 1)
-        : IF_ELSE_IF_BRANCH_POSITION_OFFSET.x;
-
-    const ifElseStepPosition = action.position ?? { x: 0, y: 0 };
-    const emptyNodePosition = {
-      x: ifElseStepPosition.x + positionX,
-      y: ifElseStepPosition.y + IF_ELSE_IF_BRANCH_POSITION_OFFSET.y,
-    };
+    const emptyNodePosition = calculateElseIfBranchPosition(
+      elseIfBranchIndex,
+      action.position ?? { x: 0, y: 0 },
+    );
 
     const emptyNode = await createStep({
       newStepType: 'EMPTY',
@@ -202,19 +152,19 @@ export const WorkflowEditActionIfElseBody = ({
     }
 
     const newBranch = {
-      id: newBranchId,
-      filterGroupId: newFilterGroupId,
+      id: branchId,
+      filterGroupId,
       nextStepIds: [emptyNode.id],
     };
 
     const updatedBranches = [...branches];
     updatedBranches.splice(branches.length - 1, 0, newBranch);
 
-    const updatedStepFilterGroups = [...stepFilterGroups, newFilterGroup];
-    const updatedStepFilters = [...stepFilters, newFilter];
+    const updatedStepFilterGroups = [...stepFilterGroups, filterGroup];
+    const updatedStepFilters = [...stepFilters, filter];
 
-    setCurrentStepFilterGroups([...currentStepFilterGroups, newFilterGroup]);
-    setCurrentStepFilters([...currentStepFilters, newFilter]);
+    setCurrentStepFilterGroups([...currentStepFilterGroups, filterGroup]);
+    setCurrentStepFilters([...currentStepFilters, filter]);
 
     actionOptions.onActionUpdate({
       ...action,
@@ -230,10 +180,6 @@ export const WorkflowEditActionIfElseBody = ({
     });
   };
 
-  const isElseBranch = (branchIndex: number) =>
-    branchIndex === branches.length - 1 &&
-    !isDefined(branches[branchIndex].filterGroupId);
-
   return (
     <StyledBodyContainer>
       <InputLabel>{t`Conditions`}</InputLabel>
@@ -243,12 +189,12 @@ export const WorkflowEditActionIfElseBody = ({
             ? stepFilterGroups.find((g) => g.id === branch.filterGroupId)
             : undefined;
 
+          const isElse = isElseBranch(branchIndex, branches.length, branch);
+
           return (
             <Fragment key={branch.id}>
-              {branchIndex > 0 && !isElseBranch(branchIndex) && (
-                <HorizontalSeparator noMargin />
-              )}
-              {isElseBranch(branchIndex) && !actionOptions.readonly && (
+              {branchIndex > 0 && !isElse && <HorizontalSeparator noMargin />}
+              {isElse && !isReadonly && (
                 <>
                   <HorizontalSeparator noMargin />
                   <Button
@@ -260,7 +206,7 @@ export const WorkflowEditActionIfElseBody = ({
                   />
                 </>
               )}
-              {isElseBranch(branchIndex) && <HorizontalSeparator noMargin />}
+              {isElse && <HorizontalSeparator noMargin />}
               <WorkflowIfElseBranchEditor
                 action={action}
                 branch={branch}
@@ -271,7 +217,7 @@ export const WorkflowEditActionIfElseBody = ({
                   branch,
                 })}
                 branchFilterGroup={branchFilterGroup}
-                readonly={actionOptions.readonly === true}
+                readonly={isReadonly}
                 onFilterSettingsUpdate={onFilterSettingsUpdate}
               />
             </Fragment>
