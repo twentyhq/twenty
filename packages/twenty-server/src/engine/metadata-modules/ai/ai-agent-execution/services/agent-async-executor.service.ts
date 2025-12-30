@@ -6,11 +6,12 @@ import {
   generateText,
   jsonSchema,
   stepCountIs,
-  ToolSet,
+  type ToolSet,
 } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -20,7 +21,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
@@ -93,11 +94,13 @@ export class AgentAsyncExecutorService {
     userPrompt,
     actorContext,
     rolePermissionConfig,
+    authContext,
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
+    authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
@@ -123,6 +126,7 @@ export class AgentAsyncExecutorService {
             ToolCategory.NATIVE_MODEL,
           ],
           rolePermissionConfig: effectiveRoleConfig,
+          authContext,
           actorContext,
           agent: agent as unknown as Parameters<
             typeof this.toolProvider.getTools

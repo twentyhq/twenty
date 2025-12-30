@@ -2,18 +2,19 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -97,6 +98,43 @@ export class McpProtocolService {
     return roleId;
   }
 
+  private buildAuthContext(
+    workspace: WorkspaceEntity,
+    userWorkspaceId?: string,
+    apiKey?: ApiKeyEntity,
+  ): WorkspaceAuthContext {
+    if (isDefined(apiKey)) {
+      return {
+        user: null,
+        apiKey,
+        application: null,
+        workspace,
+        workspaceMemberId: undefined,
+        userWorkspaceId: undefined,
+      } as WorkspaceAuthContext;
+    }
+
+    if (userWorkspaceId) {
+      return {
+        user: null,
+        apiKey: null,
+        application: null,
+        workspace,
+        workspaceMemberId: undefined,
+        userWorkspaceId,
+      } as WorkspaceAuthContext;
+    }
+
+    return {
+      user: null,
+      apiKey: null,
+      application: null,
+      workspace,
+      workspaceMemberId: undefined,
+      userWorkspaceId: undefined,
+    } as WorkspaceAuthContext;
+  }
+
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
@@ -132,10 +170,17 @@ export class McpProtocolService {
         apiKey,
       );
 
+      const authContext = this.buildAuthContext(
+        workspace,
+        userWorkspaceId,
+        apiKey,
+      );
+
       const toolSet = await this.toolProvider.getTools({
         workspaceId: workspace.id,
         categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
         rolePermissionConfig: { unionOf: [roleId] },
+        authContext,
         wrapWithErrorContext: false,
         // Exclude code_interpreter from MCP to prevent recursive execution attacks
         // (code running in the sandbox could call code_interpreter via MCP)

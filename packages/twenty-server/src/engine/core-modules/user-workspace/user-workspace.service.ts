@@ -325,16 +325,18 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async getUserWorkspaceForUserOrThrow({
     userId,
     workspaceId,
+    relations = ['twoFactorAuthenticationMethods'],
   }: {
     userId: string;
     workspaceId: string;
+    relations?: string[];
   }): Promise<UserWorkspaceEntity> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         userId,
         workspaceId,
       },
-      relations: ['twoFactorAuthenticationMethods'],
+      relations,
     });
 
     if (!isDefined(userWorkspace)) {

@@ -7,7 +7,7 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { UpsertRecordParams } from 'src/engine/core-modules/record-crud/types/upsert-record-params.type';
+import { type UpsertRecordParams } from 'src/engine/core-modules/record-crud/types/upsert-record-params.type';
 import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -17,7 +17,6 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class UpsertRecordService {
@@ -29,18 +28,10 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
+    const { objectName, objectRecord, authContext, rolePermissionConfig } =
       params;
 
-    if (!workspaceId) {
-      return {
-        success: false,
-        message: 'Failed to upsert record: Workspace ID is required',
-        error: 'Workspace ID not found',
-      };
-    }
-
-    const authContext = buildSystemAuthContext(workspaceId);
+    const workspaceId = authContext.workspace.id;
 
     try {
       return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
