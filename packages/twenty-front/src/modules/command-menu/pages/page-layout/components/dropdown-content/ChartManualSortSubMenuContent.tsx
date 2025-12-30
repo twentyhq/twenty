@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { type DropResult } from '@hello-pangea/dnd';
 
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -17,8 +16,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
-import { IconChevronLeft, IconGripVertical } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconChevronLeft } from 'twenty-ui/display';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { type WidgetConfiguration } from '~/generated/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
@@ -33,7 +32,6 @@ export const ChartManualSortSubMenuContent = ({
   axis,
   onBack,
 }: ChartManualSortSubMenuContentProps) => {
-  const theme = useTheme();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
@@ -102,21 +100,15 @@ export const ChartManualSortSubMenuContent = ({
                   index={index}
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
-                    <MenuItem
-                      text=""
-                      LeftComponent={
-                        <>
-                          <IconGripVertical
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                            color={theme.font.color.extraLight}
-                          />
-                          <Tag
-                            preventShrink
-                            color={option.color}
-                            text={option.label}
-                          />
-                        </>
+                    <MenuItemDraggable
+                      showGrip
+                      isDragDisabled={sortedOptions.length === 1}
+                      text={
+                        <Tag
+                          preventShrink
+                          color={option.color}
+                          text={option.label}
+                        />
                       }
                     />
                   }
