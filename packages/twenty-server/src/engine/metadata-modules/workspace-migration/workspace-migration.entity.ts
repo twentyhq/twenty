@@ -31,7 +31,7 @@ export interface WorkspaceMigrationColumnDefinition {
   isArray?: boolean;
   isNullable: boolean;
   isUnique?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   defaultValue: any;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
