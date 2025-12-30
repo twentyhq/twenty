@@ -2,7 +2,7 @@ import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDelete
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
@@ -92,7 +92,7 @@ export const SettingsObjectFieldItemTableRow = ({
   const { fieldMetadataItem, objectMetadataItem } =
     settingsObjectDetailTableItem;
 
-  const readonly = isObjectMetadataSettingsReadOnly({
+  const readonly = isObjectMetadataReadOnly({
     objectMetadataItem,
   });
 
@@ -204,9 +204,8 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsItemTypeTag
           item={{
+            applicationId: fieldMetadataItem.applicationId,
             isCustom: fieldMetadataItem.isCustom ?? undefined,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
           }}
         />
       </TableCell>

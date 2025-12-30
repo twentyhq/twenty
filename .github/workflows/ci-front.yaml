@@ -7,6 +7,8 @@ on:
 
   pull_request:
 
+  merge_group:
+
 permissions:
   contents: read
 
@@ -130,7 +132,7 @@ jobs:
         run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     timeout-minutes: 30
-    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
+    if: false
     needs: front-sb-build
     runs-on: depot-ubuntu-24.04-8
     env:
@@ -229,7 +231,7 @@ jobs:
       always() &&
       needs.changed-files-check-e2e.outputs.any_changed == 'true' &&
       (needs.front-build.result == 'success' || needs.front-build.result == 'skipped') &&
-      (github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e')))
+      (github.event_name == 'push' || github.event_name == 'merge_group' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e')))
     timeout-minutes: 30
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
@@ -339,7 +341,6 @@ jobs:
         changed-files-check,
         front-task,
         front-build,
-        front-chromatic-deployment,
         merge-reports-and-check-coverage,
         front-sb-test,
         front-sb-build,
