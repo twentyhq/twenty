@@ -1,9 +1,10 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  isFieldMetadataDateKind,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated/graphql';
-
-import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 
 export type SortOption = {
   value: GraphOrderBy;
@@ -19,9 +20,6 @@ export const filterSortOptionsByFieldType = ({
   options,
   fieldType,
 }: FilterSortOptionsParams): SortOption[] => {
-  const isSelectField = isSelectFieldType(fieldType);
-  const isDateField = isFieldMetadataDateKind(fieldType);
-
   return options.filter((option) => {
     const isValueSort =
       option.value === GraphOrderBy.VALUE_ASC ||
@@ -33,6 +31,8 @@ export const filterSortOptionsByFieldType = ({
       option.value === GraphOrderBy.FIELD_POSITION_ASC ||
       option.value === GraphOrderBy.FIELD_POSITION_DESC;
 
+    const isSelectField = isFieldMetadataSelectKind(fieldType);
+
     if (isManualSort && !isSelectField) {
       return false;
     }
@@ -41,7 +41,7 @@ export const filterSortOptionsByFieldType = ({
       return false;
     }
 
-    if (isDateField) {
+    if (isFieldMetadataDateKind(fieldType)) {
       return !isValueSort;
     }
 

@@ -1,6 +1,8 @@
-import { NUMBER_FIELD_TYPES } from '@/command-menu/pages/page-layout/utils/number-field-types';
-import { TEXT_FIELD_TYPES } from '@/command-menu/pages/page-layout/utils/text-field-types';
 import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  isFieldMetadataNumericKind,
+  isFieldMetadataTextKind,
+} from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconSortAscending,
@@ -36,11 +38,11 @@ export const getSortIconForFieldType = ({
     return isAscending ? IconSortAscending : IconSortDescending;
   }
 
-  if (TEXT_FIELD_TYPES.includes(fieldType)) {
+  if (isFieldMetadataTextKind(fieldType)) {
     return isAscending ? IconSortAscendingLetters : IconSortDescendingLetters;
   }
 
-  if (NUMBER_FIELD_TYPES.includes(fieldType)) {
+  if (isFieldMetadataNumericKind(fieldType)) {
     return isAscending ? IconSortAscendingNumbers : IconSortDescendingNumbers;
   }
 
