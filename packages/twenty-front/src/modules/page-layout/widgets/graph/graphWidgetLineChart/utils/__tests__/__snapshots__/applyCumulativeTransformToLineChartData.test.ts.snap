@@ -57,4 +57,3 @@ exports[`applyCumulativeTransformToLineChartData should handle skip null y value
   },
 ]
 `;
-
