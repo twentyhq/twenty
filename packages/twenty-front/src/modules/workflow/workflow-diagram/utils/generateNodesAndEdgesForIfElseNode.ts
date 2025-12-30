@@ -50,8 +50,6 @@ export const generateNodesAndEdgesForIfElseNode = ({
       nodeType: 'action',
       actionType: step.type,
       name: step.name,
-      // If-else nodes manage connections through branches, not nextStepIds
-      // Set to true to prevent the plus button from showing
       hasNextStepIds: true,
       stepId: step.id,
       position: step.position ?? {
