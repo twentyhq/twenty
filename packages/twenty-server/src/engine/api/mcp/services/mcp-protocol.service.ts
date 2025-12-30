@@ -62,7 +62,10 @@ export class McpProtocolService {
     apiKey?: ApiKeyEntity,
   ) {
     if (isDefined(apiKey)) {
-      return this.apiKeyRoleService.getRoleIdForApiKeyId(apiKey.id, workspaceId);
+      return this.apiKeyRoleService.getRoleIdForApiKeyId(
+        apiKey.id,
+        workspaceId,
+      );
     }
 
     if (!userWorkspaceId) {
