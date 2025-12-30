@@ -52,12 +52,12 @@ export const buildChartGroupByFieldConfigUpdate = <
     'PieChartConfiguration',
   );
 
-  const fieldMetadata = objectMetadataItem?.fields?.find(
+  const fieldMetadataItem = objectMetadataItem?.fields?.find(
     (field) => field.id === fieldId,
   );
 
-  const defaultOrderBy = isDefined(fieldMetadata?.type)
-    ? getChartDefaultOrderByForFieldType(fieldMetadata?.type)
+  const defaultOrderBy = isDefined(fieldMetadataItem?.type)
+    ? getChartDefaultOrderByForFieldType(fieldMetadataItem?.type)
     : GraphOrderBy.FIELD_ASC;
 
   if (isPrimaryAxis) {
