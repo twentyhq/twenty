@@ -31,6 +31,7 @@ export type AdvancedFilterCommandMenuContainerProps = {
   onUpdate?: () => void;
   objectMetadataItem: ObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
+  isWorkflowFindRecords?: boolean;
 };
 
 export const AdvancedFilterCommandMenuContainer = ({
@@ -38,6 +39,7 @@ export const AdvancedFilterCommandMenuContainer = ({
   onUpdate,
   objectMetadataItem,
   VariablePicker,
+  isWorkflowFindRecords,
 }: AdvancedFilterCommandMenuContainerProps) => {
   const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
@@ -52,6 +54,7 @@ export const AdvancedFilterCommandMenuContainer = ({
     <AdvancedFilterContext.Provider
       value={{
         onUpdate: readonly ? undefined : onUpdate,
+        isWorkflowFindRecords,
         readonly,
         VariablePicker,
         objectMetadataItem,
