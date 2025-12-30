@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Kopfzeile" />
+</Frame>
+
+Erstellt eine Navigationsleiste mit Brotkrumen.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ          | Beschreibung                                                                                                                                                                                                                                   |
+    | --------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Klassenname     | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                                                                                                                                                              |
+    | Links           | array        | An array of objects, each representing a breadcrumb link. Jedes Objekt hat eine `children`-Eigenschaft (den textlichen Inhalt des Links) und eine optionale `href`-Eigenschaft (die URL, zu der navigiert wird, wenn der Link angeklickt wird) |
+  </Tab>
+</Tabs>

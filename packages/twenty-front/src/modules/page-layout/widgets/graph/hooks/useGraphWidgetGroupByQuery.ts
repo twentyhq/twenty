@@ -1,4 +1,4 @@
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,6 +8,7 @@ import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/use
 import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { generateGroupByQueryVariablesFromBarOrLineChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarOrLineChartConfiguration';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
@@ -34,6 +35,8 @@ export const useGraphWidgetGroupByQuery = ({
       configuration,
     });
 
+  const { userTimezone } = useUserTimezone();
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(aggregateField)) {
@@ -57,7 +60,10 @@ export const useGraphWidgetGroupByQuery = ({
     throw new Error('Aggregate operation not found');
   }
 
-  const groupByQueryVariables = isPieChartConfiguration(configuration)
+  const groupByQueryVariables = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  )
     ? generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem,
         objectMetadataItems,
@@ -65,6 +71,7 @@ export const useGraphWidgetGroupByQuery = ({
         aggregateOperation: aggregateOperation,
         limit,
         firstDayOfTheWeek: calendarStartDay,
+        userTimeZone: userTimezone,
       })
     : generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
         objectMetadataItem,
@@ -75,6 +82,7 @@ export const useGraphWidgetGroupByQuery = ({
         aggregateOperation: aggregateOperation,
         limit,
         firstDayOfTheWeek: calendarStartDay,
+        userTimeZone: userTimezone,
       });
 
   const variables = {

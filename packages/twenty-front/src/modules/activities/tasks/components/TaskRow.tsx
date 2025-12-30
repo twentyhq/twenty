@@ -12,10 +12,11 @@ import { type Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
-import { useCompleteTask } from '../hooks/useCompleteTask';
+import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -138,15 +139,21 @@ export const TaskRow = ({ task }: { task: Task }) => {
               fieldMetadataName="taskTargets"
               fieldPosition={0}
             >
-              <StopPropagationContainer>
-                <ActivityTargetsInlineCell
-                  activityObjectNameSingular={CoreObjectNameSingular.Task}
-                  activityRecordId={task.id}
-                  showLabel={false}
-                  maxWidth={200}
-                  componentInstanceId={componentInstanceId}
-                />
-              </StopPropagationContainer>
+              <RecordFieldsScopeContextProvider
+                value={{
+                  scopeInstanceId: task.id,
+                }}
+              >
+                <StopPropagationContainer>
+                  <ActivityTargetsInlineCell
+                    activityObjectNameSingular={CoreObjectNameSingular.Task}
+                    activityRecordId={task.id}
+                    showLabel={false}
+                    maxWidth={200}
+                    componentInstanceId={componentInstanceId}
+                  />
+                </StopPropagationContainer>
+              </RecordFieldsScopeContextProvider>
             </FieldContextProvider>
           </StyledActivityTargetsContainer>
         }

@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Antet" />
+</Frame>
+
+Renders a breadcrumb navigation bar.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                                                                                                                                                                                        |
+    | ----------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className   | șir   | Nume de clasă opțional pentru stilizare suplimentară                                                                                                                                                             |
+    | linkuri     | array | An array of objects, each representing a breadcrumb link. Each object has a `children` property (the text content of the link) and an optional `href` property (the URL to navigate to when the link is clicked) |
+  </Tab>
+</Tabs>

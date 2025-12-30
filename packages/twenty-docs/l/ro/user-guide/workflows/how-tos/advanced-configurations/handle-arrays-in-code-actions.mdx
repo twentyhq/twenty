@@ -1,0 +1,82 @@
+---
+title: Gestionarea tablourilor în acțiunile de cod
+description: Aflați cum să gestionați corect intrările de tip tablou în acțiunile de cod din fluxurile de lucru.
+---
+
+Când lucrați cu tablouri în acțiunile de cod, este posibil să întâmpinați două provocări frecvente:
+
+1. **Tablouri transmise ca șiruri** — datele din sisteme externe sau din pașii anteriori sosesc ca un șir în loc de un tablou propriu-zis
+2. **Nu puteți selecta elemente individuale** — puteți selecta doar întregul tablou, nu câmpuri specifice din interiorul lui
+
+Ambele pot fi rezolvate cu un nod de cod.
+
+## Analizarea tablourilor din șiruri
+
+Tablourile sunt adesea transmise între pașii unui flux de lucru ca șiruri sau JSON, mai degrabă decât ca tablouri native. Acest lucru se întâmplă când:
+
+* Primirea de date de la API-uri externe prin HTTP Request
+* Procesarea payload-urilor de webhook
+* Transmiterea datelor între pașii fluxului de lucru
+
+**Soluție**: Adăugați acest tipar la începutul acțiunii dvs. de cod:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+Linia esențială `typeof users === \"string\" ? JSON.parse(users) : users` verifică dacă intrarea este un șir, o parsează dacă este necesar sau o folosește direct dacă este deja un tablou.
+
+## Extragerea câmpurilor individuale din tablouri
+
+Un webhook poate returna un tablou de forma `answers: [...]`, dar în pașii următori ai fluxului de lucru puteți selecta doar **întregul tablou** — nu și elemente individuale din interiorul lui.
+
+**Soluție**: Adăugați un nod de cod pentru a extrage câmpuri specifice și a le returna ca obiect structurat:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Nodul de cod returnează un obiect structurat în locul unui tablou. În pașii următori, acum puteți selecta câmpuri individuale precum `answer.firstname` și `answer.name` din selectorul de variabile.
+
+<Note>
+  Lucrăm activ pentru a simplifica gestionarea tablourilor în actualizările viitoare.
+</Note>
+
+<Tip>
+  Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
+</Tip>

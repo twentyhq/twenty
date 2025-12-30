@@ -18,7 +18,7 @@ import {
   mockedViewsData,
 } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

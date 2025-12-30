@@ -29,6 +29,7 @@ import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/ho
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -100,6 +101,8 @@ export const PageChangeEffect = () => {
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
+  const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -167,6 +170,18 @@ export const PageChangeEffect = () => {
             },
           },
         });
+
+        const isNewRecord = location.state?.isNewRecord === true;
+
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
+        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -310,6 +325,7 @@ export const PageChangeEffect = () => {
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
+    openNewRecordTitleCell,
   ]);
 
   useEffect(() => {

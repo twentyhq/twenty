@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { getTimelineThreadsFromCompanyId } from '../getTimelineThreadsFromCompanyId';
+import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
 
 jest.mock('@apollo/client', () => ({
   gql: jest.fn().mockImplementation((strings) => {

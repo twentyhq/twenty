@@ -149,6 +149,11 @@ msgstr "Запис са овом вредношћу већ постоји."
 msgid "A required configuration is missing."
 msgstr "Недостаје обавезна конфигурација."
 
+#. js-lingui-id: FVCXUT
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+msgid "A required field is missing."
+msgstr ""
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -167,7 +172,6 @@ msgstr "Циљ задатка"
 
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
 msgstr "Дошло је до привремене грешке. Покушајте поново."
 
@@ -392,6 +396,7 @@ msgstr "Дошло је до грешке са подацима двофакто
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
 msgid "An error occurred."
 msgstr "Дошло је до грешке."
 
@@ -433,41 +438,21 @@ msgstr "Дошло је до неочекиване грешке у конфиг
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
 #: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
-#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/file/file.exception.ts
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Дошло је до неочекиване грешке."
-
-#. js-lingui-id: ljwHbt
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
-msgid "An unexpected workflow error occurred."
-msgstr "Дошло је до неочекиване грешке радног процеса."
 
 #. js-lingui-id: q8ZbjA
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "Дошло је до непознате грешке календара."
-
-#. js-lingui-id: EV/5J1
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
-msgid "An unknown email error occurred."
-msgstr "Дошло је до непознате грешке у вези са е-поштом."
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -496,6 +481,7 @@ msgstr "Улога API кључа није пронађена."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
 msgstr "Апликација није пронађена."
@@ -740,11 +726,6 @@ msgstr "Аватар"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "URL аватара"
-
-#. js-lingui-id: GVurVk
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Bad request."
-msgstr "Погрешан захтев."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1030,11 +1011,6 @@ msgstr "Тип канала"
 msgid "City"
 msgstr "Град"
 
-#. js-lingui-id: unYzAT
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Client not found."
-msgstr "Клијент није пронађен."
-
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
@@ -1092,12 +1068,6 @@ msgstr "Валидација конфигурације није успела."
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
 msgstr "Променљива конфигурације није пронађена."
-
-#. js-lingui-id: xr7rlK
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Conflicting arguments provided."
-msgstr "Дати су конфликтни аргументи."
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -1343,16 +1313,6 @@ msgstr "Наслов контролне табле"
 msgid "Dashboards"
 msgstr "Контролне табле"
 
-#. js-lingui-id: Gb2JdW
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Data not found."
-msgstr "Подаци нису пронађени."
-
-#. js-lingui-id: Bg/wIf
-#: src/engine/metadata-modules/data-source/data-source.exception.ts
-msgid "Data source not found."
-msgstr "Извор података није пронађен."
-
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
@@ -1550,6 +1510,7 @@ msgstr "Е-пошта је обавезна"
 #. js-lingui-id: Qof3ks
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Email is required."
 msgstr "Е-пошта је обавезна."
 
@@ -1594,19 +1555,8 @@ msgstr "Празне дозволе поља нису дозвољене."
 msgid "End Date"
 msgstr "Датум завршетка"
 
-#. js-lingui-id: z1wQ2q
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity already exists."
-msgstr "Ентитет већ постоји."
-
-#. js-lingui-id: DAX1pY
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity data is malformed."
-msgstr "Подаци ентитета су неисправни."
-
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
 msgstr "Ентитет није пронађен."
@@ -1617,7 +1567,6 @@ msgid "Enum operation failed."
 msgstr "Операција енума није успела."
 
 #. js-lingui-id: AOk97Y
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
 msgstr "Енум тип није пронађен."
@@ -1642,11 +1591,6 @@ msgstr "Компанија догађаја"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
 msgstr "Контролна табла догађаја"
-
-#. js-lingui-id: NuQxIH
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Event data is corrupted."
-msgstr "Подаци догађаја су оштећени."
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2072,7 +2016,6 @@ msgstr "Име поља није синхронизовано са ознако�
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Field not found."
 msgstr "Поље није пронађено."
 
@@ -2396,18 +2339,6 @@ msgstr "Недовољне дозволе за приступ календару
 msgid "Insufficient permissions."
 msgstr "Недовољне дозволе."
 
-#. js-lingui-id: mYSErp
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'first' argument."
-msgstr "Неважећи аргумент 'first'."
-
-#. js-lingui-id: k0JXYM
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'last' argument."
-msgstr "Неважећи аргумент 'last'."
-
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -2438,16 +2369,6 @@ msgstr "Неважећи унос ревизије."
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
 msgstr "Неважећа врста ревизије."
-
-#. js-lingui-id: kYec1W
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid authentication context."
-msgstr "Неважећи контекст аутентификације."
-
-#. js-lingui-id: gxIicn
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Invalid authentication token."
-msgstr "Неважећи токен аутентификације."
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2484,22 +2405,10 @@ msgstr "Неважећи ID повезаног налога."
 msgid "Invalid country code {countryCode}"
 msgstr "Неважећи код земље {countryCode}"
 
-#. js-lingui-id: 0RwhuX
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid cursor provided."
-msgstr "Дат је неважећи курсор."
-
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Неважећи формат података."
-
-#. js-lingui-id: 3o5vtu
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid data provided."
-msgstr "Дати су неважећи подаци."
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
@@ -2515,11 +2424,6 @@ msgstr "Неважећа вредност дана. Требало би да б�
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
 msgstr "Неважећи параметар дубине."
-
-#. js-lingui-id: 4JreOU
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid direction provided."
-msgstr "Дат је неважећи смер."
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -2549,8 +2453,16 @@ msgstr "Неважећи ID датотеке."
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
 msgid "Invalid filter parameter."
 msgstr "Неважећи параметар филтера."
+
+#. js-lingui-id: /GCbsS
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter value: \"{value}\""
+msgstr ""
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
@@ -2583,11 +2495,6 @@ msgstr "Неважећа врста провајдера идентитета."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
 msgstr "Дат је неважећи унос."
-
-#. js-lingui-id: vw9FMn
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invalid invitation."
-msgstr "Неважећа позивница."
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2681,11 +2588,6 @@ msgstr "Неважећи код државе."
 msgid "Invalid phone number."
 msgstr "Неважећи број телефона."
 
-#. js-lingui-id: Hvv6QE
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid post-hook payload."
-msgstr "Неважећи payload post-hook-а."
-
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
@@ -2695,13 +2597,6 @@ msgstr "Неважећа цена."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid pricing tiers."
 msgstr "Неважећи ценовни нивои."
-
-#. js-lingui-id: 0Dexu8
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid query input."
-msgstr "Неважећи унос упита."
 
 #. js-lingui-id: XBYAgs
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -2779,12 +2674,6 @@ msgstr "Неважећа претплата."
 msgid "Invalid target URL."
 msgstr "Неважећи циљни URL."
 
-#. js-lingui-id: w58bhw
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid token type."
-msgstr "Неважећа врста токена."
-
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -2805,10 +2694,102 @@ msgstr "Неважећи формат URL-а."
 msgid "Invalid uuid {id}"
 msgstr "Неважећи uuid {id}"
 
+#. js-lingui-id: Z3Su9z
+#: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+msgid "Invalid UUID format."
+msgstr ""
+
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Invalid validation token."
 msgstr "Неважећи валидациони токен."
+
+#. js-lingui-id: 56bPee
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
+msgid "Invalid value for actor."
+msgstr ""
+
+#. js-lingui-id: Y2KtrW
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
+msgid "Invalid value for address."
+msgstr ""
+
+#. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+msgid "Invalid value for currency."
+msgstr ""
+
+#. js-lingui-id: AUbno1
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: mANTdg
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
+msgid "Invalid value for emails."
+msgstr ""
+
+#. js-lingui-id: SF3Mp4
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
+msgid "Invalid value for full name."
+msgstr ""
+
+#. js-lingui-id: UiMJoF
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: BgSFod
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON."
+msgstr ""
+
+#. js-lingui-id: GFYy9y
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
+msgid "Invalid value for links."
+msgstr ""
+
+#. js-lingui-id: Q6jO3x
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
+msgid "Invalid value for multi-select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
+msgid "Invalid value for number: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: oLqCzh
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
+msgid "Invalid value for phones."
+msgstr ""
+
+#. js-lingui-id: GLmyCK
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
+msgid "Invalid value for position: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+msgid "Invalid value for rich text."
+msgstr ""
+
+#. js-lingui-id: 9lVA5C
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
+msgid "Invalid value for UUID: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
+msgid "Invalid value: \"{inspectedValue}\""
+msgstr ""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -2819,11 +2800,6 @@ msgstr "Неважећи верификациони код."
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Неважећи верификациони код. Молимо покушајте поново."
-
-#. js-lingui-id: Ku4J80
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid verification token."
-msgstr "Неважећи верификациони токен."
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -2874,11 +2850,6 @@ msgstr "Неважећи унос окидача радног процеса."
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "Неважећа верзија радног процеса."
-
-#. js-lingui-id: +WZMeN
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invitation is corrupted."
-msgstr "Позивница је оштећена."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3026,7 +2997,6 @@ msgstr "Поље за идентификатор ознаке не може би
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "Label identifier field not found."
 msgstr "Поље идентификатора ознаке није пронађено."
 
@@ -3156,16 +3126,6 @@ msgstr "Март"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "Максималан број записа за унос је {QUERY_MAX_RECORDS}."
-
-#. js-lingui-id: p0qTse
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum query depth reached."
-msgstr "Достигнута је максимална дубина упита."
-
-#. js-lingui-id: vLHXAB
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum records exceeded for upsert."
-msgstr "Премашен је максималан број записа за уметање или ажурирање."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3366,11 +3326,6 @@ msgstr "Недостаје конфигурација декоратора."
 msgid "Missing main alias target."
 msgstr "Недостаје циљ главног алијаса."
 
-#. js-lingui-id: khQZlp
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Missing relation join column."
-msgstr "Недостаје спојна колона релације."
-
 #. js-lingui-id: W5hpOP
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Missing request body."
@@ -3380,12 +3335,6 @@ msgstr "Недостаје тело захтева."
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Недостају обавезна поља: бар једно јединствено ограничење мора бити у потпуности попуњено за '{connectFieldName}'."
-
-#. js-lingui-id: PIWoHs
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing required system field."
-msgstr "Недостаје обавезно системско поље."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3422,17 +3371,6 @@ msgstr "Поље morph релације мора да има morph ID"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "Подразумевана вредност вишеструког избора мора бити низ"
-
-#. js-lingui-id: /81w6M
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Multiple join columns found."
-msgstr "Пронађено је више спојних колона."
-
-#. js-lingui-id: ZEzn4X
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Multiple matching records found during upsert."
-msgstr "Током уметања или ажурирања пронађено је више одговарајућих записа."
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
@@ -3548,6 +3486,11 @@ msgstr "Није дат назив догађаја у покретачу дог
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "No foreign tables found."
 msgstr "Није пронађена ниједна страна табела."
+
+#. js-lingui-id: 6GG2MJ
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "No identifier to search by was found."
+msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3752,7 +3695,6 @@ msgstr "Метаподаци објекта нису пронађени."
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Object not found."
 msgstr "Објекат није пронађен."
 
@@ -3813,6 +3755,11 @@ msgstr "Октобар"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Један или више објеката за које покушавате да подесите дозволе нису пронађени. Могуће је да су избрисани."
+
+#. js-lingui-id: JZB2eY
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "One or more records were not found."
+msgstr ""
 
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4085,6 +4032,11 @@ msgstr "Виџет распореда странице са id {flatPageLayoutWi
 msgid "Parent Folder ID"
 msgstr "ИД надређене фасцикле"
 
+#. js-lingui-id: /GJDxy
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Password is too weak."
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
@@ -4181,10 +4133,21 @@ msgstr "Молимо наведите детаље везе за конфигу�
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "Молимо одаберите валидан тип везе (IMAP, SMTP, или CalDAV) и покушајте поново."
 
+#. js-lingui-id: sa9Q+R
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Please select at least 2 records to merge."
+msgstr ""
+
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Please use a company email domain."
 msgstr "Молимо користите домен е-поште компаније."
+
+#. js-lingui-id: Sguqn/
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
+msgid "Please use Settings to remove a workspace member."
+msgstr ""
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4280,30 +4243,10 @@ msgstr "Јавни домен није пронађен."
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "URL јавног домена није дефинисан. Молимо поставите променљиву окружења PUBLIC_DOMAIN_URL"
 
-#. js-lingui-id: uzWClp
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr "Сложеност упита је превисока. Релација један-према-више не може бити угнежђена у другу релацију један-према-више."
-
-#. js-lingui-id: XkHjXW
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr "Сложеност упита је превисока. Смањите број тражених поља релација. Сложеност упита: {queryComplexity}. Максимална сложеност: {maximumComplexity}."
-
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Query failed."
 msgstr "Упит није успео."
-
-#. js-lingui-id: 0bX5JL
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Query is too complex."
-msgstr "Упит је превише сложен."
-
-#. js-lingui-id: mn/6A3
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Query timed out."
-msgstr "Време за упит је истекло."
 
 #. js-lingui-id: 6H9kMC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4327,8 +4270,6 @@ msgstr "Примљено у"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Record not found."
 msgstr "Запис није пронађен."
 
@@ -4374,35 +4315,10 @@ msgstr "Payload за креирање релације је обавезан"
 msgid "Relation field target metadata not found"
 msgstr "Мета подаци циљног поља релације нису пронађени"
 
-#. js-lingui-id: MvWdPg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation has join column on both sides."
-msgstr "Релација има спојну колону на обе стране."
-
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "Релација није омогућена за ово поље."
-
-#. js-lingui-id: oThEh8
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation object not found."
-msgstr "Објекат релације није пронађен."
-
-#. js-lingui-id: +v6IlP
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation settings not found."
-msgstr "Подешавања релације нису пронађена."
-
-#. js-lingui-id: 8ZgNmg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation target field not found."
-msgstr "Циљно поље релације није пронађено."
-
-#. js-lingui-id: I0e0Bm
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation target not found."
-msgstr "Циљ релације није пронађен."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -4615,11 +4531,6 @@ msgstr "Покретања"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Субота"
-
-#. js-lingui-id: r20Bqy
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
-msgid "Schema enum operation failed."
-msgstr "Операција енума у шеми није успела."
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -5193,6 +5104,30 @@ msgstr "Назив верзије тока рада"
 msgid "The workflow version status"
 msgstr "Статус верзије тока рада"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
+#. js-lingui-id: mTxjri
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "There is an issue with your invitation. Please try again."
+msgstr ""
+
+#. js-lingui-id: gH+wBS
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "There is an issue with your token. Please try again."
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5268,11 +5203,6 @@ msgstr "Ова адреса е-поште је већ у употреби."
 msgid "This feature is not enabled."
 msgstr "Ова функција није омогућена."
 
-#. js-lingui-id: Io3Xii
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "This feature is not implemented."
-msgstr "Ова функција није имплементирана."
-
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -5347,6 +5277,16 @@ msgstr "Овај јавни домен је већ регистрован."
 msgid "This record already exists. Please check your data and try again."
 msgstr "Овај запис већ постоји. Молимо проверите ваше податке и покушајте поново."
 
+#. js-lingui-id: 0arbc4
+#: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
+msgid "This record does not exist or has been deleted."
+msgstr ""
+
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "This remote server cannot be modified."
@@ -5384,6 +5324,11 @@ msgstr "Ова улога не може бити измењена јер је с
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "Овај поддомен је већ заузет."
+
+#. js-lingui-id: aXBMTb
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "This type of record cannot be merged."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5513,7 +5458,6 @@ msgstr "Превише записа је погођено."
 
 #. js-lingui-id: ExheIC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Too many records to update at once."
 msgstr "Превише записа за ажурирање одједном."
 
@@ -5603,11 +5547,6 @@ msgstr "Неподржани тип крона распоредног распо
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "Неподржани тип метаподатака поља {fieldType}"
 
-#. js-lingui-id: 9BAEgY
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Unsupported operator."
-msgstr "Неподржан оператор."
-
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5618,6 +5557,20 @@ msgstr "Датум и време ажурирања"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Ограничења ажурирања поља важе само за објекте који се могу ажурирати."
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -5639,6 +5592,12 @@ msgstr "Кориснику је већ додељена улога."
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Корисник нема приступ овом радном простору"
+
+#. js-lingui-id: kZ0tmK
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User does not have access to this workspace."
+msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -5699,6 +5658,7 @@ msgstr "Корисник није креиран путем е-поште/лоз
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 msgid "User workspace not found."
 msgstr "Радни простор корисника није пронађен."
 
@@ -5737,11 +5697,6 @@ msgstr "Провера није успела за 0 објеката и 0 пољ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Вредност мора бити у ВЕЛИКАМ СЛОВИМА и да следи формат snake_case \"{sanitizedValue}\""
-
-#. js-lingui-id: gj6Gxm
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Verification token has expired."
-msgstr "Верификациони токен је истекао."
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -6064,6 +6019,11 @@ msgstr "Ивица радног процеса није пронађена."
 msgid "Workflow linked to the run."
 msgstr "Ток рада повезан са извршавањем."
 
+#. js-lingui-id: R67jts
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow not found."
+msgstr ""
+
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
@@ -6144,11 +6104,6 @@ msgstr "Извршавања тока рада повезана са током 
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Workflow step not found."
 msgstr "Корак радног процеса није пронађен."
-
-#. js-lingui-id: wvR5lY
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-msgid "Workflow trigger not found."
-msgstr "Окидач радног процеса није пронађен."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6231,6 +6186,11 @@ msgstr "ВерзијаТока Рада ток рада"
 msgid "Workspace creation is restricted to admins"
 msgstr "Креирање радног простора је ограничено на администраторе"
 
+#. js-lingui-id: qSQPRS
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Workspace does not exist."
+msgstr ""
+
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
@@ -6280,6 +6240,11 @@ msgstr "Позиција члана простора за рад"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Чланови простора за рад"
+
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
 
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -6345,15 +6310,24 @@ msgstr "ЧланПростораЗаРад"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "Погрешна лозинка"
+
+#. js-lingui-id: RksBK0
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password."
+msgstr ""
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "Х"
+
+#. js-lingui-id: 84/Dko
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
@@ -6429,6 +6403,11 @@ msgstr "Немате дозволу да извршите ову радњу ра
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Немате дозволу за ажурирање ових поља: {fieldsList}. Молимо контактирајте администратора ваше радне површине."
 
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
@@ -6438,6 +6417,11 @@ msgstr "Немате дозволу за креирање прегледа на 
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "Немате дозволу за измену овог прегледа."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "Потрошили сте све своје кредите. Молимо вас, надоградите свој план да бисте наставили."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

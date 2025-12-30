@@ -1,0 +1,78 @@
+---
+title: Tooltip aplikace
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Hlavička" />
+</Frame>
+
+Krátká zpráva, která zobrazí další informace, když uživatel interaguje s prvkem.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+    export const MyComponent = () => {
+      return (
+        <>
+          <p id="hoverText" style={{ display: "inline-block" }}>
+            Customer Insights
+          </p>
+          <AppTooltip
+            className
+            anchorSelect="#hoverText"
+            content="Explore customer behavior and preferences"
+            delayHide={0}
+            offset={6}
+            noArrow={false}
+            isOpen={true}
+            place="bottom"
+            positionStrategy="absolute"
+          />
+        </>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti       | Typ                                            | Popis                                                                                                                                                                                      |
+    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | className        | řetězec                                        | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                               |
+    | anchorSelect     | CSS selektor                                   | Selektor pro kotvu tooltipu (prvek, který spouští tooltip).                                                                                                                                |
+    | obsah            | textový řetězec                                | Obsah, který chcete zobrazit v rámci tooltipu.                                                                                                                                             |
+    | delayHide        | číslo                                          | Zpoždění v sekundách před skrytím tooltipu poté, co kurzor opustí kotvu.                                                                                                                   |
+    | odsazení         | číslo                                          | Odsazení v pixelech pro umístění tooltipu.                                                                                                                                                 |
+    | noArrow          | booleovská hodnota                             | Pokud je `true`, skrývá šipku na tooltipu.                                                                                                                                                 |
+    | isOpen           | booleovská hodnota                             | Pokud je `true`, tooltip je výchozím způsobem otevřen.                                                                                                                                     |
+    | umístění         | řetězec `PlacesType` z `react-tooltipu`        | Určuje umístění tooltipu. Hodnoty zahrnují `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, a `left-end`. |
+    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Strategie umístění pro tooltip. Má dvě hodnoty: `absolute` a `fixed`.                                                                                                                      |
+  </Tab>
+</Tabs>
+
+## Přetékající text s tooltipem
+
+Řeší přetékající text a zobrazuje tooltip, když text přetéká.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      const crmTaskDescription =
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ     | Popis                                                       |
+    | ---------- | ------- | ----------------------------------------------------------- |
+    | text       | řetězec | Obsah, který chcete zobrazit v oblasti přetékajícího textu. |
+  </Tab>
+</Tabs>

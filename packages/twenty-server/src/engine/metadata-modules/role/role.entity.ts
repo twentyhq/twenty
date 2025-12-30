@@ -9,8 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
@@ -72,9 +71,6 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
 
   @Column({ nullable: false, default: true })
   canBeAssignedToApiKeys: boolean;
-
-  @Column({ nullable: false, default: true })
-  canBeAssignedToApplications: boolean;
 
   @OneToMany(
     () => RoleTargetEntity,

@@ -1,10 +1,8 @@
 import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
-import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { type TabLayouts } from '@/page-layout/types/tab-layouts';
+import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated/graphql';
 
 export const convertPageLayoutToTabLayouts = (
   pageLayout: PageLayout,
@@ -20,30 +18,18 @@ export const convertPageLayoutToTabLayouts = (
       let minW = DEFAULT_WIDGET_SIZE.minimum.w;
       let minH = DEFAULT_WIDGET_SIZE.minimum.h;
 
-      if (widget.type === WidgetType.GRAPH && isDefined(widget.configuration)) {
-        const graphType =
-          'graphType' in widget.configuration
-            ? widget.configuration.graphType
-            : undefined;
-
-        if (isDefined(graphType)) {
-          const minimumSize = getWidgetSize(graphType, 'minimum');
+      if (isDefined(widget.configuration)) {
+        if (widget.configuration.__typename === 'FieldsConfiguration') {
+          minW = DEFAULT_WIDGET_SIZE.minimum.w;
+          minH = DEFAULT_WIDGET_SIZE.minimum.h;
+        } else {
+          const minimumSize = getWidgetSize(
+            widget.configuration.configurationType,
+            'minimum',
+          );
           minW = minimumSize.w;
           minH = minimumSize.h;
         }
-      }
-
-      if (widget.type === WidgetType.IFRAME) {
-        const iframeMinimumSize = WIDGET_SIZES[WidgetType.IFRAME]!.minimum;
-        minW = iframeMinimumSize.w;
-        minH = iframeMinimumSize.h;
-      }
-
-      if (widget.type === WidgetType.STANDALONE_RICH_TEXT) {
-        const richTextMinimumSize =
-          WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
-        minW = richTextMinimumSize.w;
-        minH = richTextMinimumSize.h;
       }
 
       return {

@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -23,14 +24,17 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('LineChartConfiguration')
-export class LineChartConfigurationDTO {
-  @Field(() => GraphType)
-  @IsEnum(GraphType)
+export class LineChartConfigurationDTO
+  implements PageLayoutWidgetConfigurationBase
+{
+  @Field(() => WidgetConfigurationType)
+  @IsIn([WidgetConfigurationType.LINE_CHART])
   @IsNotEmpty()
-  graphType: GraphType.LINE;
+  configurationType: WidgetConfigurationType.LINE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

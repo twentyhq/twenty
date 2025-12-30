@@ -1,0 +1,34 @@
+---
+title: Step Bar
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Intestazione" />
+</Frame>
+
+Visualizza il progresso attraverso una sequenza di passi numerati evidenziando il passo attivo. Renderizza un contenitore con passi, ciascuno rappresentato dal componente `Passo`.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props       | Tipo   | Descrizione                                                                                          |
+    | ----------- | ------ | ---------------------------------------------------------------------------------------------------- |
+    | passoAttivo | numero | L'indice del passo attualmente attivo. Determina quale passo dovrebbe essere visualmente evidenziato |
+  </Tab>
+</Tabs>

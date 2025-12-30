@@ -11,6 +11,7 @@ export const buildChartDrilldownQueryParams = ({
   clickedData,
   viewId,
   timezone,
+  firstDayOfTheWeek,
 }: BuildChartDrilldownQueryParamsInput): URLSearchParams => {
   const drilldownQueryParams = new URLSearchParams();
 
@@ -42,6 +43,7 @@ export const buildChartDrilldownQueryParams = ({
       dateGranularity,
       subFieldName: groupBySubFieldName,
       timezone,
+      firstDayOfTheWeek,
     });
 
     primaryFilters.forEach((filter) => {

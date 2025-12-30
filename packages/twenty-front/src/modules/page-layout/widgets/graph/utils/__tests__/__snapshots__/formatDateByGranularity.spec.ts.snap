@@ -1,21 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-01-15T00:00:00.000Z 1`] = `"Q1 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-01-15 1`] = `"Q1 2024"`;
 
-exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-04-15T00:00:00.000Z 1`] = `"Q2 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-02-15 1`] = `"Q1 2024"`;
 
-exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-07-15T00:00:00.000Z 1`] = `"Q3 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-03-15 1`] = `"Q1 2024"`;
 
-exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-10-15T00:00:00.000Z 1`] = `"Q4 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-04-15 1`] = `"Q2 2024"`;
 
-exports[`formatDateByGranularity should format date for DAY granularity 1`] = `"Mar 20, 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-05-15 1`] = `"Q2 2024"`;
 
-exports[`formatDateByGranularity should format date for MONTH granularity 1`] = `"March 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-06-15 1`] = `"Q2 2024"`;
 
-exports[`formatDateByGranularity should format date for NONE granularity 1`] = `"3/20/2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-07-15 1`] = `"Q3 2024"`;
 
-exports[`formatDateByGranularity should format date for QUARTER granularity 1`] = `"Q1 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-08-15 1`] = `"Q3 2024"`;
 
-exports[`formatDateByGranularity should format date for WEEK granularity 1`] = `"Mar 20, 2024 20 - 26, 2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-09-15 1`] = `"Q3 2024"`;
 
-exports[`formatDateByGranularity should format date for YEAR granularity 1`] = `"2024"`;
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-10-15 1`] = `"Q4 2024"`;
+
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-11-15 1`] = `"Q4 2024"`;
+
+exports[`formatDateByGranularity quarter calculations should calculate quarter for 2024-12-15 1`] = `"Q4 2024"`;
+
+exports[`formatDateByGranularity should format date for DAY granularity for 2024-03-20 1`] = `"Mar 20, 2024"`;
+
+exports[`formatDateByGranularity should format date for MONTH granularity for 2024-03-20 1`] = `"March 2024"`;
+
+exports[`formatDateByGranularity should format date for NONE granularity for 2024-03-20 1`] = `"3/20/2024"`;
+
+exports[`formatDateByGranularity should format date for QUARTER granularity for 2024-03-20 1`] = `"Q1 2024"`;
+
+exports[`formatDateByGranularity should format date for WEEK granularity for 2024-03-20 1`] = `"Mar 18 - 24, 2024"`;
+
+exports[`formatDateByGranularity should format date for YEAR granularity for 2024-03-20 1`] = `"2024"`;

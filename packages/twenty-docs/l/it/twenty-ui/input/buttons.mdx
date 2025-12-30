@@ -1,0 +1,439 @@
+---
+title: Pulsanti
+image: /images/user-guide/views/filter.png
+---
+
+<Frame>
+  <img src="/images/user-guide/views/filter.png" alt="Intestazione" />
+</Frame>
+
+Un elenco di pulsanti e gruppi di pulsanti utilizzati nell'app.
+
+## Pulsante
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+
+    export const MyComponent = () => {
+      return (
+        <Button
+          className
+          Icon={null}
+          title="Title"
+          fullWidth={false}
+          variant="primary"
+          size="medium"
+          position="standalone"
+          accent="default"
+          soon={false}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà         | Tipo                  | Descrizione                                                                                                          |
+    | ----------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse        | stringa               | Nome della classe opzionale per stile aggiuntivo                                                                     |
+    | Icona             | `React.ComponentType` | Un componente icona opzionale mostrato all'interno del pulsante                                                      |
+    | titolo            | stringa               | Il contenuto testuale del pulsante                                                                                   |
+    | larghezzaCompleta | booleano              | Definisce se il pulsante deve occupare l'intera larghezza del suo contenitore                                        |
+    | variante          | stringa               | La variante di stile visivo del pulsante. Le opzioni includono `primary`, `secondary` e `tertiary`.                  |
+    | dimensione        | stringa               | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                                                      |
+    | posizione         | stringa               | La posizione del pulsante rispetto ai suoi fratelli. Le opzioni includono: `standalone`, `left`, `right` e `middle`. |
+    | accento           | stringa               | Il colore di accentuazione del pulsante. Le opzioni includono: `default`, `blue` e `danger`.                         |
+    | presto            | booleano              | Indica se il pulsante è segnato come "presto" (ad esempio per funzionalità imminenti)                                |
+    | disabilitato      | booleano              | Specifica se il pulsante è disabilitato o meno                                                                       |
+    | focus             | booleano              | Determina se il pulsante è messo a fuoco                                                                             |
+    | onClick           | funzione              | Una funzione callback che si attiva quando l'utente clicca sul pulsante                                              |
+  </Tab>
+</Tabs>
+
+## Gruppo di Pulsanti
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+    import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+    export const MyComponent = () => {
+      return (
+        <ButtonGroup variant="primary" size="large" accent="blue" className>
+          <Button
+            className
+            Icon={null}
+            title="Button 1"
+            fullWidth={false}
+            variant="primary"
+            size="medium"
+            position="standalone"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 2"
+            fullWidth={false}
+            variant="secondary"
+            size="medium"
+            position="left"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 3"
+            fullWidth={false}
+            variant="tertiary"
+            size="medium"
+            position="right"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+        </ButtonGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà  | Tipo      | Descrizione                                                                                                                |
+    | ---------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
+    | variante   | stringa   | La variante di stile visivo dei pulsanti all'interno del gruppo. Le opzioni includono `primary`, `secondary` e `tertiary`. |
+    | dimensione | stringa   | Le dimensioni dei pulsanti all'interno del gruppo. Ha due opzioni: `medium` e `small`.                                     |
+    | accento    | stringa   | Il colore di accentuazione dei pulsanti all'interno del gruppo. Le opzioni includono `default`, `blue` e `danger`.         |
+    | nomeClasse | stringa   | Nome della classe opzionale per stile aggiuntivo                                                                           |
+    | figli      | ReactNode | Un array di elementi React che rappresentano i singoli pulsanti all'interno del gruppo                                     |
+  </Tab>
+</Tabs>
+
+## Pulsante Galleggiante
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButton
+          className
+          Icon={IconSearch}
+          title="Title"
+          size="medium"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà    | Tipo                  | Descrizione                                                                                                          |
+    | ------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse   | stringa               | Nome opzionale per stile aggiuntivo                                                                                  |
+    | Icona        | `React.ComponentType` | Un componente icona opzionale mostrato all'interno del pulsante                                                      |
+    | titolo       | stringa               | Il contenuto testuale del pulsante                                                                                   |
+    | dimensione   | stringa               | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                                                      |
+    | posizione    | stringa               | La posizione del pulsante rispetto ai suoi fratelli. Le opzioni includono: `standalone`, `left`, `middle` e `right`. |
+    | applicaOmbra | booleano              | Determina se applicare l'ombra a un pulsante                                                                         |
+    | applicaBlur  | booleano              | Determina se applicare un effetto blur al pulsante                                                                   |
+    | disabilitato | booleano              | Determina se il pulsante è disabilitato                                                                              |
+    | focus        | booleano              | Indica se il pulsante è messo a fuoco                                                                                |
+  </Tab>
+</Tabs>
+
+## Gruppo di Pulsanti Galleggianti
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButtonGroup size="small">
+          <FloatingButton
+            className
+            Icon={IconClipboardText}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+            focus={true}
+          />
+          <FloatingButton
+            className
+            Icon={IconCheckbox}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+          />
+        </FloatingButtonGroup>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà  | Tipo      | Descrizione                                                                            | Predefinito |
+    | ---------- | --------- | -------------------------------------------------------------------------------------- | ----------- |
+    | dimensione | stringa   | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                        | piccolo     |
+    | figli      | ReactNode | Un array di elementi React che rappresentano i singoli pulsanti all'interno del gruppo |             |
+  </Tab>
+</Tabs>
+
+## Pulsante Icona Galleggiante
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingIconButton
+          className
+          Icon={IconSearch}
+          size="small"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={false}
+          onClick={() => console.log("click")}
+          isActive={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Tipo                  | Descrizione                                                                                                           |
+    | ------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse   | stringa               | Nome opzionale per stile aggiuntivo                                                                                   |
+    | Icona        | `React.ComponentType` | Un componente icona opzionale mostrato all'interno del pulsante                                                       |
+    | dimensione   | stringa               | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                                                       |
+    | posizione    | stringa               | La posizione del pulsante rispetto ai suoi fratelli. Le opzioni includono: `standalone`, `left`, `right`, e `middle`. |
+    | applicaOmbra | booleano              | Determina se applicare l'ombra a un pulsante                                                                          |
+    | applicaBlur  | booleano              | Determina se applicare un effetto blur al pulsante                                                                    |
+    | disabilitato | booleano              | Determina se il pulsante è disabilitato                                                                               |
+    | focus        | booleano              | Indica se il pulsante ha il focus                                                                                     |
+    | onClick      | funzione              | Una funzione callback che si attiva quando l'utente clicca sul pulsante                                               |
+    | èAttivo      | booleano              | Determina se il pulsante è in uno stato attivo                                                                        |
+  </Tab>
+</Tabs>
+
+## Gruppo di Pulsanti Icona Galleggianti
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      const iconButtons = [
+        {
+          Icon: IconClipboardText,
+          onClick: () => console.log("Button 1 clicked"),
+          isActive: true,
+        },
+        {
+          Icon: IconCheckbox,
+          onClick: () => console.log("Button 2 clicked"),
+          isActive: true,
+        },
+      ];
+
+      return (
+        <FloatingIconButtonGroup
+        className
+        size="small"
+        iconButtons={iconButtons} />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà   | Tipo    | Descrizione                                                                                                                                                                                                                                                                                   |
+    | ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse  | stringa | Nome opzionale per stile aggiuntivo                                                                                                                                                                                                                                                           |
+    | dimensione  | stringa | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                                                                                                                                                                                                                               |
+    | iconButtons | array   | Un array di oggetti, ciascuno rappresentante un pulsante icona nel gruppo. Ogni oggetto dovrebbe includere il componente icona che si vuole visualizzare nel pulsante, la funzione che si vuole chiamare quando un utente clicca sul pulsante e se il pulsante dovrebbe essere attivo o meno. |
+  </Tab>
+</Tabs>
+
+## Pulsante Leggero
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { LightButton } from "@/ui/input/button/components/LightButton";
+
+    export const MyComponent = () => {
+      return <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={()=>console.log('click')}
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Tipo              | Descrizione                                                                              |
+    | ------------ | ----------------- | ---------------------------------------------------------------------------------------- |
+    | nomeClasse   | stringa           | Nome opzionale per stile aggiuntivo                                                      |
+    | icona        | `React.ReactNode` | L'icona che si vuole visualizzare nel pulsante                                           |
+    | titolo       | string            | Il contenuto testuale del pulsante                                                       |
+    | accento      | string            | Il colore di accentuazione del pulsante. Le opzioni includono: `secondary` e `tertiary`. |
+    | attivo       | booleano          | Determina se il pulsante è in uno stato attivo                                           |
+    | disabilitato | booleano          | Determina se il pulsante è disabilitato                                                  |
+    | focus        | booleano          | Indica se il pulsante è messo a fuoco                                                    |
+    | onClick      | funzione          | Una funzione callback che si attiva quando l'utente clicca sul pulsante                  |
+  </Tab>
+</Tabs>
+
+## Pulsante Icona Leggera
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <LightIconButton
+          className
+          testId="test1"
+          Icon={IconSearch}
+          title="Title"
+          size="small"
+          accent="secondary"
+          active={true}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Tipo                  | Descrizione                                                                       |
+    | ------------ | --------------------- | --------------------------------------------------------------------------------- |
+    | nomeClasse   | stringa               | Nome opzionale per stile aggiuntivo                                               |
+    | testId       | string                | Identificatore di prova per il pulsante                                           |
+    | Icona        | `React.ComponentType` | Un componente icona opzionale visualizzato all'interno del pulsante               |
+    | titolo       | string                | Il contenuto di testo del pulsante                                                |
+    | dimensione   | string                | La dimensione del pulsante. Ha due opzioni: `small` e `medium`.                   |
+    | accento      | string                | Il colore accentato del pulsante. Le opzioni includono: `secondary` e `tertiary`. |
+    | attivo       | booleano              | Determina se il pulsante si trova in uno stato attivo                             |
+    | disabilitato | booleano              | Determina se il pulsante è disabilitato                                           |
+    | focus        | booleano              | Indica se il pulsante ha il focus                                                 |
+    | onClick      | funzione              | Una funzione di callback che si attiva quando l'utente fa clic sul pulsante       |
+  </Tab>
+</Tabs>
+
+## Pulsante principale
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { MainButton } from "@/ui/input/button/components/MainButton";
+    import { IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <MainButton
+          title="Checkbox"
+          fullWidth={false}
+          variant="primary"
+          soon={false}
+          Icon={IconCheckbox}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà            | Tipo                             | Descrizione                                                                                  |
+    | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+    | titolo               | string                           | Il contenuto di testo del pulsante                                                           |
+    | larghezzaCompleta    | booleano                         | Definisce se il pulsante dovrebbe estendersi per tutta la larghezza del suo contenitore      |
+    | variante             | string                           | La variante dello stile visivo del pulsante. Options include `primary` and `secondary`       |
+    | presto               | booleano                         | Indica se il pulsante è contrassegnato come "presto" (ad esempio per funzionalità in arrivo) |
+    | Icona                | `React.ComponentType`            | Un componente icona opzionale visualizzato all'interno del pulsante                          |
+    | React `button` props | `React.ComponentProps<'button'>` | Sono supportate tutte le proprietà standard del pulsante HTML                                |
+  </Tab>
+</Tabs>
+
+## Pulsante icona rotondo
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <RoundedIconButton
+          Icon={IconSearch}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props                | Tipo                                            | Descrizione |
+    | -------------------- | ----------------------------------------------- | ----------- |
+    | Icona                | `React.ComponentType`                           |             |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  </Tab>
+</Tabs>

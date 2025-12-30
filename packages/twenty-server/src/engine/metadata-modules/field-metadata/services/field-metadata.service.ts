@@ -284,6 +284,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     createFieldInputs,
     workspaceId,
     applicationId,
+    isSystemBuild = false,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
@@ -292,6 +293,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
      * when interacting with another application than workspace custom one
      * */
     applicationId?: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
@@ -363,7 +365,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
         },
       );
 

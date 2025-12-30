@@ -1,0 +1,48 @@
+---
+title: Podporované formáty souborů
+description: Formáty souborů podporované pro import dat v Twenty.
+---
+
+## Podporované formáty
+
+Twenty podporuje pro import tři formáty souborů:
+
+| Formát             | Přípona | Poznámky                       |
+| ------------------ | ------- | ------------------------------ |
+| **CSV**            | .csv    | Doporučeno, nejkompatibilnější |
+| **Excel**          | .xlsx   | Moderní formát Excelu          |
+| **Excel (starší)** | .xls    | Starší formát Excelu           |
+
+## Požadavky na soubory
+
+| Požadavek         | Hodnota                                    |
+| ----------------- | ------------------------------------------ |
+| **Kódování**      | Doporučeno UTF-8                           |
+| **Limit záznamů** | 10,000 záznamů na soubor                   |
+| **Struktura**     | První řádek musí obsahovat záhlaví sloupců |
+| **Obsah**         | V každém souboru pouze jeden typ objektu   |
+
+## Osvědčené postupy pro CSV
+
+* **Oddělovač**: Použijte čárku (`,`) nebo středník (`;`)
+* **Textový kvalifikátor**: Použijte dvojité uvozovky (`\"`) pro text obsahující čárky
+* **Konce řádků**: Windows (CRLF) nebo Unix (LF), obojí je podporováno
+* **Prázdné hodnoty**: Nechte buňky prázdné, nepoužívejte "NULL" ani "N/A"
+
+## Osvědčené postupy pro Excel
+
+Při exportu z Excelu:
+
+* Odstraňte vzorce (exportujte pouze hodnoty)
+* Odstraňte prázdné řádky na konci
+* Zajistěte, aby nebyly sloučené buňky
+* Použijte pouze první list
+
+## Velké datové sady
+
+Pro datové sady větší než 10,000 záznamů:
+
+* Rozdělte na více souborů
+* Nebo použijte [import přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api) pro neomezený počet záznamů
+
+<Note>Pro velmi rozsáhlé migrace (100,000+ záznamů) je API výrazně rychlejší a spolehlivější než importy CSV.</Note>

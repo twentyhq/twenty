@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -164,6 +165,11 @@ export const useUpdateOneRecord = <
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
           if (!isDefined(record)) return;
+
+          const recordToUpsert = getRecordFromRecordNode({
+            recordNode: record,
+          });
+          upsertRecordsInStore({ partialRecords: [recordToUpsert] });
 
           triggerUpdateRecordOptimisticEffect({
             cache,

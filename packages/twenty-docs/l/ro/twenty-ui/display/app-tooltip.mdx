@@ -1,0 +1,78 @@
+---
+title: Sfat aplicație
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Antet" />
+</Frame>
+
+Un mesaj scurt care afișează informații suplimentare atunci când utilizatorul interacționează cu un element.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+    export const MyComponent = () => {
+      return (
+        <>
+          <p id="hoverText" style={{ display: "inline-block" }}>
+            Customer Insights
+          </p>
+          <AppTooltip
+            className
+            anchorSelect="#hoverText"
+            content="Explore customer behavior and preferences"
+            delayHide={0}
+            offset={6}
+            noArrow={false}
+            isOpen={true}
+            place="bottom"
+            positionStrategy="absolute"
+          />
+        </>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți       | Tip                                        | Descriere                                                                                                                                                                                          |
+    | ----------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className         | șir                                        | Clasă CSS opțională pentru stilizare suplimentară                                                                                                                                                  |
+    | Selectează ancora | Selector CSS                               | Selector pentru ancora tooltipului (elementul care activează tooltipul)                                                                                                                            |
+    | conținut          | șir                                        | Conținutul pe care doriți să îl afișați în interiorul tooltipului                                                                                                                                  |
+    | delayHide         | număr                                      | Întârzierea în secunde înainte de a ascunde tooltipul după ce cursorul părăsește ancora                                                                                                            |
+    | deplasare         | număr                                      | Deplasarea în pixeli pentru poziționarea tooltipului                                                                                                                                               |
+    | noArrow           | boolean                                    | Dacă este `adevărat`, ascunde săgeata de pe tooltip                                                                                                                                                |
+    | isOpen            | boolean                                    | Dacă este `adevărat`, tooltipul este deschis în mod implicit                                                                                                                                       |
+    | loc               | șir `PlacesType` din `react-tooltip`       | Specifică plasarea tooltipului. Valorile includ `jos`, `stânga`, `dreapta`, `sus`, `sus-start`, `sus-end`, `dreapta-start`, `dreapta-end`, `jos-start`, `jos-end`, `stânga-start`, și `stânga-end` |
+    | positionStrategy  | șir `PositionStrategy` din `react-tooltip` | Strategia de poziționare pentru tooltip. Are două valori: `absolut` și `fix`                                                                                                                       |
+  </Tab>
+</Tabs>
+
+## Overflowing Text with Tooltip
+
+Gestionează textul redundant și afișează un tooltip când textul depășește.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      const crmTaskDescription =
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip | Descriere                                                         |
+    | ----------- | --- | ----------------------------------------------------------------- |
+    | text        | șir | Conținutul pe care doriți să îl afișați în zona de text redundant |
+  </Tab>
+</Tabs>

@@ -14,11 +14,11 @@ import {
   type YogaInitialContext,
 } from 'graphql-yoga';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   ApiConfig,
   Billing,
@@ -107,33 +107,14 @@ export class GraphQLConfigService
         ],
       },
       conditionalSchema: async (context) => {
-        let user: UserEntity | null | undefined;
-        let workspace: WorkspaceEntity | undefined;
+        const { workspace, user } = context.req;
 
         try {
-          const {
-            user,
-            workspace,
-            apiKey,
-            application,
-            workspaceMemberId,
-            userWorkspaceId,
-            workspaceMember,
-          } = context.req;
-
-          if (!workspace) {
+          if (!isDefined(workspace)) {
             return new GraphQLSchema({});
           }
 
-          return await this.createSchema(context, {
-            user,
-            workspace,
-            apiKey,
-            application,
-            workspaceMemberId,
-            userWorkspaceId,
-            workspaceMember,
-          });
+          return await this.createSchema(context, workspace);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -163,7 +144,7 @@ export class GraphQLConfigService
           throw handleExceptionAndConvertToGraphQLError(
             error,
             this.exceptionHandlerService,
-            user
+            isDefined(user)
               ? {
                   id: user.id,
                   email: user.email,
@@ -171,7 +152,7 @@ export class GraphQLConfigService
                   lastName: user.lastName,
                 }
               : undefined,
-            workspace
+            isDefined(workspace)
               ? {
                   id: workspace.id,
                   displayName: workspace.displayName,
@@ -199,7 +180,7 @@ export class GraphQLConfigService
 
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
-    data: AuthContext,
+    workspace: WorkspaceEntity,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -218,6 +199,6 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(data);
+    return await workspaceFactory.createGraphQLSchema(workspace);
   }
 }

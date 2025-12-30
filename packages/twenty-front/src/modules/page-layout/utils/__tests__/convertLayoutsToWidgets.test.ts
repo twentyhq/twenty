@@ -1,11 +1,11 @@
 import {
   AggregateOperations,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
-import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
+import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
   const mockWidgets: PageLayoutWidget[] = [
@@ -22,7 +22,7 @@ describe('convertLayoutsToWidgets', () => {
         columnSpan: 2,
       },
       configuration: {
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: 'id',
         displayDataLabel: false,
@@ -44,7 +44,7 @@ describe('convertLayoutsToWidgets', () => {
         columnSpan: 2,
       },
       configuration: {
-        graphType: GraphType.PIE,
+        configurationType: WidgetConfigurationType.PIE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: 'id',
         groupByFieldMetadataId: 'status',

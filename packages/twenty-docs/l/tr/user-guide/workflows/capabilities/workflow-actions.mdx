@@ -1,0 +1,311 @@
+---
+title: İş Akışı Aksiyonları
+description: Twenty iş akışlarında kullanılabilen eylemler hakkında bilgi edinin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Eylemler Hakkında
+
+Aksiyonlar, bir tetikleyici devreye girdiğinde neler olacağını tanımlar. Karmaşık otomasyonlar oluşturmak için birden fazla eylemi birbirine zincirleyebilirsiniz.
+
+<Tip>
+  * Önceki adımlardaki kullanılabilir verileri gözden geçirmek için değişken seçicisini kullanın (`(x+)` simgesine tıklayın)
+  * Bir değişkenin hangi adımdan geldiğini görmek için herhangi bir giriş alanının üzerine gelin — aynı alanın (örn., ID) birden çok önceki adımda bulunduğu durumlarda faydalıdır
+  * Bakımı kolaylaştırmak için her eyleme açıklayıcı bir ad verin
+</Tip>
+
+## Kayıt Eylemleri
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Kayıt Oluştur
+
+Seçilen bir nesneye yeni bir kayıt ekler.
+
+**Yapılandırma**:
+
+* Hedef nesneyi seçin
+* Gerekli ve isteğe bağlı alanları doldurun
+* Alanları doldurmak için önceki adımlardan gelen verileri kullanın veya değerleri el ile girin
+
+**Çıktı**: Yeni oluşturulan kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+### Kayıt Güncelle
+
+Seçilen bir nesnedeki mevcut bir kaydı değiştirir.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Yapılandırma**:
+
+* Hedef nesneyi seçin
+* Güncellenecek belirli kaydı seçin.
+  * Tüm mevcut kayıtları gösteren açılır menüyü kullanarak sabit bir kayıt seçebilirsiniz.
+  * Veya `(x+)` kullanarak önceki bir adımda bulunan bir kaydı belirleyip kaydın dinamik olarak seçilmesini sağlayabilirsiniz. Bu aşamada kaydı farklı ölçütlere göre arayamazsınız. Kaydı henüz belirlemediyseniz, bu `Update Record` adımından önce bir `Search Record` adımı ekleyin.
+* Değiştirilecek alanları seçin ve yeni değerler girin
+
+**Çıktı**: Güncellenmiş kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+### Kayıt Sil
+
+Seçilen bir nesneden bir kaydı kaldırır.
+
+**Yapılandırma**:
+
+* Hedef nesneyi seçin
+* Silinecek belirli kaydı seçin
+
+**Çıktı**: Silinen kayıt verileri, sonraki adımlarda kullanılmak üzere mevcut kalır.
+
+### Kayıt Ara
+
+Seçilen bir nesnede filtreleme koşulları kullanarak kayıt bulur.
+
+**Yapılandırma**:
+
+* Aranacak nesneyi seçin
+* Sonuçları daraltmak için filtre kriterlerini ayarlayın
+* Sıralama ve sınırları yapılandırın
+
+**Çıktı**: Belirlenen filtre koşullarına uyan kayıtlar, sonraki adımlarda kullanılmak üzere döner.
+
+<Note>
+  **Sınır**: Search Records en fazla **200 kayıt** döndürür. Daha fazlasını işlemeniz gerekiyorsa, sonuçları azaltmak için belirli filtreler ekleyin veya toplu olarak işlemek için zamanlanmış iş akışlarını kullanın.
+</Note>
+
+**En İyi Uygulama**: "bulundu" ve "bulunmadı" senaryolarını yönetmek için Search Records sonrasında [dallar](/l/tr/user-guide/workflows/capabilities/workflow-branches) kullanın.
+
+### Kayıt Ekle/Güncelle
+
+Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kaydı günceller. Bir kaydın zaten var olup olmadığından emin olmadığınızda faydalıdır.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Yapılandırma**:
+
+* Hedef nesneyi seçin
+* Eşleştirme için hangi alanların kullanılabileceğine dikkat edin: Kişiler için e-posta, Şirketler için alan adı (domain), herhangi bir nesne için ID veya Benzersiz olarak işaretlenmiş herhangi bir alan. Aşağıdakilerden en az birini doldurmanız gerekecek.
+* Alan değerlerini doldurun. Benzersiz tanımlayıcılardan en az birini doldurmayı unutmayın.
+
+<Note>
+  **Yalnızca bir benzersiz tanımlayıcı eklemek, genellikle eşleştirmenin daha iyi çalışmasını sağlar.** Örneğin, aşağıdaki ekran görüntüsü şirketleri alan adlarına göre eşleştirecektir. ID mutlaka gerekli değildir.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Alanları doldurmak için önceki adımlardan gelen verileri kullanın
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### Yineleyici
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**Yapılandırma**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Döngüde her kayıt üzerinde gerçekleştireceğiniz işlemleri tanımlayın.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+
+### Filtre
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Yapılandırma**:
+
+* Select the record to filter
+* Filtre koşullarını ve kriterlerini tanımlayın
+* Sonraki adımlara geçmesi gereken kayıtları yapılandırın
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Tür                | Açıklama                                                           |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Kullanım alanları**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### E-posta Gönder
+
+İş akışınızdan bir e-posta gönderir. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**Yapılandırma**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* Alıcı e-posta adresini girin.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* Konu satırını ayarlayın.
+* Mesaj gövdesini yazın. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### Form
+
+İş akışı gerçekleştirilirken kullanıcı girdisi toplamak için bir form açar. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
+</Warning>
+
+**Yapılandırma**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**Çıktı**: Form yanıtları, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+
+## Integration Actions
+
+### Kod
+
+İş akışınızda özel JavaScript çalıştırır.
+
+**Yapılandırma**:
+
+* Önceki adımlardan gelen değişkenlere erişin. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+
+* Düzenleyicide JavaScript kodu yazın
+* Sonraki adımlarda kullanılmak üzere değişkenler döndürün
+* Kodu doğrudan adımda test edin
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### HTTP İsteği
+
+İş akışınızın bir parçası olarak harici bir API'ye istek gönderir.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Yapılandırma**:
+
+* API endpoint URL'sini girin. Using parameters from previous steps is possible.
+* HTTP yöntemini seçin (GET, POST, PUT, PATCH, DELETE)
+* Gerekli başlıkları ve değerleri ekleyin
+* Yapı önizlemesi için örnek yanıt sağlayın
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Yapılandırma**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/tr/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/tr/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

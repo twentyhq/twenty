@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import {
@@ -51,6 +52,8 @@ export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (item) =>
@@ -89,6 +92,7 @@ export const FieldWidgetRelationEditAction = ({
     getRecordFieldCardRelationPickerDropdownId({
       fieldDefinition,
       recordId,
+      instanceId: scopeInstanceId,
     });
 
   const isRelationSelectionDropdownOpen = useRecoilComponentValue(
@@ -101,7 +105,6 @@ export const FieldWidgetRelationEditAction = ({
       isDropdownOpen={isRelationSelectionDropdownOpen}
       Icon={IconPencil}
       accent="secondary"
-      className="display-on-widget-hover"
     />
   );
 

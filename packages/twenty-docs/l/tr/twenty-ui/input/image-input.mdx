@@ -1,0 +1,34 @@
+---
+title: Resim Girişi
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Başlık" />
+</Frame>
+
+Kullanıcıların bir resim yüklemesine ve kaldırmasına olanak tanır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler  | Tür      | Açıklama                                                                            |
+    | ----------- | -------- | ----------------------------------------------------------------------------------- |
+    | resim       | dize     | Resim kaynağı URL’si                                                                |
+    | onUpload    | function | Yeni bir resim yüklendiğinde çağrılan işlev. `File` nesnesini parametre olarak alır |
+    | onRemove    | function | Kullanıcı, kaldırma düğmesine tıkladığında çağrılan fonksiyon                       |
+    | onAbort     | function | Kullanıcı, yükleme sırasında iptale tıkladığında çağrılan fonksiyon                 |
+    | yükleniyor  | boolean  | Bir resmin şu anda yüklenip yüklenmediğini gösterir                                 |
+    | hata mesajı | string   | Resim girişi altında görüntülenmesi gereken isteğe bağlı hata mesajı                |
+    | devre dışı  | boolean  | `true` ise, tüm giriş devre dışıdır ve butonlara tıklanamaz                         |
+  </Tab>
+</Tabs>

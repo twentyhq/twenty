@@ -1,0 +1,311 @@
+---
+title: Действия рабочего процесса
+description: Узнайте о действиях, доступных в рабочих процессах Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## О действиях
+
+Действия определяют, что произойдет после срабатывания триггера. Вы можете связывать несколько действий вместе, чтобы создавать сложные автоматизации.
+
+<Tip>
+  * Используйте средство выбора переменных (нажмите значок `(x+)`), чтобы просматривать доступные данные из предыдущих шагов
+  * Наведите курсор на любое поле ввода, чтобы увидеть, из какого шага поступает переменная — это полезно, когда одно и то же поле (например, ID) существует в нескольких предыдущих шагах
+  * Присваивайте каждому действию описательное имя для упрощения сопровождения
+</Tip>
+
+## Действия с записями
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Создать запись
+
+Добавляет новую запись в выбранный объект.
+
+**Настройка**:
+
+* Выберите целевой объект
+* Заполните обязательные и необязательные поля
+* Используйте данные из предыдущих шагов или введите значения вручную, чтобы заполнить поля
+
+**Вывод**: Данные вновь созданной записи доступны для использования на последующих шагах.
+
+### Обновление записи
+
+Изменяет существующую запись в выбранном объекте.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Настройка**:
+
+* Выберите целевой объект
+* Выберите конкретную запись для обновления.
+  * Вы можете либо выбрать конкретную запись, используя раскрывающееся меню, где показаны все доступные записи.
+  * Либо можно выбрать запись динамически, указав запись, найденную на предыдущем шаге, с помощью `(x+)`. На этом этапе вы не можете искать запись по различным критериям. Если вы ещё не определили запись, добавьте шаг `Search Record` перед шагом `Update Record`.
+* Выберите поля для изменения и введите новые значения
+
+**Вывод**: Данные обновленной записи доступны для использования в последующих шагах.
+
+### Удаление записи
+
+Удаляет запись из выбранного объекта.
+
+**Настройка**:
+
+* Выберите целевой объект
+* Выберите конкретную запись для удаления
+
+**Вывод**: Данные удаленной записи остаются доступными для использования в последующих шагах.
+
+### Поиск записей
+
+Находит записи в выбранном объекте, используя условия фильтрации.
+
+**Настройка**:
+
+* Выберите объект для поиска
+* Установите критерии фильтра для сужения результатов
+* Настройте сортировку и ограничения
+
+**Вывод**: Возвращает записи, которые могут быть использованы в последующих шагах.
+
+<Note>
+  **Ограничение**: Search Records возвращает максимум **200 записей**. Если нужно обработать больше, добавьте точные фильтры, чтобы сократить результаты, или используйте запланированные рабочие процессы для пакетной обработки.
+</Note>
+
+**Рекомендация**: Используйте [ветвления](/l/ru/user-guide/workflows/capabilities/workflow-branches) после Search Records для обработки сценариев "найдено" и "не найдено".
+
+### Добавить или обновить запись
+
+Создаёт новую запись или обновляет существующую на основе критериев сопоставления. Это полезно, если вы не уверены, существует ли уже запись.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Настройка**:
+
+* Выберите целевой объект
+* Обратите внимание, какие поля можно использовать для сопоставления: email — для People, домен — для Companies, ID — для любого объекта или любое поле, помеченное как Unique. Ниже нужно заполнить как минимум одно из них.
+* Заполните значения полей. Не забудьте указать как минимум один уникальный идентификатор.
+
+<Note>
+  **Сопоставление обычно работает даже лучше, если указывать только один уникальный идентификатор.** Например, на скриншоте ниже компании сопоставляются по их домену. Указывать ID не обязательно.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Используйте данные из предыдущих шагов для заполнения полей
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### Итератор
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**Настройка**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Определите действия, которые нужно выполнить для каждой записи в цикле.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Видеодемонстрация" />
+
+### Фильтр
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Настройка**:
+
+* Select the record to filter
+* Определите условия фильтрации и критерии
+* Настройте, какие записи должны пройти через последующие шаги
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Тип                | Описание                                                           |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Сценарии использования**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### Отправить письмо
+
+Отправляет email из вашего рабочего процесса. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**Настройка**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* Введите email-адрес получателя.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* Установите строку темы.
+* Составьте текст сообщения. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### Форма
+
+Выводит форму во время выполнения рабочего процесса для сбора информации от пользователя. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. Для рабочих процессов с другими триггерами (запись создана, обновлена и т. д.) формы доступны только через интерфейс запуска рабочего процесса, и это не ожидаемый пользователем опыт. Центр уведомлений будет выпущен в 2026 году для полноценной поддержки форм в автоматизированных рабочих процессах.
+</Warning>
+
+**Настройка**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**Вывод**: ответы формы доступны для использования в последующих шагах.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Видеодемонстрация" />
+
+## Integration Actions
+
+### Код
+
+Выполняет кастомный JavaScript в вашем рабочем процессе.
+
+**Настройка**:
+
+* Получайте доступ к переменным из предыдущих шагов. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Видеодемонстрация" />
+
+* Напишите код JavaScript в редакторе
+* Возвращайте переменные для использования в последующих шагах
+* Проверяйте код непосредственно в шаге
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### HTTP-запрос
+
+Отправляет запрос внешнему API в рамках вашего рабочего процесса.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Настройка**:
+
+* Введите URL конечной точки API. Using parameters from previous steps is possible.
+* Выберите метод HTTP (GET, POST, PUT, PATCH, DELETE)
+* Добавьте необходимые заголовки и значения
+* Предоставьте пример ответа для предварительного просмотра структуры
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Настройка**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ru/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ru/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

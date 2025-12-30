@@ -83,6 +83,22 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
             "name": "deletedAt",
             "objectMetadataId": Any<String>,
           },
@@ -596,6 +612,27 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -698,6 +735,22 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -995,6 +1048,27 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
         },
       ],
       "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
         {
           "errors": [
             {
@@ -1354,6 +1428,22 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
             "name": "deletedAt",
             "objectMetadataId": Any<String>,
           },
@@ -1867,6 +1957,27 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -1969,6 +2080,22 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2497,6 +2624,27 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -2610,6 +2758,22 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -2907,6 +3071,27 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
         },
       ],
       "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
         {
           "errors": [
             {
@@ -3255,6 +3440,22 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
             "name": "deletedAt",
             "objectMetadataId": Any<String>,
           },
@@ -3768,6 +3969,27 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -3870,6 +4092,22 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -4428,6 +4666,27 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -4530,6 +4789,22 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5058,6 +5333,27 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -5160,6 +5456,22 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -5688,6 +6000,27 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -5801,6 +6134,22 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -6335,6 +6684,27 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -6437,6 +6807,22 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -7031,6 +7417,27 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -7133,6 +7540,22 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -7715,6 +8138,27 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -7817,6 +8261,22 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -8381,6 +8841,27 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -8483,6 +8964,22 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9035,6 +9532,27 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -9148,6 +9666,22 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -9742,6 +10276,27 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "status": "fail",
           "type": "create_view_field",
         },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
       ],
       "viewFilter": [],
       "viewGroup": [],
@@ -9844,6 +10399,22 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "flatEntityMinimalInformation": {
             "id": Any<String>,
             "name": "updatedAt",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "updatedBy",
             "objectMetadataId": Any<String>,
           },
           "status": "fail",
@@ -10141,6 +10712,27 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
         },
       ],
       "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
         {
           "errors": [
             {
@@ -10489,6 +11081,22 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
+            "name": "updatedBy",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
             "name": "deletedAt",
             "objectMetadataId": Any<String>,
           },
@@ -10771,6 +11379,27 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
         },
       ],
       "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataId": Any<String>,
+            "id": Any<String>,
+            "viewId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_field",
+        },
         {
           "errors": [
             {

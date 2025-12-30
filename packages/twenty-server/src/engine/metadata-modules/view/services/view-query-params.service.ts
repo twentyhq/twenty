@@ -115,7 +115,7 @@ export class ViewQueryParamsService {
       fields,
       recordFilters,
       recordFilterGroups,
-      filterValueDependencies: { currentWorkspaceMemberId },
+      filterValueDependencies: { currentWorkspaceMemberId, timeZone: 'UTC' }, // TODO: check if we need to put workspace member timezone here
     });
 
     const orderBy: ObjectRecordOrderBy = (view.viewSorts ?? [])

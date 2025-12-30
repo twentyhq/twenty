@@ -142,7 +142,6 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
-  // Special handling for code_interpreter tool
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
     const codeOutput = output as {

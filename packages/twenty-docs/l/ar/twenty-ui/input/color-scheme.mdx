@@ -1,0 +1,63 @@
+---
+title: طريقة عرض الألوان
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="رأس الصفحة" />
+</Frame>
+
+## بطاقة مخطط الألوان
+
+يمثل مخططات ألوان مختلفة ومخصص بشكل خاص للمواضيع الفاتحة والداكنة.
+
+<Tabs>
+  <Tab title="27332A2E2F2745">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص        | النوع                                   | الوصف                                                                  | الإعداد الافتراضي |
+    | ------------ | --------------------------------------- | ---------------------------------------------------------------------- | ----------------- |
+    | التنوع       | string                                  | نوع مخطط الألوان. تشمل الخيارات `داكنة`, `فاتحة`, و `النظام`           | فاتح              |
+    | المحدد       | قيمة منطقية                             | إذا كان `صحيح`, يتم عرض علامة الاختيار للدلالة على مخطط الألوان المحدد |                   |
+    | خصائص إضافية | `React.ComponentPropsWithoutRef<'div'>` | خصائص عنصر `div` العادي في HTML                                        |                   |
+  </Tab>
+</Tabs>
+
+## منتقي مخطط الألوان
+
+يتيح للمستخدمين اختيار بين مخططات الألوان المختلفة.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص       | النوع               | الوصف                                                                        |
+    | ----------- | ------------------- | ---------------------------------------------------------------------------- |
+    | القيمة      | `طريقة عرض الألوان` | مخطط الألوان المحدد حاليًا                                                   |
+    | عند التغيير | function            | The callback function you want to trigger when a user selects a color scheme |
+  </Tab>
+</Tabs>

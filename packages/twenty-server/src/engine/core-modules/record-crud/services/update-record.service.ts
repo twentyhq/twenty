@@ -34,6 +34,7 @@ export class UpdateRecordService {
       fieldsToUpdate,
       workspaceId,
       rolePermissionConfig,
+      // updatedBy,
     } = params;
 
     if (!workspaceId) {
@@ -161,6 +162,12 @@ export class UpdateRecordService {
               objectRecordId,
               {
                 ...transformedObjectRecord,
+                /* updatedBy: updatedBy ?? {
+                  source: FieldActorSource.WORKFLOW,
+                  name: 'Workflow',
+                  workspaceMemberId: null,
+                  context: {},
+                },*/
               },
               undefined,
               selectedColumns,

@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getEmptyStateTitle } from '../getEmptyStateTitle';
+import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 
 describe('getEmptyStateTitle', () => {
   it('should return the correct title for workflow version', () => {

@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
@@ -7,9 +6,10 @@ import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWi
 import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChartRenderer';
 import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { lazy, Suspense } from 'react';
-import { GraphType } from '~/generated/graphql';
-import { useCurrentWidget } from '../../hooks/useCurrentWidget';
+import { isDefined } from 'twenty-shared/utils';
+import { WidgetConfigurationType } from '~/generated/graphql';
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(
@@ -21,13 +21,9 @@ const GraphWidgetGaugeChart = lazy(() =>
 
 export type GraphWidgetProps = {
   objectMetadataId: string;
-  graphType: GraphType;
 };
 
-export const GraphWidget = ({
-  objectMetadataId,
-  graphType,
-}: GraphWidgetProps) => {
+export const GraphWidget = ({ objectMetadataId }: GraphWidgetProps) => {
   const widget = useCurrentWidget();
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -39,19 +35,24 @@ export const GraphWidget = ({
     objectMetadataItem,
   );
 
-  if (!hasValidConfiguration) {
-    return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
+  if (!isDefined(widget.configuration) || !hasValidConfiguration) {
+    return <PageLayoutWidgetNoDataDisplay />;
   }
 
-  switch (graphType) {
-    case GraphType.AGGREGATE:
+  const configurationType = widget.configuration?.configurationType;
+
+  switch (configurationType) {
+    case WidgetConfigurationType.AGGREGATE_CHART:
       return <GraphWidgetAggregateChartRenderer />;
 
-    case GraphType.GAUGE: {
-      const gaugeData: any = getDefaultWidgetData(graphType);
-      if (!gaugeData) {
-        return null;
-      }
+    case WidgetConfigurationType.GAUGE_CHART: {
+      const gaugeData = {
+        value: 0.7,
+        min: 0,
+        max: 1,
+        label: 'Progress',
+      };
+
       return (
         <Suspense fallback={<ChartSkeletonLoader />}>
           <GraphWidgetGaugeChart
@@ -69,14 +70,13 @@ export const GraphWidget = ({
       );
     }
 
-    case GraphType.PIE:
+    case WidgetConfigurationType.PIE_CHART:
       return <GraphWidgetPieChartRenderer />;
 
-    case GraphType.VERTICAL_BAR:
-    case GraphType.HORIZONTAL_BAR:
+    case WidgetConfigurationType.BAR_CHART:
       return <GraphWidgetBarChartRenderer />;
 
-    case GraphType.LINE:
+    case WidgetConfigurationType.LINE_CHART:
       return <GraphWidgetLineChartRenderer />;
 
     default:
