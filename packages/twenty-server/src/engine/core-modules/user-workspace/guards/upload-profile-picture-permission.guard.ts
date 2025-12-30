@@ -6,6 +6,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -14,7 +15,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class UploadProfilePicturePermissionGuard implements CanActivate {
@@ -23,6 +24,16 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    if (!isDefined(request.workspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`Workspace not found`,
+        },
+      );
+    }
 
     const workspaceId = request.workspace.id;
     const userWorkspaceId = request.userWorkspaceId;
