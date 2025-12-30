@@ -12,13 +12,14 @@ const StyledThreadMessageBody = styled(motion.div)`
   overflow-wrap: break-word;
 
   a {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${({ theme }) => theme.font.color.primary};
+
     text-decoration: underline;
-    text-decoration-color: ${({ theme }) => theme.border.color.strong};
+    text-decoration-color: ${({ theme }) => theme.font.color.primary};
 
     &:hover {
-      color: ${({ theme }) => theme.font.color.primary};
-      text-decoration-color: ${({ theme }) => theme.font.color.primary};
+      color: ${({ theme }) => theme.font.color.tertiary};
+      text-decoration-color: ${({ theme }) => theme.border.color.strong};
     }
   }
 `;
