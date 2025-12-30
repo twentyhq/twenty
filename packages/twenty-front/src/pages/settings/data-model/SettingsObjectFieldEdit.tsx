@@ -29,7 +29,9 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
+import { CurrencyCode } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -43,6 +45,9 @@ import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 //TODO: fix this type
 export type SettingsDataModelFieldEditFormValues = z.infer<
@@ -116,7 +121,36 @@ export const SettingsObjectFieldEdit = () => {
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
-      settings: fieldMetadataItem?.settings,
+      // In values mode, defaultValue and settings must exist in initial values for isDirty to work
+      // For currency fields, provide defaults when null to satisfy validation schema
+      settings:
+        fieldMetadataItem?.type === FieldMetadataType.CURRENCY
+          ? (fieldMetadataItem?.settings ?? {
+              format: 'short',
+              decimals: DEFAULT_DECIMAL_VALUE,
+            })
+          : (fieldMetadataItem?.settings ?? undefined),
+      defaultValue:
+        fieldMetadataItem?.type === FieldMetadataType.CURRENCY
+          ? fieldMetadataItem?.defaultValue
+            ? {
+                amountMicros:
+                  (fieldMetadataItem.defaultValue.amountMicros as
+                    | number
+                    | null) ?? null,
+                currencyCode: isNonEmptyString(
+                  stripSimpleQuotesFromString(
+                    fieldMetadataItem.defaultValue.currencyCode,
+                  ),
+                )
+                  ? fieldMetadataItem.defaultValue.currencyCode
+                  : applySimpleQuotesToString(CurrencyCode.USD),
+              }
+            : {
+                amountMicros: null,
+                currencyCode: applySimpleQuotesToString(CurrencyCode.USD),
+              }
+          : (fieldMetadataItem?.defaultValue ?? undefined),
     },
   });
 
