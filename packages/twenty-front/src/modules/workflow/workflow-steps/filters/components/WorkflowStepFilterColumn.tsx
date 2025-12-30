@@ -5,11 +5,11 @@ import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps
 import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
 import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown';
 import { WorkflowStepFilterValueInput } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput';
+import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
-import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import styled from '@emotion/styled';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,38 +33,25 @@ export const WorkflowStepFilterColumn = ({
 }: WorkflowStepFilterColumnProps) => {
   const { readonly, isIfBranch } = useContext(WorkflowStepFilterContext);
 
-  const stepFilters = useRecoilComponentValue(currentStepFiltersComponentState);
   const stepFilterGroups = useRecoilComponentValue(
     currentStepFilterGroupsComponentState,
   );
 
-  const isLastFilterInIfBranch = useMemo(() => {
-    if (!isIfBranch || !isDefined(stepFilter)) {
-      return false;
-    }
+  const rootStepFilterGroup = stepFilterGroups?.find(
+    (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
+  );
 
-    const rootStepFilterGroup = stepFilterGroups?.find(
-      (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
-    );
+  const { childStepFilters, childStepFilterGroups } =
+    useChildStepFiltersAndChildStepFilterGroups({
+      stepFilterGroupId: rootStepFilterGroup?.id ?? '',
+    });
 
-    if (!isDefined(rootStepFilterGroup)) {
-      return false;
-    }
-
-    const filtersInRootGroup = stepFilters?.filter(
-      (filter) => filter.stepFilterGroupId === rootStepFilterGroup.id,
-    );
-
-    const filterGroupsInRootGroup = stepFilterGroups?.filter(
-      (g) => g.parentStepFilterGroupId === rootStepFilterGroup.id,
-    );
-
-    return (
-      filtersInRootGroup?.length === 1 &&
-      (!isDefined(filterGroupsInRootGroup) ||
-        filterGroupsInRootGroup.length === 0)
-    );
-  }, [isIfBranch, stepFilter, stepFilters, stepFilterGroups]);
+  const isLastFilterInIfBranch =
+    isIfBranch &&
+    isDefined(rootStepFilterGroup) &&
+    stepFilter.stepFilterGroupId === rootStepFilterGroup.id &&
+    childStepFilters.length === 1 &&
+    childStepFilterGroups.length === 0;
 
   const shouldShowDropdown = !readonly && !isLastFilterInIfBranch;
 
