@@ -3,15 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type IResolvers } from '@graphql-tools/utils';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
-import { type DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
-import { type DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
-import { type GroupByResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/group-by-resolver.factory';
-import { type MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
-import { type RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
-import { type RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
-import { type UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
-import { type WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
+import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
+import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
+import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { GroupByResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/group-by-resolver.factory';
+import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
+import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
+import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
+import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
+import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -22,13 +22,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
-import { type CreateManyResolverFactory } from './factories/create-many-resolver.factory';
-import { type CreateOneResolverFactory } from './factories/create-one-resolver.factory';
-import { type DeleteOneResolverFactory } from './factories/delete-one-resolver.factory';
-import { type FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
-import { type FindManyResolverFactory } from './factories/find-many-resolver.factory';
-import { type FindOneResolverFactory } from './factories/find-one-resolver.factory';
-import { type UpdateOneResolverFactory } from './factories/update-one-resolver.factory';
+import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
+import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
+import { DeleteOneResolverFactory } from './factories/delete-one-resolver.factory';
+import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
+import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
+import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
+import { UpdateOneResolverFactory } from './factories/update-one-resolver.factory';
 import { type WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
 import {
   type WorkspaceResolverBuilderMethodNames,
