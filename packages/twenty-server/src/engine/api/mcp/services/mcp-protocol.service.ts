@@ -6,17 +6,17 @@ import { type Repository } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
-import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { type McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { type ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
