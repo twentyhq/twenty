@@ -5,74 +5,73 @@ import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/so
 import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
-export const getSortedKeys = ({
-  orderByY,
-  yValues,
-  manualSortOrder,
-  formattedToRawLookup,
-  selectFieldOptions,
-}: {
-  orderByY?: GraphOrderBy | null;
-  yValues: string[];
+type SortSecondaryAxisDataParams<T> = {
+  items: T[];
+  orderBy?: GraphOrderBy | null;
   manualSortOrder?: string[] | null;
   formattedToRawLookup?: Map<string, RawDimensionValue>;
   selectFieldOptions?: FieldMetadataItemOption[] | null;
-}) => {
-  switch (orderByY) {
+  getFormattedValue: (item: T) => string;
+};
+
+export const sortSecondaryAxisData = <T>({
+  items,
+  orderBy,
+  manualSortOrder,
+  formattedToRawLookup,
+  selectFieldOptions,
+  getFormattedValue,
+}: SortSecondaryAxisDataParams<T>): T[] => {
+  switch (orderBy) {
     case GraphOrderBy.FIELD_ASC:
-      return Array.from(yValues).sort((a, b) => a.localeCompare(b));
+      return items.toSorted((a, b) =>
+        getFormattedValue(a).localeCompare(getFormattedValue(b)),
+      );
+
     case GraphOrderBy.FIELD_DESC:
-      return Array.from(yValues).sort((a, b) => b.localeCompare(a));
+      return items.toSorted((a, b) =>
+        getFormattedValue(b).localeCompare(getFormattedValue(a)),
+      );
+
     case GraphOrderBy.FIELD_POSITION_ASC:
+    case GraphOrderBy.FIELD_POSITION_DESC: {
       if (
         !isDefined(selectFieldOptions) ||
         selectFieldOptions.length === 0 ||
         !isDefined(formattedToRawLookup)
       ) {
-        throw new Error('Select field options are required');
+        throw new Error(
+          'Select field options and formatted to raw lookup are required',
+        );
       }
 
       return sortBySelectOptionPosition({
-        items: Array.from(yValues),
+        items,
         options: selectFieldOptions,
         formattedToRawLookup,
-        getFormattedValue: (item) => item,
-        direction: 'ASC',
+        getFormattedValue,
+        direction: orderBy === GraphOrderBy.FIELD_POSITION_ASC ? 'ASC' : 'DESC',
       });
-    case GraphOrderBy.FIELD_POSITION_DESC:
-      if (
-        !isDefined(selectFieldOptions) ||
-        selectFieldOptions.length === 0 ||
-        !isDefined(formattedToRawLookup)
-      ) {
-        throw new Error('Select field options are required');
-      }
+    }
 
-      return sortBySelectOptionPosition({
-        items: Array.from(yValues),
-        options: selectFieldOptions,
-        formattedToRawLookup,
-        getFormattedValue: (item) => item,
-        direction: 'DESC',
-      });
     case GraphOrderBy.MANUAL: {
       if (!isDefined(manualSortOrder)) {
-        return yValues;
+        return items;
       }
 
-      const sortedKeys = sortByManualOrder({
-        items: yValues,
+      return sortByManualOrder({
+        items,
         manualSortOrder,
-        getRawValue: (formattedValue) => {
+        getRawValue: (item) => {
+          const formattedValue = getFormattedValue(item);
           const rawValue = formattedToRawLookup?.get(formattedValue);
 
           return isDefined(rawValue) ? String(rawValue) : formattedValue;
         },
       });
-
-      return sortedKeys;
     }
+
     default:
-      return yValues;
+      return items;
   }
 };

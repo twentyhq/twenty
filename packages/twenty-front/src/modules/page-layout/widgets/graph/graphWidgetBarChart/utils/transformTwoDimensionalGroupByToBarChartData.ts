@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
@@ -8,17 +7,16 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
-import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
-import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
-import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
-import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
-import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
-import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
+import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
+import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
+import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisData';
 import { type BarDatum } from '@nivo/bar';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, type FirstDayOfTheWeek } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSelectKind,
+  type FirstDayOfTheWeek,
+} from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
   GraphOrderBy,
@@ -64,58 +62,27 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
+  const { processedDataPoints, formattedToRawLookup, yFormattedToRawLookup } =
+    processTwoDimensionalGroupByResults({
+      rawResults,
+      groupByFieldX,
+      groupByFieldY,
+      aggregateField,
+      configuration,
+      aggregateOperation,
+      objectMetadataItem,
+      primaryAxisSubFieldName,
+      userTimezone,
+      firstDayOfTheWeek,
+    });
+
   const dataMap = new Map<string, BarDatum>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
-  const yFormattedToRawLookup = new Map<string, RawDimensionValue>();
-  const formattedValues = formatPrimaryDimensionValues({
-    groupByRawResults: rawResults,
-    primaryAxisGroupByField: groupByFieldX,
-    primaryAxisDateGranularity:
-      configuration.primaryAxisDateGranularity ?? undefined,
-    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
-    userTimezone,
-    firstDayOfTheWeek,
-  });
-  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
-
   let hasTooManyGroups = false;
 
-  rawResults.forEach((result) => {
-    const dimensionValues = result.groupByDimensionValues;
-    if (!isDefined(dimensionValues) || dimensionValues.length < 2) return;
-
-    const xValue = formatDimensionValue({
-      value: dimensionValues[0],
-      fieldMetadata: groupByFieldX,
-      dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
-      subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
-      userTimezone,
-      firstDayOfTheWeek,
-    });
-
-    const yValue = formatDimensionValue({
-      value: dimensionValues[1],
-      fieldMetadata: groupByFieldY,
-      dateGranularity:
-        configuration.secondaryAxisGroupByDateGranularity ?? undefined,
-      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
-      userTimezone,
-      firstDayOfTheWeek,
-    });
-
-    if (isDefined(dimensionValues[0])) {
-      formattedToRawLookup.set(xValue, dimensionValues[0] as RawDimensionValue);
-    }
-
-    if (isDefined(dimensionValues[1])) {
-      yFormattedToRawLookup.set(
-        yValue,
-        dimensionValues[1] as RawDimensionValue,
-      );
-    }
-
-    // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
+  // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
+  for (const { xValue, yValue, aggregateValue } of processedDataPoints) {
     const isNewX = !xValues.has(xValue);
     const isNewY = !yValues.has(yValue);
 
@@ -125,7 +92,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
         xValues.size >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
       ) {
         hasTooManyGroups = true;
-        return;
+        continue;
       }
     }
 
@@ -139,20 +106,9 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
         BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
       ) {
         hasTooManyGroups = true;
-        return;
+        continue;
       }
     }
-
-    const aggregateValue = computeAggregateValueFromGroupByResult({
-      rawResult: result,
-      aggregateField,
-      aggregateOperation:
-        configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
-      aggregateOperationFromRawResult: aggregateOperation,
-      objectMetadataItem,
-    });
-
-    if (!isDefined(aggregateValue)) return;
 
     xValues.add(xValue);
     yValues.add(yValue);
@@ -165,20 +121,17 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
     const dataItem = dataMap.get(xValue)!;
     dataItem[yValue] = aggregateValue;
-  });
+  }
 
-  const isSecondaryAxisSelectField =
-    groupByFieldY.type === FieldMetadataType.SELECT ||
-    groupByFieldY.type === FieldMetadataType.MULTI_SELECT;
-
-  const keys = getSortedKeys({
-    orderByY: configuration.secondaryAxisOrderBy,
-    yValues: Array.from(yValues),
+  const keys = sortSecondaryAxisData({
+    items: Array.from(yValues),
+    orderBy: configuration.secondaryAxisOrderBy,
     manualSortOrder: configuration.secondaryAxisManualSortOrder,
     formattedToRawLookup: yFormattedToRawLookup,
-    selectFieldOptions: isSecondaryAxisSelectField
+    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldY.type)
       ? groupByFieldY.options
       : undefined,
+    getFormattedValue: (item) => item,
   });
 
   const series: BarChartSeries[] = keys.map((key) => ({
@@ -188,58 +141,27 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   }));
 
   const unsortedData = Array.from(dataMap.values());
-  let sortedData = unsortedData;
+
+  let sortedData: BarDatum[] = unsortedData;
 
   if (isDefined(configuration.primaryAxisOrderBy)) {
-    if (configuration.primaryAxisOrderBy === GraphOrderBy.MANUAL) {
-      if (isDefined(configuration.primaryAxisManualSortOrder)) {
-        sortedData = sortByManualOrder({
-          items: unsortedData,
-          manualSortOrder: configuration.primaryAxisManualSortOrder,
-          getRawValue: (datum) => {
-            const formattedValue = datum[indexByKey] as string;
-            const rawValue = formattedToRawLookup.get(formattedValue);
-
-            return isDefined(rawValue) ? String(rawValue) : formattedValue;
-          },
-        });
-      }
-    } else if (
-      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC ||
-      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC
+    if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_DESC
     ) {
-      sortedData = [...unsortedData].sort((a, b) => {
-        const aValue = a[indexByKey] as string;
-        const bValue = b[indexByKey] as string;
-
-        return configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      });
-    } else if (
-      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC ||
-      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_DESC
-    ) {
-      if (
-        isDefined(groupByFieldX.options) &&
-        groupByFieldX.options.length > 0
-      ) {
-        sortedData = sortBySelectOptionPosition({
-          items: unsortedData,
-          options: groupByFieldX.options,
-          formattedToRawLookup,
-          getFormattedValue: (datum) => datum[indexByKey] as string,
-          direction:
-            configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC
-              ? 'ASC'
-              : 'DESC',
-        });
-      }
-    } else {
       sortedData = sortBarChartDataBySecondaryDimensionSum({
         data: unsortedData,
         keys,
         orderBy: configuration.primaryAxisOrderBy,
+      });
+    } else {
+      sortedData = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
+        data: unsortedData,
+        orderBy: configuration.primaryAxisOrderBy,
+        manualSortOrder: configuration.primaryAxisManualSortOrder,
+        formattedToRawLookup,
+        getFormattedValue: (datum) => datum[indexByKey] as string,
+        selectFieldOptions: groupByFieldX.options,
       });
     }
   }

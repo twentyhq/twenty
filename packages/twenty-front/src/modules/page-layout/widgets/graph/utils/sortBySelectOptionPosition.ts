@@ -18,9 +18,10 @@ export const sortBySelectOptionPosition = <T>({
   direction,
 }: SortBySelectOptionPositionParams<T>): T[] => {
   const optionValueToPosition = new Map<string, number>();
-  options.forEach((option) => {
+
+  for (const option of options) {
     optionValueToPosition.set(option.value, option.position);
-  });
+  }
 
   return items.toSorted((a, b) => {
     const formattedA = getFormattedValue(a);
@@ -32,6 +33,7 @@ export const sortBySelectOptionPosition = <T>({
     const positionA = isDefined(rawA)
       ? (optionValueToPosition.get(String(rawA)) ?? Number.MAX_SAFE_INTEGER)
       : Number.MAX_SAFE_INTEGER;
+
     const positionB = isDefined(rawB)
       ? (optionValueToPosition.get(String(rawB)) ?? Number.MAX_SAFE_INTEGER)
       : Number.MAX_SAFE_INTEGER;
