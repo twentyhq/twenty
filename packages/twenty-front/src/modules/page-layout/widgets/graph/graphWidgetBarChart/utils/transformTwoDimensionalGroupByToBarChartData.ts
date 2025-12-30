@@ -1,19 +1,16 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
+import { buildTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/buildTwoDimensionalBarChartDataMap';
 import { sortTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortTwoDimensionalBarChartData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
 import { type BarDatum } from '@nivo/bar';
 import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
-import {
-  BarChartGroupMode,
-  type BarChartConfiguration,
-} from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToBarChartDataParams = {
   rawResults: GroupByRawResult[];
@@ -68,54 +65,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       firstDayOfTheWeek,
     });
 
-  const dataMap = new Map<string, BarDatum>();
-  const xValues = new Set<string>();
-  const yValues = new Set<string>();
-  let hasTooManyGroups = false;
-
-  // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
-  for (const { xValue, yValue, aggregateValue } of processedDataPoints) {
-    const isNewX = !xValues.has(xValue);
-    const isNewY = !yValues.has(yValue);
-
-    if (configuration.groupMode === BarChartGroupMode.STACKED) {
-      if (
-        isNewX &&
-        xValues.size >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
-      ) {
-        hasTooManyGroups = true;
-        continue;
-      }
-    }
-
-    if (configuration.groupMode === BarChartGroupMode.GROUPED) {
-      const totalUniqueDimensions = xValues.size * yValues.size;
-      const additionalDimensions =
-        (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
-
-      if (
-        totalUniqueDimensions + additionalDimensions >
-        BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
-      ) {
-        hasTooManyGroups = true;
-        continue;
-      }
-    }
-
-    xValues.add(xValue);
-    yValues.add(yValue);
-
-    if (!dataMap.has(xValue)) {
-      dataMap.set(xValue, {
-        [indexByKey]: xValue,
-      });
-    }
-
-    const dataItem = dataMap.get(xValue)!;
-    dataItem[yValue] = aggregateValue;
-  }
-
-  const unsortedData = Array.from(dataMap.values());
+  const { unsortedData, yValues, hasTooManyGroups } =
+    buildTwoDimensionalBarChartData({
+      processedDataPoints,
+      indexByKey,
+      groupMode: configuration.groupMode,
+    });
 
   const { sortedData, sortedKeys, sortedSeries } =
     sortTwoDimensionalBarChartData({
