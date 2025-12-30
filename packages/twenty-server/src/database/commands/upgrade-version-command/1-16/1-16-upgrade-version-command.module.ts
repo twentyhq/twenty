@@ -25,7 +25,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FieldMetadataModule,
     ViewFieldModule,
     WorkspaceCacheModule,
-    ApplicationModule
+    ApplicationModule,
   ],
   providers: [
     BackfillUpdatedByFieldCommand,

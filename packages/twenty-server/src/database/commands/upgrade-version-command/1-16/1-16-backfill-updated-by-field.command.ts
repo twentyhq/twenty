@@ -4,7 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -29,8 +31,6 @@ import {
   WORKFLOW_RUN_STANDARD_FIELD_IDS,
   WORKFLOW_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 @Command({
   name: 'upgrade:1-16:backfill-updated-by-field',
@@ -179,7 +179,7 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
       });
     } catch (error) {
       this.logger.error(
-        `Failed to create many field for \n ${JSON.stringify(error, null, 2)}`,
+        `Failed to create many fields \n ${JSON.stringify(error, null, 2)}`,
       );
       throw error;
     }
