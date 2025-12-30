@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 type ApplyCumulativeTransformToTwoDimensionalBarChartDataOptions = {
   data: BarDatum[];
   keys: string[];
-  rangeMin?: number;
-  rangeMax?: number;
+  rangeMin?: number | null;
+  rangeMax?: number | null;
 };
 
 export const applyCumulativeTransformToTwoDimensionalBarChartData = ({

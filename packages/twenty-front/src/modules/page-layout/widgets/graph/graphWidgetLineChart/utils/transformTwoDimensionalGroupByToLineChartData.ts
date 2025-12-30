@@ -3,19 +3,14 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { sortTwoDimensionalLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortTwoDimensionalLineChartData';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToLineChartData';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
-import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
-import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisData';
-import {
-  isDefined,
-  isFieldMetadataSelectKind,
-  type FirstDayOfTheWeek,
-} from 'twenty-shared/utils';
-import { GraphOrderBy, type LineChartConfiguration } from '~/generated/graphql';
+import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
+import { type LineChartConfiguration } from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToLineChartDataParams = {
   rawResults: GroupByRawResult[];
@@ -91,57 +86,44 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     seriesMap.get(yValue)!.set(xValue, aggregateValue);
   }
 
-  const sortedXValues =
-    isDefined(configuration.primaryAxisOrderBy) &&
-    configuration.primaryAxisOrderBy !== GraphOrderBy.VALUE_ASC &&
-    configuration.primaryAxisOrderBy !== GraphOrderBy.VALUE_DESC
-      ? sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-          data: allXValues,
-          orderBy: configuration.primaryAxisOrderBy,
-          manualSortOrder: configuration.primaryAxisManualSortOrder,
-          formattedToRawLookup,
-          getFormattedValue: (item) => item,
-          selectFieldOptions: groupByFieldX.options,
-        })
-      : allXValues;
-
   const unsortedSeries: LineChartSeries[] = Array.from(seriesMap.entries()).map(
     ([seriesKey, xToYMap]) => {
-      const data: LineChartDataPoint[] = sortedXValues.map((xValue) => ({
+      const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
       }));
-
-      const transformedData = configuration.isCumulative
-        ? applyCumulativeTransformToLineChartData({
-            data,
-            rangeMin: configuration.rangeMin ?? undefined,
-            rangeMax: configuration.rangeMax ?? undefined,
-          })
-        : data;
 
       return {
         id: seriesKey,
         label: seriesKey,
         color: configuration.color as GraphColor,
-        data: transformedData,
+        data,
       };
     },
   );
 
-  const series = sortSecondaryAxisData({
-    items: unsortedSeries,
-    orderBy: configuration.secondaryAxisOrderBy,
-    manualSortOrder: configuration.secondaryAxisManualSortOrder,
-    formattedToRawLookup: yFormattedToRawLookup,
-    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldY.type)
-      ? groupByFieldY.options
-      : undefined,
-    getFormattedValue: (item) => item.id,
+  const { sortedSeries } = sortTwoDimensionalLineChartData({
+    series: unsortedSeries,
+    configuration,
+    primaryAxisFormattedToRawLookup: formattedToRawLookup,
+    primaryAxisSelectFieldOptions: groupByFieldX.options,
+    secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
+    secondaryAxisSelectFieldOptions: groupByFieldY.options,
   });
 
+  const finalSeries = configuration.isCumulative
+    ? sortedSeries.map((seriesItem) => ({
+        ...seriesItem,
+        data: applyCumulativeTransformToLineChartData({
+          data: seriesItem.data,
+          rangeMin: configuration.rangeMin ?? undefined,
+          rangeMax: configuration.rangeMax ?? undefined,
+        }),
+      }))
+    : sortedSeries;
+
   return {
-    series,
+    series: finalSeries,
     hasTooManyGroups,
     formattedToRawLookup,
   };

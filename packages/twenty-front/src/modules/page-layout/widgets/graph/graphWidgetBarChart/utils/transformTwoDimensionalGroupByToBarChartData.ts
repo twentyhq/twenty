@@ -2,24 +2,16 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
-import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { sortTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortTwoDimensionalBarChartData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
-import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
-import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisData';
 import { type BarDatum } from '@nivo/bar';
-import {
-  isDefined,
-  isFieldMetadataSelectKind,
-  type FirstDayOfTheWeek,
-} from 'twenty-shared/utils';
+import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
-  GraphOrderBy,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 
@@ -123,63 +115,34 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     dataItem[yValue] = aggregateValue;
   }
 
-  const keys = sortSecondaryAxisData({
-    items: Array.from(yValues),
-    orderBy: configuration.secondaryAxisOrderBy,
-    manualSortOrder: configuration.secondaryAxisManualSortOrder,
-    formattedToRawLookup: yFormattedToRawLookup,
-    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldY.type)
-      ? groupByFieldY.options
-      : undefined,
-    getFormattedValue: (item) => item,
-  });
-
-  const series: BarChartSeries[] = keys.map((key) => ({
-    key,
-    label: key,
-    color: configuration.color as GraphColor,
-  }));
-
   const unsortedData = Array.from(dataMap.values());
 
-  let sortedData: BarDatum[] = unsortedData;
-
-  if (isDefined(configuration.primaryAxisOrderBy)) {
-    if (
-      configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
-      configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_DESC
-    ) {
-      sortedData = sortBarChartDataBySecondaryDimensionSum({
-        data: unsortedData,
-        keys,
-        orderBy: configuration.primaryAxisOrderBy,
-      });
-    } else {
-      sortedData = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-        data: unsortedData,
-        orderBy: configuration.primaryAxisOrderBy,
-        manualSortOrder: configuration.primaryAxisManualSortOrder,
-        formattedToRawLookup,
-        getFormattedValue: (datum) => datum[indexByKey] as string,
-        selectFieldOptions: groupByFieldX.options,
-      });
-    }
-  }
+  const { sortedData, sortedKeys, sortedSeries } =
+    sortTwoDimensionalBarChartData({
+      data: unsortedData,
+      keys: Array.from(yValues),
+      indexByKey,
+      configuration,
+      primaryAxisFormattedToRawLookup: formattedToRawLookup,
+      primaryAxisSelectFieldOptions: groupByFieldX.options,
+      secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
+      secondaryAxisSelectFieldOptions: groupByFieldY.options,
+    });
 
   const finalData = configuration.isCumulative
     ? applyCumulativeTransformToTwoDimensionalBarChartData({
         data: sortedData,
-        keys,
-        rangeMin: configuration.rangeMin ?? undefined,
-        rangeMax: configuration.rangeMax ?? undefined,
+        keys: sortedKeys,
+        rangeMin: configuration.rangeMin,
+        rangeMax: configuration.rangeMax,
       })
     : sortedData;
 
   return {
     data: finalData,
     indexBy: indexByKey,
-    keys,
-    series,
+    keys: sortedKeys,
+    series: sortedSeries,
     hasTooManyGroups,
     formattedToRawLookup,
   };
