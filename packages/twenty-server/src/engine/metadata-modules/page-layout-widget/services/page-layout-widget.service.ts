@@ -20,7 +20,6 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
-import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
@@ -28,6 +27,7 @@ import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
@@ -70,16 +70,16 @@ export class PageLayoutWidgetService {
     titleForError,
   }: {
     type: WidgetType;
-    configuration: Record<string, unknown>;
+    configuration: AllPageLayoutWidgetConfiguration;
     workspaceId: string;
     titleForError: string;
-  }): Promise<WidgetConfigurationInterface> {
+  }): Promise<AllPageLayoutWidgetConfiguration> {
     const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
       workspaceId,
     );
 
-    let validatedConfig: WidgetConfigurationInterface | null = null;
+    let validatedConfig: AllPageLayoutWidgetConfiguration | null = null;
 
     try {
       validatedConfig = await validateAndTransformWidgetConfiguration({
@@ -210,9 +210,7 @@ export class PageLayoutWidgetService {
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: {
           ...createPageLayoutWidgetInput,
-          ...(validatedConfig && {
-            configuration: validatedConfig as Record<string, unknown>,
-          }),
+          configuration: validatedConfig,
         },
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
@@ -271,12 +269,8 @@ export class PageLayoutWidgetService {
   private async getValidatedConfigurationForCreate(
     input: CreatePageLayoutWidgetInput,
     workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
-    if (!input.configuration || !input.type) {
-      return null;
-    }
-
-    return this.validateWidgetConfigurationOrThrow({
+  ): Promise<AllPageLayoutWidgetConfiguration> {
+    return await this.validateWidgetConfigurationOrThrow({
       type: input.type,
       configuration: input.configuration,
       workspaceId,
@@ -313,9 +307,11 @@ export class PageLayoutWidgetService {
       id,
       update: {
         ...updateData,
-        ...(validatedConfig && {
-          configuration: validatedConfig as Record<string, unknown>,
-        }),
+        ...(isDefined(validatedConfig)
+          ? {
+              configuration: validatedConfig,
+            }
+          : {}),
       },
     };
 
@@ -369,20 +365,15 @@ export class PageLayoutWidgetService {
     updateData: UpdatePageLayoutWidgetInput,
     existingWidget: FlatPageLayoutWidget,
     workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
-    if (!updateData.configuration) {
-      return null;
+  ): Promise<AllPageLayoutWidgetConfiguration | undefined> {
+    if (!isDefined(updateData.configuration)) {
+      return undefined;
     }
 
     const typeForValidation = updateData.type ?? existingWidget.type;
-
-    if (!typeForValidation) {
-      return null;
-    }
-
     const titleForError = updateData.title ?? existingWidget.title;
 
-    return this.validateWidgetConfigurationOrThrow({
+    return await this.validateWidgetConfigurationOrThrow({
       type: typeForValidation,
       configuration: updateData.configuration,
       workspaceId,

@@ -67,7 +67,7 @@ msgstr "：过去"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": 今天{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, other {{2} 个任务无法重试}}"
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} 天} other {{days} 天}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} 年} other {{years} 年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{objectLabelPlural} 中第 {currentRank}/{totalCount}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} 天}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1067,7 +1074,7 @@ msgstr "在特定时间后"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "晚于或等于"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1119,7 +1126,7 @@ msgstr "代理"
 #. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
-msgstr ""
+msgstr "驱动此应用的代理"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1127,6 +1134,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr "用于将查询路由到专门代理的代理"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1162,7 +1170,7 @@ msgstr ""
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr ""
+msgstr "未配置 AI。请在您的环境中设置 OPENAI_API_KEY、ANTHROPIC_API_KEY 或 XAI_API_KEY。"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1913,6 +1921,11 @@ msgstr "背景"
 msgid "Background Colors"
 msgstr "背景颜色"
 
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
+
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
@@ -2515,7 +2528,7 @@ msgstr "命令菜单"
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Commands copied to clipboard"
-msgstr ""
+msgstr "命令已复制到剪贴板"
 
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2745,7 +2758,7 @@ msgstr "联系人自动创建"
 #. js-lingui-id: cByGGA
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Contact your admin to continue using Workflow or AI features."
-msgstr ""
+msgstr "请联系您的管理员以继续使用工作流或 AI 功能。"
 
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2852,7 +2865,7 @@ msgstr "复制代码"
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Copy commands"
-msgstr ""
+msgstr "复制命令"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3021,7 +3034,7 @@ msgstr "创建工作区"
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Create an application"
-msgstr ""
+msgstr "创建应用程序"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3172,12 +3185,12 @@ msgstr "按期间划分的信用"
 #. js-lingui-id: EABlI0
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
-msgstr ""
+msgstr "额度已用尽。请联系您的工作区管理员进行升级。"
 
 #. js-lingui-id: JIXvMy
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
-msgstr ""
+msgstr "额度已用尽。升级您的套餐以获取更多额度。"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4450,12 +4463,12 @@ msgstr "启用特定模型功能"
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End Trial Period"
-msgstr ""
+msgstr "结束试用期"
 
 #. js-lingui-id: QEUZoG
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End trial period to continue using Workflow or AI features."
-msgstr ""
+msgstr "结束试用期以继续使用工作流或 AI 功能。"
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5560,7 +5573,7 @@ msgstr "第四"
 #. js-lingui-id: aUj1gh
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
-msgstr ""
+msgstr "免费试用额度已用尽。立即订阅以继续使用 AI 功能。"
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5581,7 +5594,7 @@ msgstr "完全访问"
 #. js-lingui-id: xANKBj
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
-msgstr ""
+msgstr "功能"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -5589,6 +5602,7 @@ msgid "Functions - Settings"
 msgstr "功能 - 设置"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "仪表图"
@@ -5925,6 +5939,7 @@ msgid "Home"
 msgstr "主页"
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -6046,6 +6061,11 @@ msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
+msgstr ""
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -6241,7 +6261,7 @@ msgstr "安装和管理应用程序"
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
-msgstr ""
+msgstr "已安装的应用程序"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6366,12 +6386,12 @@ msgstr "无效的数字"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "无效的 URL"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "无效的 URL。点击编辑以配置此小部件。"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6438,7 +6458,7 @@ msgstr "是"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "为晚于或等于"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6533,7 +6553,7 @@ msgstr "是相对的"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "为今天{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6827,6 +6847,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "折线图"
@@ -6861,7 +6882,7 @@ msgstr ""
 #. js-lingui-id: 5Kn+XX
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
-msgstr ""
+msgstr "列出已安装的应用程序。使用筛选器搜索特定的应用程序。"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7053,7 +7074,7 @@ msgstr "管理工作流"
 #. js-lingui-id: cbzOP7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Manage your app"
-msgstr ""
+msgstr "管理您的应用程序"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -8153,6 +8174,7 @@ msgstr "数字格式"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "小数位数"
 
@@ -8237,7 +8259,7 @@ msgstr "对象和字段权限设置"
 #. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects managed by this app"
-msgstr ""
+msgstr "由该应用程序管理的对象"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8759,6 +8781,7 @@ msgid "Picture"
 msgstr "图片"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "饼图"
@@ -9124,7 +9147,7 @@ msgstr "查看更新日志"
 #. js-lingui-id: ibPuCP
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Read documentation"
-msgstr ""
+msgstr "阅读文档"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9532,6 +9555,7 @@ msgid "Revoked for this object"
 msgstr "撤销该对象"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9589,6 +9613,11 @@ msgstr "角色更新成功"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "角色"
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9748,7 +9777,7 @@ msgstr "搜索代理..."
 #. js-lingui-id: fGTI3o
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
-msgstr ""
+msgstr "搜索应用程序"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10201,7 +10230,7 @@ msgstr "无服务器功能"
 #. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions powering this app"
-msgstr ""
+msgstr "驱动该应用程序的无服务器功能"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -11449,6 +11478,11 @@ msgstr "工具生成"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11740,6 +11774,11 @@ msgstr "单位"
 msgid "Unknown"
 msgstr "未知"
 
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
+msgstr ""
+
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -11876,7 +11915,7 @@ msgstr "升级"
 #. js-lingui-id: 7aHRdp
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "升级套餐"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12074,6 +12113,7 @@ msgid "Version of the application"
 msgstr "应用程序版本"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""
@@ -12111,7 +12151,7 @@ msgstr "查看账单详情"
 #. js-lingui-id: SXCuo2
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
-msgstr ""
+msgstr "查看文档"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12593,7 +12633,7 @@ msgstr "您无权为此对象创建记录"
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
-msgstr ""
+msgstr "您可以创建私有应用程序，或将其分享给他人。"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

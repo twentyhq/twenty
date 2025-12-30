@@ -5,8 +5,9 @@ import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
+  BarChartLayout,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
@@ -44,7 +45,8 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
 
   const mockConfiguration: BarChartConfiguration = {
     __typename: 'BarChartConfiguration',
-    graphType: GraphType.VERTICAL_BAR,
+    configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.VERTICAL,
     aggregateFieldMetadataId: 'field-aggregate',
     aggregateOperation: AggregateOperations.SUM,
     primaryAxisGroupByFieldMetadataId: 'field-x',

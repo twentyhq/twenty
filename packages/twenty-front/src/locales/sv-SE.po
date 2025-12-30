@@ -67,7 +67,7 @@ msgstr ": Förfluten"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": I dag{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, one {{1} jobb kunde inte upprepas} other {{2} jobb kunde int
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} dag} other {{days} dagar}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} år} other {{years} år}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{currentRank} av {totalCount} i {objectLabelPlural}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dag} other {{days} dagar}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1067,7 +1074,7 @@ msgstr "Efter en viss tid"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "Efter eller lika med"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1119,7 +1126,7 @@ msgstr "Agent"
 #. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
-msgstr ""
+msgstr "Agenter som driver den här appen"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1127,6 +1134,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr "Agent användes för att dirigera förfrågningar till specialiserade agenter"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1162,7 +1170,7 @@ msgstr ""
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr ""
+msgstr "AI är inte konfigurerat. Ställ in OPENAI_API_KEY, ANTHROPIC_API_KEY eller XAI_API_KEY i din miljö."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1913,6 +1921,11 @@ msgstr "Bakgrund"
 msgid "Background Colors"
 msgstr "Bakgrundsfärger"
 
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
+
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
@@ -2515,7 +2528,7 @@ msgstr "Kommandomeny"
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Commands copied to clipboard"
-msgstr ""
+msgstr "Kommandon kopierade till urklipp"
 
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2745,7 +2758,7 @@ msgstr "Automatiskt kontaktskapande"
 #. js-lingui-id: cByGGA
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Contact your admin to continue using Workflow or AI features."
-msgstr ""
+msgstr "Kontakta din administratör för att fortsätta använda arbetsflödes- eller AI-funktioner."
 
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2852,7 +2865,7 @@ msgstr "Kopiera kod"
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Copy commands"
-msgstr ""
+msgstr "Kopiera kommandon"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3021,7 +3034,7 @@ msgstr "Skapa arbetsyta"
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Create an application"
-msgstr ""
+msgstr "Skapa en applikation"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3172,12 +3185,12 @@ msgstr "Krediter per period"
 #. js-lingui-id: EABlI0
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
-msgstr ""
+msgstr "Krediterna är slut. Kontakta administratören för din arbetsyta för att uppgradera."
 
 #. js-lingui-id: JIXvMy
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
-msgstr ""
+msgstr "Krediterna är slut. Uppgradera din plan för att få fler krediter."
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4450,12 +4463,12 @@ msgstr "Aktivera modellens specifika funktioner"
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End Trial Period"
-msgstr ""
+msgstr "Avsluta provperioden"
 
 #. js-lingui-id: QEUZoG
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End trial period to continue using Workflow or AI features."
-msgstr ""
+msgstr "Avsluta provperioden för att fortsätta använda arbetsflödes- eller AI-funktioner."
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5560,7 +5573,7 @@ msgstr "Fjärde"
 #. js-lingui-id: aUj1gh
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
-msgstr ""
+msgstr "Kostnadsfria provkrediter är slut. Prenumerera nu för att fortsätta använda AI-funktioner."
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5581,7 +5594,7 @@ msgstr "Full tillgång"
 #. js-lingui-id: xANKBj
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
-msgstr ""
+msgstr "Funktioner"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -5589,6 +5602,7 @@ msgid "Functions - Settings"
 msgstr "Funktioner - Inställningar"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "Mätardiagram"
@@ -5925,6 +5939,7 @@ msgid "Home"
 msgstr "Hem"
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -6046,6 +6061,11 @@ msgstr "Om du har tappat bort denna nyckel kan du återskapa den, men var medvet
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
+msgstr ""
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -6241,7 +6261,7 @@ msgstr "Installera och hantera applikationer"
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
-msgstr ""
+msgstr "Installerade applikationer"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6366,12 +6386,12 @@ msgstr "Ogiltigt nummer"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "Ogiltig URL"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "Ogiltig URL. Klicka på redigera för att konfigurera denna widget."
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6438,7 +6458,7 @@ msgstr "Är"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "Är efter eller lika med"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6533,7 +6553,7 @@ msgstr "Är relativ"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "Är i dag{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6827,6 +6847,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "Linjediagram"
@@ -6861,7 +6882,7 @@ msgstr ""
 #. js-lingui-id: 5Kn+XX
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
-msgstr ""
+msgstr "Lista installerade applikationer. Använd filtret för att söka efter en specifik applikation"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7053,7 +7074,7 @@ msgstr "Hantera arbetsflöden"
 #. js-lingui-id: cbzOP7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Manage your app"
-msgstr ""
+msgstr "Hantera din app"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -8155,6 +8176,7 @@ msgstr "Nummerformat"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "Antal decimaler"
 
@@ -8239,7 +8261,7 @@ msgstr "Objekt och fält behörighetsinställningar"
 #. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects managed by this app"
-msgstr ""
+msgstr "Objekt som hanteras av den här appen"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8761,6 +8783,7 @@ msgid "Picture"
 msgstr "Bild"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "Cirkeldiagram"
@@ -9126,7 +9149,7 @@ msgstr "Läs ändringsloggen"
 #. js-lingui-id: ibPuCP
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Read documentation"
-msgstr ""
+msgstr "Läs dokumentationen"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9534,6 +9557,7 @@ msgid "Revoked for this object"
 msgstr "Upphävd för det här objektet"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9591,6 +9615,11 @@ msgstr "Roll uppdaterad framgångsrikt"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Roller"
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9752,7 +9781,7 @@ msgstr "Sök en agent..."
 #. js-lingui-id: fGTI3o
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
-msgstr ""
+msgstr "Sök efter en applikation"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10205,7 +10234,7 @@ msgstr "serverlös funktion"
 #. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions powering this app"
-msgstr ""
+msgstr "Serverlösa funktioner som driver den här appen"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -11463,6 +11492,11 @@ msgstr "Verktygsgenerering"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11754,6 +11788,11 @@ msgstr "enhet"
 msgid "Unknown"
 msgstr "Okänd"
 
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
+msgstr ""
+
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -11890,7 +11929,7 @@ msgstr "Uppgradera"
 #. js-lingui-id: 7aHRdp
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "Uppgradera planen"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12088,6 +12127,7 @@ msgid "Version of the application"
 msgstr "Version av applikationen"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""
@@ -12125,7 +12165,7 @@ msgstr "Visa fakturadetaljer"
 #. js-lingui-id: SXCuo2
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
-msgstr ""
+msgstr "Visa dokumentation"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12607,7 +12647,7 @@ msgstr "Du har inte tillåtelse att skapa poster i detta objekt"
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
-msgstr ""
+msgstr "Du kan antingen skapa en privat app eller dela den med andra"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

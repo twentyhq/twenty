@@ -2,7 +2,10 @@
 
 exports[`Page layout widget update should succeed should update page layout widget grid position 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {
@@ -15,14 +18,17 @@ exports[`Page layout widget update should succeed should update page layout widg
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
   "title": "Original Widget Title",
-  "type": "VIEW",
+  "type": "IFRAME",
   "updatedAt": Any<String>,
 }
 `;
 
 exports[`Page layout widget update should succeed should update page layout widget title 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {
@@ -35,14 +41,17 @@ exports[`Page layout widget update should succeed should update page layout widg
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
   "title": "Updated Widget Title",
-  "type": "VIEW",
+  "type": "IFRAME",
   "updatedAt": Any<String>,
 }
 `;
 
 exports[`Page layout widget update should succeed should update page layout widget type 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {

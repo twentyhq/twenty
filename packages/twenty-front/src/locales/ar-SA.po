@@ -67,7 +67,7 @@ msgstr "الماضي"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": اليوم{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr ""
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, zero {{days} يوم} one {{days} يوم} two {{days} يومان} few {{days} أيام} many {{days} يومًا} other {{days} يوم}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, zero {{years} سنة} one {{years} سنة} two {{years} سنتان} few {{years} سنوات} many {{years} سنةً} other {{years} سنة}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "{currentRank} من {totalCount} في {objectLabelPlural}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, zero {{days} أيام} one {{days} يوم} two {{days} يومان} few {{days} أيام} many {{days} أيام} other {{days} أيام}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -1067,7 +1074,7 @@ msgstr "بعد فترة محددة من الوقت"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "بعد أو يساوي"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1119,7 +1126,7 @@ msgstr "الوكلاء"
 #. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
-msgstr ""
+msgstr "الوكلاء الذين يدعمون هذا التطبيق"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1127,6 +1134,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr "الوكلاء المستخدمون لتوجيه الاستفسارات إلى وكلاء متخصصين"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1162,7 +1170,7 @@ msgstr ""
 #. js-lingui-id: Sfwld8
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr ""
+msgstr "لم يتم تهيئة الذكاء الاصطناعي. عيّن OPENAI_API_KEY أو ANTHROPIC_API_KEY أو XAI_API_KEY في بيئتك."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1913,6 +1921,11 @@ msgstr "الخلفية"
 msgid "Background Colors"
 msgstr "ألوان الخلفية"
 
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
+
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
@@ -2515,7 +2528,7 @@ msgstr "قائمة الأوامر"
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Commands copied to clipboard"
-msgstr ""
+msgstr "تم نسخ الأوامر إلى الحافظة"
 
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2745,7 +2758,7 @@ msgstr "إنشاء جهات الاتصال تلقائيًا"
 #. js-lingui-id: cByGGA
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Contact your admin to continue using Workflow or AI features."
-msgstr ""
+msgstr "تواصل مع المسؤول لديك لمواصلة استخدام ميزات سير العمل أو الذكاء الاصطناعي."
 
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2852,7 +2865,7 @@ msgstr "نسخ الكود"
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Copy commands"
-msgstr ""
+msgstr "نسخ الأوامر"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3021,7 +3034,7 @@ msgstr "إنشاء مساحة العمل"
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Create an application"
-msgstr ""
+msgstr "إنشاء تطبيق"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3172,12 +3185,12 @@ msgstr "أرصدة حسب الفترة"
 #. js-lingui-id: EABlI0
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
-msgstr ""
+msgstr "نفدت الأرصدة. يُرجى التواصل مع مسؤول مساحة العمل للترقية."
 
 #. js-lingui-id: JIXvMy
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
-msgstr ""
+msgstr "نفدت الأرصدة. قم بترقية خطتك للحصول على المزيد من الأرصدة."
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4450,12 +4463,12 @@ msgstr "تمكين الميزات الخاصة بالنموذج"
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End Trial Period"
-msgstr ""
+msgstr "إنهاء الفترة التجريبية"
 
 #. js-lingui-id: QEUZoG
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "End trial period to continue using Workflow or AI features."
-msgstr ""
+msgstr "أنهِ الفترة التجريبية لمواصلة استخدام ميزات سير العمل أو الذكاء الاصطناعي."
 
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5560,7 +5573,7 @@ msgstr "رابع"
 #. js-lingui-id: aUj1gh
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
-msgstr ""
+msgstr "نفدت أرصدة النسخة التجريبية المجانية. اشترك الآن لمواصلة استخدام ميزات الذكاء الاصطناعي."
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5581,7 +5594,7 @@ msgstr "وصول كامل"
 #. js-lingui-id: xANKBj
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
-msgstr ""
+msgstr "الوظائف"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -5589,6 +5602,7 @@ msgid "Functions - Settings"
 msgstr "وظائف - إعدادات"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "الرسم البياني القياسي"
@@ -5925,6 +5939,7 @@ msgid "Home"
 msgstr "الرئيسية"
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -6046,6 +6061,11 @@ msgstr "إذا كنت قد فقدت هذا المفتاح، يمكنك تولي�
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
+msgstr ""
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -6241,7 +6261,7 @@ msgstr "تثبيت وإدارة التطبيقات"
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
-msgstr ""
+msgstr "التطبيقات المثبتة"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6366,12 +6386,12 @@ msgstr "رقم غير صالح"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "عنوان URL غير صالح"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "عنوان URL غير صالح. انقر فوق تحرير لتكوين هذه الودجت."
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6438,7 +6458,7 @@ msgstr "هو"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "هو بعد أو يساوي"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6533,7 +6553,7 @@ msgstr "نسبي"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "هو اليوم{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6827,6 +6847,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "الرسم البياني الخطي"
@@ -6861,7 +6882,7 @@ msgstr ""
 #. js-lingui-id: 5Kn+XX
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
-msgstr ""
+msgstr "اعرض قائمة التطبيقات المثبتة. استخدم عامل التصفية للبحث عن تطبيق محدد"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7053,7 +7074,7 @@ msgstr "إدارة العمليات"
 #. js-lingui-id: cbzOP7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Manage your app"
-msgstr ""
+msgstr "إدارة تطبيقك"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -8153,6 +8174,7 @@ msgstr "تنسيق الأرقام"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "عدد الكسور العشرية"
 
@@ -8237,7 +8259,7 @@ msgstr "إعدادات أذونات الكائنات والحقول"
 #. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects managed by this app"
-msgstr ""
+msgstr "الكائنات التي يديرها هذا التطبيق"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8759,6 +8781,7 @@ msgid "Picture"
 msgstr "صورة"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "الرسم البياني الدائري"
@@ -9124,7 +9147,7 @@ msgstr "اطّلع على سجلّ التغييرات"
 #. js-lingui-id: ibPuCP
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Read documentation"
-msgstr ""
+msgstr "اقرأ الوثائق"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9532,6 +9555,7 @@ msgid "Revoked for this object"
 msgstr "ملغى لهذا الكائن"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9589,6 +9613,11 @@ msgstr "تم تحديث الدور بنجاح"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "\\\\"
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9748,7 +9777,7 @@ msgstr "ابحث عن وكيل..."
 #. js-lingui-id: fGTI3o
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
-msgstr ""
+msgstr "ابحث عن تطبيق"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10201,7 +10230,7 @@ msgstr "وظيفة بلا خادم"
 #. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions powering this app"
-msgstr ""
+msgstr "وظائف بلا خادم تشغل هذا التطبيق"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -11449,6 +11478,11 @@ msgstr "توليد الأداة"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11740,6 +11774,11 @@ msgstr "وحدة"
 msgid "Unknown"
 msgstr "غير معروف"
 
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
+msgstr ""
+
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -11876,7 +11915,7 @@ msgstr "تحديث"
 #. js-lingui-id: 7aHRdp
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
-msgstr ""
+msgstr "ترقية الخطة"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -12074,6 +12113,7 @@ msgid "Version of the application"
 msgstr "نسخة التطبيق"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""
@@ -12111,7 +12151,7 @@ msgstr "عرض تفاصيل الفوترة"
 #. js-lingui-id: SXCuo2
 #: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
-msgstr ""
+msgstr "عرض الوثائق"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12591,7 +12631,7 @@ msgstr "غير مسموح لك بإنشاء سجلات لهذا الكائن"
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
-msgstr ""
+msgstr "يمكنك إما إنشاء تطبيق خاص أو مشاركته مع الآخرين"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
