@@ -10,7 +10,11 @@ import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGr
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  type FirstDayOfTheWeek,
+  isDefined,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
   type LineChartConfiguration,
@@ -22,6 +26,8 @@ type TransformGroupByDataToLineChartDataParams = {
   objectMetadataItems: ObjectMetadataItem[];
   configuration: LineChartConfiguration;
   aggregateOperation: string;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformGroupByDataToLineChartDataResult = {
@@ -34,10 +40,11 @@ type TransformGroupByDataToLineChartDataResult = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
-const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
+const EMPTY_LINE_CHART_RESULT: Omit<
+  TransformGroupByDataToLineChartDataResult,
+  'xAxisLabel' | 'yAxisLabel'
+> = {
   series: [],
-  xAxisLabel: undefined,
-  yAxisLabel: undefined,
   showDataLabels: false,
   showLegend: true,
   hasTooManyGroups: false,
@@ -50,11 +57,9 @@ export const transformGroupByDataToLineChartData = ({
   objectMetadataItems,
   configuration,
   aggregateOperation,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformGroupByDataToLineChartDataParams): TransformGroupByDataToLineChartDataResult => {
-  if (!isDefined(groupByData)) {
-    return EMPTY_LINE_CHART_RESULT;
-  }
-
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
       field.id === configuration.primaryAxisGroupByFieldMetadataId,
@@ -74,8 +79,47 @@ export const transformGroupByDataToLineChartData = ({
       field.id === configuration.aggregateFieldMetadataId,
   );
 
+  const queryResultGqlFieldName =
+    getGroupByQueryResultGqlFieldName(objectMetadataItem);
+  const rawResults = groupByData?.[queryResultGqlFieldName];
+  const hasNoData =
+    !isDefined(groupByData) ||
+    !isDefined(rawResults) ||
+    !Array.isArray(rawResults) ||
+    rawResults.length === 0;
+
+  const showXAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.X ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.Y ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
+
+  const yAxisLabel =
+    showYAxis && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
+
+  if (!isDefined(groupByData)) {
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
+  }
+
   if (!isDefined(groupByFieldX) || !isDefined(aggregateField)) {
-    return EMPTY_LINE_CHART_RESULT;
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
   }
 
   const primaryAxisSubFieldName =
@@ -83,12 +127,12 @@ export const transformGroupByDataToLineChartData = ({
   const secondaryAxisSubFieldName =
     configuration.secondaryAxisGroupBySubFieldName ?? undefined;
 
-  const queryResultGqlFieldName =
-    getGroupByQueryResultGqlFieldName(objectMetadataItem);
-  const rawResults = groupByData[queryResultGqlFieldName];
-
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
-    return EMPTY_LINE_CHART_RESULT;
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
   }
 
   const filteredResults = filterGroupByResults({
@@ -108,20 +152,6 @@ export const transformGroupByDataToLineChartData = ({
     aggregateOperationFromRawResult: aggregateOperation,
     objectMetadataItem,
   });
-
-  const showXAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
-
-  const yAxisLabel = showYAxis
-    ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-    : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
@@ -172,6 +202,8 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
+        firstDayOfTheWeek,
       })
     : transformOneDimensionalGroupByToLineChartData({
         rawResults: filteredResults,
@@ -181,6 +213,8 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
+        firstDayOfTheWeek,
       });
 
   return {

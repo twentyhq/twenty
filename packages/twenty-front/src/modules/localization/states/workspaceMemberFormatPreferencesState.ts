@@ -1,4 +1,3 @@
-import { CalendarStartDay } from 'twenty-shared';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -7,6 +6,7 @@ import { detectDateFormat } from '@/localization/utils/detection/detectDateForma
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { createState } from 'twenty-ui/utilities';
 
 export type WorkspaceMemberFormatPreferences = {

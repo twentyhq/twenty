@@ -7,11 +7,8 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
-import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
-import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -156,10 +153,6 @@ export const AIChatMessage = ({
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-
   const showError =
     isDefined(error) && message.role === AgentMessageRole.ASSISTANT;
 
@@ -201,12 +194,7 @@ export const AIChatMessage = ({
               ))}
             </StyledFilesContainer>
           )}
-          {showError &&
-            (contextStoreCurrentObjectMetadataItemId ? (
-              <AIChatErrorMessageWithRecordsContext error={error} />
-            ) : (
-              <AIChatErrorMessage error={error} />
-            ))}
+          {showError && <AIChatErrorRenderer error={error} />}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

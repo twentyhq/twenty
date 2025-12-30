@@ -54,15 +54,35 @@ msgstr "En forbundet konto"
 msgid "A dashboard"
 msgstr "Et dashboard"
 
+#. js-lingui-id: ixdsnM
+#: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
+msgid "A DNS manager error occurred."
+msgstr "Der opstod en fejl i DNS-manageren."
+
+#. js-lingui-id: Hjj8vT
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "A duplicate entry was detected."
+msgstr "En duplikeret post blev registreret."
+
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "A favorite that can be accessed from the left menu"
 msgstr "En favorit, som kan tilgås fra venstre menu"
 
+#. js-lingui-id: othZF2
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "A field with this name already exists."
+msgstr "Et felt med dette navn findes allerede."
+
 #. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
 msgstr "En mappe med favoritter"
+
+#. js-lingui-id: +aAI33
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "A function with this name already exists."
+msgstr "En funktion med dette navn findes allerede."
 
 #. js-lingui-id: sSGYmf
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
@@ -79,6 +99,16 @@ msgstr ""
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "En besked, der er sendt eller modtaget via en beskedkanal (e-mail, chat, osv.)"
 
+#. js-lingui-id: Nh/ZZe
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A name conflict occurred."
+msgstr "Der opstod en navnekonflikt."
+
+#. js-lingui-id: ChJFls
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "A network error occurred while accessing calendar."
+msgstr "Der opstod en netværksfejl under adgang til kalenderen."
+
 #. js-lingui-id: bufuBA
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "A note"
@@ -94,13 +124,39 @@ msgstr "Et notemål"
 msgid "A one to many relation field should never declare a join column"
 msgstr ""
 
+#. js-lingui-id: W6LTzL
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "A payment processing error occurred."
+msgstr "Der opstod en fejl ved betalingsbehandling."
+
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
 msgstr "En person"
 
+#. js-lingui-id: sieBE7
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "A record with this relationship already exists."
+msgstr "En post med denne relation findes allerede."
+
+#. js-lingui-id: j7gCou
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "A record with this value already exists."
+msgstr "En post med denne værdi findes allerede."
+
+#. js-lingui-id: bx1He3
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "A required configuration is missing."
+msgstr "En påkrævet konfiguration mangler."
+
+#. js-lingui-id: FVCXUT
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+msgid "A required field is missing."
+msgstr ""
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "A role with this label already exists."
 msgstr "En rolle med denne etiket findes allerede."
 
@@ -113,6 +169,51 @@ msgstr "En opgave"
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "Et opgavemål"
+
+#. js-lingui-id: c1qcYo
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "A temporary error occurred. Please try again."
+msgstr "Der opstod en midlertidig fejl. Prøv igen."
+
+#. js-lingui-id: reBsjo
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "A temporary network error occurred."
+msgstr "Der opstod en midlertidig netværksfejl."
+
+#. js-lingui-id: WBtp3/
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "A user with this email already exists."
+msgstr "En bruger med denne e-mail findes allerede."
+
+#. js-lingui-id: qqnpQ9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "A view error occurred."
+msgstr "Der opstod en visningsfejl."
+
+#. js-lingui-id: NsB3MF
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
+msgid "A view field error occurred."
+msgstr "Der opstod en fejl i visningsfeltet."
+
+#. js-lingui-id: Rth998
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
+msgid "A view filter error occurred."
+msgstr "Der opstod en fejl i visningsfilteret."
+
+#. js-lingui-id: 2rU/w8
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
+msgid "A view filter group error occurred."
+msgstr "Der opstod en fejl i visningsfiltergruppen."
+
+#. js-lingui-id: znJ6EA
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "A view group error occurred."
+msgstr "Der opstod en fejl i visningsgruppen."
+
+#. js-lingui-id: gHC5sU
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "A view sort error occurred."
+msgstr "Der opstod en fejl i visningssorteringen."
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -143,6 +244,11 @@ msgstr "Et workspace medlem"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Adgangstoken"
+
+#. js-lingui-id: Bk+qoW
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Access token not found."
+msgstr "Adgangstoken ikke fundet."
 
 #. js-lingui-id: pd81Qb
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -196,23 +302,43 @@ msgstr "Virksomhedens adresse"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Virksomhedens adresse - udgået til fordel for nyt adressefelt"
 
+#. js-lingui-id: VmatbA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Admin role not found."
+msgstr "Admin-rolle ikke fundet."
+
+#. js-lingui-id: kmAKx+
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Agent execution failed."
+msgstr "Udførelse af agenten mislykkedes."
+
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Agent not found"
-msgstr ""
+msgstr "Agent ikke fundet"
+
+#. js-lingui-id: UxwIFr
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Agent not found."
+msgstr "Agent ikke fundet."
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "Agent with name \"{name}\" already exists"
-msgstr ""
+msgstr "En agent med navnet \"{name}\" findes allerede"
 
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregeret / filtreret begivenhed, som skal vises på tidslinjen"
+
+#. js-lingui-id: WG8+0x
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "AI agent step execution failed."
+msgstr "Udførelse af AI-agent-trin mislykkedes."
 
 #. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
@@ -240,7 +366,12 @@ msgstr "Beløb"
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
-msgstr ""
+msgstr "En agent med dette navn findes allerede"
+
+#. js-lingui-id: Wnol69
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "An agent with this name already exists."
+msgstr "En agent med dette navn findes allerede."
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -252,26 +383,113 @@ msgstr "En vedhæftning"
 msgid "An error occurred during messages import"
 msgstr "Der opstod en fejl under meddelelsesimporten"
 
+#. js-lingui-id: dhcf1B
+#: src/engine/workspace-manager/workspace-migration.exception.ts
+msgid "An error occurred during workspace migration."
+msgstr "Der opstod en fejl under migreringen af arbejdsområdet."
+
+#. js-lingui-id: S7yZl9
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "An error occurred with two-factor authentication data."
+msgstr "Der opstod en fejl med data for to-faktor-godkendelse."
+
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
 msgid "An error occurred."
 msgstr "Der opstod en fejl."
+
+#. js-lingui-id: P/8dT5
+#: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
+msgid "An index metadata error occurred."
+msgstr "Der opstod en fejl i indeksmetadata."
 
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
 msgstr "Et indeks skal indeholde mindst ét felt"
 
+#. js-lingui-id: SOp/Vw
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "An invitation has already been sent to this email."
+msgstr "En invitation er allerede sendt til denne e-mail."
+
+#. js-lingui-id: CQ5DXU
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "An object with this name already exists."
+msgstr "Et objekt med dette navn findes allerede."
+
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
 msgstr "En mulighed"
 
+#. js-lingui-id: Tstlpf
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "An unexpected billing error occurred."
+msgstr "Der opstod en uventet faktureringsfejl."
+
+#. js-lingui-id: acTNEg
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "An unexpected configuration error occurred."
+msgstr "Der opstod en uventet konfigurationsfejl."
+
+#. js-lingui-id: W5A0Ly
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+#: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
+msgid "An unexpected error occurred."
+msgstr "Der opstod en uventet fejl."
+
+#. js-lingui-id: q8ZbjA
+#: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "An unknown calendar error occurred."
+msgstr "Der opstod en ukendt kalenderfejl."
+
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Tilbagevendende årlig omsætning: Den faktiske eller anslåede årlige omsætning af virksomheden"
+
+#. js-lingui-id: fRWsMD
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "API key is not configured."
+msgstr "API-nøglen er ikke konfigureret."
+
+#. js-lingui-id: MyJhTw
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "API key not found."
+msgstr "API-nøgle ikke fundet."
+
+#. js-lingui-id: TLSelA
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "API key role configuration not found."
+msgstr "Konfiguration af API-nøglens rolle ikke fundet."
+
+#. js-lingui-id: tGfHmi
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "API key role not found."
+msgstr "API-nøglerolle ikke fundet."
+
+#. js-lingui-id: ltvmAF
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application not found."
+msgstr "Applikation ikke fundet."
+
+#. js-lingui-id: 9qtW5o
+#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+msgid "Application variable not found."
+msgstr "Applikationsvariabel ikke fundet."
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -288,6 +506,11 @@ msgstr "Godkendt adgangsdomæne stemmer ikke overens med e-mail-domænet"
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain has already been validated"
 msgstr "Godkendt adgangsdomæne er allerede blevet valideret"
+
+#. js-lingui-id: paHOg2
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Approved access domain not found."
+msgstr "Godkendt adgangsdomæne ikke fundet."
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -318,11 +541,6 @@ msgstr "Opgaveansvarlig"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Tilknyttet Bruger-ID"
-
-#. js-lingui-id: scLx/y
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "At least one folder must be synced."
-msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -463,6 +681,12 @@ msgstr "Autentifikation er ikke aktiveret hos denne udbyder."
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Godkendelse er påkrævet for at få adgang til denne funktion. Log venligst ind og prøv igen."
 
+#. js-lingui-id: cgNV3G
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Authentication is required."
+msgstr "Godkendelse er påkrævet."
+
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Author"
@@ -502,6 +726,36 @@ msgstr "Avatar"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "Avatar URL"
+
+#. js-lingui-id: rkIGWa
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing customer not found."
+msgstr "Faktureringskunde ikke fundet."
+
+#. js-lingui-id: HVTHL6
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing meter not found."
+msgstr "Faktureringsmåler ikke fundet."
+
+#. js-lingui-id: FNftTK
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing plan not found."
+msgstr "Faktureringsplan ikke fundet."
+
+#. js-lingui-id: LI7tcn
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing price not found."
+msgstr "Faktureringspris ikke fundet."
+
+#. js-lingui-id: DDKhmc
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing product not found."
+msgstr "Faktureringsprodukt ikke fundet."
+
+#. js-lingui-id: Je6GWV
+#: src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception.ts
+msgid "Billing subscription not found."
+msgstr "Faktureringsabonnement ikke fundet."
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -561,6 +815,11 @@ msgstr "Kalender Kanalbegivenheds Sammenkobling"
 msgid "Calendar Channel Event Associations"
 msgstr "Kalender Kanalebegivenheds Sammenkoblinger"
 
+#. js-lingui-id: bQS4UN
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar channel is misconfigured."
+msgstr "Kalenderkanal er fejlkonfigureret."
+
 #. js-lingui-id: Znix/S
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -573,6 +832,11 @@ msgstr "Kalenderkanaler"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
 msgstr "Kalenderbegivenhed"
+
+#. js-lingui-id: 1t3DGy
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar event not found."
+msgstr "Kalenderbegivenhed ikke fundet."
 
 #. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -599,6 +863,16 @@ msgstr "Deltagere i kalenderbegivenhed"
 msgid "Calendar events"
 msgstr "Kalenderbegivenheder"
 
+#. js-lingui-id: GtrALl
+#: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
+msgid "Calendar provider is not supported."
+msgstr "Kalenderudbyder understøttes ikke."
+
+#. js-lingui-id: CnNFfU
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar sync error."
+msgstr "Fejl ved kalendersynkronisering."
+
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
@@ -613,6 +887,21 @@ msgstr "Kan ikke efterligne bruger via api-nøgle"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Kan ikke aktivere ikke-kladde eller ikke-sidst-udgivet version"
+
+#. js-lingui-id: QYS2AB
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot add field permissions on system objects."
+msgstr "Kan ikke tilføje felttilladelser for systemobjekter."
+
+#. js-lingui-id: FxFlC4
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot add permissions on system objects."
+msgstr "Kan ikke tilføje tilladelser for systemobjekter."
+
+#. js-lingui-id: 6kqLHf
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Cannot complete operation due to related records."
+msgstr "Kan ikke fuldføre handlingen på grund af relaterede poster."
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -633,7 +922,17 @@ msgstr "Kan ikke slette konto: du er den eneste administrator. Tildel en anden a
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot delete standard agent"
-msgstr ""
+msgstr "Kan ikke slette standardagent"
+
+#. js-lingui-id: /olFYI
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot delete the last admin user."
+msgstr "Kan ikke slette den sidste admin-bruger."
+
+#. js-lingui-id: mWk3X+
+#: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
+msgid "Cannot delete unique index that have not been created by the workspace custom application"
+msgstr "Kan ikke slette et unikt indeks, som ikke er oprettet af arbejdsområdets brugerdefinerede applikation"
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -650,13 +949,38 @@ msgstr "Kan ikke deaktivere ikke-aktive arbejdsprocesversion"
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Kan ikke aktivere unicitet på grund af eksisterende dubletværdier. Gennemgå og ret dine data først (inklusive blødt slettede poster)."
 
+#. js-lingui-id: lDTqT7
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot give write permission on non-readable objects."
+msgstr "Kan ikke give skrivetilladelse for objekter, der ikke kan læses."
+
+#. js-lingui-id: r4uEo5
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot give write permission without read permission."
+msgstr "Kan ikke give skrivetilladelse uden læsetilladelse."
+
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Kan ikke have mere end én aktiv arbejdsprocesversion"
 
+#. js-lingui-id: Q0diyJ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot remove the last admin from the workspace."
+msgstr "Kan ikke fjerne den sidste administrator fra arbejdsområdet."
+
+#. js-lingui-id: wNJvot
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Cannot switch subscription interval."
+msgstr "Kan ikke skifte abonnementsinterval."
+
+#. js-lingui-id: U/P/gT
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Cannot switch subscription plan."
+msgstr "Kan ikke skifte abonnementsplan."
+
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Kan ikke opdatere meddelelseskanalen, mens synkronisering pågår. Vent venligst, indtil synkroniseringen er færdig."
 
@@ -664,7 +988,7 @@ msgstr "Kan ikke opdatere meddelelseskanalen, mens synkronisering pågår. Vent 
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
-msgstr ""
+msgstr "Kan ikke opdatere standardagent"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -691,6 +1015,11 @@ msgstr "By"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Afslutningsdato"
+
+#. js-lingui-id: o21Tgt
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Code step execution failed."
+msgstr "Udførelse af kodetrin mislykkedes."
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -719,11 +1048,41 @@ msgstr "Virksomhed"
 msgid "Company record position"
 msgstr "Position i virksomhedsfortegnelse"
 
+#. js-lingui-id: L1uQuF
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Composite type not found."
+msgstr "Sammensat type ikke fundet."
+
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Konferenceløsning"
+
+#. js-lingui-id: n8EtHV
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Configuration validation failed."
+msgstr "Validering af konfiguration mislykkedes."
+
+#. js-lingui-id: g/dGHV
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Configuration variable not found."
+msgstr "Konfigurationsvariabel ikke fundet."
+
+#. js-lingui-id: WtMHh6
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone calling code and country code."
+msgstr "Modstridende telefonopkaldskode og landekode."
+
+#. js-lingui-id: gP+fzj
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone calling code."
+msgstr "Modstridende telefonopkaldskode."
+
+#. js-lingui-id: CmQEdn
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone country code."
+msgstr "Modstridende telefonlandekode."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -738,6 +1097,11 @@ msgstr "Connect er ikke tilladt for {connectFieldName} på {objectMetadataNameSi
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Forbundet konto"
+
+#. js-lingui-id: /OJTzk
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Connected account not found."
+msgstr "Tilknyttet konto ikke fundet."
 
 #. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -873,6 +1237,11 @@ msgstr "Cron-mønster '{pattern}' er ugyldigt"
 msgid "Cron trigger already exists"
 msgstr "Cron-udløser eksisterer allerede"
 
+#. js-lingui-id: MAPqJt
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+msgid "Cron trigger already exists."
+msgstr "Cron-udløser eksisterer allerede."
+
 #. js-lingui-id: Ej90Yp
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -880,6 +1249,11 @@ msgstr "Cron-udløser eksisterer allerede"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger not found"
 msgstr "Cron-udløser ikke fundet"
+
+#. js-lingui-id: 4bnTs7
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+msgid "Cron trigger not found."
+msgstr "Cron-udløser ikke fundet."
 
 #. js-lingui-id: vz7B0E
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -891,6 +1265,21 @@ msgstr "Cron-udløser med samme id eksisterer allerede"
 msgid "Custom Connection Parameters"
 msgstr "Tilpassede forbindelsesparametre"
 
+#. js-lingui-id: 8vxOU0
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Custom domain not found."
+msgstr "Brugerdefineret domæne ikke fundet."
+
+#. js-lingui-id: zsYQk/
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Custom domains are disabled for this workspace."
+msgstr "Brugerdefinerede domæner er deaktiveret for dette arbejdsområde."
+
+#. js-lingui-id: qHZppf
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Custom object is missing a label identifier field."
+msgstr "Det brugerdefinerede objekt mangler et etiket-identifikatorfelt."
+
 #. js-lingui-id: 7p5kLi
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -898,6 +1287,11 @@ msgstr "Tilpassede forbindelsesparametre"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Dashboard"
+
+#. js-lingui-id: jlbLNx
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+msgid "Dashboard not found."
+msgstr "Dashboard ikke fundet."
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -919,10 +1313,30 @@ msgstr "Instrumentbræt titel"
 msgid "Dashboards"
 msgstr "Instrumentbrætter"
 
+#. js-lingui-id: Bv/LBb
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Data structure is invalid."
+msgstr "Datastrukturen er ugyldig."
+
+#. js-lingui-id: /sRN4g
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Data version mismatch. Please refresh and try again."
+msgstr "Dataversionen stemmer ikke overens. Opdater og prøv igen."
+
+#. js-lingui-id: NhQiQx
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Database configuration is disabled."
+msgstr "Databasekonfiguration er deaktiveret."
+
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger already exists"
 msgstr "Database-begivenhedsudløser eksisterer allerede"
+
+#. js-lingui-id: RjLvqZ
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Database event trigger already exists."
+msgstr "Database-begivenhedsudløser eksisterer allerede."
 
 #. js-lingui-id: iS6kjG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -931,6 +1345,11 @@ msgstr "Database-begivenhedsudløser eksisterer allerede"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger not found"
 msgstr "Databasehændelsesudløser ikke fundet"
+
+#. js-lingui-id: mVe3iD
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Database event trigger not found."
+msgstr "Database-begivenhedsudløser ikke fundet."
 
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -952,10 +1371,21 @@ msgstr "Dato for når posten blev slettet"
 msgid "December"
 msgstr "December"
 
+#. js-lingui-id: cgV4xo
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Default role not found."
+msgstr "Standardrolle ikke fundet."
+
 #. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standardværdien \"{defaultValue}\" skal være en af optionernes værdier"
+
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr "Standardværdien kan ikke være null."
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -964,10 +1394,12 @@ msgstr "Standardværdien skal være en streng"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "Standardværdi skal være som citeret streng"
 
 #. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "Standardværdierne skal være unikke"
@@ -1021,7 +1453,13 @@ msgstr "Domænenavn"
 msgid "Due Date"
 msgstr "Forfaldsdato"
 
+#. js-lingui-id: UrzTjS
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
+msgstr "Duplikeret root resolver fundet. Hver root resolver kan kun kaldes én gang pr. dokument."
+
 #. js-lingui-id: BXtAxc
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Duplikeret mulighed {field}"
@@ -1041,7 +1479,23 @@ msgstr "Email allerede verificeret."
 msgid "Email can only be updated when you belong to a single workspace."
 msgstr ""
 
+#. js-lingui-id: MYgdAv
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Email domain configuration error."
+msgstr "Fejl i konfiguration af e-mail-domæne."
+
+#. js-lingui-id: Ik1o4d
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Email domain not found."
+msgstr "E-mail-domæne ikke fundet."
+
+#. js-lingui-id: m9fD11
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Email is already verified."
+msgstr "E-mail er allerede verificeret."
+
 #. js-lingui-id: xw6iqb
+#: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Email is not verified."
 msgstr "Email er ikke verificeret."
@@ -1052,6 +1506,28 @@ msgstr "Email er ikke verificeret."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Email is required"
 msgstr "Email er påkrævet"
+
+#. js-lingui-id: Qof3ks
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Email is required."
+msgstr "Email er påkrævet."
+
+#. js-lingui-id: y+BSWq
+#: src/engine/core-modules/user/user.exception.ts
+msgid "Email is unchanged."
+msgstr "E-mail er uændret."
+
+#. js-lingui-id: q87JH5
+#: src/engine/core-modules/user/user.exception.ts
+msgid "Email update is restricted to single workspace users."
+msgstr "E-mail-opdatering er begrænset til brugere med ét arbejdsområde."
+
+#. js-lingui-id: PeMFTI
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Email verification is not required."
+msgstr "E-mail-verifikation er ikke påkrævet."
 
 #. js-lingui-id: y8LSMh
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1068,16 +1544,43 @@ msgstr "E-mails"
 msgid "Employees"
 msgstr "Medarbejdere"
 
+#. js-lingui-id: aVGG1u
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Empty field permissions are not allowed."
+msgstr "Tomme felttilladelser er ikke tilladt."
+
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "Slutdato"
 
+#. js-lingui-id: qpXqpa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Entity not found."
+msgstr "Entitet ikke fundet."
+
+#. js-lingui-id: jxgcg/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Enum operation failed."
+msgstr "Enum-operation mislykkedes."
+
+#. js-lingui-id: AOk97Y
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Enum type not found."
+msgstr "Enum-type ikke fundet."
+
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr "Miljøvariabel CLOUDFLARE_API_KEY skal defineres for at bruge denne funktion."
+
+#. js-lingui-id: SlfejT
+#: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
+#: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
+msgid "Error"
+msgstr "Fejl"
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1204,25 +1707,70 @@ msgstr "Forventede, at de samme begrænsningsfelter blev brugt konsekvent på tv
 msgid "External ID"
 msgstr "Ekstern ID"
 
+#. js-lingui-id: AOxB/G
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Failed to connect to remote server."
+msgstr "Kunne ikke oprette forbindelse til fjernserver."
+
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
-msgstr ""
+msgstr "Kunne ikke oprette evaluering. Prøv venligst igen."
+
+#. js-lingui-id: M1ZSSL
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Failed to create function."
+msgstr "Kunne ikke oprette funktion."
+
+#. js-lingui-id: I71ur2
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to create record."
+msgstr "Kunne ikke oprette post."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "Kunne ikke slette opgaver. Prøv venligst igen senere."
 
+#. js-lingui-id: MBdUff
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to delete record."
+msgstr "Kunne ikke slette post."
+
+#. js-lingui-id: SkvO+5
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+msgid "Failed to duplicate dashboard."
+msgstr "Kunne ikke duplikere dashboard."
+
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "Kunne ikke indlæse køopgaver. Prøv venligst igen senere."
 
+#. js-lingui-id: /E7MoD
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Failed to record billing event."
+msgstr "Kunne ikke registrere faktureringshændelse."
+
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Kunne ikke genprøve opgaver. Prøv venligst igen senere."
+
+#. js-lingui-id: Cr+NSQ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Failed to update field permission."
+msgstr "Kunne ikke opdatere felttilladelse."
+
+#. js-lingui-id: nrcGtY
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to update record."
+msgstr "Kunne ikke opdatere post."
+
+#. js-lingui-id: FiYPA2
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to upsert record."
+msgstr "Kunne ikke opdatere/indsætte post."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1377,6 +1925,11 @@ msgstr "Foretrukne knyttet til arbejdsområde medlemmet"
 msgid "Favorites tied to the {label}"
 msgstr "Foretrukne forbundet med {label}"
 
+#. js-lingui-id: Ai7knL
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Feature configuration not found."
+msgstr "Funktionskonfiguration ikke fundet."
+
 #. js-lingui-id: 4lgLew
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
@@ -1393,6 +1946,7 @@ msgid "Field cannot be indexed as it belongs to a different object"
 msgstr "Felt kan ikke indekseres da det tilhører et andet objekt"
 
 #. js-lingui-id: Hg95ys
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
 msgstr "Felt kan ikke bruges som etiket id"
@@ -1423,8 +1977,6 @@ msgid "Field label identifier is required"
 msgstr "Feltmærkat-identifikator er påkrævet"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1433,6 +1985,13 @@ msgstr "Feltmærkat-identifikator er påkrævet"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Feltnøgle ikke fundet"
+
+#. js-lingui-id: JrAl/I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field metadata not found."
+msgstr "Feltmetadata ikke fundet."
 
 #. js-lingui-id: uTPwH1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1449,6 +2008,17 @@ msgstr "Feltmetadata til opdatering ikke fundet"
 msgid "Field name is not synced with field label"
 msgstr "Feltnavn er ikke synkroniseret med feltetiket"
 
+#. js-lingui-id: XJmtgE
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Field name is not synced with label."
+msgstr "Feltnavn er ikke synkroniseret med etiket."
+
+#. js-lingui-id: Ts+YbB
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Field not found."
+msgstr "Felt ikke fundet."
+
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
@@ -1459,6 +2029,11 @@ msgstr "Felttilladelser kan kun bruges til at begrænse adgang, ikke til at give
 msgid "Field referenced in index does not exist"
 msgstr "Feltet, der refereres til i indekset, eksisterer ikke"
 
+#. js-lingui-id: ylQono
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field restrictions only apply to readable objects."
+msgstr "Feltbegrænsninger gælder kun for objekter, der kan læses."
+
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
@@ -1468,6 +2043,11 @@ msgstr "Felt til oprettelse af relateret objekt ikke fundet"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
 msgstr "Felt til opdatering ikke fundet"
+
+#. js-lingui-id: 5cm5Hn
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field to update object metadata not found"
+msgstr "Felt til opdatering af objektets metadata ikke fundet"
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -1484,10 +2064,23 @@ msgstr ""
 msgid "Field type TS_VECTOR is a system type and cannot be created manually."
 msgstr ""
 
+#. js-lingui-id: 5Buorv
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Field type validation error."
+msgstr "Valideringsfejl for felttype."
+
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Felt anvendt til fuldtekst-søgning"
+
+#. js-lingui-id: M4sb1B
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "Field value is required"
+msgstr "Feltværdien er påkrævet"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1518,6 +2111,13 @@ msgstr "FieldMetadataId er påkrævet for at oprette en sortering af visning."
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "File category"
 msgstr "Filkategori"
+
+#. js-lingui-id: weWV3g
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+#: src/engine/core-modules/file/file.exception.ts
+msgid "File not found."
+msgstr "Fil ikke fundet."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1559,6 +2159,46 @@ msgstr "Fredag"
 msgid "Full path"
 msgstr "Fuld sti"
 
+#. js-lingui-id: pouguB
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function code is unchanged."
+msgstr "Funktionskoden er uændret."
+
+#. js-lingui-id: Ho3UAo
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function execution limit reached."
+msgstr "Grænsen for funktionskørsel er nået."
+
+#. js-lingui-id: mdxF/u
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function execution timed out."
+msgstr "Funktionskørsel fik timeout."
+
+#. js-lingui-id: IsdR/t
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function is currently building."
+msgstr "Funktionen bygges i øjeblikket."
+
+#. js-lingui-id: GhVI/u
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function is not ready."
+msgstr "Funktionen er ikke klar."
+
+#. js-lingui-id: 2ACKTg
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function not found."
+msgstr "Funktion ikke fundet."
+
+#. js-lingui-id: zKksGw
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function version not found."
+msgstr "Funktionsversion ikke fundet."
+
+#. js-lingui-id: cvJ2e6
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Google API authentication is disabled."
+msgstr "Google API-godkendelse er deaktiveret."
+
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
@@ -1583,6 +2223,11 @@ msgstr "Håndtag"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Handle Aliases"
 msgstr "Håndter Aliasser"
+
+#. js-lingui-id: CDiGGx
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Handle aliases are required."
+msgstr "Handle-aliasser er påkrævet."
 
 #. js-lingui-id: VehAU2
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -1611,7 +2256,13 @@ msgstr "Id"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideelt Kunde Profil: Indikerer om virksomheden er den mest passende og værdifulde kunde for dig"
 
+#. js-lingui-id: 6cVc+b
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider not found."
+msgstr "Identitetsudbyder ikke fundet."
+
 #. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Hvis defineret, standardværdi skal indeholde mindst én værdi"
@@ -1663,6 +2314,67 @@ msgstr "Indeks med samme id eksisterer allerede"
 msgid "Index with same name already exists"
 msgstr "Indeks med samme navn eksisterer allerede"
 
+#. js-lingui-id: 9Lkkre
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Input exceeds maximum length."
+msgstr "Input overskrider maksimal længde."
+
+#. js-lingui-id: nrH4HK
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Input is too short."
+msgstr "Input er for kort."
+
+#. js-lingui-id: 9sx+WQ
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Insufficient permissions for email domain."
+msgstr "Utilstrækkelige tilladelser til e-mail-domænet."
+
+#. js-lingui-id: Bluaux
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Insufficient permissions to access calendar."
+msgstr "Utilstrækkelige tilladelser til at få adgang til kalenderen."
+
+#. js-lingui-id: J1UlII
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Insufficient permissions."
+msgstr "Utilstrækkelige tilladelser."
+
+#. js-lingui-id: pSjWxS
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Invalid action type."
+msgstr "Ugyldig handlingstype."
+
+#. js-lingui-id: D/IcuN
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Invalid agent input."
+msgstr "Ugyldigt agentinput."
+
+#. js-lingui-id: hJpBT6
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid aggregate fields parameter."
+msgstr "Ugyldig parameter for aggregerede felter."
+
+#. js-lingui-id: KNrRpL
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Invalid argument provided."
+msgstr "Ugyldigt argument angivet."
+
+#. js-lingui-id: Z5WSzG
+#: src/engine/core-modules/audit/audit.exception.ts
+msgid "Invalid audit input."
+msgstr "Ugyldigt revisionsinput."
+
+#. js-lingui-id: g/ne5t
+#: src/engine/core-modules/audit/audit.exception.ts
+msgid "Invalid audit type."
+msgstr "Ugyldig revisionstype."
+
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr "Ugyldige CALDAV-legitimationsoplysninger. Tjek venligst dit brugernavn og din adgangskode."
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1673,20 +2385,94 @@ msgstr "Ugyldig opkaldskode {callingCode}"
 msgid "Invalid Captcha, please try another device"
 msgstr "Ugyldig Captcha, prøv venligst en anden enhed"
 
+#. js-lingui-id: guEsvP
+#: src/engine/core-modules/captcha/captcha.exception.ts
+msgid "Invalid captcha. Please try again."
+msgstr "Ugyldig captcha. Prøv igen."
+
+#. js-lingui-id: z4W/Ky
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid composite type."
+msgstr "Ugyldig sammensat type."
+
+#. js-lingui-id: jUt31O
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Invalid connected account ID."
+msgstr "Ugyldigt ID for tilknyttet konto."
+
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Ugyldig landekode {countryCode}"
 
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Ugyldige legitimationsoplysninger. Tjek venligst dit brugernavn og din adgangskode."
+#. js-lingui-id: egz9rA
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Invalid data format."
+msgstr "Ugyldigt dataformat."
+
+#. js-lingui-id: 4xhvWm
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Invalid database event trigger."
+msgstr "Ugyldig udløser for databasehændelse."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid day value. Should be integer greater than 1"
 msgstr "Ugyldig dagværdi. Skal være et heltal større end 1"
+
+#. js-lingui-id: i++4Wk
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid depth parameter."
+msgstr "Ugyldig dybde-parameter."
+
+#. js-lingui-id: 9lqqpY
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Invalid email address."
+msgstr "Ugyldig e-mailadresse."
+
+#. js-lingui-id: YtFgT4
+#: src/engine/core-modules/feature-flag/feature-flag.exception.ts
+msgid "Invalid feature flag key."
+msgstr "Ugyldig funktionsflag-nøgle."
+
+#. js-lingui-id: MaFFIW
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Invalid field input."
+msgstr "Ugyldigt feltinput."
+
+#. js-lingui-id: UcOaIa
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid field metadata."
+msgstr "Ugyldige feltmetadata."
+
+#. js-lingui-id: d6DMa/
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Invalid file ID."
+msgstr "Ugyldigt fil-ID."
+
+#. js-lingui-id: 1yoHmO
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
+msgid "Invalid filter parameter."
+msgstr "Ugyldig filterparameter."
+
+#. js-lingui-id: /GCbsS
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: oxZTCD
+#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
+msgid "Invalid foreign table input."
+msgstr "Ugyldigt input til fremmedtabel."
+
+#. js-lingui-id: lPC0WB
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid group by parameter."
+msgstr "Ugyldig group by-parameter."
 
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1698,6 +2484,37 @@ msgstr "Ugyldig timeværdi. Skal være et heltal mellem 0 og 23"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer greater than 1"
 msgstr "Ugyldig timeværdi. Skal være et heltal større end 1"
+
+#. js-lingui-id: 6WLJFQ
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Invalid identity provider type."
+msgstr "Ugyldig identitetsudbydertype."
+
+#. js-lingui-id: t7SpQO
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Invalid input provided."
+msgstr "Ugyldigt input angivet."
+
+#. js-lingui-id: 4MWDA2
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Invalid issuer URL."
+msgstr "Ugyldig udsteder-URL."
+
+#. js-lingui-id: tm//h9
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Invalid label format."
+msgstr "Ugyldigt etiketformat."
+
+#. js-lingui-id: Y8ap4e
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid limit parameter."
+msgstr "Ugyldig limit-parameter."
+
+#. js-lingui-id: 2VcEMI
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid migration action."
+msgstr "Ugyldig migrationshandling."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1716,6 +2533,76 @@ msgstr "Ugyldig minutværdi. Skal være et heltal større end 1"
 msgid "Invalid morph relation input"
 msgstr "Ugyldigt morf-relationsinput"
 
+#. js-lingui-id: 5ZHOkh
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Invalid object input."
+msgstr "Ugyldigt objektinput."
+
+#. js-lingui-id: t4AABW
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid order by parameter."
+msgstr "Ugyldig order by-parameter."
+
+#. js-lingui-id: f7SWSg
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid order by with group by parameter."
+msgstr "Ugyldig order by med group by-parameter."
+
+#. js-lingui-id: LM08/z
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Invalid page layout data."
+msgstr "Ugyldige sidelayoutdata."
+
+#. js-lingui-id: 5qj/ud
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
+msgid "Invalid page layout tab data."
+msgstr "Ugyldige data for sidelayout-fane."
+
+#. js-lingui-id: mgipnr
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
+msgid "Invalid page layout widget data."
+msgstr "Ugyldige data for sidelayout-widget."
+
+#. js-lingui-id: HiaWGB
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+msgid "Invalid parameters provided."
+msgstr "Ugyldige parametre angivet."
+
+#. js-lingui-id: Pt2vVA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Invalid permission setting."
+msgstr "Ugyldig tilladelsesindstilling."
+
+#. js-lingui-id: 0D0YwP
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone calling code."
+msgstr "Ugyldig opkaldskode."
+
+#. js-lingui-id: P/5moy
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone country code."
+msgstr "Ugyldig telefonlandekode."
+
+#. js-lingui-id: ZmVj5N
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone number."
+msgstr "Ugyldigt telefonnummer."
+
+#. js-lingui-id: r+9b/a
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid price."
+msgstr "Ugyldig pris."
+
+#. js-lingui-id: tkzFzG
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid pricing tiers."
+msgstr "Ugyldige prisniveauer."
+
+#. js-lingui-id: XBYAgs
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Invalid refresh token."
+msgstr "Ugyldigt refresh-token."
+
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
@@ -1727,30 +2614,242 @@ msgstr "Ugyldigt relationsoprettelsesdata"
 msgid "Invalid relation field target"
 msgstr ""
 
+#. js-lingui-id: JQ+mZ6
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Invalid remote server input."
+msgstr "Ugyldigt input til fjernserver."
+
+#. js-lingui-id: exysLG
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Invalid remote table input."
+msgstr "Ugyldigt input til fjerntabel."
+
+#. js-lingui-id: lOyHVQ
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Invalid request."
+msgstr "Ugyldig anmodning."
+
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Invalid response format type"
-msgstr ""
+msgstr "Ugyldig svarformattype"
+
+#. js-lingui-id: hVbdKt
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Invalid role target data."
+msgstr "Ugyldige data for rollemål."
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
 msgstr "Ugyldig indstillingstype leveret i cron-udløser"
 
+#. js-lingui-id: U3r7gv
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Invalid string format."
+msgstr "Ugyldigt strengformat."
+
+#. js-lingui-id: lpSAqb
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Invalid subdomain."
+msgstr "Ugyldigt underdomæne."
+
+#. js-lingui-id: SFQl8b
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription interval."
+msgstr "Ugyldigt abonnementsinterval."
+
+#. js-lingui-id: Do5gvp
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription item."
+msgstr "Ugyldig abonnementslinje."
+
+#. js-lingui-id: mDAXg+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription."
+msgstr "Ugyldigt abonnement."
+
+#. js-lingui-id: LWhrAo
+#: src/engine/core-modules/webhook/webhook.exception.ts
+msgid "Invalid target URL."
+msgstr "Ugyldig mål-URL."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Ugyldig udløsertype til aktivering af arbejdsprocessens udløser"
+
+#. js-lingui-id: spfaiG
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid two-factor authentication configuration."
+msgstr "Ugyldig konfiguration af to-faktor-godkendelse."
+
+#. js-lingui-id: SzaGv7
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid URL format."
+msgstr "Ugyldigt URL-format."
 
 #. js-lingui-id: 1Iyic0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid uuid {id}"
 msgstr "Ugyldig uuid {id}"
 
+#. js-lingui-id: Z3Su9z
+#: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+msgid "Invalid UUID format."
+msgstr ""
+
+#. js-lingui-id: RyBgV/
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Invalid validation token."
+msgstr "Ugyldigt valideringstoken."
+
+#. js-lingui-id: 56bPee
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
+msgid "Invalid value for actor."
+msgstr ""
+
+#. js-lingui-id: Y2KtrW
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
+msgid "Invalid value for address."
+msgstr ""
+
+#. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+msgid "Invalid value for currency."
+msgstr ""
+
+#. js-lingui-id: AUbno1
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: mANTdg
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
+msgid "Invalid value for emails."
+msgstr ""
+
+#. js-lingui-id: SF3Mp4
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
+msgid "Invalid value for full name."
+msgstr ""
+
+#. js-lingui-id: UiMJoF
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: BgSFod
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON."
+msgstr ""
+
+#. js-lingui-id: GFYy9y
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
+msgid "Invalid value for links."
+msgstr ""
+
+#. js-lingui-id: Q6jO3x
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
+msgid "Invalid value for multi-select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
+msgid "Invalid value for number: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: oLqCzh
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
+msgid "Invalid value for phones."
+msgstr ""
+
+#. js-lingui-id: GLmyCK
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
+msgid "Invalid value for position: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+msgid "Invalid value for rich text."
+msgstr ""
+
+#. js-lingui-id: 9lVA5C
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
+msgid "Invalid value for UUID: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
+msgid "Invalid value: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: I4caYo
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid verification code."
+msgstr "Ugyldig verifikationskode."
+
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Ugyldig verificeringskode. Prøv venligst igen."
+
+#. js-lingui-id: bznmUY
+#: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
+msgid "Invalid workflow edge request."
+msgstr "Ugyldig anmodning for arbejdsgangskant."
+
+#. js-lingui-id: E7F6q9
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow input."
+msgstr "Ugyldigt arbejdsgangsinput."
+
+#. js-lingui-id: aYt8SY
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow operation."
+msgstr "Ugyldig arbejdsgangshandling."
+
+#. js-lingui-id: mNaQTB
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow run."
+msgstr "Ugyldig arbejdsgangskørsel."
+
+#. js-lingui-id: dIxBwv
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow status."
+msgstr "Ugyldig arbejdsgangsstatus."
+
+#. js-lingui-id: GRz5NM
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Invalid workflow step request."
+msgstr "Ugyldig anmodning for arbejdsgangstrin."
+
+#. js-lingui-id: 0NdYmj
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "Invalid workflow step type."
+msgstr "Ugyldig type af arbejdsgangstrin."
+
+#. js-lingui-id: dw+g0N
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow trigger configuration."
+msgstr "Ugyldig konfiguration af arbejdsgangsudløser."
+
+#. js-lingui-id: rEIcf+
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow trigger input."
+msgstr "Ugyldigt input til arbejdsgangsudløser."
+
+#. js-lingui-id: 8Dzcmh
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow version."
+msgstr "Ugyldig arbejdsgangsversion."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1808,6 +2907,11 @@ msgstr "Januar"
 msgid "Job Title"
 msgstr "Jobtitel"
 
+#. js-lingui-id: cCj4vg
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Join column name is required."
+msgstr "Navn på join-kolonne er påkrævet."
+
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
@@ -1831,7 +2935,7 @@ msgstr "Json-objekt til at give udløser"
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
-msgstr ""
+msgstr "JSON-svarformat kræver et skema"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1848,16 +2952,53 @@ msgstr "Juli"
 msgid "June"
 msgstr "Juni"
 
+#. js-lingui-id: QS/zML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field metadata not found"
+msgstr "Kanban-hovedgrupperingsfeltets metadata blev ikke fundet"
+
+#. js-lingui-id: ZfLcEk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a select field"
+msgstr "Kanban-hovedgrupperingsfeltet skal være et select-felt"
+
+#. js-lingui-id: RoCvZe
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a SELECT field"
+msgstr "Kanban-hovedgrupperingsfeltet skal være et SELECT-felt"
+
+#. js-lingui-id: mAbBLH
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban view must have a main group by field"
+msgstr "Kanban-visningen skal have et hovedgrupperingsfelt"
+
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
-msgstr ""
+msgstr "Etiket kan ikke være tom"
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Label identifier field cannot be deactivated"
 msgstr "Etiketidentifikatorfelt kan ikke deaktiveres"
+
+#. js-lingui-id: Qx822J
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Label identifier field not found."
+msgstr "Etiketidentifikatorfelt ikke fundet."
 
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
@@ -1879,12 +3020,19 @@ msgstr "Etiket-id visningsfeltet skal være i den laveste position"
 msgid "Label identifier view field has to be visible"
 msgstr "Etiket-id visningsfeltet skal være synligt"
 
+#. js-lingui-id: 6bWuI/
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Label is required."
+msgstr "Etiket er påkrævet."
+
 #. js-lingui-id: 4EGmy6
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "Etiket må ikke være tom"
 
 #. js-lingui-id: k731jp
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "Etiket må ikke indeholde et komma"
@@ -2027,7 +3175,7 @@ msgid "Message Channel Message Associations"
 msgstr "Beskedkanalbeskedtilknytninger"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Meddelelseskanal ikke fundet"
 
@@ -2059,11 +3207,6 @@ msgstr "Beskedmappe"
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message folder import policy"
 msgstr "Beskedmappe importpolitik"
-
-#. js-lingui-id: aIgrkW
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "Message folder not found"
-msgstr ""
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2153,6 +3296,41 @@ msgstr "Adgangstoken for beskedudbyder"
 msgid "Messaging provider refresh token"
 msgstr "Opdateringstoken for beskedudbyder"
 
+#. js-lingui-id: akOVAq
+#: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
+msgid "Metadata version not found."
+msgstr "Metadataversion ikke fundet."
+
+#. js-lingui-id: WFVrzW
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Microsoft API authentication is disabled."
+msgstr "Microsoft API-godkendelse er deaktiveret."
+
+#. js-lingui-id: cuMeE3
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Migration factory not found."
+msgstr "Migrationsfabrik ikke fundet."
+
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr "Minutværdien må ikke overstige 60. For intervaller på over 60 minutter skal du bruge udløsertypen \"Timer\" eller et brugerdefineret cron-udtryk."
+
+#. js-lingui-id: lCnasH
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+msgid "Missing decorator configuration."
+msgstr "Mangler dekoratorkonfiguration."
+
+#. js-lingui-id: u8IV9J
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Missing main alias target."
+msgstr "Hovedaliasmål mangler."
+
+#. js-lingui-id: W5hpOP
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Missing request body."
+msgstr "Anmodningsbody mangler."
+
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
@@ -2162,7 +3340,7 @@ msgstr "Manglende krævede felter: Mindst én unik begrænsning skal være fuldt
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Model ID cannot be empty"
-msgstr ""
+msgstr "Model-ID kan ikke være tomt"
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2184,6 +3362,11 @@ msgstr "Morf-relationsoprettelsesindhold må kun indeholde relation til andre ob
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Morf-relationsoprettelsesindhold må kun indeholde relation til samme objekts metadata"
 
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr "Morph-relationsfeltet skal have et morph id"
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -2193,6 +3376,11 @@ msgstr "Multi-select felt standardværdi skal være et array"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Flere poster fundet med de samme unikke feltværdier for {conflictingFieldsValues}. Kan ikke afgøre, hvilken post der skal opdateres."
+
+#. js-lingui-id: B9dbXq
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Multiple subscriptions found where one was expected."
+msgstr "Flere abonnementer fundet, hvor ét var forventet."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2225,20 +3413,36 @@ msgstr "Navn \"{name}\" er ikke tilgængeligt da det allerede er brugt af et and
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
+#. js-lingui-id: Aam+mb
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Name is not synced with label."
+msgstr "Navn er ikke synkroniseret med etiket."
+
 #. js-lingui-id: Ny5wFU
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
 msgstr "Navn er ikke gyldigt: det skal starte med småt og kun indeholde alfanumeriske tegn"
 
 #. js-lingui-id: zjh2SJ
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too long"
 msgstr "Navnet er for langt"
 
 #. js-lingui-id: go/Vg1
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too short"
 msgstr "Navn er for kort"
+
+#. js-lingui-id: HKHHTk
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Name must be in camelCase format."
+msgstr "Navn skal være i camelCase-format."
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2251,7 +3455,9 @@ msgid "Name of the workflow run"
 msgstr "Navnet på workflow-kørslen"
 
 #. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name should be in camelCase"
 msgstr "Navn skal være i camelCase"
 
@@ -2266,10 +3472,25 @@ msgstr "Navne er ikke synkroniseret med etiketter"
 msgid "New email must be different from current email"
 msgstr ""
 
+#. js-lingui-id: LnV8zi
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "No active subscription found."
+msgstr "Intet aktivt abonnement fundet."
+
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No event name provided in database event trigger"
 msgstr "Ingen begivenhedsnavn angivet i databasehendelsesudløser"
+
+#. js-lingui-id: Xlzkd8
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "No foreign tables found."
+msgstr "Ingen fremmede tabeller fundet."
+
+#. js-lingui-id: 6GG2MJ
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "No identifier to search by was found."
+msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -2285,6 +3506,21 @@ msgstr "Intet mønster angivet i TILPASSET cron-udløser"
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "No permissions are set for this role on the selected object. Please set object permissions first."
 msgstr "Ingen tilladelser er angivet for denne rolle på det valgte objekt. Indstil venligst objekt tilladelser først."
+
+#. js-lingui-id: D2A/H0
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No permissions found in datasource."
+msgstr "Ingen tilladelser fundet i datakilden."
+
+#. js-lingui-id: NcwTz7
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "No records were affected."
+msgstr "Ingen poster blev påvirket."
+
+#. js-lingui-id: 5ZMHXg
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role found for this user in the workspace."
+msgstr "Ingen rolle fundet for denne bruger i arbejdsområdet."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2419,6 +3655,11 @@ msgstr "Talformat"
 msgid "Number of employees in the company"
 msgstr "Antal ansatte i virksomheden"
 
+#. js-lingui-id: 08qKzD
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "OAuth access was denied."
+msgstr "OAuth-adgang blev nægtet."
+
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
@@ -2439,6 +3680,28 @@ msgstr "Objektm�rket er for kort"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Objektnøgle ikke fundet"
+
+#. js-lingui-id: rHce90
+#: src/modules/workflow/common/exceptions/workflow-common.exception.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Object metadata not found."
+msgstr "Objektmetadata ikke fundet."
+
+#. js-lingui-id: AKqp4k
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Object not found."
+msgstr "Objekt ikke fundet."
+
+#. js-lingui-id: Qy6mMO
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Object permission not found."
+msgstr "Objekttilladelse ikke fundet."
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2492,6 +3755,16 @@ msgstr "Oktober"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Et eller flere objekter, du forsøger at indstille tilladelser til, kunne ikke findes. De kan være blevet slettet."
+
+#. js-lingui-id: JZB2eY
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "One or more records were not found."
+msgstr ""
+
+#. js-lingui-id: eYgzEd
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Only field restrictions are allowed."
+msgstr "Kun feltbegrænsninger er tilladt."
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2552,20 +3825,24 @@ msgstr "Mulighedsstadium"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "Muligheds-id er ugyldigt"
 
 #. js-lingui-id: MniXaX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "Muligheds-id er påkrævet"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Mulighedsetiketten \"{sanitizedLabel}\" er under 1 tegn"
 
 #. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Mulighedsetiketten overskrider 63 tegn"
@@ -2588,10 +3865,12 @@ msgstr "Mulighedsetiketten skal være en streng på mindst ét tegn"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Mulighedsværdien \"{sanitizedValue}\" er under 1 tegn"
 
 #. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Mulighedsværdien overskrider 63 tegn"
@@ -2622,11 +3901,141 @@ msgstr "Optioner er påkrævet for enum felter"
 msgid "Page Layout ID"
 msgstr "Side Layout ID"
 
+#. js-lingui-id: xCAYz6
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout is not deleted and cannot be restored"
+msgstr "Sidelayoutet er ikke slettet og kan ikke gendannes"
+
+#. js-lingui-id: ZKtamk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout not found"
+msgstr "Sidelayoutet blev ikke fundet"
+
+#. js-lingui-id: C4+axZ
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Page layout not found."
+msgstr "Sidelayoutet blev ikke fundet."
+
+#. js-lingui-id: tR9faK
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab is not deleted and cannot be restored"
+msgstr "Sidelayout-fanen er ikke slettet og kan ikke gendannes"
+
+#. js-lingui-id: qJ9V6q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout tab not found"
+msgstr "Sidelayout-fanen blev ikke fundet"
+
+#. js-lingui-id: pOITp3
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
+msgid "Page layout tab not found."
+msgstr "Sidelayout-fanen blev ikke fundet."
+
+#. js-lingui-id: CWtQfv
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to delete not found"
+msgstr "Sidelayout-fane til sletning ikke fundet"
+
+#. js-lingui-id: LTouJ4
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to destroy not found"
+msgstr "Sidelayout-fane til destruktion ikke fundet"
+
+#. js-lingui-id: BaYGVl
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to restore not found"
+msgstr "Sidelayout-fane til gendannelse ikke fundet"
+
+#. js-lingui-id: m8tBqi
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
+msgid "Page layout tab to update not found"
+msgstr "Sidelayout-fane til opdatering ikke fundet"
+
+#. js-lingui-id: eQHXfb
+#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to delete not found"
+msgstr "Sidelayout til sletning ikke fundet"
+
+#. js-lingui-id: zrm54u
+#: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to destroy not found"
+msgstr "Sidelayout til destruktion ikke fundet"
+
+#. js-lingui-id: TsrNXq
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to restore not found"
+msgstr "Sidelayout til gendannelse ikke fundet"
+
+#. js-lingui-id: /5c/t7
+#: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
+msgid "Page layout to update not found"
+msgstr "Sidelayout til opdatering ikke fundet"
+
+#. js-lingui-id: k6Npai
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget already exists"
+msgstr "Sidelayout-widget eksisterer allerede"
+
+#. js-lingui-id: A3hsQ6
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget is not deleted and cannot be restored"
+msgstr "Sidelayout-widgetten er ikke slettet og kan ikke gendannes"
+
+#. js-lingui-id: GcU04G
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
+msgid "Page layout widget not found."
+msgstr "Sidelayout-widget ikke fundet."
+
+#. js-lingui-id: 7QlaTN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to delete not found"
+msgstr "Sidelayout-widget til sletning ikke fundet"
+
+#. js-lingui-id: v2G/zq
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to destroy not found"
+msgstr "Sidelayout-widget til destruktion ikke fundet"
+
+#. js-lingui-id: fDTVnj
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to restore not found"
+msgstr "Sidelayout-widget til gendannelse ikke fundet"
+
+#. js-lingui-id: yCsIxc
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
+msgid "Page layout widget to update not found"
+msgstr "Sidelayout-widget til opdatering ikke fundet"
+
+#. js-lingui-id: +4z9mT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
+msgstr "Sidelayout-widget med id {flatPageLayoutWidgetId} eksisterer allerede"
+
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
 msgstr "Overordnet Mappe-ID"
+
+#. js-lingui-id: /GJDxy
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Password is too weak."
+msgstr ""
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -2663,6 +4072,11 @@ msgstr "Personer"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "Personer knyttet til virksomheden."
+
+#. js-lingui-id: vcvSI3
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Permission not found."
+msgstr "Tilladelse ikke fundet."
 
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2719,6 +4133,27 @@ msgstr "Angiv venligst forbindelsesdetaljer for at konfigurere din e-mail konto.
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "Vælg venligst en gyldig forbindelsestype (IMAP, SMTP, eller CalDAV) og prøv igen."
 
+#. js-lingui-id: sa9Q+R
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Please select at least 2 records to merge."
+msgstr ""
+
+#. js-lingui-id: RAkwUZ
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Please use a company email domain."
+msgstr "Brug venligst et firma-e-mail-domæne."
+
+#. js-lingui-id: Sguqn/
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
+msgid "Please use Settings to remove a workspace member."
+msgstr ""
+
+#. js-lingui-id: f8ypJ4
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Please use single sign-on to authenticate."
+msgstr "Brug venligst single sign-on til at autentificere dig."
+
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
@@ -2761,7 +4196,7 @@ msgstr "Sandsynlighed"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
-msgstr ""
+msgstr "Prompt kan ikke være tom"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -2798,15 +4233,45 @@ msgstr "udbyder"
 msgid "Public domain already registered"
 msgstr "Offentligt domæne allerede registreret"
 
+#. js-lingui-id: Vr4xfK
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "Public domain not found."
+msgstr "Offentligt domæne ikke fundet."
+
 #. js-lingui-id: Capzni
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Offentlig domæne URL er ikke defineret. Sæt venligst miljøvariablet PUBLIC_DOMAIN_URL."
 
+#. js-lingui-id: 9QTny9
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Query failed."
+msgstr "Forespørgsel mislykkedes."
+
+#. js-lingui-id: 6H9kMC
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Query timed out. Please try again."
+msgstr "Forespørgsel fik timeout. Prøv igen."
+
+#. js-lingui-id: xD2MTL
+#: src/engine/core-modules/throttler/throttler.exception.ts
+msgid "Rate limit reached. Please try again later."
+msgstr "Hastighedsgrænse nået. Prøv igen senere."
+
+#. js-lingui-id: 8G8dJM
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Raw SQL queries are not allowed."
+msgstr "Rå SQL-forespørgsler er ikke tilladt."
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Modtaget kl"
+
+#. js-lingui-id: 4R+xJM
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Record not found."
+msgstr "Post ikke fundet."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2819,10 +4284,25 @@ msgstr "Tilbagevendende begivenheds-ID"
 msgid "Refresh Token"
 msgstr "Opdateringstoken"
 
+#. js-lingui-id: 1GvzpH
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Refresh token not found."
+msgstr "Refresh-token ikke fundet."
+
+#. js-lingui-id: 2dNwZB
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Related record not found."
+msgstr "Relateret post ikke fundet."
+
 #. js-lingui-id: 2LpFdR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Related user email address"
 msgstr "Relateret brugers e-mail-adresse"
+
+#. js-lingui-id: 2LXGtF
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Relation configuration is invalid."
+msgstr "Relationskonfiguration er ugyldig."
 
 #. js-lingui-id: +bFtT5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
@@ -2834,6 +4314,11 @@ msgstr "Relationsoprettelsesdata er påkrævet"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
 msgstr "Relationsfelt målmetadata ikke fundet"
+
+#. js-lingui-id: 83atrc
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Relation is not enabled for this field."
+msgstr "Relation er ikke aktiveret for dette felt."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2854,25 +4339,50 @@ msgstr "Fjernobjekter er ikke produktionsklare endnu"
 msgid "Remote objects are not supported yet"
 msgstr "Fjernobjekter understøttes endnu ikke"
 
+#. js-lingui-id: haIkpk
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Remote server already exists."
+msgstr "Fjernserver findes allerede."
+
+#. js-lingui-id: kcB/qR
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Remote server not found."
+msgstr "Fjernserver ikke fundet."
+
+#. js-lingui-id: QxXX+p
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Remote table already exists."
+msgstr "Fjern tabel findes allerede."
+
+#. js-lingui-id: eaN14K
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Remote table not found."
+msgstr "Fjern tabel ikke fundet."
+
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Anmodningen er udløbet, prøv igen."
 
+#. js-lingui-id: sSkbaZ
+#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
+msgid "Request timed out."
+msgstr "Anmodning fik timeout."
+
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format type must be either \"text\" or \"json\""
-msgstr ""
+msgstr "Svarformattypen skal enten være \"text\" eller \"json\""
 
 #. js-lingui-id: 6Plp3x
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include a schema"
-msgstr ""
+msgstr "Svarformat med typen \"json\" skal indeholde et skema"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"text\" should not include a schema"
-msgstr ""
+msgstr "Svarformat med typen \"text\" bør ikke indeholde et skema"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2904,6 +4414,16 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
 
+#. js-lingui-id: ViBevc
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role cannot be assigned to this entity."
+msgstr "Rollen kan ikke tildeles denne entitet."
+
+#. js-lingui-id: zeffu9
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Role must have at least one target."
+msgstr "Rollen skal have mindst ét mål."
+
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -2915,6 +4435,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role not found"
 msgstr ""
+
+#. js-lingui-id: /BTyf+
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Role not found."
+msgstr "Rolle ikke fundet."
+
+#. js-lingui-id: ctpIGF
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role target is missing identifier."
+msgstr "Rollemål mangler identifikator."
 
 #. js-lingui-id: oCyyzG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
@@ -2930,16 +4462,31 @@ msgstr ""
 msgid "Role target not found"
 msgstr ""
 
+#. js-lingui-id: gz6uii
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role target not found."
+msgstr "Rollemål ikke fundet."
+
 #. js-lingui-id: alYNOd
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this id already exists"
 msgstr ""
 
+#. js-lingui-id: Ub8R48
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Roles and permissions configuration not found."
+msgstr "Konfiguration af roller og tilladelser ikke fundet."
+
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
 msgstr "Rute findes allerede"
+
+#. js-lingui-id: AcyaP/
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route already exists."
+msgstr "Rute findes allerede."
 
 #. js-lingui-id: ldQZkA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -2949,10 +4496,20 @@ msgstr "Rute findes allerede"
 msgid "Route not found"
 msgstr "Rute ikke fundet"
 
+#. js-lingui-id: F35apa
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route not found."
+msgstr "Rute ikke fundet."
+
 #. js-lingui-id: NCQS+K
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route path already exists"
 msgstr "Rute sti findes allerede"
+
+#. js-lingui-id: mF5BSU
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route path already exists."
+msgstr "Rutesti findes allerede."
 
 #. js-lingui-id: v5H7VS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -2996,6 +4553,11 @@ msgstr "September"
 msgid "Serverless function already exists"
 msgstr "Serverløs funktion eksisterer allerede"
 
+#. js-lingui-id: qqeQGz
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Serverless function execution failed."
+msgstr "Kørsel af serverløs funktion mislykkedes."
+
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -3016,6 +4578,14 @@ msgstr "Serverløs funktion eksisterer allerede"
 msgid "Serverless function not found"
 msgstr "Serverløs funktion ikke fundet"
 
+#. js-lingui-id: 4oHY1L
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Serverless function not found."
+msgstr "Serverløs funktion ikke fundet."
+
 #. js-lingui-id: jNhvmj
 #: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
 msgid "Serverless function to update not found"
@@ -3031,6 +4601,16 @@ msgstr "Serverløs funktion med samme id eksisterer allerede"
 msgid "Settings"
 msgstr "Indstillinger"
 
+#. js-lingui-id: e1k+No
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Sign up is disabled."
+msgstr "Tilmelding er deaktiveret."
+
+#. js-lingui-id: 4AomZC
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Single sign-on authentication failed."
+msgstr "Single sign-on-autentificering mislykkedes."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -3041,15 +4621,35 @@ msgstr "Nogle af de oplysninger, der er angivet, er ugyldige. Kontroller venligs
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Nogle af de tilladelser du har valgt er ugyldige. Prøv venligst igen med gyldige tilladelsesindstillinger."
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr "Nogle medlemskaber til arbejdsområdet kunne ikke findes. De har muligvis ikke længere adgang til dette arbejdsområde."
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
 msgstr ""
 
+#. js-lingui-id: IP+RN5
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "SSO configuration error."
+msgstr "SSO-konfigurationsfejl."
+
+#. js-lingui-id: NflMcG
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "SSO is disabled."
+msgstr "SSO er deaktiveret."
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Fase"
+
+#. js-lingui-id: 7XNKWU
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Standard agents cannot be modified."
+msgstr "Standardagenter kan ikke ændres."
 
 #. js-lingui-id: dc5N0o
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -3103,11 +4703,36 @@ msgstr "Statuser kan ikke sættes manuelt."
 msgid "Step is not a form"
 msgstr "Trin er ikke en formular"
 
+#. js-lingui-id: An2IAh
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Subdomain not found."
+msgstr "Underdomæne ikke fundet."
+
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Emne"
+
+#. js-lingui-id: x0Vn7k
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription is not in trial period."
+msgstr "Abonnement er ikke i prøveperiode."
+
+#. js-lingui-id: nnWIIb
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription item not found."
+msgstr "Abonnementslinje ikke fundet."
+
+#. js-lingui-id: uo7UmH
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription not found."
+msgstr "Abonnement ikke fundet."
+
+#. js-lingui-id: VNohoc
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription phase not found."
+msgstr "Abonnementsfase ikke fundet."
 
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3149,6 +4774,11 @@ msgstr "Synkroniseringstrin startet kl"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Synkroniseringsstatus"
+
+#. js-lingui-id: 8UWeLh
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Tab not found for widget duplication."
+msgstr "Fane ikke fundet til duplikering af widget."
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -3268,6 +4898,18 @@ msgstr "Opgavemålperson"
 msgid "TaskTarget task"
 msgstr "Opgavemålopgave"
 
+#. js-lingui-id: M10it4
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Test error"
+msgstr "Testfejl"
+
+#. js-lingui-id: J+cH9z
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Test user friendly message"
+msgstr "Test brugervenlig meddelelse"
+
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3277,7 +4919,7 @@ msgstr "Tekst"
 #. js-lingui-id: mQj02P
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Text response format should not have a schema"
-msgstr ""
+msgstr "Tekst-svarformat bør ikke have et skema"
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3292,7 +4934,7 @@ msgstr "Kontoens udbyder"
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "Agenten, du leder efter, kunne ikke findes. Den kan være blevet slettet, eller du har måske ikke adgang til den."
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3347,10 +4989,20 @@ msgstr "Datoen beskeden blev modtaget"
 msgid "The default role cannot be deleted as it is required for the workspace to function properly."
 msgstr "Standardrollen kan ikke slettes, da det er nødvendigt for at workspace skal fungere korrekt."
 
+#. js-lingui-id: 0biWRI
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "The default role cannot be deleted."
+msgstr "Standardrollen kan ikke slettes."
+
 #. js-lingui-id: 6BBrjb
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Standardrollen for dette workspace kunne ikke findes. Kontakt venligst support for hjælp."
+
+#. js-lingui-id: 22Peto
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "The domain does not match your email domain."
+msgstr "Domænet stemmer ikke overens med dit e-mail-domæne."
 
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3388,10 +5040,15 @@ msgstr "Objektet, du forsøger at indstille tilladelser for, kunne ikke findes. 
 msgid "The opportunity name"
 msgstr "Mulighedens navn"
 
-#. js-lingui-id: lk5nUN
-#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
-msgid "The request is too complex to process. Please try reducing the amount of data requested."
-msgstr ""
+#. js-lingui-id: pv+BoZ
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested fields."
+msgstr "Anmodningen er for kompleks at behandle. Prøv at reducere antallet af felter, der anmodes om."
+
+#. js-lingui-id: 4LVaa7
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
+msgstr "Anmodningen er for kompleks at behandle. Prøv at reducere antallet af root resolvere, der anmodes om."
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
@@ -3447,35 +5104,213 @@ msgstr "Navnet på workflow versionen"
 msgid "The workflow version status"
 msgstr "Status for workflow versionen"
 
+#. js-lingui-id: a6NBQe
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "The workspace member who last updated the record"
+msgstr ""
+
+#. js-lingui-id: mTxjri
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "There is an issue with your invitation. Please try again."
+msgstr ""
+
+#. js-lingui-id: gH+wBS
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "There is an issue with your token. Please try again."
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Der var et problem med dine forbindelsesindstillinger. Prøv venligst igen."
+
+#. js-lingui-id: Iy9pZw
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldLabel} value is already in use. Please check your data and try again."
+msgstr "Værdien for {fieldLabel} er allerede i brug. Kontroller dine data, og prøv igen."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Denne API-nøgle er blevet tilbagekaldt og kan ikke længere bruges."
 
+#. js-lingui-id: K02c+I
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has been revoked."
+msgstr "Denne API-nøgle er blevet tilbagekaldt."
+
+#. js-lingui-id: OLL1W0
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has expired."
+msgstr "Denne API-nøgle er udløbet."
+
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Denne API-nøgle er udløbet. Opret venligst en ny."
 
+#. js-lingui-id: 9J2vmW
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has no role assigned."
+msgstr "Denne API-nøgle har ingen rolle tildelt."
+
+#. js-lingui-id: ADtO2E
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "This connection is not allowed."
+msgstr "Denne forbindelse er ikke tilladt."
+
+#. js-lingui-id: z7bcpf
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain has already been validated."
+msgstr "Dette domæne er allerede blevet valideret."
+
+#. js-lingui-id: RQbcZC
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain has already been verified."
+msgstr "Dette domæne er allerede blevet verificeret."
+
+#. js-lingui-id: 3eKCDz
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is already registered as a custom domain."
+msgstr "Dette domæne er allerede registreret som et brugerdefineret domæne."
+
+#. js-lingui-id: s6batt
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain is already registered."
+msgstr "Dette domæne er allerede registreret."
+
+#. js-lingui-id: 8sTsIR
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This domain is already taken."
+msgstr "Dette domæne er allerede taget."
+
+#. js-lingui-id: NcQ6eO
+#: src/engine/core-modules/user/user.exception.ts
+msgid "This email is already in use."
+msgstr "Denne e-mail er allerede i brug."
+
+#. js-lingui-id: hsi+jf
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This feature is not enabled."
+msgstr "Denne funktion er ikke aktiveret."
+
+#. js-lingui-id: MKqbeR
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This field cannot be modified."
+msgstr "Dette felt kan ikke ændres."
+
+#. js-lingui-id: AKIPVa
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This field name is not available."
+msgstr "Dette feltnavn er ikke tilgængeligt."
+
+#. js-lingui-id: JwdaFV
+#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
+msgid "This foreign table cannot be modified."
+msgstr "Denne fremmede tabel kan ikke ændres."
+
+#. js-lingui-id: 6Z/zIt
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This method is not allowed."
+msgstr "Denne metode er ikke tilladt."
+
+#. js-lingui-id: /XKGep
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This name is a reserved keyword."
+msgstr "Dette navn er et reserveret nøgleord."
+
+#. js-lingui-id: yIUmAs
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "This name is not available."
+msgstr "Dette navn er ikke tilgængeligt."
+
 #. js-lingui-id: gPBck6
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr ""
+msgstr "Dette navn er reserveret. Brug et andet navn, ellers vil systemet tilføje suffikset \"Custom\"."
+
+#. js-lingui-id: R8zIJd
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "This object cannot be modified."
+msgstr "Dette objekt kan ikke ændres."
+
+#. js-lingui-id: 7ZdJO2
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "This operation is not allowed."
+msgstr "Denne handling er ikke tilladt."
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "Denne handling er ikke tilladt. Prøv venligst en anden tilgang eller kontakt support, hvis du har brug for hjælp."
 
+#. js-lingui-id: bEhTPN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "This operation is not supported."
+msgstr "Denne handling understøttes ikke."
+
+#. js-lingui-id: Y5C3uK
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "This provider is not supported."
+msgstr "Denne udbyder understøttes ikke."
+
+#. js-lingui-id: 8achGR
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This public domain is already registered."
+msgstr "Dette offentlige domæne er allerede registreret."
+
 #. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Denne optegnelse eksisterer allerede. Tjek venligst dine data og prøv igen."
+
+#. js-lingui-id: 0arbc4
+#: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
+msgid "This record does not exist or has been deleted."
+msgstr ""
+
+#. js-lingui-id: NxunhS
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "This remote server cannot be modified."
+msgstr "Denne fjernserver kan ikke ændres."
+
+#. js-lingui-id: rExecr
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "This role cannot be assigned to agents."
+msgstr "Denne rolle kan ikke tildeles agenter."
+
+#. js-lingui-id: UP3ZAj
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This role cannot be assigned to API keys."
+msgstr "Denne rolle kan ikke tildeles API-nøgler."
+
+#. js-lingui-id: c68K+k
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This role cannot be assigned to users."
+msgstr "Denne rolle kan ikke tildeles brugere."
+
+#. js-lingui-id: 2jnsqJ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This role cannot be edited."
+msgstr "Denne rolle kan ikke redigeres."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
@@ -3484,6 +5319,26 @@ msgstr "Denne optegnelse eksisterer allerede. Tjek venligst dine data og prøv i
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Denne rolle kan ikke ændres, da det er en systemrolle. Kun brugerdefinerede roller kan redigeres."
+
+#. js-lingui-id: nFIPim
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This subdomain is already taken."
+msgstr "Dette underdomæne er allerede taget."
+
+#. js-lingui-id: aXBMTb
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "This type of record cannot be merged."
+msgstr ""
+
+#. js-lingui-id: GEN5Cv
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "This user is already a member of the workspace."
+msgstr "Denne bruger er allerede medlem af arbejdsområdet."
+
+#. js-lingui-id: LtsBYU
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "This variable can only be set via environment."
+msgstr "Denne variabel kan kun sættes via miljøet."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3591,15 +5446,60 @@ msgstr "Tidslinjeaktivitet"
 msgid "Title"
 msgstr "Titel"
 
+#. js-lingui-id: /ObxXq
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Too many admin candidates found."
+msgstr "Der blev fundet for mange admin-kandidater."
+
+#. js-lingui-id: MYdvBz
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Too many records affected."
+msgstr "For mange poster blev berørt."
+
+#. js-lingui-id: ExheIC
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Too many records to update at once."
+msgstr "For mange poster at opdatere på én gang."
+
+#. js-lingui-id: M68C8m
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Too many requests. Please try again later."
+msgstr "For mange forespørgsler. Prøv igen senere."
+
 #. js-lingui-id: mfqtz7
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Too many workspace invitations sent. Please try again later."
 msgstr ""
 
+#. js-lingui-id: VD8J6l
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Trigger not found."
+msgstr "Udløser ikke fundet."
+
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Tirsdag"
+
+#. js-lingui-id: T+yZIr
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Two-factor authentication is already set up."
+msgstr "To-faktor-godkendelse er allerede sat op."
+
+#. js-lingui-id: lNKrNc
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Two-factor authentication method not found."
+msgstr "Metode til to-faktor-godkendelse ikke fundet."
+
+#. js-lingui-id: 7Z7wx7
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Two-factor authentication setup is required."
+msgstr "Opsætning af to-faktor-godkendelse er påkrævet."
+
+#. js-lingui-id: VT9cmj
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Two-factor authentication verification is required."
+msgstr "Verifikation af to-faktor-godkendelse er påkrævet."
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3617,6 +5517,26 @@ msgstr "Type (forældet)"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Unik indeks kan ikke oprettes for felt {fieldName} af typen {fieldType}"
 
+#. js-lingui-id: tEncxN
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Unknown operation."
+msgstr "Ukendt handling."
+
+#. js-lingui-id: BIxgma
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Unknown permission required."
+msgstr "Den påkrævede tilladelse er ukendt."
+
+#. js-lingui-id: Md/2jb
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Unsupported composite column type."
+msgstr "Ikke-understøttet sammensat kolonnetype."
+
+#. js-lingui-id: 1r7kLp
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Unsupported configuration type."
+msgstr "Ikke-understøttet konfigurationstype."
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3633,6 +5553,25 @@ msgstr "Ikke-understøttet feltmetadata type {fieldType}"
 msgid "Update DateTime"
 msgstr "Opdateringsdato og -tid"
 
+#. js-lingui-id: lHCFXi
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Update field restrictions only apply to updatable objects."
+msgstr "Begrænsninger for opdatering af felter gælder kun for opdaterbare objekter."
+
+#. js-lingui-id: KQsreu
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+msgid "Updated by"
+msgstr ""
+
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
@@ -3643,11 +5582,22 @@ msgstr "Opdateret feltnavn er ikke synkroniseret med etiket"
 msgid "User already exists"
 msgstr "Brugeren eksisterer allerede"
 
+#. js-lingui-id: 9QHVZ2
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "User already has a role assigned."
+msgstr "Brugeren har allerede en tildelt rolle."
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Brugeren har ikke adgang til dette arbejdsområde"
+
+#. js-lingui-id: kZ0tmK
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User does not have access to this workspace."
+msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -3658,6 +5608,12 @@ msgstr "Bruger har ikke tilladelse."
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "Brugerens e-mail"
+
+#. js-lingui-id: EHZMfR
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "User friendly error message"
+msgstr "Brugervenlig fejlmeddelelse"
 
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3675,6 +5631,13 @@ msgstr "Brugeren er ikke en del af arbejdsområdet."
 msgid "User is not part of the workspace"
 msgstr "Brugeren er ikke en del af arbejdsområdet"
 
+#. js-lingui-id: siJgSI
+#: src/engine/core-modules/user/user.exception.ts
+#: src/engine/core-modules/sso/sso.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "User not found."
+msgstr "Bruger ikke fundet."
+
 #. js-lingui-id: g5Z6no
 #: src/engine/core-modules/admin-panel/admin-panel.service.ts
 msgid "User not found. Please check the email or ID."
@@ -3689,6 +5652,20 @@ msgstr "Brugerens tidszone"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Bruger blev ikke oprettet med e-mail/adgangskode"
+
+#. js-lingui-id: lUEEso
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/core-modules/user-workspace/user-workspace.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User workspace not found."
+msgstr "Brugerens arbejdsområde ikke fundet."
+
+#. js-lingui-id: 9mCrQp
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "User workspace role configuration not found."
+msgstr "Konfiguration af brugerens arbejdsområderolle ikke fundet."
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3717,6 +5694,7 @@ msgstr "Validering mislykkedes for 0 objekt(er) og 0 felt(er)"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Værdien skal være i STORE_BOGSTAVER og følge snake_case \"{sanitizedValue}\""
 
@@ -3744,6 +5722,11 @@ msgstr "Versioner"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
 msgstr "Visning eksisterer allerede"
+
+#. js-lingui-id: kB0dDD
+#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+msgid "View already exists."
+msgstr "Visning eksisterer allerede."
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3871,12 +5854,6 @@ msgstr "Visningsgruppe til destruktion ikke fundet"
 msgid "View group to update not found"
 msgstr "Visningsgruppe til opdatering ikke fundet"
 
-#. js-lingui-id: XbOhpY
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-msgid "View group to update parent field not found"
-msgstr "Visningsgruppe til opdatering af forældre felt ikke fundet"
-
 #. js-lingui-id: P0grPG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -3904,6 +5881,11 @@ msgstr "Kanban-aggregeringsfeltets metadata blev ikke fundet"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
 msgstr "Visning ikke fundet"
+
+#. js-lingui-id: yheEin
+#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+msgid "View not found."
+msgstr "Visning ikke fundet."
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -3994,6 +5976,11 @@ msgstr "Vi kunne ikke logge ind på din e-mail konto. Tjek venligst din e-mail a
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Vi oplevede et problem med forbindelsen til din e-mail konto. Tjek venligst dine indstillinger og prøv igen."
 
+#. js-lingui-id: b8g3PG
+#: src/engine/core-modules/webhook/webhook.exception.ts
+msgid "Webhook not found."
+msgstr "Webhook ikke fundet."
+
 #. js-lingui-id: VAcXNz
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
@@ -4022,15 +6009,30 @@ msgstr "Arbejdsprocesser"
 msgid "Workflow automated triggers linked to the workflow."
 msgstr "Automatiserede arbejdsprocesudløsere knyttet til arbejdsprocessen."
 
+#. js-lingui-id: KSK8fH
+#: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
+msgid "Workflow edge not found."
+msgstr "Arbejdsgangskant ikke fundet."
+
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
 msgstr "Arbejdsgang knyttet til kørslen."
 
+#. js-lingui-id: R67jts
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow not found."
+msgstr ""
+
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
 msgstr "Arbejdsgangs posteringsposition"
+
+#. js-lingui-id: ysb9m+
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow root step not found."
+msgstr "Arbejdsgangens rodtrin ikke fundet."
 
 #. js-lingui-id: 5vIcqC
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4054,6 +6056,16 @@ msgstr "Arbejdsgangskørsel stillet i kø kl"
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Workflow run is not running"
 msgstr "Workflow-kørsel kører ikke"
+
+#. js-lingui-id: AzylSS
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow run limit reached."
+msgstr "Grænsen for arbejdsgangskørsler er nået."
+
+#. js-lingui-id: daijCZ
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow run not found."
+msgstr "Arbejdsgangskørsel ikke fundet."
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4086,6 +6098,12 @@ msgstr "Arbejdsgangskørsler knyttet til versionen."
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
 msgstr "Arbejdsgangskørsler knyttet til arbejdsgangen."
+
+#. js-lingui-id: dD9Vpa
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Workflow step not found."
+msgstr "Arbejdsgangstrin ikke fundet."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4168,6 +6186,16 @@ msgstr "Arbejdsgangversions arbejdsgang"
 msgid "Workspace creation is restricted to admins"
 msgstr "Oprettelse af arbejdsområder er begrænset til administratorer"
 
+#. js-lingui-id: qSQPRS
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Workspace does not exist."
+msgstr ""
+
+#. js-lingui-id: oLh4c+
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Workspace ID and role mismatch."
+msgstr "Uoverensstemmelse mellem arbejdsområde-ID og rolle."
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
@@ -4198,6 +6226,11 @@ msgstr "Arbejdsområdemedlems avatar"
 msgid "Workspace member name"
 msgstr "Arbejdsområdemedlems navn"
 
+#. js-lingui-id: rnnLQA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Workspace member not found."
+msgstr "Arbejdsområdemedlem ikke fundet."
+
 #. js-lingui-id: NiUpuN
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
@@ -4207,6 +6240,37 @@ msgstr "Arbejdsområdemedlems position"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Arbejdsområdemedlemmer"
+
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
+
+#. js-lingui-id: eQwIyW
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace not found for customer event."
+msgstr "Arbejdsområde ikke fundet for kundebegivenhed."
+
+#. js-lingui-id: 5Io9Sh
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace not found for subscription event."
+msgstr "Arbejdsområde ikke fundet for abonnementsbegivenhed."
+
+#. js-lingui-id: EhVOPs
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/workspace/workspace.exception.ts
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Workspace not found."
+msgstr "Arbejdsområde ikke fundet."
+
+#. js-lingui-id: 7wxAZI
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Workspace schema not found."
+msgstr "Arbejdsområdeskema ikke fundet."
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4246,15 +6310,24 @@ msgstr "Arbejdsområdemedlem"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "Forkert adgangskode"
+
+#. js-lingui-id: RksBK0
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password."
+msgstr ""
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 84/Dko
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
@@ -4287,10 +6360,20 @@ msgstr "Du kan ikke indstille felttilladelser på systemobjekter, da de administ
 msgid "You cannot set permissions on system objects as they are managed by the platform."
 msgstr "Du kan ikke indstille tilladelser på systemobjekter, da de administreres af platformen."
 
+#. js-lingui-id: bAPURS
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot update your own role."
+msgstr "Du kan ikke opdatere din egen rolle."
+
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Du har ikke adgang til denne funktion. Kontakt venligst din workspace administrator for adgang."
+
+#. js-lingui-id: nPwrik
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "You do not have permission to access this workflow."
+msgstr "Du har ikke tilladelse til at få adgang til denne arbejdsgang."
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
@@ -4302,10 +6385,28 @@ msgstr "Du har ikke tilladelse til at slette denne bruger fra arbejdsområdet. K
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Du har ikke adgang til at efterligne brugere. Kontakt venligst din workspace administrator for adgang."
 
+#. js-lingui-id: q5OVn+
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "You do not have permission to perform this action."
+msgstr "Du har ikke tilladelse til at udføre denne handling."
+
+#. js-lingui-id: C9jd/U
+#: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
+msgid "You do not have permission to perform this workflow action."
+msgstr "Du har ikke tilladelse til at udføre denne arbejdsgangshandling."
+
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Du har ikke adgang til at opdatere disse felter: {fieldsList}. Kontakt venligst din workspace administrator."
+
+#. js-lingui-id: ZPo5fR
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -4317,7 +6418,13 @@ msgstr "Du har ikke tilladelse til at oprette visninger på workspace-niveau."
 msgid "You don't have permission to modify this view."
 msgstr "Du har ikke tilladelse til at ændre denne visning."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "Du har opbrugt dine kreditter. Opgrader venligst dit abonnement for at fortsætte."
+
 #. js-lingui-id: z+7x/s
+#: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Du skal være autentificeret for at udføre denne handling."
@@ -4353,8 +6460,3 @@ msgstr "Dit teammedlem ansvarlig for at forvalte virksomhedens konto"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Dit arbejdsområde er blevet opdateret med en ny datamodel. Opdater venligst siden."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Din workspace medlemsskab kunne ikke findes. Du har muligvis ikke længere adgang til denne workspace."

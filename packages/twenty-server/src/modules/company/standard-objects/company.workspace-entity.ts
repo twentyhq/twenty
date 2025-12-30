@@ -52,7 +52,6 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
-
   namePlural: 'companies',
   labelSingular: msg`Company`,
   labelPlural: msg`Companies`,
@@ -169,6 +168,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
+
   // Relations
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
@@ -267,6 +276,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetCompany',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

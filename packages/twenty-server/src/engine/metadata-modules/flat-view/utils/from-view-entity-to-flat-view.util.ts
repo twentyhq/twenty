@@ -1,17 +1,22 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/view-entity-relation-properties.constant';
+import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 export const fromViewEntityToFlatView = (viewEntity: ViewEntity): FlatView => {
   const viewEntityWithoutRelations = removePropertiesFromRecord(
     viewEntity,
-    VIEW_ENTITY_RELATION_PROPERTIES,
+    Object.keys(
+      ALL_METADATA_RELATION_PROPERTIES.view,
+    ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.view)[],
   );
 
   return {
     ...viewEntityWithoutRelations,
+    createdAt: viewEntity.createdAt.toISOString(),
+    updatedAt: viewEntity.updatedAt.toISOString(),
+    deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       viewEntityWithoutRelations.universalIdentifier ??
       viewEntityWithoutRelations.id,

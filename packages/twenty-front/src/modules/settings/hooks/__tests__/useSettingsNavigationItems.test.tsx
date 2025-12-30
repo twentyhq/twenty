@@ -18,7 +18,7 @@ import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manage
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { messages } from '../../../../locales/generated/en';
+import { messages } from '~/locales/generated/en';
 
 i18n.load({
   [SOURCE_LOCALE]: messages,

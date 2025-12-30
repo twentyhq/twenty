@@ -1,0 +1,178 @@
+---
+title: Tastenkombinationen
+---
+
+## Einführung
+
+Wenn Sie eine Tastenkombination abhören müssen, verwenden Sie normalerweise den `onKeyDown` Event-Listener.
+
+In `twenty-front` jedoch könnten Sie Konflikte zwischen gleichen Tastenkombinationen haben, die in verschiedenen Komponenten, die gleichzeitig eingebunden sind, verwendet werden.
+
+Zum Beispiel, wenn Sie eine Seite haben, die auf die Enter-Taste hört, und ein Modal das auf die Enter-Taste hört, und ein Select-Element innerhalb dieses Modals auf die Enter-Taste hört, könnte ein Konflikt entstehen, wenn alle gleichzeitig eingebunden sind.
+
+## Der `useScopedHotkeys` Hook
+
+Um dieses Problem zu lösen, verfügen wir über einen benutzerdefinierten Hook, der es ermöglicht, auf Tastenkombinationen zu hören, ohne Konflikte.
+
+Sie platzieren ihn in einer Komponente, und er wird auf die Tastenkombinationen nur hören, wenn die Komponente eingebunden ist UND wenn der spezifizierte **Tastenkombinationsbereich** aktiv ist.
+
+## Wie hört man in der Praxis auf Tastenkombinationen?
+
+Es gibt zwei Schritte, um das Abhören von Tastenkombinationen einzurichten:
+
+1. Setzen Sie den [Tastenkombinationsbereich](#what-is-a-hotkey-scope-), der auf Tastenkombinationen hören wird
+2. Verwenden Sie den `useScopedHotkeys` Hook, um auf Tastenkombinationen zu hören
+
+Das Einrichten von Tastenkombinationsbereichen ist auch bei einfachen Seiten erforderlich, da andere UI-Elemente wie das linke Menü oder das Befehlsmenü ebenfalls auf Tastenkombinationen hören könnten.
+
+## Anwendungsfälle für Tastenkombinationen
+
+Im Allgemeinen haben Sie zwei Anwendungsfälle, die Tastenkombinationen erfordern:
+
+1. Auf einer Seite oder einer Komponente, die auf einer Seite eingebunden ist
+2. In einer Modal-Komponente, die wegen einer Benutzeraktion den Fokus erhält
+
+Der zweite Anwendungsfall kann rekursiv auftreten: ein Dropdown in einem Modal zum Beispiel.
+
+### Auf Tastenkombinationen in einer Seite hören
+
+Beispiel:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Auf Tastenkombinationen in einer Modal-Komponente hören
+
+Für dieses Beispiel verwenden wir eine Modalkomponente, die auf die Escape-Taste hört, um ihrem übergeordneten Element mitzuteilen, dass sie geschlossen werden soll.
+
+Hier ändert die Benutzerinteraktion den Bereich.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Dann in der Modalkomponente:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## Was ist ein Tastenkombinationsbereich?
+
+Ein Tastenkombinationsbereich ist ein String, der einen Kontext darstellt, in dem die Tastenkombinationen aktiv sind. Er wird im Allgemeinen als Enum kodiert.
+
+Wenn Sie den Tastenkombinationsbereich ändern, werden die Tastenkombinationen aktiviert, die auf diesen Bereich hören, und die Tastenkombinationen, die auf andere Bereiche hören, werden deaktiviert.
+
+Sie können immer nur einen Bereich gleichzeitig setzen.
+
+Als Beispiel sind die Tastenkombinationsbereiche für jede Seite im `PageHotkeyScope` Enum definiert:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Intern wird der aktuell ausgewählte Bereich in einem Recoil-State gespeichert, der in der gesamten Anwendung geteilt wird:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Aber dieser Recoil-State sollte niemals manuell bearbeitet werden! Wir werden im nächsten Abschnitt sehen, wie man es verwendet.
+
+## Wie funktioniert es intern?
+
+Wir haben eine dünne Schicht über [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) erstellt, die es leistungsfähiger macht und unnötige Neu-Renderings vermeidet.
+
+Wir haben auch einen Recoil-State erstellt, um den Tastenkombinationsbereich zu verwalten und in der gesamten Anwendung verfügbar zu machen.

@@ -1,10 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('RecordPositionService', () => {
-  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let mockRepository: any;
   let service: RecordPositionService;
 
@@ -16,16 +16,19 @@ describe('RecordPositionService', () => {
       maximum: jest.fn().mockResolvedValue(1),
     };
 
-    twentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepository),
-    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
+    globalWorkspaceOrmManager = {
+      getRepository: jest.fn().mockResolvedValue(mockRepository),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
+    } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RecordPositionService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
       ],
     }).compile();

@@ -5,7 +5,8 @@ import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
   type CalendarEventImportDriverException,
@@ -28,7 +29,7 @@ export class CalendarEventImportErrorHandlerService {
     CalendarEventImportErrorHandlerService.name,
   );
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -88,7 +89,7 @@ export class CalendarEventImportErrorHandlerService {
       `CalendarChannelId: ${calendarChannel.id} - Sync cursor error, resetting and rescheduling`,
     );
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
       [calendarChannel.id],
       workspaceId,
     );
@@ -130,31 +131,43 @@ export class CalendarEventImportErrorHandlerService {
       throw calendarEventImportException;
     }
 
-    const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
-        'calendarChannel',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    await calendarChannelRepository.increment(
-      {
-        id: calendarChannel.id,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const calendarChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+            workspaceId,
+            'calendarChannel',
+          );
+
+        await calendarChannelRepository.increment(
+          {
+            id: calendarChannel.id,
+          },
+          'throttleFailureCount',
+          1,
+          undefined,
+          ['throttleFailureCount', 'id'],
+        );
       },
-      'throttleFailureCount',
-      1,
-      undefined,
-      ['throttleFailureCount', 'id'],
     );
 
     switch (syncStep) {
       case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 
       case CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT:
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 
@@ -214,7 +227,7 @@ export class CalendarEventImportErrorHandlerService {
       return;
     }
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
       [calendarChannel.id],
       workspaceId,
     );

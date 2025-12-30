@@ -17,7 +17,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     }
     configuration {
       ... on BarChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
@@ -38,12 +38,13 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
         groupMode
+        layout
         isCumulative
         timezone
         firstDayOfTheWeek
       }
       ... on LineChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
@@ -69,7 +70,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on PieChartConfiguration {
-        graphType
+        configurationType
         groupByFieldMetadataId
         aggregateFieldMetadataId
         aggregateOperation
@@ -86,7 +87,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on AggregateChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         label
@@ -98,9 +99,13 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         suffix
         timezone
         firstDayOfTheWeek
+        ratioAggregateConfig {
+          fieldMetadataId
+          optionValue
+        }
       }
       ... on GaugeChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         displayDataLabel
@@ -111,9 +116,11 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on IframeConfiguration {
+        configurationType
         url
       }
       ... on StandaloneRichTextConfiguration {
+        configurationType
         body {
           blocknote
           markdown

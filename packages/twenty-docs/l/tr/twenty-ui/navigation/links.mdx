@@ -4,7 +4,7 @@ image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Başlık" />
 </Frame>
 
 ## Contact Link
@@ -12,44 +12,40 @@ image: /images/user-guide/what-is-twenty/20.png
 İletişim bilgilerini görüntülemek için stilize edilmiş bir bağlantı bileşeni.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Kullanım">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
 
-```jsx
-import { BrowserRouter as Router } from 'react-router-dom';
+    import { ContactLink } from 'twenty-ui/navigation';
 
-import { ContactLink } from 'twenty-ui/navigation';
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log('Contact link clicked!', event);
-  };
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <Router>
-      <ContactLink
-        className
-        href="mailto:example@example.com"
-        onClick={handleLinkClick}
-      >
-        example@example.com
-      </ContactLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Özellikler    | Tür               | Açıklama                                              |
-| ------------- | ----------------- | ----------------------------------------------------- |
-| sınıfAdı      | metin             | Ek stil için isteğe bağlı ad                          |
-| href          | metin             | Bağlantı için hedef URL veya yol                      |
-| tıklandığında | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi |
-| çocuklar      | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
-
-</Tab>
-
+  <Tab title="Özellikler">
+    | Özellikler | Tür               | Açıklama                                              |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | sınıfAdı   | string            | Ek stil için isteğe bağlı isim                        |
+    | href       | string            | Bağlantı için hedef URL veya yol                      |
+    | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi |
+    | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
+  </Tab>
 </Tabs>
 
 ## Ham Bağlantı
@@ -57,39 +53,36 @@ export const MyComponent = () => {
 Bağlantılar için stilize edilmiş bir bağlantı bileşeni.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Kullanım">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
-  };
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
 
-  return (
-    <Router>
-      <RawLink className href="/contact" onClick={handleLinkClick}>
-        Contact Us
-      </RawLink>
-    </Router>
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| Özellikler    | Tür               | Açıklama                                              |
-| ------------- | ----------------- | ----------------------------------------------------- |
-| sınıfAdı      | metin             | Ek stil için isteğe bağlı ad                          |
-| href          | metin             | Bağlantı için hedef URL veya yol                      |
-| tıklandığında | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi |
-| çocuklar      | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
-
-</Tab>
+  <Tab title="Özellikler">
+    | Özellikler | Tür               | Açıklama                                              |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | className  | string            | Ek stil için isteğe bağlı isim                        |
+    | href       | string            | Bağlantı için hedef URL veya yol                      |
+    | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi |
+    | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
+  </Tab>
 </Tabs>
 
 ## Yuvarlak Bağlantı
@@ -97,38 +90,34 @@ export const MyComponent = () => {
 Yuvarlak stil ile Chip bileşeni olan bir bağlantı.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Kullanım">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
-  };
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <Router>
-      <RoundedLink href="/contact" onClick={handleLinkClick}>
-        Contact Us
-      </RoundedLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Özellikler    | Tür               | Açıklama                                              |
-| ------------- | ----------------- | ----------------------------------------------------- |
-| href          | metin             | Bağlantı için hedef URL veya yol                      |
-| çocuklar      | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
-| tıklandığında | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi |
-
-</Tab>
+  <Tab title="Özellikler">
+    | Özellikler | Tür               | Açıklama                                              |
+    | ---------- | ----------------- | ----------------------------------------------------- |
+    | href       | dize              | Bağlantı için hedef URL veya yol                      |
+    | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
+    | onClick    | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi |
+  </Tab>
 </Tabs>
 
 ## Sosyal Bağlantı
@@ -136,33 +125,30 @@ export const MyComponent = () => {
 URL'ler, LinkedIn ve X (veya Twitter) gibi çeşitli sosyal bağlantı türleri için desteklenen stilize edilmiş sosyal bağlantılar.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Kullanım">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Router>
-      <SocialLink
-        type="twitter"
-        href="https://twitter.com/twentycrm"
-      ></SocialLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Özellikler    | Tür               | Açıklama                                                                                                        |
-| ------------- | ----------------- | --------------------------------------------------------------------------------------------------------------- |
-| href          | metin             | Bağlantı için hedef URL veya yol                                                                                |
-| çocuklar      | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik                                                                        |
-| tür           | metin             | Sosyal bağlantı türü. Seçenekler şunları içerir: `url`, `LinkedIn` ve `Twitter` |
-| tıklandığında | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi                                                           |
-
-</Tab>
+  <Tab title="Özellikler">
+    | Özellikler | Tür               | Açıklama                                                                        |
+    | ---------- | ----------------- | ------------------------------------------------------------------------------- |
+    | href       | string            | Bağlantı için hedef URL veya yol                                                |
+    | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik                                        |
+    | tür        | string            | Sosyal bağlantı türü. Seçenekler şunları içerir: `url`, `LinkedIn` ve `Twitter` |
+    | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi                           |
+  </Tab>
 </Tabs>

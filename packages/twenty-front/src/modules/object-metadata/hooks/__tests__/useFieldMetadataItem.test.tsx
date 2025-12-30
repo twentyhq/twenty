@@ -5,7 +5,6 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   FIELD_METADATA_ID,
   FIELD_RELATION_METADATA_ID,
@@ -13,15 +12,16 @@ import {
   queries,
   responseData,
   variables,
-} from '../__mocks__/useFieldMetadataItem';
+} from '@/object-metadata/hooks/__mocks__/useFieldMetadataItem';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
-} from '../__mocks__/useFindManyObjectMetadataItems';
+} from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   useUpdateOneFieldMetadataItem: () => ({

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import React, { useMemo } from 'react';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -75,13 +76,6 @@ export const PhonesDisplay = ({
     }
   };
 
-  const handleClick = (
-    number: string,
-    event: React.MouseEvent<HTMLElement>,
-  ) => {
-    onPhoneNumberClick?.(number, event);
-  };
-
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, callingCode }, index) => {
@@ -95,7 +89,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
@@ -113,7 +109,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
@@ -134,7 +132,7 @@ const parseAdditionalPhones = (additionalPhones?: any) => {
     try {
       return JSON.parse(additionalPhones);
     } catch (error) {
-      logError(`Error parsing additional phones' : ` + error);
+      logError(t`Error parsing additional phones: ${error}`);
     }
   }
 

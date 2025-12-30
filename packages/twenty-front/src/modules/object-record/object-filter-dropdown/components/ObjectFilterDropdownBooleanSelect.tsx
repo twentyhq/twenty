@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
@@ -45,7 +46,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   const handleOptionSelect = (newValue: boolean) => {
     applyObjectFilterDropdownFilterValue(
       newValue.toString(),
-      newValue ? 'True' : 'False',
+      newValue ? t`True` : t`False`,
     );
 
     closeDropdown();

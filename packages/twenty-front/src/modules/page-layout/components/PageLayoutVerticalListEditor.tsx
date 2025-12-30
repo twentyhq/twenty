@@ -1,4 +1,5 @@
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -9,7 +10,6 @@ import {
   type DropResult,
 } from '@hello-pangea/dnd';
 import { useId } from 'react';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;

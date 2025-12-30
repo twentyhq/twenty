@@ -1,0 +1,100 @@
+---
+title: Backend Commands
+---
+
+
+## Useful commands
+
+These commands should be executed from packages/twenty-server folder.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### First time setup
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Starting the server
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+
+### Resetting the database
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### For Workspace objects
+
+There are no migrations files, migration are generated automatically for each workspace,
+stored in the database, and applied with this command
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+This will drop the database and re-run the migrations and seed.
+
+Make sure to back up any data you want to keep before running this command.
+
+</Warning>
+
+## Tech Stack
+
+Twenty primarily uses NestJS for the backend.
+
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+
+Here's what the tech stack now looks like.
+
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/)
+
+

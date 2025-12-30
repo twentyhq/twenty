@@ -1,0 +1,89 @@
+---
+title: Migrace dat
+description: Importujte a exportujte svá data CRM pomocí souborů CSV nebo rozhraní API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Migrace dat" />
+</Frame>
+
+## Metody importu
+
+Twenty podporuje dvě hlavní metody pro import dat:
+
+| Metoda              | Vhodné pro                                 | Limit objemu                    |
+| ------------------- | ------------------------------------------ | ------------------------------- |
+| **Import CSV**      | Standardní migrace, pravidelné aktualizace | 10 000 záznamů v jednom souboru |
+| **Import přes API** | Migrace ve velkém měřítku, automatizace    | Bez omezení                     |
+
+<Note>U velmi velkých datových sad (statisíce záznamů) použijte rozhraní API. Naši [implementační partneři](/l/cs/user-guide/getting-started/capabilities/implementation-services) mohou v případě potřeby pomoci se spuštěním těchto skriptů.</Note>
+
+## Základy importu CSV
+
+Můžete importovat data pro libovolný objekt pomocí souborů CSV, XLSX nebo XLS. Každý soubor by měl obsahovat **pouze jeden typ objektu** (např. pouze záznamy Osob).
+
+<Note>**Pole musí existovat před importem.** Nahrání souboru CSV vytvoří záznamy, ale nevytvoří pole. Pokud potřebujete vlastní pole, nejprve je vytvořte v **Nastavení → Datový model**.</Note>
+
+### Postup
+
+1. Přejděte k objektu, do kterého chcete importovat data
+2. Klikněte na ikonu **⋮** vpravo nahoře (to je Nabídka příkazů) a klikněte na **Importovat záznamy**
+3. Stáhněte si šablonový soubor, abyste zajistili, že vaše data mají očekávaný formát
+4. Nahrajte naformátovaný soubor CSV
+5. Přiřaďte sloupce k polím Twenty
+6. Zkontrolujte chyby (zvýrazněné žlutě) a opravte je, přímo úpravou v uživatelském rozhraní
+7. Potvrďte import
+
+### Import relací mezi objekty
+
+Relace mezi objekty můžete importovat pomocí funkce importu CSV. Na související objekt musíte odkazovat pomocí jedinečného pole z tohoto objektu: `id`, `email` pro Osoby a členy pracovního prostoru, `domain` pro společnosti, případně jakékoli jiné pole nastavené jako jedinečné v datovém modelu pro jakýkoli jiný objekt.
+
+<Note>**Smazané záznamy se započítávají do jedinečnosti.** Dočasně smazané záznamy (viditelné v Nabídka příkazů → Zobrazit smazané záznamy) se zahrnují do kontrol jedinečnosti. Pokud importujete záznam se stejnou jedinečnou hodnotou jako má smazaný záznam, smazaný záznam bude obnoven.</Note>
+
+<Warning>
+  **Pořadí importu je důležité!**
+
+  Při importu souvisejících objektů nahrávejte soubory v tomto pořadí:
+
+  1. **Společnosti** nejdříve ("jedna" strana vztahů)
+  2. **Osoby** jako druhé (propojené se společnostmi přes companyId)
+  3. **Příležitosti** jako třetí (propojené se společnostmi/osobami)
+  4. **Vlastní objekty** s relacemi nakonec
+
+  Proč? "Jedna" strana vztahu jedna ku mnohým musí existovat dříve, než na ni můžete odkazovat. Například záznam společnosti musí existovat dříve, než importujete osobu s ID této společnosti.
+</Warning>
+
+Podívejte se prosím na [tento článek](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) s podrobným návodem, jak postupovat.
+
+## Exportovat Data
+
+Exportujte data svého pracovního prostoru pro zálohy, vytváření přehledů nebo migraci.
+
+### Postup
+
+1. Přejděte k objektu, který chcete exportovat
+2. Nastavte zobrazení se sloupci, které potřebujete
+3. Klikněte na **⋮** → **Exportovat zobrazení**
+4. Uložte soubor CSV
+
+<Note>**Exportují se pouze viditelné sloupce.** Soubor CSV bude obsahovat jen sloupce zobrazené ve vašem aktuálním zobrazení. Před exportem přidejte nebo skryjte sloupce, abyste určili, která data budou zahrnuta.</Note>
+
+<Note>**Limity exportu**: až 20 000 záznamů na jeden export.</Note>
+
+## Oprávnění
+
+Import a export dat vyžadují konkrétní oprávnění:
+
+* **Import**: Vyžaduje oprávnění "Import CSV"
+* **Export**: Vyžaduje oprávnění "Export CSV"
+
+Pokud tato oprávnění nemáte, kontaktujte správce pracovního prostoru.
+
+## Další kroky
+
+* [Připravte své soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Importujte relace mezi objekty](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Import přes API pro velké datové sady](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)

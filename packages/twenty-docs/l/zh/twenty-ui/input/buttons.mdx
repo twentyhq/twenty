@@ -1,5 +1,5 @@
 ---
-title: 按鈕
+title: Buttons
 image: /images/user-guide/views/filter.png
 ---
 
@@ -7,482 +7,433 @@ image: /images/user-guide/views/filter.png
   <img src="/images/user-guide/views/filter.png" alt="Header" />
 </Frame>
 
-一個應用程式中使用的按鈕和按鈕組的列表。
+A list of buttons and button groups used throughout the app.
 
-## 按鈕
-
-<Tabs>
-
-<Tab title="Usage">
-
-```jsx
-import { Button } from "@/ui/input/button/components/Button";
-
-export const MyComponent = () => {
-  return (
-    <Button
-      className
-      Icon={null}
-      title="Title"
-      fullWidth={false}
-      variant="primary"
-      size="medium"
-      position="standalone"
-      accent="default"
-      soon={false}
-      disabled={false}
-      focus={true}
-      onClick={() => console.log("click")}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性     | 類型                    | 描述                                                                               |
-| ------ | --------------------- | -------------------------------------------------------------------------------- |
-| 類名稱    | 字串                    | 附加樣式的可選類名                                                                        |
-| 圖標     | `React.ComponentType` | 在按鈕內顯示的可選圖標組件                                                                    |
-| 標題     | 字串                    | 按鈕的文本內容                                                                          |
-| 全寬     | 布爾值                   | 定義按鈕是否應該佈滿其容器的整個寬度                                                               |
-| 變體     | 字串                    | 按鈕的視覺風格變體。 選項包括`主要`和`次要` Options include `primary`, `secondary`, and `tertiary`  |
-| 大小     | 字串                    | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等`                                                     |
-| 職位     | 字串                    | 按鈕相對於其兄弟的定位。 選項包括：`獨立`，`左`，`右`，`中間`                                              |
-| accent | 字串                    | 按鈕的強調色。 按鈕的強調色。 Options include: `default`, `blue`, and `danger` |
-| 即將來臨   | 布爾值                   | 指示按鈕是否標記為“即將”，（例如用於即將推出的功能）                                                      |
-| 禁用     | 布爾值                   | 指定按鈕是否被禁用                                                                        |
-| 焦點     | 布爾值                   | 確定按鈕是否有焦點                                                                        |
-| 點擊     | function              | 當用戶單擊按鈕時觸發的回調函數                                                                  |
-
-</Tab>
-
-</Tabs>
-
-## 按鈕組
+## Button
 
 <Tabs>
-<Tab title="Usage">
-```jsx
-import { Button } from "@/ui/input/button/components/Button";
-import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+  <Tab title="Usage">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
 
-export const MyComponent = () => {
-return ( <ButtonGroup variant="primary" size="large" accent="blue" className>
-<Button
-className
-Icon={null}
-title="Button 1"
-fullWidth={false}
-variant="primary"
-size="medium"
-position="standalone"
-accent="blue"
-soon={false}
-disabled={false}
-focus={false}
-onClick={() => console.log("click")}
-/>
-<Button
-className
-Icon={null}
-title="Button 2"
-fullWidth={false}
-variant="secondary"
-size="medium"
-position="left"
-accent="blue"
-soon={false}
-disabled={false}
-focus={false}
-onClick={() => console.log("click")}
-/>
-<Button
-className
-Icon={null}
-title="Button 3"
-fullWidth={false}
-variant="tertiary"
-size="medium"
-position="right"
-accent="blue"
-soon={false}
-disabled={false}
-focus={false}
-onClick={() => console.log("click")}
-/> </ButtonGroup>
-);
-};
+    export const MyComponent = () => {
+      return (
+        <Button
+          className
+          Icon={null}
+          title="Title"
+          fullWidth={false}
+          variant="primary"
+          size="medium"
+          position="standalone"
+          accent="default"
+          soon={false}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-````
-</Tab>
-
-<Tab title="Props">
-
-
-| Props | Type | Description |
-|-------|------|-------------|
-| variant | string | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
-| size | string | The size of the buttons within the group. Has two options: `medium` and `small` |
-| accent | string | The accent color of the buttons within the group. Options include `default`, `blue` and `danger` |
-| className | string | Optional class name for additional styling |
-| children | ReactNode | An array of React elements representing the individual buttons within the group |
-
-
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type                  | Description                                                                                                          |
+    | --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | className | string                | Optional class name for additional styling                                                                           |
+    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
+    | title     | string                | The text content of the button                                                                                       |
+    | fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
+    | variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
+    | size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
+    | position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
+    | accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
+    | soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
+    | disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
+    | focus     | boolean               | Determines if the button has focus                                                                                   |
+    | onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
+  </Tab>
 </Tabs>
 
+## Button Group
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+    import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+    export const MyComponent = () => {
+      return (
+        <ButtonGroup variant="primary" size="large" accent="blue" className>
+          <Button
+            className
+            Icon={null}
+            title="Button 1"
+            fullWidth={false}
+            variant="primary"
+            size="medium"
+            position="standalone"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 2"
+            fullWidth={false}
+            variant="secondary"
+            size="medium"
+            position="left"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 3"
+            fullWidth={false}
+            variant="tertiary"
+            size="medium"
+            position="right"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+        </ButtonGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props     | Type      | Description                                                                                                      |
+    | --------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
+    | variant   | string    | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
+    | size      | string    | The size of the buttons within the group. Has two options: `medium` and `small`                                  |
+    | accent    | string    | The accent color of the buttons within the group. Options include `default`, `blue` and `danger`                 |
+    | className | string    | Optional class name for additional styling                                                                       |
+    | children  | ReactNode | An array of React elements representing the individual buttons within the group                                  |
+  </Tab>
+</Tabs>
 
 ## Floating Button
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { IconSearch } from "@tabler/icons-react";
 
-```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { IconSearch } from "@tabler/icons-react";
+    export const MyComponent = () => {
+      return (
+        <FloatingButton
+          className
+          Icon={IconSearch}
+          title="Title"
+          size="medium"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={true}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <FloatingButton
-      className
-      Icon={IconSearch}
-      title="Title"
-      size="medium"
-      position="standalone"
-      applyShadow={true}
-      applyBlur={true}
-      disabled={false}
-      focus={true}
-    />
-  );
-};
-````
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性   | 類型                    | 描述                                 |
-| ---- | --------------------- | ---------------------------------- |
-| 類名稱  | 字串                    | 附加樣式的可選名稱                          |
-| 圖標   | `React.ComponentType` | 在按鈕內顯示的可選圖標組件                      |
-| 標題   | 字串                    | 按鈕的文本內容                            |
-| 大小   | 字串                    | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等`       |
-| 職位   | 字串                    | 按鈕相對於其兄弟的定位。 選項包括：`獨立`，`左`，`中`，`右` |
-| 應用陰影 | 布爾值                   | 決定是否對按鈕應用陰影                        |
-| 應用模糊 | 布爾值                   | 決定是否對按鈕應用模糊效果                      |
-| 禁用   | 布爾值                   | 決定按鈕是否被禁用                          |
-| 焦點   | 布爾值                   | 指示按鈕是否有焦點                          |
-
-</Tab>
+  <Tab title="Props">
+    | Props       | Type                  | Description                                                                                                      |
+    | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+    | className   | string                | Optional name for additional styling                                                                             |
+    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
+    | title       | string                | The text content of the button                                                                                   |
+    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
+    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
+    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
+    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
+    | disabled    | boolean               | Determines whether the button is disabled                                                                        |
+    | focus       | boolean               | Indicates if the button has focus                                                                                |
+  </Tab>
 </Tabs>
 
-## 浮動按鈕組
+## Floating Button Group
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
 
-```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+    export const MyComponent = () => {
+      return (
+        <FloatingButtonGroup size="small">
+          <FloatingButton
+            className
+            Icon={IconClipboardText}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+            focus={true}
+          />
+          <FloatingButton
+            className
+            Icon={IconCheckbox}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+          />
+        </FloatingButtonGroup>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <FloatingButtonGroup size="small">
-      <FloatingButton
+  <Tab title="Props">
+    | Props    | Type      | Description                                                                     | Default |
+    | -------- | --------- | ------------------------------------------------------------------------------- | ------- |
+    | size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
+    | children | ReactNode | An array of React elements representing the individual buttons within the group |         |
+  </Tab>
+</Tabs>
+
+## Floating Icon Button
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingIconButton
+          className
+          Icon={IconSearch}
+          size="small"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={false}
+          onClick={() => console.log("click")}
+          isActive={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props       | Type                  | Description                                                                                                          |
+    | ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | className   | string                | Optional name for additional styling                                                                                 |
+    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
+    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
+    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
+    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
+    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
+    | disabled    | boolean               | Determines whether the button is disabled                                                                            |
+    | focus       | boolean               | Indicates if the button has focus                                                                                    |
+    | onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
+    | isActive    | boolean               | Determines if the button is in an active state                                                                       |
+  </Tab>
+</Tabs>
+
+## Floating Icon Button Group
+
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      const iconButtons = [
+        {
+          Icon: IconClipboardText,
+          onClick: () => console.log("Button 1 clicked"),
+          isActive: true,
+        },
+        {
+          Icon: IconCheckbox,
+          onClick: () => console.log("Button 2 clicked"),
+          isActive: true,
+        },
+      ];
+
+      return (
+        <FloatingIconButtonGroup
         className
-        Icon={IconClipboardText}
-        title
         size="small"
-        position="standalone"
-        applyShadow={true}
-        applyBlur={true}
-        disabled={false}
-        focus={true}
-      />
-      <FloatingButton
-        className
-        Icon={IconCheckbox}
-        title
-        size="small"
-        position="standalone"
-        applyShadow={true}
-        applyBlur={true}
-        disabled={false}
-      />
-    </FloatingButtonGroup>
-  );
-};
-```
+        iconButtons={iconButtons} />
+      );
+    };
 
-</Tab>
+    ```
+  </Tab>
 
-<Tab title="Props">
-
-| 屬性  | 類型       | 描述                           | 預設值 |
-| --- | -------- | ---------------------------- | --- |
-| 大小  | 字串       | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等` | 小   |
-| 子元素 | React 節點 | 表示組內單個按鈕的 React 元素數組         |     |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props       | Type   | Description                                                                                                                                                                                                                                                          |
+    | ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
+    | size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
+    | iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+  </Tab>
 </Tabs>
 
-## 浮動圖標按鈕
+## Light Button
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { LightButton } from "@/ui/input/button/components/LightButton";
 
-```jsx
-import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
-import { IconSearch } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return (
-    <FloatingIconButton
+    export const MyComponent = () => {
+      return <LightButton
       className
-      Icon={IconSearch}
-      size="small"
-      position="standalone"
-      applyShadow={true}
-      applyBlur={true}
-      disabled={false}
-      focus={false}
-      onClick={() => console.log("click")}
-      isActive={true}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性   | 類型                    | 描述                                                        |
-| ---- | --------------------- | --------------------------------------------------------- |
-| 類名稱  | 字串                    | 附加樣式的可選名稱                                                 |
-| 圖標   | `React.ComponentType` | 在按鈕內顯示的可選圖標組件                                             |
-| 大小   | 字串                    | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等`                              |
-| 職位   | 字串                    | 按鈕相對於其兄弟的定位。 選項包括：`獨立`，`左`，`中`，`右` 選項包括：`獨立`，`左`，`右`，`中間` |
-| 應用陰影 | 布爾值                   | 決定是否對按鈕應用陰影                                               |
-| 應用模糊 | 布爾值                   | 決定是否對按鈕應用模糊效果                                             |
-| 禁用   | 布爾值                   | 決定按鈕是否被禁用                                                 |
-| 焦點   | 布爾值                   | 指示按鈕是否有焦點                                                 |
-| 點擊   | function              | 當用戶單擊按鈕時觸發的回調函數                                           |
-| 活性   | 布爾值                   | 確定按鈕是否處於活動狀態                                              |
-
-</Tab>
-
-</Tabs>
-
-## 浮動圖標按鈕組
-
-<Tabs>
-<Tab title="Usage">
-
-```jsx
-import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  const iconButtons = [
-    {
-      Icon: IconClipboardText,
-      onClick: () => console.log("Button 1 clicked"),
-      isActive: true,
-    },
-    {
-      Icon: IconCheckbox,
-      onClick: () => console.log("Button 2 clicked"),
-      isActive: true,
-    },
-  ];
-
-  return (
-    <FloatingIconButtonGroup
-    className
-    size="small"
-    iconButtons={iconButtons} />
-  );
-};
-
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性          | 類型 | 描述                                                                         |
-| ----------- | -- | -------------------------------------------------------------------------- |
-| 類名稱         | 字串 | 附加樣式的可選名稱                                                                  |
-| 大小          | 字串 | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等`                                               |
-| iconButtons | 數組 | 一個對象數組，每個對象代表組中的一個圖標按鈕。 每個對象應包括您希望在按鈕中顯示的圖標組件，用戶單擊按鈕時要調用的函數，以及按鈕是否應處於活動狀態。 |
-
-</Tab>
-
-</Tabs>
-
-## 輕量按鈕
-
-<Tabs>
-<Tab title="Usage">
-
-```jsx
-import { LightButton } from "@/ui/input/button/components/LightButton";
-
-export const MyComponent = () => {
-  return <LightButton
-  className
-  icon={null}
-  title="Title"
-  accent="secondary"
-  active={false}
-  disabled={false}
-  focus={true}
-  onClick={()=>console.log('click')}
-  />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性     | 類型                | 描述                                                                          |
-| ------ | ----------------- | --------------------------------------------------------------------------- |
-| 類名稱    | 字串                | 附加樣式的可選名稱                                                                   |
-| 圖標     | `React.ReactNode` | 您想在按鈕中顯示的圖標                                                                 |
-| 標題     | 字串                | 按鈕的文本內容                                                                     |
-| accent | 字串                | 按鈕的強調色。 按鈕的強調色。 Options include: `secondary` and `tertiary` |
-| 啟用     | 布爾值               | 確定按鈕是否處於活動狀態                                                                |
-| 禁用     | 布爾值               | 決定按鈕是否被禁用                                                                   |
-| 焦點     | 布爾值               | 指示按鈕是否有焦點                                                                   |
-| 點擊     | function          | 當用戶單擊按鈕時觸發的回調函數                                                             |
-
-</Tab>
-
-</Tabs>
-
-## 輕量圖標按鈕
-
-<Tabs>
-<Tab title="Usage">
-
-```jsx
-import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
-import { IconSearch } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return (
-    <LightIconButton
-      className
-      testId="test1"
-      Icon={IconSearch}
+      icon={null}
       title="Title"
-      size="small"
       accent="secondary"
-      active={true}
+      active={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
-    />
-  );
-};
-```
+      onClick={()=>console.log('click')}
+      />;
+    };
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="Props">
-
-| 屬性     | 類型                    | 描述                                                                          |
-| ------ | --------------------- | --------------------------------------------------------------------------- |
-| 類名稱    | 字串                    | 附加樣式的可選名稱                                                                   |
-| 測試識別碼  | 字串                    | 按鈕的測試識別碼                                                                    |
-| 圖標     | `React.ComponentType` | 在按鈕內顯示的可選圖標組件                                                               |
-| 標題     | 字串                    | 按鈕的文本內容                                                                     |
-| 大小     | 字串                    | 按鈕的大小。 按鈕的大小。 有兩個選項：`小`和`中等`                                                |
-| accent | 字串                    | 按鈕的強調色。 按鈕的強調色。 Options include: `secondary` and `tertiary` |
-| 啟用     | 布爾值                   | 確定按鈕是否處於活動狀態                                                                |
-| 禁用     | 布爾值                   | 決定按鈕是否被禁用                                                                   |
-| 焦點     | 布爾值                   | 指示按鈕是否有焦點                                                                   |
-| 點擊     | function              | 當用戶單擊按鈕時觸發的回調函數                                                             |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props     | Type              | Description                                                                 |
+    | --------- | ----------------- | --------------------------------------------------------------------------- |
+    | className | string            | Optional name for additional styling                                        |
+    | icon      | `React.ReactNode` | The icon you want to display in the button                                  |
+    | title     | string            | The text content of the button                                              |
+    | accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
+    | active    | boolean           | Determines if the button is in an active state                              |
+    | disabled  | boolean           | Determines whether the button is disabled                                   |
+    | focus     | boolean           | Indicates if the button has focus                                           |
+    | onClick   | function          | A callback function that triggers when the user clicks on the button        |
+  </Tab>
 </Tabs>
 
-## 主按鈕
+## Light Icon Button
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+    import { IconSearch } from "@tabler/icons-react";
 
-```jsx
-import { MainButton } from "@/ui/input/button/components/MainButton";
-import { IconCheckbox } from "@tabler/icons-react";
+    export const MyComponent = () => {
+      return (
+        <LightIconButton
+          className
+          testId="test1"
+          Icon={IconSearch}
+          title="Title"
+          size="small"
+          accent="secondary"
+          active={true}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <MainButton
-      title="Checkbox"
-      fullWidth={false}
-      variant="primary"
-      soon={false}
-      Icon={IconCheckbox}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性                   | 類型                               | 描述                                     |
-| -------------------- | -------------------------------- | -------------------------------------- |
-| 標題                   | 字串                               | 按鈕的文本內容                                |
-| 全寬                   | 布爾值                              | 定義按鈕是否應該佈滿其容器的整個寬度                     |
-| 變體                   | 字串                               | 按鈕的視覺風格變體。 選項包括`主要`和`次要` 選項包括`主要`和`次要` |
-| 即將來臨                 | 布爾值                              | 指示按鈕是否標記為“即將”，（例如用於即將推出的功能）            |
-| 圖標                   | `React.ComponentType`            | 在按鈕內顯示的可選圖標組件                          |
-| React `button` props | `React.ComponentProps<'button'>` | 支持所有標準 HTML 按鈕屬性                       |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props     | Type                  | Description                                                                 |
+    | --------- | --------------------- | --------------------------------------------------------------------------- |
+    | className | string                | Optional name for additional styling                                        |
+    | testId    | string                | Test identifier for the button                                              |
+    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
+    | title     | string                | The text content of the button                                              |
+    | size      | string                | The size of the button. Has two options: `small` and `medium`               |
+    | accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
+    | active    | boolean               | Determines if the button is in an active state                              |
+    | disabled  | boolean               | Determines whether the button is disabled                                   |
+    | focus     | boolean               | Indicates if the button has focus                                           |
+    | onClick   | function              | A callback function that triggers when the user clicks on the button        |
+  </Tab>
 </Tabs>
 
-## 圓角圖標按鈕
+## Main Button
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { MainButton } from "@/ui/input/button/components/MainButton";
+    import { IconCheckbox } from "@tabler/icons-react";
 
-```jsx
-import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
-import { IconSearch } from "@tabler/icons-react";
+    export const MyComponent = () => {
+      return (
+        <MainButton
+          title="Checkbox"
+          fullWidth={false}
+          variant="primary"
+          soon={false}
+          Icon={IconCheckbox}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <RoundedIconButton
-      Icon={IconSearch}
-    />
-  );
-};
-```
+  <Tab title="Props">
+    | Props                | Type                             | Description                                                                       |
+    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
+    | title                | string                           | The text content of the button                                                    |
+    | fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
+    | variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
+    | soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
+    | Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
+    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
+  </Tab>
+</Tabs>
 
-</Tab>
+## Rounded Icon Button
 
-<Tab title="Props">
+<Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+    import { IconSearch } from "@tabler/icons-react";
 
-| 屬性                   | 類型                                              | 描述 |
-| -------------------- | ----------------------------------------------- | -- |
-| 圖標                   | `React.ComponentType`                           |    |
-| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
+    export const MyComponent = () => {
+      return (
+        <RoundedIconButton
+          Icon={IconSearch}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-</Tab>
-
+  <Tab title="Props">
+    | Props                | Type                                            | Description |
+    | -------------------- | ----------------------------------------------- | ----------- |
+    | Icon                 | `React.ComponentType`                           |             |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  </Tab>
 </Tabs>

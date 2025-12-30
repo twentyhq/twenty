@@ -44,7 +44,6 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
@@ -57,12 +56,14 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -70,19 +71,34 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  private readonly internalContext: WorkspaceInternalContext;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
-  declare connection: WorkspaceDataSource;
+  declare connection: GlobalWorkspaceDataSource;
 
   constructor(
-    internalContext: WorkspaceInternalContext,
-    connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
+    connection: GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
-    this.internalContext = internalContext;
     this.repositories = new Map();
+  }
+
+  private get eventEmitterService(): WorkspaceEventEmitter {
+    return this.connection.eventEmitterService;
+  }
+
+  get internalContext(): WorkspaceInternalContext {
+    const context = getWorkspaceContext();
+
+    return {
+      workspaceId: context.authContext.workspace.id,
+      flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+      flatIndexMaps: context.flatIndexMaps,
+      objectIdByNameSingular: context.objectIdByNameSingular,
+      featureFlagsMap: context.featureFlagsMap,
+      eventEmitterService: this.eventEmitterService,
+    };
   }
 
   getFeatureFlagMap(): FeatureFlagMap {
@@ -146,7 +162,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
-      this.internalContext,
       target,
       this,
       dataSource.featureFlagMap,
@@ -452,7 +467,7 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   private extractTargetNameSingularFromEntityTarget(
-    target: EntityTarget<unknown>,
+    target: EntityTarget<ObjectLiteral>,
   ): string {
     return this.connection.getMetadata(target).name;
   }
@@ -1281,7 +1296,12 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadataItem);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadataItem,
+        this,
+        this.internalContext,
+      );
     }
   }
 

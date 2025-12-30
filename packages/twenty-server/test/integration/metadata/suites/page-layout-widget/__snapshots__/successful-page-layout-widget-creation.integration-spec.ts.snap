@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout widget creation should succeed should create a page layout widget 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Test Widget",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with specific type 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://example.com",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 2,
+    "row": 0,
+    "rowSpan": 2,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Iframe Widget",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;

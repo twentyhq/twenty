@@ -1,8 +1,8 @@
 import { ensureDirSync, writeFileSync, removeSync } from 'fs-extra';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { loadManifest } from '../load-manifest';
-import { v4 } from 'uuid';
+import { loadManifest } from '@/cli/utils/load-manifest';
+import { type ApplicationConfig } from '@/application';
 
 const write = (root: string, file: string, content: string) => {
   const abs = join(root, file);
@@ -36,7 +36,51 @@ declare module 'twenty-sdk' {
     description?: string;
     icon?: string;
     applicationVariables?: Record<string, ApplicationVariable>;
+    functionRoleUniversalIdentifier?: string;
   };
+  
+  export type RoleConfig = SyncableEntityOptions & {
+    label: string;
+    description?: string;
+    icon?: string;
+    canReadAllObjectRecords?: boolean;
+    canUpdateAllObjectRecords?: boolean;
+    canSoftDeleteAllObjectRecords?: boolean;
+    canDestroyAllObjectRecords?: boolean;
+    objectPermissions?: any[];
+    fieldPermissions?: any[];
+    permissionFlags?: any[];
+  };
+
+  export enum PermissionFlag {
+    API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+    WORKSPACE = 'WORKSPACE',
+    WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
+    ROLES = 'ROLES',
+    DATA_MODEL = 'DATA_MODEL',
+    SECURITY = 'SECURITY',
+    WORKFLOWS = 'WORKFLOWS',
+    IMPERSONATE = 'IMPERSONATE',
+    SSO_BYPASS = 'SSO_BYPASS',
+    APPLICATIONS = 'APPLICATIONS',
+    LAYOUTS = 'LAYOUTS',
+    BILLING = 'BILLING',
+    AI_SETTINGS = 'AI_SETTINGS',
+
+    // Tool permissions
+    AI = 'AI',
+    VIEWS = 'VIEWS',
+    UPLOAD_FILE = 'UPLOAD_FILE',
+    DOWNLOAD_FILE = 'DOWNLOAD_FILE',
+    SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
+    HTTP_REQUEST_TOOL = 'HTTP_REQUEST_TOOL',
+    IMPORT_CSV = 'IMPORT_CSV',
+    EXPORT_CSV = 'EXPORT_CSV',
+    CONNECTED_ACCOUNTS = 'CONNECTED_ACCOUNTS',
+    PROFILE_INFORMATION = 'PROFILE_INFORMATION',
+  }
+
+
 
   type RouteTrigger = {
     type: 'route';
@@ -74,13 +118,13 @@ declare module 'twenty-sdk' {
     icon?: string;
   };
 
-  export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
+  export const Object = (_: ObjectMetadataOptions): ClassDecorator => {
     return () => {};
   };
 
   export class BaseObjectMetadata {}
 
-  export enum FieldMetadataType {
+  export enum FieldType {
     TEXT = 'TEXT',
     FULL_NAME = 'FULL_NAME',
     ADDRESS = 'ADDRESS',
@@ -88,8 +132,41 @@ declare module 'twenty-sdk' {
     DATE_TIME = 'DATE_TIME',
   }
 
-  export const FieldMetadata: (_: any) => PropertyDecorator;
+  export const Field: (_: any) => PropertyDecorator;
 }
+`;
+
+const defaultRoleMock = `
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'hello-world-role',
+  description: 'A role to define app permissions',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  objectPermissions: [
+    {
+      objectNameSingular: 'postCard',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectNameSingular: 'postCard',
+      fieldName: 'content',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+}
+
 `;
 
 const serverlessFunctionMock = `
@@ -125,10 +202,9 @@ export const config: FunctionConfig = {
 };`;
 
 const objectMock = `import {
-  ObjectMetadata,
-  BaseObjectMetadata,
-  FieldMetadata,
-  FieldMetadataType
+  Object,
+  Field,
+  FieldType
 } from 'twenty-sdk';
 
 enum PostCardStatus {
@@ -138,7 +214,7 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
-@ObjectMetadata({
+@Object({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
   namePlural: 'postCards',
@@ -147,32 +223,32 @@ enum PostCardStatus {
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard extends BaseObjectMetadata {
-  @FieldMetadata({
+export class PostCard {
+  @Field({
     universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldMetadataType.TEXT,
+    type: FieldType.TEXT,
     label: 'Content',
     description: "Postcard's content",
   })
   content: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldMetadataType.FULL_NAME,
+    type: FieldType.FULL_NAME,
     label: 'Recipient name',
   })
   recipientName: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldMetadataType.ADDRESS,
+    type: FieldType.ADDRESS,
     label: 'Recipient address',
   })
   recipientAddress: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldMetadataType.SELECT,
+    type: FieldType.SELECT,
     label: 'Status',
     defaultValue: \`'\${PostCardStatus.DRAFT}'\`,
     options: [
@@ -204,9 +280,9 @@ export class PostCard extends BaseObjectMetadata {
   })
   status: 'draft' | 'sent' | 'delivered' | 'returned';
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldType.DATE_TIME,
     label: 'Delivered at',
     isNullable: true,
     defaultValue: null,
@@ -274,13 +350,29 @@ const yarnLockMock = `# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIR
 # yarn lockfile v1
 `;
 
-const applicationConfigMock = `import { type ApplicationConfig } from 'twenty-sdk';
-
-const config: ApplicationConfig = {
-  universalIdentifier: '${v4()}',
+const applicationMockConfig: ApplicationConfig = {
+  universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
   displayName: 'My App',
   description: 'My app description',
+  icon: 'IconWorld',
+  applicationVariables: {
+    TWENTY_API_KEY: {
+      universalIdentifier: '3a327392-3a0f-4605-9223-0633f063eaf6',
+      description: 'Twenty API Key',
+      isSecret: true,
+    },
+    TWENTY_API_URL: {
+      universalIdentifier: 'aa7210a6-75b0-46ca-bcbe-09a5b42a76ec',
+      description: 'Twenty API Url',
+      isSecret: false,
+    },
+  },
+  functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
 };
+
+const applicationConfigMock = `import { type ApplicationConfig } from 'twenty-sdk';
+
+const config: ApplicationConfig = ${JSON.stringify(applicationMockConfig)};
 
 export default config;
 `;
@@ -310,6 +402,8 @@ describe('loadManifest (integration)', () => {
     write(appDirectory, 'src/Account.ts', objectMock);
 
     write(appDirectory, 'src/hello.ts', serverlessFunctionMock);
+
+    write(appDirectory, 'src/defaultRole.ts', defaultRoleMock);
 
     write(
       appDirectory,
@@ -341,11 +435,7 @@ describe('loadManifest (integration)', () => {
     );
 
     // application
-    const { universalIdentifier: _, ...otherInfo } = manifest.application;
-    expect(otherInfo).toEqual({
-      displayName: 'My App',
-      description: 'My app description',
-    });
+    expect(manifest.application).toEqual(applicationMockConfig);
 
     expect(manifest.objects.length).toBe(1);
 
@@ -457,6 +547,31 @@ describe('loadManifest (integration)', () => {
         }
       }
     }
+
+    //Role
+    expect(manifest.roles).toHaveLength(1);
+
+    for (const role of manifest.roles ?? []) {
+      const {
+        universalIdentifier: _,
+        objectPermissions,
+        fieldPermissions,
+        permissionFlags,
+        ...otherInfo
+      } = role;
+      expect(otherInfo).toEqual({
+        label: 'hello-world-role',
+        description: 'A role to define app permissions',
+        canReadAllObjectRecords: false,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      });
+
+      expect(Array.isArray(objectPermissions)).toBe(true);
+      expect(Array.isArray(fieldPermissions)).toBe(true);
+      expect(Array.isArray(permissionFlags)).toBe(true);
+    }
   });
 
   it('should not define serverless for util file', async () => {
@@ -483,6 +598,7 @@ export const format = async (params: any): Promise<any> => {
     ]);
     expect(Object.keys(manifest.sources['src'])).toEqual([
       'Account.ts',
+      'defaultRole.ts',
       'hello.ts',
     ]);
   });

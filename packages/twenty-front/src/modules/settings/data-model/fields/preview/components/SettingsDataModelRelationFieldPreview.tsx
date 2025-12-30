@@ -72,7 +72,7 @@ export const SettingsDataModelRelationFieldPreview = ({
 
   const fieldName = v4();
 
-  const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
+  const recordId = `${relationTargetObjectNameSingular}-${fieldName}-RELATION-preview`;
 
   const isRelation = fieldMetadataItem.type === FieldMetadataType.RELATION;
   const metadata = {

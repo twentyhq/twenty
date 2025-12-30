@@ -4,7 +4,7 @@ import { type AggregateOperations } from '@/object-record/record-table/constants
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue.constant';
+import { GRAPH_DEFAULT_AGGREGATE_VALUE } from '@/page-layout/widgets/graph/constants/GraphDefaultAggregateValue';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
@@ -73,7 +73,7 @@ const mockWorkflowVersion = {
 } as WorkflowVersionWorkspaceEntity;
 
 describe('WorkflowVersionEdgeWorkspaceService', () => {
-  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let service: WorkflowVersionEdgeWorkspaceService;
   let mockWorkflowVersionWorkspaceRepository: MockWorkspaceRepository;
@@ -88,11 +88,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
       mockWorkflowVersion,
     );
 
-    twentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest
+    globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation(async (_authContext, callback) => callback()),
+      getRepository: jest
         .fn()
         .mockResolvedValue(mockWorkflowVersionWorkspaceRepository),
-    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
+    } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
 
     workflowCommonWorkspaceService = {
       getWorkflowVersionOrFail: jest
@@ -104,8 +107,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
       providers: [
         WorkflowVersionEdgeWorkspaceService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
         {
           provide: WorkflowCommonWorkspaceService,

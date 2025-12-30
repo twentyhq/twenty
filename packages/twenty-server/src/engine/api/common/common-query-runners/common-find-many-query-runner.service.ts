@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import {
+  QUERY_MAX_RECORDS,
+  QUERY_MAX_RECORDS_FROM_RELATION,
+} from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -16,6 +19,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
@@ -40,6 +44,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   CommonFindManyOutput
 > {
   protected readonly operationName = CommonQueryNames.FIND_MANY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
@@ -168,7 +173,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
           FindOptionsRelations<ObjectLiteral>
         >,
         aggregate: args.selectedFieldsResult.aggregate,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
@@ -231,36 +236,42 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       throw new CommonQueryRunnerException(
         'Cannot provide both first and last',
         CommonQueryRunnerExceptionCode.ARGS_CONFLICT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
     if (args.before && args.after) {
       throw new CommonQueryRunnerException(
         'Cannot provide both before and after',
         CommonQueryRunnerExceptionCode.ARGS_CONFLICT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
     if (args.before && args.first) {
       throw new CommonQueryRunnerException(
         'Cannot provide both before and first',
         CommonQueryRunnerExceptionCode.ARGS_CONFLICT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
     if (args.after && args.last) {
       throw new CommonQueryRunnerException(
         'Cannot provide both after and last',
         CommonQueryRunnerExceptionCode.ARGS_CONFLICT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
     if (args.first !== undefined && args.first < 0) {
       throw new CommonQueryRunnerException(
         'First argument must be non-negative',
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
     if (args.last !== undefined && args.last < 0) {
       throw new CommonQueryRunnerException(
         'Last argument must be non-negative',
         CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
   }

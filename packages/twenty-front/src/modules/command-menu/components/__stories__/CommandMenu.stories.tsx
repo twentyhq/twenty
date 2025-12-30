@@ -32,7 +32,7 @@ import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-import { type CommandMenu } from '../CommandMenu';
+import { type CommandMenu } from '@/command-menu/components/CommandMenu';
 
 const openTimeout = 50;
 
@@ -104,7 +104,6 @@ const meta: Meta<typeof CommandMenu> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentWithRouterDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

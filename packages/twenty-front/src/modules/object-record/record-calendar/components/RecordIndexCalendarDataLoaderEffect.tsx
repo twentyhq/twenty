@@ -1,6 +1,7 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecordCalendarGroupByRecords } from '@/object-record/record-calendar/hooks/useRecordCalendarGroupByRecords';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { hasInitializedRecordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/hasInitializedRecordCalendarSelectedDateComponentState';
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
@@ -38,11 +39,24 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     recordCalendarSelectedDate,
   );
 
+  const hasInitializedRecordCalendarSelectedDate = useRecoilComponentValue(
+    hasInitializedRecordCalendarSelectedDateComponentState,
+  );
+
   useEffect(() => {
-    upsertRecordsInStore(records);
+    if (!hasInitializedRecordCalendarSelectedDate) {
+      return;
+    }
+
+    upsertRecordsInStore({ partialRecords: records });
     const recordIds = records.map((record) => record.id);
     setRecordCalendarRecordIds(recordIds);
-  }, [records, setRecordCalendarRecordIds, upsertRecordsInStore]);
+  }, [
+    hasInitializedRecordCalendarSelectedDate,
+    records,
+    setRecordCalendarRecordIds,
+    upsertRecordsInStore,
+  ]);
 
   useEffect(() => {
     setContextStoreTargetedRecords({

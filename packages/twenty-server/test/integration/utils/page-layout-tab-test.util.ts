@@ -1,4 +1,4 @@
-import { type PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
+import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 
 export const cleanupPageLayoutTabRecords = async (): Promise<void> => {
   await global.testDataSource.query(`DELETE from "core"."pageLayoutTab"`);

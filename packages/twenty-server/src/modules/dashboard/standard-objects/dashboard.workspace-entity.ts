@@ -91,12 +91,23 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: DASHBOARD_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the dashboard`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetDashboard',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

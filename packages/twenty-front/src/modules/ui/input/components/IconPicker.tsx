@@ -25,8 +25,8 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
-import { IconPickerScrollEffect } from '../hooks/IconPickerScrollEffect';
-import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
+import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -251,6 +251,10 @@ export const IconPicker = ({
     iconPickerVisibleCount !== undefined &&
     iconPickerVisibleCount < totalMatchingIconsCount;
 
+  const iconAriaLabel = selectedIconKey
+    ? t`(selected: ${selectedIconKey})`
+    : t`(no icon selected)`;
+
   return (
     <div className={className}>
       <Dropdown
@@ -259,11 +263,7 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent || (
             <IconButton
-              ariaLabel={`Click to select icon ${
-                selectedIconKey
-                  ? `(selected: ${selectedIconKey})`
-                  : `(no icon selected)`
-              }`}
+              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
               Icon={icon}
               variant={variant}

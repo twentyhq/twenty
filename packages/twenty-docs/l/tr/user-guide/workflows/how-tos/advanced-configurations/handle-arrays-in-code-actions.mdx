@@ -1,0 +1,82 @@
+---
+title: Code Eylemlerinde Dizileri İşleme
+description: İş akışındaki Code eylemlerinde dizi girdilerini doğru şekilde nasıl ele alacağınızı öğrenin.
+---
+
+Code eylemlerinde dizilerle çalışırken iki yaygın sorunla karşılaşabilirsiniz:
+
+1. **String olarak iletilen diziler** — harici sistemlerden veya önceki adımlardan gelen veriler gerçek bir dizi yerine string olarak gelir
+2. **Tekil öğeleri seçememe** — içindeki belirli alanları değil, yalnızca tüm diziyi seçebilirsiniz
+
+Her ikisi de bir Code düğümüyle çözülebilir.
+
+## Stringlerden Dizileri Ayrıştırma
+
+Diziler, iş akışı adımları arasında sıklıkla yerel diziler yerine string veya JSON olarak iletilir. Şu durumlarda gerçekleşir:
+
+* HTTP Request aracılığıyla harici API'lerden veri alma
+* Webhook yüklerini işleme
+* İş akışı adımları arasında veri aktarma
+
+**Çözüm**: Bu kalıbı Code eyleminizin başına ekleyin:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+Önemli satır `typeof users === "string" ? JSON.parse(users) : users` girdinin bir string olup olmadığını kontrol eder, gerekirse ayrıştırır veya zaten bir dizi ise doğrudan kullanır.
+
+## Dizilerden Tekil Alanlar Çıkarma
+
+Bir webhook `answers: [...]` gibi bir dizi döndürebilir, ancak sonraki iş akışı adımlarında içindeki tek tek öğeleri değil — yalnızca tüm diziyi seçebilirsiniz.
+
+**Çözüm**: Belirli alanları çıkarmak ve bunları yapılandırılmış bir nesne olarak döndürmek için bir Code düğümü ekleyin:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Code düğümü bir dizi yerine yapılandırılmış bir nesne döndürür. Sonraki adımlarda, değişken seçiciden `answer.firstname` ve `answer.name` gibi tekil alanları artık seçebilirsiniz.
+
+<Note>
+  Gelecek güncellemelerde diziyle çalışmayı kolaylaştırmak için aktif olarak çalışıyoruz.
+</Note>
+
+<Tip>
+  Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
+</Tip>

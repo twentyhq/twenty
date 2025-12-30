@@ -23,6 +23,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -34,7 +35,7 @@ import {
   CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
@@ -71,6 +72,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
@@ -213,6 +215,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         throw new CommonQueryRunnerException(
           `Field metadata not found for field ${viewFilter.fieldMetadataId}`,
           CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
 
@@ -252,7 +255,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       recordFilters,
       recordFilterGroups: recordFilterGroups,
       fields,
-      filterValueDependencies: {},
+      filterValueDependencies: {
+        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+      },
     });
 
     let view: ViewEntity | null = viewFilters[0]?.view;
@@ -322,7 +327,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
@@ -360,6 +365,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
           throw new CommonQueryRunnerException(
             `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
             CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -399,5 +405,20 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatFieldMetadataMaps,
       ),
     };
+  }
+
+  protected override computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<GroupByQueryArgs>,
+  ): number {
+    const groupByQueryComplexity = 1;
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
+    return (args.includeRecords ?? false)
+      ? groupByQueryComplexity +
+          selectedFieldsComplexity * getGroupLimit(args.limit)
+      : groupByQueryComplexity;
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
@@ -10,7 +10,6 @@ import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -107,16 +106,6 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetMaps: existingFlatRoleTargetMaps,
-      flatRoleMaps: existingFlatRoleMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetMaps',
-      'flatRoleMaps',
-    ]);
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -137,27 +126,22 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntityOperationByMetadataName: {
+            agent: {
               flatEntityToCreate: [flatAgentToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+            },
+            roleTarget: {
               flatEntityToCreate: isDefined(flatRoleTargetToCreate)
                 ? [flatRoleTargetToCreate]
                 : [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -191,17 +175,11 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetMaps: existingFlatRoleTargetMaps,
-      flatRoleMaps: existingFlatRoleMaps,
-      flatRoleTargetByAgentIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetMaps',
-      'flatRoleMaps',
-      'flatRoleTargetByAgentIdMaps',
-    ]);
+    const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetByAgentIdMaps',
+        'flatAgentMaps',
+      ]);
 
     const {
       flatAgentToUpdate,
@@ -210,22 +188,20 @@ export class AgentService {
       flatRoleTargetToUpdate,
     } = fromUpdateAgentInputToFlatAgentToUpdate({
       updateAgentInput: input,
-      flatAgentMaps: existingFlatAgentMaps,
+      flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
     });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntityOperationByMetadataName: {
+            agent: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatAgentToUpdate],
-            }),
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+            },
+            roleTarget: {
               flatEntityToCreate: isDefined(flatRoleTargetToCreate)
                 ? [flatRoleTargetToCreate]
                 : [],
@@ -235,16 +211,10 @@ export class AgentService {
               flatEntityToUpdate: isDefined(flatRoleTargetToUpdate)
                 ? [flatRoleTargetToUpdate]
                 : [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: isDefined(flatRoleTargetToDelete),
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -281,59 +251,111 @@ export class AgentService {
     id: string,
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetByAgentIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetByAgentIdMaps',
-    ]);
-
-    const agentToDelete = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: existingFlatAgentMaps,
+    const deletedAgents = await this.deleteManyAgents({
+      ids: [id],
+      workspaceId,
     });
 
-    if (!isDefined(agentToDelete)) {
+    if (deletedAgents.length !== 1) {
       throw new AgentException(
-        `Agent not found`,
+        'Could not retrieve deleted agent',
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
-    const roleId = flatRoleTargetByAgentIdMaps[agentToDelete.id]?.roleId;
+    const [deletedAgent] = deletedAgents;
+
+    return deletedAgent;
+  }
+
+  async deleteManyAgents({
+    ids,
+    workspaceId,
+    isSystemBuild = false,
+  }: {
+    ids: string[];
+    workspaceId: string;
+    isSystemBuild?: boolean;
+  }): Promise<FlatAgentWithRoleId[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatAgentMaps',
+        'flatRoleTargetByAgentIdMaps',
+      ]);
+
+    const agentsToDelete = ids
+      .map((id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatAgentMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    if (agentsToDelete.length === 0) {
+      return [];
+    }
+
+    const roleTargetsToDelete = agentsToDelete
+      .map((agent) => flatRoleTargetByAgentIdMaps[agent.id])
+      .filter(isDefined);
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntityOperationByMetadataName: {
+            agent: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [agentToDelete],
+              flatEntityToDelete: agentsToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              agent: true,
+            },
+            roleTarget: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: roleTargetsToDelete,
+              flatEntityToUpdate: [],
             },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting agent',
+        `Multiple validation errors occurred while deleting agent${ids.length > 1 ? 's' : ''}`,
       );
     }
 
-    return {
-      ...agentToDelete,
-      roleId: roleId ?? null,
-    };
+    return agentsToDelete.map((agent) => ({
+      ...agent,
+      roleId: flatRoleTargetByAgentIdMaps[agent.id]?.roleId ?? null,
+    }));
+  }
+
+  async searchAgents(
+    query: string,
+    workspaceId: string,
+    options: { limit: number } = { limit: 2 },
+  ): Promise<AgentEntity[]> {
+    const queryLower = query.toLowerCase();
+
+    return this.agentRepository.find({
+      where: [
+        { workspaceId, deletedAt: IsNull(), name: ILike(`%${queryLower}%`) },
+        {
+          workspaceId,
+          deletedAt: IsNull(),
+          description: ILike(`%${queryLower}%`),
+        },
+        { workspaceId, deletedAt: IsNull(), label: ILike(`%${queryLower}%`) },
+      ],
+      take: options.limit,
+      order: { name: 'ASC' },
+    });
   }
 }

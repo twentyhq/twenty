@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -15,7 +15,7 @@ import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { type BarDatum } from '@nivo/bar';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
   type BarChartConfiguration,
@@ -30,6 +30,8 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -50,6 +52,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
@@ -65,6 +69,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
@@ -79,13 +85,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       fieldMetadata: groupByFieldX,
       dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
+
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
 
     if (isDefined(dimensionValues[0])) {
@@ -97,7 +108,10 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const isNewY = !yValues.has(yValue);
 
     if (configuration.groupMode === BarChartGroupMode.STACKED) {
-      if (isNewX && xValues.size >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+      if (
+        isNewX &&
+        xValues.size >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
+      ) {
         hasTooManyGroups = true;
         return;
       }
@@ -110,7 +124,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
       if (
         totalUniqueDimensions + additionalDimensions >
-        BAR_CHART_MAXIMUM_NUMBER_OF_BARS
+        BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
       ) {
         hasTooManyGroups = true;
         return;

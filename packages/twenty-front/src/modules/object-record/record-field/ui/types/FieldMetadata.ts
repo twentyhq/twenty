@@ -91,6 +91,7 @@ export type FieldCurrencyMetadata = BaseFieldMetadata & {
   isPositive?: boolean;
   settings?: {
     format: FieldCurrencyFormat | null;
+    decimals?: number;
   };
 };
 
@@ -284,6 +285,7 @@ const FieldActorSourceSchema = z.union([
   z.literal('WORKFLOW'),
   z.literal('WEBHOOK'),
   z.literal('AGENT'),
+  z.literal('APPLICATION'),
 ]);
 
 export const FieldActorValueSchema = z.object({

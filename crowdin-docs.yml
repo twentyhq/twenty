@@ -1,0 +1,44 @@
+#
+# Crowdin CLI configuration for Documentation translations
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+#
+
+"project_id": 2
+"preserve_hierarchy": true
+"base_url": "https://twenty.api.crowdin.com"
+
+files: [
+  {
+    #
+    # MDX documentation files - user-guide
+    # Using md type to preserve JSX component structure
+    # This prevents Crowdin from reformatting <Warning>, <Accordion>, etc.
+    #
+    "source": "packages/twenty-docs/user-guide/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/user-guide/**/%original_file_name%",
+  },
+  {
+    #
+    # MDX documentation files - developers
+    # Using md type to preserve JSX component structure
+    #
+    "source": "packages/twenty-docs/developers/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/developers/**/%original_file_name%",
+  },
+  {
+    #
+    # MDX documentation files - twenty-ui
+    # Using md type to preserve JSX component structure
+    #
+    "source": "packages/twenty-docs/twenty-ui/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/twenty-ui/**/%original_file_name%",
+  },
+  {
+    #
+    # Navigation labels template - translated into per-locale navigation.json
+    #
+    "source": "packages/twenty-docs/navigation/navigation.template.json",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/navigation.json",
+  }
+]
+

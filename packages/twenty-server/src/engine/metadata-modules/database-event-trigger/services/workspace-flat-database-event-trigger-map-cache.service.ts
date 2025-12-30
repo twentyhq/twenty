@@ -6,11 +6,9 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import {
-  DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  DatabaseEventTriggerEntity,
-} from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -42,12 +40,17 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceC
 
     for (const databaseEventTriggerEntity of databaseEventTriggers) {
       const flatDatabaseEventTrigger = {
-        ...removePropertiesFromRecord(databaseEventTriggerEntity, [
-          ...DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
-        ]),
+        ...removePropertiesFromRecord(
+          databaseEventTriggerEntity,
+          Object.keys(
+            ALL_METADATA_RELATION_PROPERTIES.databaseEventTrigger,
+          ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.databaseEventTrigger)[],
+        ),
         universalIdentifier:
           databaseEventTriggerEntity.universalIdentifier ??
           databaseEventTriggerEntity.id,
+        createdAt: databaseEventTriggerEntity.createdAt.toISOString(),
+        updatedAt: databaseEventTriggerEntity.updatedAt.toISOString(),
       } satisfies FlatDatabaseEventTrigger;
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

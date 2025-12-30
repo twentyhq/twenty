@@ -1,0 +1,290 @@
+---
+title: دليل الأسلوب
+---
+
+تشمل هذه الوثيقة القواعد التي يجب اتباعها عند كتابة التعليمات البرمجية.
+
+The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
+
+لهذا، من الأفضل أن تكون تفصيلًا أكثر قليلاً بدلاً من أن تكون موجزًا للغاية.
+
+دائمًا ضع في اعتبارك أن الناس يقرؤون التعليمات البرمجية أكثر مما يكتبونها، وخاصة في المشاريع مفتوحة المصدر، حيث يمكن لأي شخص المساهمة.
+
+هناك العديد من القواعد التي لم يتم تعريفها هنا، ولكن يتم التحقق منها تلقائيًا بواسطة أدوات الفحص.
+
+## React
+
+### استخدام المكونات الوظيفية
+
+استخدم دائمًا مكونات TSX الوظيفية.
+
+لا تستخدم `import` الافتراضي مع `const`، لأنه أصعب من حيث القراءة والدمج باستخدام إكمال التعليمات البرمجية.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### الإزاحة
+
+قم بإنشاء نوع الخصائص واطلق عليه `(ComponentName)Props` إذا لم يكن هناك حاجة لتصديره.
+
+استخدام تفكيك الخصائص.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### امتنع عن استخدام `React.FC` أو `React.FunctionComponent` لتحديد أنواع الخصائص
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### No Single Variable Prop Spreading in JSX Elements
+
+تجنب استخدام انتشار متغير فردي للخصائص في عناصر JSX، مثل `{...props}`. غالبًا ما تؤدي هذه الممارسة إلى شكل تعليمي أقل قابلية للقراءة وأصعب في الصيانة لأنه من غير الواضح أي الخصائص يتلقاها المكون.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+المبرر:
+
+* نظرة سريعة تسهل معرفة الخصائص التي تمررها التعليمات البرمجية، مما يسهل من الفهم والصيانة.
+* يساعد على منع نشوء تعقيدات كبيرة بين المكونات من خلال خصائصها.
+* أدوات الفحص تجعل من السهل تحديد الخصائص التي بها أخطاء إملائية أو غير مستخدمة عندما تسرد الخصائص بشكل صريح.
+
+## JavaScript
+
+### Use nullish-coalescing operator `??`
+
+```tsx
+// ❌ سيء، قد يعيد 'default' حتى إذا كانت القيمة 0 أو ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ جيد، سيعيد 'default' فقط إذا كانت القيمة null أو غير معرّفة
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Use optional chaining `?.`
+
+```tsx
+// ❌ Bad
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### استخدام `type` بدلاً من `interface`
+
+استخدم دائمًا `type` بدلاً من `interface`، لأنهما تقريبًا دائمًا متداخلين، و `type` أكثر مرونة.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Use string literals instead of enums
+
+[الحروف المشفوعة](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) هي الطريقة المفضلة للتعامل مع القيم الشبيهة بالأعداد المخصصة في TypeScript. من السهل توسيعها باستخدام Pick و Omit، وتقدم تجربة مطور أفضل، خاصة مع إكمال التعليمات البرمجية.
+
+يمكنك معرفة السبب في أن TypeScript توصي بتجنب الأعداد [هنا](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ جيد، يستخدم حرفا مشفوعا
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL والمكتبات الداخلية
+
+يجب عليك استخدام الأعداد التي يقوم بإنشائها GraphQL codegen.
+
+من الأفضل أيضًا استخدام عدد مخصص عند استخدام مكتبة داخلية، بحيث لا تضطر المكتبة الداخلية إلى تعريض نوع حرف مشفوع غير متعلق بـ API الداخلي.
+
+مثال:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Styling
+
+### استخدام مكونات منسقة
+
+قم بتنسيق المكونات باستخدام [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ سيء
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ جيد
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+قم بإضافة بادئة للمكونات المنسقة بـ "Styled" لتمييزها عن المكونات "الحقيقية".
+
+```tsx
+// ❌ سيء
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ جيد
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Theming
+
+استخدام السمة لتنسيق معظم المكونات هو النهج المفضل.
+
+#### وحدات القياس
+
+تجنب استخدام قيم `px` أو `rem` مباشرة داخل المكونات المنسقة. بشكل عام، عادة ما تكون القيم المحددة مسبقًا موجودة بالفعل في السمة، لذا يفضل استخدام السمة لتحقيق هذا الغرض.
+
+#### ألوان
+
+امتنع عن تقديم ألوان جديدة، بدلاً من ذلك، استخدم اللوحة الموجودة في السمة. إذا كانت هناك حالة لا تتطابق فيها اللوحة، يرجى ترك تعليق لكي تتمكن الفريق من تصحيحها.
+
+```tsx
+// ❌ سيء، يحدد القيم المشفوعة للأسلوب دون استخدام السمة
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ جيد، يستعمل السمة
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## تطبيق قاعدة "عدم استيراد الأنواع"
+
+تجنب استيراد الأنواع. للحد من هذه الممارسة، تتحقق قاعدة ESLint وتبلغ عن أي استيرادات من هذا النوع. يساعد هذا على الحفاظ على الاتساق وقابلية القراءة في كود TypeScript.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### لماذا لا نوع استيرادات
+
+* **الاتساق**: من خلال تجنب استيراد الأنواع واستخدام أسلوب استيراد واحد لكل من الأنواع والقيم، يبقى الكود موحدًا في أسلوب استيراد الوحدة.
+
+* **القراءة**: استيرادات بلا نوع تحسن من قابلية القراءة للرمز من خلال توضيح عندما تقوم باستيراد القيم أو الأنواع. يقلل هذا من الغموض ويجعل من الأسهل فهم الهدف من الرموز المستوردة.
+
+* **الصيانة**: يعزز الصيانة داخل قاعدة الكود لأن المطوّرين يمكنهم تحديد مواقع استيرادات الأنواع فقط عند استعراض أو تعديل الكود.
+
+### قاعدة ESLint
+
+تفرض قاعدة ESLint، `@typescript-eslint/consistent-type-imports`, معيار عدم استيراد الأنواع. ستولد هذه القاعدة تحذيرات أو أخطاء عن أي انتهاكات لاستيراد الأنواع.
+
+يرجى ملاحظة أن هذه القاعدة تتناول بشكل خاص حالات الحافة النادرة حيث تحدث استيرادات الأنواع دون قصد. يمنع TypeScript نفسه هذه الممارسة، كما هو موضح في [ملاحظات إصدار TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). في معظم الحالات، لا ينبغي لك أن تستخدم استيرادات الأنواع وحدها.
+
+لضمان امتثال الكود الخاص بك لهذه القاعدة، تأكد من تشغيل ESLint كجزء من سير العمل الخاص بالتطوير لديك.

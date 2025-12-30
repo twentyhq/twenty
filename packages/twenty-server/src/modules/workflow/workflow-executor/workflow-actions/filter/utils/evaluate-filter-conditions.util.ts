@@ -79,6 +79,8 @@ function evaluateFilter(
       return evaluateRelationFilter(filterWithConvertedOperand);
     case 'CURRENCY':
       return evaluateCurrencyFilter(filterWithConvertedOperand);
+    case 'ACTOR':
+      return evaluateActorFilter(filterWithConvertedOperand);
     default:
       return evaluateDefaultFilter(filterWithConvertedOperand);
   }
@@ -211,6 +213,7 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 }
 
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
+  // TODO: refactor this with Temporal
   const dateLeftValue = new Date(String(filter.leftOperand));
 
   switch (filter.operand) {
@@ -241,18 +244,10 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
       );
 
     case ViewFilterOperand.IS_EMPTY:
-      return (
-        filter.leftOperand === null ||
-        filter.leftOperand === undefined ||
-        filter.leftOperand === ''
-      );
+      return !isDefined(filter.leftOperand) || filter.leftOperand === '';
 
     case ViewFilterOperand.IS_NOT_EMPTY:
-      return (
-        filter.leftOperand !== null &&
-        filter.leftOperand !== undefined &&
-        filter.leftOperand !== ''
-      );
+      return isDefined(filter.leftOperand) && filter.leftOperand !== '';
 
     case ViewFilterOperand.IS_RELATIVE:
       return parseAndEvaluateRelativeDateFilter({
@@ -341,10 +336,10 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
       return Number(leftValue) <= Number(rightValue);
 
     case ViewFilterOperand.IS_EMPTY:
-      return !isNonEmptyString(leftValue);
+      return !isDefined(filter.leftOperand) || filter.leftOperand === '';
 
     case ViewFilterOperand.IS_NOT_EMPTY:
-      return isNonEmptyString(leftValue);
+      return isDefined(filter.leftOperand) && filter.leftOperand !== '';
 
     case ViewFilterOperand.IS:
       return Number(leftValue) === Number(rightValue);
@@ -403,6 +398,20 @@ function evaluateSelectFilter(filter: ResolvedFilter): boolean {
         `Operand ${filter.operand} not supported for select filter`,
       );
   }
+}
+
+function evaluateActorFilter(filter: ResolvedFilter): boolean {
+  const { compositeFieldSubFieldName } = filter;
+
+  if (compositeFieldSubFieldName === 'source') {
+    return evaluateSelectFilter(filter);
+  }
+
+  if (compositeFieldSubFieldName === 'workspaceMemberId') {
+    return evaluateRelationFilter(filter);
+  }
+
+  return evaluateTextAndArrayFilter(filter, 'TEXT', compositeFieldSubFieldName);
 }
 
 export function evaluateFilterConditions({

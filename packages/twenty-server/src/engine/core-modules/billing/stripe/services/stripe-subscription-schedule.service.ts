@@ -2,18 +2,17 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { findOrThrow } from 'twenty-shared/utils';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class StripeSubscriptionScheduleService {
@@ -34,40 +33,11 @@ export class StripeSubscriptionScheduleService {
     );
   }
 
-  private snapshotFromLivePhase(phase: Stripe.SubscriptionSchedule.Phase) {
-    return {
-      start_date: phase.start_date,
-      end_date: phase.end_date ?? undefined,
-      items: (phase.items || []).map((i) => ({
-        price: normalizePriceRef(i.price) as string,
-        quantity: i.quantity ?? undefined,
-      })),
-      proration_behavior: 'none',
-      ...(phase.billing_thresholds
-        ? { billing_thresholds: phase.billing_thresholds }
-        : {}),
-    } as Stripe.SubscriptionScheduleUpdateParams.Phase;
-  }
-
-  private computeBaseStart(
-    currentEditable: Stripe.SubscriptionSchedule.Phase | undefined,
-    nextEditable: Stripe.SubscriptionSchedule.Phase | undefined,
-    live: Stripe.SubscriptionSchedule,
-    now: number,
-  ): number {
-    const cEnd = (currentEditable?.end_date as number | undefined) ?? 0;
-    const curPhaseEnd =
-      (live.current_phase?.end_date as number | undefined) ?? 0;
-    const nStart = (nextEditable?.start_date as number | undefined) ?? 0;
-
-    return Math.max(cEnd, curPhaseEnd, nStart, now + 1);
-  }
-
-  getEditablePhases(live: Stripe.SubscriptionSchedule) {
+  getPhases(subscriptionSchedule: Stripe.SubscriptionSchedule) {
     const now = Math.floor(Date.now() / 1000);
 
-    const currentEditable = findOrThrow(
-      live.phases,
+    const currentPhase = findOrThrow(
+      subscriptionSchedule.phases,
       (p) => {
         const s = p.start_date ?? 0;
         const e = p.end_date ?? Infinity;
@@ -75,20 +45,20 @@ export class StripeSubscriptionScheduleService {
         return s <= now && now < e;
       },
       new BillingException(
-        `Subscription must have at least 1 phase to be editable`,
+        `Subscription must have at least 1 current phase`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND,
       ),
     );
 
-    const nextEditable = (live.phases || [])
+    const nextPhase = (subscriptionSchedule.phases || [])
       .filter((p) => (p.start_date ?? 0) > now)
       .sort((a, b) => (a.start_date ?? 0) - (b.start_date ?? 0))[0] as
       | Stripe.SubscriptionSchedule.Phase
       | undefined;
 
     return {
-      currentEditable,
-      nextEditable,
+      currentPhase,
+      nextPhase,
     };
   }
 
@@ -98,95 +68,60 @@ export class StripeSubscriptionScheduleService {
     })) as SubscriptionWithSchedule;
   }
 
-  async retrieveSchedule(scheduleId: string) {
-    if (!this.stripe) throw new Error('Billing is disabled');
-
-    return this.stripe.subscriptionSchedules.retrieve(scheduleId, {
-      expand: ['subscription'],
-    });
-  }
-
   async updateSchedule(
     scheduleId: string,
     params: Stripe.SubscriptionScheduleUpdateParams,
   ) {
     if (!this.stripe) throw new Error('Billing is disabled');
 
-    return this.stripe.subscriptionSchedules.update(scheduleId, params);
+    return await this.stripe.subscriptionSchedules.update(scheduleId, params);
   }
 
-  async createScheduleFromSubscription(subscriptionId: string) {
+  async createSubscriptionSchedule(stripeSubscriptionId: string) {
     if (!this.stripe) throw new Error('Billing is disabled');
 
-    return this.stripe.subscriptionSchedules.create({
-      from_subscription: subscriptionId,
+    const schedule = await this.stripe.subscriptionSchedules.create({
+      from_subscription: stripeSubscriptionId,
     });
+
+    const currentPhase = this.getPhases(schedule).currentPhase;
+
+    return {
+      schedule,
+      currentPhase,
+    };
   }
 
-  async findOrCreateSubscriptionSchedule(
-    subscription: SubscriptionWithSchedule,
-  ) {
-    if (subscription.schedule) return subscription.schedule;
+  async loadSubscriptionSchedule(stripeSubscriptionId: string) {
+    const subscriptionWithSchedule =
+      await this.getSubscriptionWithSchedule(stripeSubscriptionId);
 
-    return this.createScheduleFromSubscription(subscription.id);
+    if (!isDefined(subscriptionWithSchedule.schedule)) {
+      return {};
+    }
+
+    const { currentPhase, nextPhase } = this.getPhases(
+      subscriptionWithSchedule.schedule,
+    );
+
+    if (!isDefined(nextPhase)) {
+      await this.releaseSubscriptionSchedule(
+        subscriptionWithSchedule.schedule.id,
+      );
+
+      return {};
+    }
+
+    return {
+      schedule: subscriptionWithSchedule.schedule,
+      currentPhase,
+      nextPhase,
+    };
   }
 
-  async replaceEditablePhases(
-    scheduleId: string,
-    desired: {
-      currentPhaseSnapshot?: Stripe.SubscriptionScheduleUpdateParams.Phase;
-      nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
-    },
-  ): Promise<Stripe.SubscriptionSchedule> {
+  releaseSubscriptionSchedule(scheduleId: string) {
     if (!this.stripe) throw new Error('Billing is disabled');
 
-    const live = await this.retrieveSchedule(scheduleId);
-    const { currentEditable, nextEditable } = this.getEditablePhases(live);
-    const now = Math.floor(Date.now() / 1000);
-
-    const phases: Stripe.SubscriptionScheduleUpdateParams.Phase[] = [];
-
-    const currentPhaseSnapshot =
-      desired.currentPhaseSnapshot ??
-      this.snapshotFromLivePhase(currentEditable);
-
-    phases.push(currentPhaseSnapshot);
-
-    const hasNextKey = 'nextPhase' in desired;
-    const wantsNext = hasNextKey && !!desired.nextPhase;
-    const wantsDeleteNext = hasNextKey && !desired.nextPhase;
-    const preserveExistingNext = !hasNextKey && !!nextEditable;
-
-    if (wantsNext) {
-      phases.push({
-        ...desired.nextPhase!,
-        start_date: this.computeBaseStart(
-          currentEditable,
-          nextEditable,
-          live,
-          now,
-        ),
-        proration_behavior: 'none',
-      });
-    }
-
-    if (!wantsNext && !wantsDeleteNext && preserveExistingNext) {
-      phases.push(this.snapshotFromLivePhase(nextEditable!));
-    }
-
-    if (phases.length === 0 && wantsNext) {
-      phases.push({
-        ...desired.nextPhase!,
-        start_date: Math.max(
-          (live.current_phase?.end_date as number | undefined) ?? 0,
-          now + 1,
-        ),
-        proration_behavior: 'none',
-      });
-    }
-
-    if (phases.length === 0) return live;
-
-    return this.updateSchedule(scheduleId, { phases });
+    return this.stripe.subscriptionSchedules.release(scheduleId);
   }
 }

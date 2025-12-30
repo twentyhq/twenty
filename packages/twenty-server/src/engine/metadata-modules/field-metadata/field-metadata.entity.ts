@@ -20,7 +20,6 @@ import {
 } from 'typeorm';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
@@ -30,8 +29,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 @Entity('fieldMetadata')
 @Check(
@@ -53,6 +52,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
   'objectMetadataId',
   'workspaceId',
 ])
+@Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
     TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
   >
@@ -126,10 +126,6 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: false, type: 'boolean' })
   isUnique: boolean | null;
 
-  @Column({ nullable: false, type: 'uuid' })
-  @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
-  workspaceId: string;
-
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
@@ -200,9 +196,6 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.fieldMetadata)
   viewFilters: Relation<ViewFilterEntity[]>;
-
-  @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.fieldMetadata)
-  viewGroups: Relation<ViewGroupEntity[]>;
 
   @OneToMany(
     () => ViewEntity,

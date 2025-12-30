@@ -15,7 +15,7 @@ import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -33,7 +33,6 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
@@ -56,11 +55,9 @@ export interface FormatResult {
 
 export abstract class RestApiBaseHandler {
   @Inject()
-  protected readonly twentyORMManager: TwentyORMManager;
-  @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
-  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
@@ -94,7 +91,7 @@ export abstract class RestApiBaseHandler {
     let roleId: string;
 
     if (isDefined(authContext.apiKey)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );

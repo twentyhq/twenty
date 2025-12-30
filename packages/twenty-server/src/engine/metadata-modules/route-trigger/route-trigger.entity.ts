@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -10,22 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { RouteTriggerEntityRelationProperties } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-
-export enum HTTPMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-}
-
-export const ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES = [
-  'serverlessFunction',
-] as const satisfies readonly RouteTriggerEntityRelationProperties[];
 
 @Entity({ name: 'routeTrigger', schema: 'core' })
 @Unique('IDX_ROUTE_TRIGGER_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
@@ -64,9 +51,6 @@ export class RouteTriggerEntity
 
   @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionId: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

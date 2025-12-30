@@ -265,6 +265,7 @@ export const useGraphQLErrorHandlerHook = <
 
         if (
           requestMetadataVersion &&
+          isDefined(currentMetadataVersion) &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
           options.metricsService.incrementCounter({

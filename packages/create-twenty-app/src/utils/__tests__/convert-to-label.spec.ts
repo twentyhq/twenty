@@ -1,4 +1,4 @@
-import { convertToLabel } from '../convert-to-label';
+import { convertToLabel } from '@/utils/convert-to-label';
 
 describe('convertToLabel', () => {
   it('should convert to label', () => {

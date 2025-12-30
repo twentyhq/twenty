@@ -1,22 +1,18 @@
 import { randomUUID } from 'crypto';
 
+import { msg } from '@lingui/core/macro';
+
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type JwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
-
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  assertIsDefinedOrThrow: jest.fn((value, error) => {
-    if (value === null || value === undefined) {
-      throw error;
-    }
-  }),
-}));
 
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
@@ -24,6 +20,7 @@ describe('JwtAuthStrategy', () => {
   let userWorkspaceRepository: any;
   let userRepository: any;
   let apiKeyRepository: any;
+  let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
 
@@ -49,6 +46,10 @@ describe('JwtAuthStrategy', () => {
       findOne: jest.fn(),
     };
 
+    applicationRepository = {
+      findOne: jest.fn(),
+    };
+
     jwtWrapperService = {
       extractJwtFromRequest: jest.fn(() => () => 'token'),
     };
@@ -66,7 +67,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(null);
@@ -74,6 +75,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -91,7 +93,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthExceptionCode if type is API_KEY not found', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -104,6 +106,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -121,7 +124,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthExceptionCode if API_KEY is revoked', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -137,6 +140,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -154,7 +158,7 @@ describe('JwtAuthStrategy', () => {
     it('should be truthy if type is API_KEY and API_KEY is not revoked', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -170,6 +174,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -198,7 +203,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -210,6 +215,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -217,7 +223,9 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -234,7 +242,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -248,6 +256,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -255,7 +264,9 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -272,7 +283,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -290,6 +301,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -303,6 +315,46 @@ describe('JwtAuthStrategy', () => {
     });
   });
 
+  describe('APPLICATION token validation', () => {
+    it('should throw AuthExceptionCode if type is APPLICATION, and application not found', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+      };
+
+      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
+
+      applicationRepository.findOne.mockResolvedValue(null);
+
+      strategy = new JwtAuthStrategy(
+        jwtWrapperService,
+        workspaceRepository,
+        applicationRepository,
+        userRepository,
+        userWorkspaceRepository,
+        apiKeyRepository,
+        permissionsService,
+      );
+
+      await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
+        new AuthException('Application not found', expect.any(String), {
+          userFriendlyMessage: msg`Application not found.`,
+        }),
+      );
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.APPLICATION_NOT_FOUND);
+      }
+    });
+  });
+
   describe('Impersonation validation', () => {
     it('should throw AuthException if impersonation token has missing impersonatorUserWorkspaceId', async () => {
       const validUserId = randomUUID();
@@ -311,7 +363,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -335,6 +387,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -357,7 +410,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -380,6 +433,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -401,7 +455,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -427,6 +481,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -449,7 +504,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -485,6 +540,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -495,6 +551,7 @@ describe('JwtAuthStrategy', () => {
         new AuthException(
           'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
           AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          { userFriendlyMessage: msg`User workspace not found.` },
         ),
       );
     });
@@ -507,7 +564,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -537,6 +594,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -560,7 +618,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -607,6 +665,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -629,7 +688,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -676,6 +735,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -699,7 +759,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -746,6 +806,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -768,7 +829,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -809,6 +870,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
@@ -837,7 +899,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -874,6 +936,7 @@ describe('JwtAuthStrategy', () => {
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
+        applicationRepository,
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,

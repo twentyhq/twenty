@@ -1,0 +1,51 @@
+---
+title: Crea una vista tabella con raggruppamento
+description: Organizza i tuoi record in gruppi comprimibili per valore di campo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Raggruppa la vista tabella in base a un campo Selezione per organizzare i record in sezioni comprimibili.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Passaggi
+
+1. Vai all'oggetto (Persone, Aziende, ecc.)
+2. Clicca sul menu a discesa della vista → **+ Aggiungi vista**
+3. Dai un nome alla tua vista (ad es., "Aziende per tipo")
+4. Clicca **Crea**
+5. Clicca **Opzioni → Raggruppa**
+6. Scegli un campo Selezione in base al quale raggruppare
+7. Clicca su **Salva**
+
+## Configura l'ordine dei gruppi
+
+In **Opzioni → Raggruppa → Ordina**, scegli come ordinare i gruppi:
+
+| Opzione                | Descrizione                                               |
+| ---------------------- | --------------------------------------------------------- |
+| **Alfabetico**         | Da A a Z                                                  |
+| **Alfabetico inverso** | Da Z a A                                                  |
+| **Ordine manuale**     | Trascina i gruppi per riordinarli sotto "Gruppi visibili" |
+
+Clicca sull'**icona a forma di occhio** accanto a un gruppo per nasconderlo dalla vista.
+
+<Note>
+  **Per prestazioni ottimali, limita a 10-15 gruppi visibili.** Se te ne servono di più, prendi in considerazione l'uso di una Dashboard.
+</Note>
+
+## Esempio: Aziende per settore
+
+1. Vai su **Aziende**
+2. Crea una nuova vista chiamata "Per settore"
+3. Clicca **Opzioni → Raggruppa**
+4. Seleziona il campo **Settore**
+5. Salva
+
+Ora le tue aziende sono organizzate per settore, rendendo facile concentrarti su un segmento alla volta.
+
+## Correlati
+
+* [Viste tabella](/l/it/user-guide/views-pipelines/capabilities/table-views) — tutte le funzionalità delle viste tabella
+* [Filtri e ordinamento](/l/it/user-guide/views-pipelines/capabilities/filters-and-sorting) — combina il raggruppamento con i filtri

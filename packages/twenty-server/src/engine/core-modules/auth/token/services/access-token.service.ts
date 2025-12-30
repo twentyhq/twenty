@@ -28,7 +28,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -41,7 +42,7 @@ export class AccessTokenService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -79,31 +80,39 @@ export class AccessTokenService {
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (isWorkspaceActiveOrSuspended(workspace)) {
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
+      const authContext = buildSystemAuthContext(workspaceId);
 
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: {
-          userId: user.id,
-        },
-      });
+      tokenWorkspaceMemberId =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          authContext,
+          async () => {
+            const workspaceMemberRepository =
+              await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+                workspaceId,
+                'workspaceMember',
+                { shouldBypassPermissionChecks: true },
+              );
 
-      assertIsDefinedOrThrow(
-        workspaceMember,
-        new AuthException(
-          'User is not a member of the workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          {
-            userFriendlyMessage: msg`User is not a member of the workspace.`,
+            const workspaceMember = await workspaceMemberRepository.findOne({
+              where: {
+                userId: user.id,
+              },
+            });
+
+            assertIsDefinedOrThrow(
+              workspaceMember,
+              new AuthException(
+                'User is not a member of the workspace',
+                AuthExceptionCode.FORBIDDEN_EXCEPTION,
+                {
+                  userFriendlyMessage: msg`User is not a member of the workspace.`,
+                },
+              ),
+            );
+
+            return workspaceMember.id;
           },
-        ),
-      );
-
-      tokenWorkspaceMemberId = workspaceMember.id;
+        );
     }
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
@@ -145,7 +154,7 @@ export class AccessTokenService {
   }
 
   async validateToken(token: string): Promise<AuthContext> {
-    await this.jwtWrapperService.verifyJwtToken(token, JwtTokenTypeEnum.ACCESS);
+    await this.jwtWrapperService.verifyJwtToken(token);
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 

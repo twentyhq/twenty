@@ -28,6 +28,7 @@ export type {
   ColorSampleProps,
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
+export { CommandBlock } from './command-block/components/CommandBlock';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -68,6 +69,7 @@ export {
   Icon123,
   IconAlertCircle,
   IconAlertTriangle,
+  IconAlignBoxLeftTop,
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
@@ -89,6 +91,7 @@ export {
   IconAt,
   IconAxisX,
   IconAxisY,
+  IconBadge2k,
   IconBaselineDensitySmall,
   IconBell,
   IconBlockquote,
@@ -120,6 +123,7 @@ export {
   IconCalendarTime,
   IconCalendarWeek,
   IconCalendarX,
+  IconCancel,
   IconCaretLeft,
   IconCaretRight,
   IconChartBar,
@@ -225,6 +229,7 @@ export {
   IconFileCheck,
   IconFileExport,
   IconFileImport,
+  IconFileInfo,
   IconFilePencil,
   IconFileText,
   IconFileUpload,
@@ -410,13 +415,16 @@ export {
   IconTags,
   IconTarget,
   IconTargetArrow,
+  IconTerminal,
   IconTestPipe,
+  IconTextCaption,
   IconTextSize,
   IconTextWrap,
   IconTimeDuration30,
   IconTimeDuration60,
   IconTimelineEvent,
   IconTool,
+  IconTransform,
   IconTrash,
   IconTrashOff,
   IconTrashX,

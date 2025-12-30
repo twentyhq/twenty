@@ -1,11 +1,15 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
-import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
+import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
@@ -14,10 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  type LineChartConfiguration,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -27,11 +27,13 @@ const GraphWidgetLineChart = lazy(() =>
   })),
 );
 
-export const GraphWidgetLineChartRenderer = ({
-  widget,
-}: {
-  widget: PageLayoutWidget;
-}) => {
+export const GraphWidgetLineChartRenderer = () => {
+  const widget = useCurrentWidget();
+
+  assertLineChartWidgetOrThrow(widget);
+
+  const { userTimezone } = useUserTimezone();
+
   const {
     series,
     xAxisLabel,
@@ -44,11 +46,11 @@ export const GraphWidgetLineChartRenderer = ({
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as LineChartConfiguration,
+    configuration: widget.configuration,
   });
 
   const navigate = useNavigate();
-  const configuration = widget.configuration as LineChartConfiguration;
+  const configuration = widget.configuration;
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -59,7 +61,7 @@ export const GraphWidgetLineChartRenderer = ({
 
   const groupMode =
     hasGroupByOnSecondaryAxis &&
-    (configuration.isStacked ?? LINE_CHART_IS_STACKED_DEFAULT)
+    (configuration.isStacked ?? LINE_CHART_CONSTANTS.IS_STACKED_DEFAULT)
       ? 'stacked'
       : undefined;
 
@@ -75,6 +77,8 @@ export const GraphWidgetLineChartRenderer = ({
     }),
   );
 
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+
   const handlePointClick = (point: Point<LineSeries>) => {
     const xValue = (point.data as LineChartDataPoint).x;
     const rawValue = formattedToRawLookup.get(xValue as string) ?? null;
@@ -86,7 +90,8 @@ export const GraphWidgetLineChartRenderer = ({
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: configuration.timezone ?? undefined,
+      timezone: userTimezone,
+      firstDayOfTheWeek: userFirstDayOfTheWeek,
     });
 
     const url = getAppPath(

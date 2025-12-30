@@ -1,0 +1,82 @@
+---
+title: التعامل مع المصفوفات في إجراءات Code
+description: تعلّم كيفية التعامل بشكل صحيح مع مُدخلات المصفوفات في إجراءات Code في سير العمل.
+---
+
+عند العمل مع المصفوفات في إجراءات Code، قد تواجه تحديين شائعين:
+
+1. **مصفوفات مُمرَّرة كسلاسل نصية** — تصل البيانات من الأنظمة الخارجية أو من الخطوات السابقة كسلسلة نصية بدلاً من أن تكون مصفوفة فعلية
+2. **لا يمكن تحديد عناصر فردية** — يمكنك تحديد المصفوفة كاملة فقط، وليس الحقول المحددة داخلها
+
+يمكن حل كلا الأمرين باستخدام عقدة Code.
+
+## تحليل المصفوفات من السلاسل النصية
+
+غالباً ما تُمرَّر المصفوفات بين خطوات سير العمل كسلاسل نصية أو JSON بدلاً من مصفوفات أصلية. يحدث هذا عندما:
+
+* استقبال البيانات من واجهات برمجة التطبيقات الخارجية عبر HTTP Request
+* معالجة حمولات خطافات الويب
+* تمرير البيانات بين خطوات سير العمل
+
+**الحل**: أضف هذا النمط في بداية إجراء Code الخاص بك:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+السطر الأساسي `typeof users === "string" ? JSON.parse(users) : users` يتحقق مما إذا كان الإدخال سلسلة نصية، ويُجري تحليله إذا لزم الأمر، أو يستخدمه مباشرة إذا كان مصفوفة بالفعل.
+
+## استخراج الحقول الفردية من المصفوفات
+
+قد يُرجِع خطّاف ويب مصفوفةً مثل `answers: [...]`، ولكن في خطوات سير العمل اللاحقة يمكنك تحديد **المصفوفة بأكملها** فقط — وليس العناصر الفردية داخلها.
+
+**الحل**: أضف عقدة Code لاستخراج حقول محددة وإرجاعها ككائن منظَّم:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+تعيد عقدة Code كائناً منظَّماً بدلاً من مصفوفة. في الخطوات اللاحقة، يمكنك الآن تحديد حقول فردية مثل `answer.firstname` و`answer.name` من منتقي المتغيرات.
+
+<Note>
+  نعمل بنشاط على جعل التعامل مع المصفوفات أسهل في التحديثات المستقبلية.
+</Note>
+
+<Tip>
+  انقر على أيقونة المربع في أعلى يمين محرر الكود لعرضه بملء الشاشة — فهذا مفيد لأن عرض المحرر الافتراضي محدود.
+</Tip>

@@ -8,7 +8,9 @@ export class ImapMessageListFetchErrorHandler {
   private readonly logger = new Logger(ImapMessageListFetchErrorHandler.name);
 
   public handleError(error: Error): void {
-    this.logger.error(`IMAP: Error fetching message list: ${error.message}`);
+    this.logger.error(
+      `IMAP: Error fetching message list: ${JSON.stringify(error)}`,
+    );
 
     const networkError = parseImapError(error, { cause: error });
 

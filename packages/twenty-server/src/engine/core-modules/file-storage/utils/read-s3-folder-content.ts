@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { isObject } from '@sniptt/guards';
-
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { type Sources } from 'twenty-shared/types';
 
 export const readS3FolderContent = (
   files: { path: string; fileContent: string }[],

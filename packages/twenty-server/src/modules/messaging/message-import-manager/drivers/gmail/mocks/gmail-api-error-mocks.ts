@@ -1,114 +1,88 @@
-import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
+import { GaxiosError } from 'gaxios';
 
-const gmailApiErrorMocks = {
-  // 400 Bad Request - Invalid query parameters
-  badRequest: {
-    code: '400',
-    message: 'badRequest',
+type ErrorConfig = {
+  reason: string;
+  message: string;
+};
+
+const ERROR_DEFINITIONS: Record<number, Record<string, ErrorConfig>> = {
+  400: {
+    default: { reason: 'badRequest', message: 'Bad Request' },
+    invalid_grant: { reason: 'invalid_grant', message: 'invalid_grant' },
+    failedPrecondition: {
+      reason: 'failedPrecondition',
+      message: 'Precondition check failed.',
+    },
   },
-
-  // 400 Invalid Grant
-  invalidGrant: {
-    code: '400',
-    message: 'invalid_grant',
+  401: {
+    default: { reason: 'authError', message: 'Invalid Credentials' },
   },
-
-  // 400 Failed Precondition
-  failedPrecondition: {
-    code: '400',
-    message: 'failedPrecondition',
+  403: {
+    default: { reason: 'rateLimitExceeded', message: 'Rate Limit Exceeded' },
+    dailyLimit: {
+      reason: 'dailyLimitExceeded',
+      message: 'Daily Limit Exceeded',
+    },
+    userRateLimit: {
+      reason: 'userRateLimitExceeded',
+      message: 'User Rate Limit Exceeded',
+    },
+    rateLimit: { reason: 'rateLimitExceeded', message: 'Rate Limit Exceeded' },
+    domainPolicy: { reason: 'domainPolicy', message: 'Domain Policy Error' },
   },
-
-  invalidCredentials: {
-    code: '401',
-    message: 'authError',
+  404: {
+    default: { reason: 'notFound', message: 'Not Found' },
   },
-
-  notFound: {
-    code: '404',
-    message: 'notFound',
+  410: {
+    default: { reason: 'resourceGone', message: 'Resource Gone' },
   },
-
-  gone: {
-    code: '410',
-    message: 'resourceGone',
+  429: {
+    default: {
+      reason: 'tooManyConcurrentRequests',
+      message: 'Too Many Concurrent Requests',
+    },
   },
-
-  dailyLimitExceeded: {
-    code: '403',
-    message: 'dailyLimitExceeded',
-  },
-
-  userRateLimitExceeded: {
-    code: '403',
-    message: 'userRateLimitExceeded',
-  },
-
-  rateLimitExceeded: {
-    code: '403',
-    message: 'rateLimitExceeded',
-  },
-
-  domainPolicyError: {
-    code: '403',
-    message: 'domainPolicy',
-  },
-
-  tooManyConcurrentRequests: {
-    code: '429',
-    message: 'tooManyConcurrentRequests',
-  },
-
-  backendError: {
-    code: '500',
-    message: 'backendError',
-  },
-
-  getError: function (code: number, type?: string): GmailApiError {
-    switch (code) {
-      case 400:
-        switch (type) {
-          case 'invalid_grant':
-            return this.invalidGrant;
-          case 'failedPrecondition':
-            return this.failedPrecondition;
-          default:
-            return this.badRequest;
-        }
-      case 401:
-        return this.invalidCredentials;
-      case 403:
-        switch (type) {
-          case 'dailyLimit':
-            return this.dailyLimitExceeded;
-          case 'userRateLimit':
-            return this.userRateLimitExceeded;
-          case 'rateLimit':
-            return this.rateLimitExceeded;
-          case 'domainPolicy':
-            return this.domainPolicyError;
-          default:
-            return this.rateLimitExceeded;
-        }
-      case 404:
-        return this.notFound;
-      case 410:
-        return this.gone;
-      case 429:
-        switch (type) {
-          case 'concurrent':
-            return this.tooManyConcurrentRequests;
-          case 'mailSending':
-            return this.mailSendingLimitExceeded;
-          default:
-            return this.tooManyConcurrentRequests;
-        }
-      case 500:
-        return this.backendError;
-      default:
-        throw new Error(`Unknown error code: ${code}`);
-    }
+  500: {
+    default: { reason: 'backendError', message: 'Backend Error' },
   },
 };
 
-export default gmailApiErrorMocks;
+export const getGmailApiError = ({
+  code,
+  reason,
+}: {
+  code: number;
+  reason?: string;
+}): GaxiosError => {
+  const statusMap = ERROR_DEFINITIONS[code];
+
+  if (!statusMap) {
+    throw new Error(`Unknown error code: ${code}`);
+  }
+
+  const config = statusMap[reason || ''] ?? statusMap.default;
+
+  return new GaxiosError(
+    config.message,
+    { url: 'https://gmail.googleapis.com/mocks' },
+    {
+      status: code,
+      statusText: config.message,
+      data: {
+        error: {
+          code,
+          message: config.message,
+          errors: [
+            {
+              message: config.message,
+              reason: config.reason,
+            },
+          ],
+        },
+      },
+      headers: {},
+      config: { url: 'https://gmail.googleapis.com/mocks' },
+      request: { responseURL: 'https://gmail.googleapis.com/mocks' },
+    },
+  );
+};

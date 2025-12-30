@@ -1,4 +1,4 @@
-import { OperationType } from '../types/operation-type';
+import { OperationType } from '@/apollo/types/operation-type';
 
 const operationTypeColors = {
   // eslint-disable-next-line @nx/workspace-no-hardcoded-colors

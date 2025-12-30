@@ -26,7 +26,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@linaria/react": "^6.2.1",
-    "@monaco-editor/react": "^4.6.0",
+    "@monaco-editor/react": "^4.7.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "date-fns": "^2.30.0",
@@ -41,6 +41,9 @@
     "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
+  },
+  "peerDependencies": {
+    "monaco-editor": ">= 0.25.0 < 1"
   },
   "scripts": {
     "build": "npx vite build"

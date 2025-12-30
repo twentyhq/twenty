@@ -34,6 +34,21 @@ export class AgentChatThreadEntity {
   @Column({ nullable: true, type: 'varchar' })
   title: string;
 
+  @Column({ type: 'int', default: 0 })
+  totalInputTokens: number;
+
+  @Column({ type: 'int', default: 0 })
+  totalOutputTokens: number;
+
+  @Column({ type: 'int', nullable: true })
+  contextWindowTokens: number | null;
+
+  @Column({ type: 'bigint', default: 0 })
+  totalInputCredits: number;
+
+  @Column({ type: 'bigint', default: 0 })
+  totalOutputCredits: number;
+
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: Relation<AgentTurnEntity[]>;
 

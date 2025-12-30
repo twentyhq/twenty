@@ -1,13 +1,14 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
+  type FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseToPlainDateOrThrow } from 'twenty-shared/utils';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 type FormatDimensionValueParams = {
@@ -15,6 +16,8 @@ type FormatDimensionValueParams = {
   fieldMetadata: FieldMetadataItem;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   subFieldName?: string;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 const normalizeMultiSelectValue = (value: unknown): unknown[] => {
@@ -43,6 +46,8 @@ export const formatDimensionValue = ({
   fieldMetadata,
   dateGranularity,
   subFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
     return t`Not Set`;
@@ -78,12 +83,6 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
-      const parsedDate = new Date(String(value));
-
-      if (isNaN(parsedDate.getTime())) {
-        return String(value);
-      }
-
       if (
         effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -94,15 +93,21 @@ export const formatDimensionValue = ({
       ) {
         return String(value);
       }
-      return formatDateByGranularity(parsedDate, effectiveDateGranularity);
+
+      const parsedPlainDate = parseToPlainDateOrThrow(String(value));
+
+      return formatDateByGranularity(
+        parsedPlainDate,
+        effectiveDateGranularity,
+        userTimezone,
+        firstDayOfTheWeek,
+      );
     }
 
     case FieldMetadataType.RELATION: {
       if (isDefined(dateGranularity)) {
-        const parsedDate = new Date(String(value));
-        if (isNaN(parsedDate.getTime())) {
-          return String(value);
-        }
+        const parsedDayString = String(value);
+
         if (
           dateGranularity ===
             ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -113,7 +118,7 @@ export const formatDimensionValue = ({
         ) {
           return String(value);
         }
-        return formatDateByGranularity(parsedDate, dateGranularity);
+        return parsedDayString;
       }
       return String(value);
     }

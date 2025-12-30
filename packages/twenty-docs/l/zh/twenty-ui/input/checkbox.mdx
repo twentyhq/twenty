@@ -1,5 +1,5 @@
 ---
-title: 複選框
+title: Checkbox
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
@@ -7,41 +7,38 @@ image: /images/user-guide/tasks/tasks_header.png
   <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
 </Frame>
 
-當使用者需要從多個選項中選擇多個值時使用。
+Used when a user needs to select multiple values from several options.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
 
-```jsx
-import { Checkbox } from "twenty-ui/display";
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Checkbox
-      checked={true}
-      indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
-      variant="primary"
-      size="small"
-      shape="squared"
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 屬性              | 類型       | 描述                                                              |
-| --------------- | -------- | --------------------------------------------------------------- |
-| 選中              | 布爾值      | 表示複選框是否已選中                                                      |
-| 未決定             | 布爾值      | 表示複選框是否處於不確定狀態（既未選中也未未選中）                                       |
-| 變更事件            | function | 當複選框狀態更改時觸發的回調函數                                                |
-| onCheckedChange | function | 當 `checked` 狀態更改時觸發的回調函數                                        |
-| 變體              | 字串       | 複選框的視覺樣式變化。 複選框的視覺樣式變化。 選項包括：`primary`，`secondary` 和 `tertiary` |
-| 大小              | 字串       | 複選框的大小。 複選框的大小。 有兩個選項：`small` 和 `large`                         |
-| 形狀              | 字串       | 複選框的形狀。 複選框的形狀。 有兩個選項：`squared` 和 `rounded`                     |
-
-</Tab>
+  <Tab title="Props">
+    | Props           | Type     | Description                                                                                  |
+    | --------------- | -------- | -------------------------------------------------------------------------------------------- |
+    | checked         | boolean  | Indicates whether the checkbox is checked                                                    |
+    | indeterminate   | boolean  | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)  |
+    | onChange        | function | The callback function you want to trigger when the checkbox state changes                    |
+    | onCheckedChange | function | The callback function you want to trigger when the `checked` state changes                   |
+    | variant         | string   | The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary` |
+    | size            | string   | The size of the checkbox. Has two options: `small` and `large`                               |
+    | shape           | string   | The shape of the checkbox. Has two options: `squared` and `rounded`                          |
+  </Tab>
 </Tabs>

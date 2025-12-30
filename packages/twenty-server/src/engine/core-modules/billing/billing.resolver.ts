@@ -3,8 +3,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
@@ -16,14 +18,15 @@ import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/output
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -32,7 +35,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -50,6 +52,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
@@ -87,12 +90,12 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey?: ApiKeyEntity,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      apiKeyId: apiKey,
+      apiKeyId: apiKey?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -143,7 +146,7 @@ export class BillingResolver {
   async switchSubscriptionInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    await this.billingSubscriptionService.changeInterval(workspace);
+    await this.billingSubscriptionUpdateService.changeInterval(workspace.id);
 
     return {
       billingSubscriptions:
@@ -163,7 +166,7 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.changePlan(workspace);
+    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
 
     return {
       billingSubscriptions:
@@ -183,7 +186,7 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async cancelSwitchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.cancelSwitchPlan(workspace);
+    await this.billingSubscriptionUpdateService.cancelSwitchPlan(workspace.id);
 
     return {
       billingSubscriptions:
@@ -205,7 +208,9 @@ export class BillingResolver {
   async cancelSwitchBillingInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    await this.billingSubscriptionService.cancelSwitchInterval(workspace);
+    await this.billingSubscriptionUpdateService.cancelSwitchInterval(
+      workspace.id,
+    );
 
     return {
       billingSubscriptions:
@@ -228,8 +233,8 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { priceId }: BillingUpdateSubscriptionItemPriceInput,
   ) {
-    await this.billingSubscriptionService.changeMeteredPrice(
-      workspace,
+    await this.billingSubscriptionUpdateService.changeMeteredPrice(
+      workspace.id,
       priceId,
     );
 
@@ -261,7 +266,28 @@ export class BillingResolver {
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingEndTrialPeriodOutput> {
-    return await this.billingSubscriptionService.endTrialPeriod(workspace);
+    const result =
+      await this.billingSubscriptionService.endTrialPeriod(workspace);
+
+    if (!result.hasPaymentMethod && result.stripeCustomerId) {
+      const billingPortalUrl =
+        await this.billingPortalWorkspaceService.computeBillingPortalSessionURLForPaymentMethodUpdate(
+          workspace,
+          result.stripeCustomerId,
+          '/settings/billing',
+        );
+
+      return {
+        hasPaymentMethod: false,
+        status: undefined,
+        billingPortalUrl,
+      };
+    }
+
+    return {
+      hasPaymentMethod: result.hasPaymentMethod,
+      status: result.status,
+    };
   }
 
   @Query(() => [BillingMeteredProductUsageOutput])
@@ -281,7 +307,9 @@ export class BillingResolver {
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   async cancelSwitchMeteredPrice(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionService.cancelSwitchMeteredPrice(workspace);
+    await this.billingSubscriptionUpdateService.cancelSwitchMeteredPrice(
+      workspace,
+    );
 
     return {
       billingSubscriptions:

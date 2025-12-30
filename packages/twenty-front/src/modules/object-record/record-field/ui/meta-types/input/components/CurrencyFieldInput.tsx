@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
 
-import { useCurrencyField } from '../../hooks/useCurrencyField';
+import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -16,7 +17,8 @@ import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyTo
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const CurrencyFieldInput = () => {
-  const { draftValue, setDraftValue, defaultValue } = useCurrencyField();
+  const { draftValue, setDraftValue, defaultValue, decimals } =
+    useCurrencyField();
 
   const { onClickOutside, onEnter, onEscape, onShiftTab, onTab } = useContext(
     FieldInputEventContext,
@@ -136,8 +138,9 @@ export const CurrencyFieldInput = () => {
       instanceId={instanceId}
       value={draftValue?.amount?.toString() ?? ''}
       currencyCode={currencyCode}
+      decimals={decimals}
       autoFocus
-      placeholder="Currency"
+      placeholder={t`Currency`}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

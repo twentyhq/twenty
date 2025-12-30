@@ -133,6 +133,16 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: TASK_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The workspace member who last updated the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
     label: msg`Relations`,
@@ -182,6 +192,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the task.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetTask',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

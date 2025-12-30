@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type FieldFullNameValue } from '../FieldMetadata';
+import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 const fullnameSchema = z.object({
   firstName: z.string(),

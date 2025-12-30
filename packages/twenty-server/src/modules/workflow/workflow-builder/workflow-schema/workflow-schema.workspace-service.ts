@@ -175,15 +175,12 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
   }): Promise<WorkflowAction> {
-    // We don't enrich on the fly for code and HTTP request workflow actions.
-    // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests, OutputSchema is determined by the example response input
-    // AI agent OutputSchema is enriched from agent's responseFormat
-    if (
-      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
-        step.type,
-      )
-    ) {
+    const BACKEND_ENRICHED_TYPES = [
+      WorkflowActionType.AI_AGENT,
+      WorkflowActionType.ITERATOR,
+    ];
+
+    if (!BACKEND_ENRICHED_TYPES.includes(step.type)) {
       return step;
     }
 
@@ -237,7 +234,6 @@ export class WorkflowSchemaWorkspaceService {
     const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
-      maxDepth: 0,
     });
 
     const objectMetadataInfo =
@@ -276,11 +272,9 @@ export class WorkflowSchemaWorkspaceService {
   private async computeRecordOutputSchema({
     objectType,
     workspaceId,
-    maxDepth = 1,
   }: {
     objectType: string;
     workspaceId: string;
-    maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
@@ -288,7 +282,7 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       );
 
-    return generateFakeObjectRecord({ objectMetadataInfo, maxDepth });
+    return generateFakeObjectRecord({ objectMetadataInfo });
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
@@ -335,7 +329,6 @@ export class WorkflowSchemaWorkspaceService {
       return this.computeRecordOutputSchema({
         objectType: availability.objectNameSingular,
         workspaceId,
-        maxDepth: 0,
       });
     }
 
@@ -434,7 +427,6 @@ export class WorkflowSchemaWorkspaceService {
               value: await this.computeRecordOutputSchema({
                 objectType: trigger.settings.availability.objectNameSingular,
                 workspaceId,
-                maxDepth: 0,
               }),
             };
           }

@@ -41,6 +41,7 @@ export type CurrencyInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
+  decimals?: number;
   currencyCode: string;
   onEnter: (newText: string) => void;
   onEscape: (newText: string) => void;
@@ -64,6 +65,7 @@ export const CurrencyInput = ({
   onClickOutside,
   onChange,
   onSelect,
+  decimals,
 }: CurrencyInputProps) => {
   const theme = useTheme();
 
@@ -114,6 +116,7 @@ export const CurrencyInput = ({
         mask={Number}
         thousandsSeparator=","
         radix="."
+        scale={decimals}
         onAccept={(value: string) => handleChange(value)}
         inputRef={wrapperRef}
         autoComplete="off"

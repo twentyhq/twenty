@@ -6,7 +6,7 @@ import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/Fie
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormPhoneFieldInput } from '../FormPhoneFieldInput';
+import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 
 const meta: Meta<typeof FormPhoneFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormPhoneFieldInput',
@@ -95,7 +95,7 @@ export const SelectingVariables: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect(`{{${MOCKED_STEP_ID}.phone.number}}`);
+            onVariableSelect(`{{${MOCKED_STEP_ID}.amount.amountMicros}}`);
           }}
         >
           Add variable
@@ -127,12 +127,12 @@ export const SelectingVariables: Story = {
 
     await userEvent.click(phoneNumberVariablePicker);
 
-    const phoneNumberVariable = await canvas.findByText('My Number');
+    const phoneNumberVariable = await canvas.findByText('Amount Micros');
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
-        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phone.number}}`,
+        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   type ExecutionStatus,
   WorkflowStepExecutionResult,
@@ -7,9 +8,11 @@ import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql'
 
 export const ServerlessFunctionExecutionResult = ({
   serverlessFunctionTestData,
+  maxHeight,
   isTesting = false,
 }: {
   serverlessFunctionTestData: ServerlessFunctionTestData;
+  maxHeight?: number;
   isTesting?: boolean;
 }) => {
   const result =
@@ -25,26 +28,26 @@ export const ServerlessFunctionExecutionResult = ({
     serverlessFunctionTestData.output.status ===
     ServerlessFunctionExecutionStatus.ERROR;
 
+  const duration = serverlessFunctionTestData.output.duration;
   const status: ExecutionStatus = {
     isSuccess,
     isError,
-    successMessage: isSuccess
-      ? `200 OK - ${serverlessFunctionTestData.output.duration}ms`
-      : undefined,
-    errorMessage: isError
-      ? `500 Error - ${serverlessFunctionTestData.output.duration}ms`
-      : undefined,
+    successMessage: isSuccess ? t`200 OK - ${duration}ms` : undefined,
+    errorMessage: isError ? t`500 Error - ${duration}ms` : undefined,
   };
 
   return (
     <WorkflowStepExecutionResult
       result={result}
       language={serverlessFunctionTestData.language}
-      height={serverlessFunctionTestData.height}
+      height={Math.min(
+        serverlessFunctionTestData.height,
+        maxHeight ?? serverlessFunctionTestData.height,
+      )}
       status={status}
       isTesting={isTesting}
-      loadingMessage="Running function"
-      idleMessage="Output"
+      loadingMessage={t`Running function`}
+      idleMessage={t`Output`}
     />
   );
 };

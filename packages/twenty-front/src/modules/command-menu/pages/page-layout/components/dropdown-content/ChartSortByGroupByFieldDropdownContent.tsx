@@ -3,6 +3,7 @@ import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layou
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -22,10 +23,11 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration'
-  ) {
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
+  if (!isBarOrLineChart) {
     throw new Error('Invalid configuration type');
   }
 
