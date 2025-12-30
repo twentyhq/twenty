@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
-import { BackfillUpdatedByViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-view-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -29,8 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     BackfillUpdatedByFieldCommand,
-    BackfillUpdatedByViewFieldsCommand,
   ],
-  exports: [BackfillUpdatedByFieldCommand, BackfillUpdatedByViewFieldsCommand],
+  exports: [BackfillUpdatedByFieldCommand],
 })
 export class V1_16_UpgradeVersionCommandModule {}
