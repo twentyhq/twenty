@@ -5,11 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-import { type WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
