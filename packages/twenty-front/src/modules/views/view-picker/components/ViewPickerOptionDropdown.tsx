@@ -20,11 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ViewVisibility } from '~/generated-metadata/graphql';
-import {
-  PermissionFlagType,
-  useDestroyCoreViewFieldMutation,
-  useDestroyCoreViewMutation,
-} from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
