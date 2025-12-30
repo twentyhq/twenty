@@ -5,12 +5,12 @@ import {
   Generated,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
-import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
+import { type UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',

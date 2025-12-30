@@ -10,15 +10,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
-import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
+import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
+import { type ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
 import {
   DEFAULT_SMART_MODEL,
-  ModelId,
+  type ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 @Entity('agent')

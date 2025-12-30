@@ -10,14 +10,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType('BillingEntitlement')
 @Unique('IDX_BILLING_ENTITLEMENT_KEY_WORKSPACE_ID_UNIQUE', [

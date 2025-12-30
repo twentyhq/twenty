@@ -4,10 +4,10 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { PackageJson } from 'twenty-shared/application';
+import { type PackageJson } from 'twenty-shared/application';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 

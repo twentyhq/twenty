@@ -1,7 +1,7 @@
 import {
-  FieldMetadataOptions,
-  FieldMetadataSettings,
-  FieldMetadataType,
+  type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -14,17 +14,17 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
-import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
+import { type AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
+import { type AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';

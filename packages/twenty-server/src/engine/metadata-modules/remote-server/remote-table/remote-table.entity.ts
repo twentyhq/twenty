@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
-  Relation,
+  type Relation,
 } from 'typeorm';
 
 import {

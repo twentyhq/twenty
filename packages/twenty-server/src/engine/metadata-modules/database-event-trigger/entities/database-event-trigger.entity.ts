@@ -6,13 +6,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { DatabaseEventTriggerEntityRelationProperties } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { type DatabaseEventTriggerEntityRelationProperties } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type DatabaseEventTriggerSettings = {

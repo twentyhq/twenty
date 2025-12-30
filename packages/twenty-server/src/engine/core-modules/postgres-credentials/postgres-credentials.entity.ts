@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  Relation,
+  type Relation,
 } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

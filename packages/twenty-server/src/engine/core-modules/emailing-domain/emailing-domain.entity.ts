@@ -11,13 +11,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
   EmailingDomainDriver,
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })

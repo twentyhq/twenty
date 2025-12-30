@@ -5,11 +5,11 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 

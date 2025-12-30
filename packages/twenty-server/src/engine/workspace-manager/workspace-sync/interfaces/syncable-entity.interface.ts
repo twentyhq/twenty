@@ -1,4 +1,4 @@
-import { Column, Index, JoinColumn, ManyToOne, Relation } from 'typeorm';
+import { Column, Index, JoinColumn, ManyToOne, type Relation } from 'typeorm';
 
 import type { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 

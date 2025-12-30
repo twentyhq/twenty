@@ -8,7 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
 } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

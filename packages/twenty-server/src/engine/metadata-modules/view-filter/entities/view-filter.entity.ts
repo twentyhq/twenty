@@ -8,7 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,7 +17,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
+import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity({ name: 'viewFilter', schema: 'core' })

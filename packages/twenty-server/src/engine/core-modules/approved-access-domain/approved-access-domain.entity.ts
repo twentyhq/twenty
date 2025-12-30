@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 

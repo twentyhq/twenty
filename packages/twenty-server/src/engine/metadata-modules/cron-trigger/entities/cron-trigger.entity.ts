@@ -6,13 +6,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { CronTriggerEntityRelationProperties } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
+import { type CronTriggerEntityRelationProperties } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type CronTriggerSettings = {

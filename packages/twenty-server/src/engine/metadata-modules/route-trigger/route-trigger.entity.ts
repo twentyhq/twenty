@@ -5,7 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,7 +13,7 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { RouteTriggerEntityRelationProperties } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { type RouteTriggerEntityRelationProperties } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export const ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES = [

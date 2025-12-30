@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
