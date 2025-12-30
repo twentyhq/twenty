@@ -7,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -16,10 +17,14 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
 @ObjectType('BillingCustomer')
-export class BillingCustomerEntity {
+@Index('IDX_BILLING_CUSTOMER_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
+  unique: true,
+})
+export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,9 +37,6 @@ export class BillingCustomerEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid', unique: true })
-  workspaceId: string;
 
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;

@@ -4,16 +4,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
 import {
@@ -59,17 +54,8 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: AgentResponseFormat;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @Column({ default: false })
   isCustom: boolean;
-
-  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agents, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
