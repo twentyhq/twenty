@@ -36,6 +36,7 @@ export const useTemporaryFieldsConfiguration = (
 
     return {
       __typename: 'FieldsConfiguration',
+      configurationType: 'FIELDS',
       sections: [
         {
           id: `${objectNameSingular}-section-general`,

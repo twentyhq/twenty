@@ -8,7 +8,6 @@ import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
@@ -38,6 +37,7 @@ import {
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { BarChartLayout } from '~/generated/graphql';
 
 type NoDataLayerWrapperProps = BarCustomLayerProps<BarDatum>;
 
@@ -279,7 +279,9 @@ export const GraphWidgetBarChart = ({
           margin={margins}
           padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
           groupMode={groupMode}
-          layout={layout}
+          layout={
+            layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'
+          }
           valueScale={{
             type: 'linear',
             min: valueDomain.min,
@@ -343,7 +345,7 @@ export const GraphWidgetBarChart = ({
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
-        layout={layout}
+        layout={layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'}
         onBarClick={onBarClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}

@@ -10,12 +10,15 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 type TestContext = {
   input: {
     title: string;
-    type?: WidgetType;
+    type: WidgetType;
+    configuration: AllPageLayoutWidgetConfiguration;
     gridPosition: {
       row: number;
       column: number;
@@ -31,6 +34,10 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     context: {
       input: {
         title: 'Test Widget',
+        type: WidgetType.IFRAME,
+        configuration: {
+          configurationType: WidgetConfigurationType.IFRAME,
+        },
         gridPosition: {
           row: 0,
           column: 0,
@@ -44,8 +51,12 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     title: 'create a page layout widget with specific type',
     context: {
       input: {
-        title: 'Graph Widget',
-        type: WidgetType.GRAPH,
+        title: 'Iframe Widget',
+        type: WidgetType.IFRAME,
+        configuration: {
+          configurationType: WidgetConfigurationType.IFRAME,
+          url: 'https://example.com',
+        },
         gridPosition: {
           row: 0,
           column: 0,

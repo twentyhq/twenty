@@ -1,8 +1,8 @@
 import {
   AggregateOperations,
   GraphOrderBy,
-  GraphType,
   ObjectRecordGroupByDateGranularity,
+  WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 
@@ -17,7 +17,7 @@ describe('normalizeChartConfigurationFields', () => {
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         aggregateFieldMetadataId: 'aggregate-456',
         aggregateOperation: AggregateOperations.SUM,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
       } as any;
 
       const result = normalizeChartConfigurationFields(barConfig);
@@ -37,7 +37,7 @@ describe('normalizeChartConfigurationFields', () => {
         primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
         aggregateFieldMetadataId: 'aggregate-012',
         aggregateOperation: AggregateOperations.COUNT,
-        graphType: GraphType.LINE,
+        configurationType: WidgetConfigurationType.LINE_CHART,
       } as any;
 
       const result = normalizeChartConfigurationFields(lineConfig);
@@ -59,7 +59,7 @@ describe('normalizeChartConfigurationFields', () => {
         orderBy: GraphOrderBy.FIELD_DESC,
         aggregateFieldMetadataId: 'pie-aggregate',
         aggregateOperation: AggregateOperations.AVG,
-        graphType: GraphType.PIE,
+        configurationType: WidgetConfigurationType.PIE_CHART,
       } as any;
 
       const result = normalizeChartConfigurationFields(pieConfig);
@@ -78,7 +78,7 @@ describe('normalizeChartConfigurationFields', () => {
         groupByFieldMetadataId: 'minimal-field',
         aggregateFieldMetadataId: 'minimal-aggregate',
         aggregateOperation: AggregateOperations.COUNT,
-        graphType: GraphType.PIE,
+        configurationType: WidgetConfigurationType.PIE_CHART,
       } as any;
 
       const result = normalizeChartConfigurationFields(pieConfig);

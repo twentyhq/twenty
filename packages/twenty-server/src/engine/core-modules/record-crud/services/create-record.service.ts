@@ -134,7 +134,7 @@ export class CreateRecordService {
               ...transformedObjectRecord,
               position,
               createdBy: actorMetadata,
-              updatedBy: actorMetadata,
+              // updatedBy: actorMetadata,
             },
             undefined,
             selectedColumns,
