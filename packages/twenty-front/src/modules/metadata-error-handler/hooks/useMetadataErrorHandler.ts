@@ -26,6 +26,7 @@ export const useMetadataErrorHandler = () => {
     role: t`role`,
     roleTarget: t`role target`,
     agent: t`agent`,
+    skill: t`skill`,
     pageLayout: t`page layout`,
     pageLayoutTab: t`page layout tab`,
     pageLayoutWidget: t`page layout widget`,

@@ -1,5 +1,4 @@
 import { Select } from '@/ui/input/components/Select';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -20,12 +19,13 @@ const StyledWrapper = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
-const StyledImage = styled.img`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-`;
+// TODO: Re-enable when MCP image is ready
+// const StyledImage = styled.img`
+//   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+//   height: 100%;
+//   object-fit: cover;
+//   width: 100%;
+// `;
 
 const StyledSchemaSelector = styled.div`
   align-items: center;
@@ -62,7 +62,6 @@ const StyledEditorContainer = styled.div`
 `;
 
 export const SettingsAIMCP = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -117,9 +116,6 @@ export const SettingsAIMCP = () => {
         description={t`Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor.`}
       />
       <StyledWrapper>
-        <StyledImage
-          src={`/images/integrations/integration-mcp-cover-${theme.name}.svg`}
-        />
         <StyledSchemaSelector>
           <Select
             dropdownId="mcp-schema-selector"

@@ -25,7 +25,7 @@ export type LoadSkillResult = {
   message: string;
 };
 
-export type LoadSkillFunction = (names: string[]) => Skill[];
+export type LoadSkillFunction = (names: string[]) => Promise<Skill[]>;
 
 export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   description:
@@ -36,7 +36,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   }): Promise<LoadSkillResult> => {
     const { skillNames } = parameters.input;
 
-    const skills = loadSkills(skillNames);
+    const skills = await loadSkills(skillNames);
 
     if (skills.length === 0) {
       return {

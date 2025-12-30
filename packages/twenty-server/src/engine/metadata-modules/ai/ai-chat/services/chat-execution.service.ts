@@ -61,7 +61,7 @@ export type ChatExecutionResult = {
   modelConfig: AIModelConfig;
 };
 
-const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
+const COMMON_PRELOAD_TOOLS = ['search_help_center'];
 
 @Injectable()
 export class ChatExecutionService {
@@ -107,7 +107,7 @@ export class ChatExecutionService {
       roleId,
     );
 
-    const skillCatalog = this.skillsService.getAllSkills();
+    const skillCatalog = await this.skillsService.getAllSkills(workspace.id);
 
     this.logger.log(
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
@@ -149,7 +149,7 @@ export class ChatExecutionService {
         },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
-        this.skillsService.getSkillsByNames(skillNames),
+        this.skillsService.getSkillsByNames(skillNames, workspace.id),
       ),
     };
 

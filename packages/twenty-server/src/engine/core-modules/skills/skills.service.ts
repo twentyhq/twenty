@@ -1,29 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { SkillDefinition } from 'src/engine/core-modules/skills/skill-definition.type';
-import { CODE_INTERPRETER_SKILL } from 'src/engine/core-modules/skills/skills/code-interpreter.skill';
-import { DASHBOARD_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/dashboard-building.skill';
-import { DATA_MANIPULATION_SKILL } from 'src/engine/core-modules/skills/skills/data-manipulation.skill';
-import { DOCX_SKILL } from 'src/engine/core-modules/skills/skills/docx.skill';
-import { METADATA_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/metadata-building.skill';
-import { PDF_SKILL } from 'src/engine/core-modules/skills/skills/pdf.skill';
-import { PPTX_SKILL } from 'src/engine/core-modules/skills/skills/pptx.skill';
-import { RESEARCH_SKILL } from 'src/engine/core-modules/skills/skills/research.skill';
-import { WORKFLOW_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/workflow-building.skill';
-import { XLSX_SKILL } from 'src/engine/core-modules/skills/skills/xlsx.skill';
+import { IsNull, type Repository } from 'typeorm';
 
-const SKILL_DEFINITIONS: SkillDefinition[] = [
-  WORKFLOW_BUILDING_SKILL,
-  DATA_MANIPULATION_SKILL,
-  DASHBOARD_BUILDING_SKILL,
-  METADATA_BUILDING_SKILL,
-  RESEARCH_SKILL,
-  CODE_INTERPRETER_SKILL,
-  XLSX_SKILL,
-  PDF_SKILL,
-  DOCX_SKILL,
-  PPTX_SKILL,
-];
+import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 
 export type Skill = {
   name: string;
@@ -34,33 +14,53 @@ export type Skill = {
 
 @Injectable()
 export class SkillsService {
-  getAllSkills(): Skill[] {
-    return SKILL_DEFINITIONS.map((skill) => ({
+  constructor(
+    @InjectRepository(SkillEntity)
+    private readonly skillRepository: Repository<SkillEntity>,
+  ) {}
+
+  async getAllSkills(workspaceId: string): Promise<Skill[]> {
+    const skills = await this.skillRepository.find({
+      where: { workspaceId, deletedAt: IsNull() },
+      order: { label: 'ASC' },
+    });
+
+    return skills.map((skill) => ({
       name: skill.name,
       label: skill.label,
-      description: skill.description,
+      description: skill.description ?? '',
       content: skill.content,
     }));
   }
 
-  getSkillByName(name: string): Skill | undefined {
-    const skillDef = SKILL_DEFINITIONS.find((skill) => skill.name === name);
+  async getSkillByName(
+    name: string,
+    workspaceId: string,
+  ): Promise<Skill | undefined> {
+    const skill = await this.skillRepository.findOne({
+      where: { name, workspaceId, deletedAt: IsNull() },
+    });
 
-    if (!skillDef) {
+    if (!skill) {
       return undefined;
     }
 
     return {
-      name: skillDef.name,
-      label: skillDef.label,
-      description: skillDef.description,
-      content: skillDef.content,
+      name: skill.name,
+      label: skill.label,
+      description: skill.description ?? '',
+      content: skill.content,
     };
   }
 
-  getSkillsByNames(names: string[]): Skill[] {
-    return names
-      .map((name) => this.getSkillByName(name))
-      .filter((skill): skill is Skill => skill !== undefined);
+  async getSkillsByNames(
+    names: string[],
+    workspaceId: string,
+  ): Promise<Skill[]> {
+    const skills = await Promise.all(
+      names.map((name) => this.getSkillByName(name, workspaceId)),
+    );
+
+    return skills.filter((skill): skill is Skill => skill !== undefined);
   }
 }
