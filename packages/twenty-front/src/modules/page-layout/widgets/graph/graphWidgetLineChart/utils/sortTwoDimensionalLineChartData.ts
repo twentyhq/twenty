@@ -1,6 +1,7 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortLineChartDataBySecondaryDimensionSum';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
@@ -35,31 +36,34 @@ export const sortTwoDimensionalLineChartData = ({
 }: SortTwoDimensionalLineChartDataConfiguration): SortTwoDimensionalLineChartDataResult => {
   let sortedSeries = series;
 
-  if (
-    primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
-    primaryAxisOrderBy === GraphOrderBy.VALUE_DESC
-  ) {
-    throw new Error('Value ordering is not supported for line charts');
-  }
-
   if (isDefined(primaryAxisOrderBy)) {
-    sortedSeries = series.map((seriesItem) => {
-      const sortedDataPoints =
-        sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-          data: seriesItem.data,
-          orderBy: primaryAxisOrderBy,
-          manualSortOrder: primaryAxisManualSortOrder,
-          formattedToRawLookup: primaryAxisFormattedToRawLookup,
-          getFormattedValue: (dataPoint: LineChartDataPoint) =>
-            String(dataPoint.x),
-          selectFieldOptions: primaryAxisSelectFieldOptions,
-        });
+    if (
+      primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
+      primaryAxisOrderBy === GraphOrderBy.VALUE_DESC
+    ) {
+      sortedSeries = sortLineChartDataBySecondaryDimensionSum({
+        series,
+        orderBy: primaryAxisOrderBy,
+      });
+    } else {
+      sortedSeries = series.map((seriesItem) => {
+        const sortedDataPoints =
+          sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
+            data: seriesItem.data,
+            orderBy: primaryAxisOrderBy,
+            manualSortOrder: primaryAxisManualSortOrder,
+            formattedToRawLookup: primaryAxisFormattedToRawLookup,
+            getFormattedValue: (dataPoint: LineChartDataPoint) =>
+              String(dataPoint.x),
+            selectFieldOptions: primaryAxisSelectFieldOptions,
+          });
 
-      return {
-        ...seriesItem,
-        data: sortedDataPoints,
-      };
-    });
+        return {
+          ...seriesItem,
+          data: sortedDataPoints,
+        };
+      });
+    }
   }
 
   sortedSeries = sortSecondaryAxisData({
