@@ -25,7 +25,7 @@ import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { ExposedWorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/exposed-workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 registerEnumType(PermissionFlagType, {
   name: 'PermissionFlagType',
@@ -47,7 +47,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 )
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
-export class UserWorkspaceEntity extends ExposedWorkspaceRelatedEntity {
+export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -12,12 +12,12 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ExposedWorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/exposed-workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'webhook', schema: 'core' })
 @ObjectType('Webhook')
-export class WebhookEntity extends ExposedWorkspaceRelatedEntity {
+export class WebhookEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
