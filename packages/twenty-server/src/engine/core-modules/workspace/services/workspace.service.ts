@@ -276,6 +276,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
   }
 
+  /**
+   * @deprecated Should be removed once AddWorkspaceForeignKeysMigrationCommand has been run successfully in production
+   * As we will be able to rely on foreignKey delete cascading
+   */
   async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: workspace.id,
