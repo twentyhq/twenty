@@ -10,7 +10,7 @@ import {
 import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Injectable()
 export class DeleteRecordService {
