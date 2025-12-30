@@ -4,7 +4,6 @@ import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/fi
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/filters/states/context/StepFilterGroupsComponentInstanceContext';
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/filters/states/context/StepFiltersComponentInstanceContext';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
-import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 
 type WorkflowEditActionFilterProps = {
   action: WorkflowFilterAction;
@@ -16,11 +15,6 @@ type WorkflowEditActionFilterProps = {
         readonly?: false;
         onActionUpdate: (action: WorkflowFilterAction) => void;
       };
-};
-
-export type FilterSettings = {
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
 };
 
 export const WorkflowEditActionFilter = ({

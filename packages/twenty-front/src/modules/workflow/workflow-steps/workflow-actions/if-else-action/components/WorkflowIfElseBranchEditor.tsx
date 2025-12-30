@@ -5,11 +5,9 @@ import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/comp
 import { WorkflowStepFilterGroupColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupColumn';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
-import {
-  type FilterSettings,
-  type IfElseSettings,
-} from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody';
+import { type IfElseSettings } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody';
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';

@@ -5,6 +5,7 @@ import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { WorkflowIfElseBranchEditor } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowIfElseBranchEditor';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
@@ -49,11 +50,6 @@ export type IfElseSettings = {
   stepFilterGroups: StepFilterGroup[];
   stepFilters: StepFilter[];
   branches: WorkflowIfElseAction['settings']['input']['branches'];
-};
-
-export type FilterSettings = {
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
 };
 
 const IF_ELSE_IF_BRANCH_POSITION_OFFSET = {
