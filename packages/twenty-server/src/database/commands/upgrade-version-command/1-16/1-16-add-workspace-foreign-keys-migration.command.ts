@@ -11,7 +11,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:1-17:add-workspace-foreign-keys-migration',
+  name: 'upgrade:1-16:add-workspace-foreign-keys-migration',
   description: 'Add foreign key constraints for workspaceId on core tables',
 })
 export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
