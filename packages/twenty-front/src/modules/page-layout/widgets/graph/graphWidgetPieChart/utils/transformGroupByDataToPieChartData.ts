@@ -16,7 +16,6 @@ import { type PieChartConfiguration } from '~/generated/graphql';
 type TransformGroupByDataToPieChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
   objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
   configuration: PieChartConfiguration;
   aggregateOperation: string;
   userTimezone: string;
