@@ -4,14 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
@@ -26,6 +29,8 @@ import {
   WORKFLOW_RUN_STANDARD_FIELD_IDS,
   WORKFLOW_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 @Command({
   name: 'upgrade:1-16:backfill-updated-by-field',
@@ -52,10 +57,9 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -68,28 +72,22 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
       `Starting backfill of updatedBy field for workspace ${workspaceId}`,
     );
 
-    const standardObjectMetadataList = await this.objectMetadataRepository.find(
-      {
-        where: {
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
           workspaceId,
-          standardId: In(Object.keys(this.objectToUpdatedByStandardIdMap)),
         },
-        relations: ['fields'],
-      },
-    );
+      );
 
-    const customObjectMetadataList = await this.objectMetadataRepository.find({
-      where: {
-        workspaceId,
-        isCustom: true,
-      },
-      relations: ['fields'],
-    });
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
-    const objectMetadataList = [
-      ...standardObjectMetadataList,
-      ...customObjectMetadataList,
-    ];
+    const objectMetadataList = Object.values(
+      flatObjectMetadataMaps.byId,
+    ).filter(isDefined);
 
     if (objectMetadataList.length === 0) {
       this.logger.log(
@@ -99,45 +97,61 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const fieldsToCreate: Array<{
-      objectMetadataId: string;
-      standardId: string;
-      label: string;
-    }> = [];
+    const createFieldInputs: CreateFieldInput[] = [];
 
-    for (const objectMetadata of objectMetadataList) {
-      let updatedByStandardId: string | undefined;
+    for (const flatObjectMetadata of objectMetadataList) {
+      const isStandardObject = isStandardMetadata(flatObjectMetadata);
+      const updatedByStandardId = !isStandardObject
+        ? CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedBy
+        : isDefined(flatObjectMetadata.standardId)
+          ? this.objectToUpdatedByStandardIdMap[flatObjectMetadata.standardId]
+          : undefined;
 
-      if (objectMetadata.isCustom) {
-        updatedByStandardId = CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedBy;
-      } else if (objectMetadata.standardId) {
-        updatedByStandardId =
-          this.objectToUpdatedByStandardIdMap[objectMetadata.standardId];
-      }
-
-      if (!updatedByStandardId) {
+      if (!isDefined(updatedByStandardId)) {
         continue;
       }
 
-      const updatedByField = objectMetadata.fields.find(
+      const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      const updatedByField = flatFieldMetadatas.find(
         (field) => field.standardId === updatedByStandardId,
       );
 
-      if (updatedByField) {
+      if (isDefined(updatedByField)) {
         this.logger.log(
-          `Object ${objectMetadata.nameSingular} (${objectMetadata.standardId || 'custom'}) already has updatedBy field, skipping`,
+          `Object ${flatObjectMetadata.nameSingular} (${flatObjectMetadata.standardId || 'custom'}) already has updatedBy field, skipping`,
         );
         continue;
       }
 
-      fieldsToCreate.push({
-        objectMetadataId: objectMetadata.id,
+      const applicationId = isStandardObject
+        ? twentyStandardFlatApplication.id
+        : workspaceCustomFlatApplication.id;
+      const universalIdentifier = isStandardObject ? updatedByStandardId : v4();
+
+      createFieldInputs.push({
+        workspaceId,
+        objectMetadataId: flatObjectMetadata.id,
+        name: 'updatedBy',
+        type: FieldMetadataType.ACTOR,
+        label: 'Updated by',
+        description: 'The user who last updated the record',
+        icon: 'IconUserCircle',
+        isNullable: true,
+        isUIReadOnly: true,
+        isCustom: false,
+        isSystem: false,
+        isActive: true,
         standardId: updatedByStandardId,
-        label: objectMetadata.labelSingular,
+        universalIdentifier,
+        applicationId,
       });
     }
 
-    if (fieldsToCreate.length === 0) {
+    if (createFieldInputs.length === 0) {
       this.logger.log(
         `All objects already have updatedBy field for workspace ${workspaceId}`,
       );
@@ -146,57 +160,32 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
     }
 
     this.logger.log(
-      `Found ${fieldsToCreate.length} objects that need updatedBy field`,
+      `Found ${createFieldInputs.length} objects that need updatedBy field`,
     );
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would create updatedBy field for ${fieldsToCreate.length} objects`,
+        `[DRY RUN] Would create updatedBy field for ${createFieldInputs.length} objects`,
       );
 
       return;
     }
 
-    for (const { objectMetadataId, standardId, label } of fieldsToCreate) {
-      try {
-        await this.fieldMetadataService.createManyFields({
-          createFieldInputs: [
-            {
-              objectMetadataId,
-              name: 'updatedBy',
-              type: FieldMetadataType.ACTOR,
-              label: 'Updated by',
-              description: 'The user who last updated the record',
-              icon: 'IconUserCircle',
-              isNullable: true,
-              isUIReadOnly: true,
-              isCustom: false,
-              isSystem: false,
-              isActive: true,
-              standardId,
-            },
-          ],
-          workspaceId,
-        });
-
-        this.logger.log(
-          `Successfully created updatedBy field for object ${label} (${objectMetadataId})`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to create updatedBy field for object ${label} (${objectMetadataId}): ${error.message}`,
-        );
-        throw error;
-      }
+    try {
+      await this.fieldMetadataService.createManyFields({
+        createFieldInputs,
+        workspaceId,
+        isSystemBuild: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to create many field for \n ${JSON.stringify(error, null, 2)}`,
+      );
+      throw error;
     }
 
     this.logger.log(
-      `Successfully backfilled updatedBy field for ${fieldsToCreate.length} objects in workspace ${workspaceId}`,
+      `Successfully backfilled updatedBy field for ${createFieldInputs.length} objects in workspace ${workspaceId}`,
     );
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ]);
   }
 }
