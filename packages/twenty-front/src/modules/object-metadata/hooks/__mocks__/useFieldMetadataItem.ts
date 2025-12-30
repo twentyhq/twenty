@@ -22,6 +22,7 @@ export const queries = {
         createdAt
         updatedAt
         settings
+        applicationId
         object {
           id
         }
@@ -47,6 +48,7 @@ export const queries = {
         updatedAt
         settings
         isLabelSyncedWithName
+        applicationId
         object {
           id
         }
@@ -72,6 +74,7 @@ export const queries = {
         defaultValue
         options
         isLabelSyncedWithName
+        applicationId
         object {
           id
         }
@@ -125,6 +128,7 @@ const defaultResponseData = {
   createdAt: '1977-09-28T13:56:55.157Z',
   updatedAt: '1996-10-10T08:27:57.117Z',
   settings: undefined,
+  applicationId: null,
 };
 
 const fieldRelationResponseData = {
