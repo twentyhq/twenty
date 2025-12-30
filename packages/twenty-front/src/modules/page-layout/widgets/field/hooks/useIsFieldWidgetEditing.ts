@@ -1,19 +1,19 @@
 import { useRecoilValue } from 'recoil';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
-export const useIsFieldWidgetEditing = ({
-  instanceId,
-}: {
-  instanceId: string;
-}) => {
+export const useIsFieldWidgetEditing = () => {
+  const recordFieldInstanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
   const focusStack = useRecoilValue(focusStackState);
 
-  // The focusId pushed to the stack starts with instanceId.
-  // For nested dropdowns (e.g., Links field sub-dropdowns), the focusId
-  // will have additional suffixes, so we use startsWith to catch all of them.
-  const isEditing = focusStack.some((item) =>
-    item.focusId.startsWith(instanceId),
+  const isEditing = focusStack.some(
+    (item) =>
+      item.componentInstance.componentInstanceId === recordFieldInstanceId,
   );
 
   return { isEditing };

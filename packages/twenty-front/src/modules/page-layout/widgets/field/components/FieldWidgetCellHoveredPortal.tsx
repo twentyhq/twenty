@@ -21,9 +21,7 @@ export const FieldWidgetCellHoveredPortal = ({
   isHovered,
   onMouseLeave,
 }: FieldWidgetCellHoveredPortalProps) => {
-  const { isEditing } = useIsFieldWidgetEditing({
-    instanceId,
-  });
+  const { isEditing } = useIsFieldWidgetEditing();
 
   if (!isHovered || isEditing) {
     return null;

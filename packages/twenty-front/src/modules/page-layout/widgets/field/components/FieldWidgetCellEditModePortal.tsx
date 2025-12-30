@@ -22,9 +22,7 @@ export const FieldWidgetCellEditModePortal = ({
   recordId,
   instanceId,
 }: FieldWidgetCellEditModePortalProps) => {
-  const { isEditing } = useIsFieldWidgetEditing({
-    instanceId,
-  });
+  const { isEditing } = useIsFieldWidgetEditing();
 
   const setIsHovered = useSetRecoilComponentState(
     fieldWidgetHoverComponentState,
