@@ -44,7 +44,9 @@ export const buildTwoDimensionalBarChartData = ({
     if (effectiveGroupMode === BarChartGroupMode.GROUPED) {
       const totalUniqueDimensions = xValues.size * yValues.size;
       const additionalDimensions =
-        (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
+        (isNewX ? 1 : 0) * yValues.size +
+        (isNewY ? 1 : 0) * xValues.size +
+        (isNewX && isNewY ? 1 : 0);
 
       if (
         totalUniqueDimensions + additionalDimensions >
