@@ -121,9 +121,8 @@ export const SettingsDataModelObjectAboutForm = ({
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
-  const isManagedObject = isDefined(objectMetadataItem?.isCustom)
-    ? !objectMetadataItem.isCustom
-    : true;
+  const isStandardObject =
+    isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
   watch('description');
   watch('icon');
 
@@ -302,7 +301,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 placeholder: `listing`,
                 defaultValue: objectMetadataItem?.nameSingular ?? '',
                 disableEdition:
-                  isManagedObject || disableEdition || isLabelSyncedWithName,
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
               {
@@ -312,7 +311,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 placeholder: `listings`,
                 defaultValue: objectMetadataItem?.namePlural ?? '',
                 disableEdition:
-                  isManagedObject || disableEdition || isLabelSyncedWithName,
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
             ].map(
@@ -380,7 +379,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            {!isManagedObject && (
+            {!isStandardObject && (
               <AdvancedSettingsWrapper>
                 <Controller
                   name="isLabelSyncedWithName"
