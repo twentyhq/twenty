@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { type McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';

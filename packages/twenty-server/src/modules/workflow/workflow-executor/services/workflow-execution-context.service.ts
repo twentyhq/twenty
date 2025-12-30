@@ -4,6 +4,7 @@ import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -11,7 +12,7 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 import { type WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
-
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,

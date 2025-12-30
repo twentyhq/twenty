@@ -12,6 +12,7 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
