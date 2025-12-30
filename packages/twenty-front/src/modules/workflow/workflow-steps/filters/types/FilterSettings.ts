@@ -4,4 +4,3 @@ export type FilterSettings = {
   stepFilterGroups?: StepFilterGroup[];
   stepFilters?: StepFilter[];
 };
-
