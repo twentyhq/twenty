@@ -10,18 +10,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { DatabaseEventTriggerEntityRelationProperties } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type DatabaseEventTriggerSettings = {
   eventName: string;
 };
-
-export const DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES = [
-  'serverlessFunction',
-] as const satisfies readonly DatabaseEventTriggerEntityRelationProperties[];
 
 @Entity('databaseEventTrigger')
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])

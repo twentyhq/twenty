@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   appendCommonExceptionCode,
   CustomException,
@@ -10,12 +11,16 @@ export const WorkspaceSchemaManagerExceptionCode = appendCommonExceptionCode({
   ENUM_OPERATION_FAILED: 'ENUM_OPERATION_FAILED',
 } as const);
 
-const workspaceSchemaManagerExceptionUserFriendlyMessages: Record<
-  keyof typeof WorkspaceSchemaManagerExceptionCode,
-  MessageDescriptor
-> = {
-  ENUM_OPERATION_FAILED: msg`Schema enum operation failed.`,
-  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
+  code: keyof typeof WorkspaceSchemaManagerExceptionCode,
+) => {
+  switch (code) {
+    case WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED:
+    case WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkspaceSchemaManagerException extends CustomException<
@@ -29,7 +34,7 @@ export class WorkspaceSchemaManagerException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workspaceSchemaManagerExceptionUserFriendlyMessages[code],
+        getWorkspaceSchemaManagerExceptionUserFriendlyMessage(code),
     });
   }
 }

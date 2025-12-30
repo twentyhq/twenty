@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -11,15 +12,23 @@ export enum ConnectedAccountRefreshAccessTokenExceptionCode {
   ACCESS_TOKEN_NOT_FOUND = 'ACCESS_TOKEN_NOT_FOUND',
 }
 
-const connectedAccountRefreshAccessTokenExceptionUserFriendlyMessages: Record<
-  ConnectedAccountRefreshAccessTokenExceptionCode,
-  MessageDescriptor
-> = {
-  [ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND]: msg`Refresh token not found.`,
-  [ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN]: msg`Invalid refresh token.`,
-  [ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED]: msg`This provider is not supported.`,
-  [ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR]: msg`A temporary network error occurred.`,
-  [ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND]: msg`Access token not found.`,
+const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
+  code: ConnectedAccountRefreshAccessTokenExceptionCode,
+) => {
+  switch (code) {
+    case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+      return msg`Refresh token not found.`;
+    case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
+      return msg`Invalid refresh token.`;
+    case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+      return msg`This provider is not supported.`;
+    case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+      return msg`A temporary network error occurred.`;
+    case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+      return msg`Access token not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ConnectedAccountRefreshAccessTokenException extends CustomException<ConnectedAccountRefreshAccessTokenExceptionCode> {
@@ -31,7 +40,7 @@ export class ConnectedAccountRefreshAccessTokenException extends CustomException
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        connectedAccountRefreshAccessTokenExceptionUserFriendlyMessages[code],
+        getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage(code),
     });
   }
 }

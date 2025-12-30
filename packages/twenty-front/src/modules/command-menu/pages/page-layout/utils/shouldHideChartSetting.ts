@@ -1,8 +1,7 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
@@ -55,8 +54,12 @@ export const shouldHideChartSetting = (
   );
 
   if (isDefined(configuration) && isDefined(objectMetadataItem)) {
+    const isBarOrLineChart =
+      isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+      isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X) {
-      if (isBarOrLineChartConfiguration(configuration)) {
+      if (isBarOrLineChart) {
         return shouldHideDateGranularityBasedOnFieldType(
           configuration.primaryAxisGroupByFieldMetadataId,
           configuration.primaryAxisGroupBySubFieldName,
@@ -67,7 +70,7 @@ export const shouldHideChartSetting = (
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y) {
-      if (isBarOrLineChartConfiguration(configuration)) {
+      if (isBarOrLineChart) {
         return shouldHideDateGranularityBasedOnFieldType(
           configuration.secondaryAxisGroupByFieldMetadataId,
           configuration.secondaryAxisGroupBySubFieldName,
@@ -78,7 +81,7 @@ export const shouldHideChartSetting = (
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY) {
-      if (isPieChartConfiguration(configuration)) {
+      if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
         return shouldHideDateGranularityBasedOnFieldType(
           configuration.groupByFieldMetadataId,
           configuration.groupBySubFieldName,
@@ -89,7 +92,7 @@ export const shouldHideChartSetting = (
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE) {
-      if (isBarOrLineChartConfiguration(configuration)) {
+      if (isBarOrLineChart) {
         return shouldHideDateGranularityBasedOnFieldType(
           configuration.primaryAxisGroupByFieldMetadataId,
           configuration.primaryAxisGroupBySubFieldName,
@@ -100,7 +103,7 @@ export const shouldHideChartSetting = (
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {
-      if (isPieChartConfiguration(configuration)) {
+      if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
         return false;
       }
     }

@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
 import { validateArrayFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util';
@@ -31,6 +32,7 @@ export const validateEmailsFieldOrThrow = (
         throw new CommonQueryRunnerException(
           `Invalid subfield ${subField} for emails field "${fieldName}"`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: msg`Invalid value for emails.` },
         );
     }
   }

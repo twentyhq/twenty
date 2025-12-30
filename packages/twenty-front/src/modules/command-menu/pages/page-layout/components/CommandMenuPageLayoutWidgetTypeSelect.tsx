@@ -19,7 +19,6 @@ import {
   IconChartPie,
   IconFrame,
 } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -49,7 +48,6 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
       const fieldSelection = buildBarChartFieldSelection();
       const newWidget = createPageLayoutGraphWidget({
-        graphType: GraphType.VERTICAL_BAR,
         fieldSelection,
       });
 

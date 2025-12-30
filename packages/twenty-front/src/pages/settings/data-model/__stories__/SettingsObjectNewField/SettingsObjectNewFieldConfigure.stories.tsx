@@ -35,11 +35,6 @@ export const Default: Story = {
     const employeeInput = await canvas.findByPlaceholderText('Employees');
     await userEvent.type(employeeInput, 'Test');
 
-    const descriptionInput = await canvas.findByPlaceholderText(
-      'Write a description',
-    );
-    await userEvent.type(descriptionInput, 'Test description');
-
     const saveButton = await canvas.findByText('Save');
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await userEvent.click(saveButton);

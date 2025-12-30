@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
 
+import { msg } from '@lingui/core/macro';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -11,15 +13,6 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
-
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  assertIsDefinedOrThrow: jest.fn((value, error) => {
-    if (value === null || value === undefined) {
-      throw error;
-    }
-  }),
-}));
 
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
@@ -230,7 +223,9 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -269,7 +264,9 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -345,7 +342,9 @@ describe('JwtAuthStrategy', () => {
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('Application not found', expect.any(String)),
+        new AuthException('Application not found', expect.any(String), {
+          userFriendlyMessage: msg`Application not found.`,
+        }),
       );
 
       try {
@@ -552,6 +551,7 @@ describe('JwtAuthStrategy', () => {
         new AuthException(
           'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
           AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          { userFriendlyMessage: msg`User workspace not found.` },
         ),
       );
     });

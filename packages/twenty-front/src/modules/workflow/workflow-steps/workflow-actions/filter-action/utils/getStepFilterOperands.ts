@@ -137,6 +137,14 @@ export const getStepFilterOperands = ({
       return FILTER_OPERANDS_MAP.UUID;
     case 'NUMERIC':
       return FILTER_OPERANDS_MAP.NUMERIC;
+    case 'ACTOR': {
+      if (subFieldName === 'source') {
+        return FILTER_OPERANDS_MAP.SELECT;
+      } else if (subFieldName === 'workspaceMemberId') {
+        return FILTER_OPERANDS_MAP.RELATION;
+      }
+      return FILTER_OPERANDS_MAP.TEXT;
+    }
     default:
       return defaultOperands;
   }

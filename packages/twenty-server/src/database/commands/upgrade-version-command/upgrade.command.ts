@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -19,6 +19,8 @@ import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/
 import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-delete-removed-agents.command';
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
+import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
+import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -52,7 +54,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly deleteRemovedAgentsCommand: DeleteRemovedAgentsCommand,
 
     // 1.15 Commands
+    protected readonly migratePageLayoutWidgetConfigurationCommand: MigratePageLayoutWidgetConfigurationCommand,
     protected readonly fixNanPositionValuesInNotesCommand: FixNanPositionValuesInNotesCommand,
+
+    // 1.16 Commands
+    protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
   ) {
     super(
       workspaceRepository,
@@ -80,14 +86,18 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1150: VersionCommands = [
+      this.migratePageLayoutWidgetConfigurationCommand,
       this.fixNanPositionValuesInNotesCommand,
     ];
+
+    const commands_1160: VersionCommands = [this.backfillUpdatedByFieldCommand];
 
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
       '1.14.0': commands_1140,
       '1.15.0': commands_1150,
+      '1.16.0': commands_1160,
     };
   }
 
