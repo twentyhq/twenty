@@ -22,6 +22,12 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = (
     universalIdentifier:
       viewFilterGroupEntityWithoutRelations.universalIdentifier ??
       viewFilterGroupEntityWithoutRelations.id,
+    viewFilterIds: viewFilterGroupEntity.viewFilters?.map(
+      (viewFilter) => viewFilter.id,
+    ) ?? [],
+    childViewFilterGroupIds: viewFilterGroupEntity.childViewFilterGroups?.map(
+      (childGroup) => childGroup.id,
+    ) ?? [],
   };
 };
 

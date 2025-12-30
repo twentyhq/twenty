@@ -19,6 +19,7 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
       summary: {
         invalidAgent: 0,
         invalidViewFilter: 0,
+        invalidViewFilterGroup: 0,
         invalidObjectMetadata: 0,
         invalidView: 0,
         invalidViewField: 0,

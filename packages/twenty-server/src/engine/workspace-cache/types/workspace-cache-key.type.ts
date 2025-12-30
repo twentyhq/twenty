@@ -17,6 +17,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatViewFieldMaps: 'flat-maps:view-field',
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
+  flatViewFilterGroupMaps: 'flat-maps:view-filter-group',
   flatServerlessFunctionMaps: 'flat-maps:serverless-function',
   flatCronTriggerMaps: 'flat-maps:cron-trigger',
   flatDatabaseEventTriggerMaps: 'flat-maps:database-event-trigger',

@@ -39,6 +39,8 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
     positionInViewFilterGroup:
       createViewFilterGroupInput.positionInViewFilterGroup ?? null,
     applicationId: workspaceCustomApplicationId,
+    viewFilterIds: [],
+    childViewFilterGroupIds: [],
   };
 };
 

@@ -1,22 +1,47 @@
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-core-view-filter-group.util';
 import { destroyOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-core-view-filter-group.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
-import { INTEGRATION_TEST_COMPANY_OBJECT_METADATA_ID } from 'test/integration/constants/integration-test-company-object-metadata-id.constants';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View Filter Group creation should succeed', () => {
+  let companyObjectMetadataId: string;
   let createdViewId: string;
   let createdViewFilterGroupId: string;
 
   beforeAll(async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 1000 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    jestExpectToBeDefined(objects);
+
+    const companyObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'company',
+    );
+
+    jestExpectToBeDefined(companyObjectMetadata);
+    companyObjectMetadataId = companyObjectMetadata.id;
+
     const { data: viewData } = await createOneCoreView({
       expectToFail: false,
       input: {
         name: 'Test View For Filter Group',
-        objectMetadataId: INTEGRATION_TEST_COMPANY_OBJECT_METADATA_ID,
-        type: 'table',
+        objectMetadataId: companyObjectMetadataId,
+        type: ViewType.TABLE,
+        icon: 'IconBuildingSkyscraper',
       },
     });
 
@@ -27,7 +52,7 @@ describe('View Filter Group creation should succeed', () => {
     if (createdViewId) {
       await destroyOneCoreView({
         expectToFail: false,
-        id: createdViewId,
+        viewId: createdViewId,
       });
     }
   });
@@ -118,4 +143,3 @@ describe('View Filter Group creation should succeed', () => {
     });
   });
 });
-
