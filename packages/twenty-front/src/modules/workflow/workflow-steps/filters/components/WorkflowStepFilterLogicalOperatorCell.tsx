@@ -27,13 +27,15 @@ const StyledContainer = styled.div`
 type WorkflowStepFilterLogicalOperatorCellProps = {
   index: number;
   stepFilterGroup: StepFilterGroup;
+  firstFilterLabel?: string;
 };
 
 export const WorkflowStepFilterLogicalOperatorCell = ({
   index,
   stepFilterGroup,
+  firstFilterLabel,
 }: WorkflowStepFilterLogicalOperatorCellProps) => {
-  const { readonly, firstFilterLabel } = useContext(WorkflowStepFilterContext);
+  const { readonly } = useContext(WorkflowStepFilterContext);
   const { t } = useLingui();
   const defaultFirstFilterLabel = t`Where`;
 

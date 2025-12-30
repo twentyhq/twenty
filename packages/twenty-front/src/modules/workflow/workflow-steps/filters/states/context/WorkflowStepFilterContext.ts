@@ -5,8 +5,6 @@ type WorkflowStepFilterContextType = {
   stepId: string;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
   readonly?: boolean;
-  firstFilterLabel?: string;
-  isIfBranch?: boolean;
 };
 
 export const WorkflowStepFilterContext =

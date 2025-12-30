@@ -17,6 +17,8 @@ type WorkflowStepFilterColumnProps = {
   stepFilterGroup: StepFilterGroup;
   stepFilter: StepFilter;
   stepFilterIndex: number;
+  isIfBranch?: boolean;
+  firstFilterLabel?: string;
 };
 
 const StyledContainer = styled.div`
@@ -30,8 +32,10 @@ export const WorkflowStepFilterColumn = ({
   stepFilterGroup,
   stepFilter,
   stepFilterIndex,
+  isIfBranch,
+  firstFilterLabel,
 }: WorkflowStepFilterColumnProps) => {
-  const { readonly, isIfBranch } = useContext(WorkflowStepFilterContext);
+  const { readonly } = useContext(WorkflowStepFilterContext);
 
   const stepFilterGroups = useRecoilComponentValue(
     currentStepFilterGroupsComponentState,
@@ -61,6 +65,7 @@ export const WorkflowStepFilterColumn = ({
         <WorkflowStepFilterLogicalOperatorCell
           index={stepFilterIndex}
           stepFilterGroup={stepFilterGroup}
+          firstFilterLabel={firstFilterLabel}
         />
         {shouldShowDropdown && (
           <WorkflowStepFilterOptionsDropdown stepFilterId={stepFilter.id} />

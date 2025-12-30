@@ -94,8 +94,6 @@ export const WorkflowIfElseBranchEditor = ({
         stepId: action.id,
         readonly,
         onFilterSettingsUpdate,
-        firstFilterLabel: i18n._(branchLabel),
-        isIfBranch,
       }}
     >
       <StyledBranchContainer>
@@ -116,6 +114,8 @@ export const WorkflowIfElseBranchEditor = ({
                     stepFilterGroup={branchFilterGroup}
                     stepFilter={stepFilterGroupChild}
                     stepFilterIndex={stepFilterGroupChildIndex}
+                    isIfBranch={isIfBranch}
+                    firstFilterLabel={i18n._(branchLabel)}
                   />
                 ),
             )}
