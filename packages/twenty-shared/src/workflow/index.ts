@@ -61,6 +61,7 @@ export { workflowRunStateStepInfosSchema } from './schemas/workflow-run-state-st
 export { workflowRunStatusSchema } from './schemas/workflow-run-status-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
+export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,

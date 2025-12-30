@@ -38,9 +38,3 @@ export type StepFilterWithPotentiallyDeprecatedOperand = {
   compositeFieldSubFieldName?: string;
   isFullRecord?: boolean;
 };
-
-export type StepIfElseBranch = {
-  id: string;
-  nextStepIds: string[];
-  filterGroupId?: string;
-};
