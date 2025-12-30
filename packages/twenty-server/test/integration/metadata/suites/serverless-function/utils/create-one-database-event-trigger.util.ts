@@ -36,11 +36,9 @@ export const createOneDatabaseEventTrigger = async ({
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage:
-        'Database Event Trigger creation has failed but should not',
+      errorMessage: 'Database Event Trigger creation has failed but should not',
     });
   }
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

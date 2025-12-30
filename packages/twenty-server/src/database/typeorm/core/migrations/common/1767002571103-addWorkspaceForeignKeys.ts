@@ -1,6 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-import { addWorkspaceForeignKeysQueries } from '../utils/1767002571103-addWorkspaceForeignKeys.util';
+import { addWorkspaceForeignKeysQueries } from 'src/database/typeorm/core/migrations/utils/1767002571103-addWorkspaceForeignKeys.util';
 
 export class AddWorkspaceForeignKeys1767002571103
   implements MigrationInterface
@@ -30,10 +30,7 @@ export class AddWorkspaceForeignKeys1767002571103
       }
 
       // eslint-disable-next-line no-console
-      console.error(
-        'Swallowing AddWorkspaceForeignKeys1767002571103 error',
-        e,
-      );
+      console.error('Swallowing AddWorkspaceForeignKeys1767002571103 error', e);
     }
   }
 

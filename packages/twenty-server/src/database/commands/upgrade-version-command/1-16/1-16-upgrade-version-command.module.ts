@@ -27,7 +27,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     ApplicationModule,
   ],
-  providers: [BackfillUpdatedByFieldCommand, AddWorkspaceForeignKeysMigrationCommand],
-  exports: [BackfillUpdatedByFieldCommand, AddWorkspaceForeignKeysMigrationCommand],
+  providers: [
+    BackfillUpdatedByFieldCommand,
+    AddWorkspaceForeignKeysMigrationCommand,
+  ],
+  exports: [
+    BackfillUpdatedByFieldCommand,
+    AddWorkspaceForeignKeysMigrationCommand,
+  ],
 })
 export class V1_16_UpgradeVersionCommandModule {}

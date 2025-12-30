@@ -32,4 +32,3 @@ export const createOneServerlessFunctionQueryFactory = ({
     input,
   },
 });
-
