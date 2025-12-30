@@ -33,11 +33,9 @@ index 1684394..32602b3 100644
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
-+                const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -87,11 +85,9 @@ index 1684394..32602b3 100644
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
-+                const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -116,7 +112,7 @@ index 1684394..32602b3 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
++                    if (key.startsWith(`${workspaceId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -165,11 +161,9 @@ index 7068c51..b8cbf9e 100644
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
-+                const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -194,7 +188,7 @@ index 7068c51..b8cbf9e 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
++                    if (key.startsWith(`${workspaceId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -219,11 +213,9 @@ index 7068c51..b8cbf9e 100644
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
-+                const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -248,7 +240,7 @@ index 7068c51..b8cbf9e 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
++                    if (key.startsWith(`${workspaceId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
@@ -420,11 +412,9 @@ index ce142f6..10e17d2 100644
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
-+        const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+        const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -482,11 +472,9 @@ index ce142f6..10e17d2 100644
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
-+        const workspaceUserId = request.req.user?.id ?? 'anonymous'
-+        const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
