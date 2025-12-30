@@ -62,7 +62,9 @@ export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually = <T>({
     case GraphOrderBy.FIELD_POSITION_ASC:
     case GraphOrderBy.FIELD_POSITION_DESC: {
       if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
-        return data;
+        throw new Error(
+          'Select field options are required for field position sorting',
+        );
       }
 
       return sortBySelectOptionPosition({
