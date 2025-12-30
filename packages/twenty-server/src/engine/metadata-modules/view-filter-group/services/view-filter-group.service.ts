@@ -2,26 +2,274 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
+import { fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-delete-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
+import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
+import { fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-update-view-filter-group-input-to-flat-view-filter-group-to-update-or-throw.util';
+import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
+import { type DeleteViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/delete-view-filter-group.input';
+import { type DestroyViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/destroy-view-filter-group.input';
+import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
+import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import {
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
-import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFilterGroupService {
   constructor(
     @InjectRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  async createOne({
+    createViewFilterGroupInput,
+    workspaceId,
+  }: {
+    createViewFilterGroupInput: CreateViewFilterGroupInput;
+    workspaceId: string;
+  }): Promise<ViewFilterGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const flatViewFilterGroupToCreate =
+      fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate({
+        createViewFilterGroupInput,
+        workspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      });
+
+    const buildAndRunResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            viewFilterGroup: {
+              flatEntityToCreate: [flatViewFilterGroupToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(buildAndRunResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        buildAndRunResult,
+        'Multiple validation errors occurred while creating view filter group',
+      );
+    }
+
+    this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatViewFilterGroupMaps'],
+    });
+
+    const {
+      flatViewFilterGroupMaps: recomputedExistingFlatViewFilterGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    return fromFlatViewFilterGroupToViewFilterGroupDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatViewFilterGroupToCreate.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
+      }),
+    );
+  }
+
+  async updateOne({
+    id,
+    updateViewFilterGroupInput,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    updateViewFilterGroupInput: UpdateViewFilterGroupInput;
+  }): Promise<ViewFilterGroupDTO> {
+    const { flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    const optimisticallyUpdatedFlatViewFilterGroup =
+      fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow({
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+        updateViewFilterGroupInput: { id, ...updateViewFilterGroupInput },
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            viewFilterGroup: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewFilterGroup],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating view filter group',
+      );
+    }
+
+    const {
+      flatViewFilterGroupMaps: recomputedExistingFlatViewFilterGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    return fromFlatViewFilterGroupToViewFilterGroupDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewFilterGroup.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
+      }),
+    );
+  }
+
+  async deleteOne({
+    deleteViewFilterGroupInput,
+    workspaceId,
+  }: {
+    deleteViewFilterGroupInput: DeleteViewFilterGroupInput;
+    workspaceId: string;
+  }): Promise<ViewFilterGroupDTO> {
+    const { flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    const optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt =
+      fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow({
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+        deleteViewFilterGroupInput,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            viewFilterGroup: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt,
+              ],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deleting view filter group',
+      );
+    }
+
+    const {
+      flatViewFilterGroupMaps: recomputedExistingFlatViewFilterGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    return fromFlatViewFilterGroupToViewFilterGroupDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
+      }),
+    );
+  }
+
+  async destroyOne({
+    destroyViewFilterGroupInput,
+    workspaceId,
+  }: {
+    destroyViewFilterGroupInput: DestroyViewFilterGroupInput;
+    workspaceId: string;
+  }): Promise<ViewFilterGroupDTO> {
+    const { flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterGroupMaps'],
+        },
+      );
+
+    const existingViewFilterGroupToDelete =
+      fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow({
+        destroyViewFilterGroupInput,
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            viewFilterGroup: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingViewFilterGroupToDelete],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while destroying view filter group',
+      );
+    }
+
+    return fromFlatViewFilterGroupToViewFilterGroupDto(
+      existingViewFilterGroupToDelete,
+    );
+  }
 
   async findByWorkspaceId(
     workspaceId: string,
@@ -83,139 +331,5 @@ export class ViewFilterGroupService {
     });
 
     return viewFilterGroup || null;
-  }
-
-  async create(
-    viewFilterGroupData: Partial<ViewFilterGroupEntity>,
-  ): Promise<ViewFilterGroupEntity> {
-    if (!isDefined(viewFilterGroupData.workspaceId)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
-        {
-          userFriendlyMessage:
-            generateViewFilterGroupUserFriendlyExceptionMessage(
-              ViewFilterGroupExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-            ),
-        },
-      );
-    }
-
-    if (!isDefined(viewFilterGroupData.viewId)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED,
-        ),
-        ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
-        {
-          userFriendlyMessage:
-            generateViewFilterGroupUserFriendlyExceptionMessage(
-              ViewFilterGroupExceptionMessageKey.VIEW_ID_REQUIRED,
-            ),
-        },
-      );
-    }
-
-    const viewFilterGroup =
-      this.viewFilterGroupRepository.create(viewFilterGroupData);
-
-    await this.flushGraphQLCache(viewFilterGroupData.workspaceId);
-
-    const savedViewFilterGroup =
-      await this.viewFilterGroupRepository.save(viewFilterGroup);
-
-    await this.flushGraphQLCache(viewFilterGroupData.workspaceId);
-
-    return savedViewFilterGroup;
-  }
-
-  async update(
-    id: string,
-    workspaceId: string,
-    updateData: Partial<ViewFilterGroupEntity>,
-  ): Promise<ViewFilterGroupEntity> {
-    const existingViewFilterGroup = await this.findById(id, workspaceId);
-
-    if (!isDefined(existingViewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    const updatedViewFilterGroup = await this.viewFilterGroupRepository.save({
-      id,
-      ...updateData,
-    });
-
-    await this.flushGraphQLCache(workspaceId);
-
-    return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
-  }
-
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewFilterGroupEntity> {
-    const viewFilterGroup = await this.findById(id, workspaceId);
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    await this.viewFilterGroupRepository.softDelete(id);
-
-    return viewFilterGroup;
-  }
-
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const viewFilterGroup = await this.viewFilterGroupRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-      },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
-      withDeleted: true,
-    });
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    await this.viewFilterGroupRepository.delete(id);
-
-    await this.flushGraphQLCache(workspaceId);
-
-    return true;
-  }
-
-  private async flushGraphQLCache(workspaceId: string): Promise<void> {
-    await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
-      workspaceId,
-    });
   }
 }
