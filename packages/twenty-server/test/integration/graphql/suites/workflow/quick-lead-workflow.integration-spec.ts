@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { v4 as uuidv4 } from 'uuid';
 import { WORKFLOW_RUN_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
+import { v4 as uuidv4 } from 'uuid';
 
 // Integration tests for the Quick Lead workflow
 // Note: These tests use the SyncDriver which processes workflow jobs synchronously.
@@ -406,8 +406,10 @@ describe('Quick Lead Workflow (e2e)', () => {
       testWorkflowRunId =
         runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
 
+      expect(testWorkflowRunId).toBeDefined();
+
       // Verify workflow is running and waiting on FORM step
-      let workflowRun = await getWorkflowRun(testWorkflowRunId);
+      let workflowRun = await getWorkflowRun(testWorkflowRunId as string);
 
       expect(workflowRun?.status).toBe('RUNNING');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
@@ -447,7 +449,7 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(submitFormResponse.body.data.submitFormStep).toBe(true);
 
       // Step 3: Verify workflow completed
-      workflowRun = await getWorkflowRun(testWorkflowRunId);
+      workflowRun = await getWorkflowRun(testWorkflowRunId as string);
       expect(workflowRun?.status).toBe('COMPLETED');
 
       // Verify all steps completed successfully
