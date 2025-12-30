@@ -14,7 +14,7 @@ import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-q
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
-import { computeResolverContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-resolver-context.util';
+import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
 export class FindManyResolverFactory
@@ -31,12 +31,12 @@ export class FindManyResolverFactory
   ): Resolver<FindManyResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, _context, info) => {
+    return async (_source, args, requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
-      const resolverContext = computeResolverContext({
+      const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
-        request: _context.req,
+        request: requestContext.req,
       });
 
       try {
@@ -62,7 +62,7 @@ export class FindManyResolverFactory
           objectRecords: records,
           objectRecordsAggregatedValues: aggregatedValues,
           selectedAggregatedFields: selectedFieldsResult.aggregate,
-          objectName: internalContext.flatObjectMetadata.nameSingular,
+          objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: args.first ?? args.last ?? QUERY_MAX_RECORDS,
           totalCount,
           order: args.orderBy,
