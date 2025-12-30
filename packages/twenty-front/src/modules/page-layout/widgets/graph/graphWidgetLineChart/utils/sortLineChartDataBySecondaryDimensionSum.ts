@@ -1,3 +1,4 @@
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { GraphOrderBy } from '~/generated/graphql';
 
@@ -16,7 +17,10 @@ export const sortLineChartDataBySecondaryDimensionSum = ({
 
   const allXValues = series[0].data.map((point) => point.x);
 
-  const xValueSums = new Map<string | number | Date, number>();
+  const xValueSums = new Map<
+    LineChartDataPoint['x'],
+    LineChartDataPoint['y']
+  >();
 
   for (const xValue of allXValues) {
     const sum = series.reduce((accumulator, seriesItem) => {
