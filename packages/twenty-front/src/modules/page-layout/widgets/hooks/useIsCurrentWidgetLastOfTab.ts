@@ -38,7 +38,7 @@ export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
     return false;
   }
 
-  const lastWidget = visibleWidgets[visibleWidgets.length - 1];
+  const lastWidget = visibleWidgets.at(-1);
 
-  return lastWidget.id === widgetId;
+  return lastWidget?.id === widgetId;
 };
