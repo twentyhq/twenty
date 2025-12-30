@@ -2,11 +2,6 @@ import request from 'supertest';
 import { WORKFLOW_RUN_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
 import { v4 as uuidv4 } from 'uuid';
 
-// Integration tests for the Quick Lead workflow
-// Note: These tests use the SyncDriver which processes workflow jobs synchronously.
-// The workflow will be in RUNNING status (waiting on FORM step) after triggering.
-// Full end-to-end tests including FORM submission and record creation can be added.
-
 const client = request(`http://localhost:${APP_PORT}`);
 
 // Quick Lead workflow IDs from prefill-workflows.ts
@@ -223,18 +218,13 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       createdWorkflowRunId = workflowRunId;
 
-      // Verify workflow run was created
       const workflowRun = await getWorkflowRun(workflowRunId);
 
       expect(workflowRun).toBeDefined();
       expect(workflowRun?.workflowVersionId).toBe(
         QUICK_LEAD_WORKFLOW_VERSION_ID,
       );
-      // Status should be RUNNING after triggering (waiting on FORM step input)
-      // The SyncDriver processes jobs synchronously in integration tests
       expect(workflowRun?.status).toBe('RUNNING');
-
-      // Verify state has correct step structure
       expect(workflowRun?.state).toBeDefined();
       expect(workflowRun?.state?.stepInfos).toBeDefined();
       expect(workflowRun?.state?.stepInfos?.trigger).toBeDefined();
@@ -246,12 +236,10 @@ describe('Quick Lead Workflow (e2e)', () => {
         workflowRun?.state?.stepInfos?.['6f553ea7-b00e-4371-9d88-d8298568a246'],
       ).toBeDefined();
 
-      // Trigger has completed, FORM step is waiting for input
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
         'PENDING',
       );
-      // Subsequent steps should be NOT_STARTED
       expect(
         workflowRun?.state?.stepInfos?.['0715b6cd-7cc1-4b98-971b-00f54dfe643b']
           ?.status,
@@ -263,7 +251,6 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should be able to stop a running workflow run', async () => {
-      // First trigger a workflow (which will be RUNNING, waiting on FORM step)
       const runWorkflowResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -285,7 +272,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       const workflowRunId =
         runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
 
-      // Stop the running workflow
       const stopResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -304,12 +290,9 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(stopResponse.body.errors).toBeUndefined();
       expect(stopResponse.body.data.stopWorkflowRun.status).toBe('STOPPED');
 
-      // Verify the workflow run was stopped
       const workflowRun = await getWorkflowRun(workflowRunId);
 
       expect(workflowRun?.status).toBe('STOPPED');
-
-      // Clean up - delete the workflow run
       await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -383,7 +366,6 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should complete full workflow: trigger → submit form → create Company and Person', async () => {
-      // Step 1: Trigger the workflow
       const runWorkflowResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -408,7 +390,6 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      // Verify workflow is running and waiting on FORM step
       let workflowRun = await getWorkflowRun(testWorkflowRunId as string);
 
       expect(workflowRun?.status).toBe('RUNNING');
@@ -416,7 +397,6 @@ describe('Quick Lead Workflow (e2e)', () => {
         'PENDING',
       );
 
-      // Step 2: Submit the form with unique test data
       const testId = uuidv4().slice(0, 8);
       const testFormData = {
         firstName: 'Integration',
@@ -448,11 +428,8 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(submitFormResponse.body.errors).toBeUndefined();
       expect(submitFormResponse.body.data.submitFormStep).toBe(true);
 
-      // Step 3: Verify workflow completed
       workflowRun = await getWorkflowRun(testWorkflowRunId as string);
       expect(workflowRun?.status).toBe('COMPLETED');
-
-      // Verify all steps completed successfully
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
         'SUCCESS',
@@ -466,8 +443,6 @@ describe('Quick Lead Workflow (e2e)', () => {
           ?.status,
       ).toBe('SUCCESS');
 
-      // Step 4: Verify Company was created
-      // The result is the created record directly with id at top level
       const companyStepResult = workflowRun?.state?.stepInfos?.[
         '0715b6cd-7cc1-4b98-971b-00f54dfe643b'
       ]?.result as { id?: string } | undefined;
@@ -502,8 +477,6 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyResponse.body.data.company.domainName.primaryLinkUrl,
       ).toContain(`test-${testId}.example.com`);
 
-      // Step 5: Verify Person was created
-      // The result is the created record directly with id at top level
       const personStepResult = workflowRun?.state?.stepInfos?.[
         '6f553ea7-b00e-4371-9d88-d8298568a246'
       ]?.result as { id?: string } | undefined;
@@ -540,7 +513,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(personResponse.body.data.person.name.lastName).toBe(
         testFormData.lastName,
       );
-      // Note: jobTitle is not mapped in the Quick Lead workflow
       expect(personResponse.body.data.person.emails.primaryEmail).toBe(
         testFormData.email,
       );
