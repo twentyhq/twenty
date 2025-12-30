@@ -5,16 +5,17 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { addWorkspaceForeignKeysQueries } from 'src/database/typeorm/core/migrations/utils/1767002571103-addWorkspaceForeignKeys.util';
+import { makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableQueries } from 'src/database/typeorm/core/migrations/utils/1767277454048-makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullable.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:1-16:add-workspace-foreign-keys-migration',
-  description: 'Add foreign key constraints for workspaceId on core tables',
+  name: 'upgrade:1-5:make-field-metadata-universal-identifier-and-application-id-not-nullable-migration',
+  description:
+    'Make universalIdentifier and applicationId columns NOT NULL on fieldMetadata table',
 })
-export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;
 
   constructor(
@@ -33,7 +34,7 @@ export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWo
   }: RunOnWorkspaceArgs): Promise<void> {
     if (this.hasRunOnce) {
       this.logger.log(
-        'Skipping has already been run once AddWorkspaceForeignKeysMigrationCommand',
+        'Skipping has already been run once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand',
       );
 
       return;
@@ -49,17 +50,19 @@ export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWo
     await queryRunner.startTransaction();
 
     try {
-      await addWorkspaceForeignKeysQueries(queryRunner);
+      await makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableQueries(
+        queryRunner,
+      );
 
       await queryRunner.commitTransaction();
       this.logger.log(
-        'Successfully run AddWorkspaceForeignKeysMigrationCommand',
+        'Successfully run MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand',
       );
       this.hasRunOnce = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.log(
-        `Rollbacking AddWorkspaceForeignKeysMigrationCommand: ${error.message}`,
+        `Rollbacking MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
       );
     } finally {
       await queryRunner.release();
