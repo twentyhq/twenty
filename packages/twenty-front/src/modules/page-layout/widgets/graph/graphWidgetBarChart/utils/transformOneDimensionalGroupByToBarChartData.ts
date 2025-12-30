@@ -6,7 +6,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToBarChartData';
+import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';

@@ -325,4 +325,3 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
     });
   });
 });
-

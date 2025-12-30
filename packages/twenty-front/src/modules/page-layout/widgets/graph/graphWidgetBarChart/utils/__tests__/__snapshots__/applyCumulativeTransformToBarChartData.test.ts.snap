@@ -57,3 +57,4 @@ exports[`applyCumulativeTransformToBarChartData should handle skip non-numeric v
   },
 ]
 `;
+

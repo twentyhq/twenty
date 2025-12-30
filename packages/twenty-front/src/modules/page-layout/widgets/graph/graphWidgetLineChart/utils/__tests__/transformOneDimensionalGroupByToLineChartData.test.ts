@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
@@ -8,7 +9,6 @@ import {
   WidgetConfigurationType,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 
 describe('transformOneDimensionalGroupByToLineChartData', () => {
   const userTimezone = 'Europe/Paris';

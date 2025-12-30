@@ -8,7 +8,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
-import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
+import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
 import {
   type FirstDayOfTheWeek,
