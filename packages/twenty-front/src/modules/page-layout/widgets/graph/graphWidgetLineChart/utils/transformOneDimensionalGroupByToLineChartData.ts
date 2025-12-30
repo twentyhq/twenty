@@ -4,14 +4,16 @@ import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/Graph
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/applyCumulativeTransformToLineChartData';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
-import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/applyCumulativeTransformToLineChartData';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
+import {
+  isFieldMetadataSelectKind,
+  type FirstDayOfTheWeek,
+} from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
 type TransformOneDimensionalGroupByToLineChartDataParams = {
@@ -69,10 +71,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     }),
   );
 
-  const isSelectField =
-    groupByFieldX.type === FieldMetadataType.SELECT ||
-    groupByFieldX.type === FieldMetadataType.MULTI_SELECT;
-
   const sortedData = sortChartData({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
@@ -80,7 +78,9 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     formattedToRawLookup,
     getFieldValue: (point) => String(point.x),
     getNumericValue: (point) => point.y ?? 0,
-    selectFieldOptions: isSelectField ? groupByFieldX.options : undefined,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+      ? groupByFieldX.options
+      : undefined,
   });
 
   const transformedData = configuration.isCumulative

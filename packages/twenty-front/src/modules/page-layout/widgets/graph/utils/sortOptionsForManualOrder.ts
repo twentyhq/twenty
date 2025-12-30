@@ -11,11 +11,11 @@ export const sortOptionsForManualOrder = <T extends SelectFieldOption>(
   manualSortOrder?: string[] | null,
 ): T[] => {
   if (!isDefined(manualSortOrder) || manualSortOrder.length === 0) {
-    return [...options].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    return options.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0));
   }
 
   return sortByManualOrder({
-    items: [...options].sort((a, b) => (a.position ?? 0) - (b.position ?? 0)),
+    items: options.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0)),
     manualSortOrder,
     getRawValue: (option) => option.value,
   });

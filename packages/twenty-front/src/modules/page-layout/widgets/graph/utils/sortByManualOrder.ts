@@ -9,7 +9,7 @@ export const sortByManualOrder = <T>({
   manualSortOrder,
   getRawValue,
 }: SortByManualOrderParams<T>): T[] => {
-  if (!manualSortOrder.length) {
+  if (manualSortOrder.length === 0) {
     return items;
   }
 
