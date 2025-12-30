@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,15 @@ export enum SearchExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
 }
 
-const searchExceptionUserFriendlyMessages: Record<
-  SearchExceptionCode,
-  MessageDescriptor
-> = {
-  [SearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND]: msg`Label identifier field not found.`,
-  [SearchExceptionCode.OBJECT_METADATA_NOT_FOUND]: msg`Object not found.`,
+const getSearchExceptionUserFriendlyMessage = (code: SearchExceptionCode) => {
+  switch (code) {
+    case SearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND:
+      return msg`No identifier to search by was found.`;
+    case SearchExceptionCode.OBJECT_METADATA_NOT_FOUND:
+      return msg`Object not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class SearchException extends CustomException<SearchExceptionCode> {
@@ -24,7 +28,7 @@ export class SearchException extends CustomException<SearchExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? searchExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getSearchExceptionUserFriendlyMessage(code),
     });
   }
 }
