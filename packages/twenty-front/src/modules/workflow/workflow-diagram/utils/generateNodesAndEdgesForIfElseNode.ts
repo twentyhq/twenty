@@ -65,9 +65,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
 
   updatedNodes.push(ifElseNode);
 
-  const branches = Array.isArray(step.settings.input.branches)
-    ? step.settings.input.branches
-    : [];
+  const branches = step.settings.input.branches;
   const totalBranches = branches.length;
 
   branches.forEach((branch, branchIndex) => {
@@ -77,7 +75,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
       branch,
     });
 
-    const nextStepIds = branch.nextStepIds ?? [];
+    const nextStepIds = branch.nextStepIds;
     for (const nextStepId of nextStepIds) {
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
