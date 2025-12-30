@@ -1,9 +1,6 @@
-import {
-  type StepFilter,
-  type StepFilterGroup,
-  type StepIfElseBranch,
-} from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 import {
   WorkflowStepExecutorException,
@@ -25,9 +22,9 @@ export const findMatchingBranch = ({
   stepFilterGroups: StepFilterGroup[];
   resolvedFilters: ResolvedFilter[];
 }): StepIfElseBranch => {
-  for (const branch of branches) {
+  const matchingBranch = branches.find((branch) => {
     if (!isDefined(branch.filterGroupId)) {
-      return branch;
+      return true;
     }
 
     const branchFilterGroups = stepFilterGroups.filter(
@@ -41,18 +38,18 @@ export const findMatchingBranch = ({
       branchFilterGroupIds.has(filter.stepFilterGroupId),
     );
 
-    const matchesFilter = evaluateFilterConditions({
+    return evaluateFilterConditions({
       filterGroups: branchFilterGroups,
       filters: branchFilters,
     });
+  });
 
-    if (matchesFilter) {
-      return branch;
-    }
+  if (!isDefined(matchingBranch)) {
+    throw new WorkflowStepExecutorException(
+      'No matching branch found in if-else action',
+      WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+    );
   }
 
-  throw new WorkflowStepExecutorException(
-    'No matching branch found in if-else action',
-    WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
-  );
+  return matchingBranch;
 };
