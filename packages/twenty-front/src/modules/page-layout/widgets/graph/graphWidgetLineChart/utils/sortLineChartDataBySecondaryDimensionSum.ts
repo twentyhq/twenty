@@ -17,15 +17,18 @@ export const sortLineChartDataBySecondaryDimensionSum = ({
 
   const allXValues = series[0].data.map((point) => point.x);
 
+  const seriesLookups = series.map(
+    (seriesItem) => new Map(seriesItem.data.map((point) => [point.x, point.y])),
+  );
+
   const xValueSums = new Map<
     LineChartDataPoint['x'],
     LineChartDataPoint['y']
   >();
 
   for (const xValue of allXValues) {
-    const sum = series.reduce((accumulator, seriesItem) => {
-      const point = seriesItem.data.find((dataPoint) => dataPoint.x === xValue);
-      return accumulator + (point?.y ?? 0);
+    const sum = seriesLookups.reduce((accumulator, lookup) => {
+      return accumulator + (lookup.get(xValue) ?? 0);
     }, 0);
     xValueSums.set(xValue, sum);
   }
@@ -34,24 +37,19 @@ export const sortLineChartDataBySecondaryDimensionSum = ({
     const sumA = xValueSums.get(a) ?? 0;
     const sumB = xValueSums.get(b) ?? 0;
 
-    if (orderBy === GraphOrderBy.VALUE_ASC) {
-      return sumA - sumB;
-    } else {
-      return sumB - sumA;
-    }
+    return orderBy === GraphOrderBy.VALUE_ASC ? sumA - sumB : sumB - sumA;
   });
 
-  const xValueToIndex = new Map<string | number | Date, number>();
-
-  sortedXValues.forEach((xValue, index) => {
-    xValueToIndex.set(xValue, index);
-  });
+  const xValueToIndex = new Map<LineChartDataPoint['x'], number>(
+    sortedXValues.map((xValue, index) => [xValue, index]),
+  );
 
   return series.map((seriesItem) => ({
     ...seriesItem,
     data: seriesItem.data.toSorted((a, b) => {
       const indexA = xValueToIndex.get(a.x) ?? 0;
       const indexB = xValueToIndex.get(b.x) ?? 0;
+
       return indexA - indexB;
     }),
   }));
