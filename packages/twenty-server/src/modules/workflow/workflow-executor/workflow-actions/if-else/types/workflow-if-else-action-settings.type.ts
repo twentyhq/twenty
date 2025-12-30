@@ -1,8 +1,5 @@
-import {
-  type StepFilter,
-  type StepFilterGroup,
-  type StepIfElseBranch,
-} from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 

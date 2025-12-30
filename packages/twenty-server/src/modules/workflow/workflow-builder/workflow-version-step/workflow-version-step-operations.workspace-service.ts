@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   FieldMetadataType,
-  type StepIfElseBranch,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
+import {
+  IF_ELSE_BRANCH_POSITION_OFFSETS,
+  type StepIfElseBranch,
+} from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
