@@ -63,7 +63,9 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { idByNameSingular } = buildObjectIdByNameMaps(flatObjectMetadataMaps);
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
     const objectId = idByNameSingular[objectName];
 
     if (!isDefined(objectId)) {
@@ -120,7 +122,9 @@ export class CommonApiContextBuilderService {
         authContext.apiKey.id,
         workspaceId,
       );
-    } else if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
+    } else if (
+      isDefined(authContext.application?.defaultServerlessFunctionRoleId)
+    ) {
       roleId = authContext.application.defaultServerlessFunctionRoleId;
     } else if (isDefined(authContext.userWorkspaceId)) {
       const userWorkspaceRoleId =
@@ -144,10 +148,10 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { rolesPermissions } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['rolesPermissions'],
-    );
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
     return rolesPermissions[roleId] ?? {};
   }
