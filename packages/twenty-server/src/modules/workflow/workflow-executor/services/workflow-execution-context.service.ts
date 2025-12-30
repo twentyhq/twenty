@@ -8,6 +8,7 @@ import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/work
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -45,9 +46,7 @@ export class WorkflowExecutionContextService {
   }
 
   private async buildUserExecutionContext(
-    workflowRun: Awaited<
-      ReturnType<typeof this.workflowRunService.getWorkflowRunOrFail>
-    >,
+    workflowRun: WorkflowRunWorkspaceEntity,
     workspaceId: string,
   ): Promise<WorkflowExecutionContext> {
     const workspaceMember =
@@ -86,9 +85,7 @@ export class WorkflowExecutionContextService {
   }
 
   private async buildApplicationExecutionContext(
-    workflowRun: Awaited<
-      ReturnType<typeof this.workflowRunService.getWorkflowRunOrFail>
-    >,
+    workflowRun: WorkflowRunWorkspaceEntity,
     workspaceId: string,
   ): Promise<WorkflowExecutionContext> {
     const { application, workspace } =

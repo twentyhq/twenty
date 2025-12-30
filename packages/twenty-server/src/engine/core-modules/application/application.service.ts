@@ -161,21 +161,15 @@ export class ApplicationService {
       );
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: {
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        workspaceId,
-      },
-    });
+    const { twentyStandardFlatApplication } =
+      await this.findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+        workspace,
+      });
 
-    if (!isDefined(application)) {
-      throw new ApplicationException(
-        `Could not find Twenty Standard Application for workspace ${workspaceId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return { application, workspace };
+    return {
+      application: twentyStandardFlatApplication as ApplicationEntity,
+      workspace,
+    };
   }
 
   async createTwentyStandardApplication(
