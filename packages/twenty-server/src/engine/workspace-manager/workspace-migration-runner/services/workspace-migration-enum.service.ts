@@ -4,6 +4,7 @@ import { isDefined } from 'class-validator';
 import { type QueryRunner, TableColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import {
@@ -195,7 +196,9 @@ export class WorkspaceMigrationEnumService {
           allEnumValues: enumValues,
           defaultValueFallback: columnDefinition.isNullable
             ? null
-            : unserializeDefaultValue(columnDefinition.defaultValue),
+            : unserializeDefaultValue(
+                columnDefinition.defaultValue as FieldMetadataDefaultSerializableValue,
+              ),
         });
 
         val = isDefined(migratedValue) ? `'${migratedValue}'` : null;

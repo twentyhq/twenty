@@ -45,8 +45,7 @@ registerEnumType(FieldMetadataType, {
 
 @ObjectType('Field')
 @Authorize({
-   
-  authorize: (context: any) => ({
+  authorize: (context: { req?: { workspace?: { id?: string } } }) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
 })
