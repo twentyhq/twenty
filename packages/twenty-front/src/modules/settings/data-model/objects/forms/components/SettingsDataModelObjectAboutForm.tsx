@@ -1,9 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { getEntityOwnershipStatus } from '@/settings/data-model/utils/getEntityOwnershipStatus';
 import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -13,7 +11,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -124,16 +121,9 @@ export const SettingsDataModelObjectAboutForm = ({
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const ownershipStatus = isDefined(objectMetadataItem)
-    ? getEntityOwnershipStatus({
-        currentWorkspace,
-        entity: objectMetadataItem,
-      })
-    : 'custom';
   const isManagedObject = isDefined(objectMetadataItem?.isCustom)
     ? !objectMetadataItem.isCustom
-    : ownershipStatus === 'managed';
+    : true;
   watch('description');
   watch('icon');
 
