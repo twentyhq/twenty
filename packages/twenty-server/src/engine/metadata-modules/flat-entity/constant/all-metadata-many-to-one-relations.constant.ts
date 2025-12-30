@@ -124,4 +124,14 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
+  viewFilterGroup: {
+    viewId: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'viewFilterGroupIds',
+    },
+    parentViewFilterGroupId: {
+      metadataName: 'viewFilterGroup',
+      flatEntityForeignKeyAggregator: 'childViewFilterGroupIds',
+    },
+  },
 } as const satisfies MetadataNameAndRelations;

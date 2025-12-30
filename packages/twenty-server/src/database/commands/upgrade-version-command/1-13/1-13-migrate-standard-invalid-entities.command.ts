@@ -378,3 +378,4 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
     this.logger.log('Migrated standard invalid entities');
   }
 }
+

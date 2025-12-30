@@ -14,6 +14,7 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -33,6 +34,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -117,6 +119,11 @@ import {
   type UpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
 import {
+  type CreateViewFilterGroupAction,
+  type DeleteViewFilterGroupAction,
+  type UpdateViewFilterGroupAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
+import {
   type CreateViewFilterAction,
   type DeleteViewFilterAction,
   type UpdateViewFilterAction,
@@ -197,6 +204,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatRowLevelPermissionPredicateGroup;
     entity: RowLevelPermissionPredicateGroupEntity;
+  };
+  viewFilterGroup: {
+    actions: {
+      created: CreateViewFilterGroupAction;
+      updated: UpdateViewFilterGroupAction;
+      deleted: DeleteViewFilterGroupAction;
+    };
+    flatEntity: FlatViewFilterGroup;
+    entity: ViewFilterGroupEntity;
   };
   index: {
     actions: {
