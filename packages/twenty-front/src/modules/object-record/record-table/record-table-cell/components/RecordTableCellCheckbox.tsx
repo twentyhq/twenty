@@ -33,7 +33,6 @@ export const RecordTableCellCheckbox = () => {
 
   const handleClick = useCallback(
     (event?: React.MouseEvent<HTMLDivElement>) => {
-      event?.stopPropagation();
       setCurrentRowSelected({
         newSelectedState: !isSelected,
         shouldSelectRange: isDefined(event?.shiftKey) && event.shiftKey,
@@ -48,7 +47,7 @@ export const RecordTableCellCheckbox = () => {
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
     >
-      <StyledContainer onClick={handleClick} data-select-disable>
+      <StyledContainer onClick={handleClick} data-select-disable="true">
         <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
     </StyledRecordTableTd>

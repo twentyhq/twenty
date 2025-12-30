@@ -120,7 +120,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
     >
       <StyledContainer
         shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-        data-select-disable
+        data-select-disable="true"
       >
         <Checkbox
           hoverable
