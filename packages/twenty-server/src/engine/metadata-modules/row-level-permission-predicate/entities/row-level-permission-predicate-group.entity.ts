@@ -14,12 +14,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicateGroup', schema: 'core' })
 @Index('IDX_RLPPG_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
@@ -45,9 +43,6 @@ export class RowLevelPermissionPredicateGroupEntity
   positionInRowLevelPermissionPredicateGroup: number | null;
 
   @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
@@ -58,10 +53,6 @@ export class RowLevelPermissionPredicateGroupEntity
 
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date | null;
-
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @ManyToOne(() => RoleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'roleId' })
