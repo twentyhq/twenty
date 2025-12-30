@@ -36,6 +36,8 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       id: predicateGroupId,
       workspaceId,
       roleId,
+      childRowLevelPermissionPredicateGroupIds: [],
+      rowLevelPermissionPredicateIds: [],
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,

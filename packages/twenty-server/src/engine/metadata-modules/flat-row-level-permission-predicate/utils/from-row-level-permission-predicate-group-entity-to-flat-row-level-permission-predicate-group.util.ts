@@ -24,5 +24,13 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
       universalIdentifier:
         rowLevelPermissionPredicateGroupEntityWithoutRelations.universalIdentifier ??
         rowLevelPermissionPredicateGroupEntityWithoutRelations.id,
+      childRowLevelPermissionPredicateGroupIds:
+        rowLevelPermissionPredicateGroupEntity.childRowLevelPermissionPredicateGroups.map(
+          ({ id }) => id,
+        ),
+      rowLevelPermissionPredicateIds:
+        rowLevelPermissionPredicateGroupEntity.rowLevelPermissionPredicates.map(
+          ({ id }) => id,
+        ),
     };
   };
