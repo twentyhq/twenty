@@ -1,22 +1,10 @@
+import { NUMBER_FIELD_TYPES } from '@/command-menu/pages/page-layout/utils/number-field-types';
+import { TEXT_FIELD_TYPES } from '@/command-menu/pages/page-layout/utils/text-field-types';
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GraphOrderBy } from '~/generated/graphql';
-
-const TEXT_FIELD_TYPES: FieldMetadataType[] = [
-  FieldMetadataType.TEXT,
-  FieldMetadataType.RICH_TEXT,
-  FieldMetadataType.RICH_TEXT_V2,
-];
-
-const NUMBER_FIELD_TYPES: FieldMetadataType[] = [
-  FieldMetadataType.NUMBER,
-  FieldMetadataType.NUMERIC,
-  FieldMetadataType.CURRENCY,
-  FieldMetadataType.RATING,
-  FieldMetadataType.POSITION,
-];
 
 export const getSortLabelSuffixForFieldType = ({
   fieldType,
