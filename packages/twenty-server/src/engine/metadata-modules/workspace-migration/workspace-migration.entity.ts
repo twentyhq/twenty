@@ -30,7 +30,7 @@ export interface WorkspaceMigrationColumnDefinition {
   isArray?: boolean;
   isNullable: boolean;
   isUnique?: boolean;
-   
+
   defaultValue: any;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;

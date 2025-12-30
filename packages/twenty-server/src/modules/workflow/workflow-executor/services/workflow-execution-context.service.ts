@@ -12,7 +12,6 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 import { type WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
- 
 export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
