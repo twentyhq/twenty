@@ -40,6 +40,13 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
+    if (!stepFilterGroups || !stepFilters) {
+      throw new WorkflowStepExecutorException(
+        'If-else action must have stepFilterGroups and stepFilters defined',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
     const resolvedFilters = stepFilters.map((filter) => ({
       ...filter,
       rightOperand: resolveInput(filter.value, context),
@@ -48,7 +55,7 @@ export class IfElseWorkflowAction implements WorkflowAction {
 
     const matchingBranch = findMatchingBranch({
       branches,
-      stepFilterGroups: stepFilterGroups ?? [],
+      stepFilterGroups,
       resolvedFilters,
     });
 
