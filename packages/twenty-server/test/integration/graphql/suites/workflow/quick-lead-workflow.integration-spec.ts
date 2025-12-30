@@ -1,12 +1,11 @@
 import request from 'supertest';
-
+import { v4 as uuidv4 } from 'uuid';
 import { WORKFLOW_RUN_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
 
 // Integration tests for the Quick Lead workflow
-// Note: These tests verify workflow structure and triggering via GraphQL API.
-// Full end-to-end execution (including FORM submission and record creation)
-// is not tested here because BullMQ job workers don't run in the test environment.
-// The workflow stays in ENQUEUED status after triggering.
+// Note: These tests use the SyncDriver which processes workflow jobs synchronously.
+// The workflow will be in RUNNING status (waiting on FORM step) after triggering.
+// Full end-to-end tests including FORM submission and record creation can be added.
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -228,11 +227,14 @@ describe('Quick Lead Workflow (e2e)', () => {
       const workflowRun = await getWorkflowRun(workflowRunId);
 
       expect(workflowRun).toBeDefined();
-      expect(workflowRun?.workflowVersionId).toBe(QUICK_LEAD_WORKFLOW_VERSION_ID);
-      // Status should be ENQUEUED after triggering (jobs are queued but not processed in tests)
-      expect(workflowRun?.status).toBe('ENQUEUED');
+      expect(workflowRun?.workflowVersionId).toBe(
+        QUICK_LEAD_WORKFLOW_VERSION_ID,
+      );
+      // Status should be RUNNING after triggering (waiting on FORM step input)
+      // The SyncDriver processes jobs synchronously in integration tests
+      expect(workflowRun?.status).toBe('RUNNING');
 
-      // Verify initial state has correct step structure
+      // Verify state has correct step structure
       expect(workflowRun?.state).toBeDefined();
       expect(workflowRun?.state?.stepInfos).toBeDefined();
       expect(workflowRun?.state?.stepInfos?.trigger).toBeDefined();
@@ -244,15 +246,24 @@ describe('Quick Lead Workflow (e2e)', () => {
         workflowRun?.state?.stepInfos?.['6f553ea7-b00e-4371-9d88-d8298568a246'],
       ).toBeDefined();
 
-      // All steps should be NOT_STARTED initially
-      expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('NOT_STARTED');
+      // Trigger has completed, FORM step is waiting for input
+      expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
-        'NOT_STARTED',
+        'PENDING',
       );
+      // Subsequent steps should be NOT_STARTED
+      expect(
+        workflowRun?.state?.stepInfos?.['0715b6cd-7cc1-4b98-971b-00f54dfe643b']
+          ?.status,
+      ).toBe('NOT_STARTED');
+      expect(
+        workflowRun?.state?.stepInfos?.['6f553ea7-b00e-4371-9d88-d8298568a246']
+          ?.status,
+      ).toBe('NOT_STARTED');
     });
 
-    it('should be able to stop a workflow run', async () => {
-      // First trigger a workflow
+    it('should be able to stop a running workflow run', async () => {
+      // First trigger a workflow (which will be RUNNING, waiting on FORM step)
       const runWorkflowResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -274,8 +285,7 @@ describe('Quick Lead Workflow (e2e)', () => {
       const workflowRunId =
         runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
 
-      // Note: Stopping an ENQUEUED workflow will fail because it's not RUNNING
-      // This test documents the expected behavior
+      // Stop the running workflow
       const stopResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -291,11 +301,13 @@ describe('Quick Lead Workflow (e2e)', () => {
           variables: { workflowRunId },
         });
 
-      // Stopping an ENQUEUED workflow should fail
-      expect(stopResponse.body.errors).toBeDefined();
-      expect(stopResponse.body.errors[0].message).toContain(
-        'Workflow run is not running',
-      );
+      expect(stopResponse.body.errors).toBeUndefined();
+      expect(stopResponse.body.data.stopWorkflowRun.status).toBe('STOPPED');
+
+      // Verify the workflow run was stopped
+      const workflowRun = await getWorkflowRun(workflowRunId);
+
+      expect(workflowRun?.status).toBe('STOPPED');
 
       // Clean up - delete the workflow run
       await client
@@ -311,6 +323,225 @@ describe('Quick Lead Workflow (e2e)', () => {
           `,
           variables: { id: workflowRunId },
         });
+    });
+  });
+
+  describe('Full workflow execution with form submission', () => {
+    let testWorkflowRunId: string | null = null;
+    let createdCompanyId: string | null = null;
+    let createdPersonId: string | null = null;
+
+    afterAll(async () => {
+      // Clean up created records in reverse order of creation
+      if (createdPersonId) {
+        await client
+          .post('/graphql')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query: `
+              mutation DestroyPerson($id: ID!) {
+                destroyPerson(id: $id) {
+                  id
+                }
+              }
+            `,
+            variables: { id: createdPersonId },
+          });
+      }
+
+      if (createdCompanyId) {
+        await client
+          .post('/graphql')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query: `
+              mutation DestroyCompany($id: ID!) {
+                destroyCompany(id: $id) {
+                  id
+                }
+              }
+            `,
+            variables: { id: createdCompanyId },
+          });
+      }
+
+      if (testWorkflowRunId) {
+        await client
+          .post('/graphql')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query: `
+              mutation DestroyWorkflowRun($id: ID!) {
+                destroyWorkflowRun(id: $id) {
+                  id
+                }
+              }
+            `,
+            variables: { id: testWorkflowRunId },
+          });
+      }
+    });
+
+    it('should complete full workflow: trigger → submit form → create Company and Person', async () => {
+      // Step 1: Trigger the workflow
+      const runWorkflowResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
+              runWorkflowVersion(input: $input) {
+                workflowRunId
+              }
+            }
+          `,
+          variables: {
+            input: {
+              workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+            },
+          },
+        });
+
+      expect(runWorkflowResponse.body.errors).toBeUndefined();
+      testWorkflowRunId =
+        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
+
+      // Verify workflow is running and waiting on FORM step
+      let workflowRun = await getWorkflowRun(testWorkflowRunId);
+
+      expect(workflowRun?.status).toBe('RUNNING');
+      expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
+        'PENDING',
+      );
+
+      // Step 2: Submit the form with unique test data
+      const testId = uuidv4().slice(0, 8);
+      const testFormData = {
+        firstName: 'Integration',
+        lastName: `TestUser-${testId}`,
+        email: `test-${testId}@example.com`,
+        jobTitle: 'Test Engineer',
+        companyName: `Test Company ${testId}`,
+        companyDomain: `https://test-${testId}.example.com`,
+      };
+
+      const submitFormResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            mutation SubmitFormStep($input: SubmitFormStepInput!) {
+              submitFormStep(input: $input)
+            }
+          `,
+          variables: {
+            input: {
+              stepId: FORM_STEP_ID,
+              workflowRunId: testWorkflowRunId,
+              response: testFormData,
+            },
+          },
+        });
+
+      expect(submitFormResponse.body.errors).toBeUndefined();
+      expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+
+      // Step 3: Verify workflow completed
+      workflowRun = await getWorkflowRun(testWorkflowRunId);
+      expect(workflowRun?.status).toBe('COMPLETED');
+
+      // Verify all steps completed successfully
+      expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
+      expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
+        'SUCCESS',
+      );
+      expect(
+        workflowRun?.state?.stepInfos?.['0715b6cd-7cc1-4b98-971b-00f54dfe643b']
+          ?.status,
+      ).toBe('SUCCESS');
+      expect(
+        workflowRun?.state?.stepInfos?.['6f553ea7-b00e-4371-9d88-d8298568a246']
+          ?.status,
+      ).toBe('SUCCESS');
+
+      // Step 4: Verify Company was created
+      // The result is the created record directly with id at top level
+      const companyStepResult = workflowRun?.state?.stepInfos?.[
+        '0715b6cd-7cc1-4b98-971b-00f54dfe643b'
+      ]?.result as { id?: string } | undefined;
+
+      createdCompanyId = companyStepResult?.id ?? null;
+      expect(createdCompanyId).toBeDefined();
+
+      const companyResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            query FindCompany($id: UUID!) {
+              company(filter: { id: { eq: $id } }) {
+                id
+                name
+                domainName {
+                  primaryLinkUrl
+                }
+              }
+            }
+          `,
+          variables: { id: createdCompanyId },
+        });
+
+      expect(companyResponse.body.errors).toBeUndefined();
+      expect(companyResponse.body.data.company).toBeDefined();
+      expect(companyResponse.body.data.company.name).toBe(
+        testFormData.companyName,
+      );
+      expect(
+        companyResponse.body.data.company.domainName.primaryLinkUrl,
+      ).toContain(`test-${testId}.example.com`);
+
+      // Step 5: Verify Person was created
+      // The result is the created record directly with id at top level
+      const personStepResult = workflowRun?.state?.stepInfos?.[
+        '6f553ea7-b00e-4371-9d88-d8298568a246'
+      ]?.result as { id?: string } | undefined;
+
+      createdPersonId = personStepResult?.id ?? null;
+      expect(createdPersonId).toBeDefined();
+
+      const personResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            query FindPerson($id: UUID!) {
+              person(filter: { id: { eq: $id } }) {
+                id
+                name {
+                  firstName
+                  lastName
+                }
+                emails {
+                  primaryEmail
+                }
+              }
+            }
+          `,
+          variables: { id: createdPersonId },
+        });
+
+      expect(personResponse.body.errors).toBeUndefined();
+      expect(personResponse.body.data.person).toBeDefined();
+      expect(personResponse.body.data.person.name.firstName).toBe(
+        testFormData.firstName,
+      );
+      expect(personResponse.body.data.person.name.lastName).toBe(
+        testFormData.lastName,
+      );
+      // Note: jobTitle is not mapped in the Quick Lead workflow
+      expect(personResponse.body.data.person.emails.primaryEmail).toBe(
+        testFormData.email,
+      );
     });
   });
 });
