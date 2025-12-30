@@ -60,7 +60,7 @@ index 1684394..32602b3 100644
 +                });
 +
 +                for (const key of this.schemaCache.keys()) {
-+                    if (key.startsWith(`${workspaceId}-${workspaceUserId}-${url}-`)) {
++                    if (key.startsWith(`${workspaceId}-${url}-`)) {
 +                        this.schemaCache.delete(key);
 +                    }
 +                }
