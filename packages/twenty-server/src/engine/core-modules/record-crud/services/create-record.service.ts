@@ -3,15 +3,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FieldActorSource } from 'twenty-shared/types';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
-import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
+import { type CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
 import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
+import { type CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type CreateRecordParams } from 'src/engine/core-modules/record-crud/types/create-record-params.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
+import { removeUndefinedFromRecord } from 'src/engine/core-modules/record-crud/utils/remove-undefined-from-record.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 @Injectable()
 export class CreateRecordService {
@@ -55,7 +56,10 @@ export class CreateRecordService {
         name: 'Workflow',
       };
 
-      const dataWithActor = { ...objectRecord, createdBy: actorMetadata };
+      // Clean undefined values from the record data (including nested composite fields)
+      // This prevents validation errors for partial composite field inputs
+      const cleanedRecord = removeUndefinedFromRecord(objectRecord);
+      const dataWithActor = { ...cleanedRecord, createdBy: actorMetadata };
 
       const createdRecord = await this.commonCreateOneRunner.execute(
         {

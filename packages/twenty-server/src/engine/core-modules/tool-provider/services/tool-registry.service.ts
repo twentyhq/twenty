@@ -59,8 +59,15 @@ export class ToolRegistryService {
   async buildToolIndex(
     workspaceId: string,
     roleId: string,
+    options?: { userId?: string; userWorkspaceId?: string },
   ): Promise<ToolIndexEntry[]> {
-    const context = this.buildContext(workspaceId, roleId);
+    const context = this.buildContext(
+      workspaceId,
+      roleId,
+      undefined,
+      options?.userId,
+      options?.userWorkspaceId,
+    );
     const entries: ToolIndexEntry[] = [];
 
     for (const provider of this.providers) {
@@ -82,10 +89,13 @@ export class ToolRegistryService {
     query: string,
     workspaceId: string,
     roleId: string,
-    options: ToolSearchOptions = {},
+    options: ToolSearchOptions & { userId?: string; userWorkspaceId?: string } = {},
   ): Promise<ToolIndexEntry[]> {
-    const { limit = 5, category } = options;
-    const index = await this.buildToolIndex(workspaceId, roleId);
+    const { limit = 5, category, userId, userWorkspaceId } = options;
+    const index = await this.buildToolIndex(workspaceId, roleId, {
+      userId,
+      userWorkspaceId,
+    });
 
     const queryLower = query.toLowerCase();
     const queryTerms = queryLower
