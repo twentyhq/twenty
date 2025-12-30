@@ -1,4 +1,4 @@
-import { type StepIfElseBranch } from 'twenty-shared/types';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getBranchesToDelete = (

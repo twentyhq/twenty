@@ -10,10 +10,8 @@ import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-step
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import {
-  type StepFilterGroup,
-  type StepIfElseBranch,
-} from 'twenty-shared/types';
+import { type StepFilterGroup } from 'twenty-shared/types';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledBranchContainer = styled.div`

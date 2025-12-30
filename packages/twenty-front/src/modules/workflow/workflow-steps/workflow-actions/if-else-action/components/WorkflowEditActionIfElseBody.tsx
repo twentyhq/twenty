@@ -15,11 +15,8 @@ import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-el
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
-import {
-  type StepFilter,
-  type StepFilterGroup,
-  type StepIfElseBranch,
-} from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
