@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -20,6 +21,7 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    workspace: {} as WorkspaceEntity,
     calendarViews: [],
     mainGroupByFieldMetadataViews: [],
     viewFilters: [],
