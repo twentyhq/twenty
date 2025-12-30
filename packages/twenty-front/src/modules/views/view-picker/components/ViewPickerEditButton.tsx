@@ -1,7 +1,7 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
-import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -24,7 +24,7 @@ export const ViewPickerEditButton = () => {
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
-  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
 
   if (viewPickerMode === 'edit') {
     return (

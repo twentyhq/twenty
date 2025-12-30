@@ -7,7 +7,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
-import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -52,7 +52,7 @@ export const ViewPickerOptionDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
-  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );

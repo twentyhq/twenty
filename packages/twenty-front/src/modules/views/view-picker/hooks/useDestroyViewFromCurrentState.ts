@@ -13,7 +13,7 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 
-export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
+export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
@@ -44,7 +44,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { changeView } = useChangeView();
 
-  const { deleteView } = usePersistView();
+  const { destroyView } = usePersistView();
 
   const deleteViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -74,14 +74,14 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
             views.filter((view) => view.id !== viewPickerReferenceViewId),
         );
 
-        await deleteView({ id: viewPickerReferenceViewId });
+        await destroyView({ id: viewPickerReferenceViewId });
       },
     [
       currentView,
       closeAndResetViewPicker,
       objectMetadataItem.id,
       changeView,
-      deleteView,
+      destroyView,
       viewPickerIsDirtyCallbackState,
       viewPickerIsPersistingCallbackState,
       viewPickerReferenceViewIdCallbackState,
