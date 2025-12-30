@@ -72,8 +72,7 @@ export const ViewPickerDropdown = () => {
   const CurrentViewIcon = getIcon(currentView?.icon);
 
   const handleClickOutside = async () => {
-    const isEditMode = viewPickerMode === 'edit';
-    if (isDropdownOpen && isEditMode) {
+    if (isDropdownOpen && viewPickerMode === 'edit') {
       await updateViewFromCurrentState();
     }
     setViewPickerMode('list');
