@@ -7,7 +7,9 @@ import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/work
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -20,6 +22,7 @@ export class WorkflowExecutionContextService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
+    private readonly roleService: RoleService,
   ) {}
 
   async getExecutionContext(runInfo: {
@@ -93,16 +96,31 @@ export class WorkflowExecutionContextService {
         workspaceId,
       );
 
-    const rolePermissionConfig = isDefined(
-      application.defaultServerlessFunctionRoleId,
-    )
-      ? { unionOf: [application.defaultServerlessFunctionRoleId] }
+    // Use the application's role if set, otherwise fall back to admin role
+    // In the future we should probably assign the Admin role to the Standard Application
+    let roleId = application.defaultServerlessFunctionRoleId;
+
+    if (!isDefined(roleId)) {
+      // Fallback: Look up admin role for existing workspaces without defaultServerlessFunctionRoleId
+      const adminRole = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: ADMIN_ROLE.standardId,
+        workspaceId,
+      });
+
+      roleId = adminRole?.id ?? null;
+    }
+
+    const rolePermissionConfig = isDefined(roleId)
+      ? { unionOf: [roleId] }
       : { shouldBypassPermissionChecks: true as const };
 
     const authContext = {
       user: null,
       apiKey: null,
-      application,
+      application: {
+        ...application,
+        defaultServerlessFunctionRoleId: roleId,
+      },
       workspace,
       workspaceMemberId: undefined,
       userWorkspaceId: undefined,
