@@ -3,7 +3,7 @@ import {
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataSettings,
-  FieldMetadataType,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
