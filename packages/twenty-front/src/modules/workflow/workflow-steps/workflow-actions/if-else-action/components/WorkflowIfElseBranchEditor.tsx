@@ -1,4 +1,3 @@
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
 import { WorkflowStepFilterAddFilterRuleSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect';
 import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterColumn';
@@ -18,23 +17,6 @@ const StyledBranchContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
-`;
-
-const StyledBranchHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const StyledBranchLabel = styled(InputLabel)`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-const StyledElsePlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-style: italic;
 `;
 
 const StyledFiltersContainer = styled.div`
