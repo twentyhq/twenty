@@ -3,12 +3,12 @@
 Updates Last interaction and Interaction status fields based on last email date
 
 ## Requirements
-- an `apiKey`- go to Settings > API & Webhooks to generate one
+- an `apiKey` - go to Settings > API & Webhooks to generate one
 
 ## Setup
 1. Add and synchronize app
 ```bash
-cd packages/twenty-apps/community/last_email_interaction
+cd packages/twenty-apps/community/last-email-interaction
 yarn auth
 yarn sync
 ```

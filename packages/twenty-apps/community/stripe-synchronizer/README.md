@@ -3,7 +3,7 @@
 Synchronizes customers from Stripe to Twenty
 
 ## Requirements
-- an `apiKey` - go to Settings > API & webhooks to generate one
+- an `apiKey` - go to Settings > API & Webhooks to generate one
 - Stripe secret API key - available in Stripe workbench
 
 ## Setup

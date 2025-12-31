@@ -3,7 +3,7 @@
 Synchronizing contacts between Twenty and Mailchimp
 
 ## Requirements
-- an `apiKey` - go to Settings > API & webhooks` to generate one
+- an `apiKey` - go to Settings > API & Webhooks to generate one
 - Mailchimp API key - Mailchimp > avatar in top right corner > Profile > Extras > API keys
 
 ## Setup
