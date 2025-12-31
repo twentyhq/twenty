@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
@@ -19,6 +21,7 @@ export const checkFilterQuery = (filterQuery: string): void => {
     throw new RestInputRequestParserException(
       `'filter' invalid. ${hint} missing in the query`,
       RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM,
+      { userFriendlyMessage: msg`Invalid filter parameter.` },
     );
   }
 

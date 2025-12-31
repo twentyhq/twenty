@@ -165,4 +165,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
 }

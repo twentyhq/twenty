@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsObjectRelationsTable } from '@/settings/data-model/object-details/components/SettingsObjectRelationsTable';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -22,11 +22,11 @@ type ObjectFieldsProps = {
 };
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
-  const readonly = isObjectMetadataSettingsReadOnly({
+  const { t } = useLingui();
+  const readonly = isObjectMetadataReadOnly({
     objectMetadataItem,
   });
 
-  const { t } = useLingui();
   const objectLabelSingular = objectMetadataItem.labelSingular;
 
   const hasRelations = objectMetadataItem.fields.some(

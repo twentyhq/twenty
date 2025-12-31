@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -54,6 +55,9 @@ export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This record does not exist or has been deleted.`,
+        },
       );
     }
 

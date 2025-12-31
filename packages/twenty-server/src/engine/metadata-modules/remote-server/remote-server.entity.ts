@@ -11,6 +11,7 @@ import {
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -35,7 +36,9 @@ export type ForeignDataWrapperOptions<T extends RemoteServerType> =
       : never;
 
 @Entity('remoteServer')
-export class RemoteServerEntity<T extends RemoteServerType> {
+export class RemoteServerEntity<
+  T extends RemoteServerType,
+> extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -57,9 +60,6 @@ export class RemoteServerEntity<T extends RemoteServerType> {
 
   @Column({ type: 'text', nullable: true })
   schema: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @OneToMany(() => RemoteTableEntity, (table) => table.server, {
     cascade: true,

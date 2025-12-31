@@ -27,6 +27,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isUIReadOnly,
     options,
     morphId,
+    applicationId,
   } = flatFieldMetadata;
 
   return {
@@ -52,5 +53,6 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isUnique: isUnique ?? false,
     settings: settings ?? undefined,
     morphId: morphId ?? undefined,
+    applicationId: applicationId ?? undefined,
   };
 };

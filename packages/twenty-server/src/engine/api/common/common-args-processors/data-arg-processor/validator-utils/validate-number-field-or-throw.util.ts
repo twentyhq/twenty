@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
 import {
@@ -15,11 +16,17 @@ export const validateNumberFieldOrThrow = (
     (typeof value !== 'number' && !isNull(value)) ||
     (typeof value === 'number' &&
       (isNaN(value) || value === Infinity || value === -Infinity))
-  )
+  ) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid number value ${inspect(value)} for field "${fieldName}"`,
+      `Invalid number value ${inspectedValue} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      {
+        userFriendlyMessage: msg`Invalid value for number: "${inspectedValue}"`,
+      },
     );
+  }
 
   return value;
 };

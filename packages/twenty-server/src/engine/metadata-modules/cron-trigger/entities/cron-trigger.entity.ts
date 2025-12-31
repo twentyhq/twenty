@@ -10,18 +10,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { CronTriggerEntityRelationProperties } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type CronTriggerSettings = {
   pattern: string;
 };
-
-export const CRON_TRIGGER_ENTITY_RELATION_PROPERTIES = [
-  'serverlessFunction',
-] as const satisfies readonly CronTriggerEntityRelationProperties[];
 
 @Entity({ name: 'cronTrigger', schema: 'core' })
 @Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])

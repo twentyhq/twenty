@@ -149,6 +149,11 @@ msgstr "Már létezik ilyen értékű rekord."
 msgid "A required configuration is missing."
 msgstr "Egy szükséges konfiguráció hiányzik."
 
+#. js-lingui-id: FVCXUT
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+msgid "A required field is missing."
+msgstr ""
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -167,7 +172,6 @@ msgstr "Egy feladat célja"
 
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
 msgstr "Átmeneti hiba történt. Kérjük, próbálja meg újra."
 
@@ -392,6 +396,7 @@ msgstr "Hiba történt a kétfaktoros hitelesítési adatokkal."
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
 msgid "An error occurred."
 msgstr "Hiba történt."
 
@@ -433,41 +438,21 @@ msgstr "Váratlan konfigurációs hiba történt."
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
 #: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
-#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/file/file.exception.ts
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Váratlan hiba történt."
-
-#. js-lingui-id: ljwHbt
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
-msgid "An unexpected workflow error occurred."
-msgstr "Váratlan munkafolyamat-hiba történt."
 
 #. js-lingui-id: q8ZbjA
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "Ismeretlen naptárhiba történt."
-
-#. js-lingui-id: EV/5J1
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
-msgid "An unknown email error occurred."
-msgstr "Ismeretlen e-mail hiba történt."
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -496,6 +481,7 @@ msgstr "Az API-kulcs szerepköre nem található."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
 msgstr "Alkalmazás nem található."
@@ -740,11 +726,6 @@ msgstr "Avatár"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "Avatár URL"
-
-#. js-lingui-id: GVurVk
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Bad request."
-msgstr "Hibás kérés."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1030,11 +1011,6 @@ msgstr "Csatornatípus"
 msgid "City"
 msgstr "Város"
 
-#. js-lingui-id: unYzAT
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Client not found."
-msgstr "Kliens nem található."
-
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
@@ -1092,12 +1068,6 @@ msgstr "A konfiguráció ellenőrzése sikertelen."
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
 msgstr "Konfigurációs változó nem található."
-
-#. js-lingui-id: xr7rlK
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Conflicting arguments provided."
-msgstr "Ütköző argumentumok lettek megadva."
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -1343,16 +1313,6 @@ msgstr "Irányítópult címe"
 msgid "Dashboards"
 msgstr "Irányítópultok"
 
-#. js-lingui-id: Gb2JdW
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Data not found."
-msgstr "Adat nem található."
-
-#. js-lingui-id: Bg/wIf
-#: src/engine/metadata-modules/data-source/data-source.exception.ts
-msgid "Data source not found."
-msgstr "Adatforrás nem található."
-
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
@@ -1550,6 +1510,7 @@ msgstr "E-mail szükséges"
 #. js-lingui-id: Qof3ks
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Email is required."
 msgstr "E-mail szükséges."
 
@@ -1594,19 +1555,8 @@ msgstr "Üres mezőengedélyek nem engedélyezettek."
 msgid "End Date"
 msgstr "Befejezés dátuma"
 
-#. js-lingui-id: z1wQ2q
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity already exists."
-msgstr "Az entitás már létezik."
-
-#. js-lingui-id: DAX1pY
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity data is malformed."
-msgstr "Az entitás adatai hibás formátumúak."
-
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
 msgstr "Entitás nem található."
@@ -1617,7 +1567,6 @@ msgid "Enum operation failed."
 msgstr "Az enum művelet sikertelen."
 
 #. js-lingui-id: AOk97Y
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
 msgstr "Az enum típus nem található."
@@ -1642,11 +1591,6 @@ msgstr "Esemény cég"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
 msgstr "Esemény irányítópult"
-
-#. js-lingui-id: NuQxIH
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Event data is corrupted."
-msgstr "Az esemény adatai sérültek."
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2072,7 +2016,6 @@ msgstr "A mező neve nincs szinkronban a címkével."
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Field not found."
 msgstr "Mező nem található."
 
@@ -2396,18 +2339,6 @@ msgstr "Nincs elegendő jogosultság a naptár eléréséhez."
 msgid "Insufficient permissions."
 msgstr "Elégtelen jogosultság."
 
-#. js-lingui-id: mYSErp
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'first' argument."
-msgstr "Érvénytelen 'first' argumentum."
-
-#. js-lingui-id: k0JXYM
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'last' argument."
-msgstr "Érvénytelen 'last' argumentum."
-
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -2438,16 +2369,6 @@ msgstr "Érvénytelen audit-bemenet."
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
 msgstr "Érvénytelen audit típus."
-
-#. js-lingui-id: kYec1W
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid authentication context."
-msgstr "Érvénytelen hitelesítési kontextus."
-
-#. js-lingui-id: gxIicn
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Invalid authentication token."
-msgstr "Érvénytelen hitelesítési token."
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2484,22 +2405,10 @@ msgstr "Érvénytelen csatlakoztatott fiókazonosító."
 msgid "Invalid country code {countryCode}"
 msgstr "Érvénytelen országkód {countryCode}"
 
-#. js-lingui-id: 0RwhuX
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid cursor provided."
-msgstr "Érvénytelen kurzor lett megadva."
-
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Érvénytelen adatformátum."
-
-#. js-lingui-id: 3o5vtu
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid data provided."
-msgstr "Érvénytelen adatok lettek megadva."
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
@@ -2515,11 +2424,6 @@ msgstr "Érvénytelen nap érték. Egészen számnak kell lennie, nagyobbnak 1-n
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
 msgstr "Érvénytelen mélységparaméter."
-
-#. js-lingui-id: 4JreOU
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid direction provided."
-msgstr "Érvénytelen irány lett megadva."
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -2549,8 +2453,16 @@ msgstr "Érvénytelen fájlazonosító."
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
 msgid "Invalid filter parameter."
 msgstr "Érvénytelen szűrőparaméter."
+
+#. js-lingui-id: /GCbsS
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter value: \"{value}\""
+msgstr ""
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
@@ -2583,11 +2495,6 @@ msgstr "Érvénytelen identitásszolgáltató-típus."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
 msgstr "Érvénytelen bemenet lett megadva."
-
-#. js-lingui-id: vw9FMn
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invalid invitation."
-msgstr "Érvénytelen meghívó."
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2681,11 +2588,6 @@ msgstr "Érvénytelen telefonos országkód."
 msgid "Invalid phone number."
 msgstr "Érvénytelen telefonszám."
 
-#. js-lingui-id: Hvv6QE
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid post-hook payload."
-msgstr "Érvénytelen post-hook payload."
-
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
@@ -2695,13 +2597,6 @@ msgstr "Érvénytelen ár."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid pricing tiers."
 msgstr "Érvénytelen árszintek."
-
-#. js-lingui-id: 0Dexu8
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid query input."
-msgstr "Érvénytelen lekérdezési bemenet."
 
 #. js-lingui-id: XBYAgs
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -2779,12 +2674,6 @@ msgstr "Érvénytelen előfizetés."
 msgid "Invalid target URL."
 msgstr "Érvénytelen cél URL."
 
-#. js-lingui-id: w58bhw
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid token type."
-msgstr "Érvénytelen token típus."
-
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -2805,10 +2694,102 @@ msgstr "Érvénytelen URL-formátum."
 msgid "Invalid uuid {id}"
 msgstr "Érvénytelen uuid {id}"
 
+#. js-lingui-id: Z3Su9z
+#: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+msgid "Invalid UUID format."
+msgstr ""
+
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Invalid validation token."
 msgstr "Érvénytelen ellenőrző token."
+
+#. js-lingui-id: 56bPee
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
+msgid "Invalid value for actor."
+msgstr ""
+
+#. js-lingui-id: Y2KtrW
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
+msgid "Invalid value for address."
+msgstr ""
+
+#. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+msgid "Invalid value for currency."
+msgstr ""
+
+#. js-lingui-id: AUbno1
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: mANTdg
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
+msgid "Invalid value for emails."
+msgstr ""
+
+#. js-lingui-id: SF3Mp4
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
+msgid "Invalid value for full name."
+msgstr ""
+
+#. js-lingui-id: UiMJoF
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: BgSFod
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON."
+msgstr ""
+
+#. js-lingui-id: GFYy9y
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
+msgid "Invalid value for links."
+msgstr ""
+
+#. js-lingui-id: Q6jO3x
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
+msgid "Invalid value for multi-select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
+msgid "Invalid value for number: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: oLqCzh
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
+msgid "Invalid value for phones."
+msgstr ""
+
+#. js-lingui-id: GLmyCK
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
+msgid "Invalid value for position: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+msgid "Invalid value for rich text."
+msgstr ""
+
+#. js-lingui-id: 9lVA5C
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
+msgid "Invalid value for UUID: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
+msgid "Invalid value: \"{inspectedValue}\""
+msgstr ""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -2819,11 +2800,6 @@ msgstr "Érvénytelen ellenőrzőkód."
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Érvénytelen ellenőrző kód. Kérjük próbálja újra."
-
-#. js-lingui-id: Ku4J80
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid verification token."
-msgstr "Érvénytelen ellenőrző token."
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -2874,11 +2850,6 @@ msgstr "Érvénytelen munkafolyamat-indító bemenet."
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "Érvénytelen munkafolyamat-verzió."
-
-#. js-lingui-id: +WZMeN
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invitation is corrupted."
-msgstr "A meghívó sérült."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3026,7 +2997,6 @@ msgstr "A címkeazonosító mező nem deaktiválható"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "Label identifier field not found."
 msgstr "Címkeazonosító mező nem található."
 
@@ -3156,16 +3126,6 @@ msgstr "Március"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "A feltöltésre kerülő rekordok maximális száma {QUERY_MAX_RECORDS}."
-
-#. js-lingui-id: p0qTse
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum query depth reached."
-msgstr "Elérte a lekérdezés maximális mélységét."
-
-#. js-lingui-id: vLHXAB
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum records exceeded for upsert."
-msgstr "Az upsert során a rekordok maximális számát túllépték."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3366,11 +3326,6 @@ msgstr "Hiányzó dekorátor-konfiguráció."
 msgid "Missing main alias target."
 msgstr "Hiányzik a fő alias cél."
 
-#. js-lingui-id: khQZlp
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Missing relation join column."
-msgstr "Hiányzik a kapcsolat join oszlopa."
-
 #. js-lingui-id: W5hpOP
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Missing request body."
@@ -3380,17 +3335,6 @@ msgstr "Hiányzik a kérés törzse."
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Hiányzó kötelező mezők: legalább egy egyedi megszorításnak teljesen ki kell lennie töltve a(z) '{connectFieldName}' esetében."
-
-#. js-lingui-id: PIWoHs
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing required system field."
-msgstr "Kötelező rendszermező hiányzik."
-
-#. js-lingui-id: eM40XC
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing time zone for date group by."
-msgstr "Hiányzik az időzóna a dátum szerinti csoportosításhoz."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3427,17 +3371,6 @@ msgstr "A morph kapcsolati mezőnek rendelkeznie kell egy morph azonosítóval"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "A többszörös kiválasztás mező alapértelmezett értékének egy tömbnek kell lennie"
-
-#. js-lingui-id: /81w6M
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Multiple join columns found."
-msgstr "Több join oszlop található."
-
-#. js-lingui-id: ZEzn4X
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Multiple matching records found during upsert."
-msgstr "Az upsert során több egyező rekordot találtunk."
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
@@ -3553,6 +3486,11 @@ msgstr "Nem lett esemény név biztosítva az adatbázis esemény triggerhez"
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "No foreign tables found."
 msgstr "Nem található idegen tábla."
+
+#. js-lingui-id: 6GG2MJ
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "No identifier to search by was found."
+msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3757,7 +3695,6 @@ msgstr "Objektum-metaadat nem található."
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Object not found."
 msgstr "Objektum nem található."
 
@@ -3818,6 +3755,11 @@ msgstr "Október"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Az egyik vagy több objektum, amelyre engedélyeket próbál beállítani, nem található. Lehet, hogy törölték őket."
+
+#. js-lingui-id: JZB2eY
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "One or more records were not found."
+msgstr ""
 
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4090,6 +4032,11 @@ msgstr "Az oldalelrendezési widget a(z) {flatPageLayoutWidgetId} azonosítóval
 msgid "Parent Folder ID"
 msgstr "Szülőmappa azonosítója"
 
+#. js-lingui-id: /GJDxy
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Password is too weak."
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
@@ -4186,10 +4133,21 @@ msgstr "Kérjük, adja meg a kapcsolati adatokat, hogy beállíthassa e-mail fi�
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "Kérjük, válasszon érvényes kapcsolati típust (IMAP, SMTP vagy CalDAV), majd próbálja újra."
 
+#. js-lingui-id: sa9Q+R
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Please select at least 2 records to merge."
+msgstr ""
+
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Please use a company email domain."
 msgstr "Kérjük, céges e-mail tartományt használjon."
+
+#. js-lingui-id: Sguqn/
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
+msgid "Please use Settings to remove a workspace member."
+msgstr ""
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4285,30 +4243,10 @@ msgstr "Nyilvános domain nem található."
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "A nyilvános domain URL nincs meghatározva. Kérjük, állítsa be a PUBLIC_DOMAIN_URL környezeti változót."
 
-#. js-lingui-id: uzWClp
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr "A lekérdezés összetettsége túl magas. Egy egy-több reláció nem ágyazható egy másik egy-több relációba."
-
-#. js-lingui-id: XkHjXW
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr "A lekérdezés összetettsége túl magas. Kérjük, csökkentse a kért kapcsolati mezők számát. Lekérdezés összetettsége: {queryComplexity}. Maximális összetettség: {maximumComplexity}."
-
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Query failed."
 msgstr "A lekérdezés sikertelen."
-
-#. js-lingui-id: 0bX5JL
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Query is too complex."
-msgstr "A lekérdezés túl összetett."
-
-#. js-lingui-id: mn/6A3
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Query timed out."
-msgstr "A lekérdezés időtúllépés miatt megszakadt."
 
 #. js-lingui-id: 6H9kMC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4332,8 +4270,6 @@ msgstr "Fogadás ideje"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Record not found."
 msgstr "Rekord nem található."
 
@@ -4379,35 +4315,10 @@ msgstr "Szükséges kapcsolatteremtési adatok"
 msgid "Relation field target metadata not found"
 msgstr "A kapcsolat mező cél metaadata nem található"
 
-#. js-lingui-id: MvWdPg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation has join column on both sides."
-msgstr "A kapcsolat mindkét oldalon join oszloppal rendelkezik."
-
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "A kapcsolat nincs engedélyezve ehhez a mezőhöz."
-
-#. js-lingui-id: oThEh8
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation object not found."
-msgstr "Kapcsolat objektum nem található."
-
-#. js-lingui-id: +v6IlP
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation settings not found."
-msgstr "Kapcsolat beállításai nem találhatók."
-
-#. js-lingui-id: 8ZgNmg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation target field not found."
-msgstr "Kapcsolat célmezője nem található."
-
-#. js-lingui-id: I0e0Bm
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation target not found."
-msgstr "Kapcsolat célja nem található."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -4620,11 +4531,6 @@ msgstr "Futások"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Szombat"
-
-#. js-lingui-id: r20Bqy
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
-msgid "Schema enum operation failed."
-msgstr "A séma enum művelet sikertelen."
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -5212,6 +5118,16 @@ msgstr "A munkafolyamat verzió státusza"
 msgid "The workspace member who last updated the record"
 msgstr ""
 
+#. js-lingui-id: mTxjri
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "There is an issue with your invitation. Please try again."
+msgstr ""
+
+#. js-lingui-id: gH+wBS
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "There is an issue with your token. Please try again."
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5287,11 +5203,6 @@ msgstr "Ezt az e-mail-címet már használják."
 msgid "This feature is not enabled."
 msgstr "Ez a funkció nincs engedélyezve."
 
-#. js-lingui-id: Io3Xii
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "This feature is not implemented."
-msgstr "Ez a funkció nincs megvalósítva."
-
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -5366,6 +5277,16 @@ msgstr "Ez a nyilvános tartomány már regisztrálva van."
 msgid "This record already exists. Please check your data and try again."
 msgstr "Ez a rekord már létezik. Kérjük, ellenőrizze az adatait és próbálja újra."
 
+#. js-lingui-id: 0arbc4
+#: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
+msgid "This record does not exist or has been deleted."
+msgstr ""
+
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "This remote server cannot be modified."
@@ -5403,6 +5324,11 @@ msgstr "Ez a szerepkör nem módosítható, mivel rendszerszerepkör. Csak egyé
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "Ez az aldomain már foglalt."
+
+#. js-lingui-id: aXBMTb
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "This type of record cannot be merged."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5532,7 +5458,6 @@ msgstr "Túl sok rekord érintett."
 
 #. js-lingui-id: ExheIC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Too many records to update at once."
 msgstr "Túl sok rekordot próbált frissíteni egyszerre."
 
@@ -5622,11 +5547,6 @@ msgstr "Nem támogatott cron ütemezés típus"
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "Nem támogatott mező metaadat típusa {fieldType}"
 
-#. js-lingui-id: 9BAEgY
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Unsupported operator."
-msgstr "Nem támogatott operátor."
-
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5672,6 +5592,12 @@ msgstr "A felhasználóhoz már van szerepkör hozzárendelve."
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "A felhasználónak nincs hozzáférése ehhez a munkaterülethez"
+
+#. js-lingui-id: kZ0tmK
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User does not have access to this workspace."
+msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -5732,6 +5658,7 @@ msgstr "A felhasználó nem lett létrehozva e-mail/jelszó használatával"
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 msgid "User workspace not found."
 msgstr "Felhasználói munkaterület nem található."
 
@@ -5770,11 +5697,6 @@ msgstr "A validáció meghiúsult 0 objektum(ok) és 0 mező(k) esetén"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Az értéknek UPPER_CASE formátumban kell lennie, és követnie kell a snake_case formátumot \"{sanitizedValue}\""
-
-#. js-lingui-id: gj6Gxm
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Verification token has expired."
-msgstr "Az ellenőrző token lejárt."
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -6097,6 +6019,11 @@ msgstr "Munkafolyamat-él nem található."
 msgid "Workflow linked to the run."
 msgstr "A munkafolyamat össze van kötve a futtatással."
 
+#. js-lingui-id: R67jts
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow not found."
+msgstr ""
+
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
@@ -6177,11 +6104,6 @@ msgstr "A munkafolyamat futtatásai össze vannak kötve a munkafolyamattal."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Workflow step not found."
 msgstr "Munkafolyamat-lépés nem található."
-
-#. js-lingui-id: wvR5lY
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-msgid "Workflow trigger not found."
-msgstr "Munkafolyamat-indító nem található."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6264,6 +6186,11 @@ msgstr "MunkafolyamatVerzió munkafolyamat"
 msgid "Workspace creation is restricted to admins"
 msgstr "A munkaterület létrehozása csak az adminisztrátorok számára engedélyezett"
 
+#. js-lingui-id: qSQPRS
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Workspace does not exist."
+msgstr ""
+
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
@@ -6313,6 +6240,11 @@ msgstr "Munkaterület tag pozíciója"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Munkaterület Tagjai"
+
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
 
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -6378,15 +6310,24 @@ msgstr "MunkaterületTag"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "Hibás jelszó"
+
+#. js-lingui-id: RksBK0
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password."
+msgstr ""
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 84/Dko
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts

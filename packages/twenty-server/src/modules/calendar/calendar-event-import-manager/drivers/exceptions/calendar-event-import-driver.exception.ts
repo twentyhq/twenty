@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -14,18 +15,29 @@ export enum CalendarEventImportDriverExceptionCode {
   CHANNEL_MISCONFIGURED = 'CHANNEL_MISCONFIGURED',
 }
 
-const calendarEventImportDriverExceptionUserFriendlyMessages: Record<
-  CalendarEventImportDriverExceptionCode,
-  MessageDescriptor
-> = {
-  [CalendarEventImportDriverExceptionCode.NOT_FOUND]: msg`Calendar event not found.`,
-  [CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR]: msg`A temporary error occurred. Please try again.`,
-  [CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS]: msg`Insufficient permissions to access calendar.`,
-  [CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR]: msg`Calendar sync error.`,
-  [CalendarEventImportDriverExceptionCode.UNKNOWN]: msg`An unknown calendar error occurred.`,
-  [CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR]: msg`A network error occurred while accessing calendar.`,
-  [CalendarEventImportDriverExceptionCode.HANDLE_ALIASES_REQUIRED]: msg`Handle aliases are required.`,
-  [CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED]: msg`Calendar channel is misconfigured.`,
+const getCalendarEventImportDriverExceptionUserFriendlyMessage = (
+  code: CalendarEventImportDriverExceptionCode,
+) => {
+  switch (code) {
+    case CalendarEventImportDriverExceptionCode.NOT_FOUND:
+      return msg`Calendar event not found.`;
+    case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
+      return msg`A temporary error occurred. Please try again.`;
+    case CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      return msg`Insufficient permissions to access calendar.`;
+    case CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR:
+      return msg`Calendar sync error.`;
+    case CalendarEventImportDriverExceptionCode.UNKNOWN:
+      return msg`An unknown calendar error occurred.`;
+    case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
+      return msg`A network error occurred while accessing calendar.`;
+    case CalendarEventImportDriverExceptionCode.HANDLE_ALIASES_REQUIRED:
+      return msg`Handle aliases are required.`;
+    case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
+      return msg`Calendar channel is misconfigured.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class CalendarEventImportDriverException extends CustomException<CalendarEventImportDriverExceptionCode> {
@@ -37,7 +49,7 @@ export class CalendarEventImportDriverException extends CustomException<Calendar
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        calendarEventImportDriverExceptionUserFriendlyMessages[code],
+        getCalendarEventImportDriverExceptionUserFriendlyMessage(code),
     });
   }
 }

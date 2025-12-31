@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,17 @@ export enum WorkflowVersionEdgeExceptionCode {
   INVALID_REQUEST = 'INVALID_REQUEST',
 }
 
-const workflowVersionEdgeExceptionUserFriendlyMessages: Record<
-  WorkflowVersionEdgeExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkflowVersionEdgeExceptionCode.NOT_FOUND]: msg`Workflow edge not found.`,
-  [WorkflowVersionEdgeExceptionCode.INVALID_REQUEST]: msg`Invalid workflow edge request.`,
+const getWorkflowVersionEdgeExceptionUserFriendlyMessage = (
+  code: WorkflowVersionEdgeExceptionCode,
+) => {
+  switch (code) {
+    case WorkflowVersionEdgeExceptionCode.NOT_FOUND:
+      return msg`Workflow edge not found.`;
+    case WorkflowVersionEdgeExceptionCode.INVALID_REQUEST:
+      return msg`Invalid workflow edge request.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkflowVersionEdgeException extends CustomException<WorkflowVersionEdgeExceptionCode> {
@@ -25,7 +31,7 @@ export class WorkflowVersionEdgeException extends CustomException<WorkflowVersio
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workflowVersionEdgeExceptionUserFriendlyMessages[code],
+        getWorkflowVersionEdgeExceptionUserFriendlyMessage(code),
     });
   }
 }

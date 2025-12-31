@@ -10,6 +10,7 @@ export type PartialIndexMetadata = Omit<
   | 'universalIdentifier'
   | 'application'
   | 'applicationId'
+  | 'workspace'
 > & {
   columns: string[];
 };
