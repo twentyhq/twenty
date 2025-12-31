@@ -1,5 +1,6 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
+import { EMPTY_NODE_ID } from '@/workflow/workflow-diagram/constants/EmptyNodeId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -149,31 +150,33 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           </StyledAddStepButtonContainer>
         )}
 
-      <WorkflowDiagramHandleSource
-        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
-        type="source"
-        position={Position.Bottom}
-        selected={
-          isSourceSelected({
-            nodeId: id,
-            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
-          }) ||
-          selected ||
-          isConnectingSource({
-            nodeId: id,
-            sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
-          }) ||
-          (isNodeConnectable && isHovered)
-        }
-        hovered={
-          isSourceHovered({
-            nodeId: id,
-            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
-          }) || isHovered
-        }
-      />
+      {id !== EMPTY_NODE_ID && (
+        <WorkflowDiagramHandleSource
+          id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
+          type="source"
+          position={Position.Bottom}
+          selected={
+            isSourceSelected({
+              nodeId: id,
+              sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            }) ||
+            selected ||
+            isConnectingSource({
+              nodeId: id,
+              sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            }) ||
+            (isNodeConnectable && isHovered)
+          }
+          hovered={
+            isSourceHovered({
+              nodeId: id,
+              sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+            }) || isHovered
+          }
+        />
+      )}
 
-      {isDefined(data.rightHandleOptions) && (
+      {id !== EMPTY_NODE_ID && isDefined(data.rightHandleOptions) && (
         <WorkflowDiagramHandleSource
           id={data.rightHandleOptions.id}
           type="source"

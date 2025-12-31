@@ -529,18 +529,13 @@ export const WorkflowDiagramCanvasBase = ({
     if (
       !isDefined(startInfo) ||
       !isDefined(startNodeCreation) ||
-      !(event instanceof MouseEvent)
+      !(event instanceof MouseEvent) ||
+      !isDefined(containerRef.current)
     ) {
       return;
     }
 
-    const bounds = (event.target as HTMLElement)
-      .closest('.react-flow')
-      ?.getBoundingClientRect();
-
-    if (!isDefined(bounds)) {
-      return;
-    }
+    const bounds = containerRef.current.getBoundingClientRect();
 
     const screenPosition = {
       x: event.clientX - bounds.left,
@@ -553,7 +548,7 @@ export const WorkflowDiagramCanvasBase = ({
       return;
     }
 
-    const DEFAULT_NODE_WIDTH = 180;
+    const DEFAULT_NODE_WIDTH = 200;
     const adjustedPosition = {
       x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
       y: flowPosition.y + 50,
