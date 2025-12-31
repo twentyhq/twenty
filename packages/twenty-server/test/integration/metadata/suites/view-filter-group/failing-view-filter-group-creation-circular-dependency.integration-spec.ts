@@ -2,17 +2,16 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-core-view-filter-group.util';
 import { destroyOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-core-view-filter-group.util';
-import { updateOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/update-one-core-view-filter-group.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { v4 } from 'uuid';
 
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
-describe('View Filter Group update should fail with circular dependency', () => {
+describe('View Filter Group creation should fail with circular dependency', () => {
   let createdViewId: string;
-  let viewFilterGroupId: string;
   let parentViewFilterGroupId: string;
   let childViewFilterGroupId: string;
 
@@ -40,7 +39,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
     const { data: viewData } = await createOneCoreView({
       expectToFail: false,
       input: {
-        name: 'Test View For Circular Dependency',
+        name: 'Test View For Creation Circular Dependency',
         objectMetadataId: companyObjectMetadata.id,
         type: ViewType.TABLE,
         icon: 'IconBuildingSkyscraper',
@@ -50,19 +49,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
     createdViewId = viewData?.createCoreView?.id;
     jestExpectToBeDefined(createdViewId);
 
-    // Create a standalone view filter group for self-reference test
-    const { data: filterGroupData } = await createOneCoreViewFilterGroup({
-      expectToFail: false,
-      input: {
-        viewId: createdViewId,
-        logicalOperator: ViewFilterGroupLogicalOperator.AND,
-      },
-    });
-
-    viewFilterGroupId = filterGroupData?.createCoreViewFilterGroup?.id;
-    jestExpectToBeDefined(viewFilterGroupId);
-
-    // Create parent view filter group for chain test
+    // Create parent view filter group for max depth test
     const { data: parentFilterGroupData } = await createOneCoreViewFilterGroup({
       expectToFail: false,
       input: {
@@ -75,7 +62,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
       parentFilterGroupData?.createCoreViewFilterGroup?.id;
     jestExpectToBeDefined(parentViewFilterGroupId);
 
-    // Create child view filter group with parent reference for chain test
+    // Create child view filter group for max depth test
     const { data: childFilterGroupData } = await createOneCoreViewFilterGroup({
       expectToFail: false,
       input: {
@@ -91,7 +78,6 @@ describe('View Filter Group update should fail with circular dependency', () => 
   });
 
   afterAll(async () => {
-    // Delete child first (due to foreign key constraint)
     if (childViewFilterGroupId) {
       await destroyOneCoreViewFilterGroup({
         expectToFail: false,
@@ -106,13 +92,6 @@ describe('View Filter Group update should fail with circular dependency', () => 
       });
     }
 
-    if (viewFilterGroupId) {
-      await destroyOneCoreViewFilterGroup({
-        expectToFail: false,
-        id: viewFilterGroupId,
-      });
-    }
-
     if (createdViewId) {
       await destroyOneCoreView({
         expectToFail: false,
@@ -121,12 +100,16 @@ describe('View Filter Group update should fail with circular dependency', () => 
     }
   });
 
-  it('when parentViewFilterGroupId equals id (self-reference)', async () => {
-    const { errors } = await updateOneCoreViewFilterGroup({
-      id: viewFilterGroupId,
+  it('when id equals parentViewFilterGroupId (self-reference)', async () => {
+    const selfReferenceId = v4();
+
+    const { errors } = await createOneCoreViewFilterGroup({
       expectToFail: true,
       input: {
-        parentViewFilterGroupId: viewFilterGroupId,
+        id: selfReferenceId,
+        viewId: createdViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        parentViewFilterGroupId: selfReferenceId,
       },
     });
 
@@ -135,12 +118,13 @@ describe('View Filter Group update should fail with circular dependency', () => 
     });
   });
 
-  it('when update creates a circular dependency chain', async () => {
-    // Try to set parent's parent to be the child (parent → child, then child → parent = cycle)
-    const { errors } = await updateOneCoreViewFilterGroup({
-      id: parentViewFilterGroupId,
+  it('when max depth is exceeded during creation', async () => {
+    // Trying to create a grandchild (depth 3) when max depth is 2
+    const { errors } = await createOneCoreViewFilterGroup({
       expectToFail: true,
       input: {
+        viewId: createdViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
         parentViewFilterGroupId: childViewFilterGroupId,
       },
     });
@@ -150,3 +134,4 @@ describe('View Filter Group update should fail with circular dependency', () => 
     });
   });
 });
+
