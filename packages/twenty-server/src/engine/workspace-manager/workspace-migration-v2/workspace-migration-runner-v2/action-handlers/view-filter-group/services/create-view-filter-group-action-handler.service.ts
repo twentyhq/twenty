@@ -57,4 +57,3 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
     return;
   }
 }
-

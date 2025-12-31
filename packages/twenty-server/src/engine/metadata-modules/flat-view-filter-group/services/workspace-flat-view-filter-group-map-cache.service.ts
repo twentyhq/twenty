@@ -55,13 +55,14 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheP
     const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
     for (const viewFilterGroupEntity of viewFilterGroups) {
-      const flatViewFilterGroup = fromViewFilterGroupEntityToFlatViewFilterGroup({
-        ...viewFilterGroupEntity,
-        viewFilters:
-          viewFiltersByViewFilterGroupId.get(viewFilterGroupEntity.id) || [],
-        childViewFilterGroups:
-          childViewFilterGroupsByParentId.get(viewFilterGroupEntity.id) || [],
-      } as ViewFilterGroupEntity);
+      const flatViewFilterGroup =
+        fromViewFilterGroupEntityToFlatViewFilterGroup({
+          ...viewFilterGroupEntity,
+          viewFilters:
+            viewFiltersByViewFilterGroupId.get(viewFilterGroupEntity.id) || [],
+          childViewFilterGroups:
+            childViewFilterGroupsByParentId.get(viewFilterGroupEntity.id) || [],
+        } as ViewFilterGroupEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatViewFilterGroup,
@@ -72,4 +73,3 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheP
     return flatViewFilterGroupMaps;
   }
 }
-

@@ -158,12 +158,11 @@ export class FlatViewFilterGroupValidatorService {
     };
 
     if (isDefined(updatedFlatViewFilterGroup.parentViewFilterGroupId)) {
-      const referencedParentViewFilterGroup = findFlatEntityByIdInFlatEntityMaps(
-        {
+      const referencedParentViewFilterGroup =
+        findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: updatedFlatViewFilterGroup.parentViewFilterGroupId,
           flatEntityMaps: optimisticFlatViewFilterGroupMaps,
-        },
-      );
+        });
 
       if (!isDefined(referencedParentViewFilterGroup)) {
         validationResult.errors.push({
@@ -177,4 +176,3 @@ export class FlatViewFilterGroupValidatorService {
     return validationResult;
   }
 }
-

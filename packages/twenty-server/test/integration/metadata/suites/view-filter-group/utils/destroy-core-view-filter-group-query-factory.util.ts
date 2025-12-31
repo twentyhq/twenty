@@ -1,6 +1,10 @@
 import gql from 'graphql-tag';
 
-export const destroyCoreViewFilterGroupQueryFactory = ({ id }: { id: string }) => ({
+export const destroyCoreViewFilterGroupQueryFactory = ({
+  id,
+}: {
+  id: string;
+}) => ({
   query: gql`
     mutation DestroyCoreViewFilterGroup($id: String!) {
       destroyCoreViewFilterGroup(id: $id)
@@ -10,4 +14,3 @@ export const destroyCoreViewFilterGroupQueryFactory = ({ id }: { id: string }) =
     id,
   },
 });
-

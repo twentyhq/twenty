@@ -13,4 +13,3 @@ export const fromFlatViewFilterGroupToViewFilterGroupDto = (
     deletedAt: deletedAt ? new Date(deletedAt) : null,
   };
 };
-

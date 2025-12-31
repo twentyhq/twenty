@@ -8,7 +8,9 @@ export const updateCoreViewFilterGroupQueryFactory = ({
   gqlFields = VIEW_FILTER_GROUP_GQL_FIELDS,
   input,
   id,
-}: PerformMetadataQueryParams<UpdateViewFilterGroupInput> & { id: string }) => ({
+}: PerformMetadataQueryParams<UpdateViewFilterGroupInput> & {
+  id: string;
+}) => ({
   query: gql`
     mutation UpdateCoreViewFilterGroup($id: String!, $input: UpdateViewFilterGroupInput!) {
       updateCoreViewFilterGroup(id: $id, input: $input) {
@@ -21,4 +23,3 @@ export const updateCoreViewFilterGroupQueryFactory = ({
     input,
   },
 });
-

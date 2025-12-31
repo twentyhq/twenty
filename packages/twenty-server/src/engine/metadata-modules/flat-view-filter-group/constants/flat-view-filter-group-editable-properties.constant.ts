@@ -5,4 +5,3 @@ export const FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES = [
   'logicalOperator',
   'positionInViewFilterGroup',
 ] as const satisfies (keyof FlatViewFilterGroup)[];
-

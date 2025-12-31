@@ -80,11 +80,10 @@ export class ViewFilterGroupResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedViewFilterGroup =
-      await this.viewFilterGroupService.deleteOne({
-        deleteViewFilterGroupInput: { id },
-        workspaceId: workspace.id,
-      });
+    const deletedViewFilterGroup = await this.viewFilterGroupService.deleteOne({
+      deleteViewFilterGroupInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return isDefined(deletedViewFilterGroup);
   }

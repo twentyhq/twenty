@@ -20,8 +20,7 @@ export const deleteOneCoreViewFilterGroup = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'View Filter Group deletion should have failed but did not',
+      errorMessage: 'View Filter Group deletion should have failed but did not',
     });
   }
 
@@ -34,4 +33,3 @@ export const deleteOneCoreViewFilterGroup = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

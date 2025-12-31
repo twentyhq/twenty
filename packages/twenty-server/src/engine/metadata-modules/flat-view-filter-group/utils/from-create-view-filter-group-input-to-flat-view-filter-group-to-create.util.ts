@@ -43,4 +43,3 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
     childViewFilterGroupIds: [],
   };
 };
-

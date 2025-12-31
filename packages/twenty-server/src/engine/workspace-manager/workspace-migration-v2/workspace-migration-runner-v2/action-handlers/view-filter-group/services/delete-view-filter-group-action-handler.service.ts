@@ -60,4 +60,3 @@ export class DeleteViewFilterGroupActionHandlerService extends WorkspaceMigratio
     return;
   }
 }
-

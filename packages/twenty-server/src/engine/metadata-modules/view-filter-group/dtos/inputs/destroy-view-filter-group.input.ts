@@ -13,4 +13,3 @@ export class DestroyViewFilterGroupInput {
   @IsUUID()
   id: string;
 }
-

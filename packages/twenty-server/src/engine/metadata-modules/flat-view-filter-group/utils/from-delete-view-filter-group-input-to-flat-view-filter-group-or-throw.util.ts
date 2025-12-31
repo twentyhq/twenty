@@ -1,5 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { extractAndSanitizeObjectStringFields, isDefined } from 'twenty-shared/utils';
+import {
+  extractAndSanitizeObjectStringFields,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
@@ -36,4 +39,3 @@ export const fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow = ({
     deletedAt: new Date().toISOString(),
   };
 };
-
