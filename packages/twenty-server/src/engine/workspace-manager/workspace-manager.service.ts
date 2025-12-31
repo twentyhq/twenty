@@ -207,7 +207,6 @@ export class WorkspaceManagerService {
 
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
-    await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
   private async setupDefaultRoles({

@@ -3,6 +3,7 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
 
+import { describe } from 'node:test';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -32,7 +33,6 @@ describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
-  let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleRepository: Repository<RoleEntity>;
   let serverlessFunctionRepository: Repository<ServerlessFunctionEntity>;
@@ -177,9 +177,6 @@ describe('WorkspaceManagerService', () => {
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
       getRepositoryToken(DataSourceEntity),
     );
-    workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
-      WorkspaceDataSourceService,
-    );
     roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
       getRepositoryToken(RoleTargetEntity),
     );
@@ -219,9 +216,6 @@ describe('WorkspaceManagerService', () => {
       expect(serverlessFunctionRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(
-        workspaceDataSourceService.deleteWorkspaceDBSchema,
-      ).toHaveBeenCalled();
     });
   });
 });
