@@ -1,3 +1,4 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -16,6 +17,7 @@ import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
@@ -61,6 +63,10 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
+  const workflowInsertStepIds = useRecoilComponentValue(
+    workflowInsertStepIdsComponentState,
+  );
+
   const { isConnectable, isConnectingSource, isConnectionInProgress } =
     useConnectionState(data.nodeType);
 
@@ -78,6 +84,11 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     nodeType: data.nodeType,
     actionType: data.nodeType === 'action' ? data.actionType : undefined,
   });
+
+  const isCreatingEmptyNodeFromThisNode =
+    isDefined(workflowInsertStepIds.position) &&
+    !isDefined(workflowInsertStepIds.nextStepId) &&
+    workflowInsertStepIds.parentStepId === data.stepId;
 
   return (
     <>
@@ -111,30 +122,32 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         </WorkflowNodeRightPart>
       </WorkflowNodeContainer>
 
-      {!data.hasNextStepIds && !isConnectionInProgress && (
-        <StyledAddStepButtonContainer
-          shouldDisplay={
-            data.nodeType === 'trigger' ||
-            isHovered ||
-            selected ||
-            isNodeCreationStarted({ parentStepId: data.stepId })
-          }
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onClick={handleAddStepButtonContainerClick}
-        >
-          <WorkflowDiagramCreateStepElement
-            data={data}
-            Label={
-              isDefined(data.defaultHandleOptions?.label) ? (
-                <WorkflowDiagramEdgeLabel
-                  label={i18n._(data.defaultHandleOptions.label)}
-                />
-              ) : undefined
+      {!data.hasNextStepIds &&
+        !isConnectionInProgress &&
+        !isCreatingEmptyNodeFromThisNode && (
+          <StyledAddStepButtonContainer
+            shouldDisplay={
+              data.nodeType === 'trigger' ||
+              isHovered ||
+              selected ||
+              isNodeCreationStarted({ parentStepId: data.stepId })
             }
-          />
-        </StyledAddStepButtonContainer>
-      )}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleAddStepButtonContainerClick}
+          >
+            <WorkflowDiagramCreateStepElement
+              data={data}
+              Label={
+                isDefined(data.defaultHandleOptions?.label) ? (
+                  <WorkflowDiagramEdgeLabel
+                    label={i18n._(data.defaultHandleOptions.label)}
+                  />
+                ) : undefined
+              }
+            />
+          </StyledAddStepButtonContainer>
+        )}
 
       <WorkflowDiagramHandleSource
         id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
