@@ -3,33 +3,28 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
+import { CommonDeleteOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-one-query-runner.service';
+import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service';
 import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
+import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Injectable()
 export class DeleteRecordService {
   private readonly logger = new Logger(DeleteRecordService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly commonDeleteOneRunner: CommonDeleteOneQueryRunnerService,
+    private readonly commonDestroyOneRunner: CommonDestroyOneQueryRunnerService,
+    private readonly commonApiContextBuilder: CommonApiContextBuilderService,
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      objectRecordId,
-      authContext,
-      rolePermissionConfig,
-      soft = true,
-    } = params;
-
-    const workspaceId = authContext.workspace.id;
+    const { objectName, objectRecordId, authContext, soft = true } = params;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -40,90 +35,59 @@ export class DeleteRecordService {
     }
 
     try {
-      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectName,
-            rolePermissionConfig,
-          );
+      const { queryRunnerContext, selectedFields, flatObjectMetadata } =
+        await this.commonApiContextBuilder.build({
+          authContext,
+          objectName,
+        });
 
-          const { flatObjectMetadataMaps, objectIdByNameSingular } =
-            repository.internalContext;
+      if (
+        !canObjectBeManagedByWorkflow({
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
+        })
+      ) {
+        throw new RecordCrudException(
+          'Failed to delete: Object cannot be deleted by workflow',
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-          const objectId = objectIdByNameSingular[objectName];
+      if (soft) {
+        const deletedRecord = await this.commonDeleteOneRunner.execute(
+          {
+            id: objectRecordId,
+            selectedFields,
+          },
+          queryRunnerContext,
+        );
 
-          if (!isDefined(objectId)) {
-            throw new RecordCrudException(
-              `Object ${objectName} not found`,
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
+        this.logger.log(`Record soft deleted successfully from ${objectName}`);
 
-          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityMaps: flatObjectMetadataMaps,
-            flatEntityId: objectId,
-          });
+        return {
+          success: true,
+          message: `Record soft deleted successfully from ${objectName}`,
+          result: deletedRecord,
+        };
+      } else {
+        const destroyedRecord = await this.commonDestroyOneRunner.execute(
+          {
+            id: objectRecordId,
+            selectedFields,
+          },
+          queryRunnerContext,
+        );
 
-          if (
-            !canObjectBeManagedByWorkflow({
-              nameSingular: flatObjectMetadata.nameSingular,
-              isSystem: flatObjectMetadata.isSystem,
-            })
-          ) {
-            throw new RecordCrudException(
-              'Failed to delete: Object cannot be deleted by workflow',
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
+        this.logger.log(
+          `Record permanently deleted successfully from ${objectName}`,
+        );
 
-          const objectRecord = await repository.findOne({
-            where: {
-              id: objectRecordId,
-            },
-          });
-
-          if (!objectRecord) {
-            throw new RecordCrudException(
-              `Failed to delete: Record ${objectName} with id ${objectRecordId} not found`,
-              RecordCrudExceptionCode.RECORD_NOT_FOUND,
-            );
-          }
-
-          if (soft) {
-            const columnsToReturnForSoftDelete: string[] = [];
-
-            await repository.softDelete(
-              objectRecordId,
-              undefined,
-              columnsToReturnForSoftDelete,
-            );
-
-            this.logger.log(
-              `Record soft deleted successfully from ${objectName}`,
-            );
-
-            return {
-              success: true,
-              message: `Record soft deleted successfully from ${objectName}`,
-              result: objectRecord,
-            };
-          } else {
-            await repository.remove(objectRecord);
-
-            this.logger.log(
-              `Record permanently deleted successfully from ${objectName}`,
-            );
-
-            return {
-              success: true,
-              message: `Record permanently deleted successfully from ${objectName}`,
-              result: { id: objectRecordId },
-            };
-          }
-        },
-      );
+        return {
+          success: true,
+          message: `Record permanently deleted successfully from ${objectName}`,
+          result: destroyedRecord,
+        };
+      }
     } catch (error) {
       if (error instanceof RecordCrudException) {
         return {

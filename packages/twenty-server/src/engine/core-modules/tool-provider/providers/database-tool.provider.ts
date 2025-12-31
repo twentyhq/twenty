@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import {
   type ToolProvider,
   type ToolProviderContext,
@@ -44,6 +45,23 @@ export class DatabaseToolProvider implements ToolProvider {
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
     const tools: ToolSet = {};
+
+    // Build authContext from available context info
+    // userWorkspaceId is required for user-based tool generation
+    if (!context.userWorkspaceId) {
+      return tools;
+    }
+
+    const authContext: WorkspaceAuthContext = {
+      user: context.userId ? { id: context.userId } : null,
+      workspace: {
+        id: context.workspaceId,
+      } as WorkspaceAuthContext['workspace'],
+      workspaceMemberId: undefined,
+      userWorkspaceId: context.userWorkspaceId,
+      apiKey: null,
+      application: null,
+    } as WorkspaceAuthContext;
 
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
@@ -108,6 +126,7 @@ export class DatabaseToolProvider implements ToolProvider {
         },
         {
           workspaceId: context.workspaceId,
+          authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           actorContext: context.actorContext,
         },
