@@ -9,7 +9,9 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { fromViewFilterGroupEntityToFlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-view-filter-group-entity-to-flat-view-filter-group.util';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -18,23 +20,48 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheP
   constructor(
     @InjectRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
+    @InjectRepository(ViewFilterEntity)
+    private readonly viewFilterRepository: Repository<ViewFilterEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatViewFilterGroupMaps> {
-    const viewFilterGroups = await this.viewFilterGroupRepository.find({
-      where: {
-        workspaceId,
-      },
-      withDeleted: true,
-    });
+    const [viewFilterGroups, viewFilters] = await Promise.all([
+      this.viewFilterGroupRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.viewFilterRepository.find({
+        where: { workspaceId },
+        select: ['id', 'viewFilterGroupId'],
+        withDeleted: true,
+      }),
+    ]);
+
+    const [viewFiltersByViewFilterGroupId, childViewFilterGroupsByParentId] = (
+      [
+        {
+          entities: viewFilters,
+          foreignKey: 'viewFilterGroupId',
+        },
+        {
+          entities: viewFilterGroups,
+          foreignKey: 'parentViewFilterGroupId',
+        },
+      ] as const
+    ).map(regroupEntitiesByRelatedEntityId);
 
     const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
     for (const viewFilterGroupEntity of viewFilterGroups) {
-      const flatViewFilterGroup =
-        fromViewFilterGroupEntityToFlatViewFilterGroup(viewFilterGroupEntity);
+      const flatViewFilterGroup = fromViewFilterGroupEntityToFlatViewFilterGroup({
+        ...viewFilterGroupEntity,
+        viewFilters:
+          viewFiltersByViewFilterGroupId.get(viewFilterGroupEntity.id) || [],
+        childViewFilterGroups:
+          childViewFilterGroupsByParentId.get(viewFilterGroupEntity.id) || [],
+      } as ViewFilterGroupEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatViewFilterGroup,

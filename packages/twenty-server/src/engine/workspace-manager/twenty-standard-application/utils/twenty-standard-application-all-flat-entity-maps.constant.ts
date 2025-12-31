@@ -78,10 +78,13 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
   });
 
+  const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
+
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatViewMaps,
+      flatViewFilterGroupMaps,
     },
     now,
     standardObjectMetadataRelatedEntityIds,

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
 import {
-  WorkspaceMigrationOrchestratorBuildArgs,
-  WorkspaceMigrationOrchestratorFailedResult,
-  WorkspaceMigrationOrchestratorSuccessfulResult,
+  type WorkspaceMigrationOrchestratorBuildArgs,
+  type WorkspaceMigrationOrchestratorFailedResult,
+  type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
@@ -361,6 +361,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
               flatFieldMetadataMaps:
                 optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
               flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+              flatViewFilterGroupMaps:
+                optimisticAllFlatEntityMaps.flatViewFilterGroupMaps,
             },
             workspaceId,
           },

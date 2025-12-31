@@ -31,7 +31,6 @@ import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modul
 import { type ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
 import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
-import { DestroyViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-group-permission.guard';
 import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 
 @Controller('rest/metadata/viewFilterGroups')
@@ -126,18 +125,5 @@ export class ViewFilterGroupController {
     return { success: isDefined(deletedViewFilterGroup) };
   }
 
-  @Delete(':id/destroy')
-  @UseGuards(DestroyViewFilterGroupPermissionGuard)
-  async destroy(
-    @Param('id') id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<{ success: boolean }> {
-    const destroyedViewFilterGroup =
-      await this.viewFilterGroupService.destroyOne({
-        destroyViewFilterGroupInput: { id },
-        workspaceId: workspace.id,
-      });
-
-    return { success: isDefined(destroyedViewFilterGroup) };
-  }
+  // TODO: the destroy endpoint will be implemented when we settle on a strategy
 }

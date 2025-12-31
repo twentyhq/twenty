@@ -100,6 +100,10 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
       metadataName: 'fieldMetadata',
       flatEntityForeignKeyAggregator: 'viewFilterIds',
     },
+    viewFilterGroupId: {
+      metadataName: 'viewFilterGroup',
+      flatEntityForeignKeyAggregator: 'viewFilterIds',
+    },
   },
   role: {},
   roleTarget: {
