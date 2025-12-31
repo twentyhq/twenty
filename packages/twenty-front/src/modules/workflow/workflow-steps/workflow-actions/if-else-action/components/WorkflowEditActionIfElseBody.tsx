@@ -10,6 +10,7 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { WorkflowIfElseBranchEditor } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowIfElseBranchEditor';
 import { calculateElseIfBranchPosition } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateElseIfBranchPosition';
+import { calculateExistingBranchPositions } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateExistingBranchPositions';
 import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
@@ -17,9 +18,7 @@ import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useT
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
-import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -45,18 +44,6 @@ type WorkflowEditActionIfElseBodyProps = {
         onActionUpdate: (action: WorkflowIfElseAction) => void;
       };
 };
-
-export type IfElseSettings = {
-  stepFilterGroups: StepFilterGroup[];
-  stepFilters: StepFilter[];
-  branches: WorkflowIfElseAction['settings']['input']['branches'];
-};
-
-const isElseBranch = (
-  branchIndex: number,
-  totalBranches: number,
-  branch: StepIfElseBranch,
-) => branchIndex === totalBranches - 1 && !isDefined(branch.filterGroupId);
 
 export const WorkflowEditActionIfElseBody = ({
   action,
@@ -139,31 +126,12 @@ export const WorkflowEditActionIfElseBody = ({
     const elseIfBranchIndex = branches.length - 1;
     const ifElseStepPosition = action.position ?? { x: 0, y: 0 };
 
-    const existingBranchPositions = branches.reduce<
-      Array<{ id: string; position: { x: number; y: number } }>
-    >((acc, branch, branchIndex) => {
-      const firstChildStepId = branch.nextStepIds[0];
-
-      if (!isDefined(firstChildStepId)) {
-        return acc;
-      }
-
-      const adjustedBranchIndex =
-        branchIndex < elseIfBranchIndex ? branchIndex : branchIndex + 1;
-
-      const branchNodePosition = calculateElseIfBranchPosition(
-        adjustedBranchIndex,
-        totalBranches,
-        ifElseStepPosition,
-      );
-
-      acc.push({
-        id: firstChildStepId,
-        position: branchNodePosition,
-      });
-
-      return acc;
-    }, []);
+    const existingBranchPositions = calculateExistingBranchPositions({
+      branches,
+      elseIfBranchIndex,
+      totalBranches,
+      ifElseStepPosition,
+    });
 
     const newEmptyNodePosition = calculateElseIfBranchPosition(
       elseIfBranchIndex,
@@ -229,7 +197,9 @@ export const WorkflowEditActionIfElseBody = ({
             ? stepFilterGroups.find((g) => g.id === branch.filterGroupId)
             : undefined;
 
-          const isElse = isElseBranch(branchIndex, branches.length, branch);
+          const isElse =
+            branchIndex === branches.length - 1 &&
+            !isDefined(branch.filterGroupId);
 
           return (
             <Fragment key={branch.id}>
