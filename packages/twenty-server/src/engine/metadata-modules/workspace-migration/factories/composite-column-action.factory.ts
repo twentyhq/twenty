@@ -21,7 +21,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 // TODO: could we export this to GraphQL ?
-// TOOD: once this module is removed, replace existing usages with CompositeFieldMetadataType from composite-field-metadata-type.type.ts
+// TODO: once this module is removed, replace existing usages with CompositeFieldMetadataType from composite-field-metadata-type.type.ts
 export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY

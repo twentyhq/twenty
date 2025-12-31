@@ -6,6 +6,8 @@ export const GET_METERED_PRODUCTS_USAGE = gql`
       productKey
       usedCredits
       grantedCredits
+      rolloverCredits
+      totalGrantedCredits
       unitPriceCents
     }
   }

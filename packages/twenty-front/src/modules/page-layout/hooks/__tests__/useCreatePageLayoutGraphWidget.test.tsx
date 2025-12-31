@@ -5,11 +5,12 @@ import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetF
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { expect } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { GraphType, WidgetType } from '~/generated-metadata/graphql';
-import { PageLayoutType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetConfigurationType } from '~/generated/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -85,7 +86,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     act(() => {
       result.current.createWidget.createPageLayoutGraphWidget({
-        graphType: GraphType.VERTICAL_BAR,
+        fieldSelection: {
+          groupByFieldMetadataIdX: 'test-groupby-field-id',
+          aggregateFieldMetadataId: 'test-aggregate-field-id',
+        },
       });
     });
 
@@ -159,33 +163,34 @@ describe('useCreatePageLayoutGraphWidget', () => {
       result.current.setActiveTabId('tab-1');
     });
 
-    const graphTypes = [
-      GraphType.AGGREGATE,
-      GraphType.GAUGE,
-      GraphType.PIE,
-      GraphType.VERTICAL_BAR,
+    const widgetConfigurationTypes = [
+      WidgetConfigurationType.AGGREGATE_CHART,
+      WidgetConfigurationType.GAUGE_CHART,
+      WidgetConfigurationType.PIE_CHART,
+      WidgetConfigurationType.BAR_CHART,
     ];
 
     const mockFieldSelections: Partial<
-      Record<GraphType, GraphWidgetFieldSelection>
+      Record<WidgetConfigurationType, GraphWidgetFieldSelection>
     > = {
-      [GraphType.AGGREGATE]: {
+      [WidgetConfigurationType.AGGREGATE_CHART]: {
         objectMetadataId: 'test-object-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
       },
-      [GraphType.VERTICAL_BAR]: {
+      [WidgetConfigurationType.BAR_CHART]: {
         objectMetadataId: 'test-object-id',
         groupByFieldMetadataIdX: 'test-groupby-field-id',
         aggregateFieldMetadataId: 'test-aggregate-field-id',
       },
     };
 
-    graphTypes.forEach((graphType) => {
+    widgetConfigurationTypes.forEach((widgetConfigurationType) => {
       act(() => {
         const fieldSelection =
-          mockFieldSelections[graphType as keyof typeof mockFieldSelections];
+          mockFieldSelections[
+            widgetConfigurationType as keyof typeof mockFieldSelections
+          ];
         result.current.createWidget.createPageLayoutGraphWidget({
-          graphType,
           fieldSelection,
         });
       });
@@ -193,7 +198,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     expect(result.current.allWidgets).toHaveLength(4);
 
-    graphTypes.forEach((graphType, index) => {
+    widgetConfigurationTypes.forEach((widgetConfigurationType, index) => {
       const widget = result.current.allWidgets[index];
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
@@ -202,7 +207,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
         isDefined(widget.configuration) &&
         'graphType' in widget.configuration
       ) {
-        expect(widget.configuration.graphType).toBe(graphType);
+        expect(widget.configuration.configurationType).toBe(
+          widgetConfigurationType,
+        );
       }
 
       expect(widget.id).toBe('mock-uuid');
@@ -234,7 +241,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     expect(() => {
       result.current.createWidget.createPageLayoutGraphWidget({
-        graphType: GraphType.VERTICAL_BAR,
+        fieldSelection: {
+          groupByFieldMetadataIdX: 'test-groupby-field-id',
+          aggregateFieldMetadataId: 'test-aggregate-field-id',
+        },
       });
     }).toThrow('A tab must be selected to create a new graph widget');
   });

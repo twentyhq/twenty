@@ -1,13 +1,16 @@
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -16,24 +19,49 @@ import { useRecoilCallback } from 'recoil';
 
 type RecordFieldListInputContextProviderProps = {
   children: React.ReactNode;
+  recordId: string;
+  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
+  instanceIdPrefix: string;
 };
 
 export const RecordFieldListInputContextProvider = ({
   children,
+  recordId,
+  fieldMetadataItem,
+  objectMetadataItem,
+  instanceIdPrefix,
 }: RecordFieldListInputContextProviderProps) => {
-  const { closeInlineCell } = useInlineCell();
+  const instanceId = useAvailableComponentInstanceId(
+    RecordFieldComponentInstanceContext,
+  );
+
+  const { closeFieldInput } = useOpenFieldInputEditMode();
+
   const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
     recordFieldListCellEditModePositionComponentState,
   );
 
+  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+    field: fieldMetadataItem,
+    objectMetadataItem,
+  });
+
   const closeInlineCellAndResetEditModePosition = useCallback(() => {
     setRecordFieldListCellEditModePosition(null);
-    closeInlineCell();
-  }, [closeInlineCell, setRecordFieldListCellEditModePosition]);
 
-  const instanceId = useAvailableComponentInstanceId(
-    RecordFieldComponentInstanceContext,
-  );
+    closeFieldInput({
+      fieldDefinition,
+      recordId,
+      prefix: instanceIdPrefix,
+    });
+  }, [
+    setRecordFieldListCellEditModePosition,
+    closeFieldInput,
+    fieldDefinition,
+    recordId,
+    instanceIdPrefix,
+  ]);
 
   const { persistFieldFromFieldInputContext } =
     usePersistFieldFromFieldInputContext();

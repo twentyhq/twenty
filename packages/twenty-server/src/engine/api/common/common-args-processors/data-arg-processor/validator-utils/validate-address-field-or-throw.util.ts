@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
 import { validateNumericFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-numeric-field-or-throw.util';
@@ -55,6 +56,7 @@ export const validateAddressFieldOrThrow = (
         throw new CommonQueryRunnerException(
           `Invalid subfield ${subField} for address field "${fieldName}"`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: msg`Invalid value for address.` },
         );
     }
   }

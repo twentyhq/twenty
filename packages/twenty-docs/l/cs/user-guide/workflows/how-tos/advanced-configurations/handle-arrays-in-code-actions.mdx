@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Zpracování polí v akcích Code
+description: Naučte se správně pracovat se vstupy typu pole v akcích Code v pracovních postupech.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Při práci s poli v akcích Code se můžete setkat se dvěma běžnými problémy:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **Pole předaná jako řetězce** — data z externích systémů nebo předchozích kroků dorazí jako řetězec místo skutečného pole
+2. **Nelze vybírat jednotlivé položky** — můžete vybrat pouze celé pole, nikoli konkrétní pole objektů v něm
 
-Both can be solved with a Code node.
+Obojí lze vyřešit pomocí uzlu Code.
 
-## Parsing Arrays from Strings
+## Parsování polí z řetězců
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Pole se mezi kroky pracovního postupu často předávají jako řetězce nebo JSON, nikoli jako nativní pole. K tomu dochází, když:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* Příjem dat z externích API pomocí HTTP Request
+* Zpracování dat webhooků
+* Předávání dat mezi kroky pracovního postupu
 
-**Solution**: Add this pattern at the start of your Code action:
+**Řešení**: Přidejte tento vzor na začátek své akce Code:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+Klíčový řádek `typeof users === "string" ? JSON.parse(users) : users` ověřuje, zda je vstup řetězec, v případě potřeby jej rozparsuje, nebo jej použije přímo, pokud už jde o pole.
 
-## Extracting Individual Fields from Arrays
+## Extrahování jednotlivých atributů z polí
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Webhook může vrátit pole jako `answers: [...]`, ale v následujících krocích pracovního postupu lze vybrat pouze celé pole — nikoli jednotlivé položky v něm.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Řešení**: Přidejte uzel Code, který extrahuje konkrétní pole a vrátí je jako strukturovaný objekt:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Uzel Code vrátí místo pole strukturovaný objekt. V následujících krocích nyní můžete ve výběru proměnných vybrat jednotlivá pole, jako `answer.firstname` a `answer.name`.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Aktivně pracujeme na tom, aby bylo zacházení s poli v budoucích aktualizacích snazší.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
 </Tip>

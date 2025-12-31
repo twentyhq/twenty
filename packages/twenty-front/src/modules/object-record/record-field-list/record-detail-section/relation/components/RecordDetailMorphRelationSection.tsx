@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
@@ -26,6 +27,7 @@ type RecordDetailMorphRelationSectionProps = {
 export const RecordDetailMorphRelationSection = ({
   loading,
 }: RecordDetailMorphRelationSectionProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const metadata = fieldDefinition.metadata as FieldMorphRelationMetadata;
@@ -44,6 +46,7 @@ export const RecordDetailMorphRelationSection = ({
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
 
   const isDropdownOpen = useRecoilComponentValue(

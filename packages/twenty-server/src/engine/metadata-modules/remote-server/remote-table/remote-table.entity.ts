@@ -1,21 +1,22 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import {
   RemoteServerEntity,
   type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('remoteTable')
-export class RemoteTableEntity {
+export class RemoteTableEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,9 +25,6 @@ export class RemoteTableEntity {
 
   @Column({ nullable: false })
   localTableName: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @Column({ nullable: false, type: 'uuid' })
   remoteServerId: string;

@@ -1,13 +1,22 @@
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
-import { type StepFilter } from 'twenty-shared/types';
+import { FieldActorSource, type StepFilter } from 'twenty-shared/types';
+import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
+
+const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
+  FieldActorSource,
+).map((source) => ({
+  label: source.charAt(0) + source.slice(1).toLowerCase(),
+  value: source,
+}));
 
 export const WorkflowStepFilterValueCompositeInput = ({
   stepFilter,
@@ -62,6 +71,31 @@ export const WorkflowStepFilterValueCompositeInput = ({
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={readonly}
+          />
+        ) : (
+          <FormTextFieldInput
+            defaultValue={stepFilter.value}
+            onChange={onChange}
+            VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
+          />
+        )
+      ) : filterType === 'ACTOR' ? (
+        subFieldName === 'source' ? (
+          <FormMultiSelectFieldInput
+            defaultValue={stepFilter.value}
+            onChange={onChange}
+            options={ACTOR_SOURCE_OPTIONS}
+            readonly={readonly}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        ) : subFieldName === 'workspaceMemberId' ? (
+          <FormSingleRecordPicker
+            objectNameSingulars={['workspaceMember']}
+            defaultValue={stepFilter.value}
+            onChange={onChange}
+            disabled={readonly}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <FormTextFieldInput

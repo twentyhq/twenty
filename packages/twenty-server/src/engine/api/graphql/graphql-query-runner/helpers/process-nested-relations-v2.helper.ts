@@ -5,6 +5,7 @@ import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -147,6 +148,7 @@ export class ProcessNestedRelationsV2Helper {
       throw new GraphqlQueryRunnerException(
         `Relation settings not found for field ${sourceFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
@@ -271,6 +273,7 @@ export class ProcessNestedRelationsV2Helper {
       throw new GraphqlQueryRunnerException(
         `Field ${sourceFieldName} not found on object ${parentObjectMetadataItem.nameSingular}`,
         GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
@@ -286,6 +289,7 @@ export class ProcessNestedRelationsV2Helper {
       throw new GraphqlQueryRunnerException(
         `Relation target object metadata id or field metadata id not found for field ${sourceFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 

@@ -1,7 +1,5 @@
-export function normalizePriceRef(
-  p: string | { id: string } | null | undefined,
-): string | undefined {
-  if (!p) return undefined;
-
-  return typeof p === 'string' ? p : p.id;
-}
+export const normalizePriceRef = (
+  priceRef: string | { id: string },
+): string => {
+  return typeof priceRef === 'string' ? priceRef : priceRef.id;
+};

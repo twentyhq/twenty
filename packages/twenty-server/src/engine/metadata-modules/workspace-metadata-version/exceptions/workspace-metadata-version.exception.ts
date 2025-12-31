@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -7,11 +8,15 @@ export enum WorkspaceMetadataVersionExceptionCode {
   METADATA_VERSION_NOT_FOUND = 'METADATA_VERSION_NOT_FOUND',
 }
 
-const workspaceMetadataVersionExceptionUserFriendlyMessages: Record<
-  WorkspaceMetadataVersionExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND]: msg`Metadata version not found.`,
+const getWorkspaceMetadataVersionExceptionUserFriendlyMessage = (
+  code: WorkspaceMetadataVersionExceptionCode,
+) => {
+  switch (code) {
+    case WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND:
+      return msg`Metadata version not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkspaceMetadataVersionException extends CustomException<WorkspaceMetadataVersionExceptionCode> {
@@ -23,7 +28,7 @@ export class WorkspaceMetadataVersionException extends CustomException<Workspace
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workspaceMetadataVersionExceptionUserFriendlyMessages[code],
+        getWorkspaceMetadataVersionExceptionUserFriendlyMessage(code),
     });
   }
 }

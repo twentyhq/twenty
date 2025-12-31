@@ -1,5 +1,5 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { BarChartLayout } from '~/generated/graphql';
 
 type BarChartMargins = {
   top: number;
