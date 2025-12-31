@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
 
 const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_URL =
@@ -89,13 +89,6 @@ const calculateStatus = (date: string) => {
       : deltaTime < 90 * day
         ? 'COOLING'
         : 'DORMANT';
-};
-
-const interactionData = (date: string, status: string) => {
-  return {
-    lastInteraction: date,
-    interactionStatus: status,
-  };
 };
 
 const updateInteractionStatus = async (objectName: string, id: string, messageDate: string, status: string) => {
@@ -259,7 +252,7 @@ export const main = async (params: {
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '683966a0-b60a-424e-86b1-7448c9191bde',
   name: 'test',
   triggers: [

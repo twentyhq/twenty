@@ -1,6 +1,11 @@
 import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-import { type stripeCustomer, type stripeEvent, type stripeStatus, type twentyObject } from './types';
+import { type FunctionConfig } from 'twenty-sdk';
+import {
+  type stripeCustomer,
+  type stripeEvent,
+  type stripeStatus,
+  type twentyObject,
+} from './types';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -485,7 +490,7 @@ export const main = async (
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: 'cd15a738-18a5-406e-8b83-959dc52ebe14',
   name: 'stripe',
   triggers: [

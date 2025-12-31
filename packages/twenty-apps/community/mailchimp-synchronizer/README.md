@@ -3,16 +3,15 @@
 Synchronizing contacts between Twenty and Mailchimp
 
 ## Requirements
-- twenty-cli `npm install -g twenty-cli`
-- an `apiKey`. Go to `https://twenty.com/settings/api-webhooks` to generate one
+- an `apiKey` - go to Settings > API & Webhooks to generate one
 - Mailchimp API key - Mailchimp > avatar in top right corner > Profile > Extras > API keys
 
 ## Setup
 1. Add app to your workspace
 ```bash
-twenty auth login
-cd mailchimp-synchronizer
-twenty app sync
+cd packages/twenty-apps/community/mailchimp-synchronizer
+yarn auth
+yarn sync
 ```
 2. Go to Settings > Integrations > Mailchimp synchronizer > Settings and add required variables
 
@@ -31,3 +30,6 @@ twenty app sync
 - SMS support is experimental and may cause errors
 - constraints are directly responsible for sent data so if e.g. you want to have a company name in 
 Mailchimp, you have to set IS_COMPANY_CONSTRAINT to true
+
+## Todo:
+- update app so it'll use provided Twenty generated object with native types from workspace once extending objects is possible
