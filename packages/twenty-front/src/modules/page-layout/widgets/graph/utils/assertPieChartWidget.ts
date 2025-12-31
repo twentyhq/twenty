@@ -1,4 +1,4 @@
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
@@ -18,7 +18,9 @@ export const assertPieChartWidgetOrThrow: AssertPieChartWidgetOrThrow = (
     new Error('Widget objectMetadataId is required'),
   );
 
-  if (!isPieChartConfiguration(widget.configuration)) {
+  if (
+    !isWidgetConfigurationOfType(widget.configuration, 'PieChartConfiguration')
+  ) {
     throw new Error(
       `Expected PieChartConfiguration but got ${widget.configuration?.__typename}`,
     );

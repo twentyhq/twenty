@@ -15,7 +15,6 @@ import { RecordInputTransformerService } from 'src/engine/core-modules/record-tr
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class UpdateRecordService {
@@ -32,17 +31,12 @@ export class UpdateRecordService {
       objectRecordId,
       objectRecord,
       fieldsToUpdate,
-      workspaceId,
+      authContext,
       rolePermissionConfig,
+      // updatedBy,
     } = params;
 
-    if (!workspaceId) {
-      return {
-        success: false,
-        message: 'Failed to update record: Workspace ID is required',
-        error: 'Workspace ID not found',
-      };
-    }
+    const workspaceId = authContext.workspace.id;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -51,8 +45,6 @@ export class UpdateRecordService {
         error: 'Invalid object record ID',
       };
     }
-
-    const authContext = buildSystemAuthContext(workspaceId);
 
     try {
       return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -161,6 +153,12 @@ export class UpdateRecordService {
               objectRecordId,
               {
                 ...transformedObjectRecord,
+                /* updatedBy: updatedBy ?? {
+                  source: FieldActorSource.WORKFLOW,
+                  name: 'Workflow',
+                  workspaceMemberId: null,
+                  context: {},
+                },*/
               },
               undefined,
               selectedColumns,

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -15,19 +16,29 @@ export enum AgentExceptionCode {
   AGENT_IS_STANDARD = 'AGENT_IS_STANDARD',
 }
 
-const agentExceptionUserFriendlyMessages: Record<
-  AgentExceptionCode,
-  MessageDescriptor
-> = {
-  [AgentExceptionCode.AGENT_NOT_FOUND]: msg`Agent not found.`,
-  [AgentExceptionCode.AGENT_EXECUTION_FAILED]: msg`Agent execution failed.`,
-  [AgentExceptionCode.API_KEY_NOT_CONFIGURED]: msg`API key is not configured.`,
-  [AgentExceptionCode.USER_WORKSPACE_ID_NOT_FOUND]: msg`User workspace not found.`,
-  [AgentExceptionCode.ROLE_NOT_FOUND]: msg`Role not found.`,
-  [AgentExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS]: msg`This role cannot be assigned to agents.`,
-  [AgentExceptionCode.INVALID_AGENT_INPUT]: msg`Invalid agent input.`,
-  [AgentExceptionCode.AGENT_ALREADY_EXISTS]: msg`An agent with this name already exists.`,
-  [AgentExceptionCode.AGENT_IS_STANDARD]: msg`Standard agents cannot be modified.`,
+const getAgentExceptionUserFriendlyMessage = (code: AgentExceptionCode) => {
+  switch (code) {
+    case AgentExceptionCode.AGENT_NOT_FOUND:
+      return msg`Agent not found.`;
+    case AgentExceptionCode.AGENT_EXECUTION_FAILED:
+      return msg`Agent execution failed.`;
+    case AgentExceptionCode.API_KEY_NOT_CONFIGURED:
+      return msg`API key is not configured.`;
+    case AgentExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
+      return msg`User workspace not found.`;
+    case AgentExceptionCode.ROLE_NOT_FOUND:
+      return msg`Role not found.`;
+    case AgentExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
+      return msg`This role cannot be assigned to agents.`;
+    case AgentExceptionCode.INVALID_AGENT_INPUT:
+      return msg`Invalid agent input.`;
+    case AgentExceptionCode.AGENT_ALREADY_EXISTS:
+      return msg`An agent with this name already exists.`;
+    case AgentExceptionCode.AGENT_IS_STANDARD:
+      return msg`Standard agents cannot be modified.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class AgentException extends CustomException<AgentExceptionCode> {
@@ -38,7 +49,7 @@ export class AgentException extends CustomException<AgentExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? agentExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getAgentExceptionUserFriendlyMessage(code),
     });
   }
 }

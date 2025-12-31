@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -12,16 +13,25 @@ export enum ApplicationExceptionCode {
   FORBIDDEN = 'FORBIDDEN',
 }
 
-const applicationExceptionUserFriendlyMessages: Record<
-  ApplicationExceptionCode,
-  MessageDescriptor
-> = {
-  [ApplicationExceptionCode.OBJECT_NOT_FOUND]: msg`Object not found.`,
-  [ApplicationExceptionCode.FIELD_NOT_FOUND]: msg`Field not found.`,
-  [ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND]: msg`Serverless function not found.`,
-  [ApplicationExceptionCode.ENTITY_NOT_FOUND]: msg`Entity not found.`,
-  [ApplicationExceptionCode.APPLICATION_NOT_FOUND]: msg`Application not found.`,
-  [ApplicationExceptionCode.FORBIDDEN]: msg`You do not have permission to perform this action.`,
+const getApplicationExceptionUserFriendlyMessage = (
+  code: ApplicationExceptionCode,
+) => {
+  switch (code) {
+    case ApplicationExceptionCode.OBJECT_NOT_FOUND:
+      return msg`Object not found.`;
+    case ApplicationExceptionCode.FIELD_NOT_FOUND:
+      return msg`Field not found.`;
+    case ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      return msg`Serverless function not found.`;
+    case ApplicationExceptionCode.ENTITY_NOT_FOUND:
+      return msg`Entity not found.`;
+    case ApplicationExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found.`;
+    case ApplicationExceptionCode.FORBIDDEN:
+      return msg`You do not have permission to perform this action.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ApplicationException extends CustomException<ApplicationExceptionCode> {
@@ -32,7 +42,7 @@ export class ApplicationException extends CustomException<ApplicationExceptionCo
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? applicationExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getApplicationExceptionUserFriendlyMessage(code),
     });
   }
 }

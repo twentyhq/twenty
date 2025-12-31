@@ -3,11 +3,9 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  WidgetConfiguration,
-  WidgetConfigurationInterface,
-} from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
+import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
 
@@ -41,13 +39,13 @@ export class PageLayoutWidgetDTO {
   type: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  objectMetadataId: string | null;
+  objectMetadataId?: string;
 
   @Field(() => GridPositionDTO, { nullable: false })
   gridPosition: GridPositionDTO;
 
-  @Field(() => WidgetConfiguration, { nullable: true })
-  configuration: WidgetConfigurationInterface | null;
+  @Field(() => WidgetConfiguration, { nullable: false })
+  configuration: AllPageLayoutWidgetConfiguration;
 
   @Field()
   createdAt: Date;
@@ -56,5 +54,5 @@ export class PageLayoutWidgetDTO {
   updatedAt: Date;
 
   @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+  deletedAt?: Date;
 }

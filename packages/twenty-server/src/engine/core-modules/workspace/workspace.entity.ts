@@ -121,7 +121,7 @@ export class WorkspaceEntity {
 
   @OneToMany(
     () => UserWorkspaceEntity,
-    (userWorkspace: UserWorkspaceEntity) => userWorkspace.workspace,
+    (userWorkspace) => userWorkspace.workspace,
     {
       onDelete: 'CASCADE',
     },

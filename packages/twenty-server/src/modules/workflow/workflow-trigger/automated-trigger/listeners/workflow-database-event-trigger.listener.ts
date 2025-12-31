@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { In, Raw } from 'typeorm';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
+  type ObjectRecordNonDestructiveEvent,
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
-  type ObjectRecordNonDestructiveEvent,
 } from 'twenty-shared/database-events';
+import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { In, Raw } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';

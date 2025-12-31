@@ -1,10 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { FieldWidgetCellHoveredContent } from '@/page-layout/widgets/field/components/FieldWidgetCellHoveredContent';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilValue } from 'recoil';
+import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
 
 type FieldWidgetCellHoveredPortalProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -23,13 +21,7 @@ export const FieldWidgetCellHoveredPortal = ({
   isHovered,
   onMouseLeave,
 }: FieldWidgetCellHoveredPortalProps) => {
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
-  const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
-    recordId,
-    fieldMetadataItem.id,
-    'inline-cell',
-  );
-  const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
+  const { isEditing } = useIsFieldWidgetEditing();
 
   if (!isHovered || isEditing) {
     return null;

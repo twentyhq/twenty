@@ -13,7 +13,7 @@ import {
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('searchFieldMetadata')
 @Unique('IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE', [
@@ -22,7 +22,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 ])
 @Index('IDX_SEARCH_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_SEARCH_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
-export class SearchFieldMetadataEntity {
+export class SearchFieldMetadataEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -45,11 +45,4 @@ export class SearchFieldMetadataEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 }

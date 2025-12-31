@@ -11,7 +11,6 @@ import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/typ
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class DeleteRecordService {
@@ -25,18 +24,12 @@ export class DeleteRecordService {
     const {
       objectName,
       objectRecordId,
-      workspaceId,
+      authContext,
       rolePermissionConfig,
       soft = true,
     } = params;
 
-    if (!workspaceId) {
-      return {
-        success: false,
-        message: 'Failed to delete record: Workspace ID is required',
-        error: 'Workspace ID not found',
-      };
-    }
+    const workspaceId = authContext.workspace.id;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -45,8 +38,6 @@ export class DeleteRecordService {
         error: 'Invalid object record ID',
       };
     }
-
-    const authContext = buildSystemAuthContext(workspaceId);
 
     try {
       return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
