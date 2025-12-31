@@ -106,6 +106,7 @@ describe('View Filter Group update should succeed', () => {
 
     expect(data.updateCoreViewFilterGroup).toMatchObject({
       id: createdViewFilterGroupId,
+      positionInViewFilterGroup: 5,
     });
   });
 });

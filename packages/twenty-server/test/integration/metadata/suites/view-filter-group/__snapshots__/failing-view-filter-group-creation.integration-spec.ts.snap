@@ -25,11 +25,6 @@ exports[`View Filter Group creation should fail when parentViewFilterGroupId doe
         {
           "errors": [
             {
-              "code": "VIEW_NOT_FOUND",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-            {
               "code": "VIEW_FILTER_GROUP_NOT_FOUND",
               "message": "Parent view filter group not found",
               "userFriendlyMessage": "Parent view filter group not found",

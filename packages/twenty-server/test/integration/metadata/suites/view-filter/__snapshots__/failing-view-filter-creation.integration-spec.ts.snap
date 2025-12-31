@@ -25,11 +25,6 @@ exports[`View Filter creation should fail when fieldMetadataId does not exist 1`
           "errors": [
             {
               "code": "INVALID_VIEW_FILTER_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-            {
-              "code": "INVALID_VIEW_FILTER_DATA",
               "message": "Field metadata not found",
               "userFriendlyMessage": "Field metadata not found",
             },
@@ -96,11 +91,6 @@ exports[`View Filter creation should fail when viewFilterGroupId does not exist 
       "viewFilter": [
         {
           "errors": [
-            {
-              "code": "INVALID_VIEW_FILTER_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
             {
               "code": "INVALID_VIEW_FILTER_DATA",
               "message": "Field metadata not found",
