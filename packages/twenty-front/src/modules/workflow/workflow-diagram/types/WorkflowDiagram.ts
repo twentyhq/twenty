@@ -128,5 +128,3 @@ export type StartNodeCreationParams = {
   position?: { x: number; y: number };
   connectionOptions?: WorkflowStepConnectionOptions;
 };
-
-export type { WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
