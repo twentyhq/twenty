@@ -1,6 +1,7 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
@@ -12,12 +13,13 @@ import { calculateElseIfBranchPosition } from '@/workflow/workflow-steps/workflo
 import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
+import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
-import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -66,6 +68,9 @@ export const WorkflowEditActionIfElseBody = ({
   const isReadonly = actionOptions.readonly === true;
 
   const { createStep } = useCreateStep();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
+  const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
 
   const currentStepFilters = useRecoilComponentValue(
     currentStepFiltersComponentState,
@@ -130,17 +135,55 @@ export const WorkflowEditActionIfElseBody = ({
 
     const { filterGroup, filter, branchId, filterGroupId } =
       createElseIfBranch();
+    const totalBranches = branches.length + 1;
     const elseIfBranchIndex = branches.length - 1;
-    const emptyNodePosition = calculateElseIfBranchPosition(
+    const ifElseStepPosition = action.position ?? { x: 0, y: 0 };
+
+    const existingBranchPositions = branches.reduce<
+      Array<{ id: string; position: { x: number; y: number } }>
+    >((acc, branch, branchIndex) => {
+      const firstChildStepId = branch.nextStepIds[0];
+
+      if (!isDefined(firstChildStepId)) {
+        return acc;
+      }
+
+      const adjustedBranchIndex =
+        branchIndex < elseIfBranchIndex ? branchIndex : branchIndex + 1;
+
+      const branchNodePosition = calculateElseIfBranchPosition(
+        adjustedBranchIndex,
+        totalBranches,
+        ifElseStepPosition,
+      );
+
+      acc.push({
+        id: firstChildStepId,
+        position: branchNodePosition,
+      });
+
+      return acc;
+    }, []);
+
+    const newEmptyNodePosition = calculateElseIfBranchPosition(
       elseIfBranchIndex,
-      action.position ?? { x: 0, y: 0 },
+      totalBranches,
+      ifElseStepPosition,
     );
+
+    if (existingBranchPositions.length > 0) {
+      const workflowVersionId = await getUpdatableWorkflowVersion();
+      await updateWorkflowVersionPosition(
+        workflowVersionId,
+        existingBranchPositions,
+      );
+    }
 
     const emptyNode = await createStep({
       newStepType: 'EMPTY',
       parentStepId: undefined,
       nextStepId: undefined,
-      position: emptyNodePosition,
+      position: newEmptyNodePosition,
       shouldSelectNode: false,
     });
 
