@@ -16,11 +16,11 @@ import { getAppPath } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type SkillsService } from 'src/engine/core-modules/skills/skills.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
   type ToolIndexEntry,
-  type ToolRegistryService,
+  ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createLoadSkillTool,
@@ -30,11 +30,11 @@ import {
   LOAD_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
-import { type AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import {
   extractCodeInterpreterFiles,
@@ -45,7 +45,7 @@ import {
   ModelProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
