@@ -500,17 +500,17 @@ export const WorkflowDiagramCanvasBase = ({
     clearEdgeHover();
   }, [clearEdgeHover]);
 
-  const handleConnectStart = useCallback(
-    (_: MouseEvent | TouchEvent, params: OnConnectStartParams) => {
-      if (isDefined(params.nodeId) && isDefined(params.handleId)) {
-        setConnectionStartInfo({
-          nodeId: params.nodeId,
-          handleId: params.handleId,
-        });
-      }
-    },
-    [],
-  );
+  const handleConnectStart = (
+    _: MouseEvent | TouchEvent,
+    params: OnConnectStartParams,
+  ) => {
+    if (isDefined(params.nodeId) && isDefined(params.handleId)) {
+      setConnectionStartInfo({
+        nodeId: params.nodeId,
+        handleId: params.handleId,
+      });
+    }
+  };
 
   const handleConnect = (connection: Connection) => {
     assertWorkflowConnectionOrThrow(connection);
@@ -518,63 +518,56 @@ export const WorkflowDiagramCanvasBase = ({
     onConnect?.(connection);
   };
 
-  const handleConnectEnd = useCallback(
-    (event: MouseEvent | TouchEvent) => {
-      let startInfo = connectionStartInfo;
+  const handleConnectEnd = (event: MouseEvent | TouchEvent) => {
+    let startInfo = connectionStartInfo;
 
-      setConnectionStartInfo((prev) => {
-        startInfo = prev;
-        return null;
-      });
+    setConnectionStartInfo((prev) => {
+      startInfo = prev;
+      return null;
+    });
 
-      if (
-        !isDefined(startInfo) ||
-        !isDefined(startNodeCreation) ||
-        !(event instanceof MouseEvent)
-      ) {
-        return;
-      }
+    if (
+      !isDefined(startInfo) ||
+      !isDefined(startNodeCreation) ||
+      !(event instanceof MouseEvent)
+    ) {
+      return;
+    }
 
-      const bounds = (event.target as HTMLElement)
-        .closest('.react-flow')
-        ?.getBoundingClientRect();
+    const bounds = (event.target as HTMLElement)
+      .closest('.react-flow')
+      ?.getBoundingClientRect();
 
-      if (!isDefined(bounds)) {
-        return;
-      }
+    if (!isDefined(bounds)) {
+      return;
+    }
 
-      const screenPosition = {
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      };
+    const screenPosition = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    };
 
-      const flowPosition = workflowDiagramScreenToFlowPosition(screenPosition);
+    const flowPosition = workflowDiagramScreenToFlowPosition(screenPosition);
 
-      if (!isDefined(flowPosition)) {
-        return;
-      }
+    if (!isDefined(flowPosition)) {
+      return;
+    }
 
-      const DEFAULT_NODE_WIDTH = 180;
-      const adjustedPosition = {
-        x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
-        y: flowPosition.y + 50,
-      };
+    const DEFAULT_NODE_WIDTH = 180;
+    const adjustedPosition = {
+      x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
+      y: flowPosition.y + 50,
+    };
 
-      startNodeCreation({
-        parentStepId: startInfo.nodeId,
-        nextStepId: undefined,
-        position: adjustedPosition,
-        connectionOptions: getConnectionOptionsForSourceHandle({
-          sourceHandleId: startInfo.handleId,
-        }),
-      });
-    },
-    [
-      connectionStartInfo,
-      startNodeCreation,
-      workflowDiagramScreenToFlowPosition,
-    ],
-  );
+    startNodeCreation({
+      parentStepId: startInfo.nodeId,
+      nextStepId: undefined,
+      position: adjustedPosition,
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId: startInfo.handleId,
+      }),
+    });
+  };
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
