@@ -10,20 +10,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
   type CreateCoreViewMutationVariables,
-  type DeleteCoreViewMutationVariables,
   type DestroyCoreViewMutationVariables,
   type UpdateCoreViewMutationVariables,
   useCreateCoreViewMutation,
-  useDeleteCoreViewMutation,
   useDestroyCoreViewMutation,
   useUpdateCoreViewMutation,
-  ViewType,
+  ViewType
 } from '~/generated/graphql';
 
 export const usePersistView = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();
-  const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
   const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
@@ -127,39 +124,6 @@ export const usePersistView = () => {
     [updateCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
-  const deleteView = useCallback(
-    async (
-      variables: DeleteCoreViewMutationVariables,
-    ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof deleteCoreViewMutation>>>
-    > => {
-      try {
-        const result = await deleteCoreViewMutation({
-          variables,
-        });
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (error instanceof ApolloError) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'view',
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [deleteCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
-  );
-
   const destroyView = useCallback(
     async (
       variables: DestroyCoreViewMutationVariables,
@@ -196,7 +160,6 @@ export const usePersistView = () => {
   return {
     createView,
     updateView,
-    deleteView,
     destroyView,
   };
 };

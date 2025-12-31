@@ -78,7 +78,7 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const visibleFieldsCount = visibleBoardFields.length;
 
-  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
+  const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
@@ -88,7 +88,7 @@ export const ObjectOptionsDropdownCustomView = ({
       return;
     }
     setViewPickerReferenceViewId(customViewData?.id);
-    deleteViewFromCurrentState();
+    destroyViewFromCurrentState();
     closeDropdown();
     onBackToDefault?.();
   };

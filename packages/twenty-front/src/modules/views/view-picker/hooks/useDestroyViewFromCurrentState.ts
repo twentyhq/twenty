@@ -46,7 +46,7 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { destroyView } = usePersistView();
 
-  const deleteViewFromCurrentState = useRecoilCallback(
+  const destroyViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
         set(viewPickerIsPersistingCallbackState, true);
@@ -90,6 +90,6 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   );
 
   return {
-    deleteViewFromCurrentState,
+    destroyViewFromCurrentState,
   };
 };

@@ -48,7 +48,7 @@ export const ViewPickerOptionDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
-  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
+  const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
@@ -70,7 +70,7 @@ export const ViewPickerOptionDropdown = ({
 
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
-    deleteViewFromCurrentState();
+    destroyViewFromCurrentState();
     closeDropdown(dropdownId);
   };
 

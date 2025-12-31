@@ -24,13 +24,13 @@ export const ViewPickerEditButton = () => {
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
-  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
+  const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
 
   if (viewPickerMode === 'edit') {
     return (
       <Button
         title={t`Delete`}
-        onClick={deleteViewFromCurrentState}
+        onClick={destroyViewFromCurrentState}
         accent="danger"
         fullWidth
         size="small"

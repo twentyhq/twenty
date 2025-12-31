@@ -32,7 +32,7 @@ export const ViewPickerCreateButton = () => {
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
-  const { deleteViewFromCurrentState } = useDestroyViewFromCurrentState();
+  const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
 
   const handleCreateButtonClick = () => {
     createViewFromCurrentState();
@@ -42,7 +42,7 @@ export const ViewPickerCreateButton = () => {
     return (
       <Button
         title={t`Delete`}
-        onClick={deleteViewFromCurrentState}
+        onClick={destroyViewFromCurrentState}
         accent="danger"
         fullWidth
         size="small"
