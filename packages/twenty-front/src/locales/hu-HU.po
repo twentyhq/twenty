@@ -1606,6 +1606,11 @@ msgstr "Alkalmazások"
 msgid "Apply"
 msgstr ""
 
+#. js-lingui-id: 9re43z
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+msgid "Apply{progressText}"
+msgstr ""
+
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
