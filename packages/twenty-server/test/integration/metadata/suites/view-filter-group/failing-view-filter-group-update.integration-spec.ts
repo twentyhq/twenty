@@ -41,11 +41,32 @@ const failingViewFilterGroupUpdateTestCases: EachTestingContext<TestContext>[] =
         },
       },
     },
+    {
+      title: 'when parentViewFilterGroupId equals id (self-reference)',
+      context: {
+        id: 'USE_CREATED_ID',
+        input: {
+          parentViewFilterGroupId: 'USE_CREATED_ID',
+        },
+      },
+    },
+    {
+      title: 'when update creates a circular dependency chain',
+      context: {
+        id: 'USE_PARENT_ID',
+        input: {
+          parentViewFilterGroupId: 'USE_CHILD_ID',
+        },
+      },
+    },
   ];
 
 describe('View Filter Group update should fail', () => {
   let createdViewId: string;
   let createdViewFilterGroupId: string;
+  // For circular dependency chain test: parent → child
+  let parentViewFilterGroupId: string;
+  let childViewFilterGroupId: string;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -79,6 +100,7 @@ describe('View Filter Group update should fail', () => {
     });
 
     createdViewId = viewData?.createCoreView?.id;
+    jestExpectToBeDefined(createdViewId);
 
     const { data: filterGroupData } = await createOneCoreViewFilterGroup({
       expectToFail: false,
@@ -89,9 +111,52 @@ describe('View Filter Group update should fail', () => {
     });
 
     createdViewFilterGroupId = filterGroupData?.createCoreViewFilterGroup?.id;
+    jestExpectToBeDefined(createdViewFilterGroupId);
+
+    // Create parent view filter group
+    const { data: parentFilterGroupData } = await createOneCoreViewFilterGroup({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+      },
+    });
+
+    parentViewFilterGroupId =
+      parentFilterGroupData?.createCoreViewFilterGroup?.id;
+    jestExpectToBeDefined(parentViewFilterGroupId);
+
+    // Create child view filter group with parent reference
+    const { data: childFilterGroupData } = await createOneCoreViewFilterGroup({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        parentViewFilterGroupId: parentViewFilterGroupId,
+      },
+    });
+
+    childViewFilterGroupId =
+      childFilterGroupData?.createCoreViewFilterGroup?.id;
+    jestExpectToBeDefined(childViewFilterGroupId);
   });
 
   afterAll(async () => {
+    // Delete child first (due to foreign key constraint)
+    if (childViewFilterGroupId) {
+      await destroyOneCoreViewFilterGroup({
+        expectToFail: false,
+        id: childViewFilterGroupId,
+      });
+    }
+
+    if (parentViewFilterGroupId) {
+      await destroyOneCoreViewFilterGroup({
+        expectToFail: false,
+        id: parentViewFilterGroupId,
+      });
+    }
+
     if (createdViewFilterGroupId) {
       await destroyOneCoreViewFilterGroup({
         expectToFail: false,
@@ -110,13 +175,45 @@ describe('View Filter Group update should fail', () => {
   it.each(eachTestingContextFilter(failingViewFilterGroupUpdateTestCases))(
     '$title',
     async ({ context }) => {
-      const id =
-        context.id === 'USE_CREATED_ID' ? createdViewFilterGroupId : context.id;
+      let id: string;
+
+      switch (context.id) {
+        case 'USE_CREATED_ID':
+          id = createdViewFilterGroupId;
+          break;
+        case 'USE_PARENT_ID':
+          id = parentViewFilterGroupId;
+          break;
+        case 'USE_CHILD_ID':
+          id = childViewFilterGroupId;
+          break;
+        default:
+          id = context.id;
+      }
+
+      let parentId: string | undefined;
+
+      if (
+        typeof context.input.parentViewFilterGroupId === 'string' &&
+        context.input.parentViewFilterGroupId === 'USE_CREATED_ID'
+      ) {
+        parentId = createdViewFilterGroupId;
+      } else if (
+        typeof context.input.parentViewFilterGroupId === 'string' &&
+        context.input.parentViewFilterGroupId === 'USE_CHILD_ID'
+      ) {
+        parentId = childViewFilterGroupId;
+      } else {
+        parentId = context.input.parentViewFilterGroupId;
+      }
 
       const { errors } = await updateOneCoreViewFilterGroup({
         id,
         expectToFail: true,
-        input: context.input,
+        input: {
+          ...context.input,
+          parentViewFilterGroupId: parentId,
+        },
       });
 
       expectOneNotInternalServerErrorSnapshot({

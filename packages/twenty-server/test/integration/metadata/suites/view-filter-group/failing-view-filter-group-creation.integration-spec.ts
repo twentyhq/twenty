@@ -21,6 +21,8 @@ type TestContext = {
   input: (testSetup: TestSetup) => CreateViewFilterGroupInput;
 };
 
+const selfReferenceId = v4();
+
 const failingViewFilterGroupCreationTestCases: EachTestingContext<TestContext>[] =
   [
     {
@@ -45,6 +47,16 @@ const failingViewFilterGroupCreationTestCases: EachTestingContext<TestContext>[]
         input: (testSetup) => ({
           viewId: testSetup.createdViewId,
           parentViewFilterGroupId: v4(),
+        }),
+      },
+    },
+    {
+      title: 'when parentViewFilterGroupId equals id (self-reference)',
+      context: {
+        input: (testSetup) => ({
+          id: selfReferenceId,
+          viewId: testSetup.createdViewId,
+          parentViewFilterGroupId: selfReferenceId,
         }),
       },
     },

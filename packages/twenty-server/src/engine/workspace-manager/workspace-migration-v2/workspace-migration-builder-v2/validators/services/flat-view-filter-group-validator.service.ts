@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { ViewFilterGroupExceptionCode } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
@@ -15,6 +16,49 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 @Injectable()
 export class FlatViewFilterGroupValidatorService {
   constructor() {}
+
+  private hasCircularDependency({
+    viewFilterGroupId,
+    parentViewFilterGroupId,
+    flatViewFilterGroupMaps,
+  }: {
+    viewFilterGroupId: string;
+    parentViewFilterGroupId: string;
+    flatViewFilterGroupMaps: FlatEntityMaps<FlatViewFilterGroup>;
+  }): boolean {
+    // Direct self-reference check
+    if (viewFilterGroupId === parentViewFilterGroupId) {
+      return true;
+    }
+
+    // Traverse ancestor chain to detect cycles
+    const visited = new Set<string>();
+    let currentParentId: string | null = parentViewFilterGroupId;
+
+    while (currentParentId !== null) {
+      if (currentParentId === viewFilterGroupId) {
+        return true;
+      }
+
+      if (visited.has(currentParentId)) {
+        // Already visited this node, cycle detected in ancestors
+        return true;
+      }
+
+      visited.add(currentParentId);
+
+      const parentGroup: FlatViewFilterGroup | undefined =
+        flatViewFilterGroupMaps.byId[currentParentId];
+
+      if (!isDefined(parentGroup)) {
+        break;
+      }
+
+      currentParentId = parentGroup.parentViewFilterGroupId ?? null;
+    }
+
+    return false;
+  }
 
   validateFlatViewFilterGroupCreation({
     flatEntityToValidate: flatViewFilterGroupToValidate,
@@ -61,6 +105,20 @@ export class FlatViewFilterGroupValidatorService {
     }
 
     if (isDefined(flatViewFilterGroupToValidate.parentViewFilterGroupId)) {
+      // Check for self-reference (a group cannot be its own parent)
+      if (
+        flatViewFilterGroupToValidate.id ===
+        flatViewFilterGroupToValidate.parentViewFilterGroupId
+      ) {
+        validationResult.errors.push({
+          code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
+          message: t`View filter group cannot be its own parent`,
+          userFriendlyMessage: msg`View filter group cannot be its own parent`,
+        });
+
+        return validationResult;
+      }
+
       const referencedParentInOptimistic = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
         flatEntityMaps: optimisticFlatViewFilterGroupMaps,
@@ -158,6 +216,24 @@ export class FlatViewFilterGroupValidatorService {
     };
 
     if (isDefined(updatedFlatViewFilterGroup.parentViewFilterGroupId)) {
+      // Check for circular dependency (including self-reference)
+      if (
+        this.hasCircularDependency({
+          viewFilterGroupId: flatEntityId,
+          parentViewFilterGroupId:
+            updatedFlatViewFilterGroup.parentViewFilterGroupId,
+          flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
+        })
+      ) {
+        validationResult.errors.push({
+          code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
+          message: t`Circular dependency detected in view filter group hierarchy`,
+          userFriendlyMessage: msg`Circular dependency detected in view filter group hierarchy`,
+        });
+
+        return validationResult;
+      }
+
       const referencedParentViewFilterGroup =
         findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: updatedFlatViewFilterGroup.parentViewFilterGroupId,
