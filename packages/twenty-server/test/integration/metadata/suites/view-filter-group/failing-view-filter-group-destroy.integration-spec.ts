@@ -35,4 +35,3 @@ describe('View Filter Group destroy should fail', () => {
     },
   );
 });
-

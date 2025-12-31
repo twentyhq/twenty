@@ -73,4 +73,3 @@ describe('View Filter Group destroy should succeed', () => {
     expect(destroyData.destroyCoreViewFilterGroup).toBe(true);
   });
 });
-

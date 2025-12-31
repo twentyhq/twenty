@@ -56,4 +56,3 @@ describe('View Filter Group creation should fail', () => {
     },
   );
 });
-
