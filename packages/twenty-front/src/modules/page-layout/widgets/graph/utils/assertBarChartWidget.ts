@@ -1,4 +1,4 @@
-import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -18,7 +18,9 @@ export const assertBarChartWidgetOrThrow: AssertBarChartWidgetOrThrow = (
     new Error('Widget objectMetadataId is required'),
   );
 
-  if (!isBarChartConfiguration(widget.configuration)) {
+  if (
+    !isWidgetConfigurationOfType(widget.configuration, 'BarChartConfiguration')
+  ) {
     throw new Error(
       `Expected BarChartConfiguration but got ${widget.configuration?.__typename}`,
     );

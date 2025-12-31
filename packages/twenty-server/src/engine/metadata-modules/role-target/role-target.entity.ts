@@ -7,13 +7,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 

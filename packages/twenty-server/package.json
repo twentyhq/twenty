@@ -164,7 +164,7 @@
     "rxjs": "7.8.1",
     "semver": "7.6.3",
     "sharp": "0.32.6",
-    "stripe": "17.3.1",
+    "stripe": "19.3.1",
     "transliteration": "2.3.5",
     "tsconfig-paths": "^4.2.0",
     "tsdav": "^2.1.5",

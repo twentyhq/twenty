@@ -6,7 +6,7 @@ import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieC
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
   AggregateOperations,
-  GraphType,
+  WidgetConfigurationType,
   type PieChartConfiguration,
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -26,7 +26,7 @@ const mockObjectMetadataItemId = companyObjectMetadataItem.id;
 const mockConfiguration: PieChartConfiguration = {
   aggregateFieldMetadataId: idField.id,
   aggregateOperation: AggregateOperations.COUNT,
-  graphType: GraphType.PIE,
+  configurationType: WidgetConfigurationType.PIE_CHART,
   groupByFieldMetadataId: idField.id,
 };
 

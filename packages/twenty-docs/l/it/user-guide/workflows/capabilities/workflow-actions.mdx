@@ -1,21 +1,21 @@
 ---
-title: Workflow Actions
-description: Learn about the actions available in Twenty workflows.
+title: Azioni del workflow
+description: Scopri le azioni disponibili nei workflow di Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## Informazioni sulle azioni
 
-Actions define what happens after a trigger fires. You can chain multiple actions together to build complex automations.
+Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concatenare più azioni per creare automazioni complesse.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Usa il selettore di variabili (fai clic sull'icona `(x+)`) per sfogliare i dati disponibili dai passaggi precedenti
+  * Passa il mouse su qualsiasi campo di input per vedere da quale passaggio proviene una variabile — utile quando lo stesso campo (ad es., ID) esiste in più passaggi precedenti
+  * Assegna a ogni azione un nome descrittivo per una manutenzione più semplice
 </Tip>
 
-## Record Actions
+## Azioni sui record
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ Aggiunge un nuovo record a un oggetto selezionato.
 
 * Seleziona l'oggetto di destinazione
 * Compila i campi richiesti e opzionali
-* Use data from previous steps or input values manually to populate fields
+* Usa i dati dai passaggi precedenti oppure inserisci i valori manualmente per popolare i campi
 
 **Output**: I dati del nuovo record creato sono disponibili per l'uso in passaggi successivi.
 
@@ -41,8 +41,8 @@ Modifica un record esistente in un oggetto selezionato.
 
 * Seleziona l'oggetto di destinazione
 * Scegli il record specifico da aggiornare.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Puoi scegliere un record fisso, utilizzando il menu a discesa che mostra tutti i record disponibili.
+  * Oppure puoi selezionare dinamicamente il record, indicando un record trovato in un passaggio precedente, usando `(x+)`. In questa fase non è possibile cercare il record in base a criteri diversi. Se non hai ancora identificato il record, aggiungi un passaggio `Search Record` prima di questo passaggio `Update Record`.
 * Seleziona i campi da modificare e inserisci nuovi valori
 
 **Output**: I dati del record aggiornato sono disponibili per l'uso in passaggi successivi.
@@ -71,25 +71,25 @@ Trova i record all'interno di un oggetto selezionato utilizzando condizioni di f
 **Output**: Restituisce i record corrispondenti utilizzabili in passaggi successivi.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Limite**: Search Records restituisce un massimo di **200 record**. Se devi elaborarne di più, aggiungi filtri specifici per ridurre i risultati oppure usa workflow pianificati per elaborare a lotti.
 </Note>
 
-**Best Practice**: Use [branches](/l/it/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Migliore Pratica**: Usa [rami](/l/it/user-guide/workflows/capabilities/workflow-branches) dopo Search Records per gestire scenari "trovato" vs "non trovato".
 
-### Upsert Record
+### Inserisci o aggiorna Record
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrispondenza. È utile quando non sei sicuro che un record esista già.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Configurazione**:
 
 * Seleziona l'oggetto di destinazione
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Tieni presente quali campi possono essere utilizzati per la corrispondenza: email per Persone, dominio per Aziende, ID per qualsiasi oggetto o qualsiasi campo contrassegnato come Univoco. Dovrai compilare almeno uno di questi qui sotto.
+* Compila i valori dei campi. Non dimenticare di valorizzare almeno uno degli identificatori univoci.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **La corrispondenza di solito funziona ancora meglio aggiungendo un solo identificatore univoco.** Ad esempio, lo screenshot qui sotto abbinerà le aziende in base al loro dominio. L'ID non è necessariamente richiesto.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

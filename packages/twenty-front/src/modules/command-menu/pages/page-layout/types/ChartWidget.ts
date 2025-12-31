@@ -1,4 +1,3 @@
-import { type ChartFilters } from '@/command-menu/pages/page-layout/types/ChartFilters';
 import { type ChartWidgetConfiguration } from '@/command-menu/pages/page-layout/types/ChartWidgetConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type ModifiedProperties } from 'twenty-shared/types';
@@ -8,9 +7,6 @@ export type ChartWidget = ModifiedProperties<
   PageLayoutWidget,
   {
     type: WidgetType.GRAPH;
-    configuration: ModifiedProperties<
-      ChartWidgetConfiguration,
-      { filter?: ChartFilters }
-    >;
+    configuration: ChartWidgetConfiguration;
   }
 >;

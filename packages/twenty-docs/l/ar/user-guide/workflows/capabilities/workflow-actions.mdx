@@ -1,21 +1,21 @@
 ---
 title: إجراءات سير العمل
-description: Learn about the actions available in Twenty workflows.
+description: تعرّف على الإجراءات المتاحة في عمليات سير العمل في Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## حول الإجراءات
 
-تحدد الإجراءات ما يحدث بعد تنفيذ الزناد. You can chain multiple actions together to build complex automations.
+تحدد الإجراءات ما يحدث بعد تنفيذ الزناد. يمكنك تسلسل عدة إجراءات معًا لبناء عمليات أتمتة معقدة.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * استخدم منتقي المتغيرات (انقر أيقونة `(x+)`) لاستعراض البيانات المتاحة من الخطوات السابقة
+  * مرّر المؤشر فوق أي حقل إدخال لمعرفة الخطوة التي يأتي منها المتغير — وهو أمر مفيد عندما يوجد الحقل نفسه (مثلًا، ID) في عدة خطوات سابقة
+  * امنح كل إجراء اسمًا وصفيًا لتسهيل الصيانة
 </Tip>
 
-## Record Actions
+## إجراءات السجل
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * اختر الكائن المستهدف
 * املأ الحقول الضرورية والاختيارية
-* Use data from previous steps or input values manually to populate fields
+* استخدم البيانات من الخطوات السابقة أو أدخِل القيم يدويًا لملء الحقول
 
 **المخرجات**: بيانات السجل المنشأ حديثاً متاحة للاستخدام في الخطوات التالية.
 
@@ -41,8 +41,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * اختر الكائن المستهدف
 * اختر السجل المحدد لتحديثه.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * يمكنك إما اختيار سجل ثابت، باستخدام القائمة المنسدلة التي تعرض جميع السجلات المتاحة.
+  * أو يمكنك اختيار السجل ديناميكيًا بتحديد سجل تم العثور عليه في خطوة سابقة، باستخدام `(x+)`. لا يمكنك البحث عن السجل بناءً على معايير مختلفة في هذه المرحلة. إذا لم تكن قد حدّدت السجل بعد، فأضِف خطوة `Search Record` قبل خطوة `Update Record`.
 * اختر الحقول لتعديل القيم وأدخل القيم الجديدة
 
 **المخرجات**: بيانات السجل المحدثة متاحة للاستخدام في الخطوات التالية.
@@ -71,25 +71,25 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 **المخرجات**: تعيد السجلات المطابقة التي يمكن استخدامها في الخطوات اللاحقة.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **الحد**: تعيد Search Records بحد أقصى **200 سجل**. إذا كنت بحاجة إلى معالجة المزيد، فأضِف عوامل تصفية محددة لتقليل النتائج أو استخدم عمليات سير عمل مجدولة للمعالجة على دفعات.
 </Note>
 
-**Best Practice**: Use [branches](/l/ar/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**أفضل الممارسات**: استخدم [الفروع](/l/ar/user-guide/workflows/capabilities/workflow-branches) بعد Search Records للتعامل مع سيناريوهات "تم العثور" مقابل "لم يتم العثور".
 
-### Upsert Record
+### إدراج أو تحديث سجل
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+ينشئ سجلًا جديدًا أو يحدّث سجلًا موجودًا استنادًا إلى معايير المطابقة. يكون هذا مفيدًا عندما لا تكون متأكدًا مما إذا كان السجل موجودًا بالفعل.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **التكوين**:
 
 * اختر الكائن المستهدف
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* لاحظ الحقول التي يمكن استخدامها للمطابقة: email لـ People، وdomain لـ Companies، وID لأي كائن، أو أي حقل مُعلَّم كـ Unique. ستحتاج إلى تعبئة واحد على الأقل من هذه الحقول أدناه.
+* املأ قيم الحقول. لا تنسَ تعبئة معرّف فريد واحد على الأقل.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **تعمل المطابقة عادةً بشكل أفضل عند إضافة معرّف فريد واحد فقط.** على سبيل المثال، ستطابق لقطة الشاشة أدناه الشركات استنادًا إلى domain الخاص بها. لا تكون قيمة ID مطلوبة بالضرورة.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

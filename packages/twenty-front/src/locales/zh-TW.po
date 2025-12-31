@@ -67,7 +67,7 @@ msgstr ": 過去"
 #. js-lingui-id: DIUF3A
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr ": 今天{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -129,13 +129,13 @@ msgstr "{0, plural, other {{2} 個工作無法重試}}"
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, other {{days} 天}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, other {{years} 年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -203,6 +203,13 @@ msgstr "在 {objectLabelPlural} 中排名第 {currentRank}（共 {totalCount}）
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} 天}}"
+
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -296,6 +303,7 @@ msgid "{jobCount, plural, one {This will retry the selected job. It will be re-e
 msgstr "{jobCount, plural, other {這將重試選定的工作。它們將從頭開始重新執行。}}"
 
 #. js-lingui-id: Koe99p
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "{morphRelationCount} Objects"
 msgstr "{morphRelationCount} 個物件"
@@ -687,7 +695,6 @@ msgstr "用戶可以對此對象執行的操作"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "啟用"
@@ -890,6 +897,11 @@ msgstr ""
 msgid "Add Public Domain"
 msgstr "新增公用領域"
 
+#. js-lingui-id: AmiJYR
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
+msgid "Add relation"
+msgstr ""
+
 #. js-lingui-id: O8tK4v
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -1073,7 +1085,7 @@ msgstr "在設定的時間後"
 #. js-lingui-id: YPnvqG
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After or equal"
-msgstr ""
+msgstr "晚於或等於"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1115,16 +1127,17 @@ msgid "Agent tokens"
 msgstr "代理程式權杖"
 
 #. js-lingui-id: 8Uv5e6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "代理"
 
-#. js-lingui-id: Y1fJZS
+#. js-lingui-id: wFe+5D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Agents created by application"
-msgstr "由應用程序創建的代理"
+msgid "Agents powering this app"
+msgstr "驅動此應用程序的代理"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -1132,6 +1145,7 @@ msgid "Agents used to route queries to specialized agents"
 msgstr "用於將查詢路由到專家代理的代理"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
@@ -1163,6 +1177,11 @@ msgstr "AI模型"
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "AI Models"
 msgstr ""
+
+#. js-lingui-id: Sfwld8
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
+msgstr "未設定 AI。請在您的環境中設定 OPENAI_API_KEY、ANTHROPIC_API_KEY 或 XAI_API_KEY。"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1534,6 +1553,13 @@ msgstr "API 和 Webhooks"
 msgid "Apostrophe and dot - {apostropheAndDotExample}"
 msgstr "撇號和點 - {apostropheAndDotExample}"
 
+#. js-lingui-id: LMUw1U
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+msgid "App"
+msgstr ""
+
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1550,11 +1576,6 @@ msgstr "Apple"
 msgid "Applicability"
 msgstr "適用性"
 
-#. js-lingui-id: uNojI9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application agents"
-msgstr "應用代理"
-
 #. js-lingui-id: bw50Pz
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
@@ -1565,18 +1586,8 @@ msgstr "應用程式詳細資料頁面"
 msgid "Application details"
 msgstr "應用程序詳細信息"
 
-#. js-lingui-id: E5NJII
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application objects"
-msgstr "應用程序對象"
-
-#. js-lingui-id: fqP45C
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Application serverless functions"
-msgstr "應用程序無伺服器功能"
-
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -1932,6 +1943,11 @@ msgstr "背景"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
 msgstr "背景顏色"
+
+#. js-lingui-id: EbQe8o
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Base Credits"
+msgstr ""
 
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
@@ -2533,6 +2549,11 @@ msgstr "指令圖標"
 msgid "Command Menu"
 msgstr "指令選單"
 
+#. js-lingui-id: 4XlFx/
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Commands copied to clipboard"
+msgstr "命令已複製到剪貼板"
+
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
@@ -2758,6 +2779,11 @@ msgstr ""
 msgid "Contact auto-creation"
 msgstr "聯繫人自動創建"
 
+#. js-lingui-id: cByGGA
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "Contact your admin to continue using Workflow or AI features."
+msgstr "請聯絡您的管理員以繼續使用工作流程或 AI 功能。"
+
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
@@ -2859,6 +2885,11 @@ msgstr "複製"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
 msgstr "複製程式碼"
+
+#. js-lingui-id: Es0ros
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Copy commands"
+msgstr "複製命令"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -3024,6 +3055,11 @@ msgstr "創建工作流程並返回此處查看其版本"
 msgid "Create a workspace"
 msgstr "建立工作區"
 
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Create an application"
+msgstr "創建應用程序"
+
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
@@ -3170,6 +3206,16 @@ msgstr "信用使用"
 msgid "Credits by period"
 msgstr "按期間計算的信用"
 
+#. js-lingui-id: EABlI0
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Please contact your workspace admin to upgrade."
+msgstr "點數已用盡。請聯絡您的工作區管理員以升級。"
+
+#. js-lingui-id: JIXvMy
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Upgrade your plan to get more credits."
+msgstr "點數已用盡。升級您的方案以取得更多點數。"
+
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -3244,7 +3290,6 @@ msgstr "找不到當前工作區成員。"
 
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 msgid "Custom"
 msgstr "自訂"
@@ -3270,10 +3315,10 @@ msgstr "自定義對象"
 msgid "Custom View"
 msgstr "自訂檢視"
 
-#. js-lingui-id: qt+EaC
+#. js-lingui-id: MNGIVW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-msgid "Customise the fields available in the {objectLabelSingular} views."
-msgstr "自定義 {objectLabelSingular} 視圖中可用的字段。"
+msgid "Customise the fields available in the {objectLabelSingular} views and their display order in the {objectLabelSingular} detail view and menus."
+msgstr ""
 
 #. js-lingui-id: qqLY+j
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -3323,7 +3368,6 @@ msgstr "捷克語"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -3403,7 +3447,6 @@ msgid "Data on display"
 msgstr "顯示的數據"
 
 #. js-lingui-id: r+cVRP
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
@@ -3531,6 +3574,7 @@ msgstr "停用工作流程"
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -3858,7 +3902,6 @@ msgstr "描述您希望 AI 實現的功能..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -4141,7 +4184,6 @@ msgid "eddy@gmail.com, @apple.com"
 msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -4440,6 +4482,16 @@ msgstr "啟用繞過選項"
 msgid "Enable model-specific features"
 msgstr "啟用特定模型功能"
 
+#. js-lingui-id: k1i50B
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End Trial Period"
+msgstr "結束試用期"
+
+#. js-lingui-id: QEUZoG
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End trial period to continue using Workflow or AI features."
+msgstr "結束試用期以繼續使用工作流程或 AI 功能。"
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -4638,7 +4690,6 @@ msgid "Entity ID copied to clipboard"
 msgstr "實體 ID 已複製到剪貼板"
 
 #. js-lingui-id: 3IeauL
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 msgid "Env Variable Options"
 msgstr "環境變數選項"
@@ -4729,7 +4780,7 @@ msgid "Error resending invitation"
 msgstr "重新發送邀請時出錯"
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -5348,11 +5399,6 @@ msgstr "欄位名稱"
 msgid "Field on destination"
 msgstr "目的地資料欄位"
 
-#. js-lingui-id: zXgopL
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-msgid "Field type"
-msgstr "字段類型"
-
 #. js-lingui-id: vF68cg
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -5418,6 +5464,7 @@ msgstr "檔案「{fileName}」上傳成功"
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -5546,6 +5593,11 @@ msgstr "第四"
 msgid "Fourth"
 msgstr "第四"
 
+#. js-lingui-id: aUj1gh
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
+msgstr "免費試用點數已用盡。立即訂閱以繼續使用 AI 功能。"
+
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
@@ -5562,12 +5614,18 @@ msgstr "從 {startDay} 到 {endDay} 之間"
 msgid "Full access"
 msgstr "完全訪問"
 
+#. js-lingui-id: xANKBj
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Functions"
+msgstr "功能"
+
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
 msgstr "功能 - 設定"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "儀表圖"
@@ -5904,6 +5962,7 @@ msgid "Home"
 msgstr "首頁"
 
 #. js-lingui-id: Xkd22/
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
@@ -5996,11 +6055,6 @@ msgstr "圖標和名稱"
 msgid "ID"
 msgstr "ID"
 
-#. js-lingui-id: sJGljQ
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-msgid "Identifier"
-msgstr "標識符"
-
 #. js-lingui-id: 06cbfQ
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
@@ -6025,6 +6079,11 @@ msgstr "如果您丟失了此密鑰，可以重新生成，但請注意，任何
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
+
+#. js-lingui-id: 28sfnx
+#: src/modules/page-layout/utils/getWidgetTitle.ts
+msgid "Iframe"
+msgstr ""
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -6147,6 +6206,7 @@ msgstr "在 {dateDiff}"
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "Inactive"
 msgstr "未啟用"
 
@@ -6177,7 +6237,6 @@ msgid "Indexes"
 msgstr "索引"
 
 #. js-lingui-id: CE+M2e
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Info"
 msgstr "資訊"
@@ -6217,6 +6276,11 @@ msgstr "插入 JSON 輸入，然後按下「運行」以測試您的功能。"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "安裝和管理應用程序"
+
+#. js-lingui-id: N52taw
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Installed applications"
+msgstr "已安裝的應用程式"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6341,12 +6405,12 @@ msgstr "無效的數字"
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL"
-msgstr ""
+msgstr "URL 無效"
 
 #. js-lingui-id: yRuMQS
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "Invalid URL. Click edit to configure this widget."
-msgstr ""
+msgstr "URL 無效。點擊編輯以配置此小工具。"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6413,7 +6477,7 @@ msgstr "是"
 #. js-lingui-id: jI6+Q3
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
-msgstr ""
+msgstr "為晚於或等於"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6508,7 +6572,7 @@ msgstr "是相對的"
 #. js-lingui-id: 8vhfz7
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
-msgstr ""
+msgstr "為今天{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -6802,6 +6866,7 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "折線圖"
@@ -6832,6 +6897,11 @@ msgstr "已將電子郵件連結至"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
 msgstr ""
+
+#. js-lingui-id: 5Kn+XX
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "List installed applications. Use filter to search for a specific application"
+msgstr "列出已安裝的應用程式。使用篩選器搜尋特定的應用程式"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7019,6 +7089,11 @@ msgstr "管理檢視"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage workflows"
 msgstr "管理工作流程"
+
+#. js-lingui-id: cbzOP7
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Manage your app"
+msgstr "管理您的應用程式"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -7355,9 +7430,7 @@ msgstr "我的未列出檢視"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7378,6 +7451,7 @@ msgstr "我的未列出檢視"
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -7765,11 +7839,6 @@ msgstr "找不到已刪除的 {objectLabelSingular}"
 msgid "No deleted records matching the filter criteria were found."
 msgstr "找不到符合篩選條件的已刪除記錄。"
 
-#. js-lingui-id: flmDTf
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-msgid "No description"
-msgstr "無描述"
-
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -7835,25 +7904,10 @@ msgstr "找不到資料夾"
 msgid "No folders found for this account"
 msgstr "未找到此帳戶的資料夾"
 
-#. js-lingui-id: xlUOps
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. End trial period and activate your billing to continue."
-msgstr "沒有剩餘的免費工作流程執行。結束試用期並啟用您的付費帳戶以繼續。"
-
-#. js-lingui-id: pxYUeX
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. Please contact your admin."
-msgstr "沒有剩餘的免費工作流執行。請聯絡您的管理員。"
-
 #. js-lingui-id: gIrKyO
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
-
-#. js-lingui-id: kkGPb1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "No installed application. Please check our <0/>"
-msgstr "未安裝任何應用程式。請查看我們的 <0/>"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8139,6 +8193,7 @@ msgstr "數字格式"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+#: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Number of decimals"
 msgstr "小數位數"
 
@@ -8209,6 +8264,7 @@ msgstr "對象層級"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
@@ -8219,10 +8275,10 @@ msgstr "對象"
 msgid "Objects and fields permissions settings"
 msgstr "物件和欄位權限設定"
 
-#. js-lingui-id: X51S3F
+#. js-lingui-id: YFI9hD
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Objects created by application"
-msgstr "由應用程序創建的對象"
+msgid "Objects managed by this app"
+msgstr "由此應用程式管理的物件"
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8744,6 +8800,7 @@ msgid "Picture"
 msgstr "圖片"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "餅圖"
@@ -8821,7 +8878,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "請鍵入\"{confirmationValue}\"確認要刪除此 API 密鑰。請注意，任何使用此密鑰的腳本都將停止工作。"
 
 #. js-lingui-id: L0SEpC
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
 msgstr ""
 
@@ -9106,6 +9163,11 @@ msgstr "原始 JSON"
 msgid "Read changelog"
 msgstr "查看更新記錄"
 
+#. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Read documentation"
+msgstr "閱讀說明文件"
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -9157,7 +9219,6 @@ msgstr "記錄篩選規則選項"
 
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Record image"
 msgstr "記錄圖像"
 
@@ -9178,11 +9239,6 @@ msgstr "記錄頁面"
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "記錄選擇"
-
-#. js-lingui-id: C450zb
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
-msgid "Record text"
-msgstr "記錄文字"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -9230,12 +9286,18 @@ msgstr "重新生成密鑰"
 msgid "Relation"
 msgstr "關聯"
 
+#. js-lingui-id: dQHMbF
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
+msgid "Relation between this object and other objects"
+msgstr ""
+
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "關係類型"
 
 #. js-lingui-id: g87L9j
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 msgid "Relations"
 msgstr "關係"
@@ -9259,7 +9321,6 @@ msgid "Reload"
 msgstr "重新載入"
 
 #. js-lingui-id: qlAIQ1
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
 msgid "Remote"
 msgstr "遠程"
@@ -9512,6 +9573,7 @@ msgid "Revoked for this object"
 msgstr "針對此物件已撤銷"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
@@ -9569,6 +9631,11 @@ msgstr "角色更新成功"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "角色"
+
+#. js-lingui-id: Qz0FZ3
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Rollover Credits"
+msgstr ""
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9697,6 +9764,7 @@ msgstr "用\"'{commandMenuSearch}'\"搜索..."
 #. js-lingui-id: l1/uy2
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "Search a field..."
 msgstr "搜索字段..."
 
@@ -9715,11 +9783,6 @@ msgstr "搜索團隊成員……"
 msgid "Search a type"
 msgstr "搜索類型"
 
-#. js-lingui-id: 4J+cf6
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
-msgid "Search a variable"
-msgstr "搜尋變數"
-
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search agents"
@@ -9729,6 +9792,11 @@ msgstr "搜索代理"
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "搜索代理..."
+
+#. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "Search an application"
+msgstr "搜尋應用程式"
 
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -10178,10 +10246,10 @@ msgstr "塞爾維亞語（西里爾文）"
 msgid "serverless function"
 msgstr "無伺服器函數"
 
-#. js-lingui-id: eGHP1w
+#. js-lingui-id: 0WOel+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Serverless functions created by application"
-msgstr "應用程序創建的無伺服器功能"
+msgid "Serverless functions powering this app"
+msgstr "支援此應用程式的無伺服器函式"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -10575,7 +10643,6 @@ msgstr "階段"
 
 #. js-lingui-id: TJBHlP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Standard"
 msgstr "標準"
 
@@ -10729,6 +10796,7 @@ msgstr "訂閱"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "立即訂閱"
 
@@ -11046,7 +11114,6 @@ msgstr "新地址的默認國家"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "此字段的描述"
 
@@ -11433,6 +11500,11 @@ msgstr "工具產生"
 msgid "Total"
 msgstr ""
 
+#. js-lingui-id: Fm0Lw/
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Total Available"
+msgstr ""
+
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
@@ -11624,10 +11696,10 @@ msgstr "雙因素身份驗證設定成功完成！"
 
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Type"
 msgstr "類型"
@@ -11684,18 +11756,18 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr ""
 
 #. js-lingui-id: u+6vfA
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall this application"
 msgstr ""
 
@@ -11723,6 +11795,11 @@ msgstr "單位"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "未知"
+
+#. js-lingui-id: YPJWmo
+#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+msgid "Unknown chart configuration type"
+msgstr ""
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -11864,6 +11941,11 @@ msgstr "更新"
 msgid "Upgrade"
 msgstr "升級"
 
+#. js-lingui-id: 7aHRdp
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Upgrade Plan"
+msgstr "升級方案"
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -11989,7 +12071,6 @@ msgid "Validate Data"
 msgstr "驗證數據"
 
 #. js-lingui-id: wMHvYH
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
@@ -12061,6 +12142,7 @@ msgid "Version of the application"
 msgstr "應用程序版本"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""
@@ -12094,6 +12176,11 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "查看計費詳情"
+
+#. js-lingui-id: SXCuo2
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "View Docs"
+msgstr "查看說明文件"
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
@@ -12541,7 +12628,7 @@ msgstr "黃色"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
@@ -12571,6 +12658,11 @@ msgstr "您已經屬於此工作區"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "您無權在此對象中創建記錄"
+
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "You can either create a private app or share it to others"
+msgstr "您可以建立私人應用程式，或將它分享給其他人"
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

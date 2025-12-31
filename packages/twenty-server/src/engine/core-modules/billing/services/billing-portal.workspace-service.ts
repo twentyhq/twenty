@@ -3,7 +3,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { findOrThrow, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  findOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -21,12 +26,11 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { assert } from 'src/utils/assert';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -73,7 +77,13 @@ export class BillingPortalWorkspaceService {
           !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
-    assert(checkoutSession.url, 'Error: missing checkout.session.url');
+    assertIsDefinedOrThrow(
+      checkoutSession.url,
+      new BillingException(
+        'Error: missing checkout.session.url',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      ),
+    );
 
     return checkoutSession.url;
   }
@@ -105,7 +115,7 @@ export class BillingPortalWorkspaceService {
       );
     }
 
-    const subscription =
+    const stripeSubscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
         workspace,
@@ -120,7 +130,7 @@ export class BillingPortalWorkspaceService {
     const createdBillingSubscription =
       await this.billingSubscriptionService.syncSubscriptionToDatabase(
         workspace.id,
-        subscription,
+        stripeSubscription.id,
       );
 
     await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
@@ -209,7 +219,44 @@ export class BillingPortalWorkspaceService {
         returnUrl,
       );
 
-    assert(session.url, 'Error: missing billingPortal.session.url');
+    assertIsDefinedOrThrow(
+      session.url,
+      new BillingException(
+        'Error: missing billingPortal.session.url',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      ),
+    );
+
+    return session.url;
+  }
+
+  async computeBillingPortalSessionURLForPaymentMethodUpdate(
+    workspace: WorkspaceEntity,
+    stripeCustomerId: string,
+    returnUrlPath?: string,
+  ) {
+    const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+    });
+
+    if (returnUrlPath) {
+      frontBaseUrl.pathname = returnUrlPath;
+    }
+    const returnUrl = frontBaseUrl.toString();
+
+    const session =
+      await this.stripeBillingPortalService.createBillingPortalSessionForPaymentMethodUpdate(
+        stripeCustomerId,
+        returnUrl,
+      );
+
+    assertIsDefinedOrThrow(
+      session.url,
+      new BillingException(
+        'Error: missing billingPortal.session.url',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
+      ),
+    );
 
     return session.url;
   }

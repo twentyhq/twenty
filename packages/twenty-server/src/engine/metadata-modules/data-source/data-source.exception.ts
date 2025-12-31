@@ -1,17 +1,22 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum DataSourceExceptionCode {
   DATA_SOURCE_NOT_FOUND = 'DATA_SOURCE_NOT_FOUND',
 }
 
-const dataSourceExceptionUserFriendlyMessages: Record<
-  DataSourceExceptionCode,
-  MessageDescriptor
-> = {
-  [DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND]: msg`Data source not found.`,
+const getDataSourceExceptionUserFriendlyMessage = (
+  code: DataSourceExceptionCode,
+) => {
+  switch (code) {
+    case DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class DataSourceException extends CustomException<DataSourceExceptionCode> {
@@ -22,7 +27,7 @@ export class DataSourceException extends CustomException<DataSourceExceptionCode
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? dataSourceExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getDataSourceExceptionUserFriendlyMessage(code),
     });
   }
 }

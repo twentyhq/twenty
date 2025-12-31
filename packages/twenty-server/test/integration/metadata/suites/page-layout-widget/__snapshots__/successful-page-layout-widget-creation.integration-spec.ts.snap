@@ -2,7 +2,10 @@
 
 exports[`Page layout widget creation should succeed should create a page layout widget 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {
@@ -15,14 +18,17 @@ exports[`Page layout widget creation should succeed should create a page layout 
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
   "title": "Test Widget",
-  "type": "VIEW",
+  "type": "IFRAME",
   "updatedAt": Any<String>,
 }
 `;
 
 exports[`Page layout widget creation should succeed should create a page layout widget with specific type 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://example.com",
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {
@@ -34,8 +40,8 @@ exports[`Page layout widget creation should succeed should create a page layout 
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Graph Widget",
-  "type": "GRAPH",
+  "title": "Iframe Widget",
+  "type": "IFRAME",
   "updatedAt": Any<String>,
 }
 `;

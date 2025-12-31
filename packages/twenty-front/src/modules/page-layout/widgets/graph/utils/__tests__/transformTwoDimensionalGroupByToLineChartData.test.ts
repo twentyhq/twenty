@@ -5,7 +5,7 @@ import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
-  GraphType,
+  WidgetConfigurationType,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
@@ -46,7 +46,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
   ): LineChartConfiguration =>
     ({
       __typename: 'LineChartConfiguration',
-      graphType: GraphType.LINE,
+      configurationType: WidgetConfigurationType.LINE_CHART,
       aggregateFieldMetadataId: 'amount-field',
       aggregateOperation: AggregateOperations.SUM,
       primaryAxisGroupByFieldMetadataId: 'created-at-field',

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -7,11 +8,15 @@ export enum ApplicationVariableEntityExceptionCode {
   APPLICATION_VARIABLE_NOT_FOUND = 'APPLICATION_VARIABLE_NOT_FOUND',
 }
 
-const applicationVariableEntityExceptionUserFriendlyMessages: Record<
-  ApplicationVariableEntityExceptionCode,
-  MessageDescriptor
-> = {
-  [ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND]: msg`Application variable not found.`,
+const getApplicationVariableEntityExceptionUserFriendlyMessage = (
+  code: ApplicationVariableEntityExceptionCode,
+) => {
+  switch (code) {
+    case ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND:
+      return msg`Application variable not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ApplicationVariableEntityException extends CustomException<ApplicationVariableEntityExceptionCode> {
@@ -23,7 +28,7 @@ export class ApplicationVariableEntityException extends CustomException<Applicat
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        applicationVariableEntityExceptionUserFriendlyMessages[code],
+        getApplicationVariableEntityExceptionUserFriendlyMessage(code),
     });
   }
 }

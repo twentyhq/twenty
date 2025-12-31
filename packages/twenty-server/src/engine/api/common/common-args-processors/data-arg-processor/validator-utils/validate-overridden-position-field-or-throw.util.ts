@@ -1,5 +1,7 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
+
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -13,11 +15,17 @@ export const validateOverriddenPositionFieldOrThrow = (
     typeof value !== 'number' ||
     (typeof value === 'number' &&
       (isNaN(value) || value === Infinity || value === -Infinity))
-  )
+  ) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid position value ${inspect(value)} for field "${fieldName}"`,
+      `Invalid position value ${inspectedValue} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      {
+        userFriendlyMessage: msg`Invalid value for position: "${inspectedValue}"`,
+      },
     );
+  }
 
   return value;
 };
