@@ -15,6 +15,7 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
+  type StartNodeCreationParams,
   type WorkflowConnection,
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
@@ -29,7 +30,6 @@ import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-e
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
@@ -152,12 +152,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnect?: OnReconnect;
   onReconnectStart?: () => void;
   onReconnectEnd?: () => void;
-  startNodeCreation?: (params: {
-    parentStepId: string | undefined;
-    nextStepId: string | undefined;
-    position?: { x: number; y: number };
-    connectionOptions?: WorkflowStepConnectionOptions;
-  }) => void;
+  startNodeCreation?: (params: StartNodeCreationParams) => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({

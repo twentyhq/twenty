@@ -3,6 +3,7 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { type MessageDescriptor } from '@lingui/core';
 import {
   type Connection,
@@ -120,3 +121,12 @@ export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;
 export type WorkflowDiagramNodeType = 'default' | 'empty-trigger' | 'empty';
 
 export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';
+
+export type StartNodeCreationParams = {
+  parentStepId: string | undefined;
+  nextStepId: string | undefined;
+  position?: { x: number; y: number };
+  connectionOptions?: WorkflowStepConnectionOptions;
+};
+
+export type { WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
