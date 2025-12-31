@@ -563,6 +563,11 @@ msgstr "Ability to add more than one URL"
 msgid "Ability to edit all settings"
 msgstr "Ability to edit all settings"
 
+#. js-lingui-id: be8QOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Ability to interact with specific records of this object."
+msgstr "Ability to interact with specific records of this object."
+
 #. js-lingui-id: wTKqOI
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Ability to interact with this object's fields."
@@ -8002,6 +8007,11 @@ msgstr "No permissions have been set for individual objects."
 msgid "No record is required to trigger this workflow"
 msgstr "No record is required to trigger this workflow"
 
+#. js-lingui-id: DiSvfp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "No record-level rules have been set yet."
+msgstr "No record-level rules have been set yet."
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -9245,6 +9255,11 @@ msgstr "Record Selection"
 msgid "Record Type"
 msgstr "Record Type"
 
+#. js-lingui-id: uMOyEH
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Record-level"
+msgstr "Record-level"
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
@@ -9656,6 +9671,16 @@ msgstr "Routing decision"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing tokens"
 msgstr "Routing tokens"
+
+#. js-lingui-id: Wzo1yG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate"
+msgstr "row level permission predicate"
+
+#. js-lingui-id: OmDNQi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate group"
+msgstr "row level permission predicate group"
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx

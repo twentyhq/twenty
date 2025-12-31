@@ -568,6 +568,11 @@ msgstr "Khả năng thêm nhiều địa chỉ URL hơn"
 msgid "Ability to edit all settings"
 msgstr "Khả năng chỉnh sửa tất cả các cài đặt"
 
+#. js-lingui-id: be8QOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Ability to interact with specific records of this object."
+msgstr ""
+
 #. js-lingui-id: wTKqOI
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Ability to interact with this object's fields."
@@ -8007,6 +8012,11 @@ msgstr "Chưa thiết lập quyền cho các đối tượng cá nhân."
 msgid "No record is required to trigger this workflow"
 msgstr "Không cần bản ghi nào để kích hoạt quy trình công việc này"
 
+#. js-lingui-id: DiSvfp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "No record-level rules have been set yet."
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -9250,6 +9260,11 @@ msgstr "Chọn Lọc Hồ sơ"
 msgid "Record Type"
 msgstr "Loại bản ghi"
 
+#. js-lingui-id: uMOyEH
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Record-level"
+msgstr ""
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
@@ -9661,6 +9676,16 @@ msgstr "Quyết định định tuyến"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing tokens"
 msgstr "Mã thông báo định tuyến"
+
+#. js-lingui-id: Wzo1yG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate"
+msgstr ""
+
+#. js-lingui-id: OmDNQi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate group"
+msgstr ""
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx

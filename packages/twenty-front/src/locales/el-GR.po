@@ -568,6 +568,11 @@ msgstr "Δυνατότητα προσθήκης περισσότερων από 
 msgid "Ability to edit all settings"
 msgstr "Δυνατότητα επεξεργασίας όλων των ρυθμίσεων"
 
+#. js-lingui-id: be8QOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Ability to interact with specific records of this object."
+msgstr ""
+
 #. js-lingui-id: wTKqOI
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Ability to interact with this object's fields."
@@ -8007,6 +8012,11 @@ msgstr "Δεν έχουν οριστεί δικαιώματα για μεμον�
 msgid "No record is required to trigger this workflow"
 msgstr "Δεν απαιτείται καμία εγγραφή για να ενεργοποιήσετε αυτήν τη ροή εργασιών"
 
+#. js-lingui-id: DiSvfp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "No record-level rules have been set yet."
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -9250,6 +9260,11 @@ msgstr "Επιλογή Εγγραφών"
 msgid "Record Type"
 msgstr "Τύπος εγγραφής"
 
+#. js-lingui-id: uMOyEH
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Record-level"
+msgstr ""
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
@@ -9661,6 +9676,16 @@ msgstr "Απόφαση δρομολόγησης"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing tokens"
 msgstr "Διακριτικά δρομολόγησης"
+
+#. js-lingui-id: Wzo1yG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate"
+msgstr ""
+
+#. js-lingui-id: OmDNQi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate group"
+msgstr ""
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
