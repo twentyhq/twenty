@@ -123,8 +123,8 @@ export const ChartSettingItem = ({
             !isDefined(value) ||
             isMinMaxRangeValid(
               item.id as
-              | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
-              | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+                | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
+                | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
               value,
               configuration,
             )
