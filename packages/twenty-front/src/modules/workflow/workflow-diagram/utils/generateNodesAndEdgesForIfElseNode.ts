@@ -15,6 +15,7 @@ import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
 import { Position } from '@xyflow/react';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const generateNodesAndEdgesForIfElseNode = ({
@@ -77,6 +78,11 @@ export const generateNodesAndEdgesForIfElseNode = ({
 
     const nextStepIds = branch.nextStepIds;
     for (const nextStepId of nextStepIds) {
+      const nextStep = steps.find((s) => s.id === nextStepId);
+      if (!isDefined(nextStep)) {
+        continue;
+      }
+
       updatedEdges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         type: edgeTypeBetweenTwoNodes,
