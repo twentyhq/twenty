@@ -3,8 +3,8 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import {
-    type CircularDependencyValidationResult,
-    validateFlatEntityCircularDependency,
+  type CircularDependencyValidationResult,
+  validateFlatEntityCircularDependency,
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/validate-flat-entity-circular-dependency.util';
 
 type TestFlatEntity = SyncableFlatEntity & {
@@ -243,4 +243,3 @@ describe('validateFlatEntityCircularDependency', () => {
     expect(result).toEqual(context.expected);
   });
 });
-
