@@ -22,26 +22,6 @@ export const seedFeatureFlags = async ({
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_AI_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -57,21 +37,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -82,7 +47,7 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED,
+        key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
