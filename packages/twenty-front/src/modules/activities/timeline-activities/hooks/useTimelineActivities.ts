@@ -38,11 +38,6 @@ export const useTimelineActivities = (
           targetableObject.targetObjectNameSingular,
       ),
   );
-  console.log({
-    hasTimelineActivityField,
-    targetableObject,
-    timelineActivityMetadata,
-  });
 
   const { recordGqlFields: depthOneRecordGqlFields } =
     useGenerateDepthRecordGqlFieldsFromObject({
