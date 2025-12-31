@@ -34,12 +34,11 @@ export const UpdateMultipleRecordsContainer = ({
   objectNameSingular: string;
   contextStoreInstanceId: string;
 }) => {
-  const { updateRecords, isUpdating, cancel } = useUpdateMultipleRecordsActions(
-    {
+  const { updateRecords, isUpdating, progress, cancel } =
+    useUpdateMultipleRecordsActions({
       objectNameSingular,
       contextStoreInstanceId,
-    },
-  );
+    });
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -98,6 +97,7 @@ export const UpdateMultipleRecordsContainer = ({
           </StyledContentContainer>
           <UpdateMultipleRecordsFooter
             isUpdating={isUpdating}
+            progress={progress}
             onUpdate={handleUpdate}
             onCancel={handleCancel}
             isUpdateDisabled={!hasChanges}

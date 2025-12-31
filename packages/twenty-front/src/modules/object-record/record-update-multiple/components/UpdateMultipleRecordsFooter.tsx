@@ -1,4 +1,6 @@
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -29,6 +31,7 @@ const StyledApplyButton = styled(Button)`
 
 type UpdateMultipleRecordsFooterProps = {
   isUpdating: boolean;
+  progress?: ObjectRecordQueryProgress;
   onUpdate: () => void;
   onCancel: () => void;
   isUpdateDisabled?: boolean;
@@ -36,11 +39,13 @@ type UpdateMultipleRecordsFooterProps = {
 
 export const UpdateMultipleRecordsFooter = ({
   isUpdating,
+  progress,
   onUpdate,
   onCancel,
   isUpdateDisabled,
 }: UpdateMultipleRecordsFooterProps) => {
   const { t } = useLingui();
+  const progressText = computeProgressText(progress);
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
@@ -63,12 +68,12 @@ export const UpdateMultipleRecordsFooter = ({
           onClick={onCancel}
         />
         <StyledApplyButton
-          title={isUpdating ? undefined : t`Apply`}
+          title={isUpdating ? t`Apply${progressText}` : t`Apply`}
           variant="primary"
           accent="blue"
           size="small"
           Icon={IconBoxMultiple}
-          isLoading={isUpdating}
+          isLoading={isUpdating && !progressText}
           hotkeys={isUpdating ? undefined : ['⌘', '⏎']}
           onClick={onUpdate}
           disabled={isUpdating || isUpdateDisabled}

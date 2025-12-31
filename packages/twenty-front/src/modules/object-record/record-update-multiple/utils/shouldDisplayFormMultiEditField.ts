@@ -4,10 +4,15 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 export const shouldDisplayFormMultiEditField = (
   fieldMetadataItem: FieldMetadataItem,
 ) => {
-  return (
-    shouldDisplayFormField({
-      fieldMetadataItem,
-      actionType: 'UPDATE_RECORD',
-    }) && !fieldMetadataItem.isUnique
-  );
+  if (
+    !shouldDisplayFormField({ fieldMetadataItem, actionType: 'UPDATE_RECORD' })
+  ) {
+    return false;
+  }
+
+  if (fieldMetadataItem.isUnique === true) {
+    return false;
+  }
+
+  return true;
 };

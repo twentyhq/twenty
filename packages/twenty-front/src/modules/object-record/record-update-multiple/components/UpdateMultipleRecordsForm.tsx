@@ -6,6 +6,7 @@ import { type UpdateMultipleRecordsState } from '@/object-record/record-update-m
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import styled from '@emotion/styled';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/layout';
 
 const StyledSection = styled(Section)`
@@ -33,31 +34,29 @@ export const UpdateMultipleRecordsForm = ({
     objectNameSingular,
   });
 
-  const fields = objectMetadataItem.fields.filter(
-    shouldDisplayFormMultiEditField,
-  );
+  const editableFields = objectMetadataItem.fields
+    .filter(shouldDisplayFormMultiEditField)
+    .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name));
 
-  const inlineFieldDefinitions = fields
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    )
-    .map((fieldMetadataItem) =>
-      formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem,
-        showLabel: true,
-        labelWidth: 90,
-      }),
-    );
+  const fieldsWithDefinitions = editableFields.map((fieldMetadataItem) => ({
+    fieldMetadataItem,
+    fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+      field: fieldMetadataItem,
+      objectMetadataItem,
+      showLabel: true,
+      labelWidth: 90,
+    }),
+  }));
 
   return (
     <StyledSection>
-      {inlineFieldDefinitions.map((fieldDefinition) => {
+      {fieldsWithDefinitions.map(({ fieldMetadataItem, fieldDefinition }) => {
         const fieldName = fieldDefinition.metadata.fieldName;
         const isRelation = isFieldRelation(fieldDefinition);
-        const fieldNameOrRelationIdName = isRelation
-          ? `${fieldName}Id`
-          : fieldName;
+        const fieldNameOrRelationIdName =
+          isRelation && fieldMetadataItem.type === FieldMetadataType.RELATION
+            ? (fieldMetadataItem.settings?.joinColumnName as string)
+            : fieldName;
 
         const value = values[fieldNameOrRelationIdName];
 
