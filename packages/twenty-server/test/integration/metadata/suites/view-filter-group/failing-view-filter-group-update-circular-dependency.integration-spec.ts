@@ -150,4 +150,3 @@ describe('View Filter Group update should fail with circular dependency', () => 
     });
   });
 });
-
