@@ -394,6 +394,11 @@ msgstr "{stepNumber}. التقويم"
 msgid "{totalCost} credits"
 msgstr "{totalCost, plural, zero {لا اعتمادات} one {اعتماد واحد} two {اعتمادان} few {# اعتمادات} many {# اعتمادًا} other {# اعتماد}}"
 
+#. js-lingui-id: p38XKy
+#: src/modules/command-menu/components/CommandMenuMultipleRecordsInfo.tsx
+msgid "{totalCount} selected"
+msgstr ""
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -1596,6 +1601,11 @@ msgstr ""
 msgid "Applications"
 msgstr "تطبيقات"
 
+#. js-lingui-id: DB8zMK
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+msgid "Apply"
+msgstr ""
+
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
@@ -2162,6 +2172,7 @@ msgstr "هل لا يمكنك المسح؟ انسخ الـ"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "إلغاء"
@@ -5275,6 +5286,11 @@ msgstr "فشل في تحديث علم الميزة. {errorMessage}"
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "فشل في تحديث السعر."
+
+#. js-lingui-id: J7vly7
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Failed to update records. Please try again."
+msgstr ""
 
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -10829,6 +10845,11 @@ msgstr "نجاح"
 msgid "Successfully merged {recordCount} records"
 msgstr "تم دمج {recordCount} من السجلات بنجاح"
 
+#. js-lingui-id: zsDoFr
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Successfully updated {count} records"
+msgstr ""
+
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
@@ -11872,8 +11893,15 @@ msgstr "تحديث"
 #: src/modules/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Update"
 msgstr "تحديث"
+
+#. js-lingui-id: 0KAL3W
+#: src/modules/command-menu/hooks/useOpenUpdateMultipleRecordsPageInCommandMenu.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Update records"
+msgstr ""
 
 #. js-lingui-id: 5bRMKt
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
