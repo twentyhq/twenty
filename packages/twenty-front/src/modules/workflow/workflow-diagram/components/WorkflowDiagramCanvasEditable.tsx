@@ -4,6 +4,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import {
@@ -56,6 +57,8 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { updateStep } = useUpdateStep();
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
+
+  const { startNodeCreation } = useStartNodeCreation();
 
   const onConnect = (edgeConnect: WorkflowConnection) => {
     setWorkflowDiagram((diagram) => {
@@ -177,6 +180,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodesConnectable
         nodesDraggable
         onDeleteEdge={onDeleteEdge}
+        startNodeCreation={startNodeCreation}
       />
 
       <WorkflowDiagramCanvasEditableEffect />

@@ -8,6 +8,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
+import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
@@ -25,6 +26,8 @@ import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -39,6 +42,7 @@ import {
   type NodeChange,
   type NodeProps,
   type OnBeforeDelete,
+  type OnConnectStartParams,
   type OnDelete,
   type OnNodeDrag,
   type OnReconnect,
@@ -105,6 +109,7 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnect,
   onReconnectStart,
   onReconnectEnd,
+  startNodeCreation,
   handlePaneContextMenu,
   nodesConnectable = false,
   nodesDraggable = false,
@@ -142,6 +147,12 @@ export const WorkflowDiagramCanvasBase = ({
   onReconnect?: OnReconnect;
   onReconnectStart?: () => void;
   onReconnectEnd?: () => void;
+  startNodeCreation?: (params: {
+    parentStepId: string | undefined;
+    nextStepId: string | undefined;
+    position?: { x: number; y: number };
+    connectionOptions?: WorkflowStepConnectionOptions;
+  }) => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -182,10 +193,18 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
+  const { workflowDiagramScreenToFlowPosition } =
+    useWorkflowDiagramScreenToFlowPosition();
+
   const { setEdgeHovered, clearEdgeHover } = useEdgeState();
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
+
+  const [connectionStartInfo, setConnectionStartInfo] = useState<{
+    nodeId: string;
+    handleId: string;
+  } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
     if (isDefined(workflowDiagram)) {
@@ -430,11 +449,81 @@ export const WorkflowDiagramCanvasBase = ({
     clearEdgeHover();
   }, [clearEdgeHover]);
 
+  const handleConnectStart = useCallback(
+    (_: MouseEvent | TouchEvent, params: OnConnectStartParams) => {
+      if (isDefined(params.nodeId) && isDefined(params.handleId)) {
+        setConnectionStartInfo({
+          nodeId: params.nodeId,
+          handleId: params.handleId,
+        });
+      }
+    },
+    [],
+  );
+
   const handleConnect = (connection: Connection) => {
     assertWorkflowConnectionOrThrow(connection);
-
+    setConnectionStartInfo(null);
     onConnect?.(connection);
   };
+
+  const handleConnectEnd = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      let startInfo = connectionStartInfo;
+
+      setConnectionStartInfo((prev) => {
+        startInfo = prev;
+        return null;
+      });
+
+      if (
+        !isDefined(startInfo) ||
+        !isDefined(startNodeCreation) ||
+        !(event instanceof MouseEvent)
+      ) {
+        return;
+      }
+
+      const bounds = (event.target as HTMLElement)
+        .closest('.react-flow')
+        ?.getBoundingClientRect();
+
+      if (!isDefined(bounds)) {
+        return;
+      }
+
+      const screenPosition = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+      };
+
+      const flowPosition = workflowDiagramScreenToFlowPosition(screenPosition);
+
+      if (!isDefined(flowPosition)) {
+        return;
+      }
+
+      const DEFAULT_NODE_WIDTH = 180;
+      const adjustedPosition = {
+        x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
+        y: flowPosition.y + 50,
+      };
+
+      startNodeCreation({
+        parentStepId: startInfo.nodeId,
+        nextStepId: undefined,
+        position: adjustedPosition,
+        connectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: startInfo.handleId,
+        }),
+      });
+    },
+    [
+      connectionStartInfo,
+      startNodeCreation,
+      workflowDiagramScreenToFlowPosition,
+    ],
+  );
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -455,6 +544,8 @@ export const WorkflowDiagramCanvasBase = ({
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onConnect={handleConnect}
+        onConnectStart={handleConnectStart}
+        onConnectEnd={handleConnectEnd}
         onReconnect={onReconnect}
         onReconnectStart={onReconnectStart}
         onReconnectEnd={onReconnectEnd}
