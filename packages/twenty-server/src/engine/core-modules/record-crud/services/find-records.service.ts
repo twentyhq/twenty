@@ -24,8 +24,14 @@ export class FindRecordsService {
   async execute(
     params: FindRecordsParams,
   ): Promise<ToolOutput<FindRecordsResult>> {
-    const { objectName, filter, orderBy, limit, offset = 0, authContext } =
-      params;
+    const {
+      objectName,
+      filter,
+      orderBy,
+      limit,
+      offset = 0,
+      authContext,
+    } = params;
 
     try {
       const {

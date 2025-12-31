@@ -32,4 +32,3 @@ export const removeUndefinedFromRecord = <T extends Record<string, unknown>>(
 
   return result as T;
 };
-

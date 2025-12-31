@@ -89,7 +89,10 @@ export class ToolRegistryService {
     query: string,
     workspaceId: string,
     roleId: string,
-    options: ToolSearchOptions & { userId?: string; userWorkspaceId?: string } = {},
+    options: ToolSearchOptions & {
+      userId?: string;
+      userWorkspaceId?: string;
+    } = {},
   ): Promise<ToolIndexEntry[]> {
     const { limit = 5, category, userId, userWorkspaceId } = options;
     const index = await this.buildToolIndex(workspaceId, roleId, {
