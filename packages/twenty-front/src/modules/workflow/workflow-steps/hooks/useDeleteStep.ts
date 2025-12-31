@@ -28,19 +28,15 @@ export const useDeleteStep = () => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
     const steps = workflow?.currentVersion?.steps;
-    if (!isDefined(steps)) {
-      return;
-    }
+    const stepToDelete = isDefined(steps)
+      ? steps.find((step) => step.id === stepId)
+      : undefined;
 
-    const stepToDelete = steps.find((step) => step.id === stepId);
-    if (!isDefined(stepToDelete)) {
-      return;
-    }
-
-    const isAiAgentStep = stepToDelete.type === 'AI_AGENT';
-    const isIfElseStep = stepToDelete.type === 'IF_ELSE';
-
-    if (isIfElseStep) {
+    if (
+      isDefined(stepToDelete) &&
+      isDefined(steps) &&
+      stepToDelete.type === 'IF_ELSE'
+    ) {
       const emptyChildStepIds = getEmptyChildStepIds({
         ifElseAction: stepToDelete as WorkflowIfElseAction,
         allSteps: steps,
@@ -73,7 +69,7 @@ export const useDeleteStep = () => {
       workflowVersionId,
     });
 
-    if (isAiAgentStep) {
+    if (isDefined(stepToDelete) && stepToDelete.type === 'AI_AGENT') {
       resetPermissionState();
     }
   };
