@@ -123,8 +123,8 @@ export type WorkflowDiagramNodeType = 'default' | 'empty-trigger' | 'empty';
 export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';
 
 export type StartNodeCreationParams = {
-  parentStepId: string | undefined;
-  nextStepId: string | undefined;
+  parentStepId?: string;
+  nextStepId?: string;
   position?: { x: number; y: number };
   connectionOptions?: WorkflowStepConnectionOptions;
 };
