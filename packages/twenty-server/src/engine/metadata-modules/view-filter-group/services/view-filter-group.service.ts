@@ -74,11 +74,6 @@ export class ViewFilterGroupService {
       );
     }
 
-    this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: ['flatViewFilterGroupMaps'],
-    });
-
     const {
       flatViewFilterGroupMaps: recomputedExistingFlatViewFilterGroupMaps,
     } =
