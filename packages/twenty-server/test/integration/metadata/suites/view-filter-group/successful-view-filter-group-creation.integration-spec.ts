@@ -136,10 +136,13 @@ describe('View Filter Group creation should succeed', () => {
       parentViewFilterGroupId,
     });
 
-    // Clean up parent
+    // Clean up parent (this CASCADE-deletes the child too)
     await destroyOneCoreViewFilterGroup({
       expectToFail: false,
       id: parentViewFilterGroupId,
     });
+
+    // Clear the child ID since it was CASCADE-deleted with the parent
+    createdViewFilterGroupId = '';
   });
 });

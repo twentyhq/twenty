@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -29,7 +28,7 @@ export const fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow = ({
 
   if (!isDefined(existingFlatViewFilterGroupToDestroy)) {
     throw new ViewFilterGroupException(
-      t`View filter group to destroy not found`,
+      `View filter group (id: ${viewFilterGroupId}) not found`,
       ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
     );
   }
