@@ -85,6 +85,7 @@ describe('View Filter Group creation should fail', () => {
     });
 
     createdViewId = viewData?.createCoreView?.id;
+    jestExpectToBeDefined(createdViewId);
   });
 
   afterAll(async () => {

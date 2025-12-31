@@ -94,6 +94,7 @@ describe('View Filter creation should fail', () => {
     });
 
     createdViewId = viewData?.createCoreView?.id;
+    jestExpectToBeDefined(createdViewId);
   });
 
   afterAll(async () => {
