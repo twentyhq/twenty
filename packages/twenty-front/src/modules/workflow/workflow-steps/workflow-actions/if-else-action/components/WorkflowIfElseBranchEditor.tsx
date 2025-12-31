@@ -9,10 +9,9 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 import { isStepFilterGroupChildAStepFilterGroup } from '@/workflow/workflow-steps/filters/utils/isStepFilterGroupChildAStepFilterGroup';
 import styled from '@emotion/styled';
 import { i18n, type MessageDescriptor } from '@lingui/core';
-import { t } from '@lingui/core/macro';
 import { type StepFilterGroup } from 'twenty-shared/types';
-import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 const StyledBranchContainer = styled.div`
   display: flex;
@@ -72,16 +71,7 @@ export const WorkflowIfElseBranchEditor = ({
     });
 
   if (isElseBranch) {
-    return (
-      <StyledBranchContainer>
-        <StyledBranchHeader>
-          <StyledBranchLabel>{i18n._(branchLabel)}</StyledBranchLabel>
-        </StyledBranchHeader>
-        <StyledElsePlaceholder>
-          {t`Default path when no conditions match`}
-        </StyledElsePlaceholder>
-      </StyledBranchContainer>
-    );
+    return null;
   }
 
   const isIfBranch = branchIndex === 0;
