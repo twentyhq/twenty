@@ -261,10 +261,6 @@ export const WorkflowDiagramCanvasBase = ({
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
-    if (edgeChanges.length === 0) {
-      return;
-    }
-
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
