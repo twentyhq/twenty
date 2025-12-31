@@ -126,6 +126,8 @@ export const WorkflowEditActionIfElseBody = ({
     const elseIfBranchIndex = branches.length - 1;
     const ifElseStepPosition = action.position ?? { x: 0, y: 0 };
 
+    const workflowVersionId = await getUpdatableWorkflowVersion();
+
     const existingBranchPositions = calculateExistingBranchPositions({
       branches,
       elseIfBranchIndex,
@@ -140,7 +142,6 @@ export const WorkflowEditActionIfElseBody = ({
     );
 
     if (existingBranchPositions.length > 0) {
-      const workflowVersionId = await getUpdatableWorkflowVersion();
       await updateWorkflowVersionPosition(
         workflowVersionId,
         existingBranchPositions,
@@ -153,6 +154,7 @@ export const WorkflowEditActionIfElseBody = ({
       nextStepId: undefined,
       position: newEmptyNodePosition,
       shouldSelectNode: false,
+      workflowVersionId,
     });
 
     if (!isDefined(emptyNode)) {

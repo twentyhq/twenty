@@ -35,6 +35,7 @@ export const useCreateStep = () => {
     position,
     connectionOptions,
     shouldSelectNode = true,
+    workflowVersionId: providedWorkflowVersionId,
   }: {
     newStepType: WorkflowActionType;
     parentStepId: string | undefined;
@@ -42,6 +43,7 @@ export const useCreateStep = () => {
     position?: { x: number; y: number };
     connectionOptions?: WorkflowStepConnectionOptions;
     shouldSelectNode?: boolean;
+    workflowVersionId?: string;
   }) => {
     if (isLoading === true) {
       return;
@@ -50,7 +52,8 @@ export const useCreateStep = () => {
     setIsLoading(true);
 
     try {
-      const workflowVersionId = await getUpdatableWorkflowVersion();
+      const workflowVersionId =
+        providedWorkflowVersionId ?? (await getUpdatableWorkflowVersion());
       const id = v4();
 
       const workflowVersionStepChanges = (
