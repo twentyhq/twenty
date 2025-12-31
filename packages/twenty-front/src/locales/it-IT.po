@@ -394,6 +394,11 @@ msgstr "{stepNumber}. Calendario"
 msgid "{totalCost} credits"
 msgstr "{totalCost} crediti"
 
+#. js-lingui-id: p38XKy
+#: src/modules/command-menu/components/CommandMenuMultipleRecordsInfo.tsx
+msgid "{totalCount} selected"
+msgstr ""
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -562,6 +567,11 @@ msgstr "Possibilità di aggiungere più di un URL"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
 msgstr "Abilità di modificare tutte le impostazioni"
+
+#. js-lingui-id: be8QOI
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Ability to interact with specific records of this object."
+msgstr ""
 
 #. js-lingui-id: wTKqOI
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -1596,6 +1606,16 @@ msgstr ""
 msgid "Applications"
 msgstr "Applicazioni"
 
+#. js-lingui-id: DB8zMK
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+msgid "Apply"
+msgstr ""
+
+#. js-lingui-id: 9re43z
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+msgid "Apply{progressText}"
+msgstr ""
+
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
@@ -2162,6 +2182,7 @@ msgstr "Non puoi scansionare? Copia il"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "Annulla"
@@ -5276,6 +5297,11 @@ msgstr "Impossibile aggiornare il feature flag. {errorMessage}"
 msgid "Failed to update price."
 msgstr "Impossibile aggiornare il prezzo."
 
+#. js-lingui-id: J7vly7
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Failed to update records. Please try again."
+msgstr ""
+
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
@@ -7986,6 +8012,11 @@ msgstr "Nessuna autorizzazione è stata impostata per gli oggetti individuali."
 msgid "No record is required to trigger this workflow"
 msgstr "Non è richiesto alcun record per attivare questo flusso di lavoro"
 
+#. js-lingui-id: DiSvfp
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "No record-level rules have been set yet."
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -9229,6 +9260,11 @@ msgstr "Selezione record"
 msgid "Record Type"
 msgstr "Tipo di record"
 
+#. js-lingui-id: uMOyEH
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+msgid "Record-level"
+msgstr ""
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
@@ -9640,6 +9676,16 @@ msgstr "Decisione di instradamento"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing tokens"
 msgstr "Token di instradamento"
+
+#. js-lingui-id: Wzo1yG
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate"
+msgstr ""
+
+#. js-lingui-id: OmDNQi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission predicate group"
+msgstr ""
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -10829,6 +10875,11 @@ msgstr "Successo"
 msgid "Successfully merged {recordCount} records"
 msgstr "Unione completata di {recordCount} record"
 
+#. js-lingui-id: zsDoFr
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Successfully updated {count} records"
+msgstr ""
+
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
@@ -11874,8 +11925,15 @@ msgstr "aggiorna"
 #: src/modules/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Update"
 msgstr "Aggiorna"
+
+#. js-lingui-id: 0KAL3W
+#: src/modules/command-menu/hooks/useOpenUpdateMultipleRecordsPageInCommandMenu.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Update records"
+msgstr ""
 
 #. js-lingui-id: 5bRMKt
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx

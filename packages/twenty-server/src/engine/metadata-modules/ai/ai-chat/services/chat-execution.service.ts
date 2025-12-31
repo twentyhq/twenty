@@ -105,6 +105,7 @@ export class ChatExecutionService {
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
       roleId,
+      { userId, userWorkspaceId },
     );
 
     const skillCatalog = this.skillsService.getAllSkills();

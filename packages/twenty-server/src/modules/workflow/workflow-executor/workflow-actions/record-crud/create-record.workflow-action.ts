@@ -69,7 +69,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const toolOutput = await this.createRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecord: workflowActionInput.objectRecord,
-      workspaceId,
+      authContext: executionContext.authContext,
       createdBy,
       rolePermissionConfig: executionContext.rolePermissionConfig,
     });

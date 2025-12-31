@@ -139,7 +139,7 @@ export class ToolProviderService {
   }
 
   private async getDatabaseTools(spec: ToolSpecification): Promise<ToolSet> {
-    if (!spec.rolePermissionConfig) {
+    if (!spec.rolePermissionConfig || !spec.authContext) {
       return {};
     }
 
@@ -153,6 +153,7 @@ export class ToolProviderService {
     return this.perObjectToolGenerator.generate(
       {
         workspaceId: spec.workspaceId,
+        authContext: spec.authContext,
         rolePermissionConfig: spec.rolePermissionConfig,
         actorContext: spec.actorContext,
       },

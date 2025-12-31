@@ -1,9 +1,7 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import {
-  type FlatObjectMetadata,
-  objectMetadataEntityRelationProperties,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const fromObjectMetadataEntityToFlatObjectMetadata = (
@@ -11,7 +9,9 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 ): FlatObjectMetadata => {
   const objectMetadataEntityWithoutRelations = removePropertiesFromRecord(
     objectMetadataEntity,
-    objectMetadataEntityRelationProperties,
+    Object.keys(
+      ALL_METADATA_RELATION_PROPERTIES.objectMetadata,
+    ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.objectMetadata)[],
   );
 
   return {
