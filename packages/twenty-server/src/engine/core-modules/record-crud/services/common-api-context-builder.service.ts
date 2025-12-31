@@ -115,7 +115,7 @@ export class CommonApiContextBuilderService {
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectsPermissions> {
     const workspaceId = authContext.workspace.id;
-    let roleId: string;
+    let roleId: string | undefined;
 
     if (isDefined(authContext.apiKey)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
@@ -126,6 +126,9 @@ export class CommonApiContextBuilderService {
       isDefined(authContext.application?.defaultServerlessFunctionRoleId)
     ) {
       roleId = authContext.application.defaultServerlessFunctionRoleId;
+    } else if (isDefined(authContext.application)) {
+      // Application without defaultServerlessFunctionRoleId - bypass permission checks
+      return {};
     } else if (isDefined(authContext.userWorkspaceId)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
