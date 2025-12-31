@@ -4,60 +4,73 @@ import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { ViewFilterGroupExceptionCode } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
+import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration-v2/utils/validate-flat-entity-circular-dependency.util';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+
+// View filter groups can have at most 2 levels of nesting (root and one child level)
+const VIEW_FILTER_GROUP_MAX_DEPTH = 2;
 
 @Injectable()
 export class FlatViewFilterGroupValidatorService {
   constructor() {}
 
-  private hasCircularDependency({
+  private getCircularDependencyValidationErrors({
     viewFilterGroupId,
     parentViewFilterGroupId,
     flatViewFilterGroupMaps,
   }: {
     viewFilterGroupId: string;
     parentViewFilterGroupId: string;
-    flatViewFilterGroupMaps: FlatEntityMaps<FlatViewFilterGroup>;
-  }): boolean {
-    // Direct self-reference check
-    if (viewFilterGroupId === parentViewFilterGroupId) {
-      return true;
+    flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
+  }): FlatEntityValidationError<ViewFilterGroupExceptionCode>[] {
+    const circularDependencyResult = validateFlatEntityCircularDependency({
+      flatEntityId: viewFilterGroupId,
+      flatEntityParentId: parentViewFilterGroupId,
+      maxDepth: VIEW_FILTER_GROUP_MAX_DEPTH,
+      parentIdKey: 'parentViewFilterGroupId',
+      flatEntityMaps: flatViewFilterGroupMaps,
+    });
+
+    if (circularDependencyResult.status === 'success') {
+      return [];
     }
 
-    // Traverse ancestor chain to detect cycles
-    const visited = new Set<string>();
-    let currentParentId: string | null = parentViewFilterGroupId;
-
-    while (currentParentId !== null) {
-      if (currentParentId === viewFilterGroupId) {
-        return true;
-      }
-
-      if (visited.has(currentParentId)) {
-        // Already visited this node, cycle detected in ancestors
-        return true;
-      }
-
-      visited.add(currentParentId);
-
-      const parentGroup: FlatViewFilterGroup | undefined =
-        flatViewFilterGroupMaps.byId[currentParentId];
-
-      if (!isDefined(parentGroup)) {
-        break;
-      }
-
-      currentParentId = parentGroup.parentViewFilterGroupId ?? null;
+    switch (circularDependencyResult.reason) {
+      case 'self_reference':
+        return [
+          {
+            code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
+            message: t`View filter group cannot be its own parent`,
+            userFriendlyMessage: msg`View filter group cannot be its own parent`,
+          },
+        ];
+      case 'circular_dependency':
+        return [
+          {
+            code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
+            message: t`Circular dependency detected in view filter group hierarchy`,
+            userFriendlyMessage: msg`Circular dependency detected in view filter group hierarchy`,
+          },
+        ];
+      case 'max_depth_exceeded':
+        return [
+          {
+            code: ViewFilterGroupExceptionCode.MAX_DEPTH_EXCEEDED,
+            message: t`View filter group hierarchy exceeds maximum depth of ${VIEW_FILTER_GROUP_MAX_DEPTH}`,
+            userFriendlyMessage: msg`View filter group hierarchy exceeds maximum depth of ${VIEW_FILTER_GROUP_MAX_DEPTH}`,
+          },
+        ];
     }
-
-    return false;
   }
 
   validateFlatViewFilterGroupCreation({
@@ -105,18 +118,16 @@ export class FlatViewFilterGroupValidatorService {
     }
 
     if (isDefined(flatViewFilterGroupToValidate.parentViewFilterGroupId)) {
-      // Check for self-reference (a group cannot be its own parent)
-      if (
-        flatViewFilterGroupToValidate.id ===
-        flatViewFilterGroupToValidate.parentViewFilterGroupId
-      ) {
-        validationResult.errors.push({
-          code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
-          message: t`View filter group cannot be its own parent`,
-          userFriendlyMessage: msg`View filter group cannot be its own parent`,
+      const circularDependencyErrors =
+        this.getCircularDependencyValidationErrors({
+          viewFilterGroupId: flatViewFilterGroupToValidate.id,
+          parentViewFilterGroupId:
+            flatViewFilterGroupToValidate.parentViewFilterGroupId,
+          flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
         });
 
-        return validationResult;
+      if (circularDependencyErrors.length > 0) {
+        validationResult.errors.push(...circularDependencyErrors);
       }
 
       const referencedParentInOptimistic = findFlatEntityByIdInFlatEntityMaps({
@@ -171,8 +182,6 @@ export class FlatViewFilterGroupValidatorService {
         message: t`View filter group not found`,
         userFriendlyMessage: msg`View filter group not found`,
       });
-
-      return validationResult;
     }
 
     return validationResult;
@@ -204,49 +213,46 @@ export class FlatViewFilterGroupValidatorService {
         message: t`View filter group not found`,
         userFriendlyMessage: msg`View filter group not found`,
       });
+    }
 
+    const parentViewFilterGroupIdUpdate = findFlatEntityPropertyUpdate({
+      property: 'parentViewFilterGroupId',
+      flatEntityUpdates,
+    });
+
+    if (!isDefined(parentViewFilterGroupIdUpdate)) {
       return validationResult;
     }
 
-    const updatedFlatViewFilterGroup = {
-      ...existingViewFilterGroup,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
-    };
+    const newParentViewFilterGroupId = parentViewFilterGroupIdUpdate.to;
 
-    if (isDefined(updatedFlatViewFilterGroup.parentViewFilterGroupId)) {
-      // Check for circular dependency (including self-reference)
-      if (
-        this.hasCircularDependency({
-          viewFilterGroupId: flatEntityId,
-          parentViewFilterGroupId:
-            updatedFlatViewFilterGroup.parentViewFilterGroupId,
-          flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
-        })
-      ) {
-        validationResult.errors.push({
-          code: ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY,
-          message: t`Circular dependency detected in view filter group hierarchy`,
-          userFriendlyMessage: msg`Circular dependency detected in view filter group hierarchy`,
-        });
+    if (!isDefined(newParentViewFilterGroupId)) {
+      return validationResult;
+    }
 
-        return validationResult;
-      }
+    const circularDependencyErrors = this.getCircularDependencyValidationErrors(
+      {
+        viewFilterGroupId: flatEntityId,
+        parentViewFilterGroupId: newParentViewFilterGroupId,
+        flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
+      },
+    );
 
-      const referencedParentViewFilterGroup =
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: updatedFlatViewFilterGroup.parentViewFilterGroupId,
-          flatEntityMaps: optimisticFlatViewFilterGroupMaps,
-        });
+    if (circularDependencyErrors.length > 0) {
+      validationResult.errors.push(...circularDependencyErrors);
+    }
 
-      if (!isDefined(referencedParentViewFilterGroup)) {
-        validationResult.errors.push({
-          code: ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-          message: t`Parent view filter group not found`,
-          userFriendlyMessage: msg`Parent view filter group not found`,
-        });
-      }
+    const referencedParentViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: newParentViewFilterGroupId,
+      flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+    });
+
+    if (!isDefined(referencedParentViewFilterGroup)) {
+      validationResult.errors.push({
+        code: ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+        message: t`Parent view filter group not found`,
+        userFriendlyMessage: msg`Parent view filter group not found`,
+      });
     }
 
     return validationResult;
