@@ -1,0 +1,225 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter creation should fail when fieldMetadataId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_filter",
+        },
+      ],
+      "viewFilterGroup": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewFilterGroup": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter creation should fail when viewFilterGroupId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View filter group not found",
+              "userFriendlyMessage": "View filter group not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_filter",
+        },
+      ],
+      "viewFilterGroup": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewFilterGroup": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter creation should fail when viewId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_view_filter",
+        },
+      ],
+      "viewFilterGroup": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewFilterGroup": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;

@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Group update should fail when parentViewFilterGroupId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewFilterGroup": [
+        {
+          "errors": [
+            {
+              "code": "VIEW_FILTER_GROUP_NOT_FOUND",
+              "message": "Parent view filter group not found",
+              "userFriendlyMessage": "Parent view filter group not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "update_view_filter_group",
+        },
+      ],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewFilterGroup": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating view filter group",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter Group update should fail when view filter group id does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View filter group not found",
+  "name": "NotFoundError",
+}
+`;

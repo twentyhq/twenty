@@ -28,7 +28,7 @@ export const fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow = ({
 
   if (!isDefined(existingFlatViewFilterGroupToDestroy)) {
     throw new ViewFilterGroupException(
-      `View filter group (id: ${viewFilterGroupId}) not found`,
+      'View filter group not found',
       ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
     );
   }
