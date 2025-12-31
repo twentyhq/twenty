@@ -22,6 +22,7 @@ export class FlatViewFilterGroupValidatorService {
       flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
       flatViewMaps,
     },
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<FlatViewFilterGroup> {
@@ -60,14 +61,20 @@ export class FlatViewFilterGroupValidatorService {
     }
 
     if (isDefined(flatViewFilterGroupToValidate.parentViewFilterGroupId)) {
-      const referencedParentViewFilterGroup = findFlatEntityByIdInFlatEntityMaps(
-        {
-          flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
-          flatEntityMaps: optimisticFlatViewFilterGroupMaps,
-        },
-      );
+      const referencedParentInOptimistic = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
+        flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+      });
 
-      if (!isDefined(referencedParentViewFilterGroup)) {
+      const referencedParentInRemaining = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
+        flatEntityMaps: remainingFlatEntityMapsToValidate,
+      });
+
+      if (
+        !isDefined(referencedParentInOptimistic) &&
+        !isDefined(referencedParentInRemaining)
+      ) {
         validationResult.errors.push({
           code: ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
           message: t`Parent view filter group not found`,
