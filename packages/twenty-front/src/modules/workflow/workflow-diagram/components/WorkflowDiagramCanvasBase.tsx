@@ -7,6 +7,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
@@ -28,6 +29,9 @@ import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/u
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -193,6 +197,10 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
+  const workflowInsertStepIds = useRecoilComponentValue(
+    workflowInsertStepIdsComponentState,
+  );
+
   const { workflowDiagramScreenToFlowPosition } =
     useWorkflowDiagramScreenToFlowPosition();
 
@@ -207,11 +215,47 @@ export const WorkflowDiagramCanvasBase = ({
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
-    if (isDefined(workflowDiagram)) {
-      return workflowDiagram;
+    if (!isDefined(workflowDiagram)) {
+      return { nodes: [], edges: [] };
     }
-    return { nodes: [], edges: [] };
-  }, [workflowDiagram]);
+
+    const nodes = [...workflowDiagram.nodes];
+    const edges = [...workflowDiagram.edges];
+
+    if (
+      isDefined(workflowInsertStepIds.position) &&
+      !isDefined(workflowInsertStepIds.nextStepId)
+    ) {
+      const emptyNode = {
+        ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION,
+        position: workflowInsertStepIds.position,
+        data: {
+          ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.data,
+          position: workflowInsertStepIds.position,
+        },
+      };
+
+      nodes.push(emptyNode);
+
+      if (isDefined(workflowInsertStepIds.parentStepId)) {
+        edges.push({
+          id: 'empty-edge',
+          type: 'blank',
+          source: workflowInsertStepIds.parentStepId,
+          sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+          target: WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id,
+          targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
+          deletable: false,
+          selectable: false,
+          data: {
+            edgeType: 'default',
+          },
+        });
+      }
+    }
+
+    return { nodes, edges };
+  }, [workflowDiagram, workflowInsertStepIds]);
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -219,6 +263,10 @@ export const WorkflowDiagramCanvasBase = ({
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
+    if (edgeChanges.length === 0) {
+      return;
+    }
+
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
@@ -347,11 +395,20 @@ export const WorkflowDiagramCanvasBase = ({
           snapshot,
           workflowDiagramState,
         );
+
+        const filteredChanges = changes.filter(
+          (change) =>
+            !(
+              'id' in change &&
+              change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id
+            ),
+        );
+
         let updatedWorkflowDiagram = workflowDiagram;
-        if (isDefined(workflowDiagram)) {
+        if (isDefined(workflowDiagram) && filteredChanges.length > 0) {
           updatedWorkflowDiagram = {
             ...workflowDiagram,
-            nodes: applyNodeChanges(changes, workflowDiagram.nodes),
+            nodes: applyNodeChanges(filteredChanges, workflowDiagram.nodes),
           };
         }
 

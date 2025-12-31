@@ -165,6 +165,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
+          empty: WorkflowDiagramStepNodeEditable,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,

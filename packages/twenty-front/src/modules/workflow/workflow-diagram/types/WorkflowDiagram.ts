@@ -117,6 +117,6 @@ export type WorkflowDiagramDefaultEdgeData = {
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
+export type WorkflowDiagramNodeType = 'default' | 'empty-trigger' | 'empty';
 
 export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';
