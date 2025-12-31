@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -45,14 +45,13 @@ export const ObjectSettings = ({
   setIsDeleting,
 }: ObjectSettingsProps) => {
   const { t } = useLingui();
-  const readonly = isObjectMetadataSettingsReadOnly({
-    objectMetadataItem,
-  });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
+
+  const isReadOnly = isObjectMetadataReadOnly({ objectMetadataItem });
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -110,7 +109,7 @@ export const ObjectSettings = ({
           />
         </Section>
       </StyledFormSection>
-      {!readonly && (
+      {!isReadOnly && (
         <StyledFormSection>
           <Section>
             <H2Title

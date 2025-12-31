@@ -161,6 +161,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Maximal amount contained in the field ${field.name}`,
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            subFieldForNumericOperation: 'amountMicros',
             fromFieldType: field.type,
             aggregateOperation: AggregateOperations.MAX,
           };
@@ -170,6 +171,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Sum of amounts contained in the field ${field.name}`,
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            subFieldForNumericOperation: 'amountMicros',
             fromFieldType: field.type,
             aggregateOperation: AggregateOperations.SUM,
           };
@@ -179,6 +181,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Average amount contained in the field ${field.name}`,
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            subFieldForNumericOperation: 'amountMicros',
             fromFieldType: field.type,
             aggregateOperation: AggregateOperations.AVG,
           };

@@ -9,6 +9,7 @@ import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/p
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetActions } from '@/page-layout/widgets/hooks/useWidgetActions';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
@@ -67,6 +68,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
+  const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
+
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
@@ -119,6 +122,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         isEditing={isEditing}
         isDragging={isDragging}
         isResizing={isResizing}
+        isLastWidget={isLastWidget}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         data-widget-id={widget.id}
