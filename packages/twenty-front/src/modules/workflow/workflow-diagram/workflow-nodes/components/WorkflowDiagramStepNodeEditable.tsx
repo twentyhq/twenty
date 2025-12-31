@@ -4,7 +4,6 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { EMPTY_NODE_ID } from '@/workflow/workflow-diagram/constants/EmptyNodeId';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -44,10 +43,6 @@ export const WorkflowDiagramStepNodeEditable = ({
   );
 
   const handleClick = () => {
-    if (id === EMPTY_NODE_ID) {
-      return;
-    }
-
     if (!isInRightDrawer) {
       setCommandMenuNavigationStack([]);
     }
