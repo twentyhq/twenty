@@ -64,4 +64,13 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   pageLayoutWidget: {
     pageLayoutTab: true,
   },
+  rowLevelPermissionPredicate: {
+    fieldMetadata: true,
+    objectMetadata: true,
+    role: true,
+    rowLevelPermissionPredicateGroup: true,
+  },
+  rowLevelPermissionPredicateGroup: {
+    role: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

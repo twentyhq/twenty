@@ -122,4 +122,6 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
       flatEntityForeignKeyAggregator: 'tabIds',
     },
   },
+  rowLevelPermissionPredicate: {},
+  rowLevelPermissionPredicateGroup: {},
 } as const satisfies MetadataNameAndRelations;
