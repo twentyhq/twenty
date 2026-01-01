@@ -21,7 +21,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 
-import { useSkillsQuery } from '~/generated-metadata/graphql';
+import { useFindManySkillsQuery } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
@@ -55,7 +55,7 @@ const StyledHeaderContainer = styled.div`
 `;
 
 export const SettingsSkillsTable = () => {
-  const { data, loading } = useSkillsQuery();
+  const { data, loading } = useFindManySkillsQuery();
 
   const { t } = useLingui();
   const theme = useTheme();
@@ -81,7 +81,7 @@ export const SettingsSkillsTable = () => {
       <StyledHeaderContainer>
         <H2Title
           title={t`Skills`}
-          description={t`Skills available for AI agents`}
+          description={t`Skills available in the chat`}
         />
         <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
           <Button

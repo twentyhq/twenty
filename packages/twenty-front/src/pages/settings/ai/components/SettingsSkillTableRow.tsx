@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { useIcons, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 import { type Skill } from '~/generated-metadata/graphql';
 
@@ -25,6 +25,12 @@ const StyledNameTableCell = styled(TableCell)`
   overflow: hidden;
 `;
 
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
+
 const StyledActionTableCell = styled(TableCell)`
   justify-content: flex-end;
   padding-right: ${({ theme }) => theme.spacing(2)};
@@ -35,9 +41,15 @@ export const SettingsSkillTableRow = ({
   action,
   link,
 }: SettingsSkillTableRowProps) => {
+  const { getIcon } = useIcons();
+  const Icon = getIcon(skill.icon ?? 'IconSparkles');
+
   return (
     <StyledSkillTableRow key={skill.id} to={link}>
       <StyledNameTableCell>
+        <StyledIconContainer>
+          <Icon size={16} />
+        </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />
       </StyledNameTableCell>
       <TableCell>

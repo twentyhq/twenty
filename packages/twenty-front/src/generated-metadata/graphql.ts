@@ -68,19 +68,6 @@ export type Agent = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type Skill = {
-  __typename?: 'Skill';
-  content: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  isCustom: Scalars['Boolean'];
-  label: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
   contextWindowTokens?: Maybe<Scalars['Int']>;
@@ -985,6 +972,14 @@ export type CreateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type CreateSkillInput = {
+  content: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID'];
@@ -1866,6 +1861,7 @@ export type Mutation = {
   createRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   createRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createSkill: Skill;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -1898,6 +1894,7 @@ export type Mutation = {
   deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteSkill: Scalars['Boolean'];
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
@@ -1993,6 +1990,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   updateRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
+  updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
@@ -2240,6 +2238,11 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
+export type MutationCreateSkillArgs = {
+  input: CreateSkillInput;
+};
+
+
 export type MutationCreateWebhookArgs = {
   input: CreateWebhookInput;
 };
@@ -2393,6 +2396,11 @@ export type MutationDeleteRowLevelPermissionPredicateGroupArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteSkillArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2866,6 +2874,11 @@ export type MutationUpdateRowLevelPermissionPredicateGroupArgs = {
 };
 
 
+export type MutationUpdateSkillArgs = {
+  input: UpdateSkillInput;
+};
+
+
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
@@ -3335,7 +3348,6 @@ export type Query = {
   fields: FieldConnection;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
-  skills: Array<Skill>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
   findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
@@ -3403,6 +3415,8 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   search: SearchResultConnection;
+  skill?: Maybe<Skill>;
+  skills: Array<Skill>;
   validatePasswordResetToken: ValidatePasswordResetTokenOutput;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
@@ -3742,6 +3756,11 @@ export type QuerySearchArgs = {
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   limit: Scalars['Int'];
   searchInput: Scalars['String'];
+};
+
+
+export type QuerySkillArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4170,6 +4189,21 @@ export type SignedFile = {
   __typename?: 'SignedFile';
   path: Scalars['String'];
   token: Scalars['String'];
+};
+
+export type Skill = {
+  __typename?: 'Skill';
+  applicationId?: Maybe<Scalars['UUID']>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
+  name: Scalars['String'];
+  standardId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
 };
 
 export type StandaloneRichTextConfiguration = {
@@ -4614,6 +4648,14 @@ export type UpdateServerlessFunctionInputUpdates = {
   handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateSkillInput = {
+  content?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  label?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateViewFieldInput = {
@@ -5232,6 +5274,8 @@ export type WorkspaceUrlsAndId = {
 
 export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
 
+export type SkillFieldsFragment = { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string };
+
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
   roleId: Scalars['UUID'];
@@ -5252,12 +5296,26 @@ export type CreateOneAgentMutationVariables = Exact<{
 
 export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
+export type CreateSkillMutationVariables = Exact<{
+  input: CreateSkillInput;
+}>;
+
+
+export type CreateSkillMutation = { __typename?: 'Mutation', createSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } };
+
 export type DeleteOneAgentMutationVariables = Exact<{
   input: AgentIdInput;
 }>;
 
 
 export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type DeleteSkillMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteSkillMutation = { __typename?: 'Mutation', deleteSkill: boolean };
 
 export type EvaluateAgentTurnMutationVariables = Exact<{
   turnId: Scalars['UUID'];
@@ -5288,47 +5346,6 @@ export type UpdateOneAgentMutationVariables = Exact<{
 
 export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }> };
-
-export type SkillsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SkillsQuery = { __typename?: 'Query', skills: Array<{ __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string }> };
-
-export type CreateSkillInput = {
-  name: Scalars['String'];
-  label: Scalars['String'];
-  description?: InputMaybe<Scalars['String']>;
-  content: Scalars['String'];
-  icon?: InputMaybe<Scalars['String']>;
-};
-
-export type CreateSkillMutationVariables = Exact<{
-  input: CreateSkillInput;
-}>;
-
-
-export type CreateSkillMutation = { __typename?: 'Mutation', createSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } };
-
-export type SkillQueryVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type SkillQuery = { __typename?: 'Query', skill?: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } | null };
-
-export type UpdateSkillInput = {
-  id: Scalars['UUID'];
-  name?: InputMaybe<Scalars['String']>;
-  label?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  content?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-};
-
 export type UpdateSkillMutationVariables = Exact<{
   input: UpdateSkillInput;
 }>;
@@ -5336,12 +5353,29 @@ export type UpdateSkillMutationVariables = Exact<{
 
 export type UpdateSkillMutation = { __typename?: 'Mutation', updateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } };
 
+export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+
+export type FindManySkillsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManySkillsQuery = { __typename?: 'Query', skills: Array<{ __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string }> };
+
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
 export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type FindOneSkillQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type FindOneSkillQuery = { __typename?: 'Query', skill?: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } | null };
 
 export type GetAgentTurnsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6813,6 +6847,19 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const SkillFieldsFragmentDoc = gql`
+    fragment SkillFields on Skill {
+  id
+  name
+  label
+  description
+  icon
+  content
+  isCustom
+  createdAt
+  updatedAt
+}
+    `;
 export const AgentFieldsFragmentDoc = gql`
     fragment AgentFields on Agent {
   id
@@ -6828,19 +6875,6 @@ export const AgentFieldsFragmentDoc = gql`
   modelConfiguration
   evaluationInputs
   applicationId
-  createdAt
-  updatedAt
-}
-    `;
-export const SkillFieldsFragmentDoc = gql`
-    fragment SkillFields on Skill {
-  id
-  name
-  label
-  description
-  icon
-  content
-  isCustom
   createdAt
   updatedAt
 }
@@ -7585,6 +7619,39 @@ export function useCreateOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateOneAgentMutationHookResult = ReturnType<typeof useCreateOneAgentMutation>;
 export type CreateOneAgentMutationResult = Apollo.MutationResult<CreateOneAgentMutation>;
 export type CreateOneAgentMutationOptions = Apollo.BaseMutationOptions<CreateOneAgentMutation, CreateOneAgentMutationVariables>;
+export const CreateSkillDocument = gql`
+    mutation CreateSkill($input: CreateSkillInput!) {
+  createSkill(input: $input) {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+export type CreateSkillMutationFn = Apollo.MutationFunction<CreateSkillMutation, CreateSkillMutationVariables>;
+
+/**
+ * __useCreateSkillMutation__
+ *
+ * To run a mutation, you first call `useCreateSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSkillMutation, { data, loading, error }] = useCreateSkillMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSkillMutation(baseOptions?: Apollo.MutationHookOptions<CreateSkillMutation, CreateSkillMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSkillMutation, CreateSkillMutationVariables>(CreateSkillDocument, options);
+      }
+export type CreateSkillMutationHookResult = ReturnType<typeof useCreateSkillMutation>;
+export type CreateSkillMutationResult = Apollo.MutationResult<CreateSkillMutation>;
+export type CreateSkillMutationOptions = Apollo.BaseMutationOptions<CreateSkillMutation, CreateSkillMutationVariables>;
 export const DeleteOneAgentDocument = gql`
     mutation DeleteOneAgent($input: AgentIdInput!) {
   deleteOneAgent(input: $input) {
@@ -7618,6 +7685,37 @@ export function useDeleteOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteOneAgentMutationHookResult = ReturnType<typeof useDeleteOneAgentMutation>;
 export type DeleteOneAgentMutationResult = Apollo.MutationResult<DeleteOneAgentMutation>;
 export type DeleteOneAgentMutationOptions = Apollo.BaseMutationOptions<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
+export const DeleteSkillDocument = gql`
+    mutation DeleteSkill($id: UUID!) {
+  deleteSkill(id: $id)
+}
+    `;
+export type DeleteSkillMutationFn = Apollo.MutationFunction<DeleteSkillMutation, DeleteSkillMutationVariables>;
+
+/**
+ * __useDeleteSkillMutation__
+ *
+ * To run a mutation, you first call `useDeleteSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSkillMutation, { data, loading, error }] = useDeleteSkillMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteSkillMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSkillMutation, DeleteSkillMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSkillMutation, DeleteSkillMutationVariables>(DeleteSkillDocument, options);
+      }
+export type DeleteSkillMutationHookResult = ReturnType<typeof useDeleteSkillMutation>;
+export type DeleteSkillMutationResult = Apollo.MutationResult<DeleteSkillMutation>;
+export type DeleteSkillMutationOptions = Apollo.BaseMutationOptions<DeleteSkillMutation, DeleteSkillMutationVariables>;
 export const EvaluateAgentTurnDocument = gql`
     mutation EvaluateAgentTurn($turnId: UUID!) {
   evaluateAgentTurn(turnId: $turnId) {
@@ -7762,6 +7860,39 @@ export function useUpdateOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOneAgentMutationHookResult = ReturnType<typeof useUpdateOneAgentMutation>;
 export type UpdateOneAgentMutationResult = Apollo.MutationResult<UpdateOneAgentMutation>;
 export type UpdateOneAgentMutationOptions = Apollo.BaseMutationOptions<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
+export const UpdateSkillDocument = gql`
+    mutation UpdateSkill($input: UpdateSkillInput!) {
+  updateSkill(input: $input) {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+export type UpdateSkillMutationFn = Apollo.MutationFunction<UpdateSkillMutation, UpdateSkillMutationVariables>;
+
+/**
+ * __useUpdateSkillMutation__
+ *
+ * To run a mutation, you first call `useUpdateSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSkillMutation, { data, loading, error }] = useUpdateSkillMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSkillMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSkillMutation, UpdateSkillMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSkillMutation, UpdateSkillMutationVariables>(UpdateSkillDocument, options);
+      }
+export type UpdateSkillMutationHookResult = ReturnType<typeof useUpdateSkillMutation>;
+export type UpdateSkillMutationResult = Apollo.MutationResult<UpdateSkillMutation>;
+export type UpdateSkillMutationOptions = Apollo.BaseMutationOptions<UpdateSkillMutation, UpdateSkillMutationVariables>;
 export const FindManyAgentsDocument = gql`
     query FindManyAgents {
   findManyAgents {
@@ -7796,6 +7927,40 @@ export function useFindManyAgentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type FindManyAgentsQueryHookResult = ReturnType<typeof useFindManyAgentsQuery>;
 export type FindManyAgentsLazyQueryHookResult = ReturnType<typeof useFindManyAgentsLazyQuery>;
 export type FindManyAgentsQueryResult = Apollo.QueryResult<FindManyAgentsQuery, FindManyAgentsQueryVariables>;
+export const FindManySkillsDocument = gql`
+    query FindManySkills {
+  skills {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+
+/**
+ * __useFindManySkillsQuery__
+ *
+ * To run a query within a React component, call `useFindManySkillsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManySkillsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManySkillsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManySkillsQuery(baseOptions?: Apollo.QueryHookOptions<FindManySkillsQuery, FindManySkillsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManySkillsQuery, FindManySkillsQueryVariables>(FindManySkillsDocument, options);
+      }
+export function useFindManySkillsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManySkillsQuery, FindManySkillsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManySkillsQuery, FindManySkillsQueryVariables>(FindManySkillsDocument, options);
+        }
+export type FindManySkillsQueryHookResult = ReturnType<typeof useFindManySkillsQuery>;
+export type FindManySkillsLazyQueryHookResult = ReturnType<typeof useFindManySkillsLazyQuery>;
+export type FindManySkillsQueryResult = Apollo.QueryResult<FindManySkillsQuery, FindManySkillsQueryVariables>;
 export const FindOneAgentDocument = gql`
     query FindOneAgent($id: UUID!) {
   findOneAgent(input: {id: $id}) {
@@ -7831,6 +7996,41 @@ export function useFindOneAgentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type FindOneAgentQueryHookResult = ReturnType<typeof useFindOneAgentQuery>;
 export type FindOneAgentLazyQueryHookResult = ReturnType<typeof useFindOneAgentLazyQuery>;
 export type FindOneAgentQueryResult = Apollo.QueryResult<FindOneAgentQuery, FindOneAgentQueryVariables>;
+export const FindOneSkillDocument = gql`
+    query FindOneSkill($id: UUID!) {
+  skill(id: $id) {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+
+/**
+ * __useFindOneSkillQuery__
+ *
+ * To run a query within a React component, call `useFindOneSkillQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneSkillQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneSkillQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindOneSkillQuery(baseOptions: Apollo.QueryHookOptions<FindOneSkillQuery, FindOneSkillQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneSkillQuery, FindOneSkillQueryVariables>(FindOneSkillDocument, options);
+      }
+export function useFindOneSkillLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneSkillQuery, FindOneSkillQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneSkillQuery, FindOneSkillQueryVariables>(FindOneSkillDocument, options);
+        }
+export type FindOneSkillQueryHookResult = ReturnType<typeof useFindOneSkillQuery>;
+export type FindOneSkillLazyQueryHookResult = ReturnType<typeof useFindOneSkillLazyQuery>;
+export type FindOneSkillQueryResult = Apollo.QueryResult<FindOneSkillQuery, FindOneSkillQueryVariables>;
 export const GetAgentTurnsDocument = gql`
     query GetAgentTurns($agentId: UUID!) {
   agentTurns(agentId: $agentId) {
@@ -15272,136 +15472,3 @@ export function useGetWorkspaceFromInviteHashLazyQuery(baseOptions?: Apollo.Lazy
 export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashQuery>;
 export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
 export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
-export const SkillsDocument = gql`
-    query Skills {
-  skills {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-
-/**
- * __useSkillsQuery__
- *
- * To run a query within a React component, call `useSkillsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSkillsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSkillsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSkillsQuery(baseOptions?: Apollo.QueryHookOptions<SkillsQuery, SkillsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SkillsQuery, SkillsQueryVariables>(SkillsDocument, options);
-      }
-export function useSkillsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SkillsQuery, SkillsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SkillsQuery, SkillsQueryVariables>(SkillsDocument, options);
-        }
-export type SkillsQueryHookResult = ReturnType<typeof useSkillsQuery>;
-export type SkillsLazyQueryHookResult = ReturnType<typeof useSkillsLazyQuery>;
-export type SkillsQueryResult = Apollo.QueryResult<SkillsQuery, SkillsQueryVariables>;
-export const CreateSkillDocument = gql`
-    mutation CreateSkill($input: CreateSkillInput!) {
-  createSkill(input: $input) {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-
-/**
- * __useCreateSkillMutation__
- *
- * To run a mutation, you first call `useCreateSkillMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateSkillMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createSkillMutation, { data, loading, error }] = useCreateSkillMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateSkillMutation(baseOptions?: Apollo.MutationHookOptions<CreateSkillMutation, CreateSkillMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateSkillMutation, CreateSkillMutationVariables>(CreateSkillDocument, options);
-      }
-export type CreateSkillMutationHookResult = ReturnType<typeof useCreateSkillMutation>;
-export type CreateSkillMutationResult = Apollo.MutationResult<CreateSkillMutation>;
-export type CreateSkillMutationOptions = Apollo.BaseMutationOptions<CreateSkillMutation, CreateSkillMutationVariables>;
-export const SkillDocument = gql`
-    query Skill($id: UUID!) {
-  skill(id: $id) {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-
-/**
- * __useSkillQuery__
- *
- * To run a query within a React component, call `useSkillQuery` and pass it any options that fit your needs.
- * When your component renders, `useSkillQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSkillQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useSkillQuery(baseOptions: Apollo.QueryHookOptions<SkillQuery, SkillQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SkillQuery, SkillQueryVariables>(SkillDocument, options);
-      }
-export function useSkillLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SkillQuery, SkillQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SkillQuery, SkillQueryVariables>(SkillDocument, options);
-        }
-export type SkillQueryHookResult = ReturnType<typeof useSkillQuery>;
-export type SkillLazyQueryHookResult = ReturnType<typeof useSkillLazyQuery>;
-export type SkillQueryResult = Apollo.QueryResult<SkillQuery, SkillQueryVariables>;
-export const UpdateSkillDocument = gql`
-    mutation UpdateSkill($input: UpdateSkillInput!) {
-  updateSkill(input: $input) {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-
-/**
- * __useUpdateSkillMutation__
- *
- * To run a mutation, you first call `useUpdateSkillMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateSkillMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateSkillMutation, { data, loading, error }] = useUpdateSkillMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateSkillMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSkillMutation, UpdateSkillMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateSkillMutation, UpdateSkillMutationVariables>(UpdateSkillDocument, options);
-      }
-export type UpdateSkillMutationHookResult = ReturnType<typeof useUpdateSkillMutation>;
-export type UpdateSkillMutationResult = Apollo.MutationResult<UpdateSkillMutation>;
-export type UpdateSkillMutationOptions = Apollo.BaseMutationOptions<UpdateSkillMutation, UpdateSkillMutationVariables>;
