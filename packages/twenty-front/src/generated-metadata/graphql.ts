@@ -1894,7 +1894,7 @@ export type Mutation = {
   deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   deleteSSOIdentityProvider: DeleteSsoOutput;
-  deleteSkill: Scalars['Boolean'];
+  deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
@@ -5315,7 +5315,7 @@ export type DeleteSkillMutationVariables = Exact<{
 }>;
 
 
-export type DeleteSkillMutation = { __typename?: 'Mutation', deleteSkill: boolean };
+export type DeleteSkillMutation = { __typename?: 'Mutation', deleteSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, createdAt: string, updatedAt: string } };
 
 export type EvaluateAgentTurnMutationVariables = Exact<{
   turnId: Scalars['UUID'];
@@ -7687,9 +7687,11 @@ export type DeleteOneAgentMutationResult = Apollo.MutationResult<DeleteOneAgentM
 export type DeleteOneAgentMutationOptions = Apollo.BaseMutationOptions<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
 export const DeleteSkillDocument = gql`
     mutation DeleteSkill($id: UUID!) {
-  deleteSkill(id: $id)
+  deleteSkill(id: $id) {
+    ...SkillFields
+  }
 }
-    `;
+    ${SkillFieldsFragmentDoc}`;
 export type DeleteSkillMutationFn = Apollo.MutationFunction<DeleteSkillMutation, DeleteSkillMutationVariables>;
 
 /**
