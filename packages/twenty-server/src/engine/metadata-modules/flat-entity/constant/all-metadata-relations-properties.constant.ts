@@ -1,151 +1,222 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
+import { ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
+import { ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
+import { FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 export const ALL_METADATA_RELATION_PROPERTIES = {
   agent: {
-    workspace: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   skill: {
     workspace: true,
     application: true,
   },
   fieldMetadata: {
-    relationTargetFieldMetadata: true,
-    relationTargetObjectMetadata: true,
-    fieldPermissions: true,
-    indexFieldMetadatas: true,
-    object: true,
-    viewFields: true,
-    viewFilters: true,
-    kanbanAggregateOperationViews: true,
-    calendarViews: true,
-    mainGroupByFieldMetadataViews: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      object: {
+        metadataName: 'objectMetadata',
+      },
+      workspace: {},
+      application: true,
+      relationTargetFieldMetadata: true,
+      relationTargetObjectMetadata: true,
+    },
+    oneToMany: {
+      fieldPermissions: true,
+      indexFieldMetadatas: true,
+      viewFields: true,
+      viewFilters: true,
+      kanbanAggregateOperationViews: true,
+      calendarViews: true,
+      mainGroupByFieldMetadataViews: true,
+    },
   },
   objectMetadata: {
-    fields: true,
-    indexMetadatas: true,
-    targetRelationFields: true,
-    dataSource: true,
-    objectPermissions: true,
-    fieldPermissions: true,
-    views: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      dataSource: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {
+      fields: true,
+      indexMetadatas: true,
+      targetRelationFields: true,
+      objectPermissions: true,
+      fieldPermissions: true,
+      views: true,
+    },
   },
   view: {
-    objectMetadata: true,
-    viewFields: true,
-    viewFilters: true,
-    viewFilterGroups: true,
-    viewGroups: true,
-    viewSorts: true,
-    workspace: true,
-    createdBy: true,
-    application: true,
-    calendarFieldMetadata: true,
-    kanbanAggregateOperationFieldMetadata: true,
-    mainGroupByFieldMetadata: true,
+    manyToOne: {
+      objectMetadata: true,
+      workspace: true,
+      createdBy: true,
+      application: true,
+      calendarFieldMetadata: true,
+      kanbanAggregateOperationFieldMetadata: true,
+      mainGroupByFieldMetadata: true,
+    },
+    oneToMany: {
+      viewFields: true,
+      viewFilters: true,
+      viewFilterGroups: true,
+      viewGroups: true,
+      viewSorts: true,
+    },
   },
   viewField: {
-    fieldMetadata: true,
-    view: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      fieldMetadata: true,
+      view: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   viewFilter: {
-    fieldMetadata: true,
-    view: true,
-    viewFilterGroup: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      fieldMetadata: true,
+      view: true,
+      viewFilterGroup: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   viewGroup: {
-    view: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      view: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   index: {
-    objectMetadata: true,
-    indexFieldMetadatas: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      objectMetadata: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {
+      indexFieldMetadatas: true,
+    },
   },
   serverlessFunction: {
-    cronTriggers: true,
-    databaseEventTriggers: true,
-    routeTriggers: true,
-    serverlessFunctionLayer: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      application: true,
+      serverlessFunctionLayer: true,
+    },
+    oneToMany: {
+      cronTriggers: true,
+      databaseEventTriggers: true,
+      routeTriggers: true,
+    },
   },
   cronTrigger: {
-    serverlessFunction: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      serverlessFunction: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   databaseEventTrigger: {
-    serverlessFunction: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      serverlessFunction: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   routeTrigger: {
-    serverlessFunction: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      serverlessFunction: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   role: {
-    roleTargets: true,
-    objectPermissions: true,
-    permissionFlags: true,
-    fieldPermissions: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {
+      roleTargets: true,
+      objectPermissions: true,
+      permissionFlags: true,
+      fieldPermissions: true,
+    },
   },
   roleTarget: {
-    role: true,
-    apiKey: true,
-    workspace: true,
-    application: true,
+    manyToOne: {
+      role: true,
+      apiKey: true,
+      workspace: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   pageLayout: {
-    workspace: true,
-    objectMetadata: true,
-    tabs: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      objectMetadata: true,
+      application: true,
+    },
+    oneToMany: {
+      tabs: true,
+    },
   },
   pageLayoutTab: {
-    workspace: true,
-    pageLayout: true,
-    widgets: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      pageLayout: true,
+      application: true,
+    },
+    oneToMany: {
+      widgets: true,
+    },
   },
   pageLayoutWidget: {
-    workspace: true,
-    pageLayoutTab: true,
-    objectMetadata: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      pageLayoutTab: true,
+      objectMetadata: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   rowLevelPermissionPredicate: {
-    workspace: true,
-    role: true,
-    fieldMetadata: true,
-    workspaceMemberFieldMetadata: true,
-    objectMetadata: true,
-    rowLevelPermissionPredicateGroup: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      role: true,
+      fieldMetadata: true,
+      workspaceMemberFieldMetadata: true,
+      objectMetadata: true,
+      rowLevelPermissionPredicateGroup: true,
+      application: true,
+    },
+    oneToMany: {},
   },
   rowLevelPermissionPredicateGroup: {
-    workspace: true,
-    role: true,
-    parentRowLevelPermissionPredicateGroup: true,
-    childRowLevelPermissionPredicateGroups: true,
-    rowLevelPermissionPredicates: true,
-    application: true,
+    manyToOne: {
+      workspace: true,
+      role: true,
+      parentRowLevelPermissionPredicateGroup: true,
+      application: true,
+    },
+    oneToMany: {
+      childRowLevelPermissionPredicateGroups: true,
+      rowLevelPermissionPredicates: true,
+    },
   },
   viewFilterGroup: {
     view: true,
@@ -157,6 +228,23 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
 } as const satisfies {
   [TName in AllMetadataName]: {
-    [P in ExtractEntityRelatedEntityProperties<MetadataEntity<TName>>]: true;
+    manyToOne: {
+      [P in ExtractEntityManyToOneEntityRelationProperties<
+        MetadataEntity<TName>
+      >]: {
+        metadataName: MetadataEntity<TName>[P] extends SyncableEntity
+          ? FromMetadataEntityToMetadataName<MetadataEntity<TName>[P]>
+          : undefined;
+      };
+    };
+    oneToMany: {
+      [P in ExtractEntityOneToManyEntityRelationProperties<
+        MetadataEntity<TName>
+      >]: {
+        metadataName: MetadataEntity<TName>[P] extends SyncableEntity
+          ? FromMetadataEntityToMetadataName<MetadataEntity<TName>[P]>
+          : undefined;
+      };
+    };
   };
 };
