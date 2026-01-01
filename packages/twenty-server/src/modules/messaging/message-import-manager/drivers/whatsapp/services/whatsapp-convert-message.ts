@@ -13,18 +13,17 @@ import {
 } from 'src/modules/messaging/message-import-manager/types/message';
 import { WhatsappUpdatePersonService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-update-person.service';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
-import { WhatsappDownloadMediaService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-download-media.service';
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
+import { type WhatsappFile } from 'src/modules/message-attachment-creation-manager/types/whatsapp-file.type';
 
 @Injectable()
 export class WhatsappConvertMessage {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly whatsappUpdatePersonService: WhatsappUpdatePersonService,
-    private readonly whatsappDownloadMediaService: WhatsappDownloadMediaService,
     private readonly whatsappGroupFormatService: WhatsappFormatGroupParticipantsToMessageParticipantsService,
     private readonly whatsappFindMessageService: WhatsappFindMessageService,
   ) {}
@@ -33,7 +32,6 @@ export class WhatsappConvertMessage {
     change: WhatsappWebhookMessageChanges,
     whatsappBusinessAccountId: string,
     workspaceId: string,
-    bearerToken: string,
   ): Promise<MessageWithParticipants[]> {
     // TODO: how to find sender's name in array if wa_id and from may not be the same?
     // When there are more than 1 contact?
@@ -87,7 +85,6 @@ export class WhatsappConvertMessage {
                 whatsappBusinessAccountId,
                 message,
                 workspaceId,
-                bearerToken,
               ),
             );
     });
@@ -102,9 +99,8 @@ export class WhatsappConvertMessage {
     whatsappBusinessAccountId: string,
     message: WhatsappWebhookMessageContent,
     workspaceId: string,
-    bearerToken: string,
   ): Promise<MessageWithParticipants> {
-    let attachments: { filename: string }[] = [];
+    let attachments: WhatsappFile[] = [];
     let text: string | null = null;
     const externalId: string = message.id;
     const receivedAt: Date = new Date(parseInt(message.timestamp));
@@ -133,18 +129,10 @@ export class WhatsappConvertMessage {
     switch (message.type) {
       case 'audio':
         attachments.push({
-          filename: await this.whatsappDownloadMediaService.downloadFile(
-            'AUDIO',
-            'whatsapp_',
-            message.audio?.mime_type,
-            '',
-            message.audio?.sha256,
-            message.timestamp,
-            message.audio?.url,
-            bearerToken,
-            workspaceId,
-          ),
-        });
+          mimeType: message.audio?.mime_type,
+          sha256: message.audio?.sha256,
+          url: message.audio?.url,
+        } as WhatsappFile);
         break;
       case 'button':
         text = message.button?.text ?? null;
@@ -169,35 +157,19 @@ export class WhatsappConvertMessage {
                 : 'OTHER';
 
         attachments.push({
-          filename: await this.whatsappDownloadMediaService.downloadFile(
-            fileType,
-            'whatsapp_',
-            message.document?.mime_type,
-            '',
-            message.document?.sha256,
-            message.timestamp,
-            message.document?.url,
-            bearerToken,
-            workspaceId,
-          ),
-        });
+          mimeType: message.document?.mime_type,
+          sha256: message.document?.sha256,
+          url: message.document?.url,
+        } as WhatsappFile);
         break;
       }
       case 'image':
         text = message.image?.caption ?? null;
         attachments.push({
-          filename: await this.whatsappDownloadMediaService.downloadFile(
-            'IMAGE',
-            'whatsapp_',
-            message.image?.mime_type,
-            '',
-            message.image?.sha256,
-            message.timestamp,
-            message.image?.url,
-            bearerToken,
-            workspaceId,
-          ),
-        });
+          mimeType: message.image?.mime_type,
+          sha256: message.image?.sha256,
+          url: message.image?.url,
+        } as WhatsappFile);
         break;
       case 'interactive':
         text =
@@ -225,18 +197,10 @@ export class WhatsappConvertMessage {
       }
       case 'sticker':
         attachments.push({
-          filename: await this.whatsappDownloadMediaService.downloadFile(
-            'IMAGE',
-            'whatsapp_',
-            message.sticker?.mime_type,
-            '',
-            message.sticker?.sha256,
-            message.timestamp,
-            message.sticker?.url,
-            bearerToken,
-            workspaceId,
-          ),
-        });
+          mimeType: message.sticker?.mime_type,
+          sha256: message.sticker?.sha256,
+          url: message.sticker?.url,
+        } as WhatsappFile);
         break;
       case 'text':
         text = message.text?.body ?? null;
@@ -244,29 +208,14 @@ export class WhatsappConvertMessage {
       case 'video':
         text = message.video?.caption ?? null;
         attachments.push({
-          filename: await this.whatsappDownloadMediaService.downloadFile(
-            'VIDEO',
-            'whatsapp_',
-            message.video?.mime_type,
-            '',
-            message.video?.sha256,
-            message.timestamp,
-            message.video?.url,
-            bearerToken,
-            workspaceId,
-          ),
-        });
+          mimeType: message.video?.mime_type,
+          sha256: message.video?.sha256,
+          url: message.video?.url,
+        } as WhatsappFile);
         break;
       default:
         break;
     }
-
-    attachments.includes({ filename: '' })
-      ? attachments.splice(
-          attachments.findIndex((attachment) => attachment.filename === ''),
-          1,
-        )
-      : null;
 
     return {
       headerMessageId: null,

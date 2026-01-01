@@ -1,6 +1,7 @@
 import { type MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type WhatsappFile } from 'src/modules/message-attachment-creation-manager/types/whatsapp-file.type';
 
 export type Message = Omit<
   MessageWorkspaceEntity,
@@ -14,9 +15,7 @@ export type Message = Omit<
   | 'id'
   | 'messageAttachments'
 > & {
-  attachments: {
-    filename: string;
-  }[];
+  attachments: WhatsappFile[] | string[];
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;

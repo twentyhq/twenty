@@ -198,6 +198,10 @@ export class MessagingSendMessageService {
 
         break;
       }
+      case ConnectedAccountProvider.WHATSAPP: {
+        // TODO: write logic
+        break;
+      }
       default:
         assertUnreachable(
           connectedAccount.provider,

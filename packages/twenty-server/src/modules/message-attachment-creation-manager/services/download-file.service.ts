@@ -1,39 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import * as crypto from 'node:crypto';
+import crypto from 'node:crypto';
 
 import axios from 'axios';
-import { FieldActorSource } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getFileExtension } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/get-file-extension.util';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Injectable()
-export class WhatsappDownloadMediaService {
+export class DownloadFileService {
   constructor(
-    @InjectRepository(AttachmentWorkspaceEntity)
-    private readonly attachmentRepository: Repository<AttachmentWorkspaceEntity>,
     private readonly fileUploadService: FileUploadService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  // 1st POC: download a file, upload them somewhere on server and store them as attachment (or maybe file?) to People records
-  // TODO: change logic so files are downloaded once person records are established
-  async downloadFile(
+  async whatsappDownloadFile(
     fileCategory: string,
-    filenamePrefix: string,
     mimeType: string | undefined,
-    personId: string,
     sha256: string | undefined,
     timestamp: string,
     url: string | undefined,
     bearerToken: string,
     workspaceId: string,
   ) {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {},
+    );
     const options = {
       method: 'GET',
       headers: {
@@ -41,7 +40,6 @@ export class WhatsappDownloadMediaService {
       },
       url: url,
     };
-
     const response = await axios.request(options);
     const responseData: string = response.data; // is it really a string???
     const file: Buffer<ArrayBufferLike> = Buffer.from(responseData); // TODO: check if it's correct
@@ -50,31 +48,18 @@ export class WhatsappDownloadMediaService {
       crypto.createHash('sha256').update(responseData).digest('hex') === sha256;
 
     if (!checkIfDataIsCorrect) {
-      return '';
+      throw new Error(); // TODO: fix
     }
     const fileFolder = FileFolder.Attachment;
     const fileExtension = getFileExtension(mimeType?.split(';', 2)[0] ?? '');
-    const filename = filenamePrefix.concat(timestamp, '_', fileExtension);
-    const uploadedFile = await this.fileUploadService.uploadFile({
+    const filename = 'whatsapp_'.concat(timestamp, '_', fileExtension);
+
+    return await this.fileUploadService.uploadFile({
       file,
       filename,
       mimeType,
       fileFolder,
       workspaceId,
     });
-
-    this.attachmentRepository.create({
-      name: uploadedFile.name,
-      fullPath: uploadedFile.files[0].path,
-      fileCategory: fileCategory,
-      createdBy: {
-        name: 'WhatsApp',
-        source: FieldActorSource.IMPORT,
-        workspaceMemberId: null,
-      },
-      personId: '', // TODO: person or personId?
-    });
-
-    return filename;
   }
 }

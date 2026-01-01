@@ -105,7 +105,6 @@ export class WhatsappController {
       return [];
     }
     const appSecret = whatsappRecord.appSecret;
-    const bearerToken = whatsappRecord.bearerToken;
 
     if (
       !validateWebhookPayload(
@@ -124,7 +123,6 @@ export class WhatsappController {
           change,
           whatsappBusinessAccountId,
           workspaceId,
-          bearerToken,
         )) {
           convertedMessages.push(message);
         }

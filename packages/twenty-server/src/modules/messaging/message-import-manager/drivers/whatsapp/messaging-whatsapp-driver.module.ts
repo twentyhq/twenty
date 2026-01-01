@@ -13,7 +13,6 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
 import { WhatsappController } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/controllers/whatsapp.controller';
 import { WhatsappUpdatePersonService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-update-person.service';
 import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
-import { WhatsappDownloadMediaService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-download-media.service';
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { WhatsappGetAllGroupParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-all-group-participants.service';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
@@ -31,7 +30,6 @@ import { WhatsappFindMessageService } from 'src/modules/messaging/message-import
   ],
   providers: [
     WhatsappConvertMessage,
-    WhatsappDownloadMediaService,
     WhatsappFindMessageService,
     WhatsappFormatGroupParticipantsToMessageParticipantsService,
     WhatsappGetAllGroupParticipantsService,
