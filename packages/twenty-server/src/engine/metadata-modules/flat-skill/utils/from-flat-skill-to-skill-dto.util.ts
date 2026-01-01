@@ -15,4 +15,3 @@ export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => ({
   createdAt: new Date(flatSkill.createdAt),
   updatedAt: new Date(flatSkill.updatedAt),
 });
-

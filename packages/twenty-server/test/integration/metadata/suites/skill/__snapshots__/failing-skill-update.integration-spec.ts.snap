@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skill update should fail should fail when attempting to update a standard skill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "SKILL_IS_STANDARD",
+    "userFriendlyMessage": "Standard skills cannot be modified.",
+  },
+  "message": "Cannot update standard skill",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Skill update should fail should fail when updating a non-existent skill 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "SKILL_NOT_FOUND",
+    "userFriendlyMessage": "Skill not found.",
+  },
+  "message": "Skill not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Skill update should fail when updating with empty content 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
+      "serverlessFunction": [],
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Content cannot be empty",
+              "userFriendlyMessage": "Content cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "update_skill",
+        },
+      ],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
+      "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating skill",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill update should fail when updating with empty label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
+      "serverlessFunction": [],
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "update_skill",
+        },
+      ],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
+      "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating skill",
+  "name": "GraphQLError",
+}
+`;

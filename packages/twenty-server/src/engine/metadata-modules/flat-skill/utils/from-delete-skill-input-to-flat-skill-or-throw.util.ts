@@ -36,4 +36,3 @@ export const fromDeleteSkillInputToFlatSkillOrThrow = ({
 
   return existingFlatSkill;
 };
-

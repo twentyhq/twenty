@@ -45,4 +45,3 @@ export const fromUpdateSkillInputToFlatSkillToUpdateOrThrow = ({
     updatedAt: new Date().toISOString(),
   };
 };
-
