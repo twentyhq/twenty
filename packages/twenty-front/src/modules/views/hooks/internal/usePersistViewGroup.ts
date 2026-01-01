@@ -6,6 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateCoreViewGroupMutationVariables,
@@ -63,6 +64,7 @@ export const usePersistViewGroupRecords = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewGroup',
+            operationType: CrudOperationType.UPDATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
