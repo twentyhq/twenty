@@ -78,16 +78,7 @@ describe('If/Else Workflow (e2e)', () => {
         query: `
           mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
             createWorkflowVersionStep(input: $input) {
-              stepsDiff {
-                type
-                path
-                value {
-                  id
-                  type
-                  name
-                  settings
-                }
-              }
+              stepsDiff
             }
           }
         `,
@@ -200,15 +191,7 @@ describe('If/Else Workflow (e2e)', () => {
         query: `
           mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
             createWorkflowVersionStep(input: $input) {
-              stepsDiff {
-                type
-                path
-                value {
-                  id
-                  type
-                  name
-                }
-              }
+              stepsDiff
             }
           }
         `,
@@ -240,15 +223,7 @@ describe('If/Else Workflow (e2e)', () => {
         query: `
           mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
             createWorkflowVersionStep(input: $input) {
-              stepsDiff {
-                type
-                path
-                value {
-                  id
-                  type
-                  name
-                }
-              }
+              stepsDiff
             }
           }
         `,
