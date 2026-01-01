@@ -1,11 +1,13 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { ExtractPropertiesThatEndsWithIds } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
 
 import { ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
 import { FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
-import { Relation } from 'typeorm';
 
 export const ALL_METADATA_RELATION_PROPERTIES = {
   agent: {
@@ -21,11 +23,20 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   fieldMetadata: {
     manyToOne: {
-      object: { metadataName: 'objectMetadata' },
+      object: {
+        metadataName: 'objectMetadata',
+        foreignKey: 'fieldMetadataIds',
+      },
       workspace: null,
       application: null,
-      relationTargetFieldMetadata: { metadataName: 'fieldMetadata' },
-      relationTargetObjectMetadata: { metadataName: 'objectMetadata' },
+      relationTargetFieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: undefined,
+      },
+      relationTargetObjectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: undefined,
+      },
     },
     oneToMany: {
       fieldPermissions: null,
@@ -54,13 +65,25 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   view: {
     manyToOne: {
-      objectMetadata: { metadataName: 'objectMetadata' },
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: 'viewIds',
+      },
       workspace: null,
       createdBy: null,
       application: null,
-      calendarFieldMetadata: { metadataName: 'fieldMetadata' },
-      kanbanAggregateOperationFieldMetadata: { metadataName: 'fieldMetadata' },
-      mainGroupByFieldMetadata: { metadataName: 'fieldMetadata' },
+      calendarFieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: 'calendarViewIds',
+      },
+      kanbanAggregateOperationFieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: 'kanbanAggregateOperationViewIds',
+      },
+      mainGroupByFieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: 'mainGroupByFieldMetadataViewIds',
+      },
     },
     oneToMany: {
       viewFields: { metadataName: 'viewField' },
@@ -74,8 +97,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   viewField: {
     manyToOne: {
-      fieldMetadata: { metadataName: 'fieldMetadata' },
-      view: { metadataName: 'view' },
+      fieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: 'viewFieldIds',
+      },
+      view: {
+        metadataName: 'view',
+        foreignKey: 'viewFieldIds',
+      },
       workspace: null,
       application: null,
     },
@@ -83,8 +112,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   viewFilter: {
     manyToOne: {
-      fieldMetadata: { metadataName: 'fieldMetadata' },
-      view: { metadataName: 'view' },
+      fieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: 'viewFilterIds',
+      },
+      view: {
+        metadataName: 'view',
+        foreignKey: 'viewFilterIds',
+      },
       // @ts-expect-error TODO migrate viewFilterGroup to v2
       viewFilterGroup: null,
       workspace: null,
@@ -94,7 +129,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   viewGroup: {
     manyToOne: {
-      view: { metadataName: 'view' },
+      view: {
+        metadataName: 'view',
+        foreignKey: 'viewGroupIds',
+      },
       workspace: null,
       application: null,
     },
@@ -102,7 +140,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   index: {
     manyToOne: {
-      objectMetadata: { metadataName: 'objectMetadata' },
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: 'indexMetadataIds',
+      },
       workspace: null,
       application: null,
     },
@@ -124,7 +165,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   cronTrigger: {
     manyToOne: {
-      serverlessFunction: { metadataName: 'serverlessFunction' },
+      serverlessFunction: {
+        metadataName: 'serverlessFunction',
+        foreignKey: 'cronTriggerIds',
+      },
       workspace: null,
       application: null,
     },
@@ -132,7 +176,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   databaseEventTrigger: {
     manyToOne: {
-      serverlessFunction: { metadataName: 'serverlessFunction' },
+      serverlessFunction: {
+        metadataName: 'serverlessFunction',
+        foreignKey: 'databaseEventTriggerIds',
+      },
       workspace: null,
       application: null,
     },
@@ -140,7 +187,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   routeTrigger: {
     manyToOne: {
-      serverlessFunction: { metadataName: 'serverlessFunction' },
+      serverlessFunction: {
+        metadataName: 'serverlessFunction',
+        foreignKey: 'routeTriggerIds',
+      },
       workspace: null,
       application: null,
     },
@@ -160,7 +210,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   roleTarget: {
     manyToOne: {
-      role: { metadataName: 'role' },
+      role: {
+        metadataName: 'role',
+        foreignKey: 'roleTargetIds',
+      },
       apiKey: null,
       workspace: null,
       application: null,
@@ -170,7 +223,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   pageLayout: {
     manyToOne: {
       workspace: null,
-      objectMetadata: { metadataName: 'objectMetadata' },
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: undefined,
+      },
       application: null,
     },
     oneToMany: {
@@ -180,7 +236,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   pageLayoutTab: {
     manyToOne: {
       workspace: null,
-      pageLayout: { metadataName: 'pageLayout' },
+      pageLayout: {
+        metadataName: 'pageLayout',
+        foreignKey: 'tabIds',
+      },
       application: null,
     },
     oneToMany: {
@@ -190,8 +249,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   pageLayoutWidget: {
     manyToOne: {
       workspace: null,
-      pageLayoutTab: { metadataName: 'pageLayoutTab' },
-      objectMetadata: { metadataName: 'objectMetadata' },
+      pageLayoutTab: {
+        metadataName: 'pageLayoutTab',
+        foreignKey: 'widgetIds',
+      },
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: undefined,
+      },
       application: null,
     },
     oneToMany: {},
@@ -199,12 +264,25 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   rowLevelPermissionPredicate: {
     manyToOne: {
       workspace: null,
-      role: { metadataName: 'role' },
-      fieldMetadata: { metadataName: 'fieldMetadata' },
-      workspaceMemberFieldMetadata: { metadataName: 'fieldMetadata' },
-      objectMetadata: { metadataName: 'objectMetadata' },
+      role: {
+        metadataName: 'role',
+        foreignKey: undefined,
+      },
+      fieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: undefined,
+      },
+      workspaceMemberFieldMetadata: {
+        metadataName: 'fieldMetadata',
+        foreignKey: undefined,
+      },
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        foreignKey: undefined,
+      },
       rowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
+        foreignKey: undefined,
       },
       application: null,
     },
@@ -213,9 +291,13 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   rowLevelPermissionPredicateGroup: {
     manyToOne: {
       workspace: null,
-      role: { metadataName: 'role' },
+      role: {
+        metadataName: 'role',
+        foreignKey: undefined,
+      },
       parentRowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
+        foreignKey: 'childRowLevelPermissionPredicateGroupIds',
       },
       application: null,
     },
@@ -243,6 +325,15 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
         MetadataEntity<TName>
       >]: NonNullable<MetadataEntity<TName>[P]> extends SyncableEntity
         ? {
+            foreignKey:
+              | ExtractPropertiesThatEndsWithIds<
+                  MetadataFlatEntity<
+                    FromMetadataEntityToMetadataName<
+                      NonNullable<MetadataEntity<TName>[P]>
+                    >
+                  >
+                >
+              | undefined;
             metadataName: FromMetadataEntityToMetadataName<
               NonNullable<MetadataEntity<TName>[P]>
             >;
