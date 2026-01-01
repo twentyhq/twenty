@@ -87,7 +87,7 @@ describe('If/Else Workflow (e2e)', () => {
       .send({
         query: `
           mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-            updateWorkflowVersion(filter: { id: { eq: $id } }, data: $data) {
+            updateWorkflowVersion(id: $id, data: $data) {
               id
               trigger
             }
