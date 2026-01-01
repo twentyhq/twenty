@@ -19,7 +19,7 @@ import { WhatsAppWebhookMessage } from 'src/modules/messaging/message-import-man
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { validateWebhookPayload } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/validate-webhook-payload.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrationsEntity';
+import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
@@ -119,16 +119,16 @@ export class WhatsappController {
     let convertedMessages: MessageWithParticipants[] = [];
 
     for (const change of body.entry[0].changes) {
-      change.value.errors === undefined
-        ? convertedMessages.concat(
-            await this.whatsappConvertMessage.convertFromWhatsappMessageToMessageWithParticipants(
-              change,
-              whatsappBusinessAccountId,
-              workspaceId,
-              bearerToken,
-            ),
-          )
-        : '';
+      if (change.value.errors === undefined) {
+        for (const message of await this.whatsappConvertMessage.convertFromWhatsappMessageToMessageWithParticipants(
+          change,
+          whatsappBusinessAccountId,
+          workspaceId,
+          bearerToken,
+        )) {
+          convertedMessages.push(message);
+        }
+      }
     }
 
     return convertedMessages;
