@@ -12,6 +12,7 @@ export type Message = Omit<
   | 'messageThread'
   | 'messageThreadId'
   | 'id'
+  | 'messageAttachments'
 > & {
   attachments: {
     filename: string;

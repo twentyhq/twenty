@@ -51,6 +51,7 @@ import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sor
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrationsEntity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -311,4 +312,9 @@ export class WorkspaceEntity {
     onDelete: 'CASCADE',
   })
   applications: Relation<Application[]>;
+
+  @OneToMany(() => IntegrationsEntity, (whatsApp) => whatsApp.workspace, {
+    onDelete: 'CASCADE',
+  })
+  whatsAppLinkedBusinessAccounts: Relation<IntegrationsEntity[]>;
 }

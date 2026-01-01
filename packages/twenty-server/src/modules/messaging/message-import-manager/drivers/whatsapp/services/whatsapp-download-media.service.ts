@@ -22,6 +22,7 @@ export class WhatsappDownloadMediaService {
   ) {}
 
   // 1st POC: download a file, upload them somewhere on server and store them as attachment (or maybe file?) to People records
+  // TODO: change logic so files are downloaded once person records are established
   async downloadFile(
     fileCategory: string,
     filenamePrefix: string,
@@ -30,11 +31,13 @@ export class WhatsappDownloadMediaService {
     sha256: string | undefined,
     timestamp: string,
     url: string | undefined,
+    bearerToken: string,
+    workspaceId: string,
   ) {
     const options = {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer ', // TODO: bearer token stored somewhere?
+        Authorization: `Bearer ${bearerToken}`,
       },
       url: url,
     };
@@ -47,12 +50,11 @@ export class WhatsappDownloadMediaService {
       crypto.createHash('sha256').update(responseData).digest('hex') === sha256;
 
     if (!checkIfDataIsCorrect) {
-      return null;
+      return '';
     }
     const fileFolder = FileFolder.Attachment;
     const fileExtension = getFileExtension(mimeType?.split(';', 2)[0] ?? '');
     const filename = filenamePrefix.concat(timestamp, '_', fileExtension);
-    const workspaceId = '???'; // TODO: find a way how to retrieve a current workspace id
     const uploadedFile = await this.fileUploadService.uploadFile({
       file,
       filename,

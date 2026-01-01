@@ -30,6 +30,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
@@ -284,6 +285,23 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflow')
   workflowId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.message,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Message`,
+    description: msg`Message attachment`,
+    icon: 'IconMessage',
+    inverseSideTarget: () => MessageWorkspaceEntity,
+    inverseSideFieldKey: 'messageAttachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  message: Relation<MessageWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('attachment')
+  attachmentId: string | null;
 
   // todo: remove this decorator and the custom field
   @WorkspaceDynamicRelation({

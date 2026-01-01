@@ -44,6 +44,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
   workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
+  message: '20202020-d07d-4927-ad29-a742acb1f182',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 
@@ -272,6 +273,7 @@ export const MESSAGE_STANDARD_FIELD_IDS = {
   receivedAt: '20202020-140a-4a2a-9f86-f13b6a979afc',
   messageParticipants: '20202020-7cff-4a74-b63c-73228448cbd9',
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
+  messageAttachments: '20202020-8184-431f-82c9-add7c118ce9b',
 } as const;
 
 export const NOTE_STANDARD_FIELD_IDS = {
@@ -537,6 +539,14 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
   favorites: '20202020-f032-478f-88fa-6426ff6f1e4c',
   attachments: '20202020-bf6f-4220-8c55-2764f1175870',
   searchVector: '20202020-0bcc-47a4-8360-2e35a7133f7a',
+} as const;
+
+export const WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS = {
+  appSecret: '20202020-9928-4bf5-984b-ed8e435a60fb',
+  bearerToken: '20202020-10b0-4778-8b88-034b190b59ca',
+  businessAccountId: '20202020-57ca-4173-96f1-7a49548765c6',
+  businessPhoneNumbers: '20202020-b207-43b7-a527-b9cf36e04cc8',
+  businessDisplayName: '20202020-f248-40f6-8b16-db8803bbf116',
 } as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {

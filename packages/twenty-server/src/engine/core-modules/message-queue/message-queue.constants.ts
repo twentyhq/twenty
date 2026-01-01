@@ -19,4 +19,5 @@ export enum MessageQueue {
   serverlessFunctionQueue = 'serverless-function-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
+  attachmentCreationQueue = 'attachment-creation-queue',
 }

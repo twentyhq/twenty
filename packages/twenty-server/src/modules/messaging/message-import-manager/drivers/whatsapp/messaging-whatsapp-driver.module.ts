@@ -10,7 +10,12 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
-import { WhatsappGetMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-message.service';
+import { WhatsappController } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/controllers/whatsapp.controller';
+import { WhatsappUpdatePersonService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-update-person.service';
+import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
+import { WhatsappDownloadMediaService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-download-media.service';
+import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
+import { WhatsappGetAllGroupParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-all-group-participants.service';
 
 @Module({
   imports: [
@@ -23,7 +28,15 @@ import { WhatsappGetMessageService } from 'src/modules/messaging/message-import-
     WorkspaceDataSourceModule,
     MessageParticipantManagerModule,
   ],
-  providers: [WhatsappGetMessageService],
-  exports: [WhatsappGetMessageService],
+  providers: [
+    WhatsappConvertMessage,
+    WhatsappDownloadMediaService,
+    WhatsappFormatGroupParticipantsToMessageParticipantsService,
+    WhatsappGetAllGroupParticipantsService,
+    WhatsappUpdatePersonService,
+  ],
+  // TODO: check if it's correct (probably not but what's missing?)
+  controllers: [WhatsappController],
+  exports: [WhatsappController],
 })
 export class MessagingWhatsAppDriverModule {}
