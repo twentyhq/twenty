@@ -10,8 +10,8 @@ import { Relation } from 'typeorm';
 export const ALL_METADATA_RELATION_PROPERTIES = {
   agent: {
     manyToOne: {
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
@@ -22,14 +22,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   fieldMetadata: {
     manyToOne: {
       object: { metadataName: 'objectMetadata' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
       relationTargetFieldMetadata: { metadataName: 'fieldMetadata' },
       relationTargetObjectMetadata: { metadataName: 'objectMetadata' },
     },
     oneToMany: {
-      fieldPermissions: { metadataName: undefined },
-      indexFieldMetadatas: { metadataName: undefined },
+      fieldPermissions: null,
+      indexFieldMetadatas: null,
       viewFields: { metadataName: 'viewField' },
       viewFilters: { metadataName: 'viewFilter' },
       kanbanAggregateOperationViews: { metadataName: 'view' },
@@ -39,25 +39,25 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   objectMetadata: {
     manyToOne: {
-      dataSource: { metadataName: undefined },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      dataSource: null,
+      workspace: null,
+      application: null,
     },
     oneToMany: {
       fields: { metadataName: 'fieldMetadata' },
       indexMetadatas: { metadataName: 'index' },
       targetRelationFields: { metadataName: 'fieldMetadata' },
-      objectPermissions: { metadataName: undefined },
-      fieldPermissions: { metadataName: undefined },
+      objectPermissions: null,
+      fieldPermissions: null,
       views: { metadataName: 'view' },
     },
   },
   view: {
     manyToOne: {
       objectMetadata: { metadataName: 'objectMetadata' },
-      workspace: { metadataName: undefined },
-      createdBy: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      createdBy: null,
+      application: null,
       calendarFieldMetadata: { metadataName: 'fieldMetadata' },
       kanbanAggregateOperationFieldMetadata: { metadataName: 'fieldMetadata' },
       mainGroupByFieldMetadata: { metadataName: 'fieldMetadata' },
@@ -66,18 +66,18 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       viewFields: { metadataName: 'viewField' },
       viewFilters: { metadataName: 'viewFilter' },
       // @ts-expect-error TODO migrate viewFilterGroup to v2
-      viewFilterGroups: { metadataName: undefined },
+      viewFilterGroups: null,
       viewGroups: { metadataName: 'viewGroup' },
       // @ts-expect-error TODO migrate viewSort to v2
-      viewSorts: { metadataName: undefined },
+      viewSorts: null,
     },
   },
   viewField: {
     manyToOne: {
       fieldMetadata: { metadataName: 'fieldMetadata' },
       view: { metadataName: 'view' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
@@ -86,35 +86,35 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       fieldMetadata: { metadataName: 'fieldMetadata' },
       view: { metadataName: 'view' },
       // @ts-expect-error TODO migrate viewFilterGroup to v2
-      viewFilterGroup: { metadataName: undefined },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      viewFilterGroup: null,
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   viewGroup: {
     manyToOne: {
       view: { metadataName: 'view' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   index: {
     manyToOne: {
       objectMetadata: { metadataName: 'objectMetadata' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {
-      indexFieldMetadatas: { metadataName: undefined },
+      indexFieldMetadatas: null,
     },
   },
   serverlessFunction: {
     manyToOne: {
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
-      serverlessFunctionLayer: { metadataName: undefined },
+      workspace: null,
+      application: null,
+      serverlessFunctionLayer: null,
     },
     oneToMany: {
       cronTriggers: { metadataName: 'cronTrigger' },
@@ -125,53 +125,53 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   cronTrigger: {
     manyToOne: {
       serverlessFunction: { metadataName: 'serverlessFunction' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   databaseEventTrigger: {
     manyToOne: {
       serverlessFunction: { metadataName: 'serverlessFunction' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   routeTrigger: {
     manyToOne: {
       serverlessFunction: { metadataName: 'serverlessFunction' },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   role: {
     manyToOne: {
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      workspace: null,
+      application: null,
     },
     oneToMany: {
       roleTargets: { metadataName: 'roleTarget' },
-      objectPermissions: { metadataName: undefined },
-      permissionFlags: { metadataName: undefined },
-      fieldPermissions: { metadataName: undefined },
+      objectPermissions: null,
+      permissionFlags: null,
+      fieldPermissions: null,
     },
   },
   roleTarget: {
     manyToOne: {
       role: { metadataName: 'role' },
-      apiKey: { metadataName: undefined },
-      workspace: { metadataName: undefined },
-      application: { metadataName: undefined },
+      apiKey: null,
+      workspace: null,
+      application: null,
     },
     oneToMany: {},
   },
   pageLayout: {
     manyToOne: {
-      workspace: { metadataName: undefined },
+      workspace: null,
       objectMetadata: { metadataName: 'objectMetadata' },
-      application: { metadataName: undefined },
+      application: null,
     },
     oneToMany: {
       tabs: { metadataName: 'pageLayoutTab' },
@@ -179,9 +179,9 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   pageLayoutTab: {
     manyToOne: {
-      workspace: { metadataName: undefined },
+      workspace: null,
       pageLayout: { metadataName: 'pageLayout' },
-      application: { metadataName: undefined },
+      application: null,
     },
     oneToMany: {
       widgets: { metadataName: 'pageLayoutWidget' },
@@ -189,16 +189,16 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   },
   pageLayoutWidget: {
     manyToOne: {
-      workspace: { metadataName: undefined },
+      workspace: null,
       pageLayoutTab: { metadataName: 'pageLayoutTab' },
       objectMetadata: { metadataName: 'objectMetadata' },
-      application: { metadataName: undefined },
+      application: null,
     },
     oneToMany: {},
   },
   rowLevelPermissionPredicate: {
     manyToOne: {
-      workspace: { metadataName: undefined },
+      workspace: null,
       role: { metadataName: 'role' },
       fieldMetadata: { metadataName: 'fieldMetadata' },
       workspaceMemberFieldMetadata: { metadataName: 'fieldMetadata' },
@@ -206,18 +206,18 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       rowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
       },
-      application: { metadataName: undefined },
+      application: null,
     },
     oneToMany: {},
   },
   rowLevelPermissionPredicateGroup: {
     manyToOne: {
-      workspace: { metadataName: undefined },
+      workspace: null,
       role: { metadataName: 'role' },
       parentRowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
       },
-      application: { metadataName: undefined },
+      application: null,
     },
     oneToMany: {
       childRowLevelPermissionPredicateGroups: {
@@ -241,26 +241,24 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       [P in ExtractEntityManyToOneEntityRelationProperties<
         MetadataEntity<TName>
-      >]: {
-        metadataName: NonNullable<
-          MetadataEntity<TName>[P]
-        > extends SyncableEntity
-          ? FromMetadataEntityToMetadataName<
+      >]: NonNullable<MetadataEntity<TName>[P]> extends SyncableEntity
+        ? {
+            metadataName: FromMetadataEntityToMetadataName<
               NonNullable<MetadataEntity<TName>[P]>
-            >
-          : undefined;
-      };
+            >;
+          }
+        : null;
     };
     oneToMany: {
       [P in ExtractEntityOneToManyEntityRelationProperties<
         MetadataEntity<TName>
-      >]: {
-        metadataName: MetadataEntity<TName>[P] extends Relation<
-          SyncableEntity[]
-        >
-          ? FromMetadataEntityToMetadataName<MetadataEntity<TName>[P][number]>
-          : undefined;
-      };
+      >]: MetadataEntity<TName>[P] extends Relation<SyncableEntity[]>
+        ? {
+            metadataName: FromMetadataEntityToMetadataName<
+              MetadataEntity<TName>[P][number]
+            >;
+          }
+        : null;
     };
   };
 };
