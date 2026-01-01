@@ -17,6 +17,7 @@ import { WhatsappDownloadMediaService } from 'src/modules/messaging/message-impo
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
+import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
 
 @Injectable()
 export class WhatsappConvertMessage {
@@ -25,6 +26,7 @@ export class WhatsappConvertMessage {
     private readonly whatsappUpdatePersonService: WhatsappUpdatePersonService,
     private readonly whatsappDownloadMediaService: WhatsappDownloadMediaService,
     private readonly whatsappGroupFormatService: WhatsappFormatGroupParticipantsToMessageParticipantsService,
+    private readonly whatsappFindMessageService: WhatsappFindMessageService,
   ) {}
 
   async convertFromWhatsappMessageToMessageWithParticipants(
@@ -208,12 +210,19 @@ export class WhatsappConvertMessage {
       case 'order':
         text = message.order?.text ?? null; // TODO: ???
         break;
-      case 'reaction':
+      case 'reaction': {
+        const relatedMessage =
+          await this.whatsappFindMessageService.findMessage(
+            message.reaction?.message_id,
+            workspaceId,
+          );
+
         text =
           message.reaction?.emoji !== undefined
-            ? `User reacted with ${message.reaction?.emoji} to ${message.reaction?.message_id}` // TODO: find a message text by message id?
-            : `User removed ${message.reaction?.message_id} reaction to ${message.reaction?.message_id}`;
+            ? `User reacted with ${message.reaction?.emoji} to ${relatedMessage}`
+            : `User removed reaction from ${relatedMessage}`;
         break;
+      }
       case 'sticker':
         attachments.push({
           filename: await this.whatsappDownloadMediaService.downloadFile(
