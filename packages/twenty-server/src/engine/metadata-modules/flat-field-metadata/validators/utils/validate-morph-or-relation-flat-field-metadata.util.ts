@@ -73,13 +73,51 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         : 'Relation field target metadata not found',
       userFriendlyMessage: msg`Relation field target metadata not found`,
     });
-  } else if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message:
-        'A relation field can only target a MORPH_RELATION or another RELATION field',
-      userFriendlyMessage: msg`Invalid relation field target`,
-    });
+  } else {
+    if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
+      errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message:
+          'A relation field can only target a MORPH_RELATION or another RELATION field',
+        userFriendlyMessage: msg`Invalid relation field target`,
+      });
+    } else {
+      if (
+        targetFlatFieldMetadata.objectMetadataId !==
+        flatFieldMetadataToValidate.relationTargetObjectMetadataId
+      ) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message:
+            'Target field metadata does not belong to the expected target object',
+          userFriendlyMessage: msg`Target relation field does not belong to the expected object`,
+        });
+      }
+
+      if (
+        targetFlatFieldMetadata.relationTargetObjectMetadataId !==
+        flatFieldMetadataToValidate.objectMetadataId
+      ) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message:
+            'Target field metadata does not point back to the source object',
+          userFriendlyMessage: msg`Target relation field does not reference the source object`,
+        });
+      }
+
+      if (
+        targetFlatFieldMetadata.relationTargetFieldMetadataId !==
+        flatFieldMetadataToValidate.id
+      ) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message:
+            'Target field metadata does not point back to the source field',
+          userFriendlyMessage: msg`Target relation field does not reference this field`,
+        });
+      }
+    }
   }
 
   if (
