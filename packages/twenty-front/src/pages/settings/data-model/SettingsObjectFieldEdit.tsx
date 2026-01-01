@@ -110,15 +110,30 @@ export const SettingsObjectFieldEdit = () => {
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
-    values: {
-      icon: fieldMetadataItem?.icon ?? 'Icon',
-      type: fieldMetadataItem?.type as SettingsFieldType,
-      label: fieldMetadataItem?.label ?? '',
-      description: fieldMetadataItem?.description,
-      isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
-      settings: fieldMetadataItem?.settings,
+    defaultValues: {
+      icon: 'Icon',
+      type: FieldMetadataType.TEXT as SettingsFieldType,
+      label: '',
+      description: null,
+      isLabelSyncedWithName: true,
+      settings: undefined,
+      defaultValue: undefined,
     },
   });
+
+  useEffect(() => {
+    if (isDefined(fieldMetadataItem)) {
+      formConfig.reset({
+        icon: fieldMetadataItem.icon ?? 'Icon',
+        type: fieldMetadataItem.type as SettingsFieldType,
+        label: fieldMetadataItem.label ?? '',
+        description: fieldMetadataItem.description,
+        isLabelSyncedWithName: fieldMetadataItem.isLabelSyncedWithName ?? true,
+        settings: fieldMetadataItem.settings ?? undefined,
+        defaultValue: fieldMetadataItem.defaultValue ?? undefined,
+      });
+    }
+  }, [fieldMetadataItem, formConfig]);
 
   useEffect(() => {
     if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
