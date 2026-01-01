@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -112,7 +112,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
-      workspaceId,
+      authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 

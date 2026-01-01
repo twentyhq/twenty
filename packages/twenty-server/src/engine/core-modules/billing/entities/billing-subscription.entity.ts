@@ -44,6 +44,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
@@ -54,7 +55,7 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
 @ObjectType('BillingSubscription')
-export class BillingSubscriptionEntity {
+export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -67,9 +68,6 @@ export class BillingSubscriptionEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @Column({ nullable: false })
   stripeCustomerId: string;

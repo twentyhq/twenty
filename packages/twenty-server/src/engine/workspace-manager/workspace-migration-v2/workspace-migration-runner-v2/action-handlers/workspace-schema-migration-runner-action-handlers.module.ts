@@ -7,9 +7,6 @@ import { UpdateAgentActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/create-skill-action-handler.service';
 import { DeleteSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/delete-skill-action-handler.service';
 import { UpdateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/update-skill-action-handler.service';
-import { CreatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/create-page-layout-action-handler.service';
-import { DeletePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/delete-page-layout-action-handler.service';
-import { UpdatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/update-page-layout-action-handler.service';
 import { CreateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/create-cron-trigger-action-handler.service';
 import { DeleteCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/delete-cron-trigger-action-handler.service';
 import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/update-cron-trigger-action-handler.service';
@@ -30,6 +27,9 @@ import { UpdatePageLayoutTabActionHandlerService } from 'src/engine/workspace-ma
 import { CreatePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/create-page-layout-widget-action-handler.service';
 import { DeletePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/delete-page-layout-widget-action-handler.service';
 import { UpdatePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/update-page-layout-widget-action-handler.service';
+import { CreatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/create-page-layout-action-handler.service';
+import { DeletePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/delete-page-layout-action-handler.service';
+import { UpdatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout/services/update-page-layout-action-handler.service';
 import { CreateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/create-role-target-action-handler.service';
 import { DeleteRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/delete-role-target-action-handler.service';
 import { UpdateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/update-role-target-action-handler.service';
@@ -39,6 +39,12 @@ import { UpdateRoleActionHandlerService } from 'src/engine/workspace-manager/wor
 import { CreateRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/create-route-trigger-action-handler.service';
 import { DeleteRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/delete-route-trigger-action-handler.service';
 import { UpdateRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/update-route-trigger-action-handler.service';
+import { CreateRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate-group/services/create-row-level-permission-predicate-group-action-handler.service';
+import { DeleteRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate-group/services/delete-row-level-permission-predicate-group-action-handler.service';
+import { UpdateRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate-group/services/update-row-level-permission-predicate-group-action-handler.service';
+import { CreateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate/services/create-row-level-permission-predicate-action-handler.service';
+import { DeleteRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate/services/delete-row-level-permission-predicate-action-handler.service';
+import { UpdateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/row-level-permission-predicate/services/update-row-level-permission-predicate-action-handler.service';
 import { CreateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/create-serverless-function-action-handler.service';
 import { DeleteServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/delete-serverless-function-action-handler.service';
 import { UpdateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/update-serverless-function-action-handler.service';
@@ -128,6 +134,14 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreatePageLayoutTabActionHandlerService,
     UpdatePageLayoutTabActionHandlerService,
     DeletePageLayoutTabActionHandlerService,
+
+    CreateRowLevelPermissionPredicateActionHandlerService,
+    UpdateRowLevelPermissionPredicateActionHandlerService,
+    DeleteRowLevelPermissionPredicateActionHandlerService,
+
+    CreateRowLevelPermissionPredicateGroupActionHandlerService,
+    UpdateRowLevelPermissionPredicateGroupActionHandlerService,
+    DeleteRowLevelPermissionPredicateGroupActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

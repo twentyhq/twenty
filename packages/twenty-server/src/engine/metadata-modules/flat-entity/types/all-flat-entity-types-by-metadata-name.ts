@@ -27,6 +27,10 @@ import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/r
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
+import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
+import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
@@ -93,6 +97,17 @@ import {
   type DeleteRouteTriggerAction,
   type UpdateRouteTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
+import {
+  type CreateRowLevelPermissionPredicateGroupAction,
+  type DeleteRowLevelPermissionPredicateGroupAction,
+  type UpdateRowLevelPermissionPredicateGroupAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action-v2.type';
+import {
+  type CreateRowLevelPermissionPredicateAction,
+  type DeleteRowLevelPermissionPredicateAction,
+  type DestroyRowLevelPermissionPredicateAction,
+  type UpdateRowLevelPermissionPredicateAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
 import {
   type CreateServerlessFunctionAction,
   type DeleteServerlessFunctionAction,
@@ -169,6 +184,26 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatViewGroup;
     entity: ViewGroupEntity;
+  };
+  rowLevelPermissionPredicate: {
+    actions: {
+      created: CreateRowLevelPermissionPredicateAction;
+      updated: UpdateRowLevelPermissionPredicateAction;
+      deleted:
+        | DeleteRowLevelPermissionPredicateAction
+        | DestroyRowLevelPermissionPredicateAction;
+    };
+    flatEntity: FlatRowLevelPermissionPredicate;
+    entity: RowLevelPermissionPredicateEntity;
+  };
+  rowLevelPermissionPredicateGroup: {
+    actions: {
+      created: CreateRowLevelPermissionPredicateGroupAction;
+      updated: UpdateRowLevelPermissionPredicateGroupAction;
+      deleted: DeleteRowLevelPermissionPredicateGroupAction;
+    };
+    flatEntity: FlatRowLevelPermissionPredicateGroup;
+    entity: RowLevelPermissionPredicateGroupEntity;
   };
   index: {
     actions: {

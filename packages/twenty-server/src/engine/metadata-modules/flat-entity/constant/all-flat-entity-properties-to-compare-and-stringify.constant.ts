@@ -11,6 +11,8 @@ import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata
 import { FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout/constants/flat-page-layout-editable-properties.constant';
 import { FLAT_ROLE_TARGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role-target/constants/flat-role-target-editable-properties.constant';
 import { FLAT_ROLE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role/constants/flat-role-editable-properties.constant';
+import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate-group/constants/flat-row-level-permission-predicate-group-editable-properties.constant';
+import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/flat-row-level-permission-predicate-editable-properties.constant';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
@@ -132,7 +134,7 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: [],
   },
-  skill: {
+skill: {
     propertiesToCompare: [
       'name',
       'label',
@@ -140,6 +142,20 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
       'description',
       'content',
       'isCustom',
+      'deletedAt',
+    ],
+    propertiesToStringify: [],
+  },
+  rowLevelPermissionPredicate: {
+    propertiesToCompare: [
+      ...FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES,
+      'deletedAt',
+    ],
+    propertiesToStringify: ['value'],
+  },
+  rowLevelPermissionPredicateGroup: {
+    propertiesToCompare: [
+      ...FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES,
       'deletedAt',
     ],
     propertiesToStringify: [],

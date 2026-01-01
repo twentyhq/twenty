@@ -149,6 +149,11 @@ msgstr "具有此值的記錄已存在。"
 msgid "A required configuration is missing."
 msgstr "缺少必要的設定。"
 
+#. js-lingui-id: FVCXUT
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+msgid "A required field is missing."
+msgstr ""
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -167,7 +172,6 @@ msgstr "任務目標"
 
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
 msgstr "發生暫時性錯誤。請再試一次。"
 
@@ -392,6 +396,7 @@ msgstr "雙重驗證資料發生錯誤。"
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
 msgid "An error occurred."
 msgstr "發生錯誤。"
 
@@ -433,41 +438,23 @@ msgstr "發生意外的設定錯誤。"
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
 #: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
-#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/file/file.exception.ts
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "An unexpected error occurred."
 msgstr "發生意外錯誤."
-
-#. js-lingui-id: ljwHbt
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
-msgid "An unexpected workflow error occurred."
-msgstr "發生意外的工作流程錯誤。"
 
 #. js-lingui-id: q8ZbjA
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "發生未知的行事曆錯誤。"
-
-#. js-lingui-id: EV/5J1
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
-msgid "An unknown email error occurred."
-msgstr "發生未知的電子郵件錯誤。"
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -496,6 +483,7 @@ msgstr "找不到 API 金鑰角色。"
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
 msgstr "找不到應用程式。"
@@ -740,11 +728,6 @@ msgstr "頭像"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "頭像網址"
-
-#. js-lingui-id: GVurVk
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Bad request."
-msgstr "錯誤的請求。"
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1030,11 +1013,6 @@ msgstr "頻道類型"
 msgid "City"
 msgstr "城市"
 
-#. js-lingui-id: unYzAT
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Client not found."
-msgstr "找不到用戶端。"
-
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
@@ -1092,12 +1070,6 @@ msgstr "設定驗證失敗。"
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
 msgstr "找不到設定變數。"
-
-#. js-lingui-id: xr7rlK
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Conflicting arguments provided."
-msgstr "提供了相互衝突的參數。"
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -1343,16 +1315,6 @@ msgstr "儀表板標題"
 msgid "Dashboards"
 msgstr "儀表板"
 
-#. js-lingui-id: Gb2JdW
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Data not found."
-msgstr "找不到資料。"
-
-#. js-lingui-id: Bg/wIf
-#: src/engine/metadata-modules/data-source/data-source.exception.ts
-msgid "Data source not found."
-msgstr "找不到資料來源。"
-
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
@@ -1550,6 +1512,7 @@ msgstr "需要電子郵件"
 #. js-lingui-id: Qof3ks
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Email is required."
 msgstr "電子郵件為必填."
 
@@ -1594,19 +1557,8 @@ msgstr "不允許空的欄位權限。"
 msgid "End Date"
 msgstr "結束日期"
 
-#. js-lingui-id: z1wQ2q
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity already exists."
-msgstr "實體已存在。"
-
-#. js-lingui-id: DAX1pY
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity data is malformed."
-msgstr "實體資料格式錯誤。"
-
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
 msgstr "找不到實體。"
@@ -1617,7 +1569,6 @@ msgid "Enum operation failed."
 msgstr "列舉操作失敗。"
 
 #. js-lingui-id: AOk97Y
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
 msgstr "找不到列舉型別。"
@@ -1642,11 +1593,6 @@ msgstr "事件公司"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
 msgstr "事件儀表板"
-
-#. js-lingui-id: NuQxIH
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Event data is corrupted."
-msgstr "事件資料已損毀。"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2039,11 +1985,16 @@ msgstr "欄位標籤標識符是必需的"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field metadata not found"
 msgstr "找不到欄位元資料"
 
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
@@ -2072,7 +2023,6 @@ msgstr "欄位名稱與標籤不同步。"
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Field not found."
 msgstr "找不到欄位。"
 
@@ -2396,18 +2346,6 @@ msgstr "存取行事曆的權限不足。"
 msgid "Insufficient permissions."
 msgstr "權限不足。"
 
-#. js-lingui-id: mYSErp
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'first' argument."
-msgstr "無效的 'first' 參數。"
-
-#. js-lingui-id: k0JXYM
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'last' argument."
-msgstr "無效的 'last' 參數。"
-
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -2438,16 +2376,6 @@ msgstr "無效的稽核輸入。"
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
 msgstr "無效的稽核類型。"
-
-#. js-lingui-id: kYec1W
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid authentication context."
-msgstr "無效的身分驗證上下文。"
-
-#. js-lingui-id: gxIicn
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Invalid authentication token."
-msgstr "無效的身分驗證權杖。"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2484,22 +2412,10 @@ msgstr "無效的已連結帳戶 ID。"
 msgid "Invalid country code {countryCode}"
 msgstr "國家代碼 {countryCode} 無效"
 
-#. js-lingui-id: 0RwhuX
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid cursor provided."
-msgstr "提供的游標無效。"
-
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "無效的資料格式。"
-
-#. js-lingui-id: 3o5vtu
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid data provided."
-msgstr "提供的資料無效。"
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
@@ -2515,11 +2431,6 @@ msgstr "日值無效。應為大於1的整數"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
 msgstr "無效的深度參數。"
-
-#. js-lingui-id: 4JreOU
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid direction provided."
-msgstr "提供的方向無效。"
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -2549,8 +2460,16 @@ msgstr "無效的檔案 ID。"
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
 msgid "Invalid filter parameter."
 msgstr "無效的篩選參數。"
+
+#. js-lingui-id: /GCbsS
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter value: \"{value}\""
+msgstr ""
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
@@ -2583,11 +2502,6 @@ msgstr "無效的身分提供者類型。"
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
 msgstr "提供的輸入無效。"
-
-#. js-lingui-id: vw9FMn
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invalid invitation."
-msgstr "無效的邀請。"
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2681,11 +2595,6 @@ msgstr "無效的電話國碼。"
 msgid "Invalid phone number."
 msgstr "無效的電話號碼。"
 
-#. js-lingui-id: Hvv6QE
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid post-hook payload."
-msgstr "無效的後置 Hook 載荷。"
-
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
@@ -2695,13 +2604,6 @@ msgstr "無效的價格。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid pricing tiers."
 msgstr "無效的訂價層級。"
-
-#. js-lingui-id: 0Dexu8
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid query input."
-msgstr "無效的查詢輸入。"
 
 #. js-lingui-id: XBYAgs
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -2744,6 +2646,16 @@ msgstr "無效的回應格式類型"
 msgid "Invalid role target data."
 msgstr "無效的角色目標資料。"
 
+#. js-lingui-id: ppA1Aq
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Invalid row level permission predicate data."
+msgstr ""
+
+#. js-lingui-id: nwC2sc
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Invalid row level permission predicate group data."
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -2779,12 +2691,6 @@ msgstr "無效的訂閱。"
 msgid "Invalid target URL."
 msgstr "無效的目標 URL。"
 
-#. js-lingui-id: w58bhw
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid token type."
-msgstr "無效的權杖類型。"
-
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -2805,10 +2711,102 @@ msgstr "無效的 URL 格式。"
 msgid "Invalid uuid {id}"
 msgstr "無效的 UUID {id}"
 
+#. js-lingui-id: Z3Su9z
+#: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+msgid "Invalid UUID format."
+msgstr ""
+
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Invalid validation token."
 msgstr "無效的驗證權杖。"
+
+#. js-lingui-id: 56bPee
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
+msgid "Invalid value for actor."
+msgstr ""
+
+#. js-lingui-id: Y2KtrW
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
+msgid "Invalid value for address."
+msgstr ""
+
+#. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+msgid "Invalid value for currency."
+msgstr ""
+
+#. js-lingui-id: AUbno1
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: mANTdg
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
+msgid "Invalid value for emails."
+msgstr ""
+
+#. js-lingui-id: SF3Mp4
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
+msgid "Invalid value for full name."
+msgstr ""
+
+#. js-lingui-id: UiMJoF
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: BgSFod
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON."
+msgstr ""
+
+#. js-lingui-id: GFYy9y
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
+msgid "Invalid value for links."
+msgstr ""
+
+#. js-lingui-id: Q6jO3x
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
+msgid "Invalid value for multi-select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
+msgid "Invalid value for number: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: oLqCzh
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
+msgid "Invalid value for phones."
+msgstr ""
+
+#. js-lingui-id: GLmyCK
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
+msgid "Invalid value for position: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+msgid "Invalid value for rich text."
+msgstr ""
+
+#. js-lingui-id: 9lVA5C
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
+msgid "Invalid value for UUID: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
+msgid "Invalid value: \"{inspectedValue}\""
+msgstr ""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -2819,11 +2817,6 @@ msgstr "無效的驗證碼。"
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "驗證碼無效。請再試一次。"
-
-#. js-lingui-id: Ku4J80
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid verification token."
-msgstr "無效的驗證權杖。"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -2874,11 +2867,6 @@ msgstr "無效的工作流程觸發條件輸入。"
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "無效的工作流程版本。"
-
-#. js-lingui-id: +WZMeN
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invitation is corrupted."
-msgstr "邀請資料已損毀。"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3026,7 +3014,6 @@ msgstr "標籤標識符欄位不能停用"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "Label identifier field not found."
 msgstr "找不到標籤識別欄位。"
 
@@ -3156,16 +3143,6 @@ msgstr "三月"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "最大記錄數為{QUERY_MAX_RECORDS}。"
-
-#. js-lingui-id: p0qTse
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum query depth reached."
-msgstr "已達查詢最大深度。"
-
-#. js-lingui-id: vLHXAB
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum records exceeded for upsert."
-msgstr "新增或更新的記錄數量超出上限。"
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3366,11 +3343,6 @@ msgstr "缺少裝飾器設定。"
 msgid "Missing main alias target."
 msgstr "缺少主要別名目標。"
 
-#. js-lingui-id: khQZlp
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Missing relation join column."
-msgstr "缺少關聯的連接欄位。"
-
 #. js-lingui-id: W5hpOP
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Missing request body."
@@ -3380,17 +3352,6 @@ msgstr "缺少請求主體。"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "缺少必需字段：至少要為 '{connectFieldName}' 完整填入一個唯一的限制條件。"
-
-#. js-lingui-id: PIWoHs
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing required system field."
-msgstr "缺少必要的系統欄位。"
-
-#. js-lingui-id: eM40XC
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing time zone for date group by."
-msgstr "缺少用於日期分組的時區。"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3427,17 +3388,6 @@ msgstr "多型關聯欄位必須具有 morph ID"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "多選欄位的默認值必須為數組"
-
-#. js-lingui-id: /81w6M
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Multiple join columns found."
-msgstr "找到多個連接欄位。"
-
-#. js-lingui-id: ZEzn4X
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Multiple matching records found during upsert."
-msgstr "新增或更新時找到多筆相符的記錄。"
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
@@ -3553,6 +3503,11 @@ msgstr "數據庫事件觸發中未提供事件名稱"
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "No foreign tables found."
 msgstr "找不到外部資料表。"
+
+#. js-lingui-id: 6GG2MJ
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "No identifier to search by was found."
+msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3740,12 +3695,17 @@ msgstr "對象標籤太短"
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Object metadata not found"
 msgstr "找不到對象元資料"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
@@ -3757,7 +3717,6 @@ msgstr "找不到物件元資料."
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Object not found."
 msgstr "找不到物件。"
 
@@ -3818,6 +3777,11 @@ msgstr "十月"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "您嘗試設置權限的一個或多個物件無法找到。它們可能已被刪除。"
+
+#. js-lingui-id: JZB2eY
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "One or more records were not found."
+msgstr ""
 
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4090,6 +4054,19 @@ msgstr "id為{flatPageLayoutWidgetId}的頁面版面配置小工具已經存在"
 msgid "Parent Folder ID"
 msgstr "父文件夾ID"
 
+#. js-lingui-id: Xsgh7b
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Parent row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: /GJDxy
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Password is too weak."
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
@@ -4186,10 +4163,21 @@ msgstr "請提供連接詳情以配置您的電子郵件帳戶。"
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "請選擇有效的連接類型（IMAP、SMTP或CalDAV）並重試。"
 
+#. js-lingui-id: sa9Q+R
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Please select at least 2 records to merge."
+msgstr ""
+
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Please use a company email domain."
 msgstr "請使用公司電子郵件網域。"
+
+#. js-lingui-id: Sguqn/
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
+msgid "Please use Settings to remove a workspace member."
+msgstr ""
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4285,30 +4273,10 @@ msgstr "找不到公開網域。"
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "公共域名URL未定義。請設置PUBLIC_DOMAIN_URL環境變量"
 
-#. js-lingui-id: uzWClp
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr "查詢複雜度過高。一對多關係不可巢狀於另一個一對多關係中。"
-
-#. js-lingui-id: XkHjXW
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr "查詢複雜度過高。請減少請求的關聯欄位數量。查詢複雜度：{queryComplexity}。最大複雜度：{maximumComplexity}。"
-
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Query failed."
 msgstr "查詢失敗。"
-
-#. js-lingui-id: 0bX5JL
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Query is too complex."
-msgstr "查詢過於複雜。"
-
-#. js-lingui-id: mn/6A3
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Query timed out."
-msgstr "查詢逾時。"
 
 #. js-lingui-id: 6H9kMC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4332,8 +4300,6 @@ msgstr "接收時間"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Record not found."
 msgstr "找不到記錄。"
 
@@ -4379,35 +4345,10 @@ msgstr "關聯創建數據是必需的"
 msgid "Relation field target metadata not found"
 msgstr "找不到目標元數據的關聯欄位"
 
-#. js-lingui-id: MvWdPg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation has join column on both sides."
-msgstr "關聯的兩側都設定了連接欄位。"
-
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "此欄位未啟用關聯。"
-
-#. js-lingui-id: oThEh8
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation object not found."
-msgstr "找不到關聯物件。"
-
-#. js-lingui-id: +v6IlP
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation settings not found."
-msgstr "找不到關聯設定。"
-
-#. js-lingui-id: 8ZgNmg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation target field not found."
-msgstr "找不到關聯目標欄位。"
-
-#. js-lingui-id: I0e0Bm
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation target not found."
-msgstr "找不到關聯目標。"
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -4514,6 +4455,14 @@ msgid "Role must have at least one target."
 msgstr "角色至少需要一個目標。"
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -4526,6 +4475,8 @@ msgid "Role not found"
 msgstr ""
 
 #. js-lingui-id: /BTyf+
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -4610,6 +4561,74 @@ msgstr "具有相同ID的路由已存在"
 msgid "Route with same path already exists"
 msgstr "具有相同路徑的路由已存在"
 
+#. js-lingui-id: va8c5P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: HBfLro
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Row level permission predicate group not found."
+msgstr ""
+
+#. js-lingui-id: vMP7nZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-delete-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to delete not found"
+msgstr ""
+
+#. js-lingui-id: h/Rc4f
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-destroy-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to destroy not found"
+msgstr ""
+
+#. js-lingui-id: NhW7fb
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-to-update-or-throw.util.ts
+msgid "Row level permission predicate group to update not found"
+msgstr ""
+
+#. js-lingui-id: LrJvM0
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Row level permission predicate group with this id already exists"
+msgstr ""
+
+#. js-lingui-id: fEazMl
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Row level permission predicate not found."
+msgstr ""
+
+#. js-lingui-id: zdTUvE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to delete not found"
+msgstr ""
+
+#. js-lingui-id: WzQYVM
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to destroy not found"
+msgstr ""
+
+#. js-lingui-id: aeNy7i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util.ts
+msgid "Row level permission predicate to update not found"
+msgstr ""
+
+#. js-lingui-id: CUT3wK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate with this id already exists"
+msgstr ""
+
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -4620,11 +4639,6 @@ msgstr "運行"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "星期六"
-
-#. js-lingui-id: r20Bqy
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
-msgid "Schema enum operation failed."
-msgstr "架構列舉操作失敗。"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -5212,6 +5226,16 @@ msgstr "工作流程版本狀態"
 msgid "The workspace member who last updated the record"
 msgstr ""
 
+#. js-lingui-id: mTxjri
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "There is an issue with your invitation. Please try again."
+msgstr ""
+
+#. js-lingui-id: gH+wBS
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "There is an issue with your token. Please try again."
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5287,11 +5311,6 @@ msgstr "此電子郵件已被使用。"
 msgid "This feature is not enabled."
 msgstr "此功能尚未啟用。"
 
-#. js-lingui-id: Io3Xii
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "This feature is not implemented."
-msgstr "此功能尚未實作。"
-
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -5366,6 +5385,16 @@ msgstr "此公開網域已註冊。"
 msgid "This record already exists. Please check your data and try again."
 msgstr "此記錄已存在。請檢查您的數據並重試。"
 
+#. js-lingui-id: 0arbc4
+#: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
+msgid "This record does not exist or has been deleted."
+msgstr ""
+
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "This remote server cannot be modified."
@@ -5403,6 +5432,11 @@ msgstr "此角色不能修改，因為它是系統角色。只有自定義角色
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "此子網域已被使用。"
+
+#. js-lingui-id: aXBMTb
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "This type of record cannot be merged."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5532,7 +5566,6 @@ msgstr "影響的記錄過多。"
 
 #. js-lingui-id: ExheIC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Too many records to update at once."
 msgstr "一次要更新的記錄過多。"
 
@@ -5622,11 +5655,6 @@ msgstr "不支持的計時排程類型"
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "不支持的欄位元數據類型{fieldType}"
 
-#. js-lingui-id: 9BAEgY
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Unsupported operator."
-msgstr "不支援的運算子。"
-
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5673,6 +5701,12 @@ msgstr "使用者已被指派角色。"
 msgid "User does not have access to this workspace"
 msgstr "用戶沒有權限訪問此工作區"
 
+#. js-lingui-id: kZ0tmK
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User does not have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
@@ -5696,6 +5730,7 @@ msgstr "用戶 ID"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User is not a member of the workspace."
 msgstr "用戶不屬於該工作區。"
@@ -5732,6 +5767,7 @@ msgstr "使用者未以電郵/密碼建立"
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 msgid "User workspace not found."
 msgstr "找不到使用者工作區。"
 
@@ -5770,11 +5806,6 @@ msgstr "對0個對象和0個字段的驗證失敗"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "值必須是全部大寫，並遵循 snake_case 格式 \"{sanitizedValue}\""
-
-#. js-lingui-id: gj6Gxm
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Verification token has expired."
-msgstr "驗證權杖已過期。"
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -6097,6 +6128,11 @@ msgstr "找不到工作流程邊。"
 msgid "Workflow linked to the run."
 msgstr "與運行相關的工作流程。"
 
+#. js-lingui-id: R67jts
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow not found."
+msgstr ""
+
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
@@ -6178,11 +6214,6 @@ msgstr "與工作流程相關的工作流程運行。"
 msgid "Workflow step not found."
 msgstr "找不到工作流程步驟。"
 
-#. js-lingui-id: wvR5lY
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-msgid "Workflow trigger not found."
-msgstr "找不到工作流程觸發條件。"
-
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version"
@@ -6263,6 +6294,11 @@ msgstr "Workflow 版本工作流程"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "工作區建立僅限於管理員"
+
+#. js-lingui-id: qSQPRS
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Workspace does not exist."
+msgstr ""
 
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -6383,15 +6419,24 @@ msgstr "工作區成員"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "密碼錯誤"
+
+#. js-lingui-id: RksBK0
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password."
+msgstr ""
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 84/Dko
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts

@@ -17,6 +17,8 @@ exports[`View Field Resolver - Failing Create Many Operations - v2 should accumu
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [],
       "viewField": [
@@ -91,6 +93,8 @@ exports[`View Field Resolver - Failing Create Many Operations - v2 should accumu
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
