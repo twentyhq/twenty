@@ -33,4 +33,3 @@ export const findSkillQueryFactory = ({
     id: input.id,
   },
 });
-

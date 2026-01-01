@@ -126,4 +126,3 @@ describe('Skill creation should fail', () => {
     },
   );
 });
-

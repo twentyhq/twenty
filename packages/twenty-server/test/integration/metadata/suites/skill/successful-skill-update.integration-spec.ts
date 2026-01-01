@@ -129,4 +129,3 @@ describe('Skill update should succeed', () => {
     });
   });
 });
-

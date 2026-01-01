@@ -42,4 +42,3 @@ describe('Skill deletion should succeed', () => {
     expect(findAfterData.skill).toBeNull();
   });
 });
-

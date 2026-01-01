@@ -26,4 +26,3 @@ export const deleteSkillQueryFactory = ({
     id: input.id,
   },
 });
-

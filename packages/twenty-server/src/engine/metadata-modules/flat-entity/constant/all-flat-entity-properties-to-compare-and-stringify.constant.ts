@@ -136,7 +136,11 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToStringify: [],
   },
   skill: {
-    propertiesToCompare: [...FLAT_SKILL_EDITABLE_PROPERTIES, 'isCustom', 'deletedAt'],
+    propertiesToCompare: [
+      ...FLAT_SKILL_EDITABLE_PROPERTIES,
+      'isCustom',
+      'deletedAt',
+    ],
     propertiesToStringify: [],
   },
   rowLevelPermissionPredicate: {

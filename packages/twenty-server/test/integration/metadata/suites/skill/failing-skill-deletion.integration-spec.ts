@@ -50,9 +50,7 @@ describe('Skill deletion should fail', () => {
       gqlFields: 'id name isCustom',
     });
 
-    const standardSkill = data.skills.find(
-      (skill) => skill.isCustom === false,
-    );
+    const standardSkill = data.skills.find((skill) => skill.isCustom === false);
 
     // If there are no standard skills, skip this test
     if (!standardSkill) {
@@ -69,4 +67,3 @@ describe('Skill deletion should fail', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });
-

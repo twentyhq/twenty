@@ -5,8 +5,8 @@ import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
