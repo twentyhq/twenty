@@ -20,6 +20,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -59,6 +60,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -92,6 +94,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -131,6 +134,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -164,6 +168,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -203,6 +208,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
