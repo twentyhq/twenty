@@ -170,7 +170,9 @@ describe('Field metadata relation creation should fail', () => {
         context: ({ collisionFieldName }) => ({
           input: {
             name: collisionFieldName,
-            relationCreationPayload: { targetFieldLabel: 'Unique Target Label' },
+            relationCreationPayload: {
+              targetFieldLabel: 'Unique Target Label',
+            },
           },
         }),
       },
