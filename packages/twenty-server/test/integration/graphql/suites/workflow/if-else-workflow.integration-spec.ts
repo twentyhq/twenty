@@ -261,6 +261,9 @@ describe('If/Else Workflow (e2e)', () => {
       });
 
     expect(activateResponse.body.errors).toBeUndefined();
+    expect(activateResponse.body.data.activateWorkflowVersion.status).toBe(
+      'ACTIVE',
+    );
   });
 
   afterAll(async () => {
@@ -354,6 +357,15 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStep.name).toBe('If/Else');
       expect(ifElseStep.settings.input.branches).toBeDefined();
       expect(ifElseStep.settings.input.branches.length).toBe(2);
+
+      const ifBranch = ifElseStep.settings.input.branches[0];
+      const elseBranch = ifElseStep.settings.input.branches[1];
+
+      expect(ifBranch.filterGroupId).toBeDefined();
+      expect(elseBranch.filterGroupId).toBeUndefined();
+      expect(ifBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
+      expect(elseBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
+
       expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
       expect(ifElseStep.settings.input.stepFilters).toBeDefined();
     });
