@@ -8,6 +8,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     workspace: true,
     application: true,
   },
+  skill: {
+    workspace: true,
+    application: true,
+  },
   fieldMetadata: {
     relationTargetFieldMetadata: true,
     relationTargetObjectMetadata: true,

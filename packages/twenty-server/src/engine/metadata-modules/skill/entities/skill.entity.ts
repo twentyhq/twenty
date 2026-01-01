@@ -4,16 +4,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 @Entity('skill')
 @Index('IDX_SKILL_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -46,17 +41,8 @@ export class SkillEntity
   @Column({ nullable: false, type: 'text' })
   content: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @Column({ default: false })
   isCustom: boolean;
-
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
