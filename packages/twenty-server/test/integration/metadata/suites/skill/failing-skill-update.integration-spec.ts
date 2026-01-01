@@ -5,8 +5,8 @@ import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
 import {
-  eachTestingContextFilter,
-  type EachTestingContext,
+    eachTestingContextFilter,
+    type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
@@ -142,9 +142,7 @@ describe('Skill update should fail', () => {
       gqlFields: 'id name isCustom',
     });
 
-    const standardSkill = data.skills.find(
-      (skill) => skill.isCustom === false,
-    );
+    const standardSkill = data.skills.find((skill) => skill.isCustom === false);
 
     // If there are no standard skills, skip this test
     if (!standardSkill) {
@@ -164,4 +162,3 @@ describe('Skill update should fail', () => {
     });
   });
 });
-

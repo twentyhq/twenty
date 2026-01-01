@@ -109,4 +109,3 @@ describe('Skill creation should succeed', () => {
     });
   });
 });
-
