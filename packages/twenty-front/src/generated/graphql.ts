@@ -4539,6 +4539,7 @@ export type UpdateWorkflowVersionStepInput = {
 };
 
 export type UpdateWorkspaceInput = {
+  allowExternalRequests?: InputMaybe<Scalars['Boolean']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
@@ -4893,6 +4894,7 @@ export type WorkflowVersionStepChanges = {
 export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
+  allowExternalRequests: Scalars['Boolean'];
   allowImpersonation: Scalars['Boolean'];
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
