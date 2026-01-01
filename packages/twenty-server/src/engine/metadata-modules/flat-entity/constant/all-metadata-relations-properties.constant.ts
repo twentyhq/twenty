@@ -65,8 +65,10 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     oneToMany: {
       viewFields: { metadataName: 'viewField' },
       viewFilters: { metadataName: 'viewFilter' },
+      // @ts-expect-error TODO migrate viewFilterGroup to v2
       viewFilterGroups: { metadataName: undefined },
       viewGroups: { metadataName: 'viewGroup' },
+      // @ts-expect-error TODO migrate viewSort to v2
       viewSorts: { metadataName: undefined },
     },
   },
@@ -256,7 +258,7 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
         metadataName: MetadataEntity<TName>[P] extends Relation<
           SyncableEntity[]
         >
-          ? FromMetadataEntityToMetadataName<MetadataEntity<TName>[P]>
+          ? FromMetadataEntityToMetadataName<MetadataEntity<TName>[P][number]>
           : undefined;
       };
     };
