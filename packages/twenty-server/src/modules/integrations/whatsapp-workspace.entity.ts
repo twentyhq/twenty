@@ -20,7 +20,7 @@ import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is
   description: msg`Whatsapp integration`,
   icon: STANDARD_OBJECT_ICONS.integrations,
   labelIdentifierStandardId:
-    WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.bearerToken, // TODO: fix
+    WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS.businessAccountId, // TODO: check if it's correct
 })
 @WorkspaceIsSystem()
 export class WhatsappWorkspaceEntity extends BaseWorkspaceEntity {

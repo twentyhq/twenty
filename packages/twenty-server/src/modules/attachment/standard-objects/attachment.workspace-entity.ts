@@ -300,8 +300,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   message: Relation<MessageWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('attachment')
-  attachmentId: string | null;
+  @WorkspaceJoinColumn('message')
+  messageId: string | null;
 
   // todo: remove this decorator and the custom field
   @WorkspaceDynamicRelation({
