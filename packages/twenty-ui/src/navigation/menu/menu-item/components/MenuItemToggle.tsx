@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
 import { Toggle, type ToggleSize } from '@ui/input';
-import { useId } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
   StyledMenuItemRightContent,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledToggleContainer = styled.label`
+const StyledToggleContainer = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
@@ -39,14 +38,13 @@ export const MenuItemToggle = ({
   toggleSize,
   disabled = false,
 }: MenuItemToggleProps) => {
-  const instanceId = useId();
   return (
     <StyledMenuItemBase
       className={className}
       focused={focused}
       disabled={disabled}
     >
-      <StyledToggleContainer htmlFor={instanceId}>
+      <StyledToggleContainer>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}
@@ -55,7 +53,6 @@ export const MenuItemToggle = ({
         />
         <StyledMenuItemRightContent>
           <Toggle
-            id={instanceId}
             value={toggled}
             onChange={disabled ? undefined : onToggleChange}
             toggleSize={toggleSize}
