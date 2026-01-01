@@ -33,7 +33,7 @@ type WorkflowIfElseBranchEditorProps = {
   branchLabel: MessageDescriptor;
   branchFilterGroup: StepFilterGroup | undefined;
   readonly: boolean;
-  onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
+  onFilterSettingsUpdate: (filterSettings: FilterSettings) => Promise<void>;
 };
 
 export const WorkflowIfElseBranchEditor = ({
