@@ -37,10 +37,39 @@ describe('If/Else Workflow (e2e)', () => {
         `,
       });
 
+    expect(createWorkflowResponse.status).toBe(200);
     expect(createWorkflowResponse.body.errors).toBeUndefined();
     createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+
+    const getWorkflowResponse = await client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send({
+        query: `
+          query GetWorkflow($id: UUID!) {
+            workflow(filter: { id: { eq: $id } }) {
+              id
+              versions {
+                edges {
+                  node {
+                    id
+                    status
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: createdWorkflowId },
+      });
+
+    expect(getWorkflowResponse.status).toBe(200);
+    expect(getWorkflowResponse.body.errors).toBeUndefined();
+    expect(
+      getWorkflowResponse.body.data.workflow.versions.edges.length,
+    ).toBeGreaterThan(0);
     createdWorkflowVersionId =
-      createWorkflowResponse.body.data.createWorkflow.versions.edges[0].node.id;
+      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
     const createIfElseStepResponse = await client
       .post('/graphql')
