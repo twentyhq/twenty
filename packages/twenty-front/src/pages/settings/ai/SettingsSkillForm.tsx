@@ -17,17 +17,17 @@ import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-    AppTooltip,
-    H2Title,
-    IconInfoCircle,
-    IconRefresh,
-    TooltipDelay,
+  AppTooltip,
+  H2Title,
+  IconInfoCircle,
+  IconRefresh,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-    useCreateSkillMutation,
-    useSkillQuery,
-    useUpdateSkillMutation,
+  useCreateSkillMutation,
+  useSkillQuery,
+  useUpdateSkillMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

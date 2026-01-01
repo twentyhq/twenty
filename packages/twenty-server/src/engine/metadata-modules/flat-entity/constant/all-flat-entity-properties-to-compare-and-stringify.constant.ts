@@ -134,7 +134,7 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: [],
   },
-skill: {
+  skill: {
     propertiesToCompare: [
       'name',
       'label',

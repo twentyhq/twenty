@@ -12,10 +12,10 @@ import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconChevronRight,
-    IconPlus,
-    IconSearch,
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSearch,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -25,8 +25,8 @@ import { useSkillsQuery } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
-    SettingsSkillTableRow,
-    StyledSkillTableRow,
+  SettingsSkillTableRow,
+  StyledSkillTableRow,
 } from './SettingsSkillTableRow';
 
 const StyledSearchContainer = styled.div`
