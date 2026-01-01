@@ -71,6 +71,20 @@ describe('If/Else Workflow (e2e)', () => {
     createdWorkflowVersionId =
       getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
+    const manualTrigger = {
+      name: 'Manual Trigger',
+      type: 'MANUAL',
+      settings: {
+        outputSchema: {},
+      },
+      nextStepIds: [],
+    };
+
+    await global.testDataSource.query(
+      `UPDATE core."workflowVersion" SET "trigger" = $1 WHERE id = $2`,
+      [JSON.stringify(manualTrigger), createdWorkflowVersionId],
+    );
+
     const createIfElseStepResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
