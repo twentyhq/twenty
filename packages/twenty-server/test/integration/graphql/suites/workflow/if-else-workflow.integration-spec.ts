@@ -78,12 +78,31 @@ describe('If/Else Workflow (e2e)', () => {
         outputSchema: {},
       },
       nextStepIds: [],
+      position: { x: 0, y: 0 },
     };
 
-    await global.testDataSource.query(
-      `UPDATE core."workflowVersion" SET "trigger" = $1 WHERE id = $2`,
-      [JSON.stringify(manualTrigger), createdWorkflowVersionId],
-    );
+    const updateWorkflowVersionResponse = await client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send({
+        query: `
+          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
+            updateWorkflowVersion(filter: { id: { eq: $id } }, data: $data) {
+              id
+              trigger
+            }
+          }
+        `,
+        variables: {
+          id: createdWorkflowVersionId,
+          data: {
+            trigger: manualTrigger,
+          },
+        },
+      });
+
+    expect(updateWorkflowVersionResponse.status).toBe(200);
+    expect(updateWorkflowVersionResponse.body.errors).toBeUndefined();
 
     const createIfElseStepResponse = await client
       .post('/graphql')
