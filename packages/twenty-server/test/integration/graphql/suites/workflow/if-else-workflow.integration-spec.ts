@@ -80,6 +80,7 @@ describe('If/Else Workflow (e2e)', () => {
         diff.type === 'CREATE' && diff.value.type === 'IF_ELSE',
     );
 
+    expect(ifElseStepDiff).toBeDefined();
     ifElseStepId = ifElseStepDiff.value.id;
 
     const emptyNodesDiff = stepsDiff.filter(
@@ -106,10 +107,19 @@ describe('If/Else Workflow (e2e)', () => {
         variables: { id: createdWorkflowVersionId },
       });
 
+    expect(getWorkflowVersionResponse.body.errors).toBeUndefined();
     const steps = getWorkflowVersionResponse.body.data.workflowVersion.steps;
     const ifElseStep = steps.find(
       (step: { id: string }) => step.id === ifElseStepId,
     );
+
+    expect(ifElseStep).toBeDefined();
+    expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
+    expect(ifElseStep.settings.input.stepFilterGroups.length).toBeGreaterThan(
+      0,
+    );
+    expect(ifElseStep.settings.input.stepFilters).toBeDefined();
+    expect(ifElseStep.settings.input.stepFilters.length).toBeGreaterThan(0);
     const ifFilterGroupId = ifElseStep.settings.input.stepFilterGroups[0].id;
 
     const updateIfElseStepResponse = await client
@@ -191,6 +201,7 @@ describe('If/Else Workflow (e2e)', () => {
         diff.type === 'CREATE' && diff.value.type === 'DELAY',
     );
 
+    expect(ifBranchStepDiff).toBeDefined();
     ifBranchActionStepId = ifBranchStepDiff.value.id;
 
     const createElseBranchStepResponse = await client
@@ -231,9 +242,10 @@ describe('If/Else Workflow (e2e)', () => {
         diff.type === 'CREATE' && diff.value.type === 'DELAY',
     );
 
+    expect(elseBranchStepDiff).toBeDefined();
     elseBranchActionStepId = elseBranchStepDiff.value.id;
 
-    await client
+    const activateResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({
@@ -247,6 +259,8 @@ describe('If/Else Workflow (e2e)', () => {
         `,
         variables: { workflowVersionId: createdWorkflowVersionId },
       });
+
+    expect(activateResponse.body.errors).toBeUndefined();
   });
 
   afterAll(async () => {
