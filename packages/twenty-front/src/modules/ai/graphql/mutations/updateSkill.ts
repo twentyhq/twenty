@@ -10,4 +10,3 @@ export const UPDATE_SKILL = gql`
     }
   }
 `;
-

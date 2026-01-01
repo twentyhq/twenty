@@ -11,27 +11,15 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/skill/interceptors/skill-graphql-api-exception.interceptor';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-
-const fromSkillEntityToSkillDTO = (skillEntity: SkillEntity): SkillDTO => ({
-  id: skillEntity.id,
-  standardId: skillEntity.standardId,
-  name: skillEntity.name,
-  label: skillEntity.label,
-  icon: skillEntity.icon ?? undefined,
-  description: skillEntity.description ?? undefined,
-  content: skillEntity.content,
-  isCustom: skillEntity.isCustom,
-  workspaceId: skillEntity.workspaceId,
-  applicationId: skillEntity.applicationId ?? undefined,
-  createdAt: skillEntity.createdAt,
-  updatedAt: skillEntity.updatedAt,
-});
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
-@UseInterceptors(SkillGraphqlApiExceptionInterceptor)
+@UseInterceptors(
+  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  SkillGraphqlApiExceptionInterceptor,
+)
 @Resolver(() => SkillDTO)
 export class SkillResolver {
   constructor(private readonly skillService: SkillService) {}
@@ -40,9 +28,7 @@ export class SkillResolver {
   async skills(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO[]> {
-    const skills = await this.skillService.findAll(workspace.id);
-
-    return skills.map(fromSkillEntityToSkillDTO);
+    return this.skillService.findAll(workspace.id);
   }
 
   @Query(() => SkillDTO, { nullable: true })
@@ -50,9 +36,7 @@ export class SkillResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO | null> {
-    const skill = await this.skillService.findById(id, workspace.id);
-
-    return skill ? fromSkillEntityToSkillDTO(skill) : null;
+    return this.skillService.findById(id, workspace.id);
   }
 
   @Mutation(() => SkillDTO)
@@ -60,9 +44,7 @@ export class SkillResolver {
     @Args('input') input: CreateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
-    const skill = await this.skillService.create(input, workspace.id);
-
-    return fromSkillEntityToSkillDTO(skill);
+    return this.skillService.create(input, workspace.id);
   }
 
   @Mutation(() => SkillDTO)
@@ -70,18 +52,14 @@ export class SkillResolver {
     @Args('input') input: UpdateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
-    const skill = await this.skillService.update(input, workspace.id);
-
-    return fromSkillEntityToSkillDTO(skill);
+    return this.skillService.update(input, workspace.id);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => SkillDTO)
   async deleteSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.skillService.delete(id, workspace.id);
-
-    return true;
+  ): Promise<SkillDTO> {
+    return this.skillService.delete(id, workspace.id);
   }
 }

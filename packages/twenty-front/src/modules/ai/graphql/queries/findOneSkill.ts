@@ -10,4 +10,3 @@ export const FIND_ONE_SKILL = gql`
     }
   }
 `;
-
