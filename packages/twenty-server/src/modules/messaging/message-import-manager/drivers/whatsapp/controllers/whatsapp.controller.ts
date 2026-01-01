@@ -23,6 +23,8 @@ import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/wha
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
+import { WhatsappWebhookHistory } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-history.type';
+import { WhatsappConvertHistoricMessagesService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-historic-messages.service';
 
 @Injectable()
 @Controller('whatsapp')
@@ -32,6 +34,7 @@ export class WhatsappController {
     @InjectRepository(IntegrationsEntity)
     private readonly integrationsRepository: Repository<IntegrationsEntity>,
     private readonly whatsappConvertMessage: WhatsappConvertMessage,
+    private readonly whatsappConvertHistoricMessagesService: WhatsappConvertHistoricMessagesService,
     private readonly logger = new Logger('WhatsappController'),
   ) {}
 
@@ -126,6 +129,33 @@ export class WhatsappController {
         )) {
           convertedMessages.push(message);
         }
+      }
+    }
+
+    return convertedMessages;
+  }
+
+  // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
+  @Post('/history')
+  public async getHistory(
+    @Req() req: Request,
+    @Body() body: WhatsappWebhookHistory,
+    @Res() res: Response,
+  ) {
+    // TODO: is validation necessary?
+    res.status(HttpStatus.OK).send();
+    let convertedMessages: MessageWithParticipants[] = [];
+    const wabaId = body.entry[0].id;
+    const wabaPhoneNumber =
+      body.entry[0].changes[0].value.metadata.display_phone_number;
+
+    for (const thread of body.entry[0].changes[0].value.history[0].threads) {
+      for (const message of await this.whatsappConvertHistoricMessagesService.parseThread(
+        thread,
+        wabaId,
+        wabaPhoneNumber,
+      )) {
+        convertedMessages.push(message);
       }
     }
 

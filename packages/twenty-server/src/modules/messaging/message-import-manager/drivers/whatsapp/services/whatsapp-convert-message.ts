@@ -92,7 +92,7 @@ export class WhatsappConvertMessage {
     return parsedMessages;
   }
 
-  private async readMessage(
+  async readMessage(
     participants: MessageParticipant[],
     messageSenderContactName: string | null,
     messageSenderId: string,
