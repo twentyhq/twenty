@@ -10,4 +10,3 @@ export const ACTIVATE_SKILL = gql`
     }
   }
 `;
-

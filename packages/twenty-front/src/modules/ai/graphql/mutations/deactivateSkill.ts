@@ -10,4 +10,3 @@ export const DEACTIVATE_SKILL = gql`
     }
   }
 `;
-
