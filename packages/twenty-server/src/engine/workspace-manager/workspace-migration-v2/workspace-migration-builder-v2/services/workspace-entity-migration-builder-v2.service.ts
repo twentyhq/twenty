@@ -12,11 +12,10 @@ import {
 import { MetadataFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
-import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
@@ -137,11 +136,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
-      addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatEntityToCreate,
-        flatEntityAndRelatedMapsToMutate:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        metadataName: this.metadataName,
+        flatEntityMapsToMutate:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
       });
 
       actionsResult.created.push(
@@ -200,11 +198,12 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
-      deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: flatEntityToDelete,
-        flatEntityAndRelatedMapsToMutate:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        metadataName: this.metadataName,
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow<
+        typeof flatEntityToDelete
+      >({
+        entityToDeleteId: flatEntityToDelete.id,
+        flatEntityMapsToMutate:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
       });
 
       actionsResult.deleted.push(
