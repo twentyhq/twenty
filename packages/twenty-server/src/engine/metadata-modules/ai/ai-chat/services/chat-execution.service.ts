@@ -109,7 +109,9 @@ export class ChatExecutionService {
       { userId, userWorkspaceId },
     );
 
-    const skillCatalog = await this.skillService.findAllFlatSkills(workspace.id);
+    const skillCatalog = await this.skillService.findAllFlatSkills(
+      workspace.id,
+    );
 
     this.logger.log(
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
@@ -340,7 +342,9 @@ In your Python code, access files at \`/home/user/{filename}\`.`;
     }
 
     const skillsList = skillCatalog
-      .map((skill) => `- \`${skill.name}\`: ${skill.description ?? skill.label}`)
+      .map(
+        (skill) => `- \`${skill.name}\`: ${skill.description ?? skill.label}`,
+      )
       .join('\n');
 
     return `
