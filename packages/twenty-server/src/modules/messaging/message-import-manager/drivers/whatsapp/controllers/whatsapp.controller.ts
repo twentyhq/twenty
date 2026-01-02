@@ -16,25 +16,27 @@ import { Repository } from 'typeorm';
 import { Response } from 'express';
 
 import { WhatsAppWebhookMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-message.type';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { validateWebhookPayload } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/validate-webhook-payload.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
-import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
 import { WhatsappWebhookHistory } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-history.type';
-import { WhatsappConvertHistoricMessagesService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-historic-messages.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  WhatsappParseWebhookMessageJob,
+  WhatsappParseWebhookMessageJobData,
+} from 'src/modules/messaging/message-import-manager/drivers/whatsapp/jobs/whatsapp-parse-webhook-message.job';
+import { WhatsappRetrieveAppSecretService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-retrieve-app-secret.service';
 
 @Injectable()
 @Controller('whatsapp')
 export class WhatsappController {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectMessageQueue(MessageQueue.parseMessageQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly whatsappRetrieveSecret: WhatsappRetrieveAppSecretService,
     @InjectRepository(IntegrationsEntity)
     private readonly integrationsRepository: Repository<IntegrationsEntity>,
-    private readonly whatsappConvertMessage: WhatsappConvertMessage,
-    private readonly whatsappConvertHistoricMessagesService: WhatsappConvertHistoricMessagesService,
     private readonly logger = new Logger('WhatsappController'),
   ) {}
 
@@ -56,7 +58,7 @@ export class WhatsappController {
       whatsappToken: token,
     });
 
-    if (whatsapp) {
+    if (whatsapp !== null) {
       // TODO: check the response (where challenge should be send? in body as is or in json, maybe in header?)
       res.status(HttpStatus.OK).send({ challenge: challenge });
     } else {
@@ -74,40 +76,11 @@ export class WhatsappController {
     @Req() req: Request,
     @Body() body: WhatsAppWebhookMessage,
     @Res() res: Response,
-  ): Promise<MessageWithParticipants[]> {
+  ) {
     res.status(HttpStatus.OK).send();
-    // TODO: check if entry really contains only 1 business account number
-    const whatsappBusinessAccountId = body.entry[0].id;
-    const workspaceIdByWABAId = await this.integrationsRepository.findOneBy({
-      whatsappBusinessAccountId: whatsappBusinessAccountId,
-    });
-
-    if (workspaceIdByWABAId === null || !workspaceIdByWABAId.workspace.id) {
-      return [];
-    }
-    const workspaceId = workspaceIdByWABAId.workspace.id;
-    const context = buildSystemAuthContext(workspaceId);
-
-    const whatsappRecord =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        context,
-        async () => {
-          const whatsappRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WhatsappWorkspaceEntity>(
-              workspaceId,
-              'whatsapp',
-            );
-
-          return await whatsappRepository.findOneBy({
-            businessAccountId: whatsappBusinessAccountId,
-          });
-        },
-      );
-
-    if (!whatsappRecord) {
-      return [];
-    }
-    const appSecret = whatsappRecord.appSecret;
+    const appSecret = await this.whatsappRetrieveSecret.retrieveAppSecret(
+      body.entry[0].id,
+    );
 
     if (
       !validateWebhookPayload(
@@ -116,23 +89,16 @@ export class WhatsappController {
         appSecret,
       )
     ) {
-      return [];
-    }
-    let convertedMessages: MessageWithParticipants[] = [];
-
-    for (const change of body.entry[0].changes) {
-      if (change.value.errors === undefined) {
-        for (const message of await this.whatsappConvertMessage.convertFromWhatsappMessageToMessageWithParticipants(
-          change,
-          whatsappBusinessAccountId,
-          workspaceId,
-        )) {
-          convertedMessages.push(message);
-        }
-      }
+      throw new Error(); // TODO: fix
     }
 
-    return convertedMessages;
+    await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(
+      WhatsappParseWebhookMessageJob.name,
+      {
+        dataType: 'message',
+        data: body,
+      },
+    );
   }
 
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
@@ -142,24 +108,27 @@ export class WhatsappController {
     @Body() body: WhatsappWebhookHistory,
     @Res() res: Response,
   ) {
-    // TODO: is validation necessary?
     res.status(HttpStatus.OK).send();
-    let convertedMessages: MessageWithParticipants[] = [];
-    const wabaId = body.entry[0].id;
-    const wabaPhoneNumber =
-      body.entry[0].changes[0].value.metadata.display_phone_number;
+    const appSecret = await this.whatsappRetrieveSecret.retrieveAppSecret(
+      body.entry[0].id,
+    );
 
-    for (const thread of body.entry[0].changes[0].value.history[0].threads) {
-      for (const message of await this.whatsappConvertHistoricMessagesService.parseThread(
-        thread,
-        wabaId,
-        wabaPhoneNumber,
-      )) {
-        convertedMessages.push(message);
-      }
+    if (
+      !validateWebhookPayload(
+        req.headers.get('X-Hub-Signature-256'),
+        body.toString(),
+        appSecret,
+      )
+    ) {
+      throw new Error(); // TODO: fix
     }
-
-    return convertedMessages;
+    await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(
+      WhatsappParseWebhookMessageJob.name,
+      {
+        dataType: 'history',
+        data: body,
+      },
+    );
   }
 
   // TODO: how People records are created? Check MessagingSaveMessagesAndEnqueueContactCreationService

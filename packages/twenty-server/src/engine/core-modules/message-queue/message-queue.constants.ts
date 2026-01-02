@@ -20,4 +20,5 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   attachmentCreationQueue = 'attachment-creation-queue',
+  parseMessageQueue = 'parse-message-queue',
 }

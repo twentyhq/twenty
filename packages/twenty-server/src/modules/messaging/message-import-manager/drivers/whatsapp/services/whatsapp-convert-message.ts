@@ -17,7 +17,7 @@ import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
-import { type WhatsappFile } from 'src/modules/message-attachment-creation-manager/types/whatsapp-file.type';
+import { WhatsappFile } from 'src/modules/messaging/message-attachment-manager/types/whatsapp-file.type';
 
 @Injectable()
 export class WhatsappConvertMessage {
@@ -33,6 +33,7 @@ export class WhatsappConvertMessage {
     whatsappBusinessAccountId: string,
     workspaceId: string,
   ): Promise<MessageWithParticipants[]> {
+    // TODO: check if entry really contains only 1 business account number
     // TODO: how to find sender's name in array if wa_id and from may not be the same?
     // When there are more than 1 contact?
     const messageSenderContactName =
