@@ -2,12 +2,12 @@ import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -31,6 +31,7 @@ export const useMetadataErrorHandler = () => {
     pageLayoutWidget: t`page layout widget`,
     rowLevelPermissionPredicate: t`row level permission predicate`,
     rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
+    viewFilterGroup: t`view filter group`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(
