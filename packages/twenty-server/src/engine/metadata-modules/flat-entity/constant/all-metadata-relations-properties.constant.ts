@@ -147,6 +147,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     rowLevelPermissionPredicates: true,
     application: true,
   },
+  viewFilterGroup: {
+    view: true,
+    viewFilters: true,
+    parentViewFilterGroup: true,
+    childViewFilterGroups: true,
+    workspace: true,
+    application: true,
+  },
 } as const satisfies {
   [TName in AllMetadataName]: {
     [P in ExtractEntityRelatedEntityProperties<MetadataEntity<TName>>]: true;

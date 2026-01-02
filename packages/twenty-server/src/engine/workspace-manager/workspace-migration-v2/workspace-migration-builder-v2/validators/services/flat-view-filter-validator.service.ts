@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -22,6 +22,7 @@ export class FlatViewFilterValidatorService {
       flatViewFilterMaps: optimisticFlatViewFilterMaps,
       flatViewMaps,
       flatFieldMetadataMaps,
+      flatViewFilterGroupMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
@@ -73,6 +74,21 @@ export class FlatViewFilterValidatorService {
       });
     }
 
+    if (isDefined(flatViewFilterToValidate.viewFilterGroupId)) {
+      const referencedViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatViewFilterToValidate.viewFilterGroupId,
+        flatEntityMaps: flatViewFilterGroupMaps,
+      });
+
+      if (!isDefined(referencedViewFilterGroup)) {
+        validationResult.errors.push({
+          code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+          message: t`View filter group not found`,
+          userFriendlyMessage: msg`View filter group not found`,
+        });
+      }
+    }
+
     return validationResult;
   }
 
@@ -116,6 +132,7 @@ export class FlatViewFilterValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFilterMaps: optimisticFlatViewFilterMaps,
       flatFieldMetadataMaps,
+      flatViewFilterGroupMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
@@ -158,6 +175,21 @@ export class FlatViewFilterValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    }
+
+    if (isDefined(updatedFlatViewFilter.viewFilterGroupId)) {
+      const referencedViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: updatedFlatViewFilter.viewFilterGroupId,
+        flatEntityMaps: flatViewFilterGroupMaps,
+      });
+
+      if (!isDefined(referencedViewFilterGroup)) {
+        validationResult.errors.push({
+          code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+          message: t`View filter group not found`,
+          userFriendlyMessage: msg`View filter group not found`,
+        });
+      }
     }
 
     return validationResult;

@@ -12250,6 +12250,11 @@ msgstr "visningsfelt"
 msgid "view filter"
 msgstr "vis filter"
 
+#. js-lingui-id: KPEwMH
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view filter group"
+msgstr ""
+
 #. js-lingui-id: n7a9IR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view group"

@@ -6,6 +6,7 @@ export const ALL_METADATA_NAME = {
   viewGroup: 'viewGroup',
   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',
+  viewFilterGroup: 'viewFilterGroup',
   index: 'index',
   serverlessFunction: 'serverlessFunction',
   cronTrigger: 'cronTrigger',

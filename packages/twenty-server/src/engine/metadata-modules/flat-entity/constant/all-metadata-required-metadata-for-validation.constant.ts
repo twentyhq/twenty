@@ -44,10 +44,15 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewFilter: {
     view: true,
     fieldMetadata: true,
+    viewFilterGroup: true,
   },
   viewGroup: {
     fieldMetadata: true,
     view: true,
+  },
+  viewFilterGroup: {
+    view: true,
+    viewFilterGroup: true,
   },
   role: {},
   roleTarget: {

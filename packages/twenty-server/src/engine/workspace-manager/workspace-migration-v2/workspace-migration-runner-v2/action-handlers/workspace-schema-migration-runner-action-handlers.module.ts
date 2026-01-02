@@ -54,6 +54,9 @@ import { UpdateViewFieldActionHandlerService } from 'src/engine/workspace-manage
 import { CreateViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/create-view-filter-action-handler.service';
 import { DeleteViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/delete-view-filter-action-handler.service';
 import { UpdateViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/update-view-filter-action-handler.service';
+import { CreateViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/create-view-filter-group-action-handler.service';
+import { DeleteViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/delete-view-filter-group-action-handler.service';
+import { UpdateViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/update-view-filter-group-action-handler.service';
 import { CreateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/create-view-group-action-handler.service';
 import { DeleteViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/delete-view-group-action-handler.service';
 import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/update-view-group-action-handler.service';
@@ -86,6 +89,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateViewFilterActionHandlerService,
     UpdateViewFilterActionHandlerService,
     DeleteViewFilterActionHandlerService,
+
+    CreateViewFilterGroupActionHandlerService,
+    UpdateViewFilterGroupActionHandlerService,
+    DeleteViewFilterGroupActionHandlerService,
 
     CreateViewGroupActionHandlerService,
     UpdateViewGroupActionHandlerService,

@@ -1,3 +1,4 @@
+import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -44,7 +45,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
       updatedAt: createdAt,
       deletedAt: null,
       universalIdentifier: viewGroupId,
-      isVisible: true,
+      isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
       fieldValue: option.value,
       position: index,
       applicationId: mainGroupByFieldMetadata.applicationId,
@@ -55,6 +56,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
 
   if (mainGroupByFieldMetadata.isNullable === true) {
     const emptyGroupId = v4();
+    const emptyGroupPosition = flatViewGroupsFromOptions.length;
 
     flatViewGroups.push({
       id: emptyGroupId,
@@ -64,9 +66,9 @@ export const computeFlatViewGroupsOnViewCreate = ({
       updatedAt: createdAt,
       deletedAt: null,
       universalIdentifier: emptyGroupId,
-      isVisible: true,
+      isVisible: emptyGroupPosition < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
       fieldValue: '',
-      position: flatViewGroupsFromOptions.length,
+      position: emptyGroupPosition,
       applicationId: mainGroupByFieldMetadata.applicationId,
     });
   }

@@ -64,7 +64,9 @@ export class SyncDriver implements MessageQueueDriver {
     if (worker) {
       await worker(job);
     } else {
-      // this.logger.error(`No handler found for job: ${queueName}`);
+      if (process.env.NODE_ENV !== 'test') {
+        this.logger.error(`No handler found for job: ${queueName}`);
+      }
     }
   }
 }
