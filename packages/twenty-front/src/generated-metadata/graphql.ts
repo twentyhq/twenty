@@ -4657,6 +4657,7 @@ export type UpdateSkillInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateViewFieldInput = {

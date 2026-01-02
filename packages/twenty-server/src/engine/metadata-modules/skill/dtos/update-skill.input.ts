@@ -14,6 +14,11 @@ export class UpdateSkillInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
   label?: string;
 
   @IsString()
