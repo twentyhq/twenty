@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { fromCreateSkillInputToFlatSkillToCreate } from 'src/engine/metadata-modules/flat-skill/utils/from-create-skill-input-to-flat-skill-to-create.util';
 import { fromDeleteSkillInputToFlatSkillOrThrow } from 'src/engine/metadata-modules/flat-skill/utils/from-delete-skill-input-to-flat-skill-or-throw.util';
 import { fromFlatSkillToSkillDto } from 'src/engine/metadata-modules/flat-skill/utils/from-flat-skill-to-skill-dto.util';
@@ -15,7 +14,6 @@ import { fromUpdateSkillInputToFlatSkillToUpdateOrThrow } from 'src/engine/metad
 import { type CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import {
   SkillException,
   SkillExceptionCode,
@@ -29,8 +27,6 @@ export class SkillService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(SkillEntity)
-    private readonly skillRepository: Repository<SkillEntity>,
   ) {}
 
   async findAll(workspaceId: string): Promise<SkillDTO[]> {
@@ -217,26 +213,43 @@ export class SkillService {
     return fromFlatSkillToSkillDto(flatSkillToDelete);
   }
 
-  async searchSkills(
-    query: string,
-    workspaceId: string,
-    options: { limit: number } = { limit: 5 },
-  ): Promise<SkillEntity[]> {
-    const queryLower = query.toLowerCase();
-
-    return this.skillRepository.find({
-      where: [
-        { workspaceId, deletedAt: IsNull(), name: ILike(`%${queryLower}%`) },
-        { workspaceId, deletedAt: IsNull(), label: ILike(`%${queryLower}%`) },
+  async findAllFlatSkills(workspaceId: string): Promise<FlatSkill[]> {
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          deletedAt: IsNull(),
-          description: ILike(`%${queryLower}%`),
+          flatMapsKeys: ['flatSkillMaps'],
         },
-      ],
-      take: options.limit,
-      order: { label: 'ASC' },
-    });
+      );
+
+    return Object.values(flatSkillMaps.byId)
+      .filter(isDefined)
+      .filter((flatSkill) => !isDefined(flatSkill.deletedAt))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  async findFlatSkillsByNames(
+    names: string[],
+    workspaceId: string,
+  ): Promise<FlatSkill[]> {
+    if (names.length === 0) {
+      return [];
+    }
+
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    return Object.values(flatSkillMaps.byId)
+      .filter(isDefined)
+      .filter(
+        (flatSkill) =>
+          names.includes(flatSkill.name) && !isDefined(flatSkill.deletedAt),
+      );
   }
 
   async findByIdOrThrow(id: string, workspaceId: string): Promise<SkillDTO> {
