@@ -23,6 +23,9 @@ import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterP
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -36,7 +39,13 @@ import {
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledGridContainer = styled.div`
+const StyledGridContainer = styled.div<{
+  shouldUseWhiteBackground: boolean;
+}>`
+  background: ${({ theme, shouldUseWhiteBackground }) =>
+    shouldUseWhiteBackground
+      ? theme.background.primary
+      : theme.background.secondary};
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -104,6 +113,13 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
+  const isMobile = useIsMobile();
+  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInPinnedTab } = useIsInPinnedTab();
+
+  const shouldUseWhiteBackground =
+    (isMobile || isInRightDrawer) && !isInPinnedTab;
+
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -143,7 +159,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   );
 
   return (
-    <StyledGridContainer ref={gridContainerRef}>
+    <StyledGridContainer
+      ref={gridContainerRef}
+      shouldUseWhiteBackground={shouldUseWhiteBackground}
+    >
       {isPageLayoutInEditMode && (
         <>
           <PageLayoutGridOverlay />
