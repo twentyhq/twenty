@@ -898,6 +898,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPageLayoutWidgetMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps: optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
               flatPageLayoutTabMaps:
                 optimisticAllFlatEntityMaps.flatPageLayoutTabMaps,
             },

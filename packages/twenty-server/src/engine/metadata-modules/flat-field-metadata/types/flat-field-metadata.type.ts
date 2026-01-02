@@ -5,7 +5,10 @@ import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/typ
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   FlatEntityFrom<
-      FieldMetadataEntity<T>
+    Omit<
+      FieldMetadataEntity<T>,
+      'relationTargetFieldMetadata' | 'relationTargetObjectMetadata'
+    >
   > & {
     universalIdentifier: string; // TODO remove once universalIdentifier is required on entity directly
   };
