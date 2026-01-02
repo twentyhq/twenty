@@ -24,6 +24,7 @@ import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
@@ -58,7 +59,7 @@ export class WorkspaceSelectQueryBuilder<
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
-    return new WorkspaceSelectQueryBuilder(
+    const workspaceSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
       clonedQueryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -66,6 +67,8 @@ export class WorkspaceSelectQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
+
+    return workspaceSelectQueryBuilder;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -327,6 +330,7 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
+    this.applyRowLevelPermissionPredicates();
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
@@ -338,7 +342,9 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+    const mainAlias = this.expressionMap.mainAlias;
+
+    const mainAliasTarget = mainAlias?.target;
 
     if (!mainAliasTarget) {
       throw new TwentyORMException(
@@ -348,5 +354,32 @@ export class WorkspaceSelectQueryBuilder<
     }
 
     return mainAliasTarget;
+  }
+
+  private applyRowLevelPermissionPredicates(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    // Subqueries don't have entity metadata, skip permission predicates
+    // Permissions are already applied on the original entity query
+    if (this.expressionMap.mainAlias?.subQuery) {
+      return;
+    }
+
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    applyRowLevelPermissionPredicates({
+      queryBuilder: this,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      featureFlagMap: this.featureFlagMap,
+    });
   }
 }

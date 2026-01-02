@@ -126,6 +126,23 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     objectMetadata: true,
     application: true,
   },
+  rowLevelPermissionPredicate: {
+    workspace: true,
+    role: true,
+    fieldMetadata: true,
+    workspaceMemberFieldMetadata: true,
+    objectMetadata: true,
+    rowLevelPermissionPredicateGroup: true,
+    application: true,
+  },
+  rowLevelPermissionPredicateGroup: {
+    workspace: true,
+    role: true,
+    parentRowLevelPermissionPredicateGroup: true,
+    childRowLevelPermissionPredicateGroups: true,
+    rowLevelPermissionPredicates: true,
+    application: true,
+  },
 } as const satisfies {
   [TName in AllMetadataName]: {
     [P in ExtractEntityRelatedEntityProperties<MetadataEntity<TName>>]: true;

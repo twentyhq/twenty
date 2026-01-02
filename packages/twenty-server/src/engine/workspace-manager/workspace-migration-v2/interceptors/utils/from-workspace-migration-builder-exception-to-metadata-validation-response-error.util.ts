@@ -35,6 +35,8 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
         invalidPageLayoutWidget: 0,
         totalErrors: 0,
         invalidPageLayoutTab: 0,
+        invalidRowLevelPermissionPredicate: 0,
+        invalidRowLevelPermissionPredicateGroup: 0,
       },
       errors: translatedReport,
     };

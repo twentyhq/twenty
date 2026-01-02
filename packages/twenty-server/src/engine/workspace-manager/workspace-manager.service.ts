@@ -17,6 +17,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -49,6 +50,8 @@ export class WorkspaceManagerService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectRepository(ServerlessFunctionEntity)
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -182,13 +185,19 @@ export class WorkspaceManagerService {
     });
   }
 
-  // TODO investigate why some entities are not on cascade delete
-  // Are foreign keys correctly applied ?
+  /**
+   * @deprecated Should be removed once AddWorkspaceForeignKeysMigrationCommand has been run successfully in production
+   * As we will be able to rely on foreignKey delete cascading
+   */
   public async delete(workspaceId: string): Promise<void> {
     await this.roleTargetRepository.delete({
       workspaceId,
     });
     await this.roleRepository.delete({
+      workspaceId,
+    });
+
+    await this.serverlessFunctionRepository.delete({
       workspaceId,
     });
 
@@ -198,7 +207,6 @@ export class WorkspaceManagerService {
 
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
-    await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
   private async setupDefaultRoles({
