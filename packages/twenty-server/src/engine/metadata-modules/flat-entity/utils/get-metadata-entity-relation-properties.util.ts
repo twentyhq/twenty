@@ -10,6 +10,8 @@ export const getMetadataEntityRelationProperties = <T extends AllMetadataName>(
   return [
     ...Object.keys(relationProperties.manyToOne),
     ...Object.keys(relationProperties.oneToMany),
-  ] as (keyof (typeof ALL_METADATA_RELATIONS)[T]['manyToOne'] &
-    keyof (typeof ALL_METADATA_RELATIONS)[T]['oneToMany'])[];
+  ] as (
+    | keyof (typeof ALL_METADATA_RELATIONS)[T]['manyToOne']
+    | keyof (typeof ALL_METADATA_RELATIONS)[T]['oneToMany']
+  )[];
 };
