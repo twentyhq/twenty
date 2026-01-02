@@ -8,8 +8,6 @@ type ExtractMetadataNames<T> = {
 
 export type MetadataManyToOneRelatedMetadataNames<T extends AllMetadataName> =
   Extract<
-    ExtractMetadataNames<
-      (typeof ALL_METADATA_RELATIONS)[T]['manyToOne']
-    >,
+    ExtractMetadataNames<(typeof ALL_METADATA_RELATIONS)[T]['manyToOne']>,
     AllMetadataName
   >;
