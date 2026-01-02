@@ -1,13 +1,78 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { ExtractPropertiesThatEndsWithIds } from 'twenty-shared/types';
-import { Relation } from 'typeorm';
+import {
+  type ExtractPropertiesThatEndsWithId,
+  type ExtractPropertiesThatEndsWithIds,
+} from 'twenty-shared/types';
+import { type Relation } from 'typeorm';
 
-import { ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
-import { ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
-import { FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
+import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
+import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
+import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
+
+type ManyToOneRelationValue<
+  TSourceMetadataName extends AllMetadataName,
+  TRelationProperty extends ExtractEntityManyToOneEntityRelationProperties<
+    MetadataEntity<TSourceMetadataName>
+  >,
+> =
+  NonNullable<
+    MetadataEntity<TSourceMetadataName>[TRelationProperty]
+  > extends SyncableEntity
+    ? {
+        metadataName: FromMetadataEntityToMetadataName<
+          NonNullable<MetadataEntity<TSourceMetadataName>[TRelationProperty]>
+        >;
+        flatEntityForeignKeyAggregator:
+          | ExtractPropertiesThatEndsWithIds<
+              MetadataFlatEntity<
+                FromMetadataEntityToMetadataName<
+                  NonNullable<
+                    MetadataEntity<TSourceMetadataName>[TRelationProperty]
+                  >
+                >
+              >
+            >
+          | undefined;
+        foreignKey: ExtractPropertiesThatEndsWithId<
+          MetadataFlatEntity<TSourceMetadataName>,
+          'id' | 'workspaceId'
+        >;
+      }
+    : null;
+
+type OneToManyRelationValue<
+  TSourceMetadataName extends AllMetadataName,
+  TRelationProperty extends ExtractEntityOneToManyEntityRelationProperties<
+    MetadataEntity<TSourceMetadataName>
+  >,
+> =
+  MetadataEntity<TSourceMetadataName>[TRelationProperty] extends Relation<
+    SyncableEntity[]
+  >
+    ? {
+        metadataName: FromMetadataEntityToMetadataName<
+          MetadataEntity<TSourceMetadataName>[TRelationProperty][number]
+        >;
+      }
+    : null;
+
+type MetadataRelationsProperties = {
+  [TSourceMetadataName in AllMetadataName]: {
+    manyToOne: {
+      [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
+    };
+    oneToMany: {
+      [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
+    };
+  };
+};
 
 export const ALL_METADATA_RELATION_PROPERTIES = {
   agent: {
@@ -25,17 +90,20 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       object: {
         metadataName: 'objectMetadata',
-        foreignKey: 'fieldMetadataIds',
+        flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+        foreignKey: 'objectMetadataId',
       },
       workspace: null,
       application: null,
       relationTargetFieldMetadata: {
         metadataName: 'fieldMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'relationTargetFieldMetadataId',
       },
       relationTargetObjectMetadata: {
         metadataName: 'objectMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'relationTargetObjectMetadataId',
       },
     },
     oneToMany: {
@@ -66,23 +134,27 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
   view: {
     manyToOne: {
       objectMetadata: {
+        foreignKey: 'objectMetadataId',
         metadataName: 'objectMetadata',
-        foreignKey: 'viewIds',
+        flatEntityForeignKeyAggregator: 'viewIds',
       },
       workspace: null,
       createdBy: null,
       application: null,
       calendarFieldMetadata: {
+        foreignKey: 'calendarFieldMetadataId',
         metadataName: 'fieldMetadata',
-        foreignKey: 'calendarViewIds',
+        flatEntityForeignKeyAggregator: 'calendarViewIds',
       },
       kanbanAggregateOperationFieldMetadata: {
+        foreignKey: 'kanbanAggregateOperationFieldMetadataId',
         metadataName: 'fieldMetadata',
-        foreignKey: 'kanbanAggregateOperationViewIds',
+        flatEntityForeignKeyAggregator: 'kanbanAggregateOperationViewIds',
       },
       mainGroupByFieldMetadata: {
+        foreignKey: 'mainGroupByFieldMetadataId',
         metadataName: 'fieldMetadata',
-        foreignKey: 'mainGroupByFieldMetadataViewIds',
+        flatEntityForeignKeyAggregator: 'mainGroupByFieldMetadataViewIds',
       },
     },
     oneToMany: {
@@ -99,11 +171,13 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       fieldMetadata: {
         metadataName: 'fieldMetadata',
-        foreignKey: 'viewFieldIds',
+        flatEntityForeignKeyAggregator: 'viewFieldIds',
+        foreignKey: 'fieldMetadataId',
       },
       view: {
         metadataName: 'view',
-        foreignKey: 'viewFieldIds',
+        flatEntityForeignKeyAggregator: 'viewFieldIds',
+        foreignKey: 'viewId',
       },
       workspace: null,
       application: null,
@@ -114,11 +188,13 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       fieldMetadata: {
         metadataName: 'fieldMetadata',
-        foreignKey: 'viewFilterIds',
+        flatEntityForeignKeyAggregator: 'viewFilterIds',
+        foreignKey: 'fieldMetadataId',
       },
       view: {
         metadataName: 'view',
-        foreignKey: 'viewFilterIds',
+        flatEntityForeignKeyAggregator: 'viewFilterIds',
+        foreignKey: 'viewId',
       },
       // @ts-expect-error TODO migrate viewFilterGroup to v2
       viewFilterGroup: null,
@@ -131,7 +207,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       view: {
         metadataName: 'view',
-        foreignKey: 'viewGroupIds',
+        flatEntityForeignKeyAggregator: 'viewGroupIds',
+        foreignKey: 'viewId',
       },
       workspace: null,
       application: null,
@@ -142,7 +219,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       objectMetadata: {
         metadataName: 'objectMetadata',
-        foreignKey: 'indexMetadataIds',
+        flatEntityForeignKeyAggregator: 'indexMetadataIds',
+        foreignKey: 'objectMetadataId',
       },
       workspace: null,
       application: null,
@@ -167,7 +245,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       serverlessFunction: {
         metadataName: 'serverlessFunction',
-        foreignKey: 'cronTriggerIds',
+        flatEntityForeignKeyAggregator: 'cronTriggerIds',
+        foreignKey: 'serverlessFunctionId',
       },
       workspace: null,
       application: null,
@@ -178,7 +257,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       serverlessFunction: {
         metadataName: 'serverlessFunction',
-        foreignKey: 'databaseEventTriggerIds',
+        flatEntityForeignKeyAggregator: 'databaseEventTriggerIds',
+        foreignKey: 'serverlessFunctionId',
       },
       workspace: null,
       application: null,
@@ -189,7 +269,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       serverlessFunction: {
         metadataName: 'serverlessFunction',
-        foreignKey: 'routeTriggerIds',
+        flatEntityForeignKeyAggregator: 'routeTriggerIds',
+        foreignKey: 'serverlessFunctionId',
       },
       workspace: null,
       application: null,
@@ -212,7 +293,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
     manyToOne: {
       role: {
         metadataName: 'role',
-        foreignKey: 'roleTargetIds',
+        flatEntityForeignKeyAggregator: 'roleTargetIds',
+        foreignKey: 'roleId',
       },
       apiKey: null,
       workspace: null,
@@ -225,7 +307,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       workspace: null,
       objectMetadata: {
         metadataName: 'objectMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'objectMetadataId',
       },
       application: null,
     },
@@ -238,7 +321,8 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       workspace: null,
       pageLayout: {
         metadataName: 'pageLayout',
-        foreignKey: 'tabIds',
+        flatEntityForeignKeyAggregator: 'tabIds',
+        foreignKey: 'pageLayoutId',
       },
       application: null,
     },
@@ -251,11 +335,13 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       workspace: null,
       pageLayoutTab: {
         metadataName: 'pageLayoutTab',
-        foreignKey: 'widgetIds',
+        flatEntityForeignKeyAggregator: 'widgetIds',
+        foreignKey: 'pageLayoutTabId',
       },
       objectMetadata: {
         metadataName: 'objectMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'objectMetadataId',
       },
       application: null,
     },
@@ -266,23 +352,28 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       workspace: null,
       role: {
         metadataName: 'role',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'roleId',
       },
       fieldMetadata: {
         metadataName: 'fieldMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'fieldMetadataId',
       },
       workspaceMemberFieldMetadata: {
         metadataName: 'fieldMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'workspaceMemberFieldMetadataId',
       },
       objectMetadata: {
         metadataName: 'objectMetadata',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'objectMetadataId',
       },
       rowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
-        foreignKey: undefined,
+        flatEntityForeignKeyAggregator: undefined,
+        foreignKey: 'rowLevelPermissionPredicateGroupId',
       },
       application: null,
     },
@@ -293,11 +384,14 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       workspace: null,
       role: {
         metadataName: 'role',
-        foreignKey: undefined,
+        foreignKey: 'roleId',
+        flatEntityForeignKeyAggregator: undefined,
       },
       parentRowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
-        foreignKey: 'childRowLevelPermissionPredicateGroupIds',
+        foreignKey: 'parentRowLevelPermissionPredicateGroupId',
+        flatEntityForeignKeyAggregator:
+          'childRowLevelPermissionPredicateGroupIds',
       },
       application: null,
     },
@@ -310,46 +404,4 @@ export const ALL_METADATA_RELATION_PROPERTIES = {
       },
     },
   },
-  viewFilterGroup: {
-    view: true,
-    viewFilters: true,
-    parentViewFilterGroup: true,
-    childViewFilterGroups: true,
-    workspace: true,
-    application: true,
-  },
-} as const satisfies {
-  [TName in AllMetadataName]: {
-    manyToOne: {
-      [P in ExtractEntityManyToOneEntityRelationProperties<
-        MetadataEntity<TName>
-      >]: NonNullable<MetadataEntity<TName>[P]> extends SyncableEntity
-        ? {
-            foreignKey:
-              | ExtractPropertiesThatEndsWithIds<
-                  MetadataFlatEntity<
-                    FromMetadataEntityToMetadataName<
-                      NonNullable<MetadataEntity<TName>[P]>
-                    >
-                  >
-                >
-              | undefined;
-            metadataName: FromMetadataEntityToMetadataName<
-              NonNullable<MetadataEntity<TName>[P]>
-            >;
-          }
-        : null;
-    };
-    oneToMany: {
-      [P in ExtractEntityOneToManyEntityRelationProperties<
-        MetadataEntity<TName>
-      >]: MetadataEntity<TName>[P] extends Relation<SyncableEntity[]>
-        ? {
-            metadataName: FromMetadataEntityToMetadataName<
-              MetadataEntity<TName>[P][number]
-            >;
-          }
-        : null;
-    };
-  };
-};
+} as const satisfies MetadataRelationsProperties;
