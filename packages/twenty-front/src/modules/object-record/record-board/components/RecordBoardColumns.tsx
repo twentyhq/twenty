@@ -1,5 +1,5 @@
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
-import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { filteredVisibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/filteredVisibleRecordGroupIdsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { ViewType } from '@/views/types/ViewType';
 import styled from '@emotion/styled';
@@ -14,7 +14,7 @@ const StyledColumnContainer = styled.div`
 
 export const RecordBoardColumns = () => {
   const visibleRecordGroupIds = useRecoilComponentFamilyValue(
-    visibleRecordGroupIdsComponentFamilySelector,
+    filteredVisibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
 
