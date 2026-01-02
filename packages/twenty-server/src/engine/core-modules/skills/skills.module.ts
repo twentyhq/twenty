@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 import { SkillsService } from './skills.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SkillEntity])],
+  imports: [WorkspaceManyOrAllFlatEntityMapsCacheModule],
   providers: [SkillsService],
   exports: [SkillsService],
 })

@@ -4,15 +4,20 @@ import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { validateSkillNameUniqueness } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util';
-import { validateSkillRequiredProperties } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util';
+import {
+  validateSkillContentIsDefined,
+  validateSkillLabelIsDefined,
+  validateSkillRequiredProperties,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -39,9 +44,7 @@ export class FlatSkillValidatorService {
     );
 
     validationResult.errors.push(
-      ...validateSkillRequiredProperties({
-        flatSkill,
-      }),
+      ...validateSkillRequiredProperties({ flatSkill }),
     );
 
     validationResult.errors.push(
@@ -139,31 +142,48 @@ export class FlatSkillValidatorService {
       });
     }
 
-    const partialFlatSkill: Partial<FlatSkill> =
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      });
-
     const optimisticFlatSkill: FlatSkill = {
       ...fromFlatSkill,
-      ...partialFlatSkill,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
     };
 
-    const existingSkills = Object.values(optimisticFlatSkillMaps.byId)
-      .filter(isDefined)
-      .filter((skill) => skill.id !== flatEntityId);
+    const labelUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'label',
+    });
 
-    validationResult.errors.push(
-      ...validateSkillRequiredProperties({
-        flatSkill: optimisticFlatSkill,
-        updatedProperties: partialFlatSkill,
-      }),
-    );
+    if (isDefined(labelUpdate)) {
+      validationResult.errors.push(
+        ...validateSkillLabelIsDefined({ flatSkill: optimisticFlatSkill }),
+      );
+    }
 
-    if (isDefined(partialFlatSkill.name)) {
+    const contentUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'content',
+    });
+
+    if (isDefined(contentUpdate)) {
+      validationResult.errors.push(
+        ...validateSkillContentIsDefined({ flatSkill: optimisticFlatSkill }),
+      );
+    }
+
+    const nameUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'name',
+    });
+
+    if (isDefined(nameUpdate)) {
+      const existingSkills = Object.values(optimisticFlatSkillMaps.byId)
+        .filter(isDefined)
+        .filter((skill) => skill.id !== flatEntityId);
+
       validationResult.errors.push(
         ...validateSkillNameUniqueness({
-          name: partialFlatSkill.name,
+          name: nameUpdate.to,
           existingFlatSkills: existingSkills,
         }),
       );

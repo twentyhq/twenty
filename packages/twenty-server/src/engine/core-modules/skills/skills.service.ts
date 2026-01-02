@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, IsNull, type Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 export type Skill = {
   name: string;
@@ -12,45 +12,55 @@ export type Skill = {
   content: string;
 };
 
+const fromFlatSkillToSkill = (flatSkill: FlatSkill): Skill => ({
+  name: flatSkill.name,
+  label: flatSkill.label,
+  description: flatSkill.description,
+  content: flatSkill.content,
+});
+
 @Injectable()
 export class SkillsService {
   constructor(
-    @InjectRepository(SkillEntity)
-    private readonly skillRepository: Repository<SkillEntity>,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async getAllSkills(workspaceId: string): Promise<Skill[]> {
-    const skills = await this.skillRepository.find({
-      where: { workspaceId, deletedAt: IsNull() },
-      order: { label: 'ASC' },
-    });
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
 
-    return skills.map((skill) => ({
-      name: skill.name,
-      label: skill.label,
-      description: skill.description,
-      content: skill.content,
-    }));
+    return Object.values(flatSkillMaps.byId)
+      .filter(isDefined)
+      .map(fromFlatSkillToSkill)
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   async getSkillByName(
     name: string,
     workspaceId: string,
   ): Promise<Skill | undefined> {
-    const skill = await this.skillRepository.findOne({
-      where: { name, workspaceId, deletedAt: IsNull() },
-    });
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
 
-    if (!skill) {
+    const flatSkill = Object.values(flatSkillMaps.byId)
+      .filter(isDefined)
+      .find((skill) => skill.name === name);
+
+    if (!flatSkill) {
       return undefined;
     }
 
-    return {
-      name: skill.name,
-      label: skill.label,
-      description: skill.description,
-      content: skill.content,
-    };
+    return fromFlatSkillToSkill(flatSkill);
   }
 
   async getSkillsByNames(
@@ -61,15 +71,17 @@ export class SkillsService {
       return [];
     }
 
-    const skills = await this.skillRepository.find({
-      where: { name: In(names), workspaceId, deletedAt: IsNull() },
-    });
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
 
-    return skills.map((skill) => ({
-      name: skill.name,
-      label: skill.label,
-      description: skill.description,
-      content: skill.content,
-    }));
+    return Object.values(flatSkillMaps.byId)
+      .filter(isDefined)
+      .filter((skill) => names.includes(skill.name))
+      .map(fromFlatSkillToSkill);
   }
 }
