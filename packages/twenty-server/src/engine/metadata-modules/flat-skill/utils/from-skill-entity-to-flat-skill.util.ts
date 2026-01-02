@@ -1,7 +1,7 @@
-import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 
-export const transformSkillEntityToFlatSkill = (
+export const fromSkillEntityToFlatSkill = (
   skillEntity: SkillEntity,
 ): FlatSkill => {
   return {

@@ -4,7 +4,7 @@ import { type MetadataManyToOneRelatedMetadataNames } from 'src/engine/metadata-
 
 type MetadataRequiredForValidation = {
   [T in AllMetadataName]: Record<
-    MetadataManyToOneRelatedMetadataNames<T>,
+    Exclude<MetadataManyToOneRelatedMetadataNames<T>, T>,
     true
   > & {
     [K in Exclude<AllMetadataName, T>]?: true;
@@ -52,7 +52,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   viewFilterGroup: {
     view: true,
-    viewFilterGroup: true,
   },
   role: {},
   roleTarget: {
@@ -63,11 +62,14 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
   },
   skill: {},
-  pageLayout: {},
+  pageLayout: {
+    objectMetadata: true,
+  },
   pageLayoutTab: {
     pageLayout: true,
   },
   pageLayoutWidget: {
+    objectMetadata: true,
     pageLayoutTab: true,
   },
   rowLevelPermissionPredicate: {

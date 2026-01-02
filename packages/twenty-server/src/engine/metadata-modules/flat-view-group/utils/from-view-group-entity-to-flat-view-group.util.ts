@@ -1,6 +1,6 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 
@@ -9,9 +9,7 @@ export const fromViewGroupEntityToFlatViewGroup = (
 ): FlatViewGroup => {
   const viewGroupEntityWithoutRelations = removePropertiesFromRecord(
     viewGroupEntity,
-    Object.keys(
-      ALL_METADATA_RELATION_PROPERTIES.viewGroup,
-    ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.viewGroup)[],
+    getMetadataEntityRelationProperties('viewGroup'),
   );
 
   return {
