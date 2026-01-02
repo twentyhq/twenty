@@ -52,7 +52,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   viewFilterGroup: {
     view: true,
-    viewFilterGroup: true,
   },
   role: {},
   roleTarget: {

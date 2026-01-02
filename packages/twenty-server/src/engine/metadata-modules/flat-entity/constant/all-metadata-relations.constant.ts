@@ -11,6 +11,7 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
+import { Expect } from 'twenty-shared/testing';
 
 type ManyToOneRelationValue<
   TSourceMetadataName extends AllMetadataName,
@@ -20,19 +21,11 @@ type ManyToOneRelationValue<
 > =
   NonNullable<
     MetadataEntity<TSourceMetadataName>[TRelationProperty]
-  > extends SyncableEntity
+  > extends Relation<infer TTargetEntity extends SyncableEntity>
     ? {
-        metadataName: FromMetadataEntityToMetadataName<
-          NonNullable<MetadataEntity<TSourceMetadataName>[TRelationProperty]>
-        >;
+        metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
         flatEntityForeignKeyAggregator: ExtractPropertiesThatEndsWithIds<
-          MetadataFlatEntity<
-            FromMetadataEntityToMetadataName<
-              NonNullable<
-                MetadataEntity<TSourceMetadataName>[TRelationProperty]
-              >
-            >
-          >
+          MetadataFlatEntity<FromMetadataEntityToMetadataName<TTargetEntity>>
           // Note: In the best of the world should not be nullable, entities should always declare inverside keys
         > | null;
         foreignKey: ExtractPropertiesThatEndsWithId<
@@ -49,12 +42,10 @@ type OneToManyRelationValue<
   >,
 > =
   MetadataEntity<TSourceMetadataName>[TRelationProperty] extends Relation<
-    SyncableEntity[]
+    (infer TTargetEntity extends SyncableEntity)[]
   >
     ? {
-        metadataName: FromMetadataEntityToMetadataName<
-          MetadataEntity<TSourceMetadataName>[TRelationProperty][number]
-        >;
+        metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
       }
     : null;
 
@@ -82,8 +73,11 @@ export const ALL_METADATA_RELATIONS = {
     oneToMany: {},
   },
   skill: {
-    workspace: true,
-    application: true,
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
   },
   fieldMetadata: {
     manyToOne: {
@@ -403,4 +397,36 @@ export const ALL_METADATA_RELATIONS = {
       },
     },
   },
+  viewFilterGroup: {
+    manyToOne: {
+      application: null,
+      parentViewFilterGroup: {
+        flatEntityForeignKeyAggregator: 'childViewFilterGroupIds',
+        foreignKey: 'parentViewFilterGroupId',
+        metadataName: 'viewFilterGroup',
+      },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: 'viewFilterGroupIds',
+        foreignKey: 'viewId',
+      },
+      workspace: null,
+    },
+    oneToMany: {
+      childViewFilterGroups: {
+        metadataName: 'viewFilterGroup',
+      },
+      viewFilters: {
+        metadataName: 'viewFilter',
+      },
+    },
+  },
 } as const satisfies MetadataRelationsProperties;
+
+// Note: satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
+// eslint-disable-next-line unused-imports/no-unused-vars
+type Assertions = [
+  Expect<
+    AllMetadataName extends keyof typeof ALL_METADATA_RELATIONS ? true : false
+  >,
+];
