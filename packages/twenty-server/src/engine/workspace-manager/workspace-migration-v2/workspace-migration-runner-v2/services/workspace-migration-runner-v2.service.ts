@@ -161,6 +161,7 @@ export class WorkspaceMigrationRunnerV2Service {
     await queryRunner.startTransaction();
 
     let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
+
     try {
       for (const action of actions) {
         const partialOptimisticCache =
