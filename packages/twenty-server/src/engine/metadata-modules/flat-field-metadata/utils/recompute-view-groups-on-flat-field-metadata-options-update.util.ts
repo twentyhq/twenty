@@ -1,3 +1,4 @@
+import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -77,15 +78,28 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
       ),
   );
 
+  const remainingFlatViewGroups = flatViewGroups.filter(
+    (flatViewGroup) =>
+      !flatViewGroupsToDelete.some(
+        (flatViewGroupToDelete) =>
+          flatViewGroupToDelete.id === flatViewGroup.id,
+      ),
+  );
+
   const viewGroupsByViewId = reduceFlatViewGroupsByViewId({
-    flatViewGroups: flatViewGroups.filter(
-      (flatViewGroup) =>
-        !flatViewGroupsToDelete.some(
-          (flatViewGroupToDelete) =>
-            flatViewGroupToDelete.id === flatViewGroup.id,
-        ),
-    ),
+    flatViewGroups: remainingFlatViewGroups,
   });
+
+  // Count visible view groups per view to enforce the limit
+  const visibleViewGroupCountByViewId = remainingFlatViewGroups.reduce<
+    Record<string, number>
+  >((acc, flatViewGroup) => {
+    if (flatViewGroup.isVisible) {
+      acc[flatViewGroup.viewId] = (acc[flatViewGroup.viewId] ?? 0) + 1;
+    }
+
+    return acc;
+  }, {});
 
   const viewIds = Object.keys(viewGroupsByViewId.flatViewGroupRecordByViewId);
 
@@ -103,6 +117,14 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
           );
         }
 
+        const currentVisibleCount = visibleViewGroupCountByViewId[viewId] ?? 0;
+        const isVisible = currentVisibleCount < VIEW_GROUP_VISIBLE_OPTIONS_MAX;
+
+        // Increment the count for future iterations if this group will be visible
+        if (isVisible) {
+          visibleViewGroupCountByViewId[viewId] = currentVisibleCount + 1;
+        }
+
         const viewGroupId = v4();
 
         return {
@@ -114,7 +136,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
           updatedAt: createdAt,
           deletedAt: null,
           universalIdentifier: viewGroupId,
-          isVisible: true,
+          isVisible,
           fieldValue: option.value,
           position: viewGroupHighestPosition + createdOptionIndex + 1,
           applicationId: fromFlatFieldMetadata.applicationId,
