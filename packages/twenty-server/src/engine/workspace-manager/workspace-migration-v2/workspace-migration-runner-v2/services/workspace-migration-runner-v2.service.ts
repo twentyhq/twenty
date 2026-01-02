@@ -36,7 +36,7 @@ export class WorkspaceMigrationRunnerV2Service {
   private getLegacyCacheInvalidationPromises({
     workspaceMigration: { actions, workspaceId },
   }: {
-    workspaceMigration: WorkspaceMigrationV2;
+    workspaceMigration: Omit<WorkspaceMigrationV2, 'relatedFlatEntityMapsKeys'>;
   }): Promise<void>[] {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
@@ -213,18 +213,12 @@ export class WorkspaceMigrationRunnerV2Service {
       const invalidationResults = await Promise.allSettled([
         this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
           workspaceId,
-          flatMapsKeys: [
-            ...new Set([
-              ...flatEntityMapsToInvalidate,
-              ...(relatedFlatEntityMapsKeys ?? []),
-            ]),
-          ],
+          flatMapsKeys: flatEntitiesCacheToInvalidate,
         }),
         ...this.getLegacyCacheInvalidationPromises({
           workspaceMigration: {
             actions,
             workspaceId,
-            relatedFlatEntityMapsKeys,
           },
         }),
       ]);
