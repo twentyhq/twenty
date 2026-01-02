@@ -20,6 +20,7 @@ exports[`View Filter creation should fail when fieldMetadataId does not exist 1`
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [],
       "viewFilter": [
@@ -58,6 +59,7 @@ exports[`View Filter creation should fail when fieldMetadataId does not exist 1`
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -92,6 +94,7 @@ exports[`View Filter creation should fail when viewFilterGroupId does not exist 
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [],
       "viewFilter": [
@@ -135,6 +138,7 @@ exports[`View Filter creation should fail when viewFilterGroupId does not exist 
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -169,6 +173,7 @@ exports[`View Filter creation should fail when viewId does not exist 1`] = `
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [],
       "viewFilter": [
@@ -212,6 +217,7 @@ exports[`View Filter creation should fail when viewId does not exist 1`] = `
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
