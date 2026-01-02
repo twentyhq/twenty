@@ -20,6 +20,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -60,6 +61,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -94,6 +96,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -134,6 +137,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -168,6 +172,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -206,6 +211,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -240,6 +246,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -280,6 +287,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,
@@ -314,6 +322,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "rowLevelPermissionPredicate": [],
       "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
+      "skill": [],
       "view": [],
       "viewField": [
         {
@@ -354,6 +363,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
       "invalidRowLevelPermissionPredicate": 0,
       "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
+      "invalidSkill": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "invalidViewFilter": 0,

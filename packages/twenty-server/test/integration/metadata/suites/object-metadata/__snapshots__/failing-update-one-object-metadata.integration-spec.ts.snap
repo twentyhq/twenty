@@ -38,6 +38,7 @@ exports[`Object metadata update should fail when labelIdentifier is a UUID field
         "rowLevelPermissionPredicate": [],
         "rowLevelPermissionPredicateGroup": [],
         "serverlessFunction": [],
+        "skill": [],
         "view": [],
         "viewField": [
           {
@@ -78,6 +79,7 @@ exports[`Object metadata update should fail when labelIdentifier is a UUID field
         "invalidRowLevelPermissionPredicate": 0,
         "invalidRowLevelPermissionPredicateGroup": 0,
         "invalidServerlessFunction": 0,
+        "invalidSkill": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,
@@ -131,6 +133,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
         "rowLevelPermissionPredicate": [],
         "rowLevelPermissionPredicateGroup": [],
         "serverlessFunction": [],
+        "skill": [],
         "view": [],
         "viewField": [
           {
@@ -171,6 +174,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
         "invalidRowLevelPermissionPredicate": 0,
         "invalidRowLevelPermissionPredicateGroup": 0,
         "invalidServerlessFunction": 0,
+        "invalidSkill": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,
@@ -224,6 +228,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
         "rowLevelPermissionPredicate": [],
         "rowLevelPermissionPredicateGroup": [],
         "serverlessFunction": [],
+        "skill": [],
         "view": [],
         "viewField": [
           {
@@ -269,6 +274,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
         "invalidRowLevelPermissionPredicate": 0,
         "invalidRowLevelPermissionPredicateGroup": 0,
         "invalidServerlessFunction": 0,
+        "invalidSkill": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,
@@ -339,6 +345,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
         "rowLevelPermissionPredicate": [],
         "rowLevelPermissionPredicateGroup": [],
         "serverlessFunction": [],
+        "skill": [],
         "view": [],
         "viewField": [],
         "viewFilter": [],
@@ -362,6 +369,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
         "invalidRowLevelPermissionPredicate": 0,
         "invalidRowLevelPermissionPredicateGroup": 0,
         "invalidServerlessFunction": 0,
+        "invalidSkill": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "invalidViewFilter": 0,

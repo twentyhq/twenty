@@ -13,6 +13,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
@@ -33,6 +34,7 @@ import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-m
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -113,6 +115,11 @@ import {
   type DeleteServerlessFunctionAction,
   type UpdateServerlessFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
+import {
+  type CreateSkillAction,
+  type DeleteSkillAction,
+  type UpdateSkillAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/skill/types/workspace-migration-v2-skill-action.type';
 import {
   type CreateViewFieldAction,
   type DeleteViewFieldAction,
@@ -294,6 +301,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatAgent;
     entity: AgentEntity;
+  };
+  skill: {
+    actions: {
+      created: CreateSkillAction;
+      updated: UpdateSkillAction;
+      deleted: DeleteSkillAction;
+    };
+    flatEntity: FlatSkill;
+    entity: SkillEntity;
   };
   pageLayout: {
     actions: {

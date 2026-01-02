@@ -29,6 +29,7 @@ import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engin
 import { WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate-group/workspace-migration-v2-row-level-permission-predicate-group-actions-builder.service';
 import { WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate/workspace-migration-v2-row-level-permission-predicate-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
+import { WorkspaceMigrationV2SkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/skill/workspace-migration-v2-skill-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/workspace-migration-v2-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationV2ViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/workspace-migration-v2-view-filter-actions-builder.service';
@@ -53,6 +54,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
     private readonly workspaceMigrationV2RoleActionsBuilderService: WorkspaceMigrationV2RoleActionsBuilderService,
     private readonly workspaceMigrationV2AgentActionsBuilderService: WorkspaceMigrationV2AgentActionsBuilderService,
+    private readonly workspaceMigrationV2SkillActionsBuilderService: WorkspaceMigrationV2SkillActionsBuilderService,
     private readonly workspaceMigrationV2PageLayoutActionsBuilderService: WorkspaceMigrationV2PageLayoutActionsBuilderService,
     private readonly workspaceMigrationV2PageLayoutWidgetActionsBuilderService: WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
     private readonly workspaceMigrationV2PageLayoutTabActionsBuilderService: WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
@@ -153,6 +155,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRoleMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
+      flatSkillMaps,
       flatPageLayoutMaps,
       flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
@@ -781,6 +784,36 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatSkillMaps)) {
+      const { from: fromFlatSkillMaps, to: toFlatSkillMaps } = flatSkillMaps;
+
+      const skillResult =
+        await this.workspaceMigrationV2SkillActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatSkillMaps,
+            to: toFlatSkillMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            skillResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (skillResult.status === 'fail') {
+        orchestratorFailureReport.skill.push(...skillResult.errors);
+      } else {
+        orchestratorActionsReport.skill = skillResult.actions;
+      }
+    }
+
     if (isDefined(flatPageLayoutMaps)) {
       const { from: fromFlatPageLayoutMaps, to: toFlatPageLayoutMaps } =
         flatPageLayoutMaps;
@@ -986,6 +1019,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.agent.deleted,
           ...aggregatedOrchestratorActionsReport.agent.created,
           ...aggregatedOrchestratorActionsReport.agent.updated,
+          ///
+
+          // Skills
+          ...aggregatedOrchestratorActionsReport.skill.deleted,
+          ...aggregatedOrchestratorActionsReport.skill.created,
+          ...aggregatedOrchestratorActionsReport.skill.updated,
           ///
 
           // Page layouts

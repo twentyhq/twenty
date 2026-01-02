@@ -113,6 +113,7 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
     },
   },
   agent: {},
+  skill: {},
   pageLayout: {},
   pageLayoutWidget: {
     pageLayoutTabId: {

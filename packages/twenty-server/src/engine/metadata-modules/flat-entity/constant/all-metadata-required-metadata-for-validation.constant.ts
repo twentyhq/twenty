@@ -62,6 +62,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   agent: {
     role: true,
   },
+  skill: {},
   pageLayout: {},
   pageLayoutTab: {
     pageLayout: true,

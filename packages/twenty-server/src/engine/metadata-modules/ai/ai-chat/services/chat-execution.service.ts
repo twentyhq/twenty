@@ -17,7 +17,6 @@ import { getAppPath } from 'twenty-shared/utils';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
   type ToolIndexEntry,
   ToolRegistryService,
@@ -46,6 +45,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -61,7 +62,7 @@ export type ChatExecutionResult = {
   modelConfig: AIModelConfig;
 };
 
-const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
+const COMMON_PRELOAD_TOOLS = ['search_help_center'];
 
 @Injectable()
 export class ChatExecutionService {
@@ -69,7 +70,7 @@ export class ChatExecutionService {
 
   constructor(
     private readonly toolRegistry: ToolRegistryService,
-    private readonly skillsService: SkillsService,
+    private readonly skillService: SkillService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
@@ -108,7 +109,9 @@ export class ChatExecutionService {
       { userId, userWorkspaceId },
     );
 
-    const skillCatalog = this.skillsService.getAllSkills();
+    const skillCatalog = await this.skillService.findAllFlatSkills(
+      workspace.id,
+    );
 
     this.logger.log(
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
@@ -150,7 +153,7 @@ export class ChatExecutionService {
         },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
-        this.skillsService.getSkillsByNames(skillNames),
+        this.skillService.findFlatSkillsByNames(skillNames, workspace.id),
       ),
     };
 
@@ -283,7 +286,7 @@ export class ChatExecutionService {
 
   private buildSystemPrompt(
     toolCatalog: ToolIndexEntry[],
-    skillCatalog: Array<{ name: string; label: string; description: string }>,
+    skillCatalog: FlatSkill[],
     preloadedTools: string[],
     contextString?: string,
     storedFiles?: Array<{ filename: string; storagePath: string; url: string }>,
@@ -333,15 +336,15 @@ ${filesJson}
 In your Python code, access files at \`/home/user/{filename}\`.`;
   }
 
-  private buildSkillCatalogSection(
-    skillCatalog: Array<{ name: string; label: string; description: string }>,
-  ): string {
+  private buildSkillCatalogSection(skillCatalog: FlatSkill[]): string {
     if (skillCatalog.length === 0) {
       return '';
     }
 
     const skillsList = skillCatalog
-      .map((skill) => `- \`${skill.name}\`: ${skill.description}`)
+      .map(
+        (skill) => `- \`${skill.name}\`: ${skill.description ?? skill.label}`,
+      )
       .join('\n');
 
     return `
