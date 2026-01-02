@@ -34,4 +34,3 @@ export const activateSkillQueryFactory = ({
     id: input.id,
   },
 });
-

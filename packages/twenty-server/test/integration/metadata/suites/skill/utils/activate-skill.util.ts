@@ -1,6 +1,6 @@
 import {
-    type ActivateSkillFactoryInput,
-    activateSkillQueryFactory,
+  type ActivateSkillFactoryInput,
+  activateSkillQueryFactory,
 } from 'test/integration/metadata/suites/skill/utils/activate-skill-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';

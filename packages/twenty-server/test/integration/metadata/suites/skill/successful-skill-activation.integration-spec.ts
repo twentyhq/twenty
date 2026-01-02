@@ -111,4 +111,3 @@ describe('Skill activation should succeed', () => {
     expect(secondActivate.activateSkill.isActive).toBe(true);
   });
 });
-
