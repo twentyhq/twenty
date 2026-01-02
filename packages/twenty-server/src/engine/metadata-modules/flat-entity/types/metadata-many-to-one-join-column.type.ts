@@ -1,6 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-many-to-one-relations.constant';
+import { type ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
+
+type ExtractForeignKeys<T> = {
+  [K in keyof T]: T[K] extends { foreignKey: infer FK } ? FK : never;
+}[keyof T];
 
 export type MetadataManyToOneJoinColumn<T extends AllMetadataName> =
-  keyof (typeof ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY)[T];
+  ExtractForeignKeys<(typeof ALL_METADATA_RELATION_PROPERTIES)[T]['manyToOne']>;
