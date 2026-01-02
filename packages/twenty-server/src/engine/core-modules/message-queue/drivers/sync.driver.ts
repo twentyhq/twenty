@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 
-import {
-  type MessageQueueJobData,
-  type MessageQueueJob,
-} from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
+  type MessageQueueJob,
+  type MessageQueueJobData,
+} from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -64,7 +64,9 @@ export class SyncDriver implements MessageQueueDriver {
     if (worker) {
       await worker(job);
     } else {
-      this.logger.error(`No handler found for job: ${queueName}`);
+      if (process.env.NODE_ENV !== 'test') {
+        this.logger.error(`No handler found for job: ${queueName}`);
+      }
     }
   }
 }
