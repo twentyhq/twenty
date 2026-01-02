@@ -8,7 +8,7 @@ import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.en
 export type Skill = {
   name: string;
   label: string;
-  description: string;
+  description: string | null;
   content: string;
 };
 
@@ -28,7 +28,7 @@ export class SkillsService {
     return skills.map((skill) => ({
       name: skill.name,
       label: skill.label,
-      description: skill.description ?? '',
+      description: skill.description,
       content: skill.content,
     }));
   }
@@ -48,7 +48,7 @@ export class SkillsService {
     return {
       name: skill.name,
       label: skill.label,
-      description: skill.description ?? '',
+      description: skill.description,
       content: skill.content,
     };
   }
@@ -68,7 +68,7 @@ export class SkillsService {
     return skills.map((skill) => ({
       name: skill.name,
       label: skill.label,
-      description: skill.description ?? '',
+      description: skill.description,
       content: skill.content,
     }));
   }
