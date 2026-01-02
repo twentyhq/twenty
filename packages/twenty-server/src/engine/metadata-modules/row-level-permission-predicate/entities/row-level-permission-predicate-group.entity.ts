@@ -72,7 +72,9 @@ export class RowLevelPermissionPredicateGroupEntity
     (rowLevelPermissionPredicateGroup) =>
       rowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroup,
   )
-  childRowLevelPermissionPredicateGroups: Relation<RowLevelPermissionPredicateGroupEntity[]>;
+  childRowLevelPermissionPredicateGroups: Relation<
+    RowLevelPermissionPredicateGroupEntity[]
+  >;
 
   @OneToMany(
     () => RowLevelPermissionPredicateEntity,

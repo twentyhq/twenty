@@ -1,4 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type Expect } from 'twenty-shared/testing';
 import {
   type ExtractPropertiesThatEndsWithId,
   type ExtractPropertiesThatEndsWithIds,
@@ -11,7 +12,6 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
-import { Expect } from 'twenty-shared/testing';
 
 type ManyToOneRelationValue<
   TSourceMetadataName extends AllMetadataName,
@@ -153,8 +153,9 @@ export const ALL_METADATA_RELATIONS = {
     oneToMany: {
       viewFields: { metadataName: 'viewField' },
       viewFilters: { metadataName: 'viewFilter' },
-      // @ts-expect-error TODO migrate viewFilterGroup to v2
-      viewFilterGroups: null,
+      viewFilterGroups: {
+        metadataName: 'viewFilterGroup',
+      },
       viewGroups: { metadataName: 'viewGroup' },
       // @ts-expect-error TODO migrate viewSort to v2
       viewSorts: null,
@@ -189,8 +190,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: 'viewFilterIds',
         foreignKey: 'viewId',
       },
-      // @ts-expect-error TODO migrate viewFilterGroup to v2
-      viewFilterGroup: null,
+      viewFilterGroup: {
+        flatEntityForeignKeyAggregator: 'childViewFilterGroupIds',
+        foreignKey: 'viewFilterGroupId',
+        metadataName: 'viewFilterGroup',
+      },
       workspace: null,
       application: null,
     },
