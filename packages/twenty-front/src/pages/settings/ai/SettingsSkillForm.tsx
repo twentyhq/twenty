@@ -438,6 +438,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   label={t`Instructions`}
                   readonly={isReadonlyMode}
                   defaultValue={formValues.content}
+                  contentType="markdown"
                   onChange={(content: string) =>
                     handleFieldChange('content', content)
                   }
