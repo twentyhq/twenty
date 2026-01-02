@@ -15,11 +15,14 @@ export const fromCreateSkillInputToFlatSkillToCreate = ({
 }): FlatSkill => {
   const now = new Date().toISOString();
 
-  const { name, label, icon, description, content } =
+  const { name, label, icon, description } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       createSkillInput,
-      ['name', 'label', 'icon', 'description', 'content'],
+      ['name', 'label', 'icon', 'description'],
     );
+
+  // Content is markdown - only trim, don't collapse whitespace (preserve newlines)
+  const content = createSkillInput.content.trim();
 
   const id = v4();
 

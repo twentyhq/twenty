@@ -108,4 +108,36 @@ describe('Skill creation should succeed', () => {
       isCustom: true,
     });
   });
+
+  it('should preserve markdown formatting with newlines in content', async () => {
+    const markdownContent = `# Skill Instructions
+
+## Step 1
+Do the first thing.
+
+## Step 2
+Do the second thing.
+
+- List item 1
+- List item 2`;
+
+    const { data } = await createSkill({
+      expectToFail: false,
+      input: {
+        name: 'markdownSkill',
+        label: 'Markdown Skill',
+        content: markdownContent,
+      },
+    });
+
+    createdSkillId = data?.createSkill?.id;
+
+    expect(data.createSkill).toMatchObject({
+      id: expect.any(String),
+      name: 'markdownSkill',
+      label: 'Markdown Skill',
+      content: markdownContent,
+      isCustom: true,
+    });
+  });
 });
