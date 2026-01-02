@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-export type FindSkillFactoryInput = {
+export type DeactivateSkillFactoryInput = {
   id: string;
 };
 
@@ -19,13 +19,13 @@ const DEFAULT_SKILL_GQL_FIELDS = `
   updatedAt
 `;
 
-export const findSkillQueryFactory = ({
+export const deactivateSkillQueryFactory = ({
   input,
   gqlFields = DEFAULT_SKILL_GQL_FIELDS,
-}: PerformMetadataQueryParams<FindSkillFactoryInput>) => ({
+}: PerformMetadataQueryParams<DeactivateSkillFactoryInput>) => ({
   query: gql`
-    query Skill($id: UUID!) {
-      skill(id: $id) {
+    mutation DeactivateSkill($id: UUID!) {
+      deactivateSkill(id: $id) {
         ${gqlFields}
       }
     }
@@ -34,3 +34,4 @@ export const findSkillQueryFactory = ({
     id: input.id,
   },
 });
+

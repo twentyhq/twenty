@@ -21,6 +21,8 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   H2Title,
+  IconArchive,
+  IconArchiveOff,
   IconInfoCircle,
   IconRefresh,
   IconTrash,
@@ -29,7 +31,9 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import {
+  useActivateSkillMutation,
   useCreateSkillMutation,
+  useDeactivateSkillMutation,
   useDeleteSkillMutation,
   useFindOneSkillQuery,
   useUpdateSkillMutation,
@@ -81,6 +85,11 @@ const StyledHeaderTitle = styled.div`
   & > input:disabled {
     color: ${({ theme }) => theme.font.color.primary};
   }
+`;
+
+const StyledDangerButtonsContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 type SkillFormValues = {
@@ -158,6 +167,8 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const [createSkill] = useCreateSkillMutation();
   const [updateSkill] = useUpdateSkillMutation();
   const [deleteSkill] = useDeleteSkillMutation();
+  const [activateSkill] = useActivateSkillMutation();
+  const [deactivateSkill] = useDeactivateSkillMutation();
 
   const skill = data?.skill;
 
@@ -310,6 +321,42 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         variables: { id: skill.id },
       });
       closeModal(DELETE_SKILL_MODAL_ID);
+      navigate(SettingsPath.AI);
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeactivate = async () => {
+    if (!skill) return;
+
+    setIsSubmitting(true);
+    try {
+      await deactivateSkill({
+        variables: { id: skill.id },
+      });
+      navigate(SettingsPath.AI);
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleActivate = async () => {
+    if (!skill) return;
+
+    setIsSubmitting(true);
+    try {
+      await activateSkill({
+        variables: { id: skill.id },
+      });
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
@@ -510,19 +557,30 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
               </StyledFormContainer>
             </Section>
 
-            {!isReadonlyMode && skill && skill.isCustom && (
+            {skill && (
               <Section>
                 <H2Title
                   title={t`Danger zone`}
-                  description={t`Delete this skill`}
+                  description={t`Deactivate or delete this skill`}
                 />
-                <Button
-                  accent="danger"
-                  variant="secondary"
-                  title={t`Delete Skill`}
-                  Icon={IconTrash}
-                  onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
-                />
+                <StyledDangerButtonsContainer>
+                  <Button
+                    Icon={skill.isActive ? IconArchive : IconArchiveOff}
+                    title={skill.isActive ? t`Deactivate` : t`Activate`}
+                    size="small"
+                    onClick={skill.isActive ? handleDeactivate : handleActivate}
+                  />
+                  {skill.isCustom && (
+                    <Button
+                      Icon={IconTrash}
+                      title={t`Delete`}
+                      size="small"
+                      accent="danger"
+                      variant="secondary"
+                      onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
+                    />
+                  )}
+                </StyledDangerButtonsContainer>
               </Section>
             )}
           </>

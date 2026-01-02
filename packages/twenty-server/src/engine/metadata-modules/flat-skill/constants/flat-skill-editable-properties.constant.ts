@@ -6,4 +6,5 @@ export const FLAT_SKILL_EDITABLE_PROPERTIES = [
   'icon',
   'description',
   'content',
+  'isActive',
 ] as const satisfies (keyof FlatSkill)[];

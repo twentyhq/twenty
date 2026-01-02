@@ -35,10 +35,10 @@ export const fromCreateSkillInputToFlatSkillToCreate = ({
     description: description ?? null,
     content,
     isCustom: true,
+    isActive: true,
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
     universalIdentifier: id,
     applicationId,
   };

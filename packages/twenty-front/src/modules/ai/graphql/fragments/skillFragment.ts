@@ -9,6 +9,7 @@ export const SKILL_FRAGMENT = gql`
     icon
     content
     isCustom
+    isActive
     createdAt
     updatedAt
   }

@@ -45,6 +45,10 @@ export class SkillDTO {
   @Field()
   isCustom: boolean;
 
+  @IsBoolean()
+  @Field()
+  isActive: boolean;
+
   @HideField()
   workspaceId: string;
 

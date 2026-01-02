@@ -62,4 +62,20 @@ export class SkillResolver {
   ): Promise<SkillDTO> {
     return this.skillService.delete(id, workspace.id);
   }
+
+  @Mutation(() => SkillDTO)
+  async activateSkill(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<SkillDTO> {
+    return this.skillService.activate(id, workspace.id);
+  }
+
+  @Mutation(() => SkillDTO)
+  async deactivateSkill(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<SkillDTO> {
+    return this.skillService.deactivate(id, workspace.id);
+  }
 }

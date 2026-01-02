@@ -6,7 +6,6 @@ export const transformSkillEntityToFlatSkill = (
 ): FlatSkill => {
   return {
     createdAt: skillEntity.createdAt.toISOString(),
-    deletedAt: skillEntity.deletedAt?.toISOString() ?? null,
     updatedAt: skillEntity.updatedAt.toISOString(),
     id: skillEntity.id,
     standardId: skillEntity.standardId,
@@ -17,6 +16,7 @@ export const transformSkillEntityToFlatSkill = (
     content: skillEntity.content,
     workspaceId: skillEntity.workspaceId,
     isCustom: skillEntity.isCustom,
+    isActive: skillEntity.isActive,
     universalIdentifier: skillEntity.standardId || skillEntity.id,
     applicationId: skillEntity.applicationId,
   };

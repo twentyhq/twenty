@@ -13,6 +13,7 @@ const DEFAULT_SKILL_GQL_FIELDS = `
   description
   content
   isCustom
+  isActive
   applicationId
   createdAt
   updatedAt

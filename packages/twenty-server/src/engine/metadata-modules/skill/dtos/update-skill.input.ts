@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -35,4 +41,9 @@ export class UpdateSkillInput {
   @IsOptional()
   @Field({ nullable: true })
   content?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isActive?: boolean;
 }

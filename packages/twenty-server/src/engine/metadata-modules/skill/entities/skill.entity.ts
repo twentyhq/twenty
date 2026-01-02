@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   PrimaryGeneratedColumn,
@@ -11,10 +10,10 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
 
 @Entity('skill')
-@Index('IDX_SKILL_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_SKILL_ID_IS_ACTIVE', ['id', 'isActive'])
 @Index('IDX_SKILL_NAME_WORKSPACE_ID_UNIQUE', ['name', 'workspaceId'], {
   unique: true,
-  where: '"deletedAt" IS NULL',
+  where: '"isActive" = true',
 })
 export class SkillEntity
   extends SyncableEntity
@@ -44,12 +43,12 @@ export class SkillEntity
   @Column({ default: false })
   isCustom: boolean;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date | null;
 }

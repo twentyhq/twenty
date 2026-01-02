@@ -14,8 +14,9 @@ export type SettingsSkillTableRowProps = {
   link?: string;
 };
 
-export const StyledSkillTableRow = styled(TableRow)`
+export const StyledSkillTableRow = styled(TableRow)<{ isActive?: boolean }>`
   grid-template-columns: 1fr 120px 36px;
+  opacity: ${({ isActive = true }) => (isActive ? 1 : 0.5)};
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -45,7 +46,7 @@ export const SettingsSkillTableRow = ({
   const Icon = getIcon(skill.icon ?? 'IconSparkles');
 
   return (
-    <StyledSkillTableRow key={skill.id} to={link}>
+    <StyledSkillTableRow key={skill.id} to={link} isActive={skill.isActive}>
       <StyledNameTableCell>
         <StyledIconContainer>
           <Icon size={16} />

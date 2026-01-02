@@ -35,6 +35,7 @@ describe('Skill creation should succeed', () => {
       description: null,
       content: 'This is the skill content with instructions',
       isCustom: true,
+      isActive: true,
     });
   });
 
@@ -58,6 +59,7 @@ describe('Skill creation should succeed', () => {
       id: expect.any(String),
       ...input,
       isCustom: true,
+      isActive: true,
     });
   });
 
@@ -106,6 +108,7 @@ describe('Skill creation should succeed', () => {
       label: 'Long Content Skill',
       content: longContent,
       isCustom: true,
+      isActive: true,
     });
   });
 
@@ -138,6 +141,7 @@ Do the second thing.
       label: 'Markdown Skill',
       content: markdownContent,
       isCustom: true,
+      isActive: true,
     });
   });
 });

@@ -40,7 +40,6 @@ export class SkillService {
 
     return Object.values(flatSkillMaps.byId)
       .filter(isDefined)
-      .filter((flatSkill) => !isDefined(flatSkill.deletedAt))
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatSkillToSkillDto);
   }
@@ -59,7 +58,7 @@ export class SkillService {
       flatEntityMaps: flatSkillMaps,
     });
 
-    if (!isDefined(flatSkill) || isDefined(flatSkill.deletedAt)) {
+    if (!isDefined(flatSkill)) {
       return null;
     }
 
@@ -224,7 +223,7 @@ export class SkillService {
 
     return Object.values(flatSkillMaps.byId)
       .filter(isDefined)
-      .filter((flatSkill) => !isDefined(flatSkill.deletedAt))
+      .filter((flatSkill) => flatSkill.isActive)
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
@@ -247,9 +246,16 @@ export class SkillService {
     return Object.values(flatSkillMaps.byId)
       .filter(isDefined)
       .filter(
-        (flatSkill) =>
-          names.includes(flatSkill.name) && !isDefined(flatSkill.deletedAt),
+        (flatSkill) => names.includes(flatSkill.name) && flatSkill.isActive,
       );
+  }
+
+  async activate(id: string, workspaceId: string): Promise<SkillDTO> {
+    return this.update({ id, isActive: true }, workspaceId);
+  }
+
+  async deactivate(id: string, workspaceId: string): Promise<SkillDTO> {
+    return this.update({ id, isActive: false }, workspaceId);
   }
 
   async findByIdOrThrow(id: string, workspaceId: string): Promise<SkillDTO> {

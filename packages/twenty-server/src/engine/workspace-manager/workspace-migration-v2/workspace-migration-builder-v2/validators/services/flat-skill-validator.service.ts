@@ -134,12 +134,35 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && isStandardMetadata(fromFlatSkill)) {
+    // Standard skills can only have isActive toggled, not other properties
+    const isActiveUpdate = findFlatEntityPropertyUpdate({
+      flatEntityUpdates,
+      property: 'isActive',
+    });
+
+    const hasNonIsActiveUpdates = flatEntityUpdates.some(
+      (update) => update.property !== 'isActive',
+    );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      isStandardMetadata(fromFlatSkill) &&
+      hasNonIsActiveUpdates
+    ) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
-        message: t`Cannot update standard skill`,
-        userFriendlyMessage: msg`Cannot update standard skill`,
+        message: t`Cannot update standard skill properties (only activation/deactivation allowed)`,
+        userFriendlyMessage: msg`Cannot update standard skill properties (only activation/deactivation allowed)`,
       });
+    }
+
+    // If only isActive is being updated on a standard skill, allow it
+    if (
+      isStandardMetadata(fromFlatSkill) &&
+      isDefined(isActiveUpdate) &&
+      !hasNonIsActiveUpdates
+    ) {
+      return validationResult;
     }
 
     const optimisticFlatSkill: FlatSkill = {

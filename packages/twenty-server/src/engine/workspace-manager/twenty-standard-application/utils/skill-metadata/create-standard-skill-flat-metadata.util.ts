@@ -37,10 +37,10 @@ export const createStandardSkillFlatMetadata = ({
     description,
     content,
     isCustom,
+    isActive: true,
     workspaceId,
     applicationId: twentyStandardApplicationId,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };
