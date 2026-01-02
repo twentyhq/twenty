@@ -2,7 +2,7 @@ import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/co
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 export const HELPER_AGENT: StandardAgentDefinition = {
-  standardId: '20202020-a5fe-d13a-22ec-4faea965604b',
+  standardId: '20202020-0002-0001-0001-000000000004',
   name: 'helper',
   label: 'Helper',
   description:
