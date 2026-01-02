@@ -3,7 +3,9 @@ import { createContext } from 'react';
 
 type WorkflowStepFilterContextType = {
   stepId: string;
-  onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
+  onFilterSettingsUpdate: (
+    filterSettings: FilterSettings,
+  ) => void | Promise<void>;
   readonly?: boolean;
 };
 

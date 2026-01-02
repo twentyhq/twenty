@@ -2,23 +2,31 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import {
+  type WorkflowIfElseAction,
+  type WorkflowStep,
+} from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
 import { WorkflowIfElseBranchEditor } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowIfElseBranchEditor';
 import { calculateElseIfBranchPosition } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateElseIfBranchPosition';
 import { calculateExistingBranchPositions } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateExistingBranchPositions';
 import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -58,6 +66,12 @@ export const WorkflowEditActionIfElseBody = ({
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
+  const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
+  const { deleteStepsOutputSchema } = useStepsOutputSchema();
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const currentStepFilters = useRecoilComponentValue(
     currentStepFiltersComponentState,
@@ -72,7 +86,46 @@ export const WorkflowEditActionIfElseBody = ({
     currentStepFilterGroupsComponentState,
   );
 
-  const onFilterSettingsUpdate = (newFilterSettings: FilterSettings) => {
+  const cleanupEmptyChildStepsFromDeletedBranches = async ({
+    branchesToDelete,
+    allSteps,
+  }: {
+    branchesToDelete: StepIfElseBranch[];
+    allSteps?: WorkflowStep[];
+  }): Promise<void> => {
+    if (branchesToDelete.length === 0 || !isDefined(allSteps)) {
+      return;
+    }
+
+    const workflowVersionId = await getUpdatableWorkflowVersion();
+
+    const childStepIdsFromDeletedBranches = branchesToDelete.flatMap(
+      (branch) => branch.nextStepIds,
+    );
+
+    const emptyChildStepIds = childStepIdsFromDeletedBranches.filter(
+      (childStepId) => {
+        const childStep = allSteps.find((step) => step.id === childStepId);
+        return isDefined(childStep) && childStep.type === 'EMPTY';
+      },
+    );
+
+    for (const emptyChildStepId of emptyChildStepIds) {
+      await deleteWorkflowVersionStep({
+        workflowVersionId,
+        stepId: emptyChildStepId,
+      });
+    }
+
+    if (emptyChildStepIds.length > 0) {
+      deleteStepsOutputSchema({
+        stepIds: emptyChildStepIds,
+        workflowVersionId,
+      });
+    }
+  };
+
+  const onFilterSettingsUpdate = async (newFilterSettings: FilterSettings) => {
     if (isReadonly) {
       return;
     }
@@ -92,6 +145,11 @@ export const WorkflowEditActionIfElseBody = ({
       branchesToDelete.length > 0
         ? branches.filter((branch) => !branchesToDelete.includes(branch))
         : branches;
+
+    await cleanupEmptyChildStepsFromDeletedBranches({
+      branchesToDelete,
+      allSteps: workflow?.currentVersion?.steps ?? undefined,
+    });
 
     setCurrentStepFilterGroups(updatedStepFilterGroups);
     setCurrentStepFilters(updatedStepFilters);

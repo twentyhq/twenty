@@ -13,6 +13,30 @@ export type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
   leftOperand: unknown;
 };
 
+const collectAllDescendantGroups = (
+  rootGroupId: string,
+  allGroups: StepFilterGroup[],
+  collectedGroups: Set<StepFilterGroup> = new Set(),
+): Set<StepFilterGroup> => {
+  const rootGroup = allGroups.find((group) => group.id === rootGroupId);
+
+  if (!rootGroup) {
+    return collectedGroups;
+  }
+
+  collectedGroups.add(rootGroup);
+
+  const childGroups = allGroups.filter(
+    (group) => group.parentStepFilterGroupId === rootGroupId,
+  );
+
+  for (const childGroup of childGroups) {
+    collectAllDescendantGroups(childGroup.id, allGroups, collectedGroups);
+  }
+
+  return collectedGroups;
+};
+
 export const findMatchingBranch = ({
   branches,
   stepFilterGroups,
@@ -27,10 +51,8 @@ export const findMatchingBranch = ({
       return true;
     }
 
-    const branchFilterGroups = stepFilterGroups.filter(
-      (group) =>
-        group.id === branch.filterGroupId ||
-        group.parentStepFilterGroupId === branch.filterGroupId,
+    const branchFilterGroups = Array.from(
+      collectAllDescendantGroups(branch.filterGroupId, stepFilterGroups),
     );
 
     const branchFilterGroupIds = new Set(branchFilterGroups.map((g) => g.id));
