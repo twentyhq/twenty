@@ -4004,6 +4004,7 @@ export type Skill = {
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   label: Scalars['String'];
   name: Scalars['String'];

@@ -1815,6 +1815,7 @@ export enum ModelProvider {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateSkill: Skill;
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
@@ -1862,11 +1863,11 @@ export type Mutation = {
   createRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   createRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   createSAMLIdentityProvider: SetupSsoOutput;
-  activateSkill: Skill;
   createSkill: Skill;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
+  deactivateSkill: Skill;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
@@ -1896,7 +1897,6 @@ export type Mutation = {
   deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
   deleteSSOIdentityProvider: DeleteSsoOutput;
-  deactivateSkill: Skill;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -2015,6 +2015,11 @@ export type Mutation = {
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
   verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
+};
+
+
+export type MutationActivateSkillArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2258,6 +2263,11 @@ export type MutationCreateWorkflowVersionEdgeArgs = {
 
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
+};
+
+
+export type MutationDeactivateSkillArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -5283,6 +5293,13 @@ export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: stri
 
 export type SkillFieldsFragment = { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string };
 
+export type ActivateSkillMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type ActivateSkillMutation = { __typename?: 'Mutation', activateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
+
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
   roleId: Scalars['UUID'];
@@ -5309,13 +5326,6 @@ export type CreateSkillMutationVariables = Exact<{
 
 
 export type CreateSkillMutation = { __typename?: 'Mutation', createSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
-
-export type ActivateSkillMutationVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type ActivateSkillMutation = { __typename?: 'Mutation', activateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type DeactivateSkillMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -7541,6 +7551,39 @@ export const WorkflowDiffFragmentFragmentDoc = gql`
   stepsDiff
 }
     `;
+export const ActivateSkillDocument = gql`
+    mutation ActivateSkill($id: UUID!) {
+  activateSkill(id: $id) {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+export type ActivateSkillMutationFn = Apollo.MutationFunction<ActivateSkillMutation, ActivateSkillMutationVariables>;
+
+/**
+ * __useActivateSkillMutation__
+ *
+ * To run a mutation, you first call `useActivateSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateSkillMutation, { data, loading, error }] = useActivateSkillMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useActivateSkillMutation(baseOptions?: Apollo.MutationHookOptions<ActivateSkillMutation, ActivateSkillMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActivateSkillMutation, ActivateSkillMutationVariables>(ActivateSkillDocument, options);
+      }
+export type ActivateSkillMutationHookResult = ReturnType<typeof useActivateSkillMutation>;
+export type ActivateSkillMutationResult = Apollo.MutationResult<ActivateSkillMutation>;
+export type ActivateSkillMutationOptions = Apollo.BaseMutationOptions<ActivateSkillMutation, ActivateSkillMutationVariables>;
 export const AssignRoleToAgentDocument = gql`
     mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
   assignRoleToAgent(agentId: $agentId, roleId: $roleId)
@@ -7674,6 +7717,39 @@ export function useCreateSkillMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateSkillMutationHookResult = ReturnType<typeof useCreateSkillMutation>;
 export type CreateSkillMutationResult = Apollo.MutationResult<CreateSkillMutation>;
 export type CreateSkillMutationOptions = Apollo.BaseMutationOptions<CreateSkillMutation, CreateSkillMutationVariables>;
+export const DeactivateSkillDocument = gql`
+    mutation DeactivateSkill($id: UUID!) {
+  deactivateSkill(id: $id) {
+    ...SkillFields
+  }
+}
+    ${SkillFieldsFragmentDoc}`;
+export type DeactivateSkillMutationFn = Apollo.MutationFunction<DeactivateSkillMutation, DeactivateSkillMutationVariables>;
+
+/**
+ * __useDeactivateSkillMutation__
+ *
+ * To run a mutation, you first call `useDeactivateSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeactivateSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deactivateSkillMutation, { data, loading, error }] = useDeactivateSkillMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeactivateSkillMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateSkillMutation, DeactivateSkillMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeactivateSkillMutation, DeactivateSkillMutationVariables>(DeactivateSkillDocument, options);
+      }
+export type DeactivateSkillMutationHookResult = ReturnType<typeof useDeactivateSkillMutation>;
+export type DeactivateSkillMutationResult = Apollo.MutationResult<DeactivateSkillMutation>;
+export type DeactivateSkillMutationOptions = Apollo.BaseMutationOptions<DeactivateSkillMutation, DeactivateSkillMutationVariables>;
 export const DeleteOneAgentDocument = gql`
     mutation DeleteOneAgent($input: AgentIdInput!) {
   deleteOneAgent(input: $input) {
@@ -7740,72 +7816,6 @@ export function useDeleteSkillMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteSkillMutationHookResult = ReturnType<typeof useDeleteSkillMutation>;
 export type DeleteSkillMutationResult = Apollo.MutationResult<DeleteSkillMutation>;
 export type DeleteSkillMutationOptions = Apollo.BaseMutationOptions<DeleteSkillMutation, DeleteSkillMutationVariables>;
-export const ActivateSkillDocument = gql`
-    mutation ActivateSkill($id: UUID!) {
-  activateSkill(id: $id) {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-export type ActivateSkillMutationFn = Apollo.MutationFunction<ActivateSkillMutation, ActivateSkillMutationVariables>;
-
-/**
- * __useActivateSkillMutation__
- *
- * To run a mutation, you first call `useActivateSkillMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useActivateSkillMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [activateSkillMutation, { data, loading, error }] = useActivateSkillMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useActivateSkillMutation(baseOptions?: Apollo.MutationHookOptions<ActivateSkillMutation, ActivateSkillMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ActivateSkillMutation, ActivateSkillMutationVariables>(ActivateSkillDocument, options);
-      }
-export type ActivateSkillMutationHookResult = ReturnType<typeof useActivateSkillMutation>;
-export type ActivateSkillMutationResult = Apollo.MutationResult<ActivateSkillMutation>;
-export type ActivateSkillMutationOptions = Apollo.BaseMutationOptions<ActivateSkillMutation, ActivateSkillMutationVariables>;
-export const DeactivateSkillDocument = gql`
-    mutation DeactivateSkill($id: UUID!) {
-  deactivateSkill(id: $id) {
-    ...SkillFields
-  }
-}
-    ${SkillFieldsFragmentDoc}`;
-export type DeactivateSkillMutationFn = Apollo.MutationFunction<DeactivateSkillMutation, DeactivateSkillMutationVariables>;
-
-/**
- * __useDeactivateSkillMutation__
- *
- * To run a mutation, you first call `useDeactivateSkillMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeactivateSkillMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deactivateSkillMutation, { data, loading, error }] = useDeactivateSkillMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeactivateSkillMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateSkillMutation, DeactivateSkillMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeactivateSkillMutation, DeactivateSkillMutationVariables>(DeactivateSkillDocument, options);
-      }
-export type DeactivateSkillMutationHookResult = ReturnType<typeof useDeactivateSkillMutation>;
-export type DeactivateSkillMutationResult = Apollo.MutationResult<DeactivateSkillMutation>;
-export type DeactivateSkillMutationOptions = Apollo.BaseMutationOptions<DeactivateSkillMutation, DeactivateSkillMutationVariables>;
 export const EvaluateAgentTurnDocument = gql`
     mutation EvaluateAgentTurn($turnId: UUID!) {
   evaluateAgentTurn(turnId: $turnId) {
