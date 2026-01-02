@@ -24,10 +24,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -51,10 +53,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         primaryAxisGroupBySubFieldName
         primaryAxisDateGranularity
         primaryAxisOrderBy
+        primaryAxisManualSortOrder
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
         secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
+        secondaryAxisManualSortOrder
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -77,6 +81,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         groupBySubFieldName
         dateGranularity
         orderBy
+        manualSortOrder
         displayDataLabel
         showCenterMetric
         displayLegend

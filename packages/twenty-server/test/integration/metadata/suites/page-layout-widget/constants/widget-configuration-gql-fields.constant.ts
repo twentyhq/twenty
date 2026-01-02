@@ -7,10 +7,12 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     primaryAxisGroupBySubFieldName
     primaryAxisDateGranularity
     primaryAxisOrderBy
+    primaryAxisManualSortOrder
     secondaryAxisGroupByFieldMetadataId
     secondaryAxisGroupBySubFieldName
     secondaryAxisGroupByDateGranularity
     secondaryAxisOrderBy
+    secondaryAxisManualSortOrder
     omitNullValues
     axisNameDisplay
     displayDataLabel
@@ -34,10 +36,12 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     primaryAxisGroupBySubFieldName
     primaryAxisDateGranularity
     primaryAxisOrderBy
+    primaryAxisManualSortOrder
     secondaryAxisGroupByFieldMetadataId
     secondaryAxisGroupBySubFieldName
     secondaryAxisGroupByDateGranularity
     secondaryAxisOrderBy
+    secondaryAxisManualSortOrder
     omitNullValues
     axisNameDisplay
     displayDataLabel
@@ -60,6 +64,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     groupBySubFieldName
     dateGranularity
     orderBy
+    manualSortOrder
     displayDataLabel
     showCenterMetric
     displayLegend
