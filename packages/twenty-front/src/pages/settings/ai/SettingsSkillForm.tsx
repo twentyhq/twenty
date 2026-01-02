@@ -213,6 +213,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         variables: {
           input: {
             id: skill.id,
+            name: formValues.name,
             label: formValues.label,
             description: formValues.description || undefined,
             content: formValues.content,
@@ -281,6 +282,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         variables: {
           input: {
             id: skill.id,
+            name: formValues.name,
             label: formValues.label,
             description: formValues.description || undefined,
             content: formValues.content,

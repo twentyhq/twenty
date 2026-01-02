@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, type Repository } from 'typeorm';
+import { In, IsNull, type Repository } from 'typeorm';
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 
@@ -57,10 +57,19 @@ export class SkillsService {
     names: string[],
     workspaceId: string,
   ): Promise<Skill[]> {
-    const skills = await Promise.all(
-      names.map((name) => this.getSkillByName(name, workspaceId)),
-    );
+    if (names.length === 0) {
+      return [];
+    }
 
-    return skills.filter((skill): skill is Skill => skill !== undefined);
+    const skills = await this.skillRepository.find({
+      where: { name: In(names), workspaceId, deletedAt: IsNull() },
+    });
+
+    return skills.map((skill) => ({
+      name: skill.name,
+      label: skill.label,
+      description: skill.description ?? '',
+      content: skill.content,
+    }));
   }
 }
