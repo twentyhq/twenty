@@ -6,4 +6,3 @@ export type FlatEntityMapsKeyToMetadata<T extends string> =
       ? Uncapitalize<Name>
       : never
     : never;
-

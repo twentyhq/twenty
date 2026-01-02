@@ -10,4 +10,3 @@ export const getMetadataNameFromFlatEntityMapsKey = <T extends string>(
 
   return uncapitalize(withoutSuffix) as FlatEntityMapsKeyToMetadata<T>;
 };
-
