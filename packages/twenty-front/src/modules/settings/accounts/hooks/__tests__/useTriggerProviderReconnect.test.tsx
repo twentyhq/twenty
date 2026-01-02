@@ -221,6 +221,34 @@ describe('useTriggerProviderReconnect', () => {
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
+
+    it('should pass skipMessageChannelConfiguration option to OAuth providers', async () => {
+      const { result } = renderHook(() => useTriggerProviderReconnect(), {
+        wrapper: Wrapper,
+      });
+
+      const options = {
+        skipMessageChannelConfiguration: true,
+        messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      };
+
+      await act(async () => {
+        await result.current.triggerProviderReconnect(
+          ConnectedAccountProvider.GOOGLE,
+          undefined,
+          options,
+        );
+      });
+
+      expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
+        ConnectedAccountProvider.GOOGLE,
+        {
+          ...options,
+          redirectLocation: '/settings/accounts',
+        },
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
   });
 
   describe('error handling', () => {
