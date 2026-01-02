@@ -434,6 +434,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                 />
 
                 <FormAdvancedTextFieldInput
+                  key={originalFormValues?.content ?? 'loading'}
                   label={t`Instructions`}
                   readonly={isReadonlyMode}
                   defaultValue={formValues.content}
