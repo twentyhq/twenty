@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { Repository } from 'typeorm';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { WhatsappWebhookHistoryThread } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-history.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WhatsappUpdatePersonService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-update-person.service';
-import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
 import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
 import {
   MessageParticipant,
@@ -21,7 +19,6 @@ export class WhatsappConvertHistoricMessagesService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly whatsappUpdatePersonService: WhatsappUpdatePersonService,
-    private readonly integrationsRepository: Repository<IntegrationsEntity>,
     private readonly whatsappConvertMessage: WhatsappConvertMessage,
   ) {}
 
@@ -29,19 +26,12 @@ export class WhatsappConvertHistoricMessagesService {
     thread: WhatsappWebhookHistoryThread,
     wabaId: string,
     wabaPhoneNumber: string,
+    workspaceId: string,
   ) {
     let parsedMessages: MessageWithParticipants[] = [];
     const userPhoneNumber = thread.id;
     let messageParticipants: MessageParticipant[] = [];
 
-    const workspaceIdByWABAId = await this.integrationsRepository.findOneBy({
-      whatsappBusinessAccountId: wabaId,
-    });
-
-    if (workspaceIdByWABAId === null || !workspaceIdByWABAId.workspace.id) {
-      return [];
-    }
-    const workspaceId = workspaceIdByWABAId.workspace.id;
     const context = buildSystemAuthContext(workspaceId);
 
     const whatsappRecord =
