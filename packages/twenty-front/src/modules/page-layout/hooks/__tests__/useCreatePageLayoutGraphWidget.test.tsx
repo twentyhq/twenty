@@ -5,7 +5,7 @@ import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetF
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

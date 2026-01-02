@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {

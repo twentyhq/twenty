@@ -1,6 +1,6 @@
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, within } from '@storybook/test';
+import { expect, fn, within } from 'storybook/test';
 import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

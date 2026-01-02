@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

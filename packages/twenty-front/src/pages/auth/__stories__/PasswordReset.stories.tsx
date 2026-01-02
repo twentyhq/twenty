@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';

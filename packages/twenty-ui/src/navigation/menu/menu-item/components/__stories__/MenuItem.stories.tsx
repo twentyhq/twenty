@@ -1,4 +1,4 @@
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { IconBell } from '@ui/display';

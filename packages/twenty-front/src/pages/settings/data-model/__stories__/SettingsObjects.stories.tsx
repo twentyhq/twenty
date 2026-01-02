@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 
 import {
   PageDecorator,

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';

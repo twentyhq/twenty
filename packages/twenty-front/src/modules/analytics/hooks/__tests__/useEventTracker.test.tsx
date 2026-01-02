@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';

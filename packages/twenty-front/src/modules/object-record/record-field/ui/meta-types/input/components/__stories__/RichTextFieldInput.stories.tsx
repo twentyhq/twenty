@@ -1,4 +1,4 @@
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { useEffect } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';

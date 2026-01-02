@@ -1,6 +1,6 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';

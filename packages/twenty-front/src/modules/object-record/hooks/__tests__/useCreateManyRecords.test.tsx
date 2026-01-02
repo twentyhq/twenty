@@ -1,4 +1,4 @@
-import { mocked } from '@storybook/test';
+import { mocked } from 'storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { v4 } from 'uuid';
 

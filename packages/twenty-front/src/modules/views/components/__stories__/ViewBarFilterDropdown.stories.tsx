@@ -18,7 +18,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 import { useSetRecoilState } from 'recoil';
 import {
   ComponentDecorator,

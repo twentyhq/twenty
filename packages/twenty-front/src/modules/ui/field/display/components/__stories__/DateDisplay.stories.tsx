@@ -3,7 +3,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 
 const meta: Meta<typeof DateDisplay> = {
