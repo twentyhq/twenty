@@ -74,7 +74,7 @@ type MetadataRelationsProperties = {
   };
 };
 
-export const ALL_METADATA_RELATION_PROPERTIES = {
+export const ALL_METADATA_RELATIONS = {
   agent: {
     manyToOne: {
       workspace: null,

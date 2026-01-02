@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
+import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -39,7 +39,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
     });
 
     const manyToOneRelations = Object.values(
-      ALL_METADATA_RELATION_PROPERTIES[metadataName].manyToOne,
+      ALL_METADATA_RELATIONS[metadataName].manyToOne,
     ) as Array<{
       metadataName: AllMetadataName;
       flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<AllMetadataName>;
