@@ -368,8 +368,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
-              flatViewFilterGroupMaps:
-                optimisticAllFlatEntityMaps.flatViewFilterGroupMaps,
             },
             workspaceId,
           },
