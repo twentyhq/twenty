@@ -191,7 +191,7 @@ export const ALL_METADATA_RELATIONS = {
         foreignKey: 'viewId',
       },
       viewFilterGroup: {
-        flatEntityForeignKeyAggregator: 'childViewFilterGroupIds',
+        flatEntityForeignKeyAggregator: 'viewFilterIds',
         foreignKey: 'viewFilterGroupId',
         metadataName: 'viewFilterGroup',
       },
