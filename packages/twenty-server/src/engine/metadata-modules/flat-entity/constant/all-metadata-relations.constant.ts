@@ -33,6 +33,7 @@ type ManyToOneRelationValue<
               >
             >
           >
+          // Note: In the best of the world should not be nullable, entities should always declare inverside keys
         > | null;
         foreignKey: ExtractPropertiesThatEndsWithId<
           MetadataFlatEntity<TSourceMetadataName>,
