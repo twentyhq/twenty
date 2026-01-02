@@ -251,11 +251,119 @@ export class SkillService {
   }
 
   async activate(id: string, workspaceId: string): Promise<SkillDTO> {
-    return this.update({ id, isActive: true }, workspaceId);
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    const existingFlatSkill = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: flatSkillMaps,
+    });
+
+    const flatSkillToUpdate: FlatSkill = {
+      ...existingFlatSkill,
+      isActive: true,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            skill: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatSkillToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while activating skill',
+      );
+    }
+
+    const { flatSkillMaps: recomputedFlatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    return fromFlatSkillToSkillDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatSkillMaps,
+      }),
+    );
   }
 
   async deactivate(id: string, workspaceId: string): Promise<SkillDTO> {
-    return this.update({ id, isActive: false }, workspaceId);
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    const existingFlatSkill = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: flatSkillMaps,
+    });
+
+    const flatSkillToUpdate: FlatSkill = {
+      ...existingFlatSkill,
+      isActive: false,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            skill: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatSkillToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deactivating skill',
+      );
+    }
+
+    const { flatSkillMaps: recomputedFlatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    return fromFlatSkillToSkillDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatSkillMaps,
+      }),
+    );
   }
 
   async findByIdOrThrow(id: string, workspaceId: string): Promise<SkillDTO> {
