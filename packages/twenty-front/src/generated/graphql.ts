@@ -953,6 +953,7 @@ export type CreateServerlessFunctionInput = {
   handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolDescription?: InputMaybe<Scalars['String']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
   toolOutputSchema?: InputMaybe<Scalars['JSON']>;
 };
@@ -3300,6 +3301,7 @@ export type Query = {
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  getToolIndex: Array<ToolIndexEntry>;
   index: Index;
   indexMetadatas: IndexConnection;
   listPlans: Array<BillingPlanOutput>;
@@ -3897,6 +3899,7 @@ export type Sentry = {
 
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
+  applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   cronTriggers?: Maybe<Array<CronTrigger>>;
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
@@ -3910,6 +3913,7 @@ export type ServerlessFunction = {
   routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
+  toolDescription?: Maybe<Scalars['String']>;
   toolInputSchema?: Maybe<Scalars['JSON']>;
   toolOutputSchema?: Maybe<Scalars['JSON']>;
   updatedAt: Scalars['DateTime'];
@@ -4209,6 +4213,15 @@ export type TimelineThreadsWithTotal = {
   totalNumberOfThreads: Scalars['Int'];
 };
 
+export type ToolIndexEntry = {
+  __typename?: 'ToolIndexEntry';
+  category: Scalars['String'];
+  description: Scalars['String'];
+  inputSchema?: Maybe<Scalars['JSON']>;
+  name: Scalars['String'];
+  objectName?: Maybe<Scalars['String']>;
+};
+
 export type TransientTokenOutput = {
   __typename?: 'TransientTokenOutput';
   transientToken: AuthToken;
@@ -4450,6 +4463,7 @@ export type UpdateServerlessFunctionInputUpdates = {
   handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolDescription?: InputMaybe<Scalars['String']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
   toolOutputSchema?: InputMaybe<Scalars['JSON']>;
 };

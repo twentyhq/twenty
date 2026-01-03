@@ -1,5 +1,5 @@
-import { type HTTPMethod } from '@/types';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type HTTPMethod } from '@/types';
 
 export type ToolSchemaPropertyType =
   | 'string'
