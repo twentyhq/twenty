@@ -49,6 +49,7 @@ export const useBuildSpreadsheetImportFields = () => {
       case FieldMetadataType.LINKS:
       case FieldMetadataType.PHONES:
       case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.ACTOR:
         return handleCompositeFields({
           fieldMetadataItem,
           fieldType: fieldMetadataItem.type,
@@ -88,7 +89,6 @@ export const useBuildSpreadsheetImportFields = () => {
 
       case FieldMetadataType.POSITION:
       case FieldMetadataType.MORPH_RELATION:
-      case FieldMetadataType.ACTOR:
       case FieldMetadataType.TS_VECTOR:
       case FieldMetadataType.RICH_TEXT:
         return [];
