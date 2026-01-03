@@ -10,6 +10,7 @@ export type ToolSchemaPropertyType =
 
 export type ToolSchemaProperty = {
   type: ToolSchemaPropertyType;
+  description?: string;
   enum?: string[];
   items?: ToolSchemaProperty;
   properties?: Record<string, ToolSchemaProperty>;

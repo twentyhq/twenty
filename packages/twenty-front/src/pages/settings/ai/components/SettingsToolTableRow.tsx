@@ -46,7 +46,7 @@ export const SettingsToolTableRow = ({
   link,
 }: SettingsToolTableRowProps) => {
   return (
-    <StyledToolTableRow key={tool.id} to={link}>
+    <StyledToolTableRow to={link}>
       <StyledNameTableCell>
         <StyledIconContainer>
           <IconCode size={16} />

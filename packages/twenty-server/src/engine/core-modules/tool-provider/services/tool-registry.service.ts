@@ -307,10 +307,18 @@ export class ToolRegistryService {
         }
       }
 
+      // Filter required array to remove loadingMessage if present
+      const required = Array.isArray(rest.required)
+        ? rest.required.filter(
+            (field) => field !== 'loadingMessage' && field !== 'input',
+          )
+        : undefined;
+
       // Otherwise return schema with loadingMessage removed
       return {
         ...rest,
         properties: cleanProperties,
+        ...(required && required.length > 0 ? { required } : {}),
       };
     }
 
