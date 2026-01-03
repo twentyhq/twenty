@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import {
-  WorkspaceMigrationActionType,
+  type WorkspaceMigrationActionType,
   type MetadataWorkspaceMigrationAction,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 

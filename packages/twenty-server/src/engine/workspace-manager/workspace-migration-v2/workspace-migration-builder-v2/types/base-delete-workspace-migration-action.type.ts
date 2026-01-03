@@ -1,4 +1,4 @@
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
 export type BaseDeleteWorkspaceMigrationAction<T extends AllMetadataName> = {
   entityId: string;

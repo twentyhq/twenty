@@ -27,7 +27,8 @@ export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
-  TAction extends WorkspaceMigrationActionV2 = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
+  TAction extends
+    WorkspaceMigrationActionV2 = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
@@ -82,6 +83,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
         });
       }
     }
+
     return args.allFlatEntityMaps;
   }
 

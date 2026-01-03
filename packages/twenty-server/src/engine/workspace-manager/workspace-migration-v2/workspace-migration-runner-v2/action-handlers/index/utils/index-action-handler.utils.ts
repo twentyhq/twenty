@@ -1,5 +1,4 @@
-import { QueryRunner } from 'typeorm';
-
+import { type QueryRunner } from 'typeorm';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,18 +12,18 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import {
-  FlatIndexFieldMetadata,
-  FlatIndexMetadata,
+  type FlatIndexFieldMetadata,
+  type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 
 export const computeFlatIndexFieldColumnNames = ({
@@ -100,8 +99,9 @@ export const insertIndexMetadata = async ({
   const { flatIndexFieldMetadatas, ...indexMetadataToInsert } =
     flatIndexMetadata;
 
-  const indexInsertResult =
-    await indexMetadataRepository.insert(indexMetadataToInsert);
+  const indexInsertResult = await indexMetadataRepository.insert(
+    indexMetadataToInsert,
+  );
 
   if (indexInsertResult.identifiers.length !== 1) {
     throw new WorkspaceQueryRunnerException(
@@ -192,4 +192,3 @@ export const dropIndexFromWorkspaceSchema = async ({
     schemaName,
   });
 };
-

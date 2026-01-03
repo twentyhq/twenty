@@ -87,7 +87,9 @@ export class WorkspaceMigrationRunnerV2Service {
 
     const shouldInvalidateRoleMapCache = actions.some((action) => {
       if ('metadataName' in action) {
-        return action.metadataName === 'role' || action.metadataName === 'roleTarget';
+        return (
+          action.metadataName === 'role' || action.metadataName === 'roleTarget'
+        );
       }
 
       return false;

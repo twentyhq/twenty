@@ -51,9 +51,9 @@ import {
   type UpdateCronTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
 import {
-  CreateDatabaseEventTriggerAction,
-  DeleteDatabaseEventTriggerAction,
-  UpdateDatabaseEventTriggerAction,
+  type CreateDatabaseEventTriggerAction,
+  type DeleteDatabaseEventTriggerAction,
+  type UpdateDatabaseEventTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
 import {
   type CreateFieldAction,
