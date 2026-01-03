@@ -1,0 +1,10 @@
+import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
+
+export const resolveTimeFormat = (timeFormat: TimeFormat): TimeFormat => {
+  if (timeFormat === TimeFormat.SYSTEM) {
+    return TimeFormat[detectTimeFormat()];
+  }
+
+  return timeFormat;
+};

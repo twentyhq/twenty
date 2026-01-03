@@ -13,6 +13,7 @@ import {
 } from 'date-fns';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { i18n } from '@lingui/core';
@@ -182,17 +183,23 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
 
+const getTimePattern = (timeFormat: TimeFormat) => {
+  return timeFormat === TimeFormat.HOUR_12 ? 'h:mm a' : 'HH:mm';
+};
+
 export const getDateTimeFormatStringFoDatePickerInputMask = (
   dateFormat: DateFormat,
+  timeFormat: TimeFormat,
 ): string => {
+  const timePattern = getTimePattern(timeFormat);
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
-      return `dd/MM/yyyy HH:mm`;
+      return `dd/MM/yyyy ${timePattern}`;
     case DateFormat.YEAR_FIRST:
-      return `yyyy-MM-dd HH:mm`;
+      return `yyyy-MM-dd ${timePattern}`;
     case DateFormat.MONTH_FIRST:
     default:
-      return `MM/dd/yyyy HH:mm`;
+      return `MM/dd/yyyy ${timePattern}`;
   }
 };
 
