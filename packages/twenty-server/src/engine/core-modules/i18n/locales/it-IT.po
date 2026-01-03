@@ -160,6 +160,16 @@ msgstr ""
 msgid "A role with this label already exists."
 msgstr "Esiste già un ruolo con questa etichetta."
 
+#. js-lingui-id: HijTmf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "A skill with this name already exists"
+msgstr ""
+
+#. js-lingui-id: jX0IPx
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "A skill with this name already exists."
+msgstr ""
+
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
@@ -926,6 +936,12 @@ msgstr "Impossibile eliminare l'account: sei l'unico amministratore. Assegna un 
 msgid "Cannot delete standard agent"
 msgstr "Impossibile eliminare l'agente standard"
 
+#. js-lingui-id: EN2+6i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot delete standard skill"
+msgstr ""
+
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
@@ -991,6 +1007,12 @@ msgstr "Impossibile aggiornare il canale di messaggi mentre la sincronizzazione 
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
 msgstr "Impossibile aggiornare l'agente standard"
+
+#. js-lingui-id: I2EmgT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
+msgstr ""
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1177,6 +1199,12 @@ msgstr "Numeri di telefono del contatto"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "Account X/Twitter del contatto"
+
+#. js-lingui-id: rx63gq
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+msgid "Content cannot be empty"
+msgstr ""
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2667,6 +2695,11 @@ msgstr ""
 msgid "Invalid setting type provided in cron trigger"
 msgstr "Tipo di impostazione non valido fornito nel trigger cron"
 
+#. js-lingui-id: TulNnA
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Invalid skill input."
+msgstr ""
+
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid string format."
@@ -3008,6 +3041,8 @@ msgid "Kanban view must have a main group by field"
 msgstr "La vista Kanban deve avere un campo principale di raggruppamento"
 
 #. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
@@ -4733,6 +4768,24 @@ msgstr "La registrazione è disabilitata."
 msgid "Single sign-on authentication failed."
 msgstr "Autenticazione single sign-on non riuscita."
 
+#. js-lingui-id: OhD7+a
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Skill not found"
+msgstr ""
+
+#. js-lingui-id: 68ze54
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Skill not found."
+msgstr ""
+
+#. js-lingui-id: e6udqn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "Skill with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -4783,6 +4836,11 @@ msgstr "I campi standard non possono essere eliminati"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Gli oggetti standard non possono essere eliminati"
+
+#. js-lingui-id: H8j7uw
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Standard skills cannot be modified."
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

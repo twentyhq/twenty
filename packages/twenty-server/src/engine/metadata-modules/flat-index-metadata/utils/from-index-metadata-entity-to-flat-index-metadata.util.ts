@@ -1,6 +1,6 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
@@ -9,9 +9,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
 ): FlatIndexMetadata => {
   const indexMetadataEntityWithoutRelations = removePropertiesFromRecord(
     indexMetadataEntity,
-    Object.keys(
-      ALL_METADATA_RELATION_PROPERTIES.index,
-    ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.index)[],
+    getMetadataEntityRelationProperties('index'),
   );
 
   return {

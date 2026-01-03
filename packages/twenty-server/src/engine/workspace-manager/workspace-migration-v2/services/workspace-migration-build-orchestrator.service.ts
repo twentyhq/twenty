@@ -368,8 +368,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
-              flatViewFilterGroupMaps:
-                optimisticAllFlatEntityMaps.flatViewFilterGroupMaps,
             },
             workspaceId,
           },
@@ -825,7 +823,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatPageLayoutMaps,
             to: toFlatPageLayoutMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: undefined,
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
             workspaceId,
           },
         );
@@ -898,6 +899,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPageLayoutWidgetMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
               flatPageLayoutTabMaps:
                 optimisticAllFlatEntityMaps.flatPageLayoutTabMaps,
             },
