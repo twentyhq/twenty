@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { jsonSchema, type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { type ZodObject, type ZodRawShape } from 'zod';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -20,6 +21,11 @@ import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  stripLoadingMessage,
+  wrapJsonSchemaForExecution,
+  wrapSchemaForExecution,
+} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
@@ -179,12 +185,16 @@ export class ToolProviderService {
         continue;
       }
 
+      const wrappedSchema = wrapSchemaForExecution(
+        tool.inputSchema as ZodObject<ZodRawShape>,
+      );
+
       if (!flag) {
         tools[toolType.toLowerCase()] = {
           description: tool.description,
-          inputSchema: tool.inputSchema,
-          execute: async (parameters: { input: ToolInput }) =>
-            tool.execute(parameters.input, executionContext),
+          inputSchema: wrappedSchema,
+          execute: async (parameters: ToolInput) =>
+            tool.execute(stripLoadingMessage(parameters), executionContext),
         };
       } else if (spec.rolePermissionConfig && spec.workspaceId) {
         const hasPermission = await this.permissionsService.hasToolPermission(
@@ -196,9 +206,9 @@ export class ToolProviderService {
         if (hasPermission) {
           tools[toolType.toLowerCase()] = {
             description: tool.description,
-            inputSchema: tool.inputSchema,
-            execute: async (parameters: { input: ToolInput }) =>
-              tool.execute(parameters.input, executionContext),
+            inputSchema: wrappedSchema,
+            execute: async (parameters: ToolInput) =>
+              tool.execute(stripLoadingMessage(parameters), executionContext),
           };
         }
       }
@@ -306,20 +316,24 @@ export class ToolProviderService {
         serverlessFunction.name,
       );
 
+      const wrappedSchema = wrapJsonSchemaForExecution(
+        serverlessFunction.toolInputSchema as Record<string, unknown>,
+      );
+
       tools[toolName] = {
         description:
           serverlessFunction.toolDescription ||
           serverlessFunction.description ||
           `Execute the ${serverlessFunction.name} serverless function`,
-        inputSchema: jsonSchema(
-          serverlessFunction.toolInputSchema as Record<string, unknown>,
-        ),
+        inputSchema: jsonSchema(wrappedSchema),
         execute: async (parameters: Record<string, unknown>) => {
+          const { loadingMessage: _, ...actualParams } = parameters;
+
           const result =
             await this.serverlessFunctionService.executeOneServerlessFunction({
               id: serverlessFunction.id,
               workspaceId: spec.workspaceId,
-              payload: parameters,
+              payload: actualParams,
               version: serverlessFunction.latestVersion ?? 'draft',
             });
 

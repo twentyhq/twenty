@@ -271,18 +271,18 @@ export class ToolRegistryService {
       return undefined;
     }
 
-    return this.cleanupSchema(schema);
+    return this.stripInternalFieldsFromSchema(schema);
   }
 
-  // Remove internal properties and simplify schema for display
-  private cleanupSchema(schema: object): object {
+  // Remove internal fields (loadingMessage) from schema for display
+  private stripInternalFieldsFromSchema(schema: object): object {
     const schemaObj = schema as Record<string, unknown>;
 
     // Remove $schema property
     const { $schema: _, ...rest } = schemaObj;
 
-    // Check if schema has properties with loadingMessage and input
-    // loadingMessage is an internal field added to all tools for status updates
+    // Remove loadingMessage from properties if present
+    // loadingMessage is an internal field auto-injected for AI status updates
     if (
       rest.type === 'object' &&
       rest.properties &&
@@ -291,30 +291,11 @@ export class ToolRegistryService {
       const properties = rest.properties as Record<string, unknown>;
       const { loadingMessage: __, ...cleanProperties } = properties;
 
-      // If only 'input' remains and it's an object type, use its schema directly
-      const propertyKeys = Object.keys(cleanProperties);
-
-      if (
-        propertyKeys.length === 1 &&
-        propertyKeys[0] === 'input' &&
-        typeof cleanProperties.input === 'object' &&
-        cleanProperties.input !== null
-      ) {
-        const inputSchema = cleanProperties.input as Record<string, unknown>;
-
-        if (inputSchema.type === 'object') {
-          return this.cleanupSchema(inputSchema);
-        }
-      }
-
       // Filter required array to remove loadingMessage if present
       const required = Array.isArray(rest.required)
-        ? rest.required.filter(
-            (field) => field !== 'loadingMessage' && field !== 'input',
-          )
+        ? rest.required.filter((field) => field !== 'loadingMessage')
         : undefined;
 
-      // Otherwise return schema with loadingMessage removed
       return {
         ...rest,
         properties: cleanProperties,
