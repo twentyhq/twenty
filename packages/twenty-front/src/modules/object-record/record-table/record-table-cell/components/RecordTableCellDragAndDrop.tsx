@@ -36,7 +36,7 @@ export const RecordTableCellDragAndDrop = () => {
     <RecordTableCellStyleWrapper
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
-      data-select-disable
+      data-select-disable="true"
       hasRightBorder={false}
       hasBottomBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}

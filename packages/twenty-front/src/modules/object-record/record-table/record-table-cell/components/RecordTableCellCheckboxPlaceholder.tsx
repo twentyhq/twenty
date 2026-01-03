@@ -32,7 +32,7 @@ export const RecordTableCellCheckboxPlaceholder = () => {
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
     >
-      <StyledContainer data-select-disable>
+      <StyledContainer data-select-disable="true">
         <Checkbox hoverable checked={hasUserSelectedAllRows === true} />
       </StyledContainer>
     </StyledRecordTableTd>
