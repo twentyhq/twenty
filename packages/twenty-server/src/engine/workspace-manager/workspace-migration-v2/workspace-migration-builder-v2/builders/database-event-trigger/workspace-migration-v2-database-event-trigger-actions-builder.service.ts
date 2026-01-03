@@ -25,7 +25,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.databaseEventTrigger,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerCreation(
@@ -57,7 +57,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.databaseEventTrigger,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerDeletion(
@@ -89,7 +89,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.databaseEventTrigger,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerUpdate(

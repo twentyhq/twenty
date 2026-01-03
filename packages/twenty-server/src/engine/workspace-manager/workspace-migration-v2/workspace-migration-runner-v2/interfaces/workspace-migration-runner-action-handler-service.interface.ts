@@ -181,6 +181,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
             assertUnreachable(action);
           }
         }
+        break;
       }
       case 'update': {
         switch (action.metadataName) {

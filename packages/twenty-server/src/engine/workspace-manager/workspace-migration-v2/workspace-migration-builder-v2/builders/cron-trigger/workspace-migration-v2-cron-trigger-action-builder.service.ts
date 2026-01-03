@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.cronTrigger,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerCreation(
@@ -53,7 +53,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.cronTrigger,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerDeletion(
@@ -83,7 +83,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.cronTrigger,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerUpdate(args);

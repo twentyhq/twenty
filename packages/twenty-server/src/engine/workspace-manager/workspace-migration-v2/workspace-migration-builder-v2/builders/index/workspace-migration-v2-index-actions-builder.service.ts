@@ -27,7 +27,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'create'> {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation(args);
 
@@ -52,7 +52,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'delete'> {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion(args);
 
@@ -85,7 +85,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     typeof ALL_METADATA_NAME.index
   >): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.index,
-    'updated'
+    'update'
   > {
     const flatEntity = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,

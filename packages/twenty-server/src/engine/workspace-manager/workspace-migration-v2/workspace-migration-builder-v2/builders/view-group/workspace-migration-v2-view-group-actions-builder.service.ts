@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupCreation(args);
@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupDeletion(args);
@@ -79,7 +79,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupUpdate(args);

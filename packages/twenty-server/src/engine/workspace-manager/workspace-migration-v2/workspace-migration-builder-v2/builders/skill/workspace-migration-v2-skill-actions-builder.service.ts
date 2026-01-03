@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'create'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillCreation(args);
 
@@ -46,7 +46,7 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'delete'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillDeletion(args);
 
@@ -71,7 +71,7 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'update'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillUpdate(args);
 

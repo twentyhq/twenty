@@ -27,7 +27,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupCreation(
@@ -59,7 +59,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupDeletion(
@@ -93,7 +93,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupUpdate(

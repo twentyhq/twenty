@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.roleTarget,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetCreation(args);
@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.roleTarget,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetDeletion(args);
@@ -79,7 +79,7 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.roleTarget,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetUpdate(args);

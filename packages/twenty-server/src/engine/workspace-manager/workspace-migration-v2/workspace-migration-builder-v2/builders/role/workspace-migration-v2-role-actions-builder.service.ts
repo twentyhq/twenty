@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'create'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleCreation(args);
 
@@ -46,7 +46,7 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'delete'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleDeletion(args);
 
@@ -71,7 +71,7 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'update'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleUpdate(args);
 

@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewField,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldCreation(args);
@@ -49,7 +49,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewField,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldDeletion(args);
@@ -77,7 +77,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewField>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewField,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldUpdate(args);

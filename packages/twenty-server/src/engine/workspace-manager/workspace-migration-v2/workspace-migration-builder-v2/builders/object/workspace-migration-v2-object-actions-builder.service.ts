@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataCreation(args);
@@ -52,7 +52,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataDeletion(args);
@@ -82,7 +82,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataUpdate(args);

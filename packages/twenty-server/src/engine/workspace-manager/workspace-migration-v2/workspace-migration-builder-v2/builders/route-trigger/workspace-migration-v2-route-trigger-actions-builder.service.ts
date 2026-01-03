@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
@@ -53,7 +53,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion(
@@ -83,7 +83,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(

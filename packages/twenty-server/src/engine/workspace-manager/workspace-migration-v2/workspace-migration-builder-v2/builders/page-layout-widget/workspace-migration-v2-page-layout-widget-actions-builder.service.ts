@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetCreation(
@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetDeletion(
@@ -83,7 +83,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetUpdate(

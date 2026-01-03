@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterCreation(args);
@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterDeletion(args);
@@ -79,7 +79,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterUpdate(args);
