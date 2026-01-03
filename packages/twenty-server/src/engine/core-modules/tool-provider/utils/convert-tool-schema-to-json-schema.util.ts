@@ -21,9 +21,7 @@ type JsonSchema = {
   properties: Record<string, JsonSchemaProperty>;
 };
 
-const mapToolSchemaTypeToJsonSchemaType = (
-  type: string,
-): JsonSchemaType => {
+const mapToolSchemaTypeToJsonSchemaType = (type: string): JsonSchemaType => {
   // Map ToolSchemaPropertyType to valid JSON Schema types
   switch (type) {
     case 'string':

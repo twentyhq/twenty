@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
+
 import graphqlTypeJson from 'graphql-type-json';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -55,4 +56,3 @@ export class ToolIndexResolver {
     });
   }
 }
-
