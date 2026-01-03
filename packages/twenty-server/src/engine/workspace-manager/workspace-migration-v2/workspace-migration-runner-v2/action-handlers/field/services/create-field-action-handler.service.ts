@@ -28,7 +28,8 @@ import {
 
 @Injectable()
 export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_field',
+  'create',
+  'fieldMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,

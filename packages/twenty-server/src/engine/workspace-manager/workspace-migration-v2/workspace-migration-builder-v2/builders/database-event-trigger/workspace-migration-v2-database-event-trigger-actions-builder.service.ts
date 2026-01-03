@@ -44,8 +44,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     return {
       status: 'success',
       action: {
-        type: 'create_database_event_trigger',
-        databaseEventTrigger: flatDatabaseEventTriggerToValidate,
+        type: 'create',
+        metadataName: 'databaseEventTrigger',
+        flatEntity: flatDatabaseEventTriggerToValidate,
       },
     };
   }
@@ -75,8 +76,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     return {
       status: 'success',
       action: {
-        type: 'delete_database_event_trigger',
-        databaseEventTriggerId: flatDatabaseEventTriggerToValidate.id,
+        type: 'delete',
+        metadataName: 'databaseEventTrigger',
+        entityId: flatDatabaseEventTriggerToValidate.id,
       },
     };
   }
@@ -104,8 +106,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateDatabaseEventTriggerAction: UpdateDatabaseEventTriggerAction = {
-      type: 'update_database_event_trigger',
-      databaseEventTriggerId: flatEntityId,
+      type: 'update',
+      metadataName: 'databaseEventTrigger',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

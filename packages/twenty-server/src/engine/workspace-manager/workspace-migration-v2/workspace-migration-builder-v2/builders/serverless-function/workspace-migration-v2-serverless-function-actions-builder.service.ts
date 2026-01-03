@@ -35,12 +35,12 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     }
 
     const updatedActions = baseResult.actions.updated.map((action) => {
-      if (action.type !== 'update_serverless_function') {
+      if (action.type !== 'update') {
         return action;
       }
 
       const toServerlessFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: action.serverlessFunctionId,
+        flatEntityId: action.entityId,
         flatEntityMaps: toFlatEntityMaps,
       });
 
@@ -82,8 +82,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: {
-        type: 'create_serverless_function',
-        serverlessFunction: flatServerlessFunctionToValidate,
+        type: 'create',
+        metadataName: 'serverlessFunction',
+        flatEntity: flatServerlessFunctionToValidate,
       },
     };
   }
@@ -111,8 +112,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: {
-        type: 'delete_serverless_function',
-        serverlessFunctionId: flatServerlessFunctionToValidate.id,
+        type: 'delete',
+        metadataName: 'serverlessFunction',
+        entityId: flatServerlessFunctionToValidate.id,
       },
     };
   }
@@ -140,8 +142,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
-      type: 'update_serverless_function',
-      serverlessFunctionId: flatEntityId,
+      type: 'update',
+      metadataName: 'serverlessFunction',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

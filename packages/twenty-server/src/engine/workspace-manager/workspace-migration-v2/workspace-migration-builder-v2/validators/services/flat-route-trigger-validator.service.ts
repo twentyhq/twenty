@@ -26,7 +26,7 @@ export class FlatRouteTriggerValidatorService {
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'update_route_trigger',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,
@@ -78,7 +78,7 @@ export class FlatRouteTriggerValidatorService {
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'delete_route_trigger',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: routeTriggerIdToDelete,
@@ -109,7 +109,7 @@ export class FlatRouteTriggerValidatorService {
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'create_route_trigger',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatRouteTriggerToValidate.id,

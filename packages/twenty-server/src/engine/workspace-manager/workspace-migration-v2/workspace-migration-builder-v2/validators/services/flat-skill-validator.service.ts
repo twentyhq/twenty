@@ -31,7 +31,7 @@ export class FlatSkillValidatorService {
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<FlatSkill> {
     const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'create_skill',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatSkill.id,
@@ -67,7 +67,7 @@ export class FlatSkillValidatorService {
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<FlatSkill> {
     const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'delete_skill',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -112,7 +112,7 @@ export class FlatSkillValidatorService {
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<FlatSkill> {
     const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'update_skill',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

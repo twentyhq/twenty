@@ -24,7 +24,8 @@ import {
 
 @Injectable()
 export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_field',
+  'delete',
+  'fieldMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -35,13 +36,13 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteFieldAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteFieldAction>) {
     const { flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { fieldMetadataId } = action;
+    const { entityId } = action;
 
     const updatedFlatFieldMetadataMaps =
       deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: fieldMetadataId,
+        entityToDeleteId: entityId,
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
@@ -59,10 +60,10 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    const { fieldMetadataId } = action;
+    const { entityId } = action;
 
     await fieldMetadataRepository.delete({
-      id: In([fieldMetadataId]),
+      id: In([entityId]),
     });
   }
 
@@ -75,7 +76,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId, fieldMetadataId } = action;
+    const { objectMetadataId, entityId } = action;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
@@ -84,7 +85,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldMetadataId,
+      flatEntityId: entityId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({

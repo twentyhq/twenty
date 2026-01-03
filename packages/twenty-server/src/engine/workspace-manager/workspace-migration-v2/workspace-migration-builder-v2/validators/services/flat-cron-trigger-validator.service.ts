@@ -26,7 +26,7 @@ export class FlatCronTriggerValidatorService {
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'update_cron_trigger',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,
@@ -78,7 +78,7 @@ export class FlatCronTriggerValidatorService {
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'delete_cron_trigger',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: cronTriggerIdToDelete,
@@ -109,7 +109,7 @@ export class FlatCronTriggerValidatorService {
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'create_cron_trigger',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatCronTriggerToValidate.id,

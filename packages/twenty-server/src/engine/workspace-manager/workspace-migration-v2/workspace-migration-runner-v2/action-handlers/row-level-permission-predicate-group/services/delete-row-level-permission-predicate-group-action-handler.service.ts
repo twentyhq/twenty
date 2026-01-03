@@ -15,17 +15,18 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteRowLevelPermissionPredicateGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_row_level_permission_predicate_group',
+  'delete',
+  'rowLevelPermissionPredicateGroup',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteRowLevelPermissionPredicateGroupAction>): Partial<AllFlatEntityMaps> {
     const { flatRowLevelPermissionPredicateGroupMaps } = allFlatEntityMaps;
-    const { rowLevelPermissionPredicateGroupId } = action;
+    const { entityId } = action;
 
     const updatedFlatMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: rowLevelPermissionPredicateGroupId,
+      entityToDeleteId: entityId,
       flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
     });
 
@@ -38,7 +39,7 @@ export class DeleteRowLevelPermissionPredicateGroupActionHandlerService extends 
     context: WorkspaceMigrationActionRunnerArgs<DeleteRowLevelPermissionPredicateGroupAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { rowLevelPermissionPredicateGroupId } = action;
+    const { entityId } = action;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateGroupEntity>(
@@ -46,7 +47,7 @@ export class DeleteRowLevelPermissionPredicateGroupActionHandlerService extends 
       );
 
     await repository.delete({
-      id: rowLevelPermissionPredicateGroupId,
+      id: entityId,
       workspaceId,
     });
   }

@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_page_layout_tab',
+  'create',
+  'pageLayoutTab',
 ) {
   constructor() {
     super();

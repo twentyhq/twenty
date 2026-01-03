@@ -57,7 +57,8 @@ type UpdateFieldPropertyUpdateHandlerArgs<
 
 @Injectable()
 export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_field',
+  'update',
+  'fieldMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -68,13 +69,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateFieldAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateFieldAction>) {
     const { flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { fieldMetadataId } = action;
+    const { entityId } = action;
 
     const existingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
       {
-        flatEntityId: fieldMetadataId,
+        flatEntityId: entityId,
         flatEntityMaps: flatFieldMetadataMaps,
       },
     );
@@ -111,10 +112,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    const { fieldMetadataId } = action;
+    const { entityId } = action;
 
     await fieldMetadataRepository.update(
-      fieldMetadataId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }
@@ -128,7 +129,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId, fieldMetadataId, updates } = action;
+    const { objectMetadataId, entityId, updates } = action;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
@@ -141,7 +142,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     const currentFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: fieldMetadataId,
+      flatEntityId: entityId,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 

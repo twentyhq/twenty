@@ -38,7 +38,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
     const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicate> =
       {
-        type: 'create_row_level_permission_predicate',
+        type: 'create',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatPredicateToValidate.id,
@@ -135,7 +135,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       }>;
     const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicate> =
       {
-        type: 'delete_row_level_permission_predicate',
+        type: 'delete',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatPredicateToDelete.id,
@@ -178,7 +178,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }>;
     const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicate> =
       {
-        type: 'update_row_level_permission_predicate',
+        type: 'update',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatEntityId,

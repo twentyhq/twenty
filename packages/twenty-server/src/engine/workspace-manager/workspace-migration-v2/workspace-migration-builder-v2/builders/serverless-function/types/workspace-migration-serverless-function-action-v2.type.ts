@@ -1,24 +1,19 @@
 import { type Sources } from 'twenty-shared/types';
 
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateServerlessFunctionAction = {
-  type: 'create_serverless_function';
-  serverlessFunction: FlatServerlessFunction;
-};
+export type CreateServerlessFunctionAction =
+  BaseCreateWorkspaceMigrationAction<'serverlessFunction'>;
 
-export type UpdateServerlessFunctionAction = {
-  type: 'update_serverless_function';
-  serverlessFunctionId: string;
-  code?: Sources;
-  updates: FlatEntityPropertiesUpdates<'serverlessFunction'>;
-};
+export type UpdateServerlessFunctionAction =
+  BaseUpdateWorkspaceMigrationAction<'serverlessFunction'> & {
+    code?: Sources;
+  };
 
-export type DeleteServerlessFunctionAction = {
-  type: 'delete_serverless_function';
-  serverlessFunctionId: string;
-};
+export type DeleteServerlessFunctionAction =
+  BaseDeleteWorkspaceMigrationAction<'serverlessFunction'>;
 
 export type WorkspaceMigrationServerlessFunctionActionV2 =
   | CreateServerlessFunctionAction

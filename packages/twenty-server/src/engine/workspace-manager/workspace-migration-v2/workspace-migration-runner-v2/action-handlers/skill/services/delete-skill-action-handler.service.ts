@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteSkillActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_skill',
+  'delete',
+  'skill',
 ) {
   constructor() {
     super();
@@ -24,10 +25,10 @@ export class DeleteSkillActionHandlerService extends WorkspaceMigrationRunnerAct
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteSkillAction>): Partial<AllFlatEntityMaps> {
     const { flatSkillMaps } = allFlatEntityMaps;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const updatedFlatSkillMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: flatEntityId,
+      entityToDeleteId: entityId,
       flatEntityMaps: flatSkillMaps,
     });
 
@@ -40,12 +41,12 @@ export class DeleteSkillActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<DeleteSkillAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const skillRepository =
       queryRunner.manager.getRepository<SkillEntity>(SkillEntity);
 
-    await skillRepository.delete({ id: flatEntityId, workspaceId });
+    await skillRepository.delete({ id: entityId, workspaceId });
   }
 
   async executeForWorkspaceSchema(

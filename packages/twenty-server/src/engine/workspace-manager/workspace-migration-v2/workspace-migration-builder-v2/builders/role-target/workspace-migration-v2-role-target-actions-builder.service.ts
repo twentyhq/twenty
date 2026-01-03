@@ -40,8 +40,9 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'create_role_target',
-        roleTarget: flatRoleTargetToValidate,
+        type: 'create',
+        metadataName: 'roleTarget',
+        flatEntity: flatRoleTargetToValidate,
       },
     };
   }
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'delete_role_target',
-        roleTargetId: flatRoleTargetToValidate.id,
+        type: 'delete',
+        metadataName: 'roleTarget',
+        entityId: flatRoleTargetToValidate.id,
       },
     };
   }
@@ -92,8 +94,9 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRoleTargetAction: UpdateRoleTargetAction = {
-      type: 'update_role_target',
-      roleTargetId: flatEntityId,
+      type: 'update',
+      metadataName: 'roleTarget',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

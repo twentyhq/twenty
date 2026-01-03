@@ -37,8 +37,9 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'create_role',
-        role: flatRoleToValidate,
+        type: 'create',
+        metadataName: 'role',
+        flatEntity: flatRoleToValidate,
       },
     };
   }
@@ -61,8 +62,9 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'delete_role',
-        roleId: flatRoleToValidate.id,
+        type: 'delete',
+        metadataName: 'role',
+        entityId: flatRoleToValidate.id,
       },
     };
   }
@@ -83,8 +85,9 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRoleAction: UpdateRoleAction = {
-      type: 'update_role',
-      roleId: flatEntityId,
+      type: 'update',
+      metadataName: 'role',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

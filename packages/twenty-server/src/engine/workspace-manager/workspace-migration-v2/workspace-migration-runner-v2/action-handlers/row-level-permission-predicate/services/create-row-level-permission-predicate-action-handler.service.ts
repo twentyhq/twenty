@@ -15,17 +15,18 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateRowLevelPermissionPredicateActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_row_level_permission_predicate',
+  'create',
+  'rowLevelPermissionPredicate',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateRowLevelPermissionPredicateAction>): Partial<AllFlatEntityMaps> {
     const { flatRowLevelPermissionPredicateMaps } = allFlatEntityMaps;
-    const { rowLevelPermissionPredicate } = action;
+    const { flatEntity } = action;
 
     const updatedFlatMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: rowLevelPermissionPredicate,
+      flatEntity,
       flatEntityMaps: flatRowLevelPermissionPredicateMaps,
     });
 
@@ -38,7 +39,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
     context: WorkspaceMigrationActionRunnerArgs<CreateRowLevelPermissionPredicateAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { rowLevelPermissionPredicate } = action;
+    const { flatEntity } = action;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateEntity>(
@@ -46,7 +47,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
       );
 
     await repository.insert({
-      ...rowLevelPermissionPredicate,
+      ...flatEntity,
       workspaceId,
     });
   }

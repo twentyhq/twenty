@@ -15,24 +15,25 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_agent',
+  'update',
+  'agent',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateAgentAction>): Partial<AllFlatEntityMaps> {
     const { flatAgentMaps } = allFlatEntityMaps;
-    const { flatEntityId, flatEntityUpdates } = action;
+    const { entityId, updates } = action;
 
     const existingAgent = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId,
+      flatEntityId: entityId,
       flatEntityMaps: flatAgentMaps,
     });
 
     const updatedAgent = {
       ...existingAgent,
       ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        updates,
       }),
     };
 
@@ -50,15 +51,15 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UpdateAgentAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId, flatEntityUpdates } = action;
+    const { entityId, updates } = action;
 
     const agentRepository =
       queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
 
     await agentRepository.update(
-      { id: flatEntityId, workspaceId },
+      { id: entityId, workspaceId },
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        updates,
       }),
     );
   }

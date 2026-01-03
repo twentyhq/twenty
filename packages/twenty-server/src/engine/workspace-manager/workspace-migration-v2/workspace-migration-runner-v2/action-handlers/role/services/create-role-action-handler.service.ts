@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { CreateRoleAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role/types/workspace-migration-role-action-v2.type';
@@ -13,7 +12,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_role',
+  'create',
+  'role',
 ) {
   constructor() {
     super();
@@ -22,9 +22,9 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateRoleAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateRoleAction>) {
     const { flatRoleMaps } = allFlatEntityMaps;
-    const { role } = action;
+    const { flatEntity: role } = action;
 
     const updatedFlatRoleMaps = addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: role,
@@ -40,7 +40,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
     context: WorkspaceMigrationActionRunnerArgs<CreateRoleAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { role } = action;
+    const { flatEntity: role } = action;
 
     const roleRepository =
       queryRunner.manager.getRepository<RoleEntity>(RoleEntity);

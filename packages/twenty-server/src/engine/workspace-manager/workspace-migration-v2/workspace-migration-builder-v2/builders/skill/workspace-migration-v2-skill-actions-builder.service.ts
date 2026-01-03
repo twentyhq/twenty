@@ -37,7 +37,8 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'create_skill',
+        type: 'create',
+        metadataName: 'skill',
         flatEntity: flatSkillToValidate,
       },
     };
@@ -61,8 +62,9 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'delete_skill',
-        flatEntityId: flatSkillToValidate.id,
+        type: 'delete',
+        metadataName: 'skill',
+        entityId: flatSkillToValidate.id,
       },
     };
   }
@@ -83,9 +85,10 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateSkillAction: UpdateSkillAction = {
-      type: 'update_skill',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'skill',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

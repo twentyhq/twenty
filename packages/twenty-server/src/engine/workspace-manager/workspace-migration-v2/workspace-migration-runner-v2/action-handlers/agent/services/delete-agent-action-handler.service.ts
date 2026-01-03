@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_agent',
+  'delete',
+  'agent',
 ) {
   constructor() {
     super();
@@ -24,10 +25,10 @@ export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteAgentAction>): Partial<AllFlatEntityMaps> {
     const { flatAgentMaps } = allFlatEntityMaps;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const updatedFlatAgentMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: flatEntityId,
+      entityToDeleteId: entityId,
       flatEntityMaps: flatAgentMaps,
     });
 
@@ -40,12 +41,12 @@ export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<DeleteAgentAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const agentRepository =
       queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
 
-    await agentRepository.delete({ id: flatEntityId, workspaceId });
+    await agentRepository.delete({ id: entityId, workspaceId });
   }
 
   async executeForWorkspaceSchema(

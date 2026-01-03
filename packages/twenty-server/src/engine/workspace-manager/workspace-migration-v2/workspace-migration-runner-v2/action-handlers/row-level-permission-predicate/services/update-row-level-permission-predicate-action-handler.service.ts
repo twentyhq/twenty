@@ -17,17 +17,18 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateRowLevelPermissionPredicateActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_row_level_permission_predicate',
+  'update',
+  'rowLevelPermissionPredicate',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateRowLevelPermissionPredicateAction>): Partial<AllFlatEntityMaps> {
     const { flatRowLevelPermissionPredicateMaps } = allFlatEntityMaps;
-    const { rowLevelPermissionPredicateId } = action;
+    const { entityId } = action;
 
     const existingPredicate = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: rowLevelPermissionPredicateId,
+      flatEntityId: entityId,
       flatEntityMaps: flatRowLevelPermissionPredicateMaps,
     });
 
@@ -50,7 +51,7 @@ export class UpdateRowLevelPermissionPredicateActionHandlerService extends Works
     context: WorkspaceMigrationActionRunnerArgs<UpdateRowLevelPermissionPredicateAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { rowLevelPermissionPredicateId } = action;
+    const { entityId } = action;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateEntity>(
@@ -59,7 +60,7 @@ export class UpdateRowLevelPermissionPredicateActionHandlerService extends Works
 
     const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
-    await repository.update(rowLevelPermissionPredicateId, update);
+    await repository.update(entityId, update);
   }
 
   async executeForWorkspaceSchema(

@@ -37,7 +37,8 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'create_agent',
+        type: 'create',
+        metadataName: 'agent',
         flatEntity: flatAgentToValidate,
       },
     };
@@ -61,8 +62,9 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'delete_agent',
-        flatEntityId: flatAgentToValidate.id,
+        type: 'delete',
+        metadataName: 'agent',
+        entityId: flatAgentToValidate.id,
       },
     };
   }
@@ -83,9 +85,10 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateAgentAction: UpdateAgentAction = {
-      type: 'update_agent',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'agent',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

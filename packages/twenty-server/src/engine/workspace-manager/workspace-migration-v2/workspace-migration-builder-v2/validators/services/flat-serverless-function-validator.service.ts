@@ -24,7 +24,7 @@ export class FlatServerlessFunctionValidatorService {
   >): FailedFlatEntityValidation<FlatServerlessFunction> {
     const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
       {
-        type: 'update_serverless_function',
+        type: 'update',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatEntityId,
@@ -55,7 +55,7 @@ export class FlatServerlessFunctionValidatorService {
   >): FailedFlatEntityValidation<FlatServerlessFunction> {
     const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
       {
-        type: 'delete_serverless_function',
+        type: 'delete',
         errors: [],
         flatEntityMinimalInformation: {
           id: serverlessFunctionIdToDelete,
@@ -86,7 +86,7 @@ export class FlatServerlessFunctionValidatorService {
   >): FailedFlatEntityValidation<FlatServerlessFunction> {
     const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
       {
-        type: 'create_serverless_function',
+        type: 'create',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatServerlessFunctionToValidate.id,

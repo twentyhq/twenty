@@ -15,24 +15,25 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdatePageLayoutActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_page_layout',
+  'update',
+  'pageLayout',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdatePageLayoutAction>): Partial<AllFlatEntityMaps> {
     const { flatPageLayoutMaps } = allFlatEntityMaps;
-    const { flatEntityId, flatEntityUpdates } = action;
+    const { entityId, updates } = action;
 
     const existingPageLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId,
+      flatEntityId: entityId,
       flatEntityMaps: flatPageLayoutMaps,
     });
 
     const updatedPageLayout = {
       ...existingPageLayout,
       ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        updates,
       }),
     };
 
@@ -50,15 +51,15 @@ export class UpdatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<UpdatePageLayoutAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId, flatEntityUpdates } = action;
+    const { entityId, updates } = action;
 
     const pageLayoutRepository =
       queryRunner.manager.getRepository<PageLayoutEntity>(PageLayoutEntity);
 
     await pageLayoutRepository.update(
-      { id: flatEntityId, workspaceId },
+      { id: entityId, workspaceId },
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        updates,
       }),
     );
   }

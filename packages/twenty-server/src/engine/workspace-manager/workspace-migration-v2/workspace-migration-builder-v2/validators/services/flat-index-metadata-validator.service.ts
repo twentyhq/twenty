@@ -27,7 +27,7 @@ export class FlatIndexValidatorService {
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatIndexMetadata> = {
-      type: 'delete_index',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: indexIdToDelete,
@@ -60,7 +60,7 @@ export class FlatIndexValidatorService {
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatIndexMetadata> = {
-      type: 'create_index',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatIndexToValidate.id,

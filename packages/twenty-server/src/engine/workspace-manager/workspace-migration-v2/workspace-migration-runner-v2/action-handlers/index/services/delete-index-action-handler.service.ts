@@ -16,7 +16,8 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 
 @Injectable()
 export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_index',
+  'delete',
+  'index',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -27,10 +28,10 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps: { flatIndexMaps },
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteIndexAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteIndexAction>) {
     return {
       flatIndexMaps: deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: action.flatIndexMetadataId,
+        entityToDeleteId: action.entityId,
         flatEntityMaps: flatIndexMaps,
       }),
     };
@@ -45,10 +46,10 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
         IndexMetadataEntity,
       );
 
-    const { flatIndexMetadataId } = action;
+    const { entityId } = action;
 
     await indexMetadataRepository.delete({
-      id: flatIndexMetadataId,
+      id: entityId,
     });
   }
 
@@ -64,7 +65,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const flatIndexMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(
       {
-        flatEntityId: action.flatIndexMetadataId,
+        flatEntityId: action.entityId,
         flatEntityMaps: flatIndexMaps,
       },
     );

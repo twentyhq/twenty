@@ -27,7 +27,7 @@ export class FlatAgentValidatorService {
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
     const validationResult: FailedFlatEntityValidation<FlatAgent> = {
-      type: 'create_agent',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatAgent.id,
@@ -73,7 +73,7 @@ export class FlatAgentValidatorService {
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
     const validationResult: FailedFlatEntityValidation<FlatAgent> = {
-      type: 'delete_agent',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -118,7 +118,7 @@ export class FlatAgentValidatorService {
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
     const validationResult: FailedFlatEntityValidation<FlatAgent> = {
-      type: 'update_agent',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

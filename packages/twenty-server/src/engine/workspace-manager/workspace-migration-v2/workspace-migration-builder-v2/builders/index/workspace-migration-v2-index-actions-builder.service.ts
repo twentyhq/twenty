@@ -43,8 +43,9 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'create_index',
-        flatIndexMetadata: flatIndexToValidate,
+        type: 'create',
+        metadataName: 'index',
+        flatEntity: flatIndexToValidate,
       },
     };
   }
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'delete_index',
-        flatIndexMetadataId: flatIndexToValidate.id,
+        type: 'delete',
+        metadataName: 'index',
+        entityId: flatIndexToValidate.id,
       },
     };
   }
@@ -94,7 +96,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     if (!isDefined(flatEntity)) {
       return {
         status: 'fail',
-        type: 'delete_index',
+        type: 'delete',
         flatEntityMinimalInformation: {},
         errors: [
           {
@@ -159,12 +161,14 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       status: 'success',
       action: [
         {
-          type: 'delete_index',
-          flatIndexMetadataId: flatEntity.id,
+          type: 'delete',
+          metadataName: 'index',
+          entityId: flatEntity.id,
         },
         {
-          type: 'create_index',
-          flatIndexMetadata: updatedFlatIndex,
+          type: 'create',
+          metadataName: 'index',
+          flatEntity: updatedFlatIndex,
         },
       ],
     };

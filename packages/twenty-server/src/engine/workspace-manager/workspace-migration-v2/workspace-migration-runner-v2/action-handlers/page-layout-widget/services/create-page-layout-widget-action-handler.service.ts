@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_page_layout_widget',
+  'create',
+  'pageLayoutWidget',
 ) {
   constructor() {
     super();
@@ -24,11 +25,11 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreatePageLayoutWidgetAction>): Partial<AllFlatEntityMaps> {
     const { flatPageLayoutWidgetMaps } = allFlatEntityMaps;
-    const { pageLayoutWidget } = action;
+    const { flatEntity } = action;
 
     const updatedFlatPageLayoutWidgetMaps =
       addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: pageLayoutWidget,
+        flatEntity,
         flatEntityMaps: flatPageLayoutWidgetMaps,
       });
 
@@ -41,7 +42,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
     context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutWidgetAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { pageLayoutWidget } = action;
+    const { flatEntity } = action;
 
     const pageLayoutWidgetRepository =
       queryRunner.manager.getRepository<PageLayoutWidgetEntity>(
@@ -49,7 +50,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
       );
 
     await pageLayoutWidgetRepository.insert({
-      ...pageLayoutWidget,
+      ...flatEntity,
       workspaceId,
     });
   }

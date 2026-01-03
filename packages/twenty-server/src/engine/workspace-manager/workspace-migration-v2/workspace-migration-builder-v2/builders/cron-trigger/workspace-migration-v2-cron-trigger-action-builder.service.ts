@@ -42,8 +42,9 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: {
-        type: 'create_cron_trigger',
-        cronTrigger: flatCronTriggerToValidate,
+        type: 'create',
+        metadataName: 'cronTrigger',
+        flatEntity: flatCronTriggerToValidate,
       },
     };
   }
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: {
-        type: 'delete_cron_trigger',
-        cronTriggerId: flatCronTriggerToValidate.id,
+        type: 'delete',
+        metadataName: 'cronTrigger',
+        entityId: flatCronTriggerToValidate.id,
       },
     };
   }
@@ -95,8 +97,9 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateCronTriggerAction: UpdateCronTriggerAction = {
-      type: 'update_cron_trigger',
-      cronTriggerId: flatEntityId,
+      type: 'update',
+      metadataName: 'cronTrigger',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

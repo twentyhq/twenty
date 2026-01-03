@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteRouteTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_route_trigger',
+  'delete',
+  'routeTrigger',
 ) {
   constructor() {
     super();
@@ -18,13 +19,13 @@ export class DeleteRouteTriggerActionHandlerService extends WorkspaceMigrationRu
     context: WorkspaceMigrationActionRunnerArgs<DeleteRouteTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { routeTriggerId } = action;
+    const { entityId } = action;
 
     const routeTriggerRepository =
       queryRunner.manager.getRepository<RouteTriggerEntity>(RouteTriggerEntity);
 
     await routeTriggerRepository.delete({
-      id: routeTriggerId,
+      id: entityId,
       workspaceId,
     });
   }

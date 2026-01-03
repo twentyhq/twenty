@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeletePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_page_layout_tab',
+  'delete',
+  'pageLayoutTab',
 ) {
   constructor() {
     super();
@@ -24,11 +25,11 @@ export class DeletePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeletePageLayoutTabAction>): Partial<AllFlatEntityMaps> {
     const { flatPageLayoutTabMaps } = allFlatEntityMaps;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const updatedFlatPageLayoutTabMaps =
       deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: flatEntityId,
+        entityToDeleteId: entityId,
         flatEntityMaps: flatPageLayoutTabMaps,
       });
 
@@ -41,14 +42,14 @@ export class DeletePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     context: WorkspaceMigrationActionRunnerArgs<DeletePageLayoutTabAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId } = action;
+    const { entityId } = action;
 
     const pageLayoutTabRepository =
       queryRunner.manager.getRepository<PageLayoutTabEntity>(
         PageLayoutTabEntity,
       );
 
-    await pageLayoutTabRepository.delete({ id: flatEntityId, workspaceId });
+    await pageLayoutTabRepository.delete({ id: entityId, workspaceId });
   }
 
   async executeForWorkspaceSchema(

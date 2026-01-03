@@ -1,23 +1,17 @@
 /* @license Enterprise */
 
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateRowLevelPermissionPredicateGroupAction = {
-  type: 'create_row_level_permission_predicate_group';
-  rowLevelPermissionPredicateGroup: FlatRowLevelPermissionPredicateGroup;
-};
+export type CreateRowLevelPermissionPredicateGroupAction =
+  BaseCreateWorkspaceMigrationAction<'rowLevelPermissionPredicateGroup'>;
 
-export type UpdateRowLevelPermissionPredicateGroupAction = {
-  type: 'update_row_level_permission_predicate_group';
-  rowLevelPermissionPredicateGroupId: string;
-  updates: FlatEntityPropertiesUpdates<'rowLevelPermissionPredicateGroup'>;
-};
+export type UpdateRowLevelPermissionPredicateGroupAction =
+  BaseUpdateWorkspaceMigrationAction<'rowLevelPermissionPredicateGroup'>;
 
-export type DeleteRowLevelPermissionPredicateGroupAction = {
-  type: 'delete_row_level_permission_predicate_group';
-  rowLevelPermissionPredicateGroupId: string;
-};
+export type DeleteRowLevelPermissionPredicateGroupAction =
+  BaseDeleteWorkspaceMigrationAction<'rowLevelPermissionPredicateGroup'>;
 
 export type WorkspaceMigrationRowLevelPermissionPredicateGroupActionV2 =
   | CreateRowLevelPermissionPredicateGroupAction

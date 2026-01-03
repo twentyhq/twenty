@@ -28,7 +28,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
       {
-        type: 'update_database_event_trigger',
+        type: 'update',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatEntityId,
@@ -81,7 +81,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
       {
-        type: 'delete_database_event_trigger',
+        type: 'delete',
         errors: [],
         flatEntityMinimalInformation: {
           id: databaseEventTriggerIdToDelete,
@@ -115,7 +115,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
       {
-        type: 'create_database_event_trigger',
+        type: 'create',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatDatabaseEventTriggerToValidate.id,

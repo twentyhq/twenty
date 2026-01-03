@@ -46,8 +46,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     return {
       status: 'success',
       action: {
-        type: 'create_row_level_permission_predicate_group',
-        rowLevelPermissionPredicateGroup: flatEntityToValidate,
+        type: 'create',
+        metadataName: 'rowLevelPermissionPredicateGroup',
+        flatEntity: flatEntityToValidate,
       },
     };
   }
@@ -79,8 +80,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     return {
       status: 'success',
       action: {
-        type: 'delete_row_level_permission_predicate_group',
-        rowLevelPermissionPredicateGroupId: predicateGroupId,
+        type: 'delete',
+        metadataName: 'rowLevelPermissionPredicateGroup',
+        entityId: predicateGroupId,
       },
     };
   }
@@ -108,8 +110,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderS
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateAction: UpdateRowLevelPermissionPredicateGroupAction = {
-      type: 'update_row_level_permission_predicate_group',
-      rowLevelPermissionPredicateGroupId: flatEntityId,
+      type: 'update',
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

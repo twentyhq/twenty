@@ -34,7 +34,8 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 
 @Injectable()
 export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_index',
+  'create',
+  'index',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -45,10 +46,10 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps: { flatIndexMaps },
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateIndexAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateIndexAction>) {
     return {
       flatIndexMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: action.flatIndexMetadata,
+        flatEntity: action.flatEntity,
         flatEntityMaps: flatIndexMaps,
       }),
     };
@@ -68,7 +69,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       );
 
     const {
-      flatIndexMetadata: { flatIndexFieldMetadatas, ...flatIndexMetadata },
+      flatEntity: { flatIndexFieldMetadatas, ...flatIndexMetadata },
     } = action;
 
     const indexInsertResult =
@@ -97,7 +98,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   ): Promise<void> {
     const {
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
-      action: { flatIndexMetadata },
+      action: { flatEntity: flatIndexMetadata },
       queryRunner,
       workspaceId,
     } = context;

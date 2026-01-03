@@ -26,7 +26,7 @@ export class FlatRoleTargetValidatorService {
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<FlatRoleTarget> {
     const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'create_role_target',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatRoleTargetToValidate.id,
@@ -84,7 +84,7 @@ export class FlatRoleTargetValidatorService {
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<FlatRoleTarget> {
     const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'delete_role_target',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatRoleTargetToValidate.id,
@@ -120,7 +120,7 @@ export class FlatRoleTargetValidatorService {
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<FlatRoleTarget> {
     const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'update_role_target',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

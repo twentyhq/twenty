@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_page_layout',
+  'create',
+  'pageLayout',
 ) {
   constructor() {
     super();

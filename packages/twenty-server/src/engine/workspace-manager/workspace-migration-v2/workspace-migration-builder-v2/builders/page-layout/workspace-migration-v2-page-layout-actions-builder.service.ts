@@ -42,7 +42,8 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout',
+        type: 'create',
+        metadataName: 'pageLayout',
         flatEntity: flatPageLayoutToValidate,
       },
     };
@@ -69,8 +70,9 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout',
-        flatEntityId: flatPageLayoutToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayout',
+        entityId: flatPageLayoutToValidate.id,
       },
     };
   }

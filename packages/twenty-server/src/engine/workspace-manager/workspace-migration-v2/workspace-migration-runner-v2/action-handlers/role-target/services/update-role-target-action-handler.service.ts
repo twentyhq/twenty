@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -15,7 +14,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_role_target',
+  'update',
+  'roleTarget',
 ) {
   constructor() {
     super();
@@ -24,12 +24,12 @@ export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateRoleTargetAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateRoleTargetAction>) {
     const { flatRoleTargetMaps } = allFlatEntityMaps;
-    const { roleTargetId } = action;
+    const { entityId } = action;
 
     const existingRoleTarget = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: roleTargetId,
+      flatEntityId: entityId,
       flatEntityMaps: flatRoleTargetMaps,
     });
 
@@ -52,14 +52,14 @@ export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<UpdateRoleTargetAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { roleTargetId } = action;
+    const { entityId } = action;
 
     const roleTargetRepository =
       queryRunner.manager.getRepository<RoleTargetEntity>(RoleTargetEntity);
 
     const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
-    await roleTargetRepository.update(roleTargetId, update);
+    await roleTargetRepository.update(entityId, update);
   }
 
   async executeForWorkspaceSchema(

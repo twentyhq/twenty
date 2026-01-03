@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_skill',
+  'create',
+  'skill',
 ) {
   constructor() {
     super();

@@ -1,21 +1,12 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateRoleAction = {
-  type: 'create_role';
-  role: FlatRole;
-};
+export type CreateRoleAction = BaseCreateWorkspaceMigrationAction<'role'>;
 
-export type UpdateRoleAction = {
-  type: 'update_role';
-  roleId: string;
-  updates: FlatEntityPropertiesUpdates<'role'>;
-};
+export type UpdateRoleAction = BaseUpdateWorkspaceMigrationAction<'role'>;
 
-export type DeleteRoleAction = {
-  type: 'delete_role';
-  roleId: string;
-};
+export type DeleteRoleAction = BaseDeleteWorkspaceMigrationAction<'role'>;
 
 export type WorkspaceMigrationRoleActionV2 =
   | CreateRoleAction

@@ -13,7 +13,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_agent',
+  'create',
+  'agent',
 ) {
   constructor() {
     super();
