@@ -1,0 +1,77 @@
+{{- if .Values.worker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-worker
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: worker
+spec:
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: worker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: worker
+    spec:
+      securityContext:
+{{- toYaml .Values.securityContext | nindent 8 }}
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ if .Values.db.enabled }}{{ include "twenty.fullname" . }}-db{{ else }}{{ .Values.db.external.host }}{{ end }} \
+                               -p {{ if .Values.db.enabled }}5432{{ else }}{{ .Values.db.external.port | default 5432 }}{{ end }} \
+                               -U postgres; do
+                echo "Waiting for database socket..."
+                sleep 2
+              done
+              echo "Database socket is ready!"
+      containers:
+        - name: worker
+          {{- $img := include "twenty.worker.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command:
+{{- toYaml .Values.worker.command | nindent 12 }}
+          env:
+            - name: SERVER_URL
+              value: {{ include "twenty.serverUrl" . | quote }}
+            - name: PG_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
+            - name: REDIS_URL
+              value: {{ include "twenty.redisUrl" . | quote }}
+            - name: STORAGE_TYPE
+              value: {{ include "twenty.storageType" . | quote }}
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.secret.tokens.name" . }}
+                  key: accessToken
+            {{- $storageEnv := (include "twenty.storageEnv" .) }}
+            {{- if $storageEnv }}
+            {{ $storageEnv | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          stdin: {{ default true .Values.worker.stdin }}
+          tty: {{ default true .Values.worker.tty }}
+{{- end }}

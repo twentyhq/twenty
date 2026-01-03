@@ -1,0 +1,122 @@
+suite: schema permissions (core for app tables, public for extensions)
+templates:
+  - templates/deployment-server.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  # Core Schema Tests
+  # ================
+  # Twenty uses a dedicated 'core' schema for all application tables and the TypeORM
+  # migrations tracking table. This provides namespace isolation and clarity.
+
+  - it: ensure-database-exists creates core schema
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: CREATE SCHEMA IF NOT EXISTS core
+
+  - it: app user gets all privileges on core schema
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: GRANT ALL PRIVILEGES ON SCHEMA core
+
+  - it: app user gets all privileges on core tables
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA core
+
+  - it: default privileges set for future core tables
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON TABLES
+
+  - it: default privileges set for future core sequences
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON SEQUENCES
+
+  # Public Schema Tests
+  # ==================
+  # PostgreSQL extensions (like unaccent for accent-insensitive text search) are
+  # created in the 'public' schema. Twenty's migrations create these functions, so
+  # the app user needs full privileges on the public schema as well.
+
+  - it: app user gets all privileges on public schema
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: GRANT ALL PRIVILEGES ON SCHEMA public
+
+  - it: app user gets all privileges on public tables
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public
+
+  - it: default privileges set for future public tables
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES
+
+  - it: default privileges set for future public sequences
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+      db.internal.appUser: twenty_app_user
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
+          pattern: ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES
+
+  # TypeORM Migration Tests
+  # ======================
+  # TypeORM migrations are configured to use the core.datasource which targets the
+  # 'core' schema. This ensures the _typeorm_migrations table and all application
+  # tables use the dedicated core schema.
+
+  - it: migrations run against core datasource
+    template: templates/deployment-server.yaml
+    set:
+      db.enabled: true
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.initContainers[?(@.name=="run-migrations")].command[2]
+          pattern: core\.datasource
+
