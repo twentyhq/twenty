@@ -1,5 +1,5 @@
 import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 

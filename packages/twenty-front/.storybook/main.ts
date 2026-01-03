@@ -1,9 +1,4 @@
 import { type StorybookConfig } from '@storybook/react-vite';
-import { dirname, join } from 'path';
-
-const getAbsolutePath = (value: string): any => {
-  return dirname(require.resolve(join(value, 'package.json')));
-};
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
@@ -37,29 +32,15 @@ const config: StorybookConfig = {
   stories: computeStoriesGlob(),
   staticDirs: ['../public'],
 
-  build: {
-    test: {
-      disabledAddons: [
-        '@storybook/addon-docs',
-        '@storybook/addon-essentials/docs',
-      ],
-    },
-  },
-
   addons: [
-    getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
-    getAbsolutePath('@storybook/addon-interactions'),
-    getAbsolutePath('@storybook/addon-coverage'),
-    // getAbsolutePath("storybook-dark-mode"),
-    getAbsolutePath('storybook-addon-cookie'),
-    getAbsolutePath('storybook-addon-pseudo-states'),
-    getAbsolutePath('storybook-addon-mock-date'),
-    // getAbsolutePath("@chromatic-com/storybook")
+    '@storybook/addon-links',
+    // Coverage addon disabled - incompatible with wyw-in-js and --test builds
+    // '@storybook/addon-coverage',
+    'storybook-addon-pseudo-states',
   ],
 
   framework: {
-    name: getAbsolutePath('@storybook/react-vite'),
+    name: '@storybook/react-vite',
     options: {},
   },
 

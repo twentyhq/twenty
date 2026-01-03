@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';

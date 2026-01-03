@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { fireEvent, within } from '@storybook/test';
+import { fireEvent, within } from 'storybook/test';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';

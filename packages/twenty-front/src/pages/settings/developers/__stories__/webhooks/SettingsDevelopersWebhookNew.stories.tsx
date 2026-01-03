@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookNew } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

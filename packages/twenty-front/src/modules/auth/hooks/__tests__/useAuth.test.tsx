@@ -6,7 +6,7 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';

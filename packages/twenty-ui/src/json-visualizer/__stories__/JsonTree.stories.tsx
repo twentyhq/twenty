@@ -6,7 +6,7 @@ import {
   waitFor,
   waitForElementToBeRemoved,
   within,
-} from '@storybook/test';
+} from 'storybook/test';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
 import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
 

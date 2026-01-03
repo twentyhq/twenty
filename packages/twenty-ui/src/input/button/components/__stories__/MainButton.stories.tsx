@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconBrandGoogle } from '@ui/display';
 import { ComponentDecorator } from '@ui/testing';
 import { MainButton } from '../MainButton';

@@ -1,5 +1,6 @@
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -9,7 +10,6 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 
 const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
   title: 'Modules/Workflow/Actions/CreateRecord/EditAction',
@@ -72,7 +72,13 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const objectSelectCurrentValue = await canvas.findByText('People');
+    const objectSelectCurrentValue = await canvas.findByText(
+      'People',
+      {},
+      {
+        timeout: 10000,
+      },
+    );
 
     await userEvent.click(objectSelectCurrentValue);
 

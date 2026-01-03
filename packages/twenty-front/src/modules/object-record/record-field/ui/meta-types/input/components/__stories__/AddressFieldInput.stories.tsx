@@ -1,5 +1,5 @@
 import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/ui/meta-types/hooks/useAddressField';

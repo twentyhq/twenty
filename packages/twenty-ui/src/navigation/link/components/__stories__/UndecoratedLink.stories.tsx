@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { UndecoratedLink } from '@ui/navigation/link/components/UndecoratedLink';
 import { ComponentWithRouterDecorator } from '@ui/testing';
 

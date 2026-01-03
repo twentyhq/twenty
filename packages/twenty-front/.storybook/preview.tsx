@@ -6,8 +6,7 @@ import { useEffect } from 'react';
 
 // eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
-// eslint-disable-next-line no-restricted-imports
-import { mockedUserJWT } from '../src/testing/mock-data/jwt';
+
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
@@ -82,15 +81,12 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    mockingDate: new Date('2024-03-12T09:30:00.000Z'),
     options: {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],
       },
     },
-    cookie: {
-      tokenPair: `{%22accessOrWorkspaceAgnosticToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-07-18T15:06:40.704Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22refreshToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-10-15T15:06:41.558Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22__typename%22:%22AuthTokenPair%22}`,
-    },
+    // Note: mockingDate and cookie parameters removed - addons not compatible with Storybook 9
   },
 };
 
