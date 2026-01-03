@@ -92,25 +92,14 @@ export const SettingsToolsTable = () => {
     [tools, customSearchTerm],
   );
 
-  // System tools from the tool index, excluding custom serverless function tools
-  const systemTools = useMemo(() => {
-    // Build tool names using the same pattern as the backend:
-    // serverless_${name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')}
-    const customToolNames = new Set(
-      tools.map((customTool) => {
-        const sanitizedName = customTool.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '_')
-          .replace(/^_+|_+$/g, '');
-
-        return `serverless_${sanitizedName}`;
-      }),
-    );
-
-    return toolIndex.filter(
-      (systemTool) => !customToolNames.has(systemTool.name),
-    );
-  }, [toolIndex, tools]);
+  // System tools from the tool index (excluding serverless function tools which are shown separately)
+  const systemTools = useMemo(
+    () =>
+      toolIndex.filter(
+        (systemTool) => systemTool.category !== 'SERVERLESS_FUNCTION',
+      ),
+    [toolIndex],
+  );
 
   const filteredSystemTools = useMemo(
     () =>
