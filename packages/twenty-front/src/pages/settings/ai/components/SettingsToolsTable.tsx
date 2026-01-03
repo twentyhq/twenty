@@ -134,13 +134,13 @@ export const SettingsToolsTable = () => {
     try {
       const result = await createServerlessFunction({
         input: {
-          name: 'New Tool',
-          toolDescription: 'A new custom tool',
+          name: t`New Tool`,
+          toolDescription: t`A new custom tool`,
           toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
         },
       });
 
-      if (result.status === 'successful' && result.response?.data) {
+      if (result.status === 'successful' && isDefined(result.response?.data)) {
         const newFunction = result.response.data.createOneServerlessFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 

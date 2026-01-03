@@ -3,13 +3,13 @@ import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-
-import { ToolRegistryService } from '../services/tool-registry.service';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -38,6 +38,7 @@ export class ToolIndexResolver {
   ) {}
 
   @Query(() => [ToolIndexEntryDTO])
+  @UseGuards(NoPermissionGuard)
   async getToolIndex(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,

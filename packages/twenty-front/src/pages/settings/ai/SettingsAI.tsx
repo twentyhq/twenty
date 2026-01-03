@@ -12,7 +12,7 @@ import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIRouterSettings } from './components/SettingsAIRouterSettings';
 import { SettingsSkillsTable } from './components/SettingsSkillsTable';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
-import { SETTINGS_AI_TABS } from './constants/SettingsAITabs';
+import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
 export const SettingsAI = () => {
   const activeTabId = useRecoilComponentValue(
