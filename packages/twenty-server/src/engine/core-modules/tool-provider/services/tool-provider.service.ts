@@ -13,7 +13,6 @@ import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-gene
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
-import { convertToolSchemaPropertyToJsonSchema } from 'src/engine/core-modules/tool-provider/utils/convert-tool-schema-to-json-schema.util';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
@@ -307,18 +306,14 @@ export class ToolProviderService {
         serverlessFunction.name,
       );
 
-      const inputJsonSchema = convertToolSchemaPropertyToJsonSchema(
-        serverlessFunction.toolInputSchema as Parameters<
-          typeof convertToolSchemaPropertyToJsonSchema
-        >[0],
-      );
-
       tools[toolName] = {
         description:
           serverlessFunction.toolDescription ||
           serverlessFunction.description ||
           `Execute the ${serverlessFunction.name} serverless function`,
-        inputSchema: jsonSchema(inputJsonSchema as Record<string, unknown>),
+        inputSchema: jsonSchema(
+          serverlessFunction.toolInputSchema as Record<string, unknown>,
+        ),
         execute: async (parameters: Record<string, unknown>) => {
           const result =
             await this.serverlessFunctionService.executeOneServerlessFunction({

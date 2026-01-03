@@ -17,8 +17,7 @@ export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
 export type { RoleManifest } from './roleManifestType';
 export type {
-  ToolSchemaPropertyType,
-  ToolSchemaProperty,
+  InputJsonSchema,
   ServerlessFunctionManifest,
   DatabaseEventTrigger,
   CronTrigger,

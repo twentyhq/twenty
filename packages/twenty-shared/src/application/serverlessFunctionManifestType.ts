@@ -1,19 +1,22 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type HTTPMethod } from '@/types';
 
-export type ToolSchemaPropertyType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'object'
-  | 'array';
-
-export type ToolSchemaProperty = {
-  type: ToolSchemaPropertyType;
+// Standard JSON Schema type for tool input/output definitions
+export type InputJsonSchema = {
+  type?:
+    | 'string'
+    | 'number'
+    | 'boolean'
+    | 'object'
+    | 'array'
+    | 'integer'
+    | 'null';
   description?: string;
-  enum?: string[];
-  items?: ToolSchemaProperty;
-  properties?: Record<string, ToolSchemaProperty>;
+  enum?: unknown[];
+  items?: InputJsonSchema;
+  properties?: Record<string, InputJsonSchema>;
+  required?: string[];
+  additionalProperties?: boolean | InputJsonSchema;
 };
 
 export type ServerlessFunctionManifest = SyncableEntityOptions & {
@@ -24,8 +27,8 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   handlerPath: string;
   handlerName: string;
   toolDescription?: string;
-  toolInputSchema?: ToolSchemaProperty;
-  toolOutputSchema?: ToolSchemaProperty;
+  toolInputSchema?: InputJsonSchema;
+  toolOutputSchema?: InputJsonSchema;
 };
 
 export type DatabaseEventTrigger = {
