@@ -5,15 +5,20 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 // TODO deprecated prastoin
 export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
@@ -59,32 +64,149 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   > {
     switch (action.type) {
       case 'create': {
-        return addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-          {
-            flatEntity: args.action.flatEntity,
-            flatEntityAndRelatedMapsToMutate: args.allFlatEntityMaps,
-            metadataName: args.action.metadataName,
-          },
-        );
+        switch (action.metadataName) {
+          case 'fieldMetadata': {
+            // TODO
+            return;
+          }
+          case 'objectMetadata':
+          case 'view':
+          case 'viewField':
+          case 'viewGroup':
+          case 'rowLevelPermissionPredicate':
+          case 'rowLevelPermissionPredicateGroup':
+          case 'viewFilterGroup':
+          case 'index':
+          case 'serverlessFunction':
+          case 'cronTrigger':
+          case 'databaseEventTrigger':
+          case 'routeTrigger':
+          case 'viewFilter':
+          case 'role':
+          case 'roleTarget':
+          case 'agent':
+          case 'skill':
+          case 'pageLayout':
+          case 'pageLayoutWidget':
+          case 'pageLayoutTab': {
+            addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+              {
+                flatEntity: action.flatEntity,
+                flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                metadataName: action.metadataName,
+              },
+            );
+
+            return allFlatEntityMaps;
+          }
+          default: {
+            assertUnreachable(action);
+          }
+        }
       }
       case 'delete': {
-        return deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-          {
-            flatEntity: args.action.flatEntity,
-            flatEntityAndRelatedMapsToMutate: args.allFlatEntityMaps,
-            metadataName: args.action.metadataName,
-          },
-        );
+        switch (action.metadataName) {
+          case 'fieldMetadata':
+          case 'objectMetadata':
+          case 'view':
+          case 'viewField':
+          case 'viewGroup':
+          case 'rowLevelPermissionPredicate':
+          case 'rowLevelPermissionPredicateGroup':
+          case 'viewFilterGroup':
+          case 'index':
+          case 'serverlessFunction':
+          case 'cronTrigger':
+          case 'databaseEventTrigger':
+          case 'routeTrigger':
+          case 'viewFilter':
+          case 'role':
+          case 'roleTarget':
+          case 'agent':
+          case 'skill':
+          case 'pageLayout':
+          case 'pageLayoutWidget':
+          case 'pageLayoutTab': {
+            const flatEntityToDelete =
+              findFlatEntityByIdInFlatEntityMapsOrThrow<
+                MetadataFlatEntity<typeof action.metadataName>
+              >({
+                flatEntityId: action.entityId,
+                flatEntityMaps:
+                  allFlatEntityMaps[
+                    getMetadataFlatEntityMapsKey(action.metadataName)
+                  ],
+              });
+
+            deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+              {
+                flatEntity: flatEntityToDelete,
+                flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                metadataName: action.metadataName,
+              },
+            );
+
+            return allFlatEntityMaps;
+          }
+          default: {
+            assertUnreachable(action);
+          }
+        }
       }
       case 'update': {
-        return replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: arg.action.flatEntity,
-          flatEntityMapsToMutate: args.allFlatEntityMaps,
-        });
+        switch (action.metadataName) {
+          case 'index': {
+            // TODO
+            return;
+          }
+          case 'fieldMetadata':
+          case 'objectMetadata':
+          case 'view':
+          case 'viewField':
+          case 'viewGroup':
+          case 'rowLevelPermissionPredicate':
+          case 'rowLevelPermissionPredicateGroup':
+          case 'viewFilterGroup':
+          case 'serverlessFunction':
+          case 'cronTrigger':
+          case 'databaseEventTrigger':
+          case 'routeTrigger':
+          case 'viewFilter':
+          case 'role':
+          case 'roleTarget':
+          case 'agent':
+          case 'skill':
+          case 'pageLayout':
+          case 'pageLayoutWidget':
+          case 'pageLayoutTab': {
+            const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
+              action.metadataName,
+            );
+            const fromFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow<
+              MetadataFlatEntity<typeof action.metadataName>
+            >({
+              flatEntityId: action.entityId,
+              flatEntityMaps: allFlatEntityMaps[flatEntityMapsKey],
+            });
+
+            const toFlatEntity = {
+              ...fromFlatEntity,
+              ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+            };
+
+            replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+              flatEntity: toFlatEntity,
+              flatEntityMapsToMutate: allFlatEntityMaps[flatEntityMapsKey],
+            });
+
+            return allFlatEntityMaps;
+          }
+          default: {
+            assertUnreachable(action);
+          }
+        }
       }
     }
-
-    return args.allFlatEntityMaps;
   }
 
   rollbackForMetadata(
