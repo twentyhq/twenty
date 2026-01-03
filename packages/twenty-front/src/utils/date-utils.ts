@@ -184,7 +184,7 @@ export const formatToHumanReadableDate = (date: Date | string) => {
 };
 
 const getTimePattern = (timeFormat: TimeFormat) => {
-  return timeFormat === TimeFormat.HOUR_12 ? 'h:mm a' : 'HH:mm';
+  return timeFormat === TimeFormat.HOUR_12 ? 'hh:mm a' : 'HH:mm';
 };
 
 export const getDateTimeFormatStringFoDatePickerInputMask = (

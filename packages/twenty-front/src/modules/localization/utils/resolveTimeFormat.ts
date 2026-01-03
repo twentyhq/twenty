@@ -3,7 +3,8 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 
 export const resolveTimeFormat = (timeFormat: TimeFormat): TimeFormat => {
   if (timeFormat === TimeFormat.SYSTEM) {
-    return TimeFormat[detectTimeFormat()];
+    const detectedFormat = detectTimeFormat();
+    return TimeFormat[detectedFormat];
   }
 
   return timeFormat;
