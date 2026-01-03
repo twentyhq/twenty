@@ -13,17 +13,3 @@ export type UpdateObjectAction =
 
 export type DeleteObjectAction =
   BaseDeleteWorkspaceMigrationAction<'objectMetadata'>;
-
-export type WorkspaceMigrationObjectActionV2 =
-  | CreateObjectAction
-  | UpdateObjectAction
-  | DeleteObjectAction;
-
-export type WorkspaceMigrationObjectActionTypeV2 =
-  WorkspaceMigrationObjectActionV2['type'];
-
-export const WORKSPACE_MIGRATION_OBJECT_ACTION_TYPES = [
-  'create',
-  'delete',
-  'update',
-] as const satisfies WorkspaceMigrationObjectActionTypeV2[];

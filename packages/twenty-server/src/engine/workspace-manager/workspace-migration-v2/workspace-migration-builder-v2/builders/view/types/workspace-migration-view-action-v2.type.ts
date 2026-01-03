@@ -7,11 +7,3 @@ export type CreateViewAction = BaseCreateWorkspaceMigrationAction<'view'>;
 export type UpdateViewAction = BaseUpdateWorkspaceMigrationAction<'view'>;
 
 export type DeleteViewAction = BaseDeleteWorkspaceMigrationAction<'view'>;
-
-export type WorkspaceMigrationViewActionV2 =
-  | CreateViewAction
-  | UpdateViewAction
-  | DeleteViewAction;
-
-export type WorkspaceMigrationViewActionTypeV2 =
-  WorkspaceMigrationViewActionV2['type'];

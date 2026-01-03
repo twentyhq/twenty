@@ -10,11 +10,3 @@ export type UpdateViewFilterGroupAction =
 
 export type DeleteViewFilterGroupAction =
   BaseDeleteWorkspaceMigrationAction<'viewFilterGroup'>;
-
-export type WorkspaceMigrationViewFilterGroupActionV2 =
-  | CreateViewFilterGroupAction
-  | UpdateViewFilterGroupAction
-  | DeleteViewFilterGroupAction;
-
-export type WorkspaceMigrationViewFilterGroupActionTypeV2 =
-  WorkspaceMigrationViewFilterGroupActionV2['type'];

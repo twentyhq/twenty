@@ -12,11 +12,3 @@ export type UpdateIndexAction = {
   entityId: string;
   updatedFlatEntity: FlatIndexMetadata;
 };
-
-export type WorkspaceMigrationIndexActionV2 =
-  | CreateIndexAction
-  | UpdateIndexAction
-  | DeleteIndexAction;
-
-export type WorkspaceMigrationIndexActionTypeV2 =
-  WorkspaceMigrationIndexActionV2['type'];

@@ -10,8 +10,3 @@ export type UpdateDatabaseEventTriggerAction =
 
 export type DeleteDatabaseEventTriggerAction =
   BaseDeleteWorkspaceMigrationAction<'databaseEventTrigger'>;
-
-export type WorkspaceMigrationDatabaseEventTriggerActionV2 =
-  | CreateDatabaseEventTriggerAction
-  | UpdateDatabaseEventTriggerAction
-  | DeleteDatabaseEventTriggerAction;

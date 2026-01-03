@@ -14,11 +14,3 @@ export type UpdateServerlessFunctionAction =
 
 export type DeleteServerlessFunctionAction =
   BaseDeleteWorkspaceMigrationAction<'serverlessFunction'>;
-
-export type WorkspaceMigrationServerlessFunctionActionV2 =
-  | CreateServerlessFunctionAction
-  | UpdateServerlessFunctionAction
-  | DeleteServerlessFunctionAction;
-
-export type WorkspaceMigrationServerlessFunctionActionTypeV2 =
-  WorkspaceMigrationServerlessFunctionActionV2['type'];

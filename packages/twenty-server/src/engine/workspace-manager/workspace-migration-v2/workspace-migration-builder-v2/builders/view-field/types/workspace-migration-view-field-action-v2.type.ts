@@ -10,11 +10,3 @@ export type UpdateViewFieldAction =
 
 export type DeleteViewFieldAction =
   BaseDeleteWorkspaceMigrationAction<'viewField'>;
-
-export type WorkspaceMigrationViewFieldActionV2 =
-  | CreateViewFieldAction
-  | UpdateViewFieldAction
-  | DeleteViewFieldAction;
-
-export type WorkspaceMigrationViewFieldActionTypeV2 =
-  WorkspaceMigrationViewFieldActionV2['type'];

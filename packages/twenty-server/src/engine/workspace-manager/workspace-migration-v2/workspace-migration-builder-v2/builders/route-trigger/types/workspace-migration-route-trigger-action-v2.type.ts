@@ -10,8 +10,3 @@ export type UpdateRouteTriggerAction =
 
 export type DeleteRouteTriggerAction =
   BaseDeleteWorkspaceMigrationAction<'routeTrigger'>;
-
-export type WorkspaceMigrationRouteTriggerActionV2 =
-  | CreateRouteTriggerAction
-  | UpdateRouteTriggerAction
-  | DeleteRouteTriggerAction;

@@ -10,8 +10,3 @@ export type UpdateCronTriggerAction =
 
 export type DeleteCronTriggerAction =
   BaseDeleteWorkspaceMigrationAction<'cronTrigger'>;
-
-export type WorkspaceMigrationCronTriggerActionV2 =
-  | CreateCronTriggerAction
-  | UpdateCronTriggerAction
-  | DeleteCronTriggerAction;

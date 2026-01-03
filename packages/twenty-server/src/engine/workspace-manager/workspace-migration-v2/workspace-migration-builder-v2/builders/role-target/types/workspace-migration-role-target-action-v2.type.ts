@@ -10,11 +10,3 @@ export type UpdateRoleTargetAction =
 
 export type DeleteRoleTargetAction =
   BaseDeleteWorkspaceMigrationAction<'roleTarget'>;
-
-export type WorkspaceMigrationRoleTargetActionV2 =
-  | CreateRoleTargetAction
-  | UpdateRoleTargetAction
-  | DeleteRoleTargetAction;
-
-export type WorkspaceMigrationRoleTargetActionTypeV2 =
-  WorkspaceMigrationRoleTargetActionV2['type'];

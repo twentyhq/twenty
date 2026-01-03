@@ -12,11 +12,3 @@ export type UpdateRowLevelPermissionPredicateAction =
 
 export type DeleteRowLevelPermissionPredicateAction =
   BaseDeleteWorkspaceMigrationAction<'rowLevelPermissionPredicate'>;
-
-export type WorkspaceMigrationRowLevelPermissionPredicateActionV2 =
-  | CreateRowLevelPermissionPredicateAction
-  | UpdateRowLevelPermissionPredicateAction
-  | DeleteRowLevelPermissionPredicateAction;
-
-export type WorkspaceMigrationRowLevelPermissionPredicateActionTypeV2 =
-  WorkspaceMigrationRowLevelPermissionPredicateActionV2['type'];
