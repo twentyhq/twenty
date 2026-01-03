@@ -20,7 +20,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
     ).reduce<Record<string, DeleteObjectAction>>(
       (acc, deleteObjectAction) => ({
         ...acc,
-        [deleteObjectAction.objectMetadataId]: deleteObjectAction,
+        [deleteObjectAction.entityId]: deleteObjectAction,
       }),
       {},
     );

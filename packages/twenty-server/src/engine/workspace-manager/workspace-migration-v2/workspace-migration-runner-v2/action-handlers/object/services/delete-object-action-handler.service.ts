@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -24,7 +23,8 @@ import {
 
 @Injectable()
 export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_object',
+  'delete',
+  'objectMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -35,14 +35,14 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteObjectAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteObjectAction>) {
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
-    const { objectMetadataId } = action;
+    const { entityId } = action;
 
     const updatedFlatObjectMetadataMaps =
       deleteFlatEntityFromFlatEntityMapsOrThrow({
         flatEntityMaps: flatObjectMetadataMaps,
-        entityToDeleteId: objectMetadataId,
+        entityToDeleteId: entityId,
       });
 
     return {
@@ -54,14 +54,14 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { objectMetadataId } = action;
+    const { entityId } = action;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
         ObjectMetadataEntity,
       );
 
-    await objectMetadataRepository.delete(objectMetadataId);
+    await objectMetadataRepository.delete(entityId);
   }
 
   async executeForWorkspaceSchema(
@@ -73,11 +73,11 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId } = action;
+    const { entityId } = action;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: objectMetadataId,
+      flatEntityId: entityId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({

@@ -30,8 +30,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           objectMetadata: {
             created: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -151,8 +152,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           objectMetadata: {
             created: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -161,8 +163,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-2',
                   id: 'object-2',
                   nameSingular: 'company',
@@ -232,8 +235,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           objectMetadata: {
             created: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -372,8 +376,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           objectMetadata: {
             created: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'attachment',
@@ -440,8 +445,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         .created as CreateObjectAction[];
       const objectActionCounts = objectActions.reduce(
         (acc, action) => {
-          acc[action.flatObjectMetadata.id] =
-            (acc[action.flatObjectMetadata.id] || 0) + 1;
+          acc[action.flatEntity.id] = (acc[action.flatEntity.id] || 0) + 1;
 
           return acc;
         },

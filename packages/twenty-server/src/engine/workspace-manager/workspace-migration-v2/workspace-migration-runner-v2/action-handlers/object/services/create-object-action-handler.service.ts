@@ -7,7 +7,6 @@ import {
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -25,7 +24,8 @@ import {
 
 @Injectable()
 export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_object',
+  'create',
+  'objectMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
@@ -36,9 +36,9 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateObjectAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateObjectAction>) {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { flatObjectMetadata, flatFieldMetadatas } = action;
+    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
 
     const updatedFlatFieldMetadatas = flatFieldMetadatas.reduce(
       (flatFieldMaps, flatFieldMetadata) =>
@@ -64,7 +64,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { flatObjectMetadata, flatFieldMetadatas } = action;
+    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
@@ -101,7 +101,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatObjectMetadata, flatFieldMetadatas } = action;
+    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,

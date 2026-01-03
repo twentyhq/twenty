@@ -28,7 +28,7 @@ export class FlatObjectMetadataValidatorService {
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
-      type: 'update_object',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,
@@ -105,7 +105,7 @@ export class FlatObjectMetadataValidatorService {
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
-      type: 'delete_object',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: objectMetadataToDeleteId,
@@ -163,7 +163,7 @@ export class FlatObjectMetadataValidatorService {
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
       {
-        type: 'create_object',
+        type: 'create',
         errors: [],
         flatEntityMinimalInformation: {
           id: flatObjectMetadataToValidate.id,

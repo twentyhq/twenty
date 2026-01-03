@@ -29,8 +29,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             updated: [],
             deleted: [
               {
-                type: 'delete_object',
-                objectMetadataId: 'object-1',
+                type: 'delete',
+                metadataName: 'objectMetadata',
+                entityId: 'object-1',
               } satisfies DeleteObjectAction,
             ],
           },
@@ -100,8 +101,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             updated: [],
             deleted: [
               {
-                type: 'delete_object',
-                objectMetadataId: 'object-1',
+                type: 'delete',
+                metadataName: 'objectMetadata',
+                entityId: 'object-1',
               } satisfies DeleteObjectAction,
             ],
           },
@@ -142,12 +144,14 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             updated: [],
             deleted: [
               {
-                type: 'delete_object',
-                objectMetadataId: 'object-1',
+                type: 'delete',
+                metadataName: 'objectMetadata',
+                entityId: 'object-1',
               } satisfies DeleteObjectAction,
               {
-                type: 'delete_object',
-                objectMetadataId: 'object-2',
+                type: 'delete',
+                metadataName: 'objectMetadata',
+                entityId: 'object-2',
               } satisfies DeleteObjectAction,
             ],
           },
@@ -219,8 +223,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         .deleted as DeleteObjectAction[];
       const objectActionCounts = objectActions.reduce(
         (acc, action) => {
-          acc[action.objectMetadataId] =
-            (acc[action.objectMetadataId] || 0) + 1;
+          acc[action.entityId] = (acc[action.entityId] || 0) + 1;
 
           return acc;
         },

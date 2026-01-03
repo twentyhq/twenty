@@ -6,7 +6,6 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
-import { FromWorkspaceMigrationActionToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
@@ -26,10 +25,10 @@ export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionTypeV2,
-  TMetadataName extends
-    AllMetadataName = FromWorkspaceMigrationActionToMetadataName<TActionType>,
+  TMetadataName extends AllMetadataName,
 > {
   public actionType: TActionType;
+  public metadataName: TMetadataName;
 
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
@@ -110,23 +109,32 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }): Promise<void> {
     this.logger.time(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
-      `${this.actionType} ${label}`,
+      `${this.actionType}_${this.metadataName} ${label}`,
     );
     await method();
     this.logger.timeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
-      `${this.actionType} ${label}`,
+      `${this.actionType}_${this.metadataName} ${label}`,
     );
   }
 }
 
 export function WorkspaceMigrationRunnerActionHandler<
   TActionType extends WorkspaceMigrationActionTypeV2,
+  TMetadataName extends AllMetadataName,
 >(
   actionType: TActionType,
-): typeof BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
-  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
+  metadataName: TMetadataName,
+): typeof BaseWorkspaceMigrationRunnerActionHandlerService<
+  TActionType,
+  TMetadataName
+> {
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<
+    TActionType,
+    TMetadataName
+  > {
     actionType = actionType;
+    metadataName = metadataName;
   }
 
   SetMetadata(

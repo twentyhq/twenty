@@ -40,9 +40,10 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: {
-        type: 'create_object',
+        type: 'create',
+        metadataName: 'objectMetadata',
         flatFieldMetadatas: [],
-        flatObjectMetadata: flatObjectMetadataToValidate,
+        flatEntity: flatObjectMetadataToValidate,
       },
     };
   }
@@ -68,8 +69,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: {
-        type: 'delete_object',
-        objectMetadataId: flatObjectMetadataToValidate.id,
+        type: 'delete',
+        metadataName: 'objectMetadata',
+        entityId: flatObjectMetadataToValidate.id,
       },
     };
   }
@@ -95,8 +97,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateObjectAction: UpdateObjectAction = {
-      type: 'update_object',
-      objectMetadataId: flatEntityId,
+      type: 'update',
+      metadataName: 'objectMetadata',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

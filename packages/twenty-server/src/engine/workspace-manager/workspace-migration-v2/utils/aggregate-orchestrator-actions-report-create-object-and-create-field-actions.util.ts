@@ -24,7 +24,7 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
     ).reduce(
       (acc, createObjectAction) => ({
         ...acc,
-        [createObjectAction.flatObjectMetadata.id]: createObjectAction,
+        [createObjectAction.flatEntity.id]: createObjectAction,
       }),
       {} as Record<string, CreateObjectAction>,
     );
