@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
+import { jsonSchema, type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -12,6 +13,7 @@ import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-gene
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
+import { convertToolSchemaPropertyToJsonSchema } from 'src/engine/core-modules/tool-provider/utils/convert-tool-schema-to-json-schema.util';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
@@ -22,8 +24,11 @@ import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 // Type-only import to avoid circular dependency at file level
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
@@ -56,6 +61,8 @@ export class ToolProviderService {
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly permissionsService: PermissionsService,
+    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     this.actionTools = new Map([
       [
@@ -133,6 +140,8 @@ export class ToolProviderService {
         return this.getMetadataTools(spec);
       case ToolCategory.NATIVE_MODEL:
         return this.getNativeModelTools(spec);
+      case ToolCategory.SERVERLESS_FUNCTION:
+        return this.getServerlessFunctionTools(spec);
       default:
         return {};
     }
@@ -270,6 +279,79 @@ export class ToolProviderService {
       registeredModel,
       spec.agent,
     );
+  }
+
+  private async getServerlessFunctionTools(
+    spec: ToolSpecification,
+  ): Promise<ToolSet> {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: spec.workspaceId,
+          flatMapsKeys: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    // Filter serverless functions that have toolInputSchema defined
+    const serverlessFunctionsWithSchema = Object.values(
+      flatServerlessFunctionMaps.byId,
+    ).filter(
+      (fn): fn is FlatServerlessFunction =>
+        isDefined(fn) && isDefined(fn.toolInputSchema) && fn.deletedAt === null,
+    );
+
+    const tools: ToolSet = {};
+
+    for (const serverlessFunction of serverlessFunctionsWithSchema) {
+      const toolName = this.buildServerlessFunctionToolName(
+        serverlessFunction.name,
+      );
+
+      const inputJsonSchema = convertToolSchemaPropertyToJsonSchema(
+        serverlessFunction.toolInputSchema as Parameters<
+          typeof convertToolSchemaPropertyToJsonSchema
+        >[0],
+      );
+
+      tools[toolName] = {
+        description:
+          serverlessFunction.toolDescription ||
+          serverlessFunction.description ||
+          `Execute the ${serverlessFunction.name} serverless function`,
+        inputSchema: jsonSchema(inputJsonSchema as Record<string, unknown>),
+        execute: async (parameters: Record<string, unknown>) => {
+          const result =
+            await this.serverlessFunctionService.executeOneServerlessFunction({
+              id: serverlessFunction.id,
+              workspaceId: spec.workspaceId,
+              payload: parameters,
+              version: serverlessFunction.latestVersion ?? 'draft',
+            });
+
+          if (result.error) {
+            return {
+              success: false,
+              error: result.error.errorMessage,
+            };
+          }
+
+          return {
+            success: true,
+            result: result.data,
+          };
+        },
+      };
+    }
+
+    return tools;
+  }
+
+  private buildServerlessFunctionToolName(functionName: string): string {
+    // Convert function name to a valid tool name (lowercase, underscores)
+    return `serverless_${functionName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')}`;
   }
 
   private wrapToolsWithErrorContext(tools: ToolSet): ToolSet {

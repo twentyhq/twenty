@@ -80,7 +80,7 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
       ),
       'deletedAt',
     ],
-    propertiesToStringify: [],
+    propertiesToStringify: ['toolInputSchema', 'toolOutputSchema'],
   },
   cronTrigger: {
     propertiesToCompare: [...FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES],

@@ -16,9 +16,12 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
+import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolProviderService } from './services/tool-provider.service';
 import { ToolRegistryService } from './services/tool-registry.service';
 
@@ -40,8 +43,11 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ServerlessFunctionModule,
+    UserRoleModule,
   ],
   providers: [
+    ToolIndexResolver,
     ActionToolProvider,
     DashboardToolProvider,
     DatabaseToolProvider,

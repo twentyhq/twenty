@@ -953,6 +953,8 @@ export type CreateServerlessFunctionInput = {
   handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+  toolOutputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateViewFieldInput = {
@@ -3908,6 +3910,8 @@ export type ServerlessFunction = {
   routeTriggers?: Maybe<Array<RouteTrigger>>;
   runtime: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
+  toolInputSchema?: Maybe<Scalars['JSON']>;
+  toolOutputSchema?: Maybe<Scalars['JSON']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -4446,6 +4450,8 @@ export type UpdateServerlessFunctionInputUpdates = {
   handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+  toolOutputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateViewFieldInput = {

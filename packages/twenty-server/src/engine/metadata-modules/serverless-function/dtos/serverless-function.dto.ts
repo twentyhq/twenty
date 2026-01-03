@@ -10,9 +10,12 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsObject,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
@@ -69,6 +72,21 @@ export class ServerlessFunctionDTO {
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  toolDescription?: string;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  toolInputSchema?: object;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  toolOutputSchema?: object;
+
   @Field(() => [CronTriggerDTO], { nullable: true })
   cronTriggers?: CronTriggerDTO[];
 
@@ -77,6 +95,11 @@ export class ServerlessFunctionDTO {
 
   @Field(() => [RouteTriggerDTO], { nullable: true })
   routeTriggers?: RouteTriggerDTO[];
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
 
   @HideField()
   workspaceId: string;

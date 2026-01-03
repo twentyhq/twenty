@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
+import { type ToolSet, zodSchema } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { type ZodType } from 'zod';
 
 import {
   type CodeExecutionStreamEmitter,
@@ -25,6 +26,7 @@ export type ToolIndexEntry = {
     | 'dashboard';
   objectName?: string;
   operation?: string;
+  inputSchema?: object;
 };
 
 export type ToolSearchOptions = {
@@ -216,12 +218,102 @@ export class ToolRegistryService {
       NATIVE_MODEL: 'action',
       VIEW: 'view',
       DASHBOARD: 'dashboard',
+      SERVERLESS_FUNCTION: 'action',
     };
 
-    return Object.entries(tools).map(([name, tool]) => ({
-      name,
-      description: tool.description ?? '',
-      category: categoryMap[category],
-    }));
+    return Object.entries(tools).map(([name, tool]) => {
+      const inputSchema = this.extractJsonSchema(tool.inputSchema);
+
+      return {
+        name,
+        description: tool.description ?? '',
+        category: categoryMap[category],
+        inputSchema,
+      };
+    });
+  }
+
+  private extractJsonSchema(inputSchema: unknown): object | undefined {
+    if (!inputSchema) {
+      return undefined;
+    }
+
+    let schema: object | undefined;
+
+    // Check if it's a Zod schema (has _def property)
+    if (
+      typeof inputSchema === 'object' &&
+      inputSchema !== null &&
+      '_def' in inputSchema
+    ) {
+      try {
+        // Use AI SDK's zodSchema() to convert Zod to JSON Schema
+        const converted = zodSchema(inputSchema as ZodType);
+
+        schema = converted.jsonSchema as object;
+      } catch {
+        // If conversion fails, return undefined
+        return undefined;
+      }
+    } else if (
+      // Check if AI SDK wrapped it with jsonSchema property
+      typeof inputSchema === 'object' &&
+      inputSchema !== null &&
+      'jsonSchema' in inputSchema
+    ) {
+      schema = (inputSchema as { jsonSchema: object }).jsonSchema;
+    } else if (typeof inputSchema === 'object') {
+      // Return as-is if it's already an object (plain JSON schema)
+      schema = inputSchema as object;
+    }
+
+    if (!schema) {
+      return undefined;
+    }
+
+    return this.cleanupSchema(schema);
+  }
+
+  // Remove internal properties and simplify schema for display
+  private cleanupSchema(schema: object): object {
+    const schemaObj = schema as Record<string, unknown>;
+
+    // Remove $schema property
+    const { $schema: _, ...rest } = schemaObj;
+
+    // Check if schema has properties with loadingMessage and input
+    // loadingMessage is an internal field added to all tools for status updates
+    if (
+      rest.type === 'object' &&
+      rest.properties &&
+      typeof rest.properties === 'object'
+    ) {
+      const properties = rest.properties as Record<string, unknown>;
+      const { loadingMessage: __, ...cleanProperties } = properties;
+
+      // If only 'input' remains and it's an object type, use its schema directly
+      const propertyKeys = Object.keys(cleanProperties);
+
+      if (
+        propertyKeys.length === 1 &&
+        propertyKeys[0] === 'input' &&
+        typeof cleanProperties.input === 'object' &&
+        cleanProperties.input !== null
+      ) {
+        const inputSchema = cleanProperties.input as Record<string, unknown>;
+
+        if (inputSchema.type === 'object') {
+          return this.cleanupSchema(inputSchema);
+        }
+      }
+
+      // Otherwise return schema with loadingMessage removed
+      return {
+        ...rest,
+        properties: cleanProperties,
+      };
+    }
+
+    return rest;
   }
 }

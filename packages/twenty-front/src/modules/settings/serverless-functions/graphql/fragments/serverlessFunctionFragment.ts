@@ -31,6 +31,10 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
       createdAt
       updatedAt
     }
+    toolDescription
+    toolInputSchema
+    toolOutputSchema
+    applicationId
     createdAt
     updatedAt
   }

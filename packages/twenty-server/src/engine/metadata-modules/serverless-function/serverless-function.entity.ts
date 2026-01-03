@@ -66,6 +66,15 @@ export class ServerlessFunctionEntity
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  toolDescription: string | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  toolInputSchema: object | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  toolOutputSchema: object | null;
+
   @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionLayerId: string;
 

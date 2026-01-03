@@ -15,7 +15,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
   IconCode,
@@ -119,48 +119,14 @@ export const SettingsServerlessFunctionDetail = () => {
           : 0,
     );
 
-  const renderActiveTabContent = () => {
-    switch (activeTabId) {
-      case 'editor':
-        return (
-          <SettingsServerlessFunctionCodeEditorTab
-            files={files}
-            handleExecute={handleTestFunction}
-            onChange={onCodeChange}
-            isTesting={isTesting}
-          />
-        );
-      case 'triggers':
-        return serverlessFunction ? (
-          <SettingsServerlessFunctionTriggersTab
-            serverlessFunction={serverlessFunction}
-          />
-        ) : null;
-      case 'test':
-        return (
-          <SettingsServerlessFunctionTestTab
-            serverlessFunctionId={serverlessFunctionId}
-            handleExecute={handleTestFunction}
-            isTesting={isTesting}
-          />
-        );
-      case 'settings':
-        return (
-          <SettingsServerlessFunctionSettingsTab
-            formValues={formValues}
-            onChange={onChange}
-          />
-        );
-      default:
-        return <></>;
-    }
-  };
+  const isEditorTab = activeTabId === 'editor';
+  const isTriggersTab = activeTabId === 'triggers';
+  const isTestTab = activeTabId === 'test';
+  const isSettingsTab = activeTabId === 'settings';
 
-  return (
-    !loading && (
-      <SubMenuTopBarContainer
-        title={formValues.name}
-        links={[
+  const breadcrumbLinks =
+    isDefined(applicationId) && applicationId !== ''
+      ? [
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
@@ -181,11 +147,50 @@ export const SettingsServerlessFunctionDetail = () => {
             ),
           },
           { children: `${serverlessFunction?.name}` },
-        ]}
-      >
+        ]
+      : [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`AI`,
+            href: getSettingsPath(SettingsPath.AI),
+          },
+          { children: `${serverlessFunction?.name}` },
+        ];
+
+  return (
+    !loading && (
+      <SubMenuTopBarContainer title={formValues.name} links={breadcrumbLinks}>
         <SettingsPageContainer>
           <TabList tabs={tabs} componentInstanceId={instanceId} />
-          {renderActiveTabContent()}
+          {isEditorTab && (
+            <SettingsServerlessFunctionCodeEditorTab
+              files={files}
+              handleExecute={handleTestFunction}
+              onChange={onCodeChange}
+              isTesting={isTesting}
+            />
+          )}
+          {isTriggersTab && serverlessFunction && (
+            <SettingsServerlessFunctionTriggersTab
+              serverlessFunction={serverlessFunction}
+            />
+          )}
+          {isTestTab && (
+            <SettingsServerlessFunctionTestTab
+              serverlessFunctionId={serverlessFunctionId}
+              handleExecute={handleTestFunction}
+              isTesting={isTesting}
+            />
+          )}
+          {isSettingsTab && (
+            <SettingsServerlessFunctionSettingsTab
+              formValues={formValues}
+              onChange={onChange}
+            />
+          )}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     )

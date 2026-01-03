@@ -1,6 +1,20 @@
 import { type HTTPMethod } from '@/types';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
+export type ToolSchemaPropertyType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'object'
+  | 'array';
+
+export type ToolSchemaProperty = {
+  type: ToolSchemaPropertyType;
+  enum?: string[];
+  items?: ToolSchemaProperty;
+  properties?: Record<string, ToolSchemaProperty>;
+};
+
 export type ServerlessFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
@@ -8,6 +22,9 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   triggers: ServerlessFunctionTriggerManifest[];
   handlerPath: string;
   handlerName: string;
+  toolDescription?: string;
+  toolInputSchema?: ToolSchemaProperty;
+  toolOutputSchema?: ToolSchemaProperty;
 };
 
 export type DatabaseEventTrigger = {
