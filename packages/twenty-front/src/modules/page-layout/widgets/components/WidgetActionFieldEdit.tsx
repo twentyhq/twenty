@@ -10,6 +10,7 @@ import {
   type GenericFieldContextType,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { isFieldInputOnly } from '@/object-record/record-field/ui/types/guards/isFieldInputOnly';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
@@ -19,11 +20,11 @@ import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/Fi
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
 import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 
 export const WidgetActionFieldEdit = () => {
   const widget = useCurrentWidget();
@@ -87,6 +88,10 @@ export const WidgetActionFieldEdit = () => {
         />
       </RecordFieldsScopeContextProvider>
     );
+  }
+
+  if (isFieldInputOnly(fieldDefinition)) {
+    return null;
   }
 
   const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
