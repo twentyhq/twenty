@@ -25,9 +25,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'objectMetadata',
@@ -36,9 +36,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             ],
           },
           fieldMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'fieldMetadata',
@@ -68,14 +68,14 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [],
+            create: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'fieldMetadata',
@@ -100,9 +100,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'objectMetadata',
@@ -111,9 +111,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             ],
           },
           fieldMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'fieldMetadata',
@@ -145,9 +145,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'objectMetadata',
@@ -161,9 +161,9 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
             ],
           },
           fieldMetadata: {
-            created: [],
-            updated: [],
-            deleted: [
+            create: [],
+            update: [],
+            delete: [
               {
                 type: 'delete',
                 metadataName: 'fieldMetadata',
@@ -216,7 +216,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
           orchestratorActionsReport: input,
         });
 
-      const fieldActions = result.fieldMetadata.deleted as DeleteFieldAction[];
+      const fieldActions = result.fieldMetadata.delete as DeleteFieldAction[];
       const fieldActionCounts = fieldActions.reduce(
         (acc, action) => {
           acc[action.objectMetadataId] =
@@ -228,7 +228,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       );
 
       const objectActions = result.objectMetadata
-        .deleted as DeleteObjectAction[];
+        .delete as DeleteObjectAction[];
       const objectActionCounts = objectActions.reduce(
         (acc, action) => {
           acc[action.entityId] = (acc[action.entityId] || 0) + 1;

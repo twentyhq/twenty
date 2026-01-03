@@ -34,7 +34,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       return baseResult;
     }
 
-    const updatedActions = baseResult.actions.updated.map((action) => {
+    const updatedActions = baseResult.actions.update.map((action) => {
       if (action.type !== 'update') {
         return action;
       }
@@ -54,7 +54,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       ...baseResult,
       actions: {
         ...baseResult.actions,
-        updated: updatedActions,
+        update: updatedActions,
       },
     };
   }

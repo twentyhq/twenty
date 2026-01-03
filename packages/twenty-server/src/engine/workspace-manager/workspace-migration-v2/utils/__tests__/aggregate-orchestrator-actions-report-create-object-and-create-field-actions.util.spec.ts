@@ -28,7 +28,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'objectMetadata',
@@ -41,11 +41,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -68,8 +68,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -87,12 +87,12 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [],
+            create: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -136,8 +136,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -154,7 +154,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'objectMetadata',
@@ -178,11 +178,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -219,8 +219,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -239,7 +239,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'objectMetadata',
@@ -252,11 +252,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -286,8 +286,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -307,12 +307,12 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [],
+            create: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -356,8 +356,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -385,7 +385,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'objectMetadata',
@@ -398,11 +398,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
@@ -418,8 +418,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -442,7 +442,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           orchestratorActionsReport: input,
         });
 
-      const fieldActions = result.fieldMetadata.created as CreateFieldAction[];
+      const fieldActions = result.fieldMetadata.create as CreateFieldAction[];
       const fieldActionCounts = fieldActions.reduce(
         (acc, action) => {
           acc[action.objectMetadataId] =
@@ -454,7 +454,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       );
 
       const objectActions = result.objectMetadata
-        .created as CreateObjectAction[];
+        .create as CreateObjectAction[];
       const objectActionCounts = objectActions.reduce(
         (acc, action) => {
           acc[action.flatEntity.id] = (acc[action.flatEntity.id] || 0) + 1;

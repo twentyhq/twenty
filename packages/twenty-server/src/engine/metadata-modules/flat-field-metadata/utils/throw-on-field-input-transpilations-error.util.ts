@@ -29,7 +29,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
             objectMetadata: [
               {
                 errors: failedInputTranspilationErrors,
-                type: 'create_field',
+                type: 'create',
                 flatEntityMinimalInformation: {},
               },
             ],

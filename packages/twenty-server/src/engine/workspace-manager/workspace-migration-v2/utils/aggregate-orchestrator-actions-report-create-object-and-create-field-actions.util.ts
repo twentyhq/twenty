@@ -20,7 +20,7 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
     orchestratorActionsReport,
   }: AggregateOrchestratorActionsReportCreateObjectAndCreateFieldActionsArgs): OrchestratorActionsReport => {
     const initialCreatedObjectActionByObjectMetadataId = (
-      orchestratorActionsReport.objectMetadata.created as CreateObjectAction[]
+      orchestratorActionsReport.objectMetadata.create as CreateObjectAction[]
     ).reduce(
       (acc, createObjectAction) => ({
         ...acc,
@@ -38,7 +38,7 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       createdFieldActionByObjectMetadataId,
       createdObjectActionByObjectMetadataId,
     } = (
-      orchestratorActionsReport.fieldMetadata.created as CreateFieldAction[]
+      orchestratorActionsReport.fieldMetadata.create as CreateFieldAction[]
     ).reduce<AggregatedActions>(
       (
         {
@@ -182,11 +182,11 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       ...orchestratorActionsReport,
       fieldMetadata: {
         ...orchestratorActionsReport.fieldMetadata,
-        created: Object.values(createdFieldActionByObjectMetadataId),
+        create: Object.values(createdFieldActionByObjectMetadataId),
       },
       objectMetadata: {
         ...orchestratorActionsReport.objectMetadata,
-        created: Object.values(createdObjectActionByObjectMetadataId),
+        create: Object.values(createdObjectActionByObjectMetadataId),
       },
     };
   };

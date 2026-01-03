@@ -192,7 +192,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadata: [
               {
                 errors: inputTranspilationResult.errors,
-                type: 'update_field',
+                type: 'update',
                 flatEntityMinimalInformation: {},
               },
             ],
