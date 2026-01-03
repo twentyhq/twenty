@@ -107,7 +107,6 @@ import {
 import {
   type CreateRowLevelPermissionPredicateAction,
   type DeleteRowLevelPermissionPredicateAction,
-  type DestroyRowLevelPermissionPredicateAction,
   type UpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
 import {
@@ -196,9 +195,7 @@ export type AllFlatEntityTypesByMetadataName = {
     actions: {
       created: CreateRowLevelPermissionPredicateAction;
       updated: UpdateRowLevelPermissionPredicateAction;
-      deleted:
-        | DeleteRowLevelPermissionPredicateAction
-        | DestroyRowLevelPermissionPredicateAction;
+      deleted: DeleteRowLevelPermissionPredicateAction;
     };
     flatEntity: FlatRowLevelPermissionPredicate;
     entity: RowLevelPermissionPredicateEntity;

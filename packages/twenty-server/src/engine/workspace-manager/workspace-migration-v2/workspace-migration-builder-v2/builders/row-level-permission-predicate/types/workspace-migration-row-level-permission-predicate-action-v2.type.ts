@@ -13,17 +13,10 @@ export type UpdateRowLevelPermissionPredicateAction =
 export type DeleteRowLevelPermissionPredicateAction =
   BaseDeleteWorkspaceMigrationAction<'rowLevelPermissionPredicate'>;
 
-export type DestroyRowLevelPermissionPredicateAction = {
-  type: 'destroy';
-  metadataName: 'rowLevelPermissionPredicate';
-  entityId: string;
-};
-
 export type WorkspaceMigrationRowLevelPermissionPredicateActionV2 =
   | CreateRowLevelPermissionPredicateAction
   | UpdateRowLevelPermissionPredicateAction
   | DeleteRowLevelPermissionPredicateAction
-  | DestroyRowLevelPermissionPredicateAction;
 
 export type WorkspaceMigrationRowLevelPermissionPredicateActionTypeV2 =
   WorkspaceMigrationRowLevelPermissionPredicateActionV2['type'];
