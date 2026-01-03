@@ -132,6 +132,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
             assertUnreachable(action);
           }
         }
+        break;
       }
       case 'delete': {
         switch (action.metadataName) {

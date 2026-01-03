@@ -83,10 +83,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     workspaceId,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.index
-  >): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.index,
-    'update'
-  > {
+  >): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'update'> {
     const flatEntity = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps:
