@@ -15,10 +15,10 @@ import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconChevronRight,
-    IconPlus,
-    IconSearch,
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSearch,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -26,8 +26,8 @@ import { Section } from 'twenty-ui/layout';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
 import {
-    SettingsToolTableRow,
-    StyledToolTableRow,
+  SettingsToolTableRow,
+  StyledToolTableRow,
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`

@@ -6,4 +6,3 @@ export const SETTINGS_AI_TABS = {
     SETTINGS: 'settings',
   },
 } as const;
-

@@ -7,14 +7,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    IconChevronDown,
-    IconChevronRight,
-    IconCode,
-    IconDatabase,
-    IconPlayerPlay,
-    IconSettings,
-    IconTable,
-    OverflowingTextWithTooltip,
+  IconChevronDown,
+  IconChevronRight,
+  IconCode,
+  IconDatabase,
+  IconPlayerPlay,
+  IconSettings,
+  IconTable,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
