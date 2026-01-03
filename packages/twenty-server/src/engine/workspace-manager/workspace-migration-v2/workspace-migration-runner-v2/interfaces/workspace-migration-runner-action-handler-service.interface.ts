@@ -14,7 +14,10 @@ import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThro
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
-import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import {
+  buildActionHandlerKey,
+  type WorkspaceMigrationActionV2,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -66,10 +69,39 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       case 'create': {
         switch (action.metadataName) {
           case 'fieldMetadata': {
-            // TODO
-            return;
+            action.flatFieldMetadatas.forEach((flatEntity) =>
+              addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+                {
+                  flatEntity,
+                  flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                  metadataName: action.metadataName,
+                },
+              ),
+            );
+
+            return allFlatEntityMaps;
           }
-          case 'objectMetadata':
+          case 'objectMetadata': {
+            addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+              {
+                flatEntity: action.flatEntity,
+                flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                metadataName: action.metadataName,
+              },
+            );
+
+            action.flatFieldMetadatas.forEach((flatField) =>
+              addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+                {
+                  flatEntity: flatField,
+                  flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                  metadataName: 'fieldMetadata',
+                },
+              ),
+            );
+
+            return allFlatEntityMaps;
+          }
           case 'view':
           case 'viewField':
           case 'viewGroup':
@@ -156,8 +188,27 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       case 'update': {
         switch (action.metadataName) {
           case 'index': {
-            // TODO
-            return;
+            const flatIndex = findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId: action.entityId,
+              flatEntityMaps: allFlatEntityMaps['flatIndexMaps'],
+            });
+            deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+              {
+                flatEntity: flatIndex,
+                flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                metadataName: action.metadataName,
+              },
+            );
+
+            addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+              {
+                flatEntity: action.updatedFlatEntity,
+                flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+                metadataName: action.metadataName,
+              },
+            );
+
+            return allFlatEntityMaps;
           }
           case 'fieldMetadata':
           case 'objectMetadata':
@@ -291,7 +342,7 @@ export function WorkspaceMigrationRunnerActionHandler<
 
   SetMetadata(
     WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
-    actionType,
+    buildActionHandlerKey(actionType, metadataName),
   )(ActionHandlerService);
 
   return ActionHandlerService;
