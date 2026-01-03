@@ -41,10 +41,6 @@ export class WorkspaceMigrationRunnerV2Service {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
-        if (!('metadataName' in action)) {
-          return false;
-        }
-
         return (
           action.metadataName === 'objectMetadata' ||
           action.metadataName === 'fieldMetadata'
@@ -68,9 +64,7 @@ export class WorkspaceMigrationRunnerV2Service {
       'viewFilterGroup',
     ];
     const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) =>
-        'metadataName' in action &&
-        viewRelatedMetadataNames.includes(action.metadataName),
+      (action) => viewRelatedMetadataNames.includes(action.metadataName),
     );
 
     if (
@@ -86,13 +80,9 @@ export class WorkspaceMigrationRunnerV2Service {
     }
 
     const shouldInvalidateRoleMapCache = actions.some((action) => {
-      if ('metadataName' in action) {
-        return (
-          action.metadataName === 'role' || action.metadataName === 'roleTarget'
-        );
-      }
-
-      return false;
+      return (
+        action.metadataName === 'role' || action.metadataName === 'roleTarget'
+      );
     });
 
     if (
