@@ -41,20 +41,14 @@ export class WorkspaceMigrationRunnerV2Service {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
-        // TODO switch on action.metadataName
-        switch (action.type) {
-          case 'delete_field':
-          case 'create_field':
-          case 'update_field':
-          case 'delete':
-          case 'create':
-          case 'update': {
-            return true;
-          }
-          default: {
-            return false;
-          }
+        if (!('metadataName' in action)) {
+          return false;
         }
+
+        return (
+          action.metadataName === 'objectMetadata' ||
+          action.metadataName === 'fieldMetadata'
+        );
       },
     );
 
@@ -92,19 +86,11 @@ export class WorkspaceMigrationRunnerV2Service {
     }
 
     const shouldInvalidateRoleMapCache = actions.some((action) => {
-      switch (action.type) {
-        case 'create_role':
-        case 'delete_role':
-        case 'update_role':
-        case 'create_role_target':
-        case 'delete_role_target':
-        case 'update_role_target': {
-          return true;
-        }
-        default: {
-          return false;
-        }
+      if ('metadataName' in action) {
+        return action.metadataName === 'role' || action.metadataName === 'roleTarget';
       }
+
+      return false;
     });
 
     if (

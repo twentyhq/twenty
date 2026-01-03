@@ -98,9 +98,10 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutAction: UpdatePageLayoutAction = {
-      type: 'update_page_layout',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'pageLayout',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

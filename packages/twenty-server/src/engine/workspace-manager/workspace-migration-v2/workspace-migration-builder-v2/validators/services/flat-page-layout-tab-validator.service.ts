@@ -24,7 +24,7 @@ export class FlatPageLayoutTabValidatorService {
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<FlatPageLayoutTab> {
     const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'create_page_layout_tab',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatPageLayoutTab.id,
@@ -57,7 +57,7 @@ export class FlatPageLayoutTabValidatorService {
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<FlatPageLayoutTab> {
     const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'delete_page_layout_tab',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -92,7 +92,7 @@ export class FlatPageLayoutTabValidatorService {
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<FlatPageLayoutTab> {
     const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'update_page_layout_tab',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

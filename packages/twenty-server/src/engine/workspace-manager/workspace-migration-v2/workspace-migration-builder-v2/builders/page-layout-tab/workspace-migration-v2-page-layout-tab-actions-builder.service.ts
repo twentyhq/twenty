@@ -42,7 +42,8 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout_tab',
+        type: 'create',
+        metadataName: 'pageLayoutTab',
         flatEntity: flatPageLayoutTabToValidate,
       },
     };
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout_tab',
-        flatEntityId: flatPageLayoutTabToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayoutTab',
+        entityId: flatPageLayoutTabToValidate.id,
       },
     };
   }
@@ -100,9 +102,10 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutTabAction: UpdatePageLayoutTabAction = {
-      type: 'update_page_layout_tab',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'pageLayoutTab',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {
