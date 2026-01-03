@@ -6,6 +6,7 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -27,6 +28,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   const setUpdatedObjectNamePlural = useSetRecoilState(
     updatedObjectNamePluralState,
   );
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const {
     description,
@@ -94,6 +99,28 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 
     navigate(SettingsPath.ObjectDetail, {
       objectNamePlural: objectNamePluralForRedirection,
+    });
+
+    const previousNamePlural = objectMetadataItem.namePlural;
+    const updatedNamePlural = updatedObject?.data?.updateOneObject.namePlural;
+
+    if (!updatedNamePlural) return;
+
+    setNavigationMemorizedUrl((prev) => {
+      if (!prev) return prev;
+
+      const objectRouteRegex = new RegExp(
+        `^/objects/${previousNamePlural}(/|\\?|$)`,
+      );
+
+      if (!objectRouteRegex.test(prev)) {
+        return prev;
+      }
+
+      return prev.replace(
+        new RegExp(`^/objects/${previousNamePlural}`),
+        `/objects/${updatedNamePlural}`,
+      );
     });
   };
 
