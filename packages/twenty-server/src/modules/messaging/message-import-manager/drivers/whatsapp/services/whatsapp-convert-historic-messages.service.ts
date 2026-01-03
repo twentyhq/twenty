@@ -11,8 +11,8 @@ import {
   MessageWithParticipants,
 } from 'src/modules/messaging/message-import-manager/types/message';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class WhatsappConvertHistoricMessagesService {
@@ -34,18 +34,20 @@ export class WhatsappConvertHistoricMessagesService {
 
     const context = buildSystemAuthContext(workspaceId);
 
-    const whatsappRecord =
+    const messageChannelRecord =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         context,
         async () => {
-          const whatsappRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WhatsappWorkspaceEntity>(
+          const messageChannelRepository =
+            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
               workspaceId,
-              'whatsapp',
+              'messageChannel',
             );
 
-          return await whatsappRepository.findOneBy({
-            businessAccountId: wabaId,
+          return await messageChannelRepository.findOne({
+            where: {
+              handle: wabaId,
+            },
           });
         },
       );
@@ -68,18 +70,23 @@ export class WhatsappConvertHistoricMessagesService {
         },
       );
 
-    if (!whatsappRecord || !personRecord) {
+    if (
+      !messageChannelRecord ||
+      !personRecord ||
+      !messageChannelRecord.customData?.whatsappBusinessName
+    ) {
       return [];
     }
     const personName = `${personRecord.name?.firstName} ${personRecord.name?.lastName}`;
 
-    const businessDisplayName = whatsappRecord.businessDisplayName;
+    const businessDisplayName =
+      messageChannelRecord.customData?.whatsappBusinessName;
 
     for (const message of thread.messages) {
       if (message.from === wabaPhoneNumber) {
         messageParticipants.push({
           role: MessageParticipantRole.TO,
-          handle: userPhoneNumber,
+          handle: '+'.concat(userPhoneNumber),
           displayName: personName,
         });
         message.type === 'system'
@@ -103,7 +110,7 @@ export class WhatsappConvertHistoricMessagesService {
       } else {
         messageParticipants.push({
           role: MessageParticipantRole.TO,
-          handle: wabaPhoneNumber,
+          handle: '+'.concat(wabaPhoneNumber),
           displayName: businessDisplayName,
         });
         message.type === 'system'

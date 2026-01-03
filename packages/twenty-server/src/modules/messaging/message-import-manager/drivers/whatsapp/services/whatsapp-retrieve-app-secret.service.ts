@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class WhatsappRetrieveAppSecretService {
@@ -27,26 +27,26 @@ export class WhatsappRetrieveAppSecretService {
     const workspaceId = workspaceIdByWABAId.workspace.id;
     const context = buildSystemAuthContext(workspaceId);
 
-    const whatsappRecord =
+    const whatsappConnectedAccountRecord =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         context,
         async () => {
-          const whatsappRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WhatsappWorkspaceEntity>(
+          const connectedAccountRepository =
+            await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
               workspaceId,
-              'whatsapp',
+              'connectedAccount',
             );
 
-          return await whatsappRepository.findOneBy({
-            businessAccountId: whatsappBusinessAccountId,
+          return await connectedAccountRepository.findOneBy({
+            handle: whatsappBusinessAccountId,
           });
         },
       );
 
-    if (!whatsappRecord) {
+    if (!whatsappConnectedAccountRecord) {
       throw new Error(''); // TODO: fix
     }
 
-    return whatsappRecord.appSecret;
+    return whatsappConnectedAccountRecord.refreshToken;
   }
 }

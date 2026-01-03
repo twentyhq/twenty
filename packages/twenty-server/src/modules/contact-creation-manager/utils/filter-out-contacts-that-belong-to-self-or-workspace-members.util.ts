@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
@@ -14,36 +15,42 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   if (!isDefined(connectedAccount.handle)) {
     throw new Error('Connected account handle is missing');
   }
-  const selfDomainName = getDomainNameFromHandle(
-    connectedAccount.handle,
-  ).toLowerCase();
+  if (connectedAccount.provider !== ConnectedAccountProvider.WHATSAPP) {
+    const selfDomainName = getDomainNameFromHandle(
+      connectedAccount.handle,
+    ).toLowerCase();
 
-  const allHandles = [
-    connectedAccount.handle.toLowerCase(),
-    ...(connectedAccount.handleAliases?.split(',') || []).map((handle) =>
-      handle.toLowerCase(),
-    ),
-  ];
+    const allHandles = [
+      connectedAccount.handle.toLowerCase(),
+      ...(connectedAccount.handleAliases?.split(',') || []).map((handle) =>
+        handle.toLowerCase(),
+      ),
+    ];
 
-  const workspaceMembersMap = workspaceMembers.reduce(
-    (map, workspaceMember) => {
-      // @ts-expect-error legacy noImplicitAny
-      map[workspaceMember.userEmail.toLowerCase()] = true;
+    const workspaceMembersMap = workspaceMembers.reduce(
+      (map, workspaceMember) => {
+        // @ts-expect-error legacy noImplicitAny
+        map[workspaceMember.userEmail.toLowerCase()] = true;
 
-      return map;
-    },
-    new Map<string, boolean>(),
-  );
+        return map;
+      },
+      new Map<string, boolean>(),
+    );
 
-  const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
-    getDomainNameFromHandle(contact.handle).toLowerCase() !== selfDomainName;
+    const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
+      getDomainNameFromHandle(contact.handle).toLowerCase() !== selfDomainName;
 
-  return contacts.filter(
-    (contact) =>
-      (isDifferentDomain(contact, selfDomainName) ||
-        !isWorkDomain(selfDomainName)) &&
-      // @ts-expect-error legacy noImplicitAny
-      !workspaceMembersMap[contact.handle.toLowerCase()] &&
-      !allHandles.includes(contact.handle.toLowerCase()),
-  );
+    return contacts.filter(
+      (contact) =>
+        (isDifferentDomain(contact, selfDomainName) ||
+          !isWorkDomain(selfDomainName)) &&
+        // @ts-expect-error legacy noImplicitAny
+        !workspaceMembersMap[contact.handle.toLowerCase()] &&
+        !allHandles.includes(contact.handle.toLowerCase()),
+    );
+  } else {
+    const allHandles = connectedAccount.handleAliases?.split(',') || [];
+
+    return contacts.filter((contact) => !allHandles.includes(contact.handle));
+  }
 }

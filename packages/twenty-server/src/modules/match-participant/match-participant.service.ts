@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -121,7 +122,7 @@ export class MatchParticipantService<
       const queryBuilder = addPersonEmailFiltersToQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
         emails: uniqueParticipantsHandles,
-      });
+      }); // TODO: plug the other query builder
 
       const people = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
@@ -136,7 +137,7 @@ export class MatchParticipantService<
         transactionManager,
       );
 
-      const partipantsToBeUpdated = participants
+      const participantsToBeUpdated = participants
         .map((participant) => ({
           ...participant,
           handle: participant.handle ?? '',
@@ -184,7 +185,7 @@ export class MatchParticipantService<
         .filter(isDefined);
 
       await participantRepository.updateMany(
-        partipantsToBeUpdated.map((participant) => ({
+        participantsToBeUpdated.map((participant) => ({
           criteria: participant.id,
           partialEntity: participant,
         })),
@@ -195,7 +196,7 @@ export class MatchParticipantService<
         [
           {
             workspaceMemberId: null,
-            participants: partipantsToBeUpdated,
+            participants: participantsToBeUpdated,
           },
         ],
         workspaceId,

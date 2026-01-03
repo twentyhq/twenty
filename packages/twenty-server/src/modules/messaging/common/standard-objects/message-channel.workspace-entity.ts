@@ -21,6 +21,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageChannelCustomData } from 'src/modules/messaging/common/standard-objects/message-channel-custom-data.type';
 
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
@@ -501,4 +502,15 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageFolders: Relation<MessageFolderWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.customData,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Custom data`,
+    description: msg`JSON object containing custom data`,
+    icon: 'IconDatabase',
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  customData: MessageChannelCustomData | null;
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { parsePhoneNumber } from 'libphonenumber-js/max';
+
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -23,8 +25,8 @@ export class WhatsappUpdatePersonService {
       .replace('to ', '')
       .trim()
       .split(' ');
-    const oldNumber = preparedString[1];
-    const newNumber = preparedString[2];
+    const formattedOldNumber = parsePhoneNumber(preparedString[1]);
+    const formattedNewNumber = parsePhoneNumber(preparedString[2]);
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -37,9 +39,17 @@ export class WhatsappUpdatePersonService {
           );
 
         await personRepository.update(
-          { whatsAppPhoneNumber: { primaryPhoneNumber: oldNumber } },
           {
-            whatsAppPhoneNumber: { primaryPhoneNumber: newNumber },
+            whatsAppPhoneNumber: {
+              primaryPhoneCallingCode: formattedOldNumber.countryCallingCode,
+              primaryPhoneNumber: formattedOldNumber.number,
+            },
+          },
+          {
+            whatsAppPhoneNumber: {
+              primaryPhoneCallingCode: formattedNewNumber.countryCallingCode,
+              primaryPhoneNumber: formattedNewNumber.number,
+            },
             whatsAppId: wa_id,
           },
         );

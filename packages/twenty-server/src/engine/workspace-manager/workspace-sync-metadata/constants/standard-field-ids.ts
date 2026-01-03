@@ -231,6 +231,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
+  customData: '20202020-d143-46b1-b567-581d27936ce7',
 } as const;
 
 export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
@@ -539,14 +540,6 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
   favorites: '20202020-f032-478f-88fa-6426ff6f1e4c',
   attachments: '20202020-bf6f-4220-8c55-2764f1175870',
   searchVector: '20202020-0bcc-47a4-8360-2e35a7133f7a',
-} as const;
-
-export const WHATSAPP_INTEGRATION_STANDARD_FIELD_IDS = {
-  appSecret: '20202020-9928-4bf5-984b-ed8e435a60fb',
-  bearerToken: '20202020-10b0-4778-8b88-034b190b59ca',
-  businessAccountId: '20202020-57ca-4173-96f1-7a49548765c6',
-  businessPhoneNumbers: '20202020-b207-43b7-a527-b9cf36e04cc8',
-  businessDisplayName: '20202020-f248-40f6-8b16-db8803bbf116',
 } as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {

@@ -7,8 +7,8 @@ import { extractParticipantName } from 'src/modules/messaging/message-import-man
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappGetAllGroupParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-all-group-participants.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
@@ -30,47 +30,49 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
-        const whatsappRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WhatsappWorkspaceEntity>(
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
             workspaceId,
             'whatsapp',
           );
 
-        const whatsappRecord = await whatsappRepository.findOne({
+        const whatsappRecord = await connectedAccountRepository.findOne({
           where: {
-            businessAccountId: businessAccountId,
+            handle: businessAccountId,
           },
         });
 
-        if (whatsappRecord !== null) {
-          let participantsIds =
-            await this.whatsappGetAllGroupParticipantsService.getAllWhatsappGroupParticipantsService(
-              group_id,
-              whatsappRecord.bearerToken,
-            );
+        if (!whatsappRecord || !whatsappRecord.accessToken) {
+          throw new Error(); // TODO: check
+        }
 
-          participantsIds.splice(participantsIds.indexOf(senderId), 1);
-          participantsIds.splice(participantsIds.indexOf(businessAccountId), 1);
-          const personRepository =
-            await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
-              workspaceId,
-              'person',
-            );
+        let participantsIds =
+          await this.whatsappGetAllGroupParticipantsService.getAllWhatsappGroupParticipantsService(
+            group_id,
+            whatsappRecord.accessToken,
+          );
 
-          for (const participantId of participantsIds) {
-            const participantName = extractParticipantName(
-              await personRepository.findOneBy({
-                whatsAppId: participantId,
-              }),
-            );
-            const participant: MessageParticipant = {
-              role: MessageParticipantRole.TO,
-              handle: participantId,
-              displayName: participantName,
-            };
+        participantsIds.splice(participantsIds.indexOf(senderId), 1);
+        participantsIds.splice(participantsIds.indexOf(businessAccountId), 1);
+        const personRepository =
+          await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+            workspaceId,
+            'person',
+          );
 
-            messageParticipants.push(participant);
-          }
+        for (const participantId of participantsIds) {
+          const participantName = extractParticipantName(
+            await personRepository.findOneBy({
+              whatsAppId: participantId,
+            }),
+          );
+          const participant: MessageParticipant = {
+            role: MessageParticipantRole.TO,
+            handle: participantId,
+            displayName: participantName,
+          };
+
+          messageParticipants.push(participant);
         }
       },
     );

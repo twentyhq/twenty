@@ -7,9 +7,10 @@ import {
   ConnectedAccountProvider,
   type FieldActorSource,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getCountryCodesForCallingCode, isDefined } from 'twenty-shared/utils';
 import { type DeepPartial } from 'typeorm';
 import { v4 } from 'uuid';
+import { parsePhoneNumber } from 'libphonenumber-js/max';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -28,6 +29,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
+import { addPersonWhatsappNumberFilterToQueryBuilder } from 'src/modules/match-participant/utils/add-person-whatsapp-number-filter-to-query-builder';
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -85,10 +87,16 @@ export class CreateCompanyAndPersonService {
           return [];
         }
 
-        const queryBuilder = addPersonEmailFiltersToQueryBuilder({
-          queryBuilder: personRepository.createQueryBuilder('person'),
-          emails: uniqueHandles,
-        });
+        const queryBuilder =
+          connectedAccount.provider !== ConnectedAccountProvider.WHATSAPP
+            ? addPersonEmailFiltersToQueryBuilder({
+                queryBuilder: personRepository.createQueryBuilder('person'),
+                emails: uniqueHandles,
+              })
+            : addPersonWhatsappNumberFilterToQueryBuilder({
+                queryBuilder: personRepository.createQueryBuilder('person'),
+                phoneNumbers: uniqueHandles,
+              });
 
         const alreadyCreatedPeople = await queryBuilder
           .orderBy('person.createdAt', 'ASC')
@@ -218,45 +226,67 @@ export class CreateCompanyAndPersonService {
 
     for (const contact of uniqueContacts) {
       if (!contact.handle.includes('@')) {
-        continue;
-      }
+        const parsedNumber = parsePhoneNumber(contact.handle);
+        const existingPersonOnWhatsAppNumber = alreadyCreatedPeople.find(
+          (person) => {
+            return (
+              // country flag is unnecessary as main focus is on phone number
+              person.whatsAppPhoneNumber.primaryPhoneNumber ===
+                parsedNumber.nationalNumber &&
+              person.whatsAppPhoneNumber.primaryPhoneCallingCode ===
+                parsedNumber.countryCallingCode
+            );
+          },
+        );
 
-      const existingPersonOnPrimaryEmail = alreadyCreatedPeople.find(
-        (person) => {
-          return (
-            isNonEmptyString(person.emails?.primaryEmail) &&
-            person.emails.primaryEmail.toLowerCase() ===
-              contact.handle.toLowerCase()
+        if (!isDefined(existingPersonOnWhatsAppNumber)) {
+          continue;
+        }
+
+        shouldCreateOrRestorePeopleByHandleMap.set(contact.handle, {
+          existingPerson: existingPersonOnWhatsAppNumber,
+        });
+      } else {
+        const existingPersonOnPrimaryEmail = alreadyCreatedPeople.find(
+          (person) => {
+            return (
+              isNonEmptyString(person.emails?.primaryEmail) &&
+              person.emails.primaryEmail.toLowerCase() ===
+                contact.handle.toLowerCase()
+            );
+          },
+        );
+
+        if (isDefined(existingPersonOnPrimaryEmail)) {
+          shouldCreateOrRestorePeopleByHandleMap.set(
+            contact.handle.toLowerCase(),
+            {
+              existingPerson: existingPersonOnPrimaryEmail,
+            },
           );
-        },
-      );
+          continue;
+        }
 
-      if (isDefined(existingPersonOnPrimaryEmail)) {
+        const existingPersonOnAdditionalEmails = alreadyCreatedPeople.find(
+          (person) => {
+            return (
+              Array.isArray(person.emails?.additionalEmails) &&
+              person.emails.additionalEmails.some(
+                (email) => email.toLowerCase() === contact.handle.toLowerCase(),
+              )
+            );
+          },
+        );
+
+        if (!isDefined(existingPersonOnAdditionalEmails)) continue;
+
         shouldCreateOrRestorePeopleByHandleMap.set(
           contact.handle.toLowerCase(),
           {
-            existingPerson: existingPersonOnPrimaryEmail,
+            existingPerson: existingPersonOnAdditionalEmails,
           },
         );
-        continue;
       }
-
-      const existingPersonOnAdditionalEmails = alreadyCreatedPeople.find(
-        (person) => {
-          return (
-            Array.isArray(person.emails?.additionalEmails) &&
-            person.emails.additionalEmails.some(
-              (email) => email.toLowerCase() === contact.handle.toLowerCase(),
-            )
-          );
-        },
-      );
-
-      if (!isDefined(existingPersonOnAdditionalEmails)) continue;
-
-      shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
-        existingPerson: existingPersonOnAdditionalEmails,
-      });
     }
 
     const contactsThatNeedPersonCreate = uniqueContacts.filter(
@@ -278,27 +308,33 @@ export class CreateCompanyAndPersonService {
       return !isNull(existingPerson.deletedAt);
     });
 
-    const workDomainNamesToCreate = compact(
-      [...contactsThatNeedPersonCreate, ...contactsThatNeedPersonRestore]
-        .map((contact) => {
-          const companyDomainName = isWorkEmail(contact.handle)
-            ? getDomainNameFromHandle(contact.handle)
-            : undefined;
+    const workDomainNamesToCreate =
+      source === 'EMAIL'
+        ? compact(
+            [...contactsThatNeedPersonCreate, ...contactsThatNeedPersonRestore]
+              .map((contact) => {
+                const companyDomainName = isWorkEmail(contact.handle)
+                  ? getDomainNameFromHandle(contact.handle)
+                  : undefined;
 
-          if (!isDefined(companyDomainName) || !isWorkDomain(companyDomainName))
-            return undefined;
+                if (
+                  !isDefined(companyDomainName) ||
+                  !isWorkDomain(companyDomainName)
+                )
+                  return undefined;
 
-          return {
-            domainName: companyDomainName,
-            createdBySource: source,
-            createdByWorkspaceMember: connectedAccount.accountOwner,
-            createdByContext: {
-              provider: connectedAccount.provider,
-            },
-          };
-        })
-        .filter(isDefined),
-    );
+                return {
+                  domainName: companyDomainName,
+                  createdBySource: source,
+                  createdByWorkspaceMember: connectedAccount.accountOwner,
+                  createdByContext: {
+                    provider: connectedAccount.provider,
+                  },
+                };
+              })
+              .filter(isDefined),
+          )
+        : [];
 
     return {
       contactsThatNeedPersonCreate,
@@ -335,26 +371,53 @@ export class CreateCompanyAndPersonService {
         getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
       const createdByName = computeDisplayName(createdBy.workspaceMember?.name);
 
-      const companyId = companiesMap[getDomainNameFromHandle(handle)];
+      if (handle.includes('@')) {
+        const companyId = companiesMap[getDomainNameFromHandle(handle)];
 
-      return {
-        id,
-        emails: {
-          primaryEmail: handle.toLowerCase(),
-          additionalEmails: null,
-        },
-        name: {
-          firstName,
-          lastName,
-        },
-        companyId,
-        createdBy: {
-          source: createdBy.source,
-          workspaceMemberId: createdBy.workspaceMember?.id ?? null,
-          name: createdByName,
-          context: createdBy.context,
-        },
-      };
+        return {
+          id,
+          emails: {
+            primaryEmail: handle.toLowerCase(),
+            additionalEmails: null,
+          },
+          name: {
+            firstName,
+            lastName,
+          },
+          companyId,
+          createdBy: {
+            source: createdBy.source,
+            workspaceMemberId: createdBy.workspaceMember?.id ?? null,
+            name: createdByName,
+            context: createdBy.context,
+          },
+        };
+      } else {
+        const phoneNumber = parsePhoneNumber(handle);
+        const callingCode = phoneNumber.countryCallingCode;
+        const number = phoneNumber.nationalNumber;
+        const countryCode = getCountryCodesForCallingCode(callingCode)[0]; // TODO: still not sure about this approach, may cause some discrepancies, is it possible to totally skip country code?
+
+        return {
+          id,
+          whatsAppPhoneNumber: {
+            primaryPhoneNumber: number,
+            primaryPhoneCallingCode: callingCode,
+            primaryPhoneCountryCode: countryCode,
+            additionalPhones: null,
+          },
+          name: {
+            firstName,
+            lastName,
+          },
+          createdBy: {
+            source: createdBy.source,
+            workspaceMemberId: null,
+            name: createdByName,
+            context: createdBy.context,
+          },
+        };
+      }
     });
   }
 

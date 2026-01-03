@@ -341,7 +341,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsUnique()
   @WorkspaceIsNullable()
-  whatsAppPhoneNumber: PhonesMetadata; // or string? we have no data about the landline code (+1 or others)
+  whatsAppPhoneNumber: PhonesMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.whatsappId,

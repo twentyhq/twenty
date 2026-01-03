@@ -85,6 +85,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         participant.handle === connectedAccount.handle;
 
                       const isExcludedByNonProfessionalEmails =
+                        participant.handle.includes('@') &&
                         messageChannel.excludeNonProfessionalEmails &&
                         !isWorkEmail(participant.handle);
 
@@ -133,7 +134,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           workspaceId,
           connectedAccount,
           contactsToCreate,
-          source: FieldActorSource.EMAIL,
+          source: FieldActorSource.EMAIL, // TODO: change to what? SMS? WhatsApp?
         },
       );
     }

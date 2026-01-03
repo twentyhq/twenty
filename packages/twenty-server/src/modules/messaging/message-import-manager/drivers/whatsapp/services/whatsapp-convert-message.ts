@@ -15,9 +15,9 @@ import { WhatsappUpdatePersonService } from 'src/modules/messaging/message-impor
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WhatsappWorkspaceEntity } from 'src/modules/integrations/whatsapp-workspace.entity';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
 import { WhatsappFile } from 'src/modules/messaging/message-attachment-manager/types/whatsapp-file.type';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class WhatsappConvertMessage {
@@ -46,23 +46,26 @@ export class WhatsappConvertMessage {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
-        const integrationsRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WhatsappWorkspaceEntity>(
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
             workspaceId,
-            'whatsapp',
+            'messageChannel',
           );
 
-        const whatsappRecord = await integrationsRepository.findOne({
-          where: { businessAccountId: whatsappBusinessAccountId },
+        const whatsappRecord = await messageChannelRepository.findOne({
+          where: { handle: whatsappBusinessAccountId },
         });
 
-        if (whatsappRecord === null) {
-          return [];
+        if (
+          whatsappRecord === null ||
+          !whatsappRecord.customData?.whatsappBusinessName
+        ) {
+          throw new Error(); // TODO: check
         }
         const messageReceiver: MessageParticipant = {
           role: MessageParticipantRole.TO,
-          handle: change.value.metadata.display_phone_number,
-          displayName: whatsappRecord.businessDisplayName,
+          handle: '+'.concat(change.value.metadata.display_phone_number),
+          displayName: whatsappRecord.customData.whatsappBusinessName,
         };
 
         participants.push(messageReceiver);
@@ -107,7 +110,7 @@ export class WhatsappConvertMessage {
     const receivedAt: Date = new Date(parseInt(message.timestamp));
     const messageSender: MessageParticipant = {
       role: MessageParticipantRole.FROM,
-      handle: message.from, // phone number
+      handle: '+'.concat(message.from), // phone number
       displayName: messageSenderContactName,
     };
 
@@ -143,21 +146,9 @@ export class WhatsappConvertMessage {
         break;
       case 'document': {
         text = message.document?.caption ?? '';
-        const fileType =
-          message.document?.filename.endsWith('.txt') ||
-          message.document?.filename.endsWith('.doc') ||
-          message.document?.filename.endsWith('.docx') ||
-          message.document?.filename.endsWith('.pdf')
-            ? 'TEXT_DOCUMENT'
-            : message.document?.filename.endsWith('.xls') ||
-                message.document?.filename.endsWith('.xlsx')
-              ? 'SPREADSHEET'
-              : message.document?.filename.endsWith('.ppt') ||
-                  message.document?.filename.endsWith('.pptx')
-                ? 'PRESENTATION'
-                : 'OTHER';
 
         attachments.push({
+          fileName: message.document?.filename,
           mimeType: message.document?.mime_type,
           sha256: message.document?.sha256,
           url: message.document?.url,
