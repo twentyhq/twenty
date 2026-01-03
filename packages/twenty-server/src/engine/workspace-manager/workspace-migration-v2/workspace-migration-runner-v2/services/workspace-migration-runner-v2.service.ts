@@ -145,7 +145,7 @@ export class WorkspaceMigrationRunnerV2Service {
         const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
-              actionType: action.type,
+              action,
               context: {
                 action,
                 allFlatEntityMaps,
@@ -235,7 +235,7 @@ export class WorkspaceMigrationRunnerV2Service {
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
           {
-            actionType: invertedAction.type,
+            action: invertedAction,
             context: {
               action: invertedAction,
               allFlatEntityMaps: allFlatEntityMaps,

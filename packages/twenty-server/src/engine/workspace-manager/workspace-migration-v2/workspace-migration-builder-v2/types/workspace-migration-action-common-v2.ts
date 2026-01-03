@@ -9,3 +9,13 @@ export type WorkspaceMigrationActionV2 = MetadataWorkspaceMigrationAction<
   AllMetadataName,
   WorkspaceMigrationActionType
 >;
+
+export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionType;
+
+export type WorkspaceMigrationActionHandlerKey =
+  `${WorkspaceMigrationActionType}_${AllMetadataName}`;
+
+export const buildActionHandlerKey = (
+  actionType: WorkspaceMigrationActionType,
+  metadataName: AllMetadataName,
+): WorkspaceMigrationActionHandlerKey => `${actionType}_${metadataName}`;
