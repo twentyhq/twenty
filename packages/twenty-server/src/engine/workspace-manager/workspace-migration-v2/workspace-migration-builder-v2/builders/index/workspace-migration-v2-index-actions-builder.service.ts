@@ -159,18 +159,12 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     return {
       status: 'success',
-      action: [
-        {
-          type: 'delete',
-          metadataName: 'index',
-          entityId: flatEntity.id,
-        },
-        {
-          type: 'create',
-          metadataName: 'index',
-          flatEntity: updatedFlatIndex,
-        },
-      ],
+      action: {
+        type: 'update',
+        metadataName: 'index',
+        entityId: flatEntity.id,
+        updatedFlatEntity: updatedFlatIndex,
+      },
     };
   }
 }
