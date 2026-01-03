@@ -22,6 +22,8 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-workspace-foreign-keys-migration.command';
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
+import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -61,6 +63,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.16 Commands
     protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
     protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
+    protected readonly identifyStandardFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -95,6 +99,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1160: VersionCommands = [
       this.backfillUpdatedByFieldCommand,
       this.addWorkspaceForeignKeysMigrationCommand,
+      this.identifyStandardFieldMetadataCommand,
+      this
+        .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
     this.allCommands = {

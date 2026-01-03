@@ -3,9 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-workspace-foreign-keys-migration.command';
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
+import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -20,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ObjectMetadataEntity,
       ViewEntity,
       ViewFieldEntity,
+      FieldMetadataEntity,
     ]),
     DataSourceModule,
     FieldMetadataModule,
@@ -30,10 +34,14 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
+    IdentifyFieldMetadataCommand,
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
+    IdentifyFieldMetadataCommand,
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}
