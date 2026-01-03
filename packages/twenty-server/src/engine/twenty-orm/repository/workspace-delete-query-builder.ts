@@ -103,7 +103,7 @@ export class WorkspaceDeleteQueryBuilder<
         objectMetadata.isCustom,
       );
 
-      const before = await eventSelectQueryBuilder.getOne();
+      const before = await eventSelectQueryBuilder.getMany();
 
       this.expressionMap.wheres = applyTableAliasOnWhereCondition({
         condition: this.expressionMap.wheres,
