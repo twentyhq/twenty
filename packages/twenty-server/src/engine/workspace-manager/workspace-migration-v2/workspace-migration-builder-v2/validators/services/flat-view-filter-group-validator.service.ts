@@ -84,7 +84,7 @@ export class FlatViewFilterGroupValidatorService {
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<FlatViewFilterGroup> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'create_view_filter_group',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
@@ -164,7 +164,7 @@ export class FlatViewFilterGroupValidatorService {
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<FlatViewFilterGroup> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'delete_view_filter_group',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
@@ -197,7 +197,7 @@ export class FlatViewFilterGroupValidatorService {
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<FlatViewFilterGroup> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'update_view_filter_group',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

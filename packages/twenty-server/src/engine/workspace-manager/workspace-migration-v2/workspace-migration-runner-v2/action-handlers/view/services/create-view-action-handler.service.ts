@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { CreateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
@@ -13,7 +12,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_view',
+  'create',
+  'view',
 ) {
   constructor() {
     super();
@@ -22,12 +22,12 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewAction>) {
     const { flatViewMaps } = allFlatEntityMaps;
-    const { view } = action;
+    const { flatEntity } = action;
 
     const updatedFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: view,
+      flatEntity,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -40,13 +40,13 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     context: WorkspaceMigrationActionRunnerArgs<CreateViewAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { view } = action;
+    const { flatEntity } = action;
 
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
     await viewRepository.insert({
-      ...view,
+      ...flatEntity,
       workspaceId,
     });
   }

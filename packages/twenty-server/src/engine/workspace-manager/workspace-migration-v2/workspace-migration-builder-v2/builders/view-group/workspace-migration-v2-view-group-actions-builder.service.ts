@@ -40,8 +40,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'create_view_group',
-        viewGroup: flatViewGroupToValidate,
+        type: 'create',
+        metadataName: 'viewGroup',
+        flatEntity: flatViewGroupToValidate,
       },
     };
   }
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'delete_view_group',
-        viewGroupId: flatViewGroupToValidate.id,
+        type: 'delete',
+        metadataName: 'viewGroup',
+        entityId: flatViewGroupToValidate.id,
       },
     };
   }
@@ -92,8 +94,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewGroupAction: UpdateViewGroupAction = {
-      type: 'update_view_group',
-      viewGroupId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewGroup',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

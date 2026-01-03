@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { DeleteViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
@@ -13,7 +12,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_view',
+  'delete',
+  'view',
 ) {
   constructor() {
     super();
@@ -22,12 +22,12 @@ export class DeleteViewActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewAction>) {
     const { flatViewMaps } = allFlatEntityMaps;
-    const { viewId } = action;
+    const { entityId } = action;
 
     const updatedFlatViewMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: viewId,
+      entityToDeleteId: entityId,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -40,13 +40,13 @@ export class DeleteViewActionHandlerService extends WorkspaceMigrationRunnerActi
     context: WorkspaceMigrationActionRunnerArgs<DeleteViewAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { viewId } = action;
+    const { entityId } = action;
 
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
     await viewRepository.delete({
-      id: viewId,
+      id: entityId,
       workspaceId,
     });
   }

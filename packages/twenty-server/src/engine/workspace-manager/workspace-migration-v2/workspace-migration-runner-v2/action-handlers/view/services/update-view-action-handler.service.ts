@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -15,7 +14,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_view',
+  'update',
+  'view',
 ) {
   constructor() {
     super();
@@ -24,12 +24,12 @@ export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewAction>) {
     const { flatViewMaps } = allFlatEntityMaps;
-    const { viewId } = action;
+    const { entityId } = action;
 
     const existingView = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: viewId,
+      flatEntityId: entityId,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -52,13 +52,13 @@ export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     context: WorkspaceMigrationActionRunnerArgs<UpdateViewAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { viewId } = action;
+    const { entityId } = action;
 
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
     await viewRepository.update(
-      viewId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }

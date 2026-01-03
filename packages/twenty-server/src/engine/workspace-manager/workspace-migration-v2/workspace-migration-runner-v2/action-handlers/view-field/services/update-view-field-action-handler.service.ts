@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -15,7 +14,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_view_field',
+  'update',
+  'viewField',
 ) {
   constructor() {
     super();
@@ -24,12 +24,12 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFieldAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFieldAction>) {
     const { flatViewFieldMaps } = allFlatEntityMaps;
-    const { viewFieldId } = action;
+    const { entityId } = action;
 
     const existingViewField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: viewFieldId,
+      flatEntityId: entityId,
       flatEntityMaps: flatViewFieldMaps,
     });
 
@@ -52,14 +52,14 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     context: WorkspaceMigrationActionRunnerArgs<UpdateViewFieldAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { viewFieldId } = action;
+    const { entityId } = action;
 
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
     const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
-    await viewFieldRepository.update(viewFieldId, update);
+    await viewFieldRepository.update(entityId, update);
   }
 
   async executeForWorkspaceSchema(

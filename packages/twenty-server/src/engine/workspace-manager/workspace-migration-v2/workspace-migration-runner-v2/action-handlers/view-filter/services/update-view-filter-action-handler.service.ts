@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -15,7 +14,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_view_filter',
+  'update',
+  'viewFilter',
 ) {
   constructor() {
     super();
@@ -24,12 +24,12 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFilterAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFilterAction>) {
     const { flatViewFilterMaps } = allFlatEntityMaps;
-    const { viewFilterId } = action;
+    const { entityId } = action;
 
     const existingViewFilter = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: viewFilterId,
+      flatEntityId: entityId,
       flatEntityMaps: flatViewFilterMaps,
     });
 
@@ -52,14 +52,14 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<UpdateViewFilterAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { viewFilterId } = action;
+    const { entityId } = action;
 
     const viewFilterRepository =
       queryRunner.manager.getRepository<ViewFilterEntity>(ViewFilterEntity);
 
     const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
 
-    await viewFilterRepository.update(viewFilterId, update);
+    await viewFilterRepository.update(entityId, update);
   }
 
   async executeForWorkspaceSchema(

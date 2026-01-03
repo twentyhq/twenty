@@ -37,8 +37,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'create_view',
-        view: flatViewToValidate,
+        type: 'create',
+        metadataName: 'view',
+        flatEntity: flatViewToValidate,
       },
     };
   }
@@ -61,8 +62,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'delete_view',
-        viewId: flatViewToValidate.id,
+        type: 'delete',
+        metadataName: 'view',
+        entityId: flatViewToValidate.id,
       },
     };
   }
@@ -83,8 +85,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewAction: UpdateViewAction = {
-      type: 'update_view',
-      viewId: flatEntityId,
+      type: 'update',
+      metadataName: 'view',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

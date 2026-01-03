@@ -42,8 +42,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     return {
       status: 'success',
       action: {
-        type: 'create_view_filter_group',
-        viewFilterGroup: flatViewFilterGroupToValidate,
+        type: 'create',
+        metadataName: 'viewFilterGroup',
+        flatEntity: flatViewFilterGroupToValidate,
       },
     };
   }
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     return {
       status: 'success',
       action: {
-        type: 'delete_view_filter_group',
-        viewFilterGroupId: flatViewFilterGroupToValidate.id,
+        type: 'delete',
+        metadataName: 'viewFilterGroup',
+        entityId: flatViewFilterGroupToValidate.id,
       },
     };
   }
@@ -100,8 +102,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterGroupAction: UpdateViewFilterGroupAction = {
-      type: 'update_view_filter_group',
-      viewFilterGroupId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewFilterGroup',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

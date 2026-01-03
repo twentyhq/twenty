@@ -38,8 +38,9 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'create_view_field',
-        viewField: args.flatEntityToValidate,
+        type: 'create',
+        metadataName: 'viewField',
+        flatEntity: args.flatEntityToValidate,
       },
     };
   }
@@ -65,8 +66,9 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'delete_view_field',
-        viewFieldId: flatViewFieldToValidate.id,
+        type: 'delete',
+        metadataName: 'viewField',
+        entityId: flatViewFieldToValidate.id,
       },
     };
   }
@@ -90,8 +92,9 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFieldAction: UpdateViewFieldAction = {
-      type: 'update_view_field',
-      viewFieldId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewField',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

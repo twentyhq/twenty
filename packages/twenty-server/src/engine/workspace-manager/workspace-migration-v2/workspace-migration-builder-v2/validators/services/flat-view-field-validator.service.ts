@@ -31,7 +31,7 @@ export class FlatViewFieldValidatorService {
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
     const validationResult: FailedFlatEntityValidation<FlatViewField> = {
-      type: 'update_view_field',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,
@@ -129,7 +129,7 @@ export class FlatViewFieldValidatorService {
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
     const validationResult: FailedFlatEntityValidation<FlatViewField> = {
-      type: 'delete_view_field',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: viewFieldIdToDelete,
@@ -193,7 +193,7 @@ export class FlatViewFieldValidatorService {
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
     const validationResult: FailedFlatEntityValidation<FlatViewField> = {
-      type: 'create_view_field',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatViewFieldToValidate.id,

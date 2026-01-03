@@ -28,7 +28,7 @@ export class FlatViewFilterValidatorService {
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'create_view_filter',
+      type: 'create',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
@@ -101,7 +101,7 @@ export class FlatViewFilterValidatorService {
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'delete_view_filter',
+      type: 'delete',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
@@ -138,7 +138,7 @@ export class FlatViewFilterValidatorService {
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
     const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'update_view_filter',
+      type: 'update',
       errors: [],
       flatEntityMinimalInformation: {
         id: flatEntityId,

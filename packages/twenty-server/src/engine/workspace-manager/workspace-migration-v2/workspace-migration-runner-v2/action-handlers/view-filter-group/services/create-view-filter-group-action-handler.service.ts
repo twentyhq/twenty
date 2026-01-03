@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type CreateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
@@ -13,18 +12,19 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 
 @Injectable()
 export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_view_filter_group',
+  'create',
+  'viewFilterGroup',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewFilterGroupAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewFilterGroupAction>) {
     const { flatViewFilterGroupMaps } = allFlatEntityMaps;
-    const { viewFilterGroup } = action;
+    const { flatEntity } = action;
 
     const updatedFlatViewFilterGroupMaps = addFlatEntityToFlatEntityMapsOrThrow(
       {
-        flatEntity: viewFilterGroup,
+        flatEntity,
         flatEntityMaps: flatViewFilterGroupMaps,
       },
     );
@@ -38,7 +38,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
     context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterGroupAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { viewFilterGroup } = action;
+    const { flatEntity } = action;
 
     const viewFilterGroupRepository =
       queryRunner.manager.getRepository<ViewFilterGroupEntity>(
@@ -46,7 +46,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
       );
 
     await viewFilterGroupRepository.insert({
-      ...viewFilterGroup,
+      ...flatEntity,
       workspaceId,
     });
   }

@@ -5,7 +5,6 @@ import {
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { CreateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
@@ -13,17 +12,18 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_view_filter',
+  'create',
+  'viewFilter',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewFilterAction>): Partial<AllFlatEntityMaps> {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewFilterAction>) {
     const { flatViewFilterMaps } = allFlatEntityMaps;
-    const { viewFilter } = action;
+    const { flatEntity } = action;
 
     const updatedFlatViewFilterMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: viewFilter,
+      flatEntity,
       flatEntityMaps: flatViewFilterMaps,
     });
 
@@ -36,13 +36,13 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { viewFilter } = action;
+    const { flatEntity } = action;
 
     const viewFilterRepository =
       queryRunner.manager.getRepository<ViewFilterEntity>(ViewFilterEntity);
 
     await viewFilterRepository.insert({
-      ...viewFilter,
+      ...flatEntity,
       workspaceId,
     });
   }

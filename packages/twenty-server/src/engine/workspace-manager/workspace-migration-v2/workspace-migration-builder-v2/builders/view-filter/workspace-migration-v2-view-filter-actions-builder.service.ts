@@ -40,8 +40,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'create_view_filter',
-        viewFilter: flatViewFilterToValidate,
+        type: 'create',
+        metadataName: 'viewFilter',
+        flatEntity: flatViewFilterToValidate,
       },
     };
   }
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'delete_view_filter',
-        viewFilterId: flatViewFilterToValidate.id,
+        type: 'delete',
+        metadataName: 'viewFilter',
+        entityId: flatViewFilterToValidate.id,
       },
     };
   }
@@ -92,8 +94,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterAction: UpdateViewFilterAction = {
-      type: 'update_view_filter',
-      viewFilterId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewFilter',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

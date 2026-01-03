@@ -1,21 +1,15 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateViewFilterGroupAction = {
-  type: 'create_view_filter_group';
-  viewFilterGroup: FlatViewFilterGroup;
-};
+export type CreateViewFilterGroupAction =
+  BaseCreateWorkspaceMigrationAction<'viewFilterGroup'>;
 
-export type UpdateViewFilterGroupAction = {
-  type: 'update_view_filter_group';
-  viewFilterGroupId: string;
-  updates: FlatEntityPropertiesUpdates<'viewFilterGroup'>;
-};
+export type UpdateViewFilterGroupAction =
+  BaseUpdateWorkspaceMigrationAction<'viewFilterGroup'>;
 
-export type DeleteViewFilterGroupAction = {
-  type: 'delete_view_filter_group';
-  viewFilterGroupId: string;
-};
+export type DeleteViewFilterGroupAction =
+  BaseDeleteWorkspaceMigrationAction<'viewFilterGroup'>;
 
 export type WorkspaceMigrationViewFilterGroupActionV2 =
   | CreateViewFilterGroupAction

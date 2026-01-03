@@ -41,13 +41,14 @@ export class WorkspaceMigrationRunnerV2Service {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
+        // TODO switch on action.metadataName
         switch (action.type) {
           case 'delete_field':
           case 'create_field':
           case 'update_field':
-          case 'delete_object':
-          case 'create_object':
-          case 'update_object': {
+          case 'delete':
+          case 'create':
+          case 'update': {
             return true;
           }
           default: {
@@ -65,28 +66,17 @@ export class WorkspaceMigrationRunnerV2Service {
       );
     }
 
+    const viewRelatedMetadataNames = [
+      'view',
+      'viewFilter',
+      'viewGroup',
+      'viewField',
+      'viewFilterGroup',
+    ];
     const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) => {
-        switch (action.type) {
-          case 'delete_view':
-          case 'create_view':
-          case 'update_view':
-          case 'delete_view_filter':
-          case 'create_view_filter':
-          case 'update_view_filter':
-          case 'delete_view_group':
-          case 'create_view_group':
-          case 'update_view_group':
-          case 'delete_view_field':
-          case 'create_view_field':
-          case 'update_view_field': {
-            return true;
-          }
-          default: {
-            return false;
-          }
-        }
-      },
+      (action) =>
+        'metadataName' in action &&
+        viewRelatedMetadataNames.includes(action.metadataName),
     );
 
     if (

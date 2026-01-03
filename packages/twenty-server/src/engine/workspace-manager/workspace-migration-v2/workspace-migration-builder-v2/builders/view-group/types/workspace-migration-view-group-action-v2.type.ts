@@ -1,21 +1,15 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateViewGroupAction = {
-  type: 'create_view_group';
-  viewGroup: FlatViewGroup;
-};
+export type CreateViewGroupAction =
+  BaseCreateWorkspaceMigrationAction<'viewGroup'>;
 
-export type UpdateViewGroupAction = {
-  type: 'update_view_group';
-  viewGroupId: string;
-  updates: FlatEntityPropertiesUpdates<'viewGroup'>;
-};
+export type UpdateViewGroupAction =
+  BaseUpdateWorkspaceMigrationAction<'viewGroup'>;
 
-export type DeleteViewGroupAction = {
-  type: 'delete_view_group';
-  viewGroupId: string;
-};
+export type DeleteViewGroupAction =
+  BaseDeleteWorkspaceMigrationAction<'viewGroup'>;
 
 export type WorkspaceMigrationViewGroupActionV2 =
   | CreateViewGroupAction
