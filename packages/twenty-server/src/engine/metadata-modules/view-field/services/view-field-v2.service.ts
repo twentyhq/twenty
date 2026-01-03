@@ -36,6 +36,17 @@ export class ViewFieldV2Service {
     private readonly applicationService: ApplicationService,
   ) {}
 
+  private async invalidateAndRecomputeViewFieldMaps(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
+  }
+
   async createOne({
     createViewFieldInput,
     workspaceId,
@@ -107,6 +118,8 @@ export class ViewFieldV2Service {
       );
     }
 
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
+
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -128,6 +141,8 @@ export class ViewFieldV2Service {
     workspaceId: string;
     updateViewFieldInput: UpdateViewFieldInput;
   }): Promise<ViewFieldDTO> {
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
+
     const { flatViewFieldMaps: existingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -163,6 +178,8 @@ export class ViewFieldV2Service {
         'Multiple validation errors occurred while updating view field',
       );
     }
+
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -223,6 +240,8 @@ export class ViewFieldV2Service {
       );
     }
 
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
+
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -282,7 +301,13 @@ export class ViewFieldV2Service {
       );
     }
 
-    return fromFlatViewFieldToViewFieldDto(existingViewFieldToDelete);
+    const viewFieldDto = fromFlatViewFieldToViewFieldDto(
+      existingViewFieldToDelete,
+    );
+
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
+
+    return viewFieldDto;
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
