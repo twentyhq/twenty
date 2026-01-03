@@ -2,12 +2,16 @@ import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/use
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { isJunctionRelationField } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import groupBy from 'lodash.groupby';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type FeatureFlagKey } from '~/generated/graphql';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;
@@ -34,6 +38,10 @@ export const useFieldListFieldMetadataItems = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const isJunctionRelationsEnabled = useIsFeatureEnabled(
+    'IS_JUNCTION_RELATIONS_ENABLED' as FeatureFlagKey,
+  );
 
   const availableFieldMetadataItems = objectMetadataItem.readableFields
     .filter(
@@ -70,25 +78,37 @@ export const useFieldListFieldMetadataItems = ({
         : 'inlineFieldMetadataItems',
   );
 
-  const inlineRelationFieldMetadataItems = (
-    relationFieldMetadataItems ?? []
-  ).filter(
-    (fieldMetadataItem) =>
-      (objectNameSingular === CoreObjectNameSingular.Note &&
-        fieldMetadataItem.name === 'noteTargets') ||
-      (objectNameSingular === CoreObjectNameSingular.Task &&
-        fieldMetadataItem.name === 'taskTargets'),
-  );
+  // Activity target relations (hardcoded noteTargets/taskTargets) - rendered with ActivityTargetsInlineCell
+  const isActivityTargetRelation = (fieldMetadataItem: FieldMetadataItem) =>
+    (objectNameSingular === CoreObjectNameSingular.Note &&
+      fieldMetadataItem.name === 'noteTargets') ||
+    (objectNameSingular === CoreObjectNameSingular.Task &&
+      fieldMetadataItem.name === 'taskTargets');
 
+  const activityTargetFieldMetadataItems = (
+    relationFieldMetadataItems ?? []
+  ).filter(isActivityTargetRelation);
+
+  // Junction relations (many-to-many through junction) - rendered inline with RecordInlineCell
+  // Only show if feature flag is enabled
+  const junctionRelationFieldMetadataItems = isJunctionRelationsEnabled
+    ? (relationFieldMetadataItems ?? []).filter(
+        (fieldMetadataItem) =>
+          !isActivityTargetRelation(fieldMetadataItem) &&
+          isJunctionRelationField(fieldMetadataItem),
+      )
+    : [];
+
+  // Keep backwards compatibility alias
+  const inlineRelationFieldMetadataItems = activityTargetFieldMetadataItems;
+
+  // When junction relations feature is disabled, treat junction fields as boxed relations
   const boxedRelationFieldMetadataItems = (relationFieldMetadataItems ?? [])
     .filter(
       (fieldMetadataItem) =>
-        !(
-          (objectNameSingular === CoreObjectNameSingular.Note &&
-            fieldMetadataItem.name === 'noteTargets') ||
-          (objectNameSingular === CoreObjectNameSingular.Task &&
-            fieldMetadataItem.name === 'taskTargets')
-        ),
+        !isActivityTargetRelation(fieldMetadataItem) &&
+        (!isJunctionRelationsEnabled ||
+          !isJunctionRelationField(fieldMetadataItem)),
     )
     .filter((fieldMetadataItem) => {
       const canReadRelation =
@@ -113,6 +133,7 @@ export const useFieldListFieldMetadataItems = ({
   return {
     inlineFieldMetadataItems,
     inlineRelationFieldMetadataItems,
+    junctionRelationFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   };
 };

@@ -2,6 +2,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import {
+  generateJunctionRelationGqlFields,
+  isJunctionRelationField,
+} from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
@@ -13,7 +17,7 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
   >[];
   fields: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
+    'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
   >[];
   depth: 0 | 1;
   shouldOnlyLoadRelationIdentifiers?: boolean;
@@ -45,6 +49,21 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           throw new Error(
             `Target object metadata item not found for ${fieldMetadata.name}`,
           );
+        }
+
+        // Check if this is a junction relation (many-to-many through junction)
+        if (isJunctionRelationField(fieldMetadata)) {
+          const junctionGqlFields = generateJunctionRelationGqlFields({
+            fieldMetadataItem: fieldMetadata as FieldMetadataItem,
+            objectMetadataItems: objectMetadataItems as ObjectMetadataItem[],
+          });
+
+          if (isDefined(junctionGqlFields) && depth === 1) {
+            return {
+              ...recordGqlFields,
+              [fieldMetadata.name]: junctionGqlFields,
+            };
+          }
         }
 
         const labelIdentifierFieldMetadataItem =

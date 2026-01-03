@@ -107,16 +107,24 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
+  // Extract junctionTargetRelationFieldIds from settings for the form
+  const junctionTargetRelationFieldIds =
+    fieldMetadataItem?.settings &&
+    'junctionTargetRelationFieldIds' in fieldMetadataItem.settings
+      ? fieldMetadataItem.settings.junctionTargetRelationFieldIds
+      : undefined;
+
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
-    values: {
+    defaultValues: {
       icon: fieldMetadataItem?.icon ?? 'Icon',
       type: fieldMetadataItem?.type as SettingsFieldType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings: fieldMetadataItem?.settings,
+      junctionTargetRelationFieldIds,
     },
   });
 
@@ -189,9 +197,19 @@ export const SettingsObjectFieldEdit = () => {
     const otherDirtyFields = omit(dirtyFields, 'relation');
 
     if (Object.keys(otherDirtyFields).length > 0) {
+      // relationType and junctionTargetRelationFieldIds are stored at form root level
+      // but get merged into settings by formatFieldMetadataItemInput
+      const dirtyFieldKeys = Object.keys(otherDirtyFields);
+      const hasRelationSettingsChange =
+        dirtyFieldKeys.includes('junctionTargetRelationFieldIds') ||
+        dirtyFieldKeys.includes('relationType');
+      const effectiveDirtyKeys = hasRelationSettingsChange
+        ? [...dirtyFieldKeys, 'settings']
+        : dirtyFieldKeys;
+
       const formattedInput = Object.fromEntries(
         Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-          ([key]) => Object.keys(otherDirtyFields).includes(key),
+          ([key]) => effectiveDirtyKeys.includes(key),
         ),
       );
 

@@ -47,7 +47,8 @@ export const MenuItemMultiSelectAvatar = ({
   isKeySelected,
   onSelectChange,
 }: MenuItemMultiSelectAvatarProps) => {
-  const handleOnClick = () => {
+  const handleOnClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
     onSelectChange?.(!selected);
   };
 

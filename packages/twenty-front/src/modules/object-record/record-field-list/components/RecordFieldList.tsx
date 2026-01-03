@@ -76,6 +76,7 @@ export const RecordFieldList = ({
   const {
     inlineFieldMetadataItems,
     inlineRelationFieldMetadataItems,
+    junctionRelationFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
@@ -205,6 +206,65 @@ export const RecordFieldList = ({
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
+            {junctionRelationFieldMetadataItems?.map(
+              (fieldMetadataItem, index) => (
+                <FieldContext.Provider
+                  key={objectRecordId + fieldMetadataItem.id}
+                  value={{
+                    recordId: objectRecordId,
+                    maxWidth: 200,
+                    isLabelIdentifier: false,
+                    fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                      field: fieldMetadataItem,
+                      position: index,
+                      objectMetadataItem,
+                      showLabel: true,
+                      labelWidth: 90,
+                    }),
+                    useUpdateRecord: useUpdateOneObjectRecordMutation,
+                    isDisplayModeFixHeight: true,
+                    isRecordFieldReadOnly: isRecordFieldReadOnly({
+                      isRecordReadOnly,
+                      objectPermissions:
+                        getObjectPermissionsFromMapByObjectMetadataId({
+                          objectPermissionsByObjectMetadataId,
+                          objectMetadataId: objectMetadataItem.id,
+                        }),
+                      fieldMetadataItem: {
+                        id: fieldMetadataItem.id,
+                        isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                      },
+                    }),
+                    onMouseEnter: () =>
+                      handleMouseEnter(
+                        index +
+                          (inlineRelationFieldMetadataItems?.length ?? 0) +
+                          (inlineFieldMetadataItems?.length ?? 0),
+                      ),
+                    anchorId: `${getRecordFieldInputInstanceId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: instanceId,
+                    })}`,
+                  }}
+                >
+                  <RecordFieldComponentInstanceContext.Provider
+                    value={{
+                      instanceId: getRecordFieldInputInstanceId({
+                        recordId: objectRecordId,
+                        fieldName: fieldMetadataItem.name,
+                        prefix: instanceId,
+                      }),
+                    }}
+                  >
+                    <RecordInlineCell
+                      loading={recordLoading}
+                      instanceIdPrefix={instanceId}
+                    />
+                  </RecordFieldComponentInstanceContext.Provider>
+                </FieldContext.Provider>
+              ),
+            )}
           </>
         )}
       </PropertyBox>
