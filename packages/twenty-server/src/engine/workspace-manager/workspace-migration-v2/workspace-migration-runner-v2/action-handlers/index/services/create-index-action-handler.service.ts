@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/types/workspace-migration-index-action-v2';
@@ -24,18 +20,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps: { flatIndexMaps },
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateIndexAction>) {
-    return {
-      flatIndexMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: action.flatEntity,
-        flatEntityMaps: flatIndexMaps,
-      }),
-    };
   }
 
   async executeForMetadata(

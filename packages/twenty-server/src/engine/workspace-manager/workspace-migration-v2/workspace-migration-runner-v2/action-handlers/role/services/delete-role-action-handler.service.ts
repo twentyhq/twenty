@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { DeleteRoleAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role/types/workspace-migration-role-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -17,23 +13,6 @@ export class DeleteRoleActionHandlerService extends WorkspaceMigrationRunnerActi
 ) {
   constructor() {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteRoleAction>) {
-    const { flatRoleMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const updatedFlatRoleMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: entityId,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    return {
-      flatRoleMaps: updatedFlatRoleMaps,
-    };
   }
 
   async executeForMetadata(

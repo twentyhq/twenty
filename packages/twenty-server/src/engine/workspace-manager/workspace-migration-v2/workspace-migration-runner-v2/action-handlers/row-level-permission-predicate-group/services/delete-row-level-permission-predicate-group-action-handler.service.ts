@@ -2,13 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { DeleteRowLevelPermissionPredicateGroupAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -18,23 +13,6 @@ export class DeleteRowLevelPermissionPredicateGroupActionHandlerService extends 
   'delete',
   'rowLevelPermissionPredicateGroup',
 ) {
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteRowLevelPermissionPredicateGroupAction>): Partial<AllFlatEntityMaps> {
-    const { flatRowLevelPermissionPredicateGroupMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const updatedFlatMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: entityId,
-      flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-    });
-
-    return {
-      flatRowLevelPermissionPredicateGroupMaps: updatedFlatMaps,
-    };
-  }
-
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteRowLevelPermissionPredicateGroupAction>,
   ): Promise<void> {

@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type DeleteViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -17,24 +13,6 @@ export class DeleteViewFilterGroupActionHandlerService extends WorkspaceMigratio
 ) {
   constructor() {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewFilterGroupAction>) {
-    const { flatViewFilterGroupMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const updatedFlatViewFilterGroupMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: entityId,
-        flatEntityMaps: flatViewFilterGroupMaps,
-      });
-
-    return {
-      flatViewFilterGroupMaps: updatedFlatViewFilterGroupMaps,
-    };
   }
 
   async executeForMetadata(

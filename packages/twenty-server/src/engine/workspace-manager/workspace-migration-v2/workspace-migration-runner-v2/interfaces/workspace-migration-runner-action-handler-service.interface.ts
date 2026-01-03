@@ -1,6 +1,7 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -21,16 +22,13 @@ import {
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { assertUnreachable } from 'twenty-shared/utils';
 
-// TODO deprecated prastoin
-export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
+type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   TActionType extends WorkspaceMigrationActionV2,
 > = Pick<
   WorkspaceMigrationActionRunnerArgs<TActionType>,
   'allFlatEntityMaps' | 'action'
 >;
-///
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
@@ -56,8 +54,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return Promise.resolve();
   }
 
-  // TODO prastoin remove
-  optimisticallyApplyActionOnAllFlatEntityMaps({
+  private optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<TAction>): Pick<
@@ -192,6 +189,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
               flatEntityId: action.entityId,
               flatEntityMaps: allFlatEntityMaps['flatIndexMaps'],
             });
+
             deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
               {
                 flatEntity: flatIndex,

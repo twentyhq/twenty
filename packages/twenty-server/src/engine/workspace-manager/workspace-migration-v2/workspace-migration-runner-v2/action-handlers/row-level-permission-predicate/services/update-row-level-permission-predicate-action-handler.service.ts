@@ -2,14 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { UpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -20,33 +14,6 @@ export class UpdateRowLevelPermissionPredicateActionHandlerService extends Works
   'update',
   'rowLevelPermissionPredicate',
 ) {
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateRowLevelPermissionPredicateAction>): Partial<AllFlatEntityMaps> {
-    const { flatRowLevelPermissionPredicateMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const existingPredicate = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: entityId,
-      flatEntityMaps: flatRowLevelPermissionPredicateMaps,
-    });
-
-    const updatedPredicate = {
-      ...existingPredicate,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
-    };
-
-    const updatedFlatMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: updatedPredicate,
-      flatEntityMaps: flatRowLevelPermissionPredicateMaps,
-    });
-
-    return {
-      flatRowLevelPermissionPredicateMaps: updatedFlatMaps,
-    };
-  }
-
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateRowLevelPermissionPredicateAction>,
   ): Promise<void> {

@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
@@ -30,24 +26,6 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteFieldAction>) {
-    const { flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const updatedFlatFieldMetadataMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: entityId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-    return {
-      flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-    };
   }
 
   async executeForMetadata(

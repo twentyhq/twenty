@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -28,24 +23,6 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps: { flatIndexMaps },
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateIndexAction>) {
-    // Delete old index then add the updated one
-    const mapsAfterDelete = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: action.entityId,
-      flatEntityMaps: flatIndexMaps,
-    });
-
-    return {
-      flatIndexMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: action.updatedFlatEntity,
-        flatEntityMaps: mapsAfterDelete,
-      }),
-    };
   }
 
   async executeForMetadata(

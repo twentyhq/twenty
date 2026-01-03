@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -31,33 +27,6 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateObjectAction>) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
-
-    const updatedFlatFieldMetadatas = flatFieldMetadatas.reduce(
-      (flatFieldMaps, flatFieldMetadata) =>
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatFieldMetadata,
-          flatEntityMaps: flatFieldMaps,
-        }),
-      flatFieldMetadataMaps,
-    );
-
-    const updatedFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatObjectMetadata,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    return {
-      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: updatedFlatFieldMetadatas,
-    };
   }
 
   async executeForMetadata(

@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { UpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -19,33 +14,6 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
 ) {
   constructor() {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFilterAction>) {
-    const { flatViewFilterMaps } = allFlatEntityMaps;
-    const { entityId } = action;
-
-    const existingViewFilter = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: entityId,
-      flatEntityMaps: flatViewFilterMaps,
-    });
-
-    const updatedViewFilter = {
-      ...existingViewFilter,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
-    };
-
-    const updatedFlatViewFilterMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: updatedViewFilter,
-      flatEntityMaps: flatViewFilterMaps,
-    });
-
-    return {
-      flatViewFilterMaps: updatedFlatViewFilterMaps,
-    };
   }
 
   async executeForMetadata(
