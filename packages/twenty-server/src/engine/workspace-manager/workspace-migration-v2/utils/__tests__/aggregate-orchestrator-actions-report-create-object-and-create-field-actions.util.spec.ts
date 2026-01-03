@@ -50,13 +50,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-1',
-                  name: 'firstName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
@@ -104,13 +97,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-1',
-                  name: 'firstName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
@@ -125,13 +111,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-2',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-2',
-                  name: 'secondName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
@@ -146,13 +125,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-3',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-3',
-                  name: 'lastName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-3',
@@ -215,13 +187,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-1',
-                  name: 'firstName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
@@ -236,13 +201,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-2',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-2',
-                  objectMetadataId: 'object-2',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-2',
-                  name: 'name',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
@@ -303,13 +261,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-1',
-                  name: 'firstName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
@@ -324,13 +275,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-2',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-2',
-                  objectMetadataId: 'object-2',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-2',
-                  name: 'orphanField',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
@@ -373,13 +317,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-1',
-                  name: 'firstName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
@@ -394,13 +331,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-2',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-2',
-                  name: 'lastName',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
@@ -415,13 +345,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-3',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.TEXT,
-                  id: 'field-3',
-                  name: 'email',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-3',
@@ -484,13 +407,6 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 type: 'create',
                 metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
-                flatEntity: getFlatFieldMetadataMock({
-                  universalIdentifier: 'field-1',
-                  objectMetadataId: 'object-1',
-                  type: FieldMetadataType.RELATION,
-                  id: 'field-1',
-                  name: 'author',
-                }),
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
