@@ -82,4 +82,3 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     }
   }
 };
-
