@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
@@ -22,15 +23,16 @@ export class FlatPageLayoutTabValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatPageLayoutMaps },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
-  >): FailedFlatEntityValidation<FlatPageLayoutTab> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'create',
-      errors: [],
+  >): FailedFlatEntityValidation<'pageLayoutTab'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatPageLayoutTab.id,
+        universalIdentifier: flatPageLayoutTab.universalIdentifier,
         title: flatPageLayoutTab.title,
       },
-    };
+      metadataName: 'pageLayoutTab',
+      type: 'create',
+    });
 
     const referencedPageLayout = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatPageLayoutTab.pageLayoutId,
@@ -55,15 +57,16 @@ export class FlatPageLayoutTabValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
-  >): FailedFlatEntityValidation<FlatPageLayoutTab> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'pageLayoutTab'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
         title: flatEntityToValidate.title,
       },
-    };
+      metadataName: 'pageLayoutTab',
+      type: 'delete',
+    });
 
     const existingPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatEntityToValidate.id,
@@ -90,14 +93,14 @@ export class FlatPageLayoutTabValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
-  >): FailedFlatEntityValidation<FlatPageLayoutTab> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutTab> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'pageLayoutTab'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'pageLayoutTab',
+      type: 'update',
+    });
 
     const fromFlatPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,

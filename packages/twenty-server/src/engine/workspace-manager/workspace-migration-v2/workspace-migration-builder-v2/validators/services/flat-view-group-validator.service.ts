@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -23,14 +24,14 @@ export class FlatViewGroupValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
-  >): FailedFlatEntityValidation<FlatViewGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewGroup> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'viewGroup',
+      type: 'update',
+    });
 
     const existingFlatViewGroup =
       optimisticFlatViewGroupMaps.byId[flatEntityId];
@@ -82,20 +83,21 @@ export class FlatViewGroupValidatorService {
   }
 
   public validateFlatViewGroupDeletion({
-    flatEntityToValidate: { id: viewGroupIdToDelete },
+    flatEntityToValidate: { id: viewGroupIdToDelete, universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
-  >): FailedFlatEntityValidation<FlatViewGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewGroup> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: viewGroupIdToDelete,
+        universalIdentifier,
       },
-    };
+      metadataName: 'viewGroup',
+      type: 'delete',
+    });
 
     const existingFlatViewGroup =
       optimisticFlatViewGroupMaps.byId[viewGroupIdToDelete];
@@ -119,15 +121,16 @@ export class FlatViewGroupValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
-  >): FailedFlatEntityValidation<FlatViewGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewGroup> = {
-      type: 'create',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewGroupToValidate.id,
+        universalIdentifier: flatViewGroupToValidate.universalIdentifier,
         viewId: flatViewGroupToValidate.viewId,
       },
-    };
+      metadataName: 'viewGroup',
+      type: 'create',
+    });
 
     const existingFlatViewGroup =
       optimisticFlatViewGroupMaps.byId[flatViewGroupToValidate.id];

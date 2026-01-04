@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventTriggerExceptionCode } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -25,15 +26,14 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
-      {
-        type: 'update',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatEntityId,
-        },
-      };
+  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+      metadataName: 'databaseEventTrigger',
+      type: 'update',
+    });
 
     const existingFlatDatabaseEventTrigger =
       optimisticFlatDatabaseEventTriggerMaps.byId[flatEntityId];
@@ -72,21 +72,24 @@ export class FlatDatabaseEventTriggerValidatorService {
   }
 
   public validateFlatDatabaseEventTriggerDeletion({
-    flatEntityToValidate: { id: databaseEventTriggerIdToDelete },
+    flatEntityToValidate: {
+      id: databaseEventTriggerIdToDelete,
+      universalIdentifier,
+    },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatDatabaseEventTriggerMaps: optimisticFlatDatabaseEventTriggerMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
-      {
-        type: 'delete',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: databaseEventTriggerIdToDelete,
-        },
-      };
+  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: databaseEventTriggerIdToDelete,
+        universalIdentifier,
+      },
+      metadataName: 'databaseEventTrigger',
+      type: 'delete',
+    });
 
     const existingFlatDatabaseEventTrigger =
       optimisticFlatDatabaseEventTriggerMaps.byId[
@@ -112,15 +115,15 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
-      {
-        type: 'create',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatDatabaseEventTriggerToValidate.id,
-        },
-      };
+  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatDatabaseEventTriggerToValidate.id,
+        universalIdentifier: flatDatabaseEventTriggerToValidate.universalIdentifier,
+      },
+      metadataName: 'databaseEventTrigger',
+      type: 'create',
+    });
 
     if (
       isDefined(

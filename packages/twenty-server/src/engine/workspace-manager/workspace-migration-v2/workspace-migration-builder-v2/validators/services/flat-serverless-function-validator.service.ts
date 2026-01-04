@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
@@ -21,15 +22,14 @@ export class FlatServerlessFunctionValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
-  >): FailedFlatEntityValidation<FlatServerlessFunction> {
-    const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
-      {
-        type: 'update',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatEntityId,
-        },
-      };
+  >): FailedFlatEntityValidation<'serverlessFunction'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+      metadataName: 'serverlessFunction',
+      type: 'update',
+    });
 
     const existingFlatServerlessFunction =
       optimisticFlatServerlessFunctionMaps.byId[flatEntityId];
@@ -46,21 +46,24 @@ export class FlatServerlessFunctionValidatorService {
   }
 
   public validateFlatServerlessFunctionDeletion({
-    flatEntityToValidate: { id: serverlessFunctionIdToDelete },
+    flatEntityToValidate: {
+      id: serverlessFunctionIdToDelete,
+      universalIdentifier,
+    },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatServerlessFunctionMaps: optimisticFlatServerlessFunctionMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
-  >): FailedFlatEntityValidation<FlatServerlessFunction> {
-    const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
-      {
-        type: 'delete',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: serverlessFunctionIdToDelete,
-        },
-      };
+  >): FailedFlatEntityValidation<'serverlessFunction'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: serverlessFunctionIdToDelete,
+        universalIdentifier,
+      },
+      metadataName: 'serverlessFunction',
+      type: 'delete',
+    });
 
     const existingFlatServerlessFunction =
       optimisticFlatServerlessFunctionMaps.byId[serverlessFunctionIdToDelete];
@@ -83,15 +86,15 @@ export class FlatServerlessFunctionValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
-  >): FailedFlatEntityValidation<FlatServerlessFunction> {
-    const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
-      {
-        type: 'create',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatServerlessFunctionToValidate.id,
-        },
-      };
+  >): FailedFlatEntityValidation<'serverlessFunction'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatServerlessFunctionToValidate.id,
+        universalIdentifier: flatServerlessFunctionToValidate.universalIdentifier,
+      },
+      metadataName: 'serverlessFunction',
+      type: 'create',
+    });
 
     if (
       isDefined(

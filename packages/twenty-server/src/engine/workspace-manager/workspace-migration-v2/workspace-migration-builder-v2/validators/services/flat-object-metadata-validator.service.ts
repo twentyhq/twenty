@@ -10,6 +10,7 @@ import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-mod
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -26,14 +27,14 @@ export class FlatObjectMetadataValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<FlatObjectMetadata> {
-    const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'objectMetadata'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'objectMetadata',
+      type: 'update',
+    });
 
     const existingFlatObjectMetadata =
       optimisticFlatObjectMetadataMaps.byId[flatEntityId];
@@ -96,21 +97,22 @@ export class FlatObjectMetadataValidatorService {
   }
 
   public validateFlatObjectMetadataDeletion({
-    flatEntityToValidate: { id: objectMetadataToDeleteId },
+    flatEntityToValidate: { id: objectMetadataToDeleteId, universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     },
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<FlatObjectMetadata> {
-    const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'objectMetadata'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: objectMetadataToDeleteId,
+        universalIdentifier,
       },
-    };
+      metadataName: 'objectMetadata',
+      type: 'delete',
+    });
 
     const flatObjectMetadataToDelete =
       optimisticFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
@@ -160,17 +162,17 @@ export class FlatObjectMetadataValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<FlatObjectMetadata> {
-    const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
-      {
-        type: 'create',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatObjectMetadataToValidate.id,
-          namePlural: flatObjectMetadataToValidate.namePlural,
-          nameSingular: flatObjectMetadataToValidate.nameSingular,
-        },
-      };
+  >): FailedFlatEntityValidation<'objectMetadata'> {
+    const objectValidationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatObjectMetadataToValidate.id,
+        universalIdentifier: flatObjectMetadataToValidate.universalIdentifier,
+        namePlural: flatObjectMetadataToValidate.namePlural,
+        nameSingular: flatObjectMetadataToValidate.nameSingular,
+      },
+      metadataName: 'objectMetadata',
+      type: 'create',
+    });
 
     if (
       isDefined(

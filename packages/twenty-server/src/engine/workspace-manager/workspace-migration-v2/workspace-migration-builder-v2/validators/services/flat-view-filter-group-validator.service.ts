@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -14,6 +14,7 @@ import {
   type FailedFlatEntityValidation,
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
@@ -82,14 +83,15 @@ export class FlatViewFilterGroupValidatorService {
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<FlatViewFilterGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'create',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
+        universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'viewFilterGroup',
+      type: 'create',
+    });
 
     const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterGroupToValidate.id,
@@ -162,14 +164,15 @@ export class FlatViewFilterGroupValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<FlatViewFilterGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
+        universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'viewFilterGroup',
+      type: 'delete',
+    });
 
     const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterGroupToValidate.id,
@@ -195,14 +198,14 @@ export class FlatViewFilterGroupValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<FlatViewFilterGroup> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilterGroup> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'viewFilterGroup',
+      type: 'update',
+    });
 
     const existingViewFilterGroup =
       optimisticFlatViewFilterGroupMaps.byId[flatEntityId];

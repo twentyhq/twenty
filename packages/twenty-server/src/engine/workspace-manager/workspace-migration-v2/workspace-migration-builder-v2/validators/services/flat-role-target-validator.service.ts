@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { validateFlatRoleTargetAssignationAvailability } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util';
@@ -24,14 +25,15 @@ export class FlatRoleTargetValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
-  >): FailedFlatEntityValidation<FlatRoleTarget> {
-    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'create',
-      errors: [],
+  >): FailedFlatEntityValidation<'roleTarget'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatRoleTargetToValidate.id,
+        universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'roleTarget',
+      type: 'create',
+    });
 
     const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatRoleTargetToValidate.id,
@@ -82,14 +84,15 @@ export class FlatRoleTargetValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
-  >): FailedFlatEntityValidation<FlatRoleTarget> {
-    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'roleTarget'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatRoleTargetToValidate.id,
+        universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'roleTarget',
+      type: 'delete',
+    });
 
     const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatRoleTargetToValidate.id,
@@ -118,14 +121,14 @@ export class FlatRoleTargetValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
-  >): FailedFlatEntityValidation<FlatRoleTarget> {
-    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'roleTarget'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'roleTarget',
+      type: 'update',
+    });
 
     const existingRoleTarget = optimisticFlatRoleTargetMaps.byId[flatEntityId];
 

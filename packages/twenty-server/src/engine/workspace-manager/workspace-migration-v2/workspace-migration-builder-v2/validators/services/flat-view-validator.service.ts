@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,6 +9,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -25,14 +26,14 @@ export class FlatViewValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<FlatView> {
-    const validationResult: FailedFlatEntityValidation<FlatView> = {
-      type: 'update',
-      errors: [],
+  >): FailedFlatEntityValidation<'view'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
       },
-    };
+      metadataName: 'view',
+      type: 'update',
+    });
 
     const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
 
@@ -146,22 +147,23 @@ export class FlatViewValidatorService {
   }
 
   public validateFlatViewDeletion({
-    flatEntityToValidate: { id: viewIdToDelete },
+    flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<FlatView> {
-    const validationResult: FailedFlatEntityValidation<FlatView> = {
-      type: 'delete',
-      errors: [],
+  >): FailedFlatEntityValidation<'view'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: viewIdToDelete,
+        id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'view',
+      type: 'delete',
+    });
 
-    const existingFlatView = optimisticFlatViewMaps.byId[viewIdToDelete];
+    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityToValidate.id];
 
     if (!isDefined(existingFlatView)) {
       validationResult.errors.push({
@@ -183,14 +185,15 @@ export class FlatViewValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<FlatView> {
-    const validationResult: FailedFlatEntityValidation<FlatView> = {
-      type: 'create',
-      errors: [],
+  >): FailedFlatEntityValidation<'view'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewToValidate.id,
+        universalIdentifier: flatViewToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'view',
+      type: 'create',
+    });
 
     const optimisticFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
