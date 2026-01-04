@@ -7,4 +7,3 @@ export const DEFAULT_TOOL_INPUT_SCHEMA = {
     b: { type: 'number' },
   },
 };
-

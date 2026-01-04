@@ -39,4 +39,3 @@ export class NativeModelToolProvider implements ToolProvider {
     );
   }
 }
-
