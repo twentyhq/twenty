@@ -26,6 +26,7 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
       Object.keys(translatedReport) as (keyof typeof translatedReport)[]
     ).reduce((acc, metadataName) => {
       const failedMetadataValidation = translatedReport[metadataName];
+
       if (failedMetadataValidation.length === 0) {
         return acc;
       }

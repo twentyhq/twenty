@@ -53,8 +53,5 @@ export const translateOrchestratorFailureReportErrors = (
   report: OrchestratorFailureReport,
   i18n: I18n,
 ) => {
-  return translateUserFriendlyMessageInFlatEntityValidationError(
-    report,
-    i18n,
-  );
+  return translateUserFriendlyMessageInFlatEntityValidationError(report, i18n);
 };
