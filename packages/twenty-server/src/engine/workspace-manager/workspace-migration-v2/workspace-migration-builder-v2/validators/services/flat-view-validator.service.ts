@@ -26,16 +26,17 @@ export class FlatViewValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<'view'> {
+  >): FailedFlatEntityValidation<'view', 'update'> {
+    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingFlatView?.universalIdentifier,
       },
       metadataName: 'view',
       type: 'update',
     });
-
-    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatView)) {
       validationResult.errors.push({
@@ -153,7 +154,7 @@ export class FlatViewValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<'view'> {
+  >): FailedFlatEntityValidation<'view', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -185,7 +186,7 @@ export class FlatViewValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
-  >): FailedFlatEntityValidation<'view'> {
+  >): FailedFlatEntityValidation<'view', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewToValidate.id,

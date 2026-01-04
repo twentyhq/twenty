@@ -21,7 +21,7 @@ export class FlatPageLayoutValidatorService {
     flatEntityToValidate: flatPageLayout,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
-  >): FailedFlatEntityValidation<'pageLayout'> {
+  >): FailedFlatEntityValidation<'pageLayout', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatPageLayout.id,
@@ -42,7 +42,7 @@ export class FlatPageLayoutValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
-  >): FailedFlatEntityValidation<'pageLayout'> {
+  >): FailedFlatEntityValidation<'pageLayout', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -78,18 +78,19 @@ export class FlatPageLayoutValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
-  >): FailedFlatEntityValidation<'pageLayout'> {
-    const validationResult = getEmptyFlatEntityValidationError({
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-      metadataName: 'pageLayout',
-      type: 'update',
-    });
-
+  >): FailedFlatEntityValidation<'pageLayout', 'update'> {
     const fromFlatPageLayout = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps: optimisticFlatPageLayoutMaps,
+    });
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: fromFlatPageLayout?.universalIdentifier,
+      },
+      metadataName: 'pageLayout',
+      type: 'update',
     });
 
     if (!isDefined(fromFlatPageLayout)) {

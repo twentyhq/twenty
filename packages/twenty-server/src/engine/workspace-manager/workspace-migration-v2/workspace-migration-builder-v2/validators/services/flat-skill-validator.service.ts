@@ -30,7 +30,7 @@ export class FlatSkillValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<'skill'> {
+  >): FailedFlatEntityValidation<'skill', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatSkill.id,
@@ -67,7 +67,7 @@ export class FlatSkillValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<'skill'> {
+  >): FailedFlatEntityValidation<'skill', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -113,18 +113,19 @@ export class FlatSkillValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<'skill'> {
-    const validationResult = getEmptyFlatEntityValidationError({
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-      metadataName: 'skill',
-      type: 'update',
-    });
-
+  >): FailedFlatEntityValidation<'skill', 'update'> {
     const fromFlatSkill = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps: optimisticFlatSkillMaps,
+    });
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: fromFlatSkill?.universalIdentifier,
+      },
+      metadataName: 'skill',
+      type: 'update',
     });
 
     if (!isDefined(fromFlatSkill)) {

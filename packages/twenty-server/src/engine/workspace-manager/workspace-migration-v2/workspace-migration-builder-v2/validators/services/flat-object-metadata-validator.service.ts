@@ -4,7 +4,6 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
@@ -27,17 +26,18 @@ export class FlatObjectMetadataValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<'objectMetadata'> {
+  >): FailedFlatEntityValidation<'objectMetadata', 'update'> {
+    const existingFlatObjectMetadata =
+      optimisticFlatObjectMetadataMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingFlatObjectMetadata?.universalIdentifier,
       },
       metadataName: 'objectMetadata',
       type: 'update',
     });
-
-    const existingFlatObjectMetadata =
-      optimisticFlatObjectMetadataMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatObjectMetadata)) {
       validationResult.errors.push({
@@ -104,7 +104,7 @@ export class FlatObjectMetadataValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<'objectMetadata'> {
+  >): FailedFlatEntityValidation<'objectMetadata', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: objectMetadataToDeleteId,
@@ -125,7 +125,7 @@ export class FlatObjectMetadataValidatorService {
       });
     } else {
       validationResult.flatEntityMinimalInformation = {
-        id: flatObjectMetadataToDelete.id,
+        ...validationResult.flatEntityMinimalInformation,
         namePlural: flatObjectMetadataToDelete.namePlural,
         nameSingular: flatObjectMetadataToDelete.nameSingular,
       };
@@ -162,7 +162,7 @@ export class FlatObjectMetadataValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): FailedFlatEntityValidation<'objectMetadata'> {
+  >): FailedFlatEntityValidation<'objectMetadata', 'create'> {
     const objectValidationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatObjectMetadataToValidate.id,

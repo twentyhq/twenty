@@ -9,7 +9,6 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
@@ -39,17 +38,19 @@ export class FlatFieldMetadataValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<'fieldMetadata'> {
+  >): FailedFlatEntityValidation<'fieldMetadata', 'update'> {
+    const existingFlatFieldMetadataToUpdate =
+      optimisticFlatFieldMetadataMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier:
+          existingFlatFieldMetadataToUpdate?.universalIdentifier,
       },
       metadataName: 'fieldMetadata',
       type: 'update',
     });
-
-    const existingFlatFieldMetadataToUpdate =
-      optimisticFlatFieldMetadataMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatFieldMetadataToUpdate)) {
       validationResult.errors.push({
@@ -203,7 +204,7 @@ export class FlatFieldMetadataValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<'fieldMetadata'> {
+  >): FailedFlatEntityValidation<'fieldMetadata', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatFieldMetadataToDeleteId,
@@ -227,6 +228,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       name: flatFieldMetadataToDelete.name,
       objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
     };
@@ -284,7 +286,7 @@ export class FlatFieldMetadataValidatorService {
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<'fieldMetadata'> {
+  >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatFieldMetadataToValidate.id,

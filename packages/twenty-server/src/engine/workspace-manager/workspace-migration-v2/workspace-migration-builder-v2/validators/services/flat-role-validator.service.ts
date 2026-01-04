@@ -26,7 +26,7 @@ export class FlatRoleValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<'role'> {
+  >): FailedFlatEntityValidation<'role', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -71,7 +71,7 @@ export class FlatRoleValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<'role'> {
+  >): FailedFlatEntityValidation<'role', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -113,16 +113,17 @@ export class FlatRoleValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<'role'> {
+  >): FailedFlatEntityValidation<'role', 'update'> {
+    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: fromFlatRole?.universalIdentifier,
       },
       metadataName: 'role',
       type: 'update',
     });
-
-    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
 
     if (!isDefined(fromFlatRole)) {
       validationResult.errors.push({

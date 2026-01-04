@@ -26,17 +26,19 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+  >): FailedFlatEntityValidation<'databaseEventTrigger', 'update'> {
+    const existingFlatDatabaseEventTrigger =
+      optimisticFlatDatabaseEventTriggerMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier:
+          existingFlatDatabaseEventTrigger?.universalIdentifier,
       },
       metadataName: 'databaseEventTrigger',
       type: 'update',
     });
-
-    const existingFlatDatabaseEventTrigger =
-      optimisticFlatDatabaseEventTriggerMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatDatabaseEventTrigger)) {
       validationResult.errors.push({
@@ -81,7 +83,7 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+  >): FailedFlatEntityValidation<'databaseEventTrigger', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: databaseEventTriggerIdToDelete,
@@ -115,7 +117,7 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): FailedFlatEntityValidation<'databaseEventTrigger'> {
+  >): FailedFlatEntityValidation<'databaseEventTrigger', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatDatabaseEventTriggerToValidate.id,

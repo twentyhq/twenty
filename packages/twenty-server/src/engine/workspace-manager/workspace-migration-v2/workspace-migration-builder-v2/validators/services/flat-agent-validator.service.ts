@@ -26,7 +26,7 @@ export class FlatAgentValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
-  >): FailedFlatEntityValidation<'agent'> {
+  >): FailedFlatEntityValidation<'agent', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatAgent.id,
@@ -73,7 +73,7 @@ export class FlatAgentValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
-  >): FailedFlatEntityValidation<'agent'> {
+  >): FailedFlatEntityValidation<'agent', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
@@ -119,18 +119,19 @@ export class FlatAgentValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.agent
-  >): FailedFlatEntityValidation<'agent'> {
-    const validationResult = getEmptyFlatEntityValidationError({
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-      metadataName: 'agent',
-      type: 'update',
-    });
-
+  >): FailedFlatEntityValidation<'agent', 'update'> {
     const fromFlatAgent = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps: optimisticFlatAgentMaps,
+    });
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: fromFlatAgent?.universalIdentifier,
+      },
+      metadataName: 'agent',
+      type: 'update',
     });
 
     if (!isDefined(fromFlatAgent)) {

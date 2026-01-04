@@ -83,7 +83,7 @@ export class FlatViewFilterGroupValidatorService {
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+  >): FailedFlatEntityValidation<'viewFilterGroup', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
@@ -164,7 +164,7 @@ export class FlatViewFilterGroupValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+  >): FailedFlatEntityValidation<'viewFilterGroup', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterGroupToValidate.id,
@@ -198,17 +198,18 @@ export class FlatViewFilterGroupValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
-  >): FailedFlatEntityValidation<'viewFilterGroup'> {
+  >): FailedFlatEntityValidation<'viewFilterGroup', 'update'> {
+    const existingViewFilterGroup =
+      optimisticFlatViewFilterGroupMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingViewFilterGroup?.universalIdentifier,
       },
       metadataName: 'viewFilterGroup',
       type: 'update',
     });
-
-    const existingViewFilterGroup =
-      optimisticFlatViewFilterGroupMaps.byId[flatEntityId];
 
     if (!isDefined(existingViewFilterGroup)) {
       validationResult.errors.push({

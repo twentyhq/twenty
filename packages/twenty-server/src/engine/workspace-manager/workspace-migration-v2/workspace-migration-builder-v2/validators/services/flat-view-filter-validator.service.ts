@@ -27,7 +27,7 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<'viewFilter'> {
+  >): FailedFlatEntityValidation<'viewFilter', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
@@ -101,7 +101,7 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<'viewFilter'> {
+  >): FailedFlatEntityValidation<'viewFilter', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
@@ -139,16 +139,17 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<'viewFilter'> {
+  >): FailedFlatEntityValidation<'viewFilter', 'update'> {
+    const existingViewFilter = optimisticFlatViewFilterMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingViewFilter?.universalIdentifier,
       },
       metadataName: 'viewFilter',
       type: 'update',
     });
-
-    const existingViewFilter = optimisticFlatViewFilterMaps.byId[flatEntityId];
 
     if (!isDefined(existingViewFilter)) {
       validationResult.errors.push({

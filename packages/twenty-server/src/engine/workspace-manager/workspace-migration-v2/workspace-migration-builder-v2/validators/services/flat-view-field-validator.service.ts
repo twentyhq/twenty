@@ -30,17 +30,18 @@ export class FlatViewFieldValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
-  >): FailedFlatEntityValidation<'viewField'> {
+  >): FailedFlatEntityValidation<'viewField', 'update'> {
+    const existingFlatViewField =
+      optimisticFlatViewFieldMaps.byId[flatEntityId];
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingFlatViewField?.universalIdentifier,
       },
       metadataName: 'viewField',
       type: 'update',
     });
-
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatViewField)) {
       validationResult.errors.push({
@@ -128,7 +129,7 @@ export class FlatViewFieldValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
-  >): FailedFlatEntityValidation<'viewField'> {
+  >): FailedFlatEntityValidation<'viewField', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: viewFieldIdToDelete,
@@ -193,7 +194,7 @@ export class FlatViewFieldValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
-  >): FailedFlatEntityValidation<'viewField'> {
+  >): FailedFlatEntityValidation<'viewField', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFieldToValidate.id,
