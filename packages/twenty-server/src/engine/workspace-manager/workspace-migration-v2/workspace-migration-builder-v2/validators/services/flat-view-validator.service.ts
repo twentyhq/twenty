@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -164,7 +164,8 @@ export class FlatViewValidatorService {
       type: 'delete',
     });
 
-    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityToValidate.id];
+    const existingFlatView =
+      optimisticFlatViewMaps.byId[flatEntityToValidate.id];
 
     if (!isDefined(existingFlatView)) {
       validationResult.errors.push({

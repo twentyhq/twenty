@@ -1,8 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type WorkspaceMigrationActionTypeV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
-import { AllMetadataName } from 'twenty-shared/metadata';
 
 export type FlatEntityValidationError<TCode extends string = string> = {
   code: TCode;
