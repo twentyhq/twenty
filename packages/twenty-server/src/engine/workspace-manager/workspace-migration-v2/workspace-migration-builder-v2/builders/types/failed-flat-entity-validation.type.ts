@@ -11,13 +11,20 @@ export type FlatEntityValidationError<TCode extends string = string> = {
   value?: unknown;
 };
 
-export type FailedFlatEntityValidation<T extends AllMetadataName> = {
-  type: WorkspaceMigrationActionTypeV2;
-  metadataName: T;
+export type FailedFlatEntityValidation<
+  TMetadataName extends AllMetadataName,
+  TAcionType extends WorkspaceMigrationActionTypeV2,
+  TRequiredProperties extends
+    keyof MetadataFlatEntity<TMetadataName> = TAcionType extends 'update'
+    ? 'id'
+    : 'id' | 'universalIdentifier',
+> = {
+  type: TAcionType;
+  metadataName: TMetadataName;
   errors: FlatEntityValidationError[];
   flatEntityMinimalInformation: Pick<
-    MetadataFlatEntity<T>,
-    'universalIdentifier' | 'id'
+    MetadataFlatEntity<TMetadataName>,
+    TRequiredProperties
   > &
-    Partial<Omit<MetadataFlatEntity<T>, 'universalidentifier' | 'id'>>;
+    Partial<Omit<MetadataFlatEntity<TMetadataName>, TRequiredProperties>>;
 };
