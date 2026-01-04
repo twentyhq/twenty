@@ -24,6 +24,7 @@ import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/se
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -405,8 +406,14 @@ export class ServerlessFunctionService {
       serverlessFunctionLayerId: serverlessFunctionToCreateLayerId,
     };
 
+    // If no toolInputSchema is provided, use the default schema
+    // (because the default template will be used for the code)
+    const toolInputSchema = isDefined(serverlessFunctionInput.toolInputSchema)
+      ? serverlessFunctionInput.toolInputSchema
+      : DEFAULT_TOOL_INPUT_SCHEMA;
+
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
-      { ...createServerlessFunctionInput, workspaceId },
+      { ...createServerlessFunctionInput, workspaceId, toolInputSchema },
     );
 
     const createdServerlessFunction =

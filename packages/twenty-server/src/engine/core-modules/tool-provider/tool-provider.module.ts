@@ -7,6 +7,7 @@ import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/provid
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
+import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ServerlessFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/serverless-function-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -23,7 +24,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
-import { ToolProviderService } from './services/tool-provider.service';
 import { ToolRegistryService } from './services/tool-registry.service';
 
 // NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule to avoid
@@ -53,6 +53,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
+    NativeModelToolProvider,
     ServerlessFunctionToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
@@ -63,6 +64,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         dashboardProvider: DashboardToolProvider,
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
+        nativeModelProvider: NativeModelToolProvider,
         serverlessFunctionProvider: ServerlessFunctionToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
@@ -71,6 +73,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         dashboardProvider,
         databaseProvider,
         metadataProvider,
+        nativeModelProvider,
         serverlessFunctionProvider,
         viewProvider,
         workflowProvider,
@@ -80,14 +83,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DashboardToolProvider,
         DatabaseToolProvider,
         MetadataToolProvider,
+        NativeModelToolProvider,
         ServerlessFunctionToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,
       ],
     },
-    ToolProviderService,
     ToolRegistryService,
   ],
-  exports: [ToolProviderService, ToolRegistryService],
+  exports: [ToolRegistryService],
 })
 export class ToolProviderModule {}

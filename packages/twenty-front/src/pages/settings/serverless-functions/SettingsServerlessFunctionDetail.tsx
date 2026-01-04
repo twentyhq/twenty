@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
@@ -16,6 +17,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -33,6 +35,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '', applicationId = '' } = useParams();
 
   const navigate = useNavigate();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -40,6 +43,15 @@ export const SettingsServerlessFunctionDetail = () => {
   });
 
   const applicationName = data?.findOneApplication?.name;
+
+  // A serverless function is "managed" if it belongs to an application
+  // other than the workspace's custom application
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+  const isManaged =
+    isDefined(applicationId) &&
+    applicationId !== '' &&
+    applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${SERVERLESS_FUNCTION_DETAIL_ID}-${serverlessFunctionId}`;
 
@@ -193,6 +205,7 @@ export const SettingsServerlessFunctionDetail = () => {
               handleExecute={handleTestFunction}
               onChange={onCodeChange}
               isTesting={isTesting}
+              isManaged={isManaged}
             />
           )}
           {isTriggersTab && serverlessFunction && (

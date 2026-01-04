@@ -8,6 +8,7 @@ import {
   type CodeExecutionStreamEmitter,
   type ToolProvider,
   type ToolProviderContext,
+  type ToolRetrievalOptions,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
@@ -187,6 +188,44 @@ export class ToolRegistryService {
     );
   }
 
+  // Main method for eager loading tools by categories (replaces ToolProviderService.getTools)
+  async getToolsByCategories(
+    context: ToolProviderContext,
+    options: ToolRetrievalOptions = {},
+  ): Promise<ToolSet> {
+    const { categories, excludeTools, wrapWithErrorContext } = options;
+    const tools: ToolSet = {};
+
+    for (const provider of this.providers) {
+      if (categories && !categories.includes(provider.category)) {
+        continue;
+      }
+      if (await provider.isAvailable(context)) {
+        const providerTools = await provider.generateTools(context);
+
+        Object.assign(tools, providerTools);
+      }
+    }
+
+    // Apply excludeTools filter
+    if (excludeTools?.length) {
+      for (const toolType of excludeTools) {
+        delete tools[toolType.toLowerCase()];
+      }
+    }
+
+    this.logger.log(
+      `Generated ${Object.keys(tools).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
+    );
+
+    // Apply error wrapping if requested
+    if (wrapWithErrorContext) {
+      return this.wrapToolsWithErrorContext(tools);
+    }
+
+    return tools;
+  }
+
   private buildContext(
     workspaceId: string,
     roleId: string,
@@ -306,5 +345,83 @@ export class ToolRegistryService {
     }
 
     return rest;
+  }
+
+  private wrapToolsWithErrorContext(tools: ToolSet): ToolSet {
+    const wrappedTools: ToolSet = {};
+
+    for (const [toolName, tool] of Object.entries(tools)) {
+      if (!tool.execute) {
+        wrappedTools[toolName] = tool;
+        continue;
+      }
+
+      const originalExecute = tool.execute;
+
+      wrappedTools[toolName] = {
+        ...tool,
+        execute: async (...args: Parameters<typeof originalExecute>) => {
+          try {
+            return await originalExecute(...args);
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
+
+            return {
+              success: false,
+              error: {
+                message: errorMessage,
+                tool: toolName,
+                suggestion: this.generateErrorSuggestion(
+                  toolName,
+                  errorMessage,
+                ),
+              },
+            };
+          }
+        },
+      };
+    }
+
+    return wrappedTools;
+  }
+
+  private generateErrorSuggestion(
+    _toolName: string,
+    errorMessage: string,
+  ): string {
+    const lowerError = errorMessage.toLowerCase();
+
+    if (
+      lowerError.includes('not found') ||
+      lowerError.includes('does not exist')
+    ) {
+      return 'Verify the ID or name exists with a search query first';
+    }
+
+    if (
+      lowerError.includes('permission') ||
+      lowerError.includes('forbidden') ||
+      lowerError.includes('unauthorized')
+    ) {
+      return 'This operation requires elevated permissions or a different role';
+    }
+
+    if (lowerError.includes('invalid') || lowerError.includes('validation')) {
+      return 'Check the tool schema for valid parameter formats and types';
+    }
+
+    if (
+      lowerError.includes('duplicate') ||
+      lowerError.includes('already exists')
+    ) {
+      return 'A record with this identifier already exists. Try updating instead of creating';
+    }
+
+    if (lowerError.includes('required') || lowerError.includes('missing')) {
+      return 'Required fields are missing. Check which fields are mandatory for this operation';
+    }
+
+    return 'Try adjusting the parameters or using a different approach';
   }
 }

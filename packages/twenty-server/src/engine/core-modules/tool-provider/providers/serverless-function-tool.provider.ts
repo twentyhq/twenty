@@ -4,8 +4,8 @@ import { jsonSchema, type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    type ToolProvider,
-    type ToolProviderContext,
+  type ToolProvider,
+  type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
