@@ -25,7 +25,7 @@ exports[`Agent deletion should fail should fail when attempting to delete a stan
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,

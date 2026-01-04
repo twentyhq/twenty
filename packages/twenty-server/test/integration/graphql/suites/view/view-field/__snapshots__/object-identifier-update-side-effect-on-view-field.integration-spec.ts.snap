@@ -26,7 +26,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewField",
+    "message": "Validation failed for 1 viewField",
     "summary": {
       "totalErrors": 1,
       "viewField": 1,
@@ -55,6 +55,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "flatEntityMinimalInformation": {
             "fieldMetadataId": Any<String>,
             "id": Any<String>,
+            "universalIdentifier": Any<String>,
             "viewId": Any<String>,
           },
           "metadataName": "viewField",
@@ -63,7 +64,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewField",
+    "message": "Validation failed for 1 viewField",
     "summary": {
       "totalErrors": 1,
       "viewField": 1,
@@ -99,7 +100,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewField",
+    "message": "Validation failed for 1 viewField",
     "summary": {
       "totalErrors": 1,
       "viewField": 1,
@@ -128,6 +129,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "flatEntityMinimalInformation": {
             "fieldMetadataId": Any<String>,
             "id": Any<String>,
+            "universalIdentifier": Any<String>,
             "viewId": Any<String>,
           },
           "metadataName": "viewField",
@@ -136,7 +138,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewField",
+    "message": "Validation failed for 1 viewField",
     "summary": {
       "totalErrors": 1,
       "viewField": 1,
@@ -165,6 +167,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
           "flatEntityMinimalInformation": {
             "fieldMetadataId": Any<String>,
             "id": Any<String>,
+            "universalIdentifier": Any<String>,
             "viewId": Any<String>,
           },
           "metadataName": "viewField",
@@ -173,7 +176,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewField",
+    "message": "Validation failed for 1 viewField",
     "summary": {
       "totalErrors": 1,
       "viewField": 1,

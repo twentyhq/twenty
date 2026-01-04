@@ -28,7 +28,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -69,7 +69,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -110,7 +110,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -166,7 +166,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -222,7 +222,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -278,7 +278,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -334,7 +334,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -375,7 +375,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -416,7 +416,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -463,7 +463,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -504,7 +504,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -545,7 +545,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -586,7 +586,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -645,7 +645,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -686,7 +686,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -727,7 +727,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -768,7 +768,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -809,7 +809,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -850,7 +850,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -891,7 +891,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -932,7 +932,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -978,7 +978,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1018,7 +1018,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1059,7 +1059,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1099,7 +1099,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1146,7 +1146,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1187,7 +1187,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1228,7 +1228,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1269,7 +1269,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1316,7 +1316,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1357,7 +1357,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1398,7 +1398,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1445,7 +1445,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1485,7 +1485,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1525,7 +1525,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1566,7 +1566,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1607,7 +1607,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1654,7 +1654,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1695,7 +1695,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1736,7 +1736,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1792,7 +1792,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1848,7 +1848,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1904,7 +1904,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -1960,7 +1960,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2001,7 +2001,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2048,7 +2048,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2089,7 +2089,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2130,7 +2130,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2171,7 +2171,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2212,7 +2212,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2253,7 +2253,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2294,7 +2294,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2335,7 +2335,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2376,7 +2376,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2417,7 +2417,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2463,7 +2463,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2503,7 +2503,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2544,7 +2544,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2584,7 +2584,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2631,7 +2631,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2672,7 +2672,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2713,7 +2713,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2754,7 +2754,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2801,7 +2801,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2842,7 +2842,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2883,7 +2883,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2930,7 +2930,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -2970,7 +2970,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -3010,7 +3010,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -3051,7 +3051,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,

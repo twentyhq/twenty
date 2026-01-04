@@ -25,7 +25,7 @@ exports[`failing createOne unique field metadata should fail for composite type 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 index",
+    "message": "Validation failed for 1 index",
     "summary": {
       "index": 1,
       "totalErrors": 1,
@@ -62,7 +62,7 @@ exports[`failing createOne unique field metadata should fail when field has cust
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 index",
+    "message": "Validation failed for 1 index",
     "summary": {
       "index": 1,
       "totalErrors": 1,

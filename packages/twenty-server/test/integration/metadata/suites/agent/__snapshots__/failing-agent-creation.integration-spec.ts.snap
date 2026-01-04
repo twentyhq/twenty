@@ -25,7 +25,7 @@ exports[`Agent creation should fail when computed name already exists 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -62,7 +62,7 @@ exports[`Agent creation should fail when label is empty string 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -113,7 +113,7 @@ exports[`Agent creation should fail when modelId is empty string 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -164,7 +164,7 @@ exports[`Agent creation should fail when prompt is empty string 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -215,7 +215,7 @@ exports[`Agent creation should fail when responseFormat has invalid type 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -252,7 +252,7 @@ exports[`Agent creation should fail when responseFormat type is json but schema 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -289,7 +289,7 @@ exports[`Agent creation should fail when responseFormat type is text but schema 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,

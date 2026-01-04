@@ -28,7 +28,7 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -69,7 +69,7 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,
@@ -104,7 +104,7 @@ exports[`Failing create field metadata tests suite should fail to create TS_VECT
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,

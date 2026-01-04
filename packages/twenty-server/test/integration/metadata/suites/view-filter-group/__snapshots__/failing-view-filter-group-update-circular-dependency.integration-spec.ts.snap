@@ -24,7 +24,7 @@ exports[`View Filter Group update should fail with circular dependency when pare
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilterGroup",
+    "message": "Validation failed for 1 viewFilterGroup",
     "summary": {
       "totalErrors": 1,
       "viewFilterGroup": 1,
@@ -60,7 +60,7 @@ exports[`View Filter Group update should fail with circular dependency when upda
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilterGroup",
+    "message": "Validation failed for 1 viewFilterGroup",
     "summary": {
       "totalErrors": 1,
       "viewFilterGroup": 1,

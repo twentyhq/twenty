@@ -48,7 +48,7 @@ exports[`Skill update should fail when updating with empty content 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 skill",
+    "message": "Validation failed for 1 skill",
     "summary": {
       "skill": 1,
       "totalErrors": 1,
@@ -84,7 +84,7 @@ exports[`Skill update should fail when updating with empty label 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 skill",
+    "message": "Validation failed for 1 skill",
     "summary": {
       "skill": 1,
       "totalErrors": 1,

@@ -26,6 +26,7 @@ exports[`Field metadata relation update should fail relation when name is not in
               "id": Any<String>,
               "name": "New Name",
               "objectMetadataId": Any<String>,
+              "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
             "status": "fail",
@@ -33,7 +34,7 @@ exports[`Field metadata relation update should fail relation when name is not in
           },
         ],
       },
-      "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
         "fieldMetadata": 1,
         "totalErrors": 1,

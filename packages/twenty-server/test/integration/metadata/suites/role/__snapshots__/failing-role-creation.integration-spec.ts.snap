@@ -25,7 +25,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -62,7 +62,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -99,7 +99,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -136,7 +136,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -173,7 +173,7 @@ exports[`Role creation should fail when label already exists 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,

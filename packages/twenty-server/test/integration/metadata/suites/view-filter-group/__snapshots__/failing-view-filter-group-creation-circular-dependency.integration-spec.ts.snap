@@ -29,7 +29,7 @@ exports[`View Filter Group creation should fail with circular dependency when id
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilterGroup",
+    "message": "Validation failed for 1 viewFilterGroup",
     "summary": {
       "totalErrors": 1,
       "viewFilterGroup": 1,
@@ -65,7 +65,7 @@ exports[`View Filter Group creation should fail with circular dependency when ma
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilterGroup",
+    "message": "Validation failed for 1 viewFilterGroup",
     "summary": {
       "totalErrors": 1,
       "viewFilterGroup": 1,

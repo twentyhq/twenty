@@ -36,7 +36,7 @@ exports[`Role update should fail updating role with existing write permissions s
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -72,7 +72,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -108,7 +108,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -144,7 +144,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -180,7 +180,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -216,7 +216,7 @@ exports[`Role update should fail when updating label to one that already exists 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,
@@ -252,7 +252,7 @@ exports[`Role update should fail when updating to enable write permissions witho
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 role",
+    "message": "Validation failed for 1 role",
     "summary": {
       "role": 1,
       "totalErrors": 1,

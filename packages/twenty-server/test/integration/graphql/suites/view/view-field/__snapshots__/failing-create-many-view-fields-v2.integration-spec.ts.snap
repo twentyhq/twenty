@@ -67,7 +67,7 @@ exports[`View Field Resolver - Failing Create Many Operations - v2 should accumu
         },
       ],
     },
-    "message": "Validation failed for 3 totalErrorss, 3 viewFields",
+    "message": "Validation failed for 3 viewFields",
     "summary": {
       "totalErrors": 3,
       "viewField": 3,

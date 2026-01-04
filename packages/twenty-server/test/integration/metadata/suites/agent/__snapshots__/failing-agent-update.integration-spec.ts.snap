@@ -24,7 +24,7 @@ exports[`Agent update should fail should fail when attempting to update a standa
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -82,7 +82,7 @@ exports[`Agent update should fail when settings null required properties 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -118,7 +118,7 @@ exports[`Agent update should fail when updating label to one that already exists
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -154,7 +154,7 @@ exports[`Agent update should fail when updating responseFormat type to json with
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -190,7 +190,7 @@ exports[`Agent update should fail when updating responseFormat type to text with
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -226,7 +226,7 @@ exports[`Agent update should fail when updating responseFormat with invalid type
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -262,7 +262,7 @@ exports[`Agent update should fail when updating with empty label 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -298,7 +298,7 @@ exports[`Agent update should fail when updating with empty modelId 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,
@@ -334,7 +334,7 @@ exports[`Agent update should fail when updating with empty prompt 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 agent",
+    "message": "Validation failed for 1 agent",
     "summary": {
       "agent": 1,
       "totalErrors": 1,

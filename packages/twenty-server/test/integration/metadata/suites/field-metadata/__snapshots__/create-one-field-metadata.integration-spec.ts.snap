@@ -27,7 +27,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata",
     "summary": {
       "fieldMetadata": 1,
       "totalErrors": 1,

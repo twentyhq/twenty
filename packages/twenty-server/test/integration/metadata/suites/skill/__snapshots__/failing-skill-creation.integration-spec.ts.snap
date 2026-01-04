@@ -25,7 +25,7 @@ exports[`Skill creation should fail when content is empty string 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 skill",
+    "message": "Validation failed for 1 skill",
     "summary": {
       "skill": 1,
       "totalErrors": 1,
@@ -76,7 +76,7 @@ exports[`Skill creation should fail when label is empty string 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 skill",
+    "message": "Validation failed for 1 skill",
     "summary": {
       "skill": 1,
       "totalErrors": 1,
@@ -127,7 +127,7 @@ exports[`Skill creation should fail when name already exists 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 skill",
+    "message": "Validation failed for 1 skill",
     "summary": {
       "skill": 1,
       "totalErrors": 1,
