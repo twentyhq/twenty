@@ -126,24 +126,6 @@ describe('If/Else Workflow (e2e)', () => {
       });
 
     expect(createIfElseStepResponse.body.errors).toBeUndefined();
-    const stepsDiff =
-      createIfElseStepResponse.body.data.createWorkflowVersionStep.stepsDiff;
-    const ifElseStepDiff = stepsDiff.find(
-      (diff: { type: string; value: { type: string } }) =>
-        diff.type === 'CREATE' && diff.value.type === 'IF_ELSE',
-    );
-
-    expect(ifElseStepDiff).toBeDefined();
-    ifElseStepId = ifElseStepDiff.value.id;
-
-    const emptyNodesDiff = stepsDiff.filter(
-      (diff: { type: string; value: { type: string } }) =>
-        diff.type === 'CREATE' && diff.value.type === 'EMPTY',
-    );
-
-    expect(emptyNodesDiff.length).toBe(2);
-    ifBranchEmptyNodeId = emptyNodesDiff[0].value.id;
-    elseBranchEmptyNodeId = emptyNodesDiff[1].value.id;
 
     const getWorkflowVersionResponse = await client
       .post('/graphql')
@@ -163,10 +145,27 @@ describe('If/Else Workflow (e2e)', () => {
     expect(getWorkflowVersionResponse.body.errors).toBeUndefined();
     const steps = getWorkflowVersionResponse.body.data.workflowVersion.steps;
     const ifElseStep = steps.find(
-      (step: { id: string }) => step.id === ifElseStepId,
+      (step: { type: string }) => step.type === 'IF_ELSE',
     );
 
     expect(ifElseStep).toBeDefined();
+    expect(ifElseStep.id).toBeDefined();
+    ifElseStepId = ifElseStep.id;
+
+    const stepsDiff =
+      createIfElseStepResponse.body.data.createWorkflowVersionStep.stepsDiff;
+
+    expect(stepsDiff).toBeDefined();
+    expect(Array.isArray(stepsDiff)).toBe(true);
+
+    const emptyNodes = steps.filter(
+      (step: { type: string }) => step.type === 'EMPTY',
+    );
+
+    expect(emptyNodes.length).toBe(2);
+    ifBranchEmptyNodeId = emptyNodes[0].id;
+    elseBranchEmptyNodeId = emptyNodes[1].id;
+
     expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
     expect(ifElseStep.settings.input.stepFilterGroups.length).toBeGreaterThan(
       0,
