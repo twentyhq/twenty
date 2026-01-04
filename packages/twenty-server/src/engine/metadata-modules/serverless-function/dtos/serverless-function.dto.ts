@@ -7,6 +7,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsNumber,
@@ -72,20 +73,14 @@ export class ServerlessFunctionDTO {
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
 
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  toolDescription?: string;
-
   @IsObject()
   @IsOptional()
   @Field(() => graphqlTypeJson, { nullable: true })
   toolInputSchema?: object;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  toolOutputSchema?: object;
+  @IsBoolean()
+  @Field()
+  isTool: boolean;
 
   @Field(() => [CronTriggerDTO], { nullable: true })
   cronTriggers?: CronTriggerDTO[];

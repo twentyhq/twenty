@@ -71,9 +71,9 @@ export const SettingsToolsTable = () => {
   const [builtInSearchTerm, setBuiltInSearchTerm] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  // Filter to only show serverless functions that have toolInputSchema defined
+  // Filter to only show serverless functions that are marked as tools
   const tools = useMemo(
-    () => serverlessFunctions.filter((fn) => isDefined(fn.toolInputSchema)),
+    () => serverlessFunctions.filter((fn) => fn.isTool === true),
     [serverlessFunctions],
   );
 
@@ -123,8 +123,8 @@ export const SettingsToolsTable = () => {
     try {
       const result = await createServerlessFunction({
         input: {
-          name: t`New Tool`,
-          toolDescription: t`A new custom tool`,
+          name: 'new-tool',
+          isTool: true,
           toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
         },
       });

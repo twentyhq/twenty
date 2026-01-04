@@ -301,12 +301,12 @@ export class ToolProviderService {
         },
       );
 
-    // Filter serverless functions that have toolInputSchema defined
+    // Filter serverless functions that are marked as tools
     const serverlessFunctionsWithSchema = Object.values(
       flatServerlessFunctionMaps.byId,
     ).filter(
       (fn): fn is FlatServerlessFunction =>
-        isDefined(fn) && isDefined(fn.toolInputSchema) && fn.deletedAt === null,
+        isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
     );
 
     const tools: ToolSet = {};
@@ -322,7 +322,6 @@ export class ToolProviderService {
 
       tools[toolName] = {
         description:
-          serverlessFunction.toolDescription ||
           serverlessFunction.description ||
           `Execute the ${serverlessFunction.name} serverless function`,
         inputSchema: jsonSchema(wrappedSchema),

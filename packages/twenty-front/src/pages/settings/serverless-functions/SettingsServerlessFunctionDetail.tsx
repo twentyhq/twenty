@@ -1,7 +1,9 @@
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { getToolInputSchemaFromSourceCode } from '@/serverless-functions/utils/getToolInputSchemaFromSourceCode';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsServerlessFunctionLabelContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionLabelContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
@@ -54,18 +56,22 @@ export const SettingsServerlessFunctionDetail = () => {
     serverlessFunctionId,
   });
 
-  const handleSave = useDebouncedCallback(async () => {
-    await updateServerlessFunction({
-      input: {
-        id: serverlessFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
+  const handleSave = useDebouncedCallback(
+    async (toolInputSchema?: object | null) => {
+      await updateServerlessFunction({
+        input: {
+          id: serverlessFunctionId,
+          update: {
+            name: formValues.name,
+            description: formValues.description,
+            code: formValues.code,
+            ...(toolInputSchema !== undefined && { toolInputSchema }),
+          },
         },
-      },
-    });
-  }, 500);
+      });
+    },
+    500,
+  );
 
   const onChange = (key: string) => {
     return async (value: string) => {
@@ -88,7 +94,15 @@ export const SettingsServerlessFunctionDetail = () => {
         }),
       };
     });
-    await handleSave();
+
+    // Parse and save schema if editing the handler file
+    let toolInputSchema: object | null | undefined;
+
+    if (filePath === serverlessFunction?.handlerPath) {
+      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
+    }
+
+    await handleSave(toolInputSchema);
   };
 
   const handleTestFunction = async () => {
@@ -162,7 +176,15 @@ export const SettingsServerlessFunctionDetail = () => {
 
   return (
     !loading && (
-      <SubMenuTopBarContainer title={formValues.name} links={breadcrumbLinks}>
+      <SubMenuTopBarContainer
+        title={
+          <SettingsServerlessFunctionLabelContainer
+            value={formValues.name}
+            onChange={onChange('name')}
+          />
+        }
+        links={breadcrumbLinks}
+      >
         <SettingsPageContainer>
           <TabList tabs={tabs} componentInstanceId={instanceId} />
           {isEditorTab && (

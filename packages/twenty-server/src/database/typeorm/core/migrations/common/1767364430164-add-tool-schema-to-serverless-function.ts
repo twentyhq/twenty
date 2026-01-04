@@ -7,25 +7,19 @@ export class AddToolSchemaToServerlessFunction1767364430164
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD "toolDescription" text`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" ADD "toolInputSchema" jsonb`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" ADD "toolOutputSchema" jsonb`,
+      `ALTER TABLE "core"."serverlessFunction" ADD "isTool" boolean NOT NULL DEFAULT false`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "toolOutputSchema"`,
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "isTool"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "toolInputSchema"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "toolDescription"`,
     );
   }
 }

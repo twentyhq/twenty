@@ -8,7 +8,6 @@ export const FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES = [
   'code',
   'handlerPath',
   'handlerName',
-  'toolDescription',
   'toolInputSchema',
-  'toolOutputSchema',
+  'isTool',
 ] as const satisfies (keyof FlatServerlessFunction)[];

@@ -55,9 +55,7 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
           JSON.stringify(rawCreateServerlessFunctionInput.code),
         )
       : null,
-    toolDescription: rawCreateServerlessFunctionInput?.toolDescription ?? null,
     toolInputSchema: rawCreateServerlessFunctionInput?.toolInputSchema ?? null,
-    toolOutputSchema:
-      rawCreateServerlessFunctionInput?.toolOutputSchema ?? null,
+    isTool: rawCreateServerlessFunctionInput?.isTool ?? false,
   };
 };

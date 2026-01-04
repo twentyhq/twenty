@@ -26,9 +26,8 @@ export type ServerlessFunctionManifest = SyncableEntityOptions & {
   triggers: ServerlessFunctionTriggerManifest[];
   handlerPath: string;
   handlerName: string;
-  toolDescription?: string;
   toolInputSchema?: InputJsonSchema;
-  toolOutputSchema?: InputJsonSchema;
+  isTool?: boolean;
 };
 
 export type DatabaseEventTrigger = {
