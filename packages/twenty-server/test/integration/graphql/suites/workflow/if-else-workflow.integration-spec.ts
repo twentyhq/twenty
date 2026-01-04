@@ -287,17 +287,32 @@ describe('If/Else Workflow (e2e)', () => {
       .send({
         query: `
           mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-            activateWorkflowVersion(workflowVersionId: $workflowVersionId) {
-              id
-              status
-            }
+            activateWorkflowVersion(workflowVersionId: $workflowVersionId)
           }
         `,
         variables: { workflowVersionId: createdWorkflowVersionId },
       });
 
     expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion.status).toBe(
+    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+
+    const verifyStatusResponse = await client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send({
+        query: `
+          query GetWorkflowVersionStatus($id: UUID!) {
+            workflowVersion(filter: { id: { eq: $id } }) {
+              id
+              status
+            }
+          }
+        `,
+        variables: { id: createdWorkflowVersionId },
+      });
+
+    expect(verifyStatusResponse.body.errors).toBeUndefined();
+    expect(verifyStatusResponse.body.data.workflowVersion.status).toBe(
       'ACTIVE',
     );
   });
