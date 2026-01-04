@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export const getToolInputSchemaFromSourceCode = async (
   sourceCode: string,
 ): Promise<object | null> => {
@@ -7,7 +9,7 @@ export const getToolInputSchemaFromSourceCode = async (
   // Serverless functions take a single params object
   const firstParam = inputSchema[0];
 
-  if (firstParam?.type === 'object' && firstParam.properties) {
+  if (firstParam?.type === 'object' && isDefined(firstParam.properties)) {
     return {
       type: 'object',
       properties: firstParam.properties,
