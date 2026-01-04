@@ -25,7 +25,7 @@ exports[`Page layout tab creation should fail when pageLayoutId references non-e
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 pageLayoutTab",
+    "message": "Validation failed for 1 pageLayoutTab",
     "summary": {
       "pageLayoutTab": 1,
       "totalErrors": 1,

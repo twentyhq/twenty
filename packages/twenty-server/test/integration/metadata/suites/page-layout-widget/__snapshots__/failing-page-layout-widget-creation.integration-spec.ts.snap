@@ -36,7 +36,7 @@ exports[`Page layout widget creation should fail when pageLayoutTabId references
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 pageLayoutWidget",
+    "message": "Validation failed for 1 pageLayoutWidget",
     "summary": {
       "pageLayoutWidget": 1,
       "totalErrors": 1,

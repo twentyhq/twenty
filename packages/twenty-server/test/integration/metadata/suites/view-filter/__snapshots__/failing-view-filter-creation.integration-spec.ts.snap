@@ -24,7 +24,7 @@ exports[`View Filter creation should fail when fieldMetadataId does not exist 1`
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilter",
+    "message": "Validation failed for 1 viewFilter",
     "summary": {
       "totalErrors": 1,
       "viewFilter": 1,
@@ -65,7 +65,7 @@ exports[`View Filter creation should fail when viewFilterGroupId does not exist 
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilter",
+    "message": "Validation failed for 1 viewFilter",
     "summary": {
       "totalErrors": 1,
       "viewFilter": 1,
@@ -106,7 +106,7 @@ exports[`View Filter creation should fail when viewId does not exist 1`] = `
         },
       ],
     },
-    "message": "Validation failed for 1 totalErrors, 1 viewFilter",
+    "message": "Validation failed for 1 viewFilter",
     "summary": {
       "totalErrors": 1,
       "viewFilter": 1,
