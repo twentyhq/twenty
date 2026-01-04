@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateDatabaseEventTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_database_event_trigger',
+  'create',
+  'databaseEventTrigger',
 ) {
   constructor() {
     super();
@@ -18,7 +19,7 @@ export class CreateDatabaseEventTriggerActionHandlerService extends WorkspaceMig
     context: WorkspaceMigrationActionRunnerArgs<CreateDatabaseEventTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { databaseEventTrigger } = action;
+    const { flatEntity: databaseEventTrigger } = action;
 
     const databaseEventTriggerRepository =
       queryRunner.manager.getRepository<DatabaseEventTriggerEntity>(

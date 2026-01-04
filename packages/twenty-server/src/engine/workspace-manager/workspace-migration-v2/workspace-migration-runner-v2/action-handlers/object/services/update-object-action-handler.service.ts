@@ -2,15 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -30,41 +25,13 @@ import {
 
 @Injectable()
 export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_object',
+  'update',
+  'objectMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateObjectAction>): Partial<AllFlatEntityMaps> {
-    const { flatObjectMetadataMaps } = allFlatEntityMaps;
-    const { objectMetadataId } = action;
-
-    const existingFlatObjectMetadata =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: objectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-    const updatedFlatObjectMetadata = {
-      ...existingFlatObjectMetadata,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
-    };
-
-    const updatedFlatObjectMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: updatedFlatObjectMetadata,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-    return {
-      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-    };
   }
 
   async executeForMetadata(
@@ -78,7 +45,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       );
 
     await objectMetadataRepository.update(
-      action.objectMetadataId,
+      action.entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }
@@ -92,11 +59,11 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId, updates } = action;
+    const { entityId, updates } = action;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: objectMetadataId,
+      flatEntityId: entityId,
     });
 
     const { schemaName, tableName: currentTableName } =

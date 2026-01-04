@@ -9,7 +9,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateCronTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_cron_trigger',
+  'update',
+  'cronTrigger',
 ) {
   constructor() {
     super();
@@ -19,13 +20,13 @@ export class UpdateCronTriggerActionHandlerService extends WorkspaceMigrationRun
     context: WorkspaceMigrationActionRunnerArgs<UpdateCronTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { cronTriggerId } = action;
+    const { entityId } = action;
 
     const cronTriggerRepository =
       queryRunner.manager.getRepository<CronTriggerEntity>(CronTriggerEntity);
 
     await cronTriggerRepository.update(
-      cronTriggerId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }

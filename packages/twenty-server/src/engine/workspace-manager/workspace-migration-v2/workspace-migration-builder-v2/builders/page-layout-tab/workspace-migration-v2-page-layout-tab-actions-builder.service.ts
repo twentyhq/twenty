@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutTab>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutTab,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatPageLayoutTabValidatorService.validateFlatPageLayoutTabCreation(
@@ -42,7 +42,8 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout_tab',
+        type: 'create',
+        metadataName: 'pageLayoutTab',
         flatEntity: flatPageLayoutTabToValidate,
       },
     };
@@ -52,7 +53,7 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutTab>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutTab,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatPageLayoutTabValidatorService.validateFlatPageLayoutTabDeletion(
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout_tab',
-        flatEntityId: flatPageLayoutTabToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayoutTab',
+        entityId: flatPageLayoutTabToValidate.id,
       },
     };
   }
@@ -83,7 +85,7 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutTab,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatPageLayoutTabValidatorService.validateFlatPageLayoutTabUpdate(
@@ -100,9 +102,10 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutTabAction: UpdatePageLayoutTabAction = {
-      type: 'update_page_layout_tab',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'pageLayoutTab',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

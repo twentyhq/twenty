@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataCreation(args);
@@ -40,9 +40,10 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: {
-        type: 'create_object',
+        type: 'create',
+        metadataName: 'objectMetadata',
         flatFieldMetadatas: [],
-        flatObjectMetadata: flatObjectMetadataToValidate,
+        flatEntity: flatObjectMetadataToValidate,
       },
     };
   }
@@ -51,7 +52,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataDeletion(args);
@@ -68,8 +69,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: {
-        type: 'delete_object',
-        objectMetadataId: flatObjectMetadataToValidate.id,
+        type: 'delete',
+        metadataName: 'objectMetadata',
+        entityId: flatObjectMetadataToValidate.id,
       },
     };
   }
@@ -80,7 +82,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatObjectValidatorService.validateFlatObjectMetadataUpdate(args);
@@ -95,8 +97,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateObjectAction: UpdateObjectAction = {
-      type: 'update_object',
-      objectMetadataId: flatEntityId,
+      type: 'update',
+      metadataName: 'objectMetadata',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

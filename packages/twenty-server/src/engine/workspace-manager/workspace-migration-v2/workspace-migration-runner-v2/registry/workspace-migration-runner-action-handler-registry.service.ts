@@ -7,7 +7,8 @@ import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/wor
 
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
-  type WorkspaceMigrationActionTypeV2,
+  buildActionHandlerKey,
+  type WorkspaceMigrationActionHandlerKey,
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/workspace-schema-migration-runner-action-handlers.module';
@@ -23,7 +24,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
   implements OnModuleInit
 {
   private readonly actionHandlers = new Map<
-    WorkspaceMigrationActionTypeV2,
+    WorkspaceMigrationActionHandlerKey,
     InstanceType<typeof BaseWorkspaceMigrationRunnerActionHandlerService>
   >();
 
@@ -43,31 +44,36 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
 
       if (!instance || !metatype) return;
 
-      const actionType = Reflect.getMetadata(
-        WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
-        metatype,
-      );
+      const actionHandlerKey: WorkspaceMigrationActionHandlerKey | undefined =
+        Reflect.getMetadata(
+          WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
+          metatype,
+        );
 
-      if (actionType && instance.execute) {
-        this.actionHandlers.set(actionType, instance);
+      if (actionHandlerKey && instance.execute) {
+        this.actionHandlers.set(actionHandlerKey, instance);
       }
     });
   }
 
   async executeActionHandler<T extends WorkspaceMigrationActionV2>({
-    actionType,
+    action,
     context,
     rollback,
   }: {
-    actionType: WorkspaceMigrationActionTypeV2;
+    action: T;
     context: WorkspaceMigrationActionRunnerArgs<T>;
     rollback?: boolean;
   }): Promise<Partial<AllFlatEntityMaps>> {
-    const handler = this.actionHandlers.get(actionType);
+    const actionHandlerKey = buildActionHandlerKey(
+      action.type,
+      action.metadataName,
+    );
+    const handler = this.actionHandlers.get(actionHandlerKey);
 
     if (!handler) {
       throw new WorkspaceMigrationRunnerException(
-        `No migration runner action handler found for action: ${actionType}`,
+        `No migration runner action handler found for action: ${actionHandlerKey}`,
         WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE,
       );
     }

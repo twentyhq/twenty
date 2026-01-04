@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupCreation(args);
@@ -40,8 +40,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'create_view_group',
-        viewGroup: flatViewGroupToValidate,
+        type: 'create',
+        metadataName: 'viewGroup',
+        flatEntity: flatViewGroupToValidate,
       },
     };
   }
@@ -50,7 +51,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupDeletion(args);
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     return {
       status: 'success',
       action: {
-        type: 'delete_view_group',
-        viewGroupId: flatViewGroupToValidate.id,
+        type: 'delete',
+        metadataName: 'viewGroup',
+        entityId: flatViewGroupToValidate.id,
       },
     };
   }
@@ -77,7 +79,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewGroup,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewGroupValidatorService.validateFlatViewGroupUpdate(args);
@@ -92,8 +94,9 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewGroupAction: UpdateViewGroupAction = {
-      type: 'update_view_group',
-      viewGroupId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewGroup',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

@@ -1,18 +1,9 @@
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type UpdateAgentAction = {
-  type: 'update_agent';
-  flatEntityId: string;
-  flatEntityUpdates: FlatEntityPropertiesUpdates<'agent'>;
-};
+export type CreateAgentAction = BaseCreateWorkspaceMigrationAction<'agent'>;
 
-export type CreateAgentAction = {
-  type: 'create_agent';
-  flatEntity: FlatAgent;
-};
+export type UpdateAgentAction = BaseUpdateWorkspaceMigrationAction<'agent'>;
 
-export type DeleteAgentAction = {
-  type: 'delete_agent';
-  flatEntityId: string;
-};
+export type DeleteAgentAction = BaseDeleteWorkspaceMigrationAction<'agent'>;

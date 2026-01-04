@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'create'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillCreation(args);
 
@@ -37,7 +37,8 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'create_skill',
+        type: 'create',
+        metadataName: 'skill',
         flatEntity: flatSkillToValidate,
       },
     };
@@ -45,7 +46,7 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'delete'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillDeletion(args);
 
@@ -61,15 +62,16 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'delete_skill',
-        flatEntityId: flatSkillToValidate.id,
+        type: 'delete',
+        metadataName: 'skill',
+        entityId: flatSkillToValidate.id,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.skill>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.skill, 'update'> {
     const validationResult =
       this.flatSkillValidatorService.validateFlatSkillUpdate(args);
 
@@ -83,9 +85,10 @@ export class WorkspaceMigrationV2SkillActionsBuilderService extends WorkspaceEnt
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateSkillAction: UpdateSkillAction = {
-      type: 'update_skill',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'skill',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

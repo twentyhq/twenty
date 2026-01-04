@@ -953,117 +953,117 @@ export class WorkspaceMigrationBuildOrchestratorService {
         relatedFlatEntityMapsKeys,
         actions: [
           // Object and fields and indexes
-          ...aggregatedOrchestratorActionsReport.index.deleted,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.deleted,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.deleted,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.created,
-          ...aggregatedOrchestratorActionsReport.objectMetadata.updated,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.created,
-          ...aggregatedOrchestratorActionsReport.fieldMetadata.updated,
-          ...aggregatedOrchestratorActionsReport.index.created,
-          ...aggregatedOrchestratorActionsReport.index.updated.flat(),
+          ...aggregatedOrchestratorActionsReport.index.delete,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.create,
+          ...aggregatedOrchestratorActionsReport.objectMetadata.update,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.create,
+          ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
+          ...aggregatedOrchestratorActionsReport.index.create,
+          ...aggregatedOrchestratorActionsReport.index.update.flat(),
           ///
 
           // Views
-          ...aggregatedOrchestratorActionsReport.view.deleted,
-          ...aggregatedOrchestratorActionsReport.view.created,
-          ...aggregatedOrchestratorActionsReport.view.updated,
-          ...aggregatedOrchestratorActionsReport.viewField.deleted,
-          ...aggregatedOrchestratorActionsReport.viewField.created,
-          ...aggregatedOrchestratorActionsReport.viewField.updated,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.deleted,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.created,
-          ...aggregatedOrchestratorActionsReport.viewFilterGroup.updated,
-          ...aggregatedOrchestratorActionsReport.viewFilter.deleted,
-          ...aggregatedOrchestratorActionsReport.viewFilter.created,
-          ...aggregatedOrchestratorActionsReport.viewFilter.updated,
-          ...aggregatedOrchestratorActionsReport.viewGroup.deleted,
-          ...aggregatedOrchestratorActionsReport.viewGroup.created,
-          ...aggregatedOrchestratorActionsReport.viewGroup.updated,
+          ...aggregatedOrchestratorActionsReport.view.delete,
+          ...aggregatedOrchestratorActionsReport.view.create,
+          ...aggregatedOrchestratorActionsReport.view.update,
+          ...aggregatedOrchestratorActionsReport.viewField.delete,
+          ...aggregatedOrchestratorActionsReport.viewField.create,
+          ...aggregatedOrchestratorActionsReport.viewField.update,
+          ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
+          ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
+          ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewFilter.delete,
+          ...aggregatedOrchestratorActionsReport.viewFilter.create,
+          ...aggregatedOrchestratorActionsReport.viewFilter.update,
+          ...aggregatedOrchestratorActionsReport.viewGroup.delete,
+          ...aggregatedOrchestratorActionsReport.viewGroup.create,
+          ...aggregatedOrchestratorActionsReport.viewGroup.update,
           ///
 
           // Serverless functions
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.deleted,
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.created,
-          ...aggregatedOrchestratorActionsReport.serverlessFunction.updated,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.delete,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.create,
+          ...aggregatedOrchestratorActionsReport.serverlessFunction.update,
           ///
 
           // Database event triggers
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.deleted,
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.created,
-          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.delete,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.create,
+          ...aggregatedOrchestratorActionsReport.databaseEventTrigger.update,
           ///
 
           // Cron triggers
-          ...aggregatedOrchestratorActionsReport.cronTrigger.deleted,
-          ...aggregatedOrchestratorActionsReport.cronTrigger.created,
-          ...aggregatedOrchestratorActionsReport.cronTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.delete,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.create,
+          ...aggregatedOrchestratorActionsReport.cronTrigger.update,
           ///
 
           // Route triggers
-          ...aggregatedOrchestratorActionsReport.routeTrigger.deleted,
-          ...aggregatedOrchestratorActionsReport.routeTrigger.created,
-          ...aggregatedOrchestratorActionsReport.routeTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.delete,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.create,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.update,
           ///
 
           // Roles
-          ...aggregatedOrchestratorActionsReport.role.deleted,
-          ...aggregatedOrchestratorActionsReport.role.created,
-          ...aggregatedOrchestratorActionsReport.role.updated,
+          ...aggregatedOrchestratorActionsReport.role.delete,
+          ...aggregatedOrchestratorActionsReport.role.create,
+          ...aggregatedOrchestratorActionsReport.role.update,
           ///
 
           // Role targets
-          ...aggregatedOrchestratorActionsReport.roleTarget.deleted,
-          ...aggregatedOrchestratorActionsReport.roleTarget.created,
-          ...aggregatedOrchestratorActionsReport.roleTarget.updated,
+          ...aggregatedOrchestratorActionsReport.roleTarget.delete,
+          ...aggregatedOrchestratorActionsReport.roleTarget.create,
+          ...aggregatedOrchestratorActionsReport.roleTarget.update,
           ///
 
           // Agents
-          ...aggregatedOrchestratorActionsReport.agent.deleted,
-          ...aggregatedOrchestratorActionsReport.agent.created,
-          ...aggregatedOrchestratorActionsReport.agent.updated,
+          ...aggregatedOrchestratorActionsReport.agent.delete,
+          ...aggregatedOrchestratorActionsReport.agent.create,
+          ...aggregatedOrchestratorActionsReport.agent.update,
           ///
 
           // Skills
-          ...aggregatedOrchestratorActionsReport.skill.deleted,
-          ...aggregatedOrchestratorActionsReport.skill.created,
-          ...aggregatedOrchestratorActionsReport.skill.updated,
+          ...aggregatedOrchestratorActionsReport.skill.delete,
+          ...aggregatedOrchestratorActionsReport.skill.create,
+          ...aggregatedOrchestratorActionsReport.skill.update,
           ///
 
           // Page layouts
-          ...aggregatedOrchestratorActionsReport.pageLayout.deleted,
-          ...aggregatedOrchestratorActionsReport.pageLayout.created,
-          ...aggregatedOrchestratorActionsReport.pageLayout.updated,
+          ...aggregatedOrchestratorActionsReport.pageLayout.delete,
+          ...aggregatedOrchestratorActionsReport.pageLayout.create,
+          ...aggregatedOrchestratorActionsReport.pageLayout.update,
           ///
 
           // Page layout tabs
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.deleted,
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.created,
-          ...aggregatedOrchestratorActionsReport.pageLayoutTab.updated,
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
           ///
 
           // Page layout widgets
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.deleted,
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.created,
-          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.updated,
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
           ///
 
           // Row level permission predicates
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .deleted,
+            .delete,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .created,
+            .create,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .updated,
+            .update,
           ///
 
           // Row level permission predicate groups
           ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.deleted,
+            .rowLevelPermissionPredicateGroup.delete,
           ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.created,
+            .rowLevelPermissionPredicateGroup.create,
           ...aggregatedOrchestratorActionsReport
-            .rowLevelPermissionPredicateGroup.updated,
+            .rowLevelPermissionPredicateGroup.update,
           ///
         ],
         workspaceId,

@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'create'> {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewCreation(args);
 
@@ -37,15 +37,16 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'create_view',
-        view: flatViewToValidate,
+        type: 'create',
+        metadataName: 'view',
+        flatEntity: flatViewToValidate,
       },
     };
   }
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'delete'> {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewDeletion(args);
 
@@ -61,15 +62,16 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'delete_view',
-        viewId: flatViewToValidate.id,
+        type: 'delete',
+        metadataName: 'view',
+        entityId: flatViewToValidate.id,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'update'> {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewUpdate(args);
 
@@ -83,8 +85,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewAction: UpdateViewAction = {
-      type: 'update_view',
-      viewId: flatEntityId,
+      type: 'update',
+      metadataName: 'view',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

@@ -5,8 +5,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RouteTriggerExceptionCode } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -24,17 +24,18 @@ export class FlatRouteTriggerValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
-  >): FailedFlatEntityValidation<FlatRouteTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'update_route_trigger',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-    };
-
+  >): FailedFlatEntityValidation<'routeTrigger', 'update'> {
     const existingFlatRouteTrigger =
       optimisticFlatRouteTriggerMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: existingFlatRouteTrigger?.universalIdentifier,
+      },
+      metadataName: 'routeTrigger',
+      type: 'update',
+    });
 
     if (!isDefined(existingFlatRouteTrigger)) {
       validationResult.errors.push({
@@ -70,20 +71,21 @@ export class FlatRouteTriggerValidatorService {
   }
 
   public validateFlatRouteTriggerDeletion({
-    flatEntityToValidate: { id: routeTriggerIdToDelete },
+    flatEntityToValidate: { id: routeTriggerIdToDelete, universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRouteTriggerMaps: optimisticFlatRouteTriggerMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
-  >): FailedFlatEntityValidation<FlatRouteTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'delete_route_trigger',
-      errors: [],
+  >): FailedFlatEntityValidation<'routeTrigger', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: routeTriggerIdToDelete,
+        universalIdentifier,
       },
-    };
+      metadataName: 'routeTrigger',
+      type: 'delete',
+    });
 
     const existingFlatRouteTrigger =
       optimisticFlatRouteTriggerMaps.byId[routeTriggerIdToDelete];
@@ -107,14 +109,15 @@ export class FlatRouteTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
-  >): FailedFlatEntityValidation<FlatRouteTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
-      type: 'create_route_trigger',
-      errors: [],
+  >): FailedFlatEntityValidation<'routeTrigger', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatRouteTriggerToValidate.id,
+        universalIdentifier: flatRouteTriggerToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'routeTrigger',
+      type: 'create',
+    });
 
     if (
       isDefined(

@@ -15,7 +15,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_serverless_function',
+  'create',
+  'serverlessFunction',
 ) {
   constructor(private readonly fileStorageService: FileStorageService) {
     super();
@@ -25,7 +26,7 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
     context: WorkspaceMigrationActionRunnerArgs<CreateServerlessFunctionAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { serverlessFunction } = action;
+    const { flatEntity: serverlessFunction } = action;
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -66,7 +67,7 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
 
     await this.fileStorageService.delete({
       folderPath: getServerlessFolder({
-        serverlessFunction: action.serverlessFunction,
+        serverlessFunction: action.flatEntity,
       }),
     });
   }

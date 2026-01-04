@@ -4,68 +4,89 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
-import { FromWorkspaceMigrationActionToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
+import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
-  type ExtractAction,
-  type WorkspaceMigrationActionTypeV2,
+  buildActionHandlerKey,
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
+import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
+import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
 
-// TODO deprecated prastoin
-export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
+type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   TActionType extends WorkspaceMigrationActionV2,
 > = Pick<
   WorkspaceMigrationActionRunnerArgs<TActionType>,
   'allFlatEntityMaps' | 'action'
 >;
-///
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
-  TActionType extends WorkspaceMigrationActionTypeV2,
-  TMetadataName extends
-    AllMetadataName = FromWorkspaceMigrationActionToMetadataName<TActionType>,
+  TActionType extends WorkspaceMigrationActionType,
+  TMetadataName extends AllMetadataName,
+  TAction extends
+    WorkspaceMigrationActionV2 = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
 > {
   public actionType: TActionType;
+  public metadataName: TMetadataName;
 
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
 
   executeForMetadata(
-    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
-  optimisticallyApplyActionOnAllFlatEntityMaps(
-    args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
-      ExtractAction<TActionType>
-    >,
-  ): Pick<
+  private optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<TAction>): Pick<
     AllFlatEntityMaps,
     | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
     | MetadataToFlatEntityMapsKey<TMetadataName>
   > {
-    return args.allFlatEntityMaps;
+    switch (action.type) {
+      case 'create': {
+        return optimisticallyApplyCreateActionOnAllFlatEntityMaps({
+          action,
+          allFlatEntityMaps,
+        });
+      }
+      case 'delete': {
+        return optimisticallyApplyDeleteActionOnAllFlatEntityMaps({
+          action,
+          allFlatEntityMaps,
+        });
+      }
+      case 'update': {
+        return optimisticallyApplyUpdateActionOnAllFlatEntityMaps({
+          action,
+          allFlatEntityMaps,
+        });
+      }
+    }
   }
 
   rollbackForMetadata(
-    _context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   async execute(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    context: WorkspaceMigrationActionRunnerArgs<TAction>,
   ): Promise<
     Pick<
       AllFlatEntityMaps,
@@ -96,7 +117,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   async rollback(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+    context: WorkspaceMigrationActionRunnerArgs<TAction>,
   ): Promise<void> {
     await this.rollbackForMetadata(context);
   }
@@ -110,28 +131,37 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }): Promise<void> {
     this.logger.time(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
-      `${this.actionType} ${label}`,
+      `${this.actionType}_${this.metadataName} ${label}`,
     );
     await method();
     this.logger.timeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
-      `${this.actionType} ${label}`,
+      `${this.actionType}_${this.metadataName} ${label}`,
     );
   }
 }
 
 export function WorkspaceMigrationRunnerActionHandler<
-  TActionType extends WorkspaceMigrationActionTypeV2,
+  TActionType extends WorkspaceMigrationActionType,
+  TMetadataName extends AllMetadataName,
 >(
   actionType: TActionType,
-): typeof BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
-  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
+  metadataName: TMetadataName,
+): typeof BaseWorkspaceMigrationRunnerActionHandlerService<
+  TActionType,
+  TMetadataName
+> {
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<
+    TActionType,
+    TMetadataName
+  > {
     actionType = actionType;
+    metadataName = metadataName;
   }
 
   SetMetadata(
     WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
-    actionType,
+    buildActionHandlerKey(actionType, metadataName),
   )(ActionHandlerService);
 
   return ActionHandlerService;
