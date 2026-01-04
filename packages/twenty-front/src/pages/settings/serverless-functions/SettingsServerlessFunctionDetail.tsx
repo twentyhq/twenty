@@ -1,7 +1,9 @@
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { getToolInputSchemaFromSourceCode } from '@/serverless-functions/utils/getToolInputSchemaFromSourceCode';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsServerlessFunctionLabelContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionLabelContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
@@ -15,7 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
   IconCode,
@@ -54,18 +56,22 @@ export const SettingsServerlessFunctionDetail = () => {
     serverlessFunctionId,
   });
 
-  const handleSave = useDebouncedCallback(async () => {
-    await updateServerlessFunction({
-      input: {
-        id: serverlessFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
+  const handleSave = useDebouncedCallback(
+    async (toolInputSchema?: object | null) => {
+      await updateServerlessFunction({
+        input: {
+          id: serverlessFunctionId,
+          update: {
+            name: formValues.name,
+            description: formValues.description,
+            code: formValues.code,
+            ...(toolInputSchema !== undefined && { toolInputSchema }),
+          },
         },
-      },
-    });
-  }, 500);
+      });
+    },
+    500,
+  );
 
   const onChange = (key: string) => {
     return async (value: string) => {
@@ -88,7 +94,15 @@ export const SettingsServerlessFunctionDetail = () => {
         }),
       };
     });
-    await handleSave();
+
+    // Parse and save schema if editing the handler file
+    let toolInputSchema: object | null | undefined;
+
+    if (filePath === serverlessFunction?.handlerPath) {
+      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
+    }
+
+    await handleSave(toolInputSchema);
   };
 
   const handleTestFunction = async () => {
@@ -119,48 +133,14 @@ export const SettingsServerlessFunctionDetail = () => {
           : 0,
     );
 
-  const renderActiveTabContent = () => {
-    switch (activeTabId) {
-      case 'editor':
-        return (
-          <SettingsServerlessFunctionCodeEditorTab
-            files={files}
-            handleExecute={handleTestFunction}
-            onChange={onCodeChange}
-            isTesting={isTesting}
-          />
-        );
-      case 'triggers':
-        return serverlessFunction ? (
-          <SettingsServerlessFunctionTriggersTab
-            serverlessFunction={serverlessFunction}
-          />
-        ) : null;
-      case 'test':
-        return (
-          <SettingsServerlessFunctionTestTab
-            serverlessFunctionId={serverlessFunctionId}
-            handleExecute={handleTestFunction}
-            isTesting={isTesting}
-          />
-        );
-      case 'settings':
-        return (
-          <SettingsServerlessFunctionSettingsTab
-            formValues={formValues}
-            onChange={onChange}
-          />
-        );
-      default:
-        return <></>;
-    }
-  };
+  const isEditorTab = activeTabId === 'editor';
+  const isTriggersTab = activeTabId === 'triggers';
+  const isTestTab = activeTabId === 'test';
+  const isSettingsTab = activeTabId === 'settings';
 
-  return (
-    !loading && (
-      <SubMenuTopBarContainer
-        title={formValues.name}
-        links={[
+  const breadcrumbLinks =
+    isDefined(applicationId) && applicationId !== ''
+      ? [
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
@@ -181,11 +161,58 @@ export const SettingsServerlessFunctionDetail = () => {
             ),
           },
           { children: `${serverlessFunction?.name}` },
-        ]}
+        ]
+      : [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`AI`,
+            href: getSettingsPath(SettingsPath.AI),
+          },
+          { children: `${serverlessFunction?.name}` },
+        ];
+
+  return (
+    !loading && (
+      <SubMenuTopBarContainer
+        title={
+          <SettingsServerlessFunctionLabelContainer
+            value={formValues.name}
+            onChange={onChange('name')}
+          />
+        }
+        links={breadcrumbLinks}
       >
         <SettingsPageContainer>
           <TabList tabs={tabs} componentInstanceId={instanceId} />
-          {renderActiveTabContent()}
+          {isEditorTab && (
+            <SettingsServerlessFunctionCodeEditorTab
+              files={files}
+              handleExecute={handleTestFunction}
+              onChange={onCodeChange}
+              isTesting={isTesting}
+            />
+          )}
+          {isTriggersTab && serverlessFunction && (
+            <SettingsServerlessFunctionTriggersTab
+              serverlessFunction={serverlessFunction}
+            />
+          )}
+          {isTestTab && (
+            <SettingsServerlessFunctionTestTab
+              serverlessFunctionId={serverlessFunctionId}
+              handleExecute={handleTestFunction}
+              isTesting={isTesting}
+            />
+          )}
+          {isSettingsTab && (
+            <SettingsServerlessFunctionSettingsTab
+              formValues={formValues}
+              onChange={onChange}
+            />
+          )}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     )

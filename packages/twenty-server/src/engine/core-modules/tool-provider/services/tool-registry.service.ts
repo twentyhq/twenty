@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
+import { type ToolSet, zodSchema } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { type ZodType } from 'zod';
 
 import {
   type CodeExecutionStreamEmitter,
@@ -25,6 +26,7 @@ export type ToolIndexEntry = {
     | 'dashboard';
   objectName?: string;
   operation?: string;
+  inputSchema?: object;
 };
 
 export type ToolSearchOptions = {
@@ -216,12 +218,91 @@ export class ToolRegistryService {
       NATIVE_MODEL: 'action',
       VIEW: 'view',
       DASHBOARD: 'dashboard',
+      SERVERLESS_FUNCTION: 'action',
     };
 
-    return Object.entries(tools).map(([name, tool]) => ({
-      name,
-      description: tool.description ?? '',
-      category: categoryMap[category],
-    }));
+    return Object.entries(tools).map(([name, tool]) => {
+      const inputSchema = this.extractJsonSchema(tool.inputSchema);
+
+      return {
+        name,
+        description: tool.description ?? '',
+        category: categoryMap[category],
+        inputSchema,
+      };
+    });
+  }
+
+  private extractJsonSchema(inputSchema: unknown): object | undefined {
+    if (!inputSchema) {
+      return undefined;
+    }
+
+    let schema: object | undefined;
+
+    // Check if it's a Zod schema (has _def property)
+    if (
+      typeof inputSchema === 'object' &&
+      inputSchema !== null &&
+      '_def' in inputSchema
+    ) {
+      try {
+        // Use AI SDK's zodSchema() to convert Zod to JSON Schema
+        const converted = zodSchema(inputSchema as ZodType);
+
+        schema = converted.jsonSchema as object;
+      } catch {
+        // If conversion fails, return undefined
+        return undefined;
+      }
+    } else if (
+      // Check if AI SDK wrapped it with jsonSchema property
+      typeof inputSchema === 'object' &&
+      inputSchema !== null &&
+      'jsonSchema' in inputSchema
+    ) {
+      schema = (inputSchema as { jsonSchema: object }).jsonSchema;
+    } else if (typeof inputSchema === 'object') {
+      // Return as-is if it's already an object (plain JSON schema)
+      schema = inputSchema as object;
+    }
+
+    if (!schema) {
+      return undefined;
+    }
+
+    return this.stripInternalFieldsFromSchema(schema);
+  }
+
+  // Remove internal fields (loadingMessage) from schema for display
+  private stripInternalFieldsFromSchema(schema: object): object {
+    const schemaObj = schema as Record<string, unknown>;
+
+    // Remove $schema property
+    const { $schema: _, ...rest } = schemaObj;
+
+    // Remove loadingMessage from properties if present
+    // loadingMessage is an internal field auto-injected for AI status updates
+    if (
+      rest.type === 'object' &&
+      rest.properties &&
+      typeof rest.properties === 'object'
+    ) {
+      const properties = rest.properties as Record<string, unknown>;
+      const { loadingMessage: __, ...cleanProperties } = properties;
+
+      // Filter required array to remove loadingMessage if present
+      const required = Array.isArray(rest.required)
+        ? rest.required.filter((field) => field !== 'loadingMessage')
+        : undefined;
+
+      return {
+        ...rest,
+        properties: cleanProperties,
+        ...(required && required.length > 0 ? { required } : {}),
+      };
+    }
+
+    return rest;
   }
 }

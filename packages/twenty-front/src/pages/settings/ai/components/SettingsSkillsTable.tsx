@@ -16,15 +16,13 @@ import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconArchive,
   IconChevronRight,
-  IconFilterCog,
+  IconFilter,
   IconPlus,
   IconSearch,
 } from 'twenty-ui/display';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 
 import {
@@ -40,29 +38,27 @@ import {
   StyledSkillTableRow,
 } from './SettingsSkillTableRow';
 
-const StyledSearchContainer = styled.div`
+const StyledSearchAndFilterContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
+  align-items: center;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSearchInput = styled(SettingsTextInput)`
   flex: 1;
-`;
-
-const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
 `;
 
 const StyledTableHeaderRow = styled(StyledSkillTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledHeaderContainer = styled.div`
+const StyledFooterContainer = styled.div`
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsSkillsTable = () => {
@@ -124,23 +120,8 @@ export const SettingsSkillsTable = () => {
   };
 
   return (
-    <Section>
-      <StyledHeaderContainer>
-        <H2Title
-          title={t`Skills`}
-          description={t`Skills available in the chat`}
-        />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
-          <Button
-            Icon={IconPlus}
-            title={t`New Skill`}
-            size="small"
-            variant="secondary"
-          />
-        </UndecoratedLink>
-      </StyledHeaderContainer>
-
-      <StyledSearchContainer>
+    <>
+      <StyledSearchAndFilterContainer>
         <StyledSearchInput
           instanceId="skill-table-search"
           LeftIcon={IconSearch}
@@ -150,11 +131,15 @@ export const SettingsSkillsTable = () => {
         />
         <Dropdown
           dropdownId="settings-skills-filter-dropdown"
+          dropdownPlacement="bottom-end"
+          dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
-            <LightIconButton
-              aria-label={t`Filter skills`}
-              Icon={IconFilterCog}
-              accent="tertiary"
+            <Button
+              Icon={IconFilter}
+              size="medium"
+              variant="secondary"
+              accent="default"
+              ariaLabel={t`Filter`}
             />
           }
           dropdownComponents={
@@ -171,9 +156,9 @@ export const SettingsSkillsTable = () => {
             </DropdownContent>
           }
         />
-      </StyledSearchContainer>
+      </StyledSearchAndFilterContainer>
 
-      <StyledTable>
+      <Table>
         <StyledTableHeaderRow>
           {SETTINGS_SKILL_TABLE_METADATA.fields.map(
             (settingsSkillTableMetadataField) => (
@@ -221,7 +206,18 @@ export const SettingsSkillsTable = () => {
                 }
               />
             ))}
-      </StyledTable>
-    </Section>
+      </Table>
+
+      <StyledFooterContainer>
+        <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
+          <Button
+            Icon={IconPlus}
+            title={t`New Skill`}
+            size="small"
+            variant="secondary"
+          />
+        </UndecoratedLink>
+      </StyledFooterContainer>
+    </>
   );
 };

@@ -10,134 +10,98 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 
 const GetFieldMetadataInputSchema = z.object({
-  loadingMessage: z
+  id: z
     .string()
+    .uuid()
     .optional()
-    .describe('A clear description of the action being performed.'),
-  input: z.object({
-    id: z
-      .string()
-      .uuid()
-      .optional()
-      .describe(
-        'Unique identifier for the field metadata. If provided, returns a single field.',
-      ),
-    objectMetadataId: z
-      .string()
-      .uuid()
-      .optional()
-      .describe('Filter fields by object metadata ID.'),
-    limit: z
-      .number()
-      .int()
-      .min(1)
-      .max(100)
-      .default(100)
-      .describe('Maximum number of fields to return.'),
-  }),
+    .describe(
+      'Unique identifier for the field metadata. If provided, returns a single field.',
+    ),
+  objectMetadataId: z
+    .string()
+    .uuid()
+    .optional()
+    .describe('Filter fields by object metadata ID.'),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(100)
+    .describe('Maximum number of fields to return.'),
 });
 
 const CreateFieldMetadataInputSchema = z.object({
-  loadingMessage: z
+  objectMetadataId: z
     .string()
+    .uuid()
+    .describe('ID of the object to add the field to'),
+  type: z
+    .nativeEnum(FieldMetadataType)
+    .describe(
+      'Field type (e.g., TEXT, NUMBER, BOOLEAN, DATE_TIME, RELATION, etc.)',
+    ),
+  name: z.string().describe('Internal name of the field (camelCase)'),
+  label: z.string().describe('Display label of the field'),
+  description: z.string().optional().describe('Description of the field'),
+  icon: z.string().optional().describe('Icon identifier for the field'),
+  isNullable: z.boolean().optional().describe('Whether the field can be null'),
+  isUnique: z
+    .boolean()
     .optional()
-    .describe('A clear description of the action being performed.'),
-  input: z.object({
-    objectMetadataId: z
-      .string()
-      .uuid()
-      .describe('ID of the object to add the field to'),
-    type: z
-      .nativeEnum(FieldMetadataType)
-      .describe(
-        'Field type (e.g., TEXT, NUMBER, BOOLEAN, DATE_TIME, RELATION, etc.)',
-      ),
-    name: z.string().describe('Internal name of the field (camelCase)'),
-    label: z.string().describe('Display label of the field'),
-    description: z.string().optional().describe('Description of the field'),
-    icon: z.string().optional().describe('Icon identifier for the field'),
-    isNullable: z
-      .boolean()
-      .optional()
-      .describe('Whether the field can be null'),
-    isUnique: z
-      .boolean()
-      .optional()
-      .describe('Whether the field value must be unique'),
-    defaultValue: z
-      .unknown()
-      .optional()
-      .describe('Default value for the field'),
-    options: z
-      .unknown()
-      .optional()
-      .describe('Options for SELECT/MULTI_SELECT fields'),
-    settings: z
-      .unknown()
-      .optional()
-      .describe('Additional settings for the field'),
-    isLabelSyncedWithName: z
-      .boolean()
-      .optional()
-      .describe('Whether label should sync with name changes'),
-    isRemoteCreation: z
-      .boolean()
-      .optional()
-      .describe('Whether this is a remote field creation'),
-    relationCreationPayload: z
-      .unknown()
-      .optional()
-      .describe('Payload for creating relation fields'),
-  }),
+    .describe('Whether the field value must be unique'),
+  defaultValue: z.unknown().optional().describe('Default value for the field'),
+  options: z
+    .unknown()
+    .optional()
+    .describe('Options for SELECT/MULTI_SELECT fields'),
+  settings: z
+    .unknown()
+    .optional()
+    .describe('Additional settings for the field'),
+  isLabelSyncedWithName: z
+    .boolean()
+    .optional()
+    .describe('Whether label should sync with name changes'),
+  isRemoteCreation: z
+    .boolean()
+    .optional()
+    .describe('Whether this is a remote field creation'),
+  relationCreationPayload: z
+    .unknown()
+    .optional()
+    .describe('Payload for creating relation fields'),
 });
 
 const UpdateFieldMetadataInputSchema = z.object({
-  loadingMessage: z
-    .string()
+  id: z.string().uuid().describe('ID of the field to update'),
+  name: z.string().optional().describe('Internal name of the field'),
+  label: z.string().optional().describe('Display label of the field'),
+  description: z.string().optional().describe('Description of the field'),
+  icon: z.string().optional().describe('Icon identifier for the field'),
+  isActive: z.boolean().optional().describe('Whether the field is active'),
+  isNullable: z.boolean().optional().describe('Whether the field can be null'),
+  isUnique: z
+    .boolean()
     .optional()
-    .describe('A clear description of the action being performed.'),
-  input: z.object({
-    id: z.string().uuid().describe('ID of the field to update'),
-    name: z.string().optional().describe('Internal name of the field'),
-    label: z.string().optional().describe('Display label of the field'),
-    description: z.string().optional().describe('Description of the field'),
-    icon: z.string().optional().describe('Icon identifier for the field'),
-    isActive: z.boolean().optional().describe('Whether the field is active'),
-    isNullable: z
-      .boolean()
-      .optional()
-      .describe('Whether the field can be null'),
-    isUnique: z
-      .boolean()
-      .optional()
-      .describe('Whether the field value must be unique'),
-    defaultValue: z
-      .unknown()
-      .optional()
-      .describe('Default value for the field'),
-    options: z
-      .unknown()
-      .optional()
-      .describe('Options for SELECT/MULTI_SELECT fields'),
-    settings: z
-      .unknown()
-      .optional()
-      .describe('Additional settings for the field'),
-    isLabelSyncedWithName: z
-      .boolean()
-      .optional()
-      .describe('Whether label should sync with name changes'),
-  }),
+    .describe('Whether the field value must be unique'),
+  defaultValue: z.unknown().optional().describe('Default value for the field'),
+  options: z
+    .unknown()
+    .optional()
+    .describe('Options for SELECT/MULTI_SELECT fields'),
+  settings: z
+    .unknown()
+    .optional()
+    .describe('Additional settings for the field'),
+  isLabelSyncedWithName: z
+    .boolean()
+    .optional()
+    .describe('Whether label should sync with name changes'),
 });
 
 const DeleteFieldMetadataInputSchema = z.object({
-  loadingMessage: z
-    .string()
-    .optional()
-    .describe('A clear description of the action being performed.'),
-  input: z.object({
-    id: z.string().uuid().describe('ID of the field to delete'),
-  }),
+  id: z.string().uuid().describe('ID of the field to delete'),
 });
 
 @Injectable()
@@ -151,21 +115,21 @@ export class FieldMetadataToolsFactory {
           'Find fields metadata. Retrieve information about the fields of objects in the workspace data model.',
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
-          input: { id?: string; objectMetadataId?: string; limit?: number };
+          id?: string;
+          objectMetadataId?: string;
+          limit?: number;
         }) => {
           return this.fieldMetadataService.query({
             filter: {
               workspaceId: { eq: workspaceId },
-              ...(parameters.input.id
-                ? { id: { eq: parameters.input.id } }
-                : {}),
-              ...(parameters.input.objectMetadataId
+              ...(parameters.id ? { id: { eq: parameters.id } } : {}),
+              ...(parameters.objectMetadataId
                 ? {
-                    objectMetadataId: { eq: parameters.input.objectMetadataId },
+                    objectMetadataId: { eq: parameters.objectMetadataId },
                   }
                 : {}),
             },
-            paging: { limit: parameters.input.limit ?? 100 },
+            paging: { limit: parameters.limit ?? 100 },
           });
         },
       },
@@ -174,27 +138,25 @@ export class FieldMetadataToolsFactory {
           'Create a new field metadata on an object. Specify the objectMetadataId and field properties.',
         inputSchema: CreateFieldMetadataInputSchema,
         execute: async (parameters: {
-          input: {
-            objectMetadataId: string;
-            type: FieldMetadataType;
-            name: string;
-            label: string;
-            description?: string;
-            icon?: string;
-            isNullable?: boolean;
-            isUnique?: boolean;
-            defaultValue?: unknown;
-            options?: unknown;
-            settings?: unknown;
-            isLabelSyncedWithName?: boolean;
-            isRemoteCreation?: boolean;
-            relationCreationPayload?: unknown;
-          };
+          objectMetadataId: string;
+          type: FieldMetadataType;
+          name: string;
+          label: string;
+          description?: string;
+          icon?: string;
+          isNullable?: boolean;
+          isUnique?: boolean;
+          defaultValue?: unknown;
+          options?: unknown;
+          settings?: unknown;
+          isLabelSyncedWithName?: boolean;
+          isRemoteCreation?: boolean;
+          relationCreationPayload?: unknown;
         }) => {
           try {
             const flatFieldMetadata =
               await this.fieldMetadataService.createOneField({
-                createFieldInput: parameters.input as Parameters<
+                createFieldInput: parameters as Parameters<
                   typeof this.fieldMetadataService.createOneField
                 >[0]['createFieldInput'],
                 workspaceId,
@@ -214,23 +176,21 @@ export class FieldMetadataToolsFactory {
           'Update an existing field metadata. Provide the field ID and the properties to update.',
         inputSchema: UpdateFieldMetadataInputSchema,
         execute: async (parameters: {
-          input: {
-            id: string;
-            name?: string;
-            label?: string;
-            description?: string;
-            icon?: string;
-            isActive?: boolean;
-            isNullable?: boolean;
-            isUnique?: boolean;
-            defaultValue?: unknown;
-            options?: unknown;
-            settings?: unknown;
-            isLabelSyncedWithName?: boolean;
-          };
+          id: string;
+          name?: string;
+          label?: string;
+          description?: string;
+          icon?: string;
+          isActive?: boolean;
+          isNullable?: boolean;
+          isUnique?: boolean;
+          defaultValue?: unknown;
+          options?: unknown;
+          settings?: unknown;
+          isLabelSyncedWithName?: boolean;
         }) => {
           try {
-            const { id, ...update } = parameters.input;
+            const { id, ...update } = parameters;
 
             const flatFieldMetadata =
               await this.fieldMetadataService.updateOneField({
@@ -252,11 +212,11 @@ export class FieldMetadataToolsFactory {
       delete_field_metadata: {
         description: 'Delete a field metadata by its ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
-        execute: async (parameters: { input: { id: string } }) => {
+        execute: async (parameters: { id: string }) => {
           try {
             const flatFieldMetadata =
               await this.fieldMetadataService.deleteOneField({
-                deleteOneFieldInput: { id: parameters.input.id },
+                deleteOneFieldInput: { id: parameters.id },
                 workspaceId,
               });
 

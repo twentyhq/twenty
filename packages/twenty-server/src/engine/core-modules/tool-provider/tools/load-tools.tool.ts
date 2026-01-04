@@ -8,16 +8,14 @@ import {
 export const LOAD_TOOLS_TOOL_NAME = 'load_tools' as const;
 
 export const loadToolsInputSchema = z.object({
-  input: z.object({
-    toolNames: z
-      .array(z.string())
-      .describe(
-        'Array of tool names to load. Use the exact names from the tool catalog.',
-      ),
-  }),
+  toolNames: z
+    .array(z.string())
+    .describe(
+      'Array of tool names to load. Use the exact names from the tool catalog.',
+    ),
 });
 
-export type LoadToolsInput = z.infer<typeof loadToolsInputSchema>['input'];
+export type LoadToolsInput = z.infer<typeof loadToolsInputSchema>;
 
 export type LoadToolsResult = {
   loaded: string[];
@@ -37,10 +35,8 @@ export const createLoadToolsTool = (
 ) => ({
   description: `Load tools by name to make them available for use. Call this when you need to use a tool from the catalog that isn't already loaded. You can load multiple tools at once.`,
   inputSchema: loadToolsInputSchema,
-  execute: async (parameters: {
-    input: LoadToolsInput;
-  }): Promise<LoadToolsResult> => {
-    const { toolNames } = parameters.input;
+  execute: async (parameters: LoadToolsInput): Promise<LoadToolsResult> => {
+    const { toolNames } = parameters;
 
     const loaded: string[] = [];
     const notFound: string[] = [];
