@@ -14,17 +14,10 @@ export type FlatEntityValidationError<TCode extends string = string> = {
 export type FailedFlatEntityValidation<
   TMetadataName extends AllMetadataName,
   TAcionType extends WorkspaceMigrationActionTypeV2,
-  TRequiredProperties extends
-    keyof MetadataFlatEntity<TMetadataName> = TAcionType extends 'update'
-    ? 'id'
-    : 'id' | 'universalIdentifier',
 > = {
   type: TAcionType;
   metadataName: TMetadataName;
   errors: FlatEntityValidationError[];
-  flatEntityMinimalInformation: Pick<
-    MetadataFlatEntity<TMetadataName>,
-    TRequiredProperties
-  > &
-    Partial<Omit<MetadataFlatEntity<TMetadataName>, TRequiredProperties>>;
+  flatEntityMinimalInformation: Pick<MetadataFlatEntity<TMetadataName>, 'id'> &
+    Partial<Omit<MetadataFlatEntity<TMetadataName>, 'id'>>;
 };

@@ -93,8 +93,11 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     if (!isDefined(flatEntity)) {
       return {
         status: 'fail',
-        type: 'delete',
-        flatEntityMinimalInformation: {},
+        metadataName: 'index',
+        type: 'update',
+        flatEntityMinimalInformation: {
+          id: flatEntityId,
+        },
         errors: [
           {
             code: FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
@@ -115,7 +118,11 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     if (deletionValidationResult.errors.length > 0) {
       return {
         status: 'fail',
-        ...deletionValidationResult,
+        type: 'update',
+        errors: deletionValidationResult.errors,
+        flatEntityMinimalInformation:
+          deletionValidationResult.flatEntityMinimalInformation,
+        metadataName: deletionValidationResult.metadataName,
       };
     }
 
@@ -150,7 +157,11 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     if (creationValidationResult.errors.length > 0) {
       return {
         status: 'fail',
-        ...creationValidationResult,
+        type: 'update',
+        errors: creationValidationResult.errors,
+        flatEntityMinimalInformation:
+          creationValidationResult.flatEntityMinimalInformation,
+        metadataName: creationValidationResult.metadataName,
       };
     }
 
