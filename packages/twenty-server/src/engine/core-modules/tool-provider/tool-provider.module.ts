@@ -7,6 +7,7 @@ import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/provid
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
+import { ServerlessFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/serverless-function-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -52,6 +53,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
+    ServerlessFunctionToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
@@ -61,6 +63,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         dashboardProvider: DashboardToolProvider,
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
+        serverlessFunctionProvider: ServerlessFunctionToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
@@ -68,6 +71,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         dashboardProvider,
         databaseProvider,
         metadataProvider,
+        serverlessFunctionProvider,
         viewProvider,
         workflowProvider,
       ],
@@ -76,6 +80,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DashboardToolProvider,
         DatabaseToolProvider,
         MetadataToolProvider,
+        ServerlessFunctionToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,
       ],

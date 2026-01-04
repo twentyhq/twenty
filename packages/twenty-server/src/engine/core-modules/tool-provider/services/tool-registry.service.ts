@@ -23,7 +23,8 @@ export type ToolIndexEntry = {
     | 'workflow'
     | 'metadata'
     | 'view'
-    | 'dashboard';
+    | 'dashboard'
+    | 'serverless_function';
   objectName?: string;
   operation?: string;
   inputSchema?: object;
@@ -37,7 +38,8 @@ export type ToolSearchOptions = {
     | 'workflow'
     | 'metadata'
     | 'view'
-    | 'dashboard';
+    | 'dashboard'
+    | 'serverless_function';
 };
 
 export type ToolContext = {
@@ -218,7 +220,7 @@ export class ToolRegistryService {
       NATIVE_MODEL: 'action',
       VIEW: 'view',
       DASHBOARD: 'dashboard',
-      SERVERLESS_FUNCTION: 'action',
+      SERVERLESS_FUNCTION: 'serverless_function',
     };
 
     return Object.entries(tools).map(([name, tool]) => {
