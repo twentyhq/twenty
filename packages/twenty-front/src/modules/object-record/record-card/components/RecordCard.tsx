@@ -40,24 +40,28 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
-    transition: all ease-in-out 160ms;
+    display: none;
     opacity: 0;
-  }
-
-  &[data-selected='true'] .checkbox-container {
-    opacity: 1;
-  }
-
-  &:hover .checkbox-container {
-    opacity: 1;
+    transition: all ease-in-out 160ms;
   }
 
   .compact-icon-container {
-    transition: all ease-in-out 160ms;
+    display: none;
     opacity: 0;
+    transition: all ease-in-out 160ms;
   }
-  &:hover .compact-icon-container {
+
+  .icons-container {
+    display: none;
+  }
+
+  &:hover .icons-container {
+    display: flex;
     opacity: 1;
+  }
+
+  &:hover .record-chip-container {
+    max-width: calc(100% - 20px);
   }
 `;
 

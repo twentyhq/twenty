@@ -24,21 +24,18 @@ import { ChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
-const StyledCompactIconContainer = styled.div`
+const StyledIconsContainer = styled.div`
   align-items: center;
   display: flex;
-  justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledCheckboxContainer = styled.div`
-  margin-left: auto;
+  flex-shrink: 0;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
+  width: 100%;
 `;
 
 export const RecordBoardCardHeader = () => {
@@ -79,7 +76,7 @@ export const RecordBoardCardHeader = () => {
 
   return (
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
-      <StyledRecordChipContainer>
+      <StyledRecordChipContainer className="record-chip-container">
         <StopPropagationContainer>
           {isDefined(record) && (
             <RecordChip
@@ -97,20 +94,16 @@ export const RecordBoardCardHeader = () => {
         </StopPropagationContainer>
       </StyledRecordChipContainer>
 
-      {isCompactModeActive && (
-        <StyledCompactIconContainer className="compact-icon-container">
-          <StopPropagationContainer>
-            <LightIconButton
-              Icon={isCardExpanded ? IconEyeOff : IconEye}
-              accent="tertiary"
-              onClick={() => {
-                setIsCardExpanded(!isCardExpanded);
-              }}
-            />
-          </StopPropagationContainer>
-        </StyledCompactIconContainer>
-      )}
-      <StyledCheckboxContainer className="checkbox-container">
+      <StyledIconsContainer className="icons-container">
+        <StopPropagationContainer>
+          <LightIconButton
+            Icon={isCardExpanded ? IconEyeOff : IconEye}
+            accent="tertiary"
+            onClick={() => {
+              setIsCardExpanded(!isCardExpanded);
+            }}
+          />
+        </StopPropagationContainer>
         <StopPropagationContainer>
           <Checkbox
             hoverable
@@ -122,7 +115,7 @@ export const RecordBoardCardHeader = () => {
             variant={CheckboxVariant.Secondary}
           />
         </StopPropagationContainer>
-      </StyledCheckboxContainer>
+      </StyledIconsContainer>
     </RecordCardHeaderContainer>
   );
 };
