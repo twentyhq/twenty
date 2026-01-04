@@ -60,6 +60,7 @@ export class FlatViewFieldValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: updatedFlatViewField.id,
       viewId: updatedFlatViewField.viewId,
       fieldMetadataId: updatedFlatViewField.fieldMetadataId,

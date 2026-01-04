@@ -57,6 +57,7 @@ export class FlatObjectMetadataValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: existingFlatObjectMetadata.id,
       namePlural: existingFlatObjectMetadata.namePlural,
       nameSingular: existingFlatObjectMetadata.nameSingular,

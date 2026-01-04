@@ -68,6 +68,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: flatFieldMetadataToValidate.id,
       name: flatFieldMetadataToValidate.name,
       objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,

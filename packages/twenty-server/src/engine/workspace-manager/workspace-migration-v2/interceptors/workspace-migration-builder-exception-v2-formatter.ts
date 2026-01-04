@@ -8,6 +8,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 export const workspaceMigrationBuilderExceptionV2Formatter = (
   error: WorkspaceMigrationBuilderExceptionV2,
@@ -19,9 +20,7 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       i18n,
     );
 
-  const message = `Validation failed for ${(
-    Object.keys(summary) as (keyof typeof summary)[]
-  )
+  const message = `Validation failed for ${Object.values(ALL_METADATA_NAME)
     .flatMap((metadataName) => {
       const count = summary[metadataName];
 

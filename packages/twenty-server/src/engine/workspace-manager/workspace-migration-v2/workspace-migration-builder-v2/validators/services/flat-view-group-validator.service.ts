@@ -62,6 +62,7 @@ export class FlatViewGroupValidatorService {
     }
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: updatedFlatViewGroup.id,
       viewId: updatedFlatViewGroup.viewId,
     };

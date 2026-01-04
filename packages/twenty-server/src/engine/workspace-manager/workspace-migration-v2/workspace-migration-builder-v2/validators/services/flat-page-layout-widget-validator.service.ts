@@ -56,6 +56,7 @@ export class FlatPageLayoutWidgetValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: updatedFlatPageLayoutWidget.id,
       pageLayoutTabId: updatedFlatPageLayoutWidget.pageLayoutTabId,
     };
