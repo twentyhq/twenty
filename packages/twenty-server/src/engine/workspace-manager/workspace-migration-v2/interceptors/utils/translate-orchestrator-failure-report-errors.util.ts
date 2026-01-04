@@ -1,5 +1,4 @@
 import { type I18n, type MessageDescriptor } from '@lingui/core';
-import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
@@ -57,5 +56,5 @@ export const translateOrchestratorFailureReportErrors = (
   return translateUserFriendlyMessageInFlatEntityValidationError(
     report,
     i18n,
-  ) as MetadataValidationErrorResponse['errors'];
+  );
 };

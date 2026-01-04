@@ -7,6 +7,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
+import { isDefined } from 'twenty-shared/utils';
 
 export const workspaceMigrationBuilderExceptionV2Formatter = (
   error: WorkspaceMigrationBuilderExceptionV2,
@@ -18,6 +19,19 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       i18n,
     );
 
+  const message = `Validation failed for ${(
+    Object.keys(summary) as (keyof typeof summary)[]
+  )
+    .flatMap((metadataName) => {
+      const count = summary[metadataName];
+      if (!isDefined(count) || count === 0) {
+        return [];
+      }
+
+      return [`${count} ${metadataName}${count > 1 ? 's' : ''}`];
+    })
+    .join(', ')}`;
+
   throw new BaseGraphQLError(
     error.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
@@ -25,8 +39,8 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       code: 'METADATA_VALIDATION_ERROR',
       errors,
       summary,
-      message: `Validation failed for 0 object(s) and 0 field(s)`,
-      userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
+      message,
+      userFriendlyMessage: msg`Metadata validation failed`,
     },
   );
 };
