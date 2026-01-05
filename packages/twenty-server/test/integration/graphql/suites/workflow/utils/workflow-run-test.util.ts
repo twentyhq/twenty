@@ -63,3 +63,77 @@ export const getWorkflowRun = async (
 
   return response.body.data.workflowRun;
 };
+
+export const runWorkflowVersion = async ({
+  workflowVersionId,
+  payload,
+}: {
+  workflowVersionId: string;
+  payload?: object;
+}): Promise<string> => {
+  const response = await client
+    .post('/graphql')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send({
+      query: `
+        mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
+          runWorkflowVersion(input: $input) {
+            workflowRunId
+          }
+        }
+      `,
+      variables: {
+        input: {
+          workflowVersionId,
+          payload: payload ?? {},
+        },
+      },
+    });
+
+  if (response.body.errors || !response.body.data?.runWorkflowVersion) {
+    throw new Error(
+      `Failed to run workflow version: ${JSON.stringify(response.body.errors)}`,
+    );
+  }
+
+  return response.body.data.runWorkflowVersion.workflowRunId;
+};
+
+export const destroyWorkflowRun = async (
+  workflowRunId: string,
+): Promise<void> => {
+  await client
+    .post('/graphql')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send({
+      query: `
+        mutation DestroyWorkflowRun($id: ID!) {
+          destroyWorkflowRun(id: $id) {
+            id
+          }
+        }
+      `,
+      variables: { id: workflowRunId },
+    });
+};
+
+export const waitForWorkflowCompletion = async (
+  workflowRunId: string,
+  maxAttempts = 30,
+  intervalMs = 500,
+): Promise<WorkflowRunResponse | null> => {
+  let workflowRun = await getWorkflowRun(workflowRunId);
+  let attempts = 0;
+
+  while (
+    workflowRun?.status === 'RUNNING' &&
+    attempts < maxAttempts &&
+    workflowRun !== null
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    workflowRun = await getWorkflowRun(workflowRunId);
+    attempts++;
+  }
+
+  return workflowRun;
+};

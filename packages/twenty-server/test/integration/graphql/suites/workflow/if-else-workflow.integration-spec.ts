@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import request from 'supertest';
-import { getWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import {
+  destroyWorkflowRun,
+  runWorkflowVersion,
+  waitForWorkflowCompletion
+} from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -358,115 +362,31 @@ describe('If/Else Workflow (e2e)', () => {
 
   describe('If/Else branching execution', () => {
     it('should execute IF branch when condition is true', async () => {
-      const runWorkflowResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-              runWorkflowVersion(input: $input) {
-                workflowRunId
-              }
-            }
-          `,
-          variables: {
-            input: {
-              workflowVersionId: createdWorkflowVersionId,
-              payload: { number: 10 },
-            },
-          },
-        });
+      const workflowRunId = await runWorkflowVersion({
+        workflowVersionId: createdWorkflowVersionId!,
+        payload: { number: 10 },
+      });
 
-      expect(runWorkflowResponse.status).toBe(200);
-      expect(runWorkflowResponse.body.errors).toBeUndefined();
-      expect(
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId,
-      ).toBeDefined();
-
-      const workflowRunId =
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
-
-      let workflowRun = await getWorkflowRun(workflowRunId);
-      let attempts = 0;
-
-      while (
-        workflowRun?.status === 'RUNNING' &&
-        attempts < 30 &&
-        workflowRun !== null
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        workflowRun = await getWorkflowRun(workflowRunId);
-        attempts++;
-      }
+      const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
       expect(workflowRun).toBeDefined();
       expect(workflowRun?.status).toBe('COMPLETED');
       expect(workflowRun?.state?.stepInfos).toBeDefined();
-
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
-
       expect(workflowRun?.state?.stepInfos?.[ifElseStepId!]?.status).toBe(
         'SUCCESS',
       );
 
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflowRun($id: ID!) {
-              destroyWorkflowRun(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: workflowRunId },
-        });
+      await destroyWorkflowRun(workflowRunId);
     });
 
     it('should execute ELSE branch when condition is false', async () => {
-      const runWorkflowResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-              runWorkflowVersion(input: $input) {
-                workflowRunId
-              }
-            }
-          `,
-          variables: {
-            input: {
-              workflowVersionId: createdWorkflowVersionId,
-              payload: { number: 5 },
-            },
-          },
-        });
+      const workflowRunId = await runWorkflowVersion({
+        workflowVersionId: createdWorkflowVersionId!,
+        payload: { number: 5 },
+      });
 
-      expect(runWorkflowResponse.status).toBe(200);
-      expect(runWorkflowResponse.body.errors).toBeUndefined();
-      expect(
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId,
-      ).toBeDefined();
-
-      const workflowRunId =
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
-
-      let workflowRun = await getWorkflowRun(workflowRunId);
-      let attempts = 0;
-
-      while (
-        workflowRun?.status === 'RUNNING' &&
-        attempts < 30 &&
-        workflowRun !== null
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        workflowRun = await getWorkflowRun(workflowRunId);
-        attempts++;
-      }
-
-      expect(workflowRun).toBeDefined();
+      const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
       if (workflowRun?.status === 'FAILED') {
         const failedSteps = Object.entries(workflowRun.state?.stepInfos ?? {})
@@ -483,28 +403,15 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
+      expect(workflowRun).toBeDefined();
       expect(workflowRun?.status).toBe('COMPLETED');
       expect(workflowRun?.state?.stepInfos).toBeDefined();
-
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
-
       expect(workflowRun?.state?.stepInfos?.[ifElseStepId!]?.status).toBe(
         'SUCCESS',
       );
 
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflowRun($id: ID!) {
-              destroyWorkflowRun(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: workflowRunId },
-        });
+      await destroyWorkflowRun(workflowRunId);
     });
   });
 });

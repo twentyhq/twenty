@@ -1,5 +1,9 @@
 import request from 'supertest';
-import { getWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import {
+  destroyWorkflowRun,
+  getWorkflowRun,
+  runWorkflowVersion,
+} from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -13,21 +17,8 @@ describe('Quick Lead Workflow (e2e)', () => {
   let createdWorkflowRunId: string | null = null;
 
   afterAll(async () => {
-    // Clean up workflow run
     if (createdWorkflowRunId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflowRun($id: ID!) {
-              destroyWorkflowRun(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: createdWorkflowRunId },
-        });
+      await destroyWorkflowRun(createdWorkflowRunId);
     }
   });
 
@@ -128,32 +119,9 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should trigger Quick Lead workflow and create workflow run', async () => {
-      const runWorkflowResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-              runWorkflowVersion(input: $input) {
-                workflowRunId
-              }
-            }
-          `,
-          variables: {
-            input: {
-              workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
-            },
-          },
-        });
-
-      expect(runWorkflowResponse.status).toBe(200);
-      expect(runWorkflowResponse.body.errors).toBeUndefined();
-      expect(
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId,
-      ).toBeDefined();
-
-      const workflowRunId =
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
+      const workflowRunId = await runWorkflowVersion({
+        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      });
 
       createdWorkflowRunId = workflowRunId;
 
@@ -190,26 +158,9 @@ describe('Quick Lead Workflow (e2e)', () => {
     });
 
     it('should be able to stop a running workflow run', async () => {
-      const runWorkflowResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-              runWorkflowVersion(input: $input) {
-                workflowRunId
-              }
-            }
-          `,
-          variables: {
-            input: {
-              workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
-            },
-          },
-        });
-
-      const workflowRunId =
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
+      const workflowRunId = await runWorkflowVersion({
+        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      });
 
       const stopResponse = await client
         .post('/graphql')
@@ -232,19 +183,7 @@ describe('Quick Lead Workflow (e2e)', () => {
       const workflowRun = await getWorkflowRun(workflowRunId);
 
       expect(workflowRun?.status).toBe('STOPPED');
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflowRun($id: ID!) {
-              destroyWorkflowRun(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: workflowRunId },
-        });
+      await destroyWorkflowRun(workflowRunId);
     });
   });
 
@@ -288,44 +227,14 @@ describe('Quick Lead Workflow (e2e)', () => {
       }
 
       if (testWorkflowRunId) {
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send({
-            query: `
-              mutation DestroyWorkflowRun($id: ID!) {
-                destroyWorkflowRun(id: $id) {
-                  id
-                }
-              }
-            `,
-            variables: { id: testWorkflowRunId },
-          });
+        await destroyWorkflowRun(testWorkflowRunId);
       }
     });
 
     it('should complete full workflow: trigger → submit form → create Company and Person', async () => {
-      const runWorkflowResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-              runWorkflowVersion(input: $input) {
-                workflowRunId
-              }
-            }
-          `,
-          variables: {
-            input: {
-              workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
-            },
-          },
-        });
-
-      expect(runWorkflowResponse.body.errors).toBeUndefined();
-      testWorkflowRunId =
-        runWorkflowResponse.body.data.runWorkflowVersion.workflowRunId;
+      testWorkflowRunId = await runWorkflowVersion({
+        workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+      });
 
       expect(testWorkflowRunId).toBeDefined();
 
