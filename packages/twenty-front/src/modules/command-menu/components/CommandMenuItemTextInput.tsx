@@ -82,7 +82,9 @@ export const CommandMenuItemTextInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: isTextInputCurrentlyFocused ? handleClickOutside : undefined,
+    onClickOutside: isTextInputCurrentlyFocused
+      ? handleClickOutside
+      : undefined,
   });
 
   const focusInput = () => {
