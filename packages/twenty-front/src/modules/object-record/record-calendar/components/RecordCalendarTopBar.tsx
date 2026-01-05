@@ -1,6 +1,5 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -13,7 +12,6 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
-import { useRecoilValue } from 'recoil';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -51,10 +49,6 @@ const StyledNavigationSection = styled.div`
 export const RecordCalendarTopBar = () => {
   const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
     RecordCalendarComponentInstanceContext,
-  );
-
-  const recordIndexCalendarLayout = useRecoilValue(
-    recordIndexCalendarLayoutState,
   );
 
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
