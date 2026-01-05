@@ -173,6 +173,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         const relatedField = fields.find(
           (f) => f.id === field.relationTargetFieldMetadataId,
         );
+
         if (relatedField && !processedIds.has(relatedField.id)) {
           currentChunk.push(relatedField.id);
           processedIds.add(relatedField.id);

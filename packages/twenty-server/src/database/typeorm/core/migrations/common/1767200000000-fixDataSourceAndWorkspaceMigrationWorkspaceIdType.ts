@@ -15,7 +15,7 @@ export class FixDataSourceAndWorkspaceMigrationWorkspaceIdType1767200000000
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(_queryRunner: QueryRunner): Promise<void> {
     // Rollback is intentionally not implemented
     // Converting uuid back to varchar could cause data loss and is not recommended
   }
