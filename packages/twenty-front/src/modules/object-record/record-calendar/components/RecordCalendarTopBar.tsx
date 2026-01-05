@@ -3,7 +3,6 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
-import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -23,7 +22,6 @@ import {
 } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ViewCalendarLayout } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -98,27 +96,6 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        <Select
-          dropdownId={`record-calendar-top-bar-layout-select-${recordCalendarId}`}
-          selectSizeVariant="small"
-          options={[
-            {
-              label: t`Month`,
-              value: ViewCalendarLayout.MONTH,
-            },
-            {
-              label: t`Week`,
-              value: ViewCalendarLayout.WEEK,
-            },
-            {
-              label: t`Timeline`,
-              value: ViewCalendarLayout.DAY,
-            },
-          ]}
-          disabled
-          value={recordIndexCalendarLayout}
-          onChange={() => {}}
-        />
         <Dropdown
           dropdownId={datePickerDropdownId}
           clickableComponent={
