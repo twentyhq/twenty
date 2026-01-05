@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter creation should fail when fieldMetadataId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter creation should fail when viewFilterGroupId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View filter group not found",
+              "userFriendlyMessage": "View filter group not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter creation should fail when viewId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "View not found",
+              "userFriendlyMessage": "View not found",
+            },
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating view filter",
+  "name": "GraphQLError",
+}
+`;

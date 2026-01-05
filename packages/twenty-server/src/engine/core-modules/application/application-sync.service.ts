@@ -703,6 +703,8 @@ export class ApplicationSyncService {
           timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
           handlerPath: serverlessFunctionToSync.handlerPath,
           handlerName: serverlessFunctionToSync.handlerName,
+          toolInputSchema: serverlessFunctionToSync.toolInputSchema,
+          isTool: serverlessFunctionToSync.isTool,
         },
       };
 
@@ -747,6 +749,8 @@ export class ApplicationSyncService {
         handlerName: serverlessFunctionToCreate.handlerName,
         applicationId,
         serverlessFunctionLayerId,
+        toolInputSchema: serverlessFunctionToCreate.toolInputSchema,
+        isTool: serverlessFunctionToCreate.isTool,
       };
 
       const createdServerlessFunction =

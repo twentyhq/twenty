@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skill update should fail should fail when attempting to update a standard skill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "SKILL_IS_STANDARD",
+    "userFriendlyMessage": "Standard skills cannot be modified.",
+  },
+  "message": "Cannot update standard skill",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Skill update should fail should fail when updating a non-existent skill 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "SKILL_NOT_FOUND",
+    "userFriendlyMessage": "Skill not found.",
+  },
+  "message": "Skill not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Skill update should fail when updating with empty content 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Content cannot be empty",
+              "userFriendlyMessage": "Content cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "skill",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 skill",
+    "summary": {
+      "skill": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating skill",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill update should fail when updating with empty label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "skill",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 skill",
+    "summary": {
+      "skill": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating skill",
+  "name": "GraphQLError",
+}
+`;

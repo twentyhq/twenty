@@ -73,7 +73,10 @@ export const useIncrementalDestroyManyRecords = <T>({
       recordGqlFields: { id: true },
     });
 
-  const destroyManyRecordsBatch = async (recordIdsToDestroy: string[]) => {
+  const destroyManyRecordsBatch = async (
+    recordIdsToDestroy: string[],
+    abortSignal: AbortSignal,
+  ) => {
     const numberOfBatches = Math.ceil(
       recordIdsToDestroy.length / mutationPageSize,
     );
@@ -93,6 +96,11 @@ export const useIncrementalDestroyManyRecords = <T>({
           mutation: destroyManyRecordsMutation,
           variables: {
             filter: { id: { in: batchedIdsToDestroy } },
+          },
+          context: {
+            fetchOptions: {
+              signal: abortSignal,
+            },
           },
           optimisticResponse: skipOptimisticEffect
             ? undefined
@@ -145,13 +153,15 @@ export const useIncrementalDestroyManyRecords = <T>({
   const incrementalDestroyManyRecords = async () => {
     let totalDestroyedCount = 0;
 
-    await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
-      await destroyManyRecordsBatch(recordIds);
+    await incrementalFetchAndMutate(
+      async ({ recordIds, totalCount, abortSignal }) => {
+        await destroyManyRecordsBatch(recordIds, abortSignal);
 
-      totalDestroyedCount += recordIds.length;
+        totalDestroyedCount += recordIds.length;
 
-      updateProgress(totalDestroyedCount, totalCount);
-    });
+        updateProgress(totalDestroyedCount, totalCount);
+      },
+    );
 
     await refetchAggregateQueries();
 

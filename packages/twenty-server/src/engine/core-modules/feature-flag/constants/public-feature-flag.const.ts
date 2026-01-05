@@ -20,6 +20,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+    metadata: {
+      label: 'If/Else Workflow Node',
+      description: 'Enable if/else conditional branching in workflows',
+      imagePath: 'https://twenty.com/images/lab/is-if-else-enabled.png',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
