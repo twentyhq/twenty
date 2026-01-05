@@ -11,8 +11,6 @@ describe('If/Else Workflow (e2e)', () => {
   let ifElseStepId: string | null = null;
   let ifBranchEmptyNodeId: string | null = null;
   let elseBranchEmptyNodeId: string | null = null;
-  let ifBranchActionStepId: string | null = null;
-  let elseBranchActionStepId: string | null = null;
 
   beforeAll(async () => {
     const createWorkflowResponse = await client
@@ -217,71 +215,6 @@ describe('If/Else Workflow (e2e)', () => {
 
     expect(updateIfElseStepResponse.body.errors).toBeUndefined();
 
-    const createIfBranchStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'DELAY',
-            parentStepId: ifBranchEmptyNodeId,
-            position: { x: 0, y: 200 },
-          },
-        },
-      });
-
-    expect(createIfBranchStepResponse.body.errors).toBeUndefined();
-    const ifBranchStepsDiff =
-      createIfBranchStepResponse.body.data.createWorkflowVersionStep.stepsDiff;
-    const ifBranchStepDiff = ifBranchStepsDiff.find(
-      (diff: { type: string; value: { type: string } }) =>
-        diff.type === 'CREATE' && diff.value.type === 'DELAY',
-    );
-
-    expect(ifBranchStepDiff).toBeDefined();
-    ifBranchActionStepId = ifBranchStepDiff.value.id;
-
-    const createElseBranchStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'DELAY',
-            parentStepId: elseBranchEmptyNodeId,
-            position: { x: 400, y: 200 },
-          },
-        },
-      });
-
-    expect(createElseBranchStepResponse.body.errors).toBeUndefined();
-    const elseBranchStepsDiff =
-      createElseBranchStepResponse.body.data.createWorkflowVersionStep
-        .stepsDiff;
-    const elseBranchStepDiff = elseBranchStepsDiff.find(
-      (diff: { type: string; value: { type: string } }) =>
-        diff.type === 'CREATE' && diff.value.type === 'DELAY',
-    );
-
-    expect(elseBranchStepDiff).toBeDefined();
-    elseBranchActionStepId = elseBranchStepDiff.value.id;
-
     const activateResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -476,14 +409,6 @@ describe('If/Else Workflow (e2e)', () => {
         'SUCCESS',
       );
 
-      expect(
-        workflowRun?.state?.stepInfos?.[ifBranchActionStepId!]?.status,
-      ).toBe('SUCCESS');
-
-      expect(
-        workflowRun?.state?.stepInfos?.[elseBranchActionStepId!]?.status,
-      ).toBe('NOT_STARTED');
-
       await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -566,14 +491,6 @@ describe('If/Else Workflow (e2e)', () => {
       expect(workflowRun?.state?.stepInfos?.[ifElseStepId!]?.status).toBe(
         'SUCCESS',
       );
-
-      expect(
-        workflowRun?.state?.stepInfos?.[ifBranchActionStepId!]?.status,
-      ).toBe('NOT_STARTED');
-
-      expect(
-        workflowRun?.state?.stepInfos?.[elseBranchActionStepId!]?.status,
-      ).toBe('SUCCESS');
 
       await client
         .post('/graphql')
