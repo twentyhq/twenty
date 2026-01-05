@@ -429,13 +429,24 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
       const ifElseStep = await getIfElseStepWithBranches();
+
+      expect(ifElseStep.settings.input.branches).toBeDefined();
+      expect(ifElseStep.settings.input.branches.length).toBe(2);
+
       const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
 
-      expect(matchedBranch).toBeDefined();
-      expect(matchedBranch!.filterGroupId).toBeDefined();
-      expect(matchedBranch!.nextStepIds).toContain(ifBranchEmptyNodeId);
+      if (!matchedBranch) {
+        const branchIds = ifElseStep.settings.input.branches.map((b) => b.id);
+
+        throw new Error(
+          `Branch with ID ${ifElseStepResult?.matchingBranchId} not found. Available branch IDs: ${branchIds.join(', ')}`,
+        );
+      }
+
+      expect(matchedBranch.filterGroupId).toBeDefined();
+      expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
 
       await destroyWorkflowRun(workflowRunId);
     });
@@ -463,13 +474,24 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
       const ifElseStep = await getIfElseStepWithBranches();
+
+      expect(ifElseStep.settings.input.branches).toBeDefined();
+      expect(ifElseStep.settings.input.branches.length).toBe(2);
+
       const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
 
-      expect(matchedBranch).toBeDefined();
-      expect(matchedBranch!.filterGroupId).toBeUndefined();
-      expect(matchedBranch!.nextStepIds).toContain(elseBranchEmptyNodeId);
+      if (!matchedBranch) {
+        const branchIds = ifElseStep.settings.input.branches.map((b) => b.id);
+
+        throw new Error(
+          `Branch with ID ${ifElseStepResult?.matchingBranchId} not found. Available branch IDs: ${branchIds.join(', ')}`,
+        );
+      }
+
+      expect(matchedBranch.filterGroupId).toBeUndefined();
+      expect(matchedBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
 
       await destroyWorkflowRun(workflowRunId);
     });
