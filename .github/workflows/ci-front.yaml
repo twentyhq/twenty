@@ -354,6 +354,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    name: ${{ github.event_name == 'merge_group' && 'ci-e2e-merge-queue-check' || 'ci-e2e-status-check' }}
     needs: [changed-files-check-e2e, e2e-test]
     steps:
       - name: Fail job if any needs failed

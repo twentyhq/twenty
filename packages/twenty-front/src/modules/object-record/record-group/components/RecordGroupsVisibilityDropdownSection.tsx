@@ -44,7 +44,7 @@ export const RecordGroupsVisibilityDropdownSection = ({
       {showSubheader && (
         <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       )}
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {recordGroupIds.length > 0 && (
           <>
             {!isDraggable ? (
