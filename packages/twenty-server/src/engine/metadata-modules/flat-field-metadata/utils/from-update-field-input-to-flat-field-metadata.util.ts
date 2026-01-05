@@ -171,12 +171,14 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewsToUpdate,
+      flatFieldMetadatasToUpdate: flatFieldMetadatasToUpdateFromSideEffect,
     } = sideEffectResult.result;
 
     return {
       flatFieldMetadatasToUpdate: [
-        ...accumulator.flatFieldMetadatasToUpdate,
         toFlatFieldMetadata,
+        ...accumulator.flatFieldMetadatasToUpdate,
+        ...flatFieldMetadatasToUpdateFromSideEffect,
       ],
       flatIndexMetadatasToUpdate: [
         ...accumulator.flatIndexMetadatasToUpdate,
