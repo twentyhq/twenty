@@ -3,11 +3,18 @@ import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/a
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowActionType,
+  type WorkflowIfElseAction,
+} from '@/workflow/types/Workflow';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
+import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,6 +27,10 @@ export const CommandMenuWorkflowCreateStepContent = () => {
   );
 
   const { createStep } = useCreateStep();
+  const { updateStep } = useUpdateStep();
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    workflowVisualizerWorkflowId,
+  );
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
   const { closeRightClickMenu } = useCloseRightClickMenu();
@@ -29,6 +40,47 @@ export const CommandMenuWorkflowCreateStepContent = () => {
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentState(workflowInsertStepIdsComponentState);
+
+  const handleIfElseParentStep = async ({
+    parentStep,
+    createdStep,
+  }: {
+    parentStep: WorkflowIfElseAction;
+    createdStep: WorkflowAction;
+  }) => {
+    const branches = parentStep.settings.input.branches;
+
+    const stepFilterGroups = parentStep.settings.input.stepFilterGroups ?? [];
+    const stepFilters = parentStep.settings.input.stepFilters ?? [];
+
+    const { filterGroup, filter, branchId, filterGroupId } =
+      createElseIfBranch();
+
+    const newBranch = {
+      id: branchId,
+      filterGroupId,
+      nextStepIds: [createdStep.id],
+    };
+
+    const updatedBranches = [...branches];
+    updatedBranches.splice(branches.length - 1, 0, newBranch);
+
+    const updatedStepFilterGroups = [...stepFilterGroups, filterGroup];
+    const updatedStepFilters = [...stepFilters, filter];
+
+    await updateStep({
+      ...parentStep,
+      settings: {
+        ...parentStep.settings,
+        input: {
+          ...parentStep.settings.input,
+          stepFilterGroups: updatedStepFilterGroups,
+          stepFilters: updatedStepFilters,
+          branches: updatedBranches,
+        },
+      },
+    });
+  };
 
   const handleCreateStep = async (actionType: WorkflowActionType) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
@@ -50,6 +102,19 @@ export const CommandMenuWorkflowCreateStepContent = () => {
 
     if (!isDefined(createdStep)) {
       return;
+    }
+
+    const steps = workflowWithCurrentVersion?.currentVersion?.steps;
+    const parentStep =
+      isDefined(parentStepId) && isDefined(steps) && isDefined(position)
+        ? steps.find((step) => step.id === parentStepId)
+        : undefined;
+
+    if (parentStep?.type === 'IF_ELSE') {
+      await handleIfElseParentStep({
+        parentStep,
+        createdStep,
+      });
     }
 
     setWorkflowInsertStepIds({
