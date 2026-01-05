@@ -243,7 +243,6 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         typeof entity === 'function' ? entity.name : String(entity);
 
       try {
-        this.logger.log(`Scanning ${entityName}`);
         const orphanedRecords = await this.dataSource
           .getRepository(entity)
           .createQueryBuilder('entity')
@@ -332,32 +331,15 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
           if (entity === FieldMetadataEntity) {
             deletedCount = await this.deleteFieldMetadataInChunks(ids);
           } else {
-            // Standard deletion for other entities
-            const queryRunner = this.dataSource.createQueryRunner();
+            const result = await this.dataSource
+              .getRepository(entity)
+              .createQueryBuilder()
+              .delete()
+              .from(entity)
+              .whereInIds(ids)
+              .execute();
 
-            try {
-              await queryRunner.connect();
-              await queryRunner.startTransaction();
-
-              const result = await queryRunner.manager
-                .getRepository(entity)
-                .createQueryBuilder()
-                .delete()
-                .from(entity)
-                .whereInIds(ids)
-                .execute();
-
-              deletedCount = result.affected || 0;
-
-              await queryRunner.commitTransaction();
-            } catch (error) {
-              if (queryRunner.isTransactionActive) {
-                await queryRunner.rollbackTransaction();
-              }
-              throw error;
-            } finally {
-              await queryRunner.release();
-            }
+            deletedCount = result.affected || 0;
           }
         }
 
