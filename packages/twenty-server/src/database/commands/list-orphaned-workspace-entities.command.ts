@@ -78,7 +78,7 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   SearchFieldMetadataEntity, // depends on FieldMetadataEntity
   RowLevelPermissionPredicateEntity, // depends on RowLevelPermissionPredicateGroupEntity
   PageLayoutWidgetEntity, // depends on PageLayoutTabEntity
-  
+
   // Level 3: Mid-level children
   RowLevelPermissionPredicateGroupEntity, // depends on ObjectMetadataEntity
   ViewEntity, // depends on ObjectMetadataEntity
@@ -88,13 +88,13 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   RouteTriggerEntity, // depends on ServerlessFunctionEntity
   CronTriggerEntity, // depends on ServerlessFunctionEntity
   DatabaseEventTriggerEntity, // depends on ServerlessFunctionEntity
-  
+
   // Level 2: Children that depend on core entities
   FieldMetadataEntity, // depends on ObjectMetadataEntity (has CASCADE)
   PageLayoutEntity, // depends on ObjectMetadataEntity
   SkillEntity, // depends on AgentEntity
   ServerlessFunctionEntity, // depends on ServerlessFunctionLayerEntity
-  
+
   // Level 1: Core entities with CASCADE deletes - delete after their children
   ObjectMetadataEntity, // depends on DataSourceEntity (CASCADE is minimal now)
   RoleEntity, // has CASCADE for permissions (already deleted)
@@ -103,7 +103,7 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   UserWorkspaceEntity, // has CASCADE for role targets (already deleted)
   ApiKeyEntity, // has CASCADE for role targets (already deleted)
   ServerlessFunctionLayerEntity, // referenced by ServerlessFunctionEntity (delete after)
-  
+
   // Level 0: Independent entities (no foreign keys to other workspace entities)
   ApplicationEntity,
   ApprovedAccessDomainEntity,
@@ -258,6 +258,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
             return `NOT EXISTS ${subQuery}`;
           })
+          .withDeleted()
           .getMany();
 
         if (orphanedRecords.length > 0) {
