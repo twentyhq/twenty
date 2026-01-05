@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
+import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
@@ -97,7 +97,7 @@ describe('transformOneDimensionalGroupByToLineChartData', () => {
       expect(result.hasTooManyGroups).toBe(false);
     });
 
-    it('should filter out null aggregate values', () => {
+    it('should treat null aggregate values as zero', () => {
       const rawResults: GroupByRawResult[] = [
         {
           groupByDimensionValues: ['Stage A'],
@@ -127,6 +127,7 @@ describe('transformOneDimensionalGroupByToLineChartData', () => {
 
       expect(result.series[0].data).toEqual([
         { x: 'Stage A', y: 100 },
+        { x: 'Stage B', y: 0 },
         { x: 'Stage C', y: 200 },
       ]);
       expect(result.hasTooManyGroups).toBe(false);
