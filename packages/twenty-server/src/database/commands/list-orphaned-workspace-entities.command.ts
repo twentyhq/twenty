@@ -66,43 +66,43 @@ type DeletionResult = {
 // Ordered by dependency: CHILDREN FIRST to minimize CASCADE overhead
 const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   // Level 4: Deepest children - delete these first to avoid CASCADE overhead
-  ViewFieldEntity, // depends on ViewEntity + FieldMetadataEntity
-  ViewFilterEntity, // depends on ViewEntity + FieldMetadataEntity
-  ViewGroupEntity, // depends on ViewEntity + FieldMetadataEntity
-  ViewSortEntity, // depends on ViewEntity + FieldMetadataEntity
-  ViewFilterGroupEntity, // depends on ViewEntity
-  FieldPermissionEntity, // depends on FieldMetadataEntity + RoleEntity
-  ObjectPermissionEntity, // depends on ObjectMetadataEntity + RoleEntity
-  PermissionFlagEntity, // depends on RoleEntity
-  RoleTargetEntity, // depends on RoleEntity + UserWorkspaceEntity/ApiKeyEntity/AgentEntity
-  SearchFieldMetadataEntity, // depends on FieldMetadataEntity
-  RowLevelPermissionPredicateEntity, // depends on RowLevelPermissionPredicateGroupEntity
-  PageLayoutWidgetEntity, // depends on PageLayoutTabEntity
+  ViewFieldEntity,
+  ViewFilterEntity,
+  ViewGroupEntity,
+  ViewSortEntity,
+  ViewFilterGroupEntity,
+  FieldPermissionEntity,
+  ObjectPermissionEntity,
+  PermissionFlagEntity,
+  RoleTargetEntity,
+  SearchFieldMetadataEntity,
+  RowLevelPermissionPredicateEntity,
+  PageLayoutWidgetEntity,
 
   // Level 3: Mid-level children
-  RowLevelPermissionPredicateGroupEntity, // depends on ObjectMetadataEntity
-  ViewEntity, // depends on ObjectMetadataEntity
-  IndexMetadataEntity, // depends on ObjectMetadataEntity
-  PageLayoutTabEntity, // depends on PageLayoutEntity
-  RemoteTableEntity, // depends on RemoteServerEntity
-  RouteTriggerEntity, // depends on ServerlessFunctionEntity
-  CronTriggerEntity, // depends on ServerlessFunctionEntity
-  DatabaseEventTriggerEntity, // depends on ServerlessFunctionEntity
+  RowLevelPermissionPredicateGroupEntity,
+  ViewEntity,
+  IndexMetadataEntity,
+  PageLayoutTabEntity,
+  RemoteTableEntity,
+  RouteTriggerEntity,
+  CronTriggerEntity,
+  DatabaseEventTriggerEntity,
 
   // Level 2: Children that depend on core entities
-  FieldMetadataEntity, // depends on ObjectMetadataEntity (has CASCADE)
-  PageLayoutEntity, // depends on ObjectMetadataEntity
-  SkillEntity, // depends on AgentEntity
-  ServerlessFunctionEntity, // depends on ServerlessFunctionLayerEntity
+  FieldMetadataEntity,
+  PageLayoutEntity,
+  SkillEntity,
+  ServerlessFunctionEntity,
 
   // Level 1: Core entities with CASCADE deletes - delete after their children
-  ObjectMetadataEntity, // depends on DataSourceEntity (CASCADE is minimal now)
-  RoleEntity, // has CASCADE for permissions (already deleted)
-  AgentEntity, // has CASCADE for skills (already deleted)
-  RemoteServerEntity, // has CASCADE for remote tables (already deleted)
-  UserWorkspaceEntity, // has CASCADE for role targets (already deleted)
-  ApiKeyEntity, // has CASCADE for role targets (already deleted)
-  ServerlessFunctionLayerEntity, // referenced by ServerlessFunctionEntity (delete after)
+  ObjectMetadataEntity,
+  RoleEntity,
+  AgentEntity,
+  RemoteServerEntity,
+  UserWorkspaceEntity,
+  ApiKeyEntity,
+  ServerlessFunctionLayerEntity,
 
   // Level 0: Independent entities (no foreign keys to other workspace entities)
   ApplicationEntity,
@@ -141,11 +141,9 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
   }
 
   private async deleteFieldMetadataInChunks(ids: string[]): Promise<number> {
-    // Smaller chunk size for FieldMetadata due to extensive CASCADE deletes
     const CHUNK_SIZE = 50;
     let totalDeleted = 0;
 
-    // Fetch all field metadata records to identify relation pairs
     const fieldMetadataRepository =
       this.dataSource.getRepository(FieldMetadataEntity);
     const fields = await fieldMetadataRepository
@@ -153,7 +151,6 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       .where('field.id IN (:...ids)', { ids })
       .getMany();
 
-    // Group fields by relation pairs (both sides of a relation go together)
     const processedIds = new Set<string>();
     const chunks: string[][] = [];
     let currentChunk: string[] = [];
@@ -163,12 +160,9 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         continue;
       }
 
-      // Add the field
       currentChunk.push(field.id);
       processedIds.add(field.id);
 
-      // If this field has a relation target, add it to the same chunk
-      // Since relations are symmetrical, this handles both sides of the relation
       if (field.relationTargetFieldMetadataId) {
         const relatedField = fields.find(
           (f) => f.id === field.relationTargetFieldMetadataId,
@@ -180,19 +174,16 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         }
       }
 
-      // When chunk is full, save it and start a new one
       if (currentChunk.length >= CHUNK_SIZE) {
         chunks.push([...currentChunk]);
         currentChunk = [];
       }
     }
 
-    // Add remaining chunk
     if (currentChunk.length > 0) {
       chunks.push(currentChunk);
     }
 
-    // Delete each chunk
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
 
@@ -328,8 +319,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         let deletedCount = 0;
 
         if (!options.dryRun) {
-          // Special handling for FieldMetadataEntity due to self-referencing FK
-          if (entity === FieldMetadataEntity) {
+          if (entityName === 'FieldMetadataEntity') {
             deletedCount = await this.deleteFieldMetadataInChunks(ids);
           } else {
             const result = await this.dataSource
