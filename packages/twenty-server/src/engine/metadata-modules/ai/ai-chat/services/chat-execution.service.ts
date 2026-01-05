@@ -387,12 +387,13 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
 ### Tool Catalog by Category`);
 
     const categoryOrder = [
-      'database',
-      'action',
-      'workflow',
-      'dashboard',
-      'metadata',
-      'view',
+      'DATABASE',
+      'ACTION',
+      'WORKFLOW',
+      'DASHBOARD',
+      'METADATA',
+      'VIEW',
+      'SERVERLESS_FUNCTION',
     ];
 
     for (const category of categoryOrder) {
@@ -426,18 +427,20 @@ ${tools
 
   private getCategoryLabel(category: string): string {
     switch (category) {
-      case 'database':
+      case 'DATABASE':
         return 'Database Tools (CRUD operations)';
-      case 'action':
+      case 'ACTION':
         return 'Action Tools (HTTP, Email, etc.)';
-      case 'workflow':
+      case 'WORKFLOW':
         return 'Workflow Tools (create/manage workflows)';
-      case 'metadata':
+      case 'METADATA':
         return 'Metadata Tools (schema management)';
-      case 'view':
+      case 'VIEW':
         return 'View Tools (query views)';
-      case 'dashboard':
+      case 'DASHBOARD':
         return 'Dashboard Tools (create/manage dashboards)';
+      case 'SERVERLESS_FUNCTION':
+        return 'Serverless Functions (custom tools)';
       default:
         return category;
     }
