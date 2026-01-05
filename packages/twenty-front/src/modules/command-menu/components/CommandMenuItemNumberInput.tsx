@@ -42,6 +42,7 @@ export const CommandMenuItemNumberInput = ({
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
   const [hasError, setHasError] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -69,6 +70,7 @@ export const CommandMenuItemNumberInput = ({
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     event.target.select();
+    setIsFocused(true);
     pushFocusItemToFocusStack({
       focusId,
       component: {
@@ -82,6 +84,7 @@ export const CommandMenuItemNumberInput = ({
   };
 
   const handleBlur = () => {
+    setIsFocused(false);
     removeFocusItemFromFocusStackById({ focusId });
   };
 
@@ -105,7 +108,7 @@ export const CommandMenuItemNumberInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: handleClickOutside,
+    onClickOutside: isFocused ? handleClickOutside : undefined,
   });
 
   const handleChange = (text: string) => {
