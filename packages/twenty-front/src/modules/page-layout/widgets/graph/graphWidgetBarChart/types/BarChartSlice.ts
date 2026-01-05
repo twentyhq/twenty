@@ -6,7 +6,4 @@ export type BarChartSlice = {
   sliceLeft: number;
   sliceRight: number;
   sliceCenter: number;
-  anchorX: number;
-  anchorY: number;
-  isAllNegative: boolean;
 };

@@ -29,6 +29,7 @@ type CustomSliceHoverLayerProps = {
   marginLeft: number;
   marginTop: number;
   layout: BarChartLayout;
+  groupMode: 'grouped' | 'stacked';
   onSliceHover: (data: SliceHoverData | null) => void;
   onSliceClick?: (slice: BarChartSlice) => void;
   onSliceLeave: () => void;
@@ -41,6 +42,7 @@ export const CustomSliceHoverLayer = ({
   marginLeft,
   marginTop,
   layout,
+  groupMode,
   onSliceHover,
   onSliceClick,
   onSliceLeave,
@@ -90,9 +92,8 @@ export const CustomSliceHoverLayer = ({
       const virtualElement = createSliceVirtualElement({
         slice,
         svgBoundingRectangle,
-        marginLeft,
-        marginTop,
         layout,
+        groupMode,
       });
 
       return {
@@ -100,7 +101,7 @@ export const CustomSliceHoverLayer = ({
         virtualElement,
       };
     },
-    [marginLeft, marginTop, isVertical, slices, layout],
+    [marginLeft, marginTop, isVertical, slices, layout, groupMode],
   );
 
   const handleMouseMove = useRecoilCallback(
@@ -161,14 +162,15 @@ export const CustomSliceHoverLayer = ({
     return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
   }, [slices, hoveredSliceIndex]);
 
-  const highlightX = isVertical ? (hoveredSlice?.sliceLeft ?? 0) : 0;
-  const highlightY = isVertical ? 0 : (hoveredSlice?.sliceLeft ?? 0);
-  const highlightWidth = isVertical
-    ? (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0)
-    : innerWidth;
-  const highlightHeight = isVertical
-    ? innerHeight
-    : (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0);
+  const HIGHLIGHT_THICKNESS = 1;
+  const highlightX = isVertical
+    ? (hoveredSlice?.sliceCenter ?? 0) - HIGHLIGHT_THICKNESS / 2
+    : 0;
+  const highlightY = isVertical
+    ? 0
+    : (hoveredSlice?.sliceCenter ?? 0) - HIGHLIGHT_THICKNESS / 2;
+  const highlightWidth = isVertical ? HIGHLIGHT_THICKNESS : innerWidth;
+  const highlightHeight = isVertical ? innerHeight : HIGHLIGHT_THICKNESS;
 
   const { opacity } = useSpring({
     opacity: isDefined(hoveredSlice) ? 1 : 0,
@@ -191,7 +193,7 @@ export const CustomSliceHoverLayer = ({
         <rect
           width={highlightWidth}
           height={highlightHeight}
-          fill={theme.background.transparent.lighter}
+          fill={theme.background.transparent.medium}
           style={{ pointerEvents: 'none' }}
         />
       </animated.g>

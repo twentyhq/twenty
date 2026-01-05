@@ -270,6 +270,7 @@ export const GraphWidgetBarChart = ({
         marginLeft={margins.left}
         marginTop={margins.top}
         layout={layout}
+        groupMode={groupMode ?? 'grouped'}
         onSliceHover={handleSliceHover}
         onSliceClick={onSliceClick}
         onSliceLeave={handleSliceLeave}

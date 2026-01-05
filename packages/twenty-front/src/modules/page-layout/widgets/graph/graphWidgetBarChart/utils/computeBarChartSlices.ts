@@ -43,44 +43,18 @@ export const computeBarChartSlices = ({
 
     let minPosition = Infinity;
     let maxPosition = -Infinity;
-    let minAnchor = Infinity;
-    let maxAnchor = -Infinity;
 
     for (const bar of groupBars) {
       if (isVertical) {
         minPosition = Math.min(minPosition, bar.x);
         maxPosition = Math.max(maxPosition, bar.x + bar.width);
-        minAnchor = Math.min(minAnchor, bar.y);
-        maxAnchor = Math.max(maxAnchor, bar.y + bar.height);
       } else {
         minPosition = Math.min(minPosition, bar.y);
         maxPosition = Math.max(maxPosition, bar.y + bar.height);
-        minAnchor = Math.min(minAnchor, bar.x);
-        maxAnchor = Math.max(maxAnchor, bar.x + bar.width);
       }
     }
 
     const sliceCenter = (minPosition + maxPosition) / 2;
-
-    const hasPositiveValues = groupBars.some(
-      (bar) => Number(bar.data.value) >= 0,
-    );
-    const hasNegativeValues = groupBars.some(
-      (bar) => Number(bar.data.value) < 0,
-    );
-    const isAllNegative = hasNegativeValues && !hasPositiveValues;
-
-    const anchorY = isVertical
-      ? isAllNegative
-        ? maxAnchor
-        : minAnchor
-      : sliceCenter;
-
-    const anchorX = isVertical
-      ? sliceCenter
-      : isAllNegative
-        ? minAnchor
-        : maxAnchor;
 
     slices.push({
       indexValue,
@@ -88,9 +62,6 @@ export const computeBarChartSlices = ({
       sliceLeft: minPosition,
       sliceRight: maxPosition,
       sliceCenter,
-      anchorX,
-      anchorY,
-      isAllNegative,
     });
   }
 
