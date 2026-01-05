@@ -9,22 +9,13 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { type VirtualElement } from '@floating-ui/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { animated, to, useSpring } from '@react-spring/web';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
-
-const StyledHighlightRect = styled.rect`
-  pointer-events: none;
-  transition:
-    x 0.15s ease-out,
-    y 0.15s ease-out,
-    width 0.15s ease-out,
-    height 0.15s ease-out;
-`;
 
 export type SliceHoverData = {
   slice: BarChartSlice;
@@ -173,29 +164,42 @@ export const CustomSliceHoverLayer = ({
     return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
   }, [slices, hoveredSliceIndex]);
 
+  const highlightSpring = useSpring({
+    x: isVertical ? (hoveredSlice?.sliceLeft ?? 0) : 0,
+    y: isVertical ? 0 : (hoveredSlice?.sliceLeft ?? 0),
+    width: isVertical
+      ? (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0)
+      : innerWidth,
+    height: isVertical
+      ? innerHeight
+      : (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0),
+    opacity: isDefined(hoveredSlice) ? 1 : 0,
+    config: {
+      tension: 300,
+      friction: 30,
+    },
+  });
+
   if (bars.length === 0) {
     return null;
   }
 
   return (
     <g>
-      {isDefined(hoveredSlice) && (
-        <StyledHighlightRect
-          x={isVertical ? hoveredSlice.sliceLeft : 0}
-          y={isVertical ? 0 : hoveredSlice.sliceLeft}
-          width={
-            isVertical
-              ? hoveredSlice.sliceRight - hoveredSlice.sliceLeft
-              : innerWidth
-          }
-          height={
-            isVertical
-              ? innerHeight
-              : hoveredSlice.sliceRight - hoveredSlice.sliceLeft
-          }
+      <animated.g
+        transform={to(
+          [highlightSpring.x, highlightSpring.y],
+          (x, y) => `translate(${x}, ${y})`,
+        )}
+        opacity={highlightSpring.opacity}
+      >
+        <animated.rect
+          width={highlightSpring.width}
+          height={highlightSpring.height}
           fill={theme.background.transparent.lighter}
+          style={{ pointerEvents: 'none' }}
         />
-      )}
+      </animated.g>
 
       <rect
         x={0}
