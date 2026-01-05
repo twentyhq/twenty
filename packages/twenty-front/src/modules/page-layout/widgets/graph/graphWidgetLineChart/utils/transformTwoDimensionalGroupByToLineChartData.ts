@@ -1,8 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/applyCumulativeTransformToLineChartData';
 import { buildTwoDimensionalLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/buildTwoDimensionalLineChartSeries';
+import { limitTwoDimensionalLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/limitTwoDimensionalLineChartData';
 import { sortTwoDimensionalLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortTwoDimensionalLineChartData';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
@@ -56,11 +58,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       firstDayOfTheWeek,
     });
 
-  const { unsortedSeries, hasTooManyGroups } =
-    buildTwoDimensionalLineChartSeries({
-      processedDataPoints,
-      color: configuration.color as GraphColor,
-    });
+  const { unsortedSeries } = buildTwoDimensionalLineChartSeries({
+    processedDataPoints,
+    color: configuration.color as GraphColor,
+  });
 
   const { sortedSeries } = sortTwoDimensionalLineChartData({
     series: unsortedSeries,
@@ -71,8 +72,14 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     secondaryAxisSelectFieldOptions: groupByFieldY.options,
   });
 
+  const { limitedSeries, hasTooManyGroups } = limitTwoDimensionalLineChartData({
+    sortedSeries,
+    isStacked:
+      configuration.isStacked ?? LINE_CHART_CONSTANTS.IS_STACKED_DEFAULT,
+  });
+
   const finalSeries = configuration.isCumulative
-    ? sortedSeries.map((seriesItem) => ({
+    ? limitedSeries.map((seriesItem) => ({
         ...seriesItem,
         data: applyCumulativeTransformToLineChartData({
           data: seriesItem.data,
@@ -80,7 +87,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
           rangeMax: configuration.rangeMax ?? undefined,
         }),
       }))
-    : sortedSeries;
+    : limitedSeries;
 
   return {
     series: finalSeries,

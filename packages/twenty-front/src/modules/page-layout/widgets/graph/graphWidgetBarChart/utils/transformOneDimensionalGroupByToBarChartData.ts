@@ -3,10 +3,10 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
@@ -72,13 +72,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       firstDayOfTheWeek,
     });
 
-  // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedProcessedDataPoints = processedDataPoints.slice(
-    0,
-    BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
-  );
-
-  const unsortedData: BarDatum[] = limitedProcessedDataPoints.map(
+  const unsortedData: BarDatum[] = processedDataPoints.map(
     ({ xValue, aggregateValue }) => ({
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
@@ -97,6 +91,11 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       : undefined,
   });
 
+  const limitedSortedData = sortedData.slice(
+    0,
+    BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
+  );
+
   const series: BarChartSeries[] = [
     {
       key: aggregateValueKey,
@@ -107,12 +106,12 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
   const finalData = configuration.isCumulative
     ? applyCumulativeTransformToBarChartData({
-        data: sortedData,
+        data: limitedSortedData,
         aggregateKey: aggregateValueKey,
         rangeMin: configuration.rangeMin ?? undefined,
         rangeMax: configuration.rangeMax ?? undefined,
       })
-    : sortedData;
+    : limitedSortedData;
 
   return {
     data: finalData,

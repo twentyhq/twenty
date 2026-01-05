@@ -58,13 +58,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
       firstDayOfTheWeek,
     });
 
-  // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedProcessedDataPoints = processedDataPoints.slice(
-    0,
-    LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS,
-  );
-
-  const unsortedData: LineChartDataPoint[] = limitedProcessedDataPoints.map(
+  const unsortedData: LineChartDataPoint[] = processedDataPoints.map(
     ({ xValue, aggregateValue }) => ({
       x: xValue,
       y: aggregateValue,
@@ -83,13 +77,18 @@ export const transformOneDimensionalGroupByToLineChartData = ({
       : undefined,
   });
 
+  const limitedSortedData = sortedData.slice(
+    0,
+    LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS,
+  );
+
   const transformedData = configuration.isCumulative
     ? applyCumulativeTransformToLineChartData({
-        data: sortedData,
+        data: limitedSortedData,
         rangeMin: configuration.rangeMin ?? undefined,
         rangeMax: configuration.rangeMax ?? undefined,
       })
-    : sortedData;
+    : limitedSortedData;
 
   const series: LineChartSeries[] = [
     {

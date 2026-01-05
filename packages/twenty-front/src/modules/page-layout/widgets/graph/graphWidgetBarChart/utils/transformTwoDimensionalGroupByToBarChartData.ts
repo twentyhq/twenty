@@ -3,6 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
 import { buildTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/buildTwoDimensionalBarChartData';
+import { limitTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/limitTwoDimensionalBarChartData';
 import { sortTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortTwoDimensionalBarChartData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -65,12 +66,10 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       firstDayOfTheWeek,
     });
 
-  const { unsortedData, yValues, hasTooManyGroups } =
-    buildTwoDimensionalBarChartData({
-      processedDataPoints,
-      indexByKey,
-      groupMode: configuration.groupMode,
-    });
+  const { unsortedData, yValues } = buildTwoDimensionalBarChartData({
+    processedDataPoints,
+    indexByKey,
+  });
 
   const { sortedData, sortedKeys, sortedSeries } =
     sortTwoDimensionalBarChartData({
@@ -84,20 +83,28 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       secondaryAxisSelectFieldOptions: groupByFieldY.options,
     });
 
+  const { limitedData, limitedKeys, limitedSeries, hasTooManyGroups } =
+    limitTwoDimensionalBarChartData({
+      sortedData,
+      sortedKeys,
+      sortedSeries,
+      groupMode: configuration.groupMode,
+    });
+
   const finalData = configuration.isCumulative
     ? applyCumulativeTransformToTwoDimensionalBarChartData({
-        data: sortedData,
-        keys: sortedKeys,
+        data: limitedData,
+        keys: limitedKeys,
         rangeMin: configuration.rangeMin,
         rangeMax: configuration.rangeMax,
       })
-    : sortedData;
+    : limitedData;
 
   return {
     data: finalData,
     indexBy: indexByKey,
-    keys: sortedKeys,
-    series: sortedSeries,
+    keys: limitedKeys,
+    series: limitedSeries,
     hasTooManyGroups,
     formattedToRawLookup,
   };
