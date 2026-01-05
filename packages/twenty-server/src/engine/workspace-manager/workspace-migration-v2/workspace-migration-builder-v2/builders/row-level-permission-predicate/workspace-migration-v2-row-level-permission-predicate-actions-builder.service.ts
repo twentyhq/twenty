@@ -27,7 +27,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateCreation(
@@ -46,8 +46,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     return {
       status: 'success',
       action: {
-        type: 'create_row_level_permission_predicate',
-        rowLevelPermissionPredicate: flatEntityToValidate,
+        type: 'create',
+        metadataName: 'rowLevelPermissionPredicate',
+        flatEntity: flatEntityToValidate,
       },
     };
   }
@@ -58,7 +59,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateDeletion(
@@ -79,8 +80,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     return {
       status: 'success',
       action: {
-        type: 'delete_row_level_permission_predicate',
-        rowLevelPermissionPredicateId: predicateId,
+        type: 'delete',
+        metadataName: 'rowLevelPermissionPredicate',
+        entityId: predicateId,
       },
     };
   }
@@ -91,7 +93,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateUpdate(
@@ -108,8 +110,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateAction: UpdateRowLevelPermissionPredicateAction = {
-      type: 'update_row_level_permission_predicate',
-      rowLevelPermissionPredicateId: flatEntityId,
+      type: 'update',
+      metadataName: 'rowLevelPermissionPredicate',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

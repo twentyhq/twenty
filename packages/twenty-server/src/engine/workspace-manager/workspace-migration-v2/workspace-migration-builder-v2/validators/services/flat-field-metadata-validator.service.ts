@@ -9,7 +9,6 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
@@ -17,6 +16,7 @@ import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -38,17 +38,19 @@ export class FlatFieldMetadataValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<FlatFieldMetadata> {
-    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
-      type: 'update_field',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-    };
-
+  >): FailedFlatEntityValidation<'fieldMetadata', 'update'> {
     const existingFlatFieldMetadataToUpdate =
       optimisticFlatFieldMetadataMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier:
+          existingFlatFieldMetadataToUpdate?.universalIdentifier,
+      },
+      metadataName: 'fieldMetadata',
+      type: 'update',
+    });
 
     if (!isDefined(existingFlatFieldMetadataToUpdate)) {
       validationResult.errors.push({
@@ -66,6 +68,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: flatFieldMetadataToValidate.id,
       name: flatFieldMetadataToValidate.name,
       objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
@@ -192,21 +195,25 @@ export class FlatFieldMetadataValidatorService {
   }
 
   validateFlatFieldMetadataDeletion({
-    flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
+    flatEntityToValidate: {
+      id: flatFieldMetadataToDeleteId,
+      universalIdentifier,
+    },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<FlatFieldMetadata> {
-    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
-      type: 'delete_field',
-      errors: [],
+  >): FailedFlatEntityValidation<'fieldMetadata', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatFieldMetadataToDeleteId,
+        universalIdentifier,
       },
-    };
+      metadataName: 'fieldMetadata',
+      type: 'delete',
+    });
 
     const flatFieldMetadataToDelete =
       optimisticFlatFieldMetadataMaps.byId[flatFieldMetadataToDeleteId];
@@ -222,6 +229,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       name: flatFieldMetadataToDelete.name,
       objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
     };
@@ -279,16 +287,17 @@ export class FlatFieldMetadataValidatorService {
     remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): FailedFlatEntityValidation<FlatFieldMetadata> {
-    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
-      errors: [],
+  >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatFieldMetadataToValidate.id,
+        universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
         name: flatFieldMetadataToValidate.name,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
-      type: 'create_field',
-    };
+      metadataName: 'fieldMetadata',
+      type: 'create',
+    });
 
     const parentFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];

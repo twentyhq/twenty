@@ -4,7 +4,6 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type GetMockFieldMetadataEntityOverride<
@@ -30,7 +29,7 @@ export const getMockFieldMetadataEntity = <
     morphId: null,
     fieldPermissions: [],
     icon: null,
-    indexFieldMetadatas: {} as IndexFieldMetadataEntity,
+    indexFieldMetadatas: [],
     isCustom: true,
     isLabelSyncedWithName: false,
     isNullable: null,

@@ -16,11 +16,11 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
     orchestratorActionsReport,
   }: AggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActionsArgs): OrchestratorActionsReport => {
     const deleteObjectActionByObjectMetadataId = (
-      orchestratorActionsReport.objectMetadata.deleted as DeleteObjectAction[]
+      orchestratorActionsReport.objectMetadata.delete as DeleteObjectAction[]
     ).reduce<Record<string, DeleteObjectAction>>(
       (acc, deleteObjectAction) => ({
         ...acc,
-        [deleteObjectAction.objectMetadataId]: deleteObjectAction,
+        [deleteObjectAction.entityId]: deleteObjectAction,
       }),
       {},
     );
@@ -29,7 +29,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
     };
 
     const { deleteFieldActionByFieldMetadataId } = (
-      orchestratorActionsReport.fieldMetadata.deleted as DeleteFieldAction[]
+      orchestratorActionsReport.fieldMetadata.delete as DeleteFieldAction[]
     ).reduce<AggregatedActions>(
       ({ deleteFieldActionByFieldMetadataId }, deleteFieldAction) => {
         const fieldParentObjectDeleteObjectAction =
@@ -46,7 +46,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
         return {
           deleteFieldActionByFieldMetadataId: {
             ...deleteFieldActionByFieldMetadataId,
-            [deleteFieldAction.fieldMetadataId]: deleteFieldAction,
+            [deleteFieldAction.entityId]: deleteFieldAction,
           },
         };
       },
@@ -57,7 +57,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
       ...orchestratorActionsReport,
       fieldMetadata: {
         ...orchestratorActionsReport.fieldMetadata,
-        deleted: Object.values(deleteFieldActionByFieldMetadataId),
+        delete: Object.values(deleteFieldActionByFieldMetadataId),
       },
     };
   };

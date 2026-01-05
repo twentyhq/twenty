@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skill creation should fail when content is empty string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Content cannot be empty",
+              "userFriendlyMessage": "Content cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "emptyContentSkill",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "skill",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 skill",
+    "summary": {
+      "skill": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating skill",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill creation should fail when content is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "content" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill creation should fail when label is empty string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SKILL_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "emptyLabelSkill",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "skill",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 skill",
+    "summary": {
+      "skill": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating skill",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill creation should fail when label is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "label" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill creation should fail when name already exists 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "skill": [
+        {
+          "errors": [
+            {
+              "code": "SKILL_ALREADY_EXISTS",
+              "message": "Skill with name "existingTestSkill" already exists",
+              "userFriendlyMessage": "A skill with this name already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "existingTestSkill",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "skill",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 skill",
+    "summary": {
+      "skill": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating skill",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Skill creation should fail when name is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "name" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;

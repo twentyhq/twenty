@@ -13,7 +13,9 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -32,7 +34,9 @@ import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-m
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -59,6 +63,7 @@ import {
 import {
   type CreateIndexAction,
   type DeleteIndexAction,
+  type UpdateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/types/workspace-migration-index-action-v2';
 import {
   type CreateObjectAction,
@@ -103,7 +108,6 @@ import {
 import {
   type CreateRowLevelPermissionPredicateAction,
   type DeleteRowLevelPermissionPredicateAction,
-  type DestroyRowLevelPermissionPredicateAction,
   type UpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
 import {
@@ -112,10 +116,20 @@ import {
   type UpdateServerlessFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import {
+  type CreateSkillAction,
+  type DeleteSkillAction,
+  type UpdateSkillAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/skill/types/workspace-migration-v2-skill-action.type';
+import {
   type CreateViewFieldAction,
   type DeleteViewFieldAction,
   type UpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/types/workspace-migration-view-field-action-v2.type';
+import {
+  type CreateViewFilterGroupAction,
+  type DeleteViewFilterGroupAction,
+  type UpdateViewFilterGroupAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
 import {
   type CreateViewFilterAction,
   type DeleteViewFilterAction,
@@ -135,173 +149,189 @@ import {
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
     actions: {
-      created: CreateFieldAction;
-      updated: UpdateFieldAction;
-      deleted: DeleteFieldAction;
+      create: CreateFieldAction;
+      update: UpdateFieldAction;
+      delete: DeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
     entity: FieldMetadataEntity;
   };
   objectMetadata: {
     actions: {
-      created: CreateObjectAction;
-      updated: UpdateObjectAction;
-      deleted: DeleteObjectAction;
+      create: CreateObjectAction;
+      update: UpdateObjectAction;
+      delete: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
     entity: ObjectMetadataEntity;
   };
   view: {
     actions: {
-      created: CreateViewAction;
-      updated: UpdateViewAction;
-      deleted: DeleteViewAction;
+      create: CreateViewAction;
+      update: UpdateViewAction;
+      delete: DeleteViewAction;
     };
     flatEntity: FlatView;
     entity: ViewEntity;
   };
   viewField: {
     actions: {
-      created: CreateViewFieldAction;
-      updated: UpdateViewFieldAction;
-      deleted: DeleteViewFieldAction;
+      create: CreateViewFieldAction;
+      update: UpdateViewFieldAction;
+      delete: DeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
     entity: ViewFieldEntity;
   };
   viewGroup: {
     actions: {
-      created: CreateViewGroupAction;
-      updated: UpdateViewGroupAction;
-      deleted: DeleteViewGroupAction;
+      create: CreateViewGroupAction;
+      update: UpdateViewGroupAction;
+      delete: DeleteViewGroupAction;
     };
     flatEntity: FlatViewGroup;
     entity: ViewGroupEntity;
   };
   rowLevelPermissionPredicate: {
     actions: {
-      created: CreateRowLevelPermissionPredicateAction;
-      updated: UpdateRowLevelPermissionPredicateAction;
-      deleted:
-        | DeleteRowLevelPermissionPredicateAction
-        | DestroyRowLevelPermissionPredicateAction;
+      create: CreateRowLevelPermissionPredicateAction;
+      update: UpdateRowLevelPermissionPredicateAction;
+      delete: DeleteRowLevelPermissionPredicateAction;
     };
     flatEntity: FlatRowLevelPermissionPredicate;
     entity: RowLevelPermissionPredicateEntity;
   };
   rowLevelPermissionPredicateGroup: {
     actions: {
-      created: CreateRowLevelPermissionPredicateGroupAction;
-      updated: UpdateRowLevelPermissionPredicateGroupAction;
-      deleted: DeleteRowLevelPermissionPredicateGroupAction;
+      create: CreateRowLevelPermissionPredicateGroupAction;
+      update: UpdateRowLevelPermissionPredicateGroupAction;
+      delete: DeleteRowLevelPermissionPredicateGroupAction;
     };
     flatEntity: FlatRowLevelPermissionPredicateGroup;
     entity: RowLevelPermissionPredicateGroupEntity;
   };
+  viewFilterGroup: {
+    actions: {
+      create: CreateViewFilterGroupAction;
+      update: UpdateViewFilterGroupAction;
+      delete: DeleteViewFilterGroupAction;
+    };
+    flatEntity: FlatViewFilterGroup;
+    entity: ViewFilterGroupEntity;
+  };
   index: {
     actions: {
-      created: CreateIndexAction;
-      updated: [DeleteIndexAction, CreateIndexAction];
-      deleted: DeleteIndexAction;
+      create: CreateIndexAction;
+      update: UpdateIndexAction;
+      delete: DeleteIndexAction;
     };
     flatEntity: FlatIndexMetadata;
     entity: IndexMetadataEntity;
   };
   serverlessFunction: {
     actions: {
-      created: CreateServerlessFunctionAction;
-      updated: UpdateServerlessFunctionAction;
-      deleted: DeleteServerlessFunctionAction;
+      create: CreateServerlessFunctionAction;
+      update: UpdateServerlessFunctionAction;
+      delete: DeleteServerlessFunctionAction;
     };
     flatEntity: FlatServerlessFunction;
     entity: ServerlessFunctionEntity;
   };
   cronTrigger: {
     actions: {
-      created: CreateCronTriggerAction;
-      updated: UpdateCronTriggerAction;
-      deleted: DeleteCronTriggerAction;
+      create: CreateCronTriggerAction;
+      update: UpdateCronTriggerAction;
+      delete: DeleteCronTriggerAction;
     };
     flatEntity: FlatCronTrigger;
     entity: CronTriggerEntity;
   };
   databaseEventTrigger: {
     actions: {
-      created: CreateDatabaseEventTriggerAction;
-      updated: UpdateDatabaseEventTriggerAction;
-      deleted: DeleteDatabaseEventTriggerAction;
+      create: CreateDatabaseEventTriggerAction;
+      update: UpdateDatabaseEventTriggerAction;
+      delete: DeleteDatabaseEventTriggerAction;
     };
     flatEntity: FlatDatabaseEventTrigger;
     entity: DatabaseEventTriggerEntity;
   };
   routeTrigger: {
     actions: {
-      created: CreateRouteTriggerAction;
-      updated: UpdateRouteTriggerAction;
-      deleted: DeleteRouteTriggerAction;
+      create: CreateRouteTriggerAction;
+      update: UpdateRouteTriggerAction;
+      delete: DeleteRouteTriggerAction;
     };
     flatEntity: FlatRouteTrigger;
     entity: RouteTriggerEntity;
   };
   viewFilter: {
     actions: {
-      created: CreateViewFilterAction;
-      updated: UpdateViewFilterAction;
-      deleted: DeleteViewFilterAction;
+      create: CreateViewFilterAction;
+      update: UpdateViewFilterAction;
+      delete: DeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
     entity: ViewFilterEntity;
   };
   role: {
     actions: {
-      created: CreateRoleAction;
-      updated: UpdateRoleAction;
-      deleted: DeleteRoleAction;
+      create: CreateRoleAction;
+      update: UpdateRoleAction;
+      delete: DeleteRoleAction;
     };
     flatEntity: FlatRole;
     entity: RoleEntity;
   };
   roleTarget: {
     actions: {
-      created: CreateRoleTargetAction;
-      updated: UpdateRoleTargetAction;
-      deleted: DeleteRoleTargetAction;
+      create: CreateRoleTargetAction;
+      update: UpdateRoleTargetAction;
+      delete: DeleteRoleTargetAction;
     };
     flatEntity: FlatRoleTarget;
     entity: RoleTargetEntity;
   };
   agent: {
     actions: {
-      created: CreateAgentAction;
-      updated: UpdateAgentAction;
-      deleted: DeleteAgentAction;
+      create: CreateAgentAction;
+      update: UpdateAgentAction;
+      delete: DeleteAgentAction;
     };
     flatEntity: FlatAgent;
     entity: AgentEntity;
   };
+  skill: {
+    actions: {
+      create: CreateSkillAction;
+      update: UpdateSkillAction;
+      delete: DeleteSkillAction;
+    };
+    flatEntity: FlatSkill;
+    entity: SkillEntity;
+  };
   pageLayout: {
     actions: {
-      created: CreatePageLayoutAction;
-      updated: UpdatePageLayoutAction;
-      deleted: DeletePageLayoutAction;
+      create: CreatePageLayoutAction;
+      update: UpdatePageLayoutAction;
+      delete: DeletePageLayoutAction;
     };
     flatEntity: FlatPageLayout;
     entity: PageLayoutEntity;
   };
   pageLayoutWidget: {
     actions: {
-      created: CreatePageLayoutWidgetAction;
-      updated: UpdatePageLayoutWidgetAction;
-      deleted: DeletePageLayoutWidgetAction;
+      create: CreatePageLayoutWidgetAction;
+      update: UpdatePageLayoutWidgetAction;
+      delete: DeletePageLayoutWidgetAction;
     };
     flatEntity: FlatPageLayoutWidget;
     entity: PageLayoutWidgetEntity;
   };
   pageLayoutTab: {
     actions: {
-      created: CreatePageLayoutTabAction;
-      updated: UpdatePageLayoutTabAction;
-      deleted: DeletePageLayoutTabAction;
+      create: CreatePageLayoutTabAction;
+      update: UpdatePageLayoutTabAction;
+      delete: DeletePageLayoutTabAction;
     };
     flatEntity: FlatPageLayoutTab;
     entity: PageLayoutTabEntity;

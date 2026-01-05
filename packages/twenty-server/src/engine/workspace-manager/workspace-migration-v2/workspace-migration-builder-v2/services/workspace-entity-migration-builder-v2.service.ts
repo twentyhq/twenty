@@ -144,7 +144,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         metadataName: this.metadataName,
       });
 
-      actionsResult.created.push(
+      actionsResult.create.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -207,7 +207,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         metadataName: this.metadataName,
       });
 
-      actionsResult.deleted.push(
+      actionsResult.delete.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -271,7 +271,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey],
       });
 
-      actionsResult.updated.push(
+      actionsResult.update.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -310,18 +310,18 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<T>,
   ):
-    | FlatEntityValidationReturnType<T, 'created'>
-    | Promise<FlatEntityValidationReturnType<T, 'created'>>;
+    | FlatEntityValidationReturnType<T, 'create'>
+    | Promise<FlatEntityValidationReturnType<T, 'create'>>;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<T>,
   ):
-    | FlatEntityValidationReturnType<T, 'deleted'>
-    | Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
+    | FlatEntityValidationReturnType<T, 'delete'>
+    | Promise<FlatEntityValidationReturnType<T, 'delete'>>;
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<T>,
   ):
-    | FlatEntityValidationReturnType<T, 'updated'>
-    | Promise<FlatEntityValidationReturnType<T, 'updated'>>;
+    | FlatEntityValidationReturnType<T, 'update'>
+    | Promise<FlatEntityValidationReturnType<T, 'update'>>;
 }

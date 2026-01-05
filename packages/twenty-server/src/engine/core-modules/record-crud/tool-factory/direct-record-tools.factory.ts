@@ -52,7 +52,13 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           restrictedFields,
         ),
         execute: async (parameters) => {
-          const { limit, offset, orderBy, ...filter } = parameters.input;
+          const {
+            loadingMessage: _,
+            limit,
+            offset,
+            orderBy,
+            ...filter
+          } = parameters;
 
           return deps.findRecordsService.execute({
             objectName: objectMetadata.nameSingular,
@@ -72,7 +78,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
         execute: async (parameters) => {
           return deps.findRecordsService.execute({
             objectName: objectMetadata.nameSingular,
-            filter: { id: { eq: parameters.input.id } },
+            filter: { id: { eq: parameters.id } },
             limit: 1,
             authContext,
             rolePermissionConfig: context.rolePermissionConfig,
@@ -89,9 +95,11 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           restrictedFields,
         ),
         execute: async (parameters) => {
+          const { loadingMessage: _, ...objectRecord } = parameters;
+
           return deps.createRecordService.execute({
             objectName: objectMetadata.nameSingular,
-            objectRecord: parameters.input,
+            objectRecord,
             authContext,
             rolePermissionConfig: context.rolePermissionConfig,
             createdBy: context.actorContext,
@@ -108,7 +116,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           restrictedFields,
         ),
         execute: async (parameters) => {
-          const { id, ...allFields } = parameters.input;
+          const { loadingMessage: _, id, ...allFields } = parameters;
 
           const objectRecord = Object.fromEntries(
             Object.entries(allFields).filter(
@@ -134,7 +142,7 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
         execute: async (parameters) => {
           return deps.deleteRecordService.execute({
             objectName: objectMetadata.nameSingular,
-            objectRecordId: parameters.input.id,
+            objectRecordId: parameters.id,
             authContext,
             rolePermissionConfig: context.rolePermissionConfig,
             soft: true,

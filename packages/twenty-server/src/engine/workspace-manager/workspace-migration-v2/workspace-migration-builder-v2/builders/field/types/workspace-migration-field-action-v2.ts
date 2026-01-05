@@ -1,29 +1,22 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateFieldAction = {
-  type: 'create_field';
+export type CreateFieldAction = Omit<
+  BaseCreateWorkspaceMigrationAction<'fieldMetadata'>,
+  'flatEntity'
+> & {
   objectMetadataId: string;
   flatFieldMetadatas: FlatFieldMetadata[];
 };
 
-export type UpdateFieldAction = {
-  type: 'update_field';
-  fieldMetadataId: string;
-  objectMetadataId: string;
-  updates: FlatEntityPropertiesUpdates<'fieldMetadata'>;
-};
+export type UpdateFieldAction =
+  BaseUpdateWorkspaceMigrationAction<'fieldMetadata'> & {
+    objectMetadataId: string;
+  };
 
-export type DeleteFieldAction = {
-  type: 'delete_field';
-  fieldMetadataId: string;
-  objectMetadataId: string;
-};
-
-export type WorkspaceMigrationFieldActionV2 =
-  | CreateFieldAction
-  | UpdateFieldAction
-  | DeleteFieldAction;
-
-export type WorkspaceMigrationFieldActionTypeV2 =
-  WorkspaceMigrationFieldActionV2['type'];
+export type DeleteFieldAction =
+  BaseDeleteWorkspaceMigrationAction<'fieldMetadata'> & {
+    objectMetadataId: string;
+  };

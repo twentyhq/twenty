@@ -55,7 +55,7 @@ export class DelayWorkflowAction implements WorkflowAction {
       if (!workflowActionInput.scheduledDateTime) {
         throw new WorkflowStepExecutorException(
           'Scheduled date time is required for scheduled date delay',
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }
 
@@ -67,14 +67,14 @@ export class DelayWorkflowAction implements WorkflowAction {
       if (delayInMs < 0) {
         throw new WorkflowStepExecutorException(
           'Scheduled date cannot be in the past',
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }
     } else if (workflowActionInput.delayType === 'DURATION') {
       if (!workflowActionInput.duration) {
         throw new WorkflowStepExecutorException(
           'Duration is required for duration delay',
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }
 
@@ -93,7 +93,7 @@ export class DelayWorkflowAction implements WorkflowAction {
     } else {
       throw new WorkflowStepExecutorException(
         'Invalid delay type',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 

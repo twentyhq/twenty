@@ -4,6 +4,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -11,6 +12,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -59,11 +61,38 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     additionalFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
-  const combinedFilters = combineFilters([anyFieldFilter, requestFilters]);
+  const recordGroupDefinitions = useRecoilComponentValue(
+    recordGroupDefinitionsComponentSelector,
+  );
+
+  const visibleRecordGroupDefinitions = recordGroupDefinitions.filter(
+    (recordGroupDefinition) => recordGroupDefinition.isVisible,
+  );
+
+  const recordGroupValues = visibleRecordGroupDefinitions.map(
+    (recordGroupDefinition) => recordGroupDefinition.value,
+  );
+
+  const recordGroupOptionsFilter = isDefined(recordGroupFieldMetadata)
+    ? {
+        [recordGroupFieldMetadata.name]: {
+          in: recordGroupValues,
+        },
+      }
+    : {};
+
+  const combinedFilters = combineFilters([
+    anyFieldFilter,
+    requestFilters,
+    recordGroupOptionsFilter,
+  ]);
+
+  const recordGroupsLimit = visibleRecordGroupDefinitions.length;
 
   return {
     combinedFilters,
     recordGqlFields,
     orderBy,
+    recordGroupsLimit,
   };
 };

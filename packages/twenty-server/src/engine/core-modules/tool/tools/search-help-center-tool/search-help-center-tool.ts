@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
-import { SearchHelpCenterToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
+import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
@@ -15,7 +15,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class SearchHelpCenterTool implements Tool {
   description =
     'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
-  inputSchema = SearchHelpCenterToolParametersZodSchema;
+  inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
