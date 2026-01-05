@@ -5,6 +5,7 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -180,6 +181,8 @@ describe('If/Else Workflow (e2e)', () => {
     );
     expect(ifElseStep.settings.input.stepFilters).toBeDefined();
     expect(ifElseStep.settings.input.stepFilters.length).toBeGreaterThan(0);
+    expect(ifElseStep.settings.input.branches).toBeDefined();
+    expect(ifElseStep.settings.input.branches.length).toBe(2);
     const ifFilterGroupId = ifElseStep.settings.input.stepFilterGroups[0].id;
 
     const updateIfElseStepResponse = await client
@@ -204,6 +207,8 @@ describe('If/Else Workflow (e2e)', () => {
                 ...ifElseStep.settings,
                 input: {
                   ...ifElseStep.settings.input,
+                  branches: ifElseStep.settings.input.branches,
+                  stepFilterGroups: ifElseStep.settings.input.stepFilterGroups,
                   stepFilters: [
                     {
                       id: ifElseStep.settings.input.stepFilters[0].id,
@@ -352,13 +357,23 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStep.settings.input.branches).toBeDefined();
       expect(ifElseStep.settings.input.branches.length).toBe(2);
 
-      const ifBranch = ifElseStep.settings.input.branches[0];
-      const elseBranch = ifElseStep.settings.input.branches[1];
+      const ifBranch = ifElseStep.settings.input.branches.find(
+        (branch: { filterGroupId?: string }) => isDefined(branch.filterGroupId),
+      );
+      const elseBranch = ifElseStep.settings.input.branches.find(
+        (
+          branch: { filterGroupId?: string },
+          index: number,
+          branches: Array<{ filterGroupId?: string }>,
+        ) => index === branches.length - 1 && !isDefined(branch.filterGroupId),
+      );
 
-      expect(ifBranch.filterGroupId).toBeDefined();
-      expect(elseBranch.filterGroupId).toBeUndefined();
-      expect(ifBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
-      expect(elseBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
+      expect(ifBranch).toBeDefined();
+      expect(elseBranch).toBeDefined();
+      expect(ifBranch?.filterGroupId).toBeDefined();
+      expect(elseBranch?.filterGroupId).toBeUndefined();
+      expect(ifBranch?.nextStepIds).toContain(ifBranchEmptyNodeId);
+      expect(elseBranch?.nextStepIds).toContain(elseBranchEmptyNodeId);
 
       expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
       expect(ifElseStep.settings.input.stepFilters).toBeDefined();
@@ -445,6 +460,22 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
+      const ifBranch = ifElseStep.settings.input.branches.find(
+        (branch: { filterGroupId?: string }) => isDefined(branch.filterGroupId),
+      );
+      const elseBranch = ifElseStep.settings.input.branches.find(
+        (
+          branch: { filterGroupId?: string },
+          index: number,
+          branches: Array<{ filterGroupId?: string }>,
+        ) => index === branches.length - 1 && !isDefined(branch.filterGroupId),
+      );
+
+      expect(ifBranch).toBeDefined();
+      expect(elseBranch).toBeDefined();
+      expect(ifBranch?.filterGroupId).toBeDefined();
+      expect(elseBranch?.filterGroupId).toBeUndefined();
+      expect(matchedBranch.id).toBe(ifBranch?.id);
       expect(matchedBranch.filterGroupId).toBeDefined();
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
 
