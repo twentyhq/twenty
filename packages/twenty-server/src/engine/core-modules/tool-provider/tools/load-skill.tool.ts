@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type Skill } from 'src/engine/core-modules/skills/skills.service';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
 export const LOAD_SKILL_TOOL_NAME = 'load_skill';
 
@@ -25,7 +25,7 @@ export type LoadSkillResult = {
   message: string;
 };
 
-export type LoadSkillFunction = (names: string[]) => Skill[];
+export type LoadSkillFunction = (names: string[]) => Promise<FlatSkill[]>;
 
 export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   description:
@@ -36,7 +36,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   }): Promise<LoadSkillResult> => {
     const { skillNames } = parameters.input;
 
-    const skills = loadSkills(skillNames);
+    const skills = await loadSkills(skillNames);
 
     if (skills.length === 0) {
       return {

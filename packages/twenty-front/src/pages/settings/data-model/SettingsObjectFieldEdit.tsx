@@ -142,6 +142,17 @@ export const SettingsObjectFieldEdit = () => {
     objectMetadataItem: objectMetadataItem,
   });
 
+  const fieldNamesThatCannotBeDeactivated = [
+    'createdAt',
+    'createdBy',
+    'deletedAt',
+    'updatedAt',
+  ];
+
+  const fieldCanBeDeactivated = !fieldNamesThatCannotBeDeactivated.includes(
+    fieldMetadataItem.name,
+  );
+
   const handleSave = async (
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
@@ -372,7 +383,7 @@ export const SettingsObjectFieldEdit = () => {
               />
             </Section>
 
-            {!isLabelIdentifier && !readonly && (
+            {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
               <Section>
                 <H2Title
                   title={t`Danger zone`}

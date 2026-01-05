@@ -11,9 +11,11 @@ export const spreadsheetImportFilterAvailableFieldMetadataItems = (
         fieldMetadataItem.isActive &&
         (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
         fieldMetadataItem.name !== 'deletedAt' &&
-        (![FieldMetadataType.RELATION, FieldMetadataType.RICH_TEXT].includes(
-          fieldMetadataItem.type,
-        ) ||
+        (![
+          FieldMetadataType.RELATION,
+          FieldMetadataType.RICH_TEXT,
+          FieldMetadataType.ACTOR,
+        ].includes(fieldMetadataItem.type) ||
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
