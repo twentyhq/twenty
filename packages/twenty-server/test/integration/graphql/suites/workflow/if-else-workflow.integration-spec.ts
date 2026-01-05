@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 import request from 'supertest';
 import {
   destroyWorkflowRun,
   runWorkflowVersion,
-  waitForWorkflowCompletion
+  waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
@@ -387,21 +386,6 @@ describe('If/Else Workflow (e2e)', () => {
       });
 
       const workflowRun = await waitForWorkflowCompletion(workflowRunId);
-
-      if (workflowRun?.status === 'FAILED') {
-        const failedSteps = Object.entries(workflowRun.state?.stepInfos ?? {})
-          .filter(([_, info]) => info?.status === 'FAILED')
-          .map(([stepId, info]) => ({ stepId, info }));
-
-        console.error(
-          'Workflow failed. Failed steps:',
-          JSON.stringify(failedSteps, null, 2),
-        );
-        console.error(
-          'Workflow run state:',
-          JSON.stringify(workflowRun.state, null, 2),
-        );
-      }
 
       expect(workflowRun).toBeDefined();
       expect(workflowRun?.status).toBe('COMPLETED');
