@@ -4,20 +4,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { join } from 'path';
 
 import deepEqual from 'deep-equal';
-import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
-import { Sources } from 'twenty-shared/types';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
+import { Sources } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
@@ -32,15 +34,13 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -335,6 +335,8 @@ export class ServerlessFunctionService {
         name: serverlessFunctionInput.update.name,
         description: serverlessFunctionInput.update.description,
         timeoutSeconds: serverlessFunctionInput.update.timeoutSeconds,
+        toolInputSchema: serverlessFunctionInput.update.toolInputSchema,
+        isTool: serverlessFunctionInput.update.isTool,
       },
     );
 

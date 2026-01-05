@@ -19,13 +19,13 @@ export type ToolIndexEntry = {
   name: string;
   description: string;
   category:
-    | 'database'
-    | 'action'
-    | 'workflow'
-    | 'metadata'
-    | 'view'
-    | 'dashboard'
-    | 'serverless_function';
+    | 'DATABASE'
+    | 'ACTION'
+    | 'WORKFLOW'
+    | 'METADATA'
+    | 'VIEW'
+    | 'DASHBOARD'
+    | 'SERVERLESS_FUNCTION';
   objectName?: string;
   operation?: string;
   inputSchema?: object;
@@ -34,13 +34,13 @@ export type ToolIndexEntry = {
 export type ToolSearchOptions = {
   limit?: number;
   category?:
-    | 'database'
-    | 'action'
-    | 'workflow'
-    | 'metadata'
-    | 'view'
-    | 'dashboard'
-    | 'serverless_function';
+    | 'DATABASE'
+    | 'ACTION'
+    | 'WORKFLOW'
+    | 'METADATA'
+    | 'VIEW'
+    | 'DASHBOARD'
+    | 'SERVERLESS_FUNCTION';
 };
 
 export type ToolContext = {
@@ -252,14 +252,14 @@ export class ToolRegistryService {
     category: ToolCategory,
   ): ToolIndexEntry[] {
     const categoryMap: Record<ToolCategory, ToolIndexEntry['category']> = {
-      DATABASE_CRUD: 'database',
-      ACTION: 'action',
-      WORKFLOW: 'workflow',
-      METADATA: 'metadata',
-      NATIVE_MODEL: 'action',
-      VIEW: 'view',
-      DASHBOARD: 'dashboard',
-      SERVERLESS_FUNCTION: 'serverless_function',
+      DATABASE_CRUD: 'DATABASE',
+      ACTION: 'ACTION',
+      WORKFLOW: 'WORKFLOW',
+      METADATA: 'METADATA',
+      NATIVE_MODEL: 'ACTION',
+      VIEW: 'VIEW',
+      DASHBOARD: 'DASHBOARD',
+      SERVERLESS_FUNCTION: 'SERVERLESS_FUNCTION',
     };
 
     return Object.entries(tools).map(([name, tool]) => {
