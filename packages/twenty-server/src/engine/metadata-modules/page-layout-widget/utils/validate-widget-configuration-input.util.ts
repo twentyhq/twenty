@@ -1,5 +1,5 @@
 import { isNotEmptyObject, type ValidationError } from 'class-validator';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
@@ -53,14 +53,21 @@ export const validateWidgetConfigurationInput = ({
   }
 
   const configurationRecord = configuration as Record<string, unknown>;
-  const configurationType = configurationRecord.configurationType;
 
-  if (!isDefined(configurationType)) {
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      configurationRecord,
+      'configurationType',
+    )
+  ) {
     throw new PageLayoutWidgetException(
       'Invalid configuration: missing configuration type',
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
   }
+
+  const configurationType =
+    configurationRecord.configurationType as WidgetConfigurationType;
 
   let errors: ValidationError[] = [];
 
@@ -107,11 +114,34 @@ export const validateWidgetConfigurationInput = ({
         configuration,
       );
       break;
+    case WidgetConfigurationType.VIEW:
+      throw new Error('View configuration is not supported yet');
+    case WidgetConfigurationType.FIELD:
+      throw new Error('Field configuration is not supported yet');
+    case WidgetConfigurationType.FIELDS:
+      throw new Error('Fields configuration is not supported yet');
+    case WidgetConfigurationType.TIMELINE:
+      throw new Error('Timeline configuration is not supported yet');
+    case WidgetConfigurationType.TASKS:
+      throw new Error('Tasks configuration is not supported yet');
+    case WidgetConfigurationType.NOTES:
+      throw new Error('Notes configuration is not supported yet');
+    case WidgetConfigurationType.FILES:
+      throw new Error('Files configuration is not supported yet');
+    case WidgetConfigurationType.EMAILS:
+      throw new Error('Emails configuration is not supported yet');
+    case WidgetConfigurationType.CALENDAR:
+      throw new Error('Calendar configuration is not supported yet');
+    case WidgetConfigurationType.FIELD_RICH_TEXT:
+      throw new Error('Field rich text configuration is not supported yet');
+    case WidgetConfigurationType.WORKFLOW:
+      throw new Error('Workflow configuration is not supported yet');
+    case WidgetConfigurationType.WORKFLOW_VERSION:
+      throw new Error('Workflow version configuration is not supported yet');
+    case WidgetConfigurationType.WORKFLOW_RUN:
+      throw new Error('Workflow run configuration is not supported yet');
     default:
-      throw new PageLayoutWidgetException(
-        `Invalid configuration type: ${configurationRecord.configurationType}`,
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
+      assertUnreachable(configurationType);
   }
 
   if (errors.length > 0) {
