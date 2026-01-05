@@ -15,21 +15,28 @@ import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
-import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+
+type DeletionResult = {
+  entityName: string;
+  success: boolean;
+  deletedCount?: number;
+  error?: string;
+};
 
 // All entities that extend WorkspaceRelatedEntity or SyncableEntity
 const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
@@ -168,43 +175,69 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
     this.logger.log(
       chalk.red(
-        `\nDeleting ${allOrphanedRecords.length} orphaned record(s) in a single transaction...`,
+        `\nDeleting ${allOrphanedRecords.length} orphaned record(s)...`,
       ),
     );
 
-    const queryRunner = this.dataSource.createQueryRunner();
+    const deletionResults: DeletionResult[] = [];
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    for (const [entity, ids] of orphanedIdsByEntity) {
+      const entityName =
+        typeof entity === 'function' ? entity.name : String(entity);
 
-    try {
-      for (const [entity, ids] of orphanedIdsByEntity) {
-        const entityName =
-          typeof entity === 'function' ? entity.name : String(entity);
-
-        await queryRunner.manager
+      try {
+        const result = await this.dataSource
+          .getRepository(entity)
           .createQueryBuilder()
           .delete()
           .from(entity)
           .whereInIds(ids)
           .execute();
 
-        this.logger.log(chalk.gray(`  Deleted ${ids.length} ${entityName} record(s)`));
+        deletionResults.push({
+          entityName,
+          success: true,
+          deletedCount: result.affected || 0,
+        });
+
+        this.logger.log(
+          chalk.green(`  ✓ Deleted ${result.affected || 0} ${entityName} record(s)`),
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+
+        deletionResults.push({
+          entityName,
+          success: false,
+          error: errorMessage,
+        });
+
+        this.logger.error(
+          chalk.red(`  ✗ Failed to delete ${entityName} records: ${errorMessage}`),
+        );
       }
+    }
 
-      await queryRunner.commitTransaction();
+    const successfulDeletions = deletionResults.filter((r) => r.success);
+    const failedDeletions = deletionResults.filter((r) => !r.success);
+    const totalDeleted = successfulDeletions.reduce(
+      (sum, r) => sum + (r.deletedCount || 0),
+      0,
+    );
 
+    this.logger.log(chalk.blue('\n=== Deletion Summary ==='));
+    this.logger.log(
+      chalk.green(`Successfully deleted: ${totalDeleted} record(s) across ${successfulDeletions.length} entity type(s)`),
+    );
+
+    if (failedDeletions.length > 0) {
       this.logger.log(
-        chalk.green(
-          `Successfully deleted ${allOrphanedRecords.length} orphaned record(s).`,
-        ),
+        chalk.red(`Failed deletions: ${failedDeletions.length} entity type(s)`),
       );
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error(chalk.red('Transaction rolled back due to error:'));
-      throw error;
-    } finally {
-      await queryRunner.release();
+      this.logger.log(chalk.red('\nFailed entity types:'));
+      for (const failure of failedDeletions) {
+        this.logger.log(chalk.red(`  - ${failure.entityName}: ${failure.error}`));
+      }
     }
   }
 }
