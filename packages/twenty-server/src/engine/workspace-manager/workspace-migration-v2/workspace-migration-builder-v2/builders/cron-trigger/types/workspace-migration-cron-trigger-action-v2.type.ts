@@ -1,31 +1,12 @@
-import { type FlatCronTriggerPropertiesToCompare } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger-properties-to-compare.type';
-import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateCronTriggerAction = {
-  type: 'create_cron_trigger';
-  cronTrigger: FlatCronTrigger;
-};
+export type CreateCronTriggerAction =
+  BaseCreateWorkspaceMigrationAction<'cronTrigger'>;
 
-export type UpdateCronTriggerAction = {
-  type: 'update_cron_trigger';
-  cronTriggerId: string;
-  updates: Array<
-    {
-      [P in FlatCronTriggerPropertiesToCompare]: PropertyUpdate<
-        FlatCronTrigger,
-        P
-      >;
-    }[FlatCronTriggerPropertiesToCompare]
-  >;
-};
+export type UpdateCronTriggerAction =
+  BaseUpdateWorkspaceMigrationAction<'cronTrigger'>;
 
-export type DeleteCronTriggerAction = {
-  type: 'delete_cron_trigger';
-  cronTriggerId: string;
-};
-
-export type WorkspaceMigrationCronTriggerActionV2 =
-  | CreateCronTriggerAction
-  | UpdateCronTriggerAction
-  | DeleteCronTriggerAction;
+export type DeleteCronTriggerAction =
+  BaseDeleteWorkspaceMigrationAction<'cronTrigger'>;

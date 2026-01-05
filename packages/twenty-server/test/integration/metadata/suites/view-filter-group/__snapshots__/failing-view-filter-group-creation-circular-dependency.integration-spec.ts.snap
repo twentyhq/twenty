@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Group creation should fail with circular dependency when id equals parentViewFilterGroupId (self-reference) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilterGroup": [
+        {
+          "errors": [
+            {
+              "code": "CIRCULAR_DEPENDENCY",
+              "message": "View filter group cannot be its own parent",
+              "userFriendlyMessage": "View filter group cannot be its own parent",
+            },
+            {
+              "code": "VIEW_FILTER_GROUP_NOT_FOUND",
+              "message": "Parent view filter group not found",
+              "userFriendlyMessage": "Parent view filter group not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilterGroup",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilterGroup",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilterGroup": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating view filter group",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter Group creation should fail with circular dependency when max depth is exceeded during creation 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilterGroup": [
+        {
+          "errors": [
+            {
+              "code": "MAX_DEPTH_EXCEEDED",
+              "message": "View filter group hierarchy exceeds maximum depth of 2",
+              "userFriendlyMessage": "View filter group hierarchy exceeds maximum depth of 2",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilterGroup",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilterGroup",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilterGroup": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating view filter group",
+  "name": "GraphQLError",
+}
+`;

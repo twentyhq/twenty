@@ -2,14 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
@@ -24,30 +19,13 @@ import {
 
 @Injectable()
 export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_field',
+  'delete',
+  'fieldMetadata',
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteFieldAction>): Partial<AllFlatEntityMaps> {
-    const { flatFieldMetadataMaps } = allFlatEntityMaps;
-    const { fieldMetadataId } = action;
-
-    const updatedFlatFieldMetadataMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-    return {
-      flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-    };
   }
 
   async executeForMetadata(
@@ -59,10 +37,10 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    const { fieldMetadataId } = action;
+    const { entityId } = action;
 
     await fieldMetadataRepository.delete({
-      id: In([fieldMetadataId]),
+      id: In([entityId]),
     });
   }
 
@@ -75,7 +53,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { objectMetadataId, fieldMetadataId } = action;
+    const { objectMetadataId, entityId } = action;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
@@ -84,7 +62,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldMetadataId,
+      flatEntityId: entityId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
