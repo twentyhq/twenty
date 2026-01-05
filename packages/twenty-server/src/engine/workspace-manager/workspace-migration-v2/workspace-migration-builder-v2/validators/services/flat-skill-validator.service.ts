@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -10,6 +10,7 @@ import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exce
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { validateSkillNameUniqueness } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util';
@@ -29,15 +30,16 @@ export class FlatSkillValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<FlatSkill> {
-    const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'create_skill',
-      errors: [],
+  >): FailedFlatEntityValidation<'skill', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatSkill.id,
+        universalIdentifier: flatSkill.universalIdentifier,
         name: flatSkill.name,
       },
-    };
+      metadataName: 'skill',
+      type: 'create',
+    });
 
     const existingSkills = Object.values(optimisticFlatSkillMaps.byId).filter(
       isDefined,
@@ -65,15 +67,16 @@ export class FlatSkillValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<FlatSkill> {
-    const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'delete_skill',
-      errors: [],
+  >): FailedFlatEntityValidation<'skill', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
         name: flatEntityToValidate.name,
       },
-    };
+      metadataName: 'skill',
+      type: 'delete',
+    });
 
     const existingSkill = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatEntityToValidate.id,
@@ -110,18 +113,19 @@ export class FlatSkillValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.skill
-  >): FailedFlatEntityValidation<FlatSkill> {
-    const validationResult: FailedFlatEntityValidation<FlatSkill> = {
-      type: 'update_skill',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-    };
-
+  >): FailedFlatEntityValidation<'skill', 'update'> {
     const fromFlatSkill = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps: optimisticFlatSkillMaps,
+    });
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: fromFlatSkill?.universalIdentifier,
+      },
+      metadataName: 'skill',
+      type: 'update',
     });
 
     if (!isDefined(fromFlatSkill)) {

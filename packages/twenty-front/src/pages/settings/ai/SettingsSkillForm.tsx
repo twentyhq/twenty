@@ -392,32 +392,26 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     ? t`Deactivate "Synchronize Label and API Name" to set a custom API name`
     : t`Input must be in camel case and cannot start with a number`;
 
-  const renderTitle = () => {
-    if (isCreateMode) {
-      return t`New Skill`;
-    }
-
-    if (loading === true) {
-      return t`Skill`;
-    }
-
-    return (
-      <StyledHeaderTitle>
-        <TitleInput
-          instanceId="skill-label-input"
-          disabled={isReadonlyMode}
-          sizeVariant="md"
-          value={formValues.label}
-          onChange={(value) => handleFieldChange('label', value)}
-          placeholder={t`Skill name`}
-        />
-      </StyledHeaderTitle>
-    );
-  };
+  const title = isCreateMode ? (
+    t`New Skill`
+  ) : loading ? (
+    t`Skill`
+  ) : (
+    <StyledHeaderTitle>
+      <TitleInput
+        instanceId="skill-label-input"
+        disabled={isReadonlyMode}
+        sizeVariant="md"
+        value={formValues.label}
+        onChange={(value) => handleFieldChange('label', value)}
+        placeholder={t`Skill name`}
+      />
+    </StyledHeaderTitle>
+  );
 
   return (
     <SubMenuTopBarContainer
-      title={renderTitle()}
+      title={title}
       actionButton={
         isCreateMode ? (
           <SaveAndCancelButtons

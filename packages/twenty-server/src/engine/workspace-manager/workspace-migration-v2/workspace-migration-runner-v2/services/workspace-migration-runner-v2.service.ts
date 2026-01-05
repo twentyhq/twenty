@@ -41,19 +41,10 @@ export class WorkspaceMigrationRunnerV2Service {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
-        switch (action.type) {
-          case 'delete_field':
-          case 'create_field':
-          case 'update_field':
-          case 'delete_object':
-          case 'create_object':
-          case 'update_object': {
-            return true;
-          }
-          default: {
-            return false;
-          }
-        }
+        return (
+          action.metadataName === 'objectMetadata' ||
+          action.metadataName === 'fieldMetadata'
+        );
       },
     );
 
@@ -65,28 +56,15 @@ export class WorkspaceMigrationRunnerV2Service {
       );
     }
 
+    const viewRelatedMetadataNames = [
+      'view',
+      'viewFilter',
+      'viewGroup',
+      'viewField',
+      'viewFilterGroup',
+    ];
     const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) => {
-        switch (action.type) {
-          case 'delete_view':
-          case 'create_view':
-          case 'update_view':
-          case 'delete_view_filter':
-          case 'create_view_filter':
-          case 'update_view_filter':
-          case 'delete_view_group':
-          case 'create_view_group':
-          case 'update_view_group':
-          case 'delete_view_field':
-          case 'create_view_field':
-          case 'update_view_field': {
-            return true;
-          }
-          default: {
-            return false;
-          }
-        }
-      },
+      (action) => viewRelatedMetadataNames.includes(action.metadataName),
     );
 
     if (
@@ -102,19 +80,9 @@ export class WorkspaceMigrationRunnerV2Service {
     }
 
     const shouldInvalidateRoleMapCache = actions.some((action) => {
-      switch (action.type) {
-        case 'create_role':
-        case 'delete_role':
-        case 'update_role':
-        case 'create_role_target':
-        case 'delete_role_target':
-        case 'update_role_target': {
-          return true;
-        }
-        default: {
-          return false;
-        }
-      }
+      return (
+        action.metadataName === 'role' || action.metadataName === 'roleTarget'
+      );
     });
 
     if (
@@ -167,7 +135,7 @@ export class WorkspaceMigrationRunnerV2Service {
         const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
-              actionType: action.type,
+              action,
               context: {
                 action,
                 allFlatEntityMaps,
@@ -257,7 +225,7 @@ export class WorkspaceMigrationRunnerV2Service {
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
           {
-            actionType: invertedAction.type,
+            action: invertedAction,
             context: {
               action: invertedAction,
               allFlatEntityMaps: allFlatEntityMaps,

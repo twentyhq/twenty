@@ -2882,6 +2882,11 @@ msgstr "Érvénytelen munkafolyamat-futtatás."
 msgid "Invalid workflow status."
 msgstr "Érvénytelen munkafolyamat-állapot."
 
+#. js-lingui-id: v+ozTr
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "Invalid workflow step input."
+msgstr ""
+
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Invalid workflow step request."
@@ -3353,6 +3358,11 @@ msgstr "Üzenetküldő szolgáltató hozzáférési tokene"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Üzenetküldő szolgáltató frissítési tokene"
+
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -5882,11 +5892,6 @@ msgstr "Felhasználó által előnyben részesített hétköznap"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Felhasználó preferált idő formátuma"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "A validáció meghiúsult 0 objektum(ok) és 0 mező(k) esetén"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

@@ -26,11 +26,14 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
         {
           report: {
             ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
-            objectMetadata: [
+            fieldMetadata: [
               {
                 errors: failedInputTranspilationErrors,
-                type: 'create_field',
-                flatEntityMinimalInformation: {},
+                type: 'create',
+                metadataName: 'fieldMetadata',
+                flatEntityMinimalInformation: {
+                  id: '',
+                },
               },
             ],
           },

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -26,14 +26,15 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<FlatViewFilter> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'create_view_filter',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilter', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
+        universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'viewFilter',
+      type: 'create',
+    });
 
     const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.id,
@@ -99,14 +100,15 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<FlatViewFilter> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'delete_view_filter',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilter', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatViewFilterToValidate.id,
+        universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'viewFilter',
+      type: 'delete',
+    });
 
     const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.id,
@@ -136,16 +138,17 @@ export class FlatViewFilterValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
-  >): FailedFlatEntityValidation<FlatViewFilter> {
-    const validationResult: FailedFlatEntityValidation<FlatViewFilter> = {
-      type: 'update_view_filter',
-      errors: [],
+  >): FailedFlatEntityValidation<'viewFilter', 'update'> {
+    const existingViewFilter = optimisticFlatViewFilterMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: existingViewFilter?.universalIdentifier,
       },
-    };
-
-    const existingViewFilter = optimisticFlatViewFilterMaps.byId[flatEntityId];
+      metadataName: 'viewFilter',
+      type: 'update',
+    });
 
     if (!isDefined(existingViewFilter)) {
       validationResult.errors.push({
