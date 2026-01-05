@@ -1,22 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type ItemWithPosition = {
-  position?: number | null;
-};
-
-type SortByManualOrderParams<T extends ItemWithPosition> = {
+type SortByManualOrderParams<T> = {
   items: T[];
   manualSortOrder: string[];
   getRawValue: (item: T) => string | null | undefined;
 };
 
-export const sortByManualOrder = <T extends ItemWithPosition>({
+export const sortByManualOrder = <T>({
   items,
   manualSortOrder,
   getRawValue,
 }: SortByManualOrderParams<T>): T[] => {
   if (manualSortOrder.length === 0) {
-    return items.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    return items;
   }
 
   const orderMap = new Map(
@@ -31,7 +27,7 @@ export const sortByManualOrder = <T extends ItemWithPosition>({
     const indexB = orderMap.get(rawValueB);
 
     if (!isDefined(indexA) && !isDefined(indexB)) {
-      return (a.position ?? 0) - (b.position ?? 0);
+      return 0;
     }
 
     if (!isDefined(indexA)) {
