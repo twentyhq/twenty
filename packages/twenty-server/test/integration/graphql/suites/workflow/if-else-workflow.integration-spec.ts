@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import request from 'supertest';
 import { getWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
