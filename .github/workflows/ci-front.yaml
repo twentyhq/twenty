@@ -368,4 +368,4 @@ jobs:
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
-        run: exit
+        run: exit 1
