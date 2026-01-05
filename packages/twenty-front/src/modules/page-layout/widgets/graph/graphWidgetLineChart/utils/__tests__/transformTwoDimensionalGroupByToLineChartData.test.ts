@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
+import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
@@ -206,7 +206,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
       expect(result.hasTooManyGroups).toBe(false);
     });
 
-    it('should filter out null aggregate values', () => {
+    it('should convert null aggregate values to zero', () => {
       const rawResults: GroupByRawResult[] = [
         {
           groupByDimensionValues: ['2024-01-01', 'Stage A'],
@@ -235,8 +235,8 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       });
 
-      expect(result.series[0].data).toHaveLength(2);
-      expect(result.series[0].data.map((d) => d.y)).toEqual([100, 200]);
+      expect(result.series[0].data).toHaveLength(3);
+      expect(result.series[0].data.map((d) => d.y)).toEqual([100, 0, 200]);
 
       expect(result.hasTooManyGroups).toBe(false);
     });
