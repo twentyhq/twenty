@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateRouteTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_route_trigger',
+  'create',
+  'routeTrigger',
 ) {
   constructor() {
     super();
@@ -18,7 +19,7 @@ export class CreateRouteTriggerActionHandlerService extends WorkspaceMigrationRu
     context: WorkspaceMigrationActionRunnerArgs<CreateRouteTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { routeTrigger } = action;
+    const { flatEntity: routeTrigger } = action;
 
     const routeTriggerRepository =
       queryRunner.manager.getRepository<RouteTriggerEntity>(RouteTriggerEntity);

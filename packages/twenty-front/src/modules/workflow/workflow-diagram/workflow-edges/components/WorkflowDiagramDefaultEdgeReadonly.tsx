@@ -23,7 +23,10 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
 }: WorkflowDiagramDefaultEdgeReadonlyProps) => {
   const theme = useTheme();
 
-  const { segments } = getEdgePath({
+  const {
+    segments,
+    overlayPosition: [labelX, labelY],
+  } = getEdgePath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -53,6 +56,8 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
             sourceX={sourceX}
             sourceY={sourceY}
             position={data.labelOptions.position}
+            centerX={labelX}
+            centerY={labelY}
           >
             <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
           </WorkflowDiagramEdgeLabelContainer>

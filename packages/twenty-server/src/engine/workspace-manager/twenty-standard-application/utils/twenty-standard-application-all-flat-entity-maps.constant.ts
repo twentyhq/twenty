@@ -1,6 +1,7 @@
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 import { buildStandardFlatAgentMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/build-standard-flat-agent-metadata-maps.util';
+import { buildStandardFlatSkillMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/build-standard-flat-skill-metadata-maps.util';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
@@ -78,10 +79,13 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
   });
 
+  const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
+
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatViewMaps,
+      flatViewFilterGroupMaps,
     },
     now,
     standardObjectMetadataRelatedEntityIds,
@@ -119,6 +123,14 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
   });
 
+  const flatSkillMaps = buildStandardFlatSkillMetadataMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps: undefined,
+  });
+
   return {
     flatViewFieldMaps,
     flatViewFilterMaps,
@@ -129,5 +141,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatObjectMetadataMaps,
     flatRoleMaps,
     flatAgentMaps,
+    flatSkillMaps,
   };
 };

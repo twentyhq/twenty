@@ -44,7 +44,7 @@ export const opportunitiesByStageView = ({
     key: null,
     position: 2,
     icon: 'IconLayoutKanban',
-    kanbanAggregateOperation: AggregateOperations.MIN,
+    kanbanAggregateOperation: AggregateOperations.SUM,
     kanbanAggregateOperationFieldMetadataId:
       opportunityObjectMetadata.fields.find(
         (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.amount,

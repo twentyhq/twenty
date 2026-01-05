@@ -13,12 +13,12 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
-import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
+import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
+import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import {
   generateViewFilterGroupExceptionMessage,
@@ -90,8 +90,8 @@ export class ViewFilterGroupController {
     @Body() input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
-    return this.viewFilterGroupService.create({
-      ...input,
+    return this.viewFilterGroupService.createOne({
+      createViewFilterGroupInput: input,
       workspaceId: workspace.id,
     });
   }
@@ -103,13 +103,11 @@ export class ViewFilterGroupController {
     @Body() input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
-    const updatedViewFilterGroup = await this.viewFilterGroupService.update(
+    return this.viewFilterGroupService.updateOne({
       id,
-      workspace.id,
-      input,
-    );
-
-    return updatedViewFilterGroup;
+      updateViewFilterGroupInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Delete(':id')
@@ -118,10 +116,10 @@ export class ViewFilterGroupController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
-    const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
-      id,
-      workspace.id,
-    );
+    const deletedViewFilterGroup = await this.viewFilterGroupService.deleteOne({
+      deleteViewFilterGroupInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return { success: isDefined(deletedViewFilterGroup) };
   }

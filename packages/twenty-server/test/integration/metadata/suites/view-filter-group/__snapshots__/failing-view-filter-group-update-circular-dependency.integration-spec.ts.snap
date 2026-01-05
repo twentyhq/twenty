@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Group update should fail with circular dependency when parentViewFilterGroupId equals id (self-reference) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilterGroup": [
+        {
+          "errors": [
+            {
+              "code": "CIRCULAR_DEPENDENCY",
+              "message": "View filter group cannot be its own parent",
+              "userFriendlyMessage": "View filter group cannot be its own parent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilterGroup",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilterGroup",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilterGroup": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating view filter group",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`View Filter Group update should fail with circular dependency when update creates a circular dependency chain 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilterGroup": [
+        {
+          "errors": [
+            {
+              "code": "CIRCULAR_DEPENDENCY",
+              "message": "Circular dependency detected in view filter group hierarchy",
+              "userFriendlyMessage": "Circular dependency detected in view filter group hierarchy",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilterGroup",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilterGroup",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilterGroup": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating view filter group",
+  "name": "GraphQLError",
+}
+`;
