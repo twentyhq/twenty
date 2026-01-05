@@ -1,8 +1,6 @@
+import { useShouldUseWhiteBackground } from '@/page-layout/hooks/useShouldUseWhiteBackground';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 
 const StyledVerticalListContainer = styled.div<{
@@ -24,12 +22,7 @@ type PageLayoutVerticalListViewerProps = {
 export const PageLayoutVerticalListViewer = ({
   widgets,
 }: PageLayoutVerticalListViewerProps) => {
-  const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
-  const { isInPinnedTab } = useIsInPinnedTab();
-
-  const shouldUseWhiteBackground =
-    (isMobile || isInRightDrawer) && !isInPinnedTab;
+  const { shouldUseWhiteBackground } = useShouldUseWhiteBackground();
 
   return (
     <StyledVerticalListContainer

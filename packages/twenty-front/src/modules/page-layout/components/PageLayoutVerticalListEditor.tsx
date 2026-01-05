@@ -1,9 +1,7 @@
+import { useShouldUseWhiteBackground } from '@/page-layout/hooks/useShouldUseWhiteBackground';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
@@ -44,12 +42,7 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
-  const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
-  const { isInPinnedTab } = useIsInPinnedTab();
-
-  const shouldUseWhiteBackground =
-    (isMobile || isInRightDrawer) && !isInPinnedTab;
+  const { shouldUseWhiteBackground } = useShouldUseWhiteBackground();
 
   const setDraggingWidgetId = useSetRecoilComponentState(
     pageLayoutDraggingWidgetIdComponentState,
