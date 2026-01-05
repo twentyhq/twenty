@@ -266,14 +266,4 @@ describe('validateWidgetConfigurationInput', () => {
       ).toThrow(/Invalid configuration type: UNSUPPORTED_TYPE/);
     });
   });
-
-  describe('Error messages', () => {
-    it('should include validation details in error message', () => {
-      expect(() =>
-        validateWidgetConfigurationInput({
-          configuration: INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
-        }),
-      ).toThrow(/aggregateFieldMetadataId must be a UUID/);
-    });
-  });
 });

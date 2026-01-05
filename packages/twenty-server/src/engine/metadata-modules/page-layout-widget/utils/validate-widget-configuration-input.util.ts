@@ -15,14 +15,27 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validateWidgetConfigurationByDto } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-by-dto.util';
 
-const formatValidationErrors = (errors: ValidationError[]): string => {
+const formatValidationErrors = (
+  errors: ValidationError[],
+  parentProperty?: string,
+): string => {
   return errors
     .map((err) => {
-      const constraints = err.constraints
-        ? Object.values(err.constraints).join(', ')
-        : 'Unknown error';
+      const propertyPath = parentProperty
+        ? `${parentProperty}.${err.property}`
+        : err.property;
 
-      return `${err.property}: ${constraints}`;
+      if (err.constraints) {
+        const constraints = Object.values(err.constraints).join(', ');
+
+        return `${propertyPath}: ${constraints}`;
+      }
+
+      if (err.children && err.children.length > 0) {
+        return formatValidationErrors(err.children, propertyPath);
+      }
+
+      return `${propertyPath}: Unknown error`;
     })
     .join('; ');
 };
