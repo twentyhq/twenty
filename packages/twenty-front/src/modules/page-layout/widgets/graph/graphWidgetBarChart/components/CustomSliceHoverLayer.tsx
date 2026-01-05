@@ -5,11 +5,12 @@ import {
   findSliceAtPosition,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
 import { createSliceVirtualElement } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createSliceVirtualElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type VirtualElement } from '@floating-ui/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { useCallback, useMemo, type MouseEvent } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -41,7 +42,7 @@ export const CustomSliceHoverLayer = ({
   onSliceClick,
   onSliceLeave,
 }: CustomSliceHoverLayerProps) => {
-  const hoveredSliceIndex = useRecoilComponentValue(
+  const hoveredSliceIndexState = useRecoilComponentCallbackState(
     graphWidgetHoveredSliceIndexComponentState,
   );
   const setHoveredSliceIndex = useSetRecoilComponentState(
@@ -63,16 +64,18 @@ export const CustomSliceHoverLayer = ({
 
   const buildSliceData = useCallback(
     (event: MouseEvent<SVGRectElement>): SliceHoverData | null => {
-      const svgRect =
+      const svgBoundingRectangle =
         event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-      if (!isDefined(svgRect)) {
+      if (!isDefined(svgBoundingRectangle)) {
         return null;
       }
 
-      const mouseX = event.clientX - svgRect.left - marginLeft;
-      const mouseY = event.clientY - svgRect.top - marginTop;
+      const mouseXPosition =
+        event.clientX - svgBoundingRectangle.left - marginLeft;
+      const mouseYPosition =
+        event.clientY - svgBoundingRectangle.top - marginTop;
 
-      const position = isVertical ? mouseX : mouseY;
+      const position = isVertical ? mouseXPosition : mouseYPosition;
       const slice = findSliceAtPosition(slices, position);
 
       if (!isDefined(slice)) {
@@ -81,7 +84,7 @@ export const CustomSliceHoverLayer = ({
 
       const virtualElement = createSliceVirtualElement({
         slice,
-        svgRect,
+        svgBoundingRectangle,
         marginLeft,
         marginTop,
         layout,
@@ -95,26 +98,35 @@ export const CustomSliceHoverLayer = ({
     [marginLeft, marginTop, isVertical, slices, layout],
   );
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      const sliceData = buildSliceData(event);
+  const handleMouseMove = useRecoilCallback(
+    ({ snapshot }) =>
+      (event: MouseEvent<SVGRectElement>) => {
+        const sliceData = buildSliceData(event);
+        const currentHoveredSliceIndex = snapshot
+          .getLoadable(hoveredSliceIndexState)
+          .getValue();
 
-      if (!isDefined(sliceData)) {
-        if (isDefined(hoveredSliceIndex)) {
-          setHoveredSliceIndex(null);
-          onSliceHover(null);
+        if (!isDefined(sliceData)) {
+          if (isDefined(currentHoveredSliceIndex)) {
+            setHoveredSliceIndex(null);
+            onSliceHover(null);
+          }
+          return;
         }
-        return;
-      }
 
-      if (sliceData.slice.indexValue === hoveredSliceIndex) {
-        return;
-      }
+        if (sliceData.slice.indexValue === currentHoveredSliceIndex) {
+          return;
+        }
 
-      setHoveredSliceIndex(sliceData.slice.indexValue);
-      onSliceHover(sliceData);
-    },
-    [buildSliceData, hoveredSliceIndex, setHoveredSliceIndex, onSliceHover],
+        setHoveredSliceIndex(sliceData.slice.indexValue);
+        onSliceHover(sliceData);
+      },
+    [
+      buildSliceData,
+      hoveredSliceIndexState,
+      setHoveredSliceIndex,
+      onSliceHover,
+    ],
   );
 
   const handleMouseLeave = useCallback(() => {

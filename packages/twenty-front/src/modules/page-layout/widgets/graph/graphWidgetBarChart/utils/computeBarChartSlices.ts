@@ -1,5 +1,6 @@
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
 
 type ComputeBarChartSlicesParams = {
@@ -26,7 +27,7 @@ export const computeBarChartSlices = ({
   for (const bar of bars) {
     const key = String(bar.data.indexValue);
     const existing = groupedBars.get(key);
-    if (existing) {
+    if (isDefined(existing)) {
       existing.push(bar);
     } else {
       groupedBars.set(key, [bar]);
@@ -93,19 +94,27 @@ export const computeBarChartSlices = ({
 
   const totalDimension = isVertical ? innerWidth : innerHeight;
 
+  const originalBoundaries = slices.map((slice) => ({
+    left: slice.sliceLeft,
+    right: slice.sliceRight,
+  }));
+
   for (let i = 0; i < slices.length; i++) {
     const slice = slices[i];
-    const prevSlice = slices[i - 1];
-    const nextSlice = slices[i + 1];
+    const previousOriginalBoundary = originalBoundaries[i - 1];
+    const nextOriginalBoundary = originalBoundaries[i + 1];
+    const currentOriginalBoundary = originalBoundaries[i];
 
-    if (prevSlice) {
-      slice.sliceLeft = (prevSlice.sliceRight + slice.sliceLeft) / 2;
+    if (isDefined(previousOriginalBoundary)) {
+      slice.sliceLeft =
+        (previousOriginalBoundary.right + currentOriginalBoundary.left) / 2;
     } else {
       slice.sliceLeft = 0;
     }
 
-    if (nextSlice) {
-      slice.sliceRight = (slice.sliceRight + nextSlice.sliceLeft) / 2;
+    if (isDefined(nextOriginalBoundary)) {
+      slice.sliceRight =
+        (currentOriginalBoundary.right + nextOriginalBoundary.left) / 2;
     } else {
       slice.sliceRight = totalDimension;
     }

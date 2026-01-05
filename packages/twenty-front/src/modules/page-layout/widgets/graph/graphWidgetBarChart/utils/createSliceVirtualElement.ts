@@ -4,7 +4,7 @@ import { BarChartLayout } from '~/generated/graphql';
 
 type CreateSliceVirtualElementParams = {
   slice: BarChartSlice;
-  svgRect: DOMRect;
+  svgBoundingRectangle: DOMRect;
   marginLeft: number;
   marginTop: number;
   layout: BarChartLayout;
@@ -12,15 +12,15 @@ type CreateSliceVirtualElementParams = {
 
 export const createSliceVirtualElement = ({
   slice,
-  svgRect,
+  svgBoundingRectangle,
   marginLeft,
   marginTop,
   layout,
 }: CreateSliceVirtualElementParams): VirtualElement => {
   const isVertical = layout === BarChartLayout.VERTICAL;
 
-  const left = svgRect.left + marginLeft + slice.anchorX;
-  const top = svgRect.top + marginTop + slice.anchorY;
+  const left = svgBoundingRectangle.left + marginLeft + slice.anchorX;
+  const top = svgBoundingRectangle.top + marginTop + slice.anchorY;
   const width = slice.sliceRight - slice.sliceLeft;
 
   return {
