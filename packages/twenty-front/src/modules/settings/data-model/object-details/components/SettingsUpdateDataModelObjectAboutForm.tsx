@@ -1,6 +1,7 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange } from '@/settings/data-model/object-details/utils/computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange.util';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   type SettingsDataModelObjectAboutFormValues,
@@ -11,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
@@ -101,27 +103,20 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       objectNamePlural: objectNamePluralForRedirection,
     });
 
-    const previousNamePlural = objectMetadataItem.namePlural;
-    const updatedNamePlural = updatedObject?.data?.updateOneObject.namePlural;
+    const updatedObjectNamePlural =
+      updatedObject?.data?.updateOneObject.namePlural;
 
-    if (!updatedNamePlural) return;
+    if (!isDefined(updatedObjectNamePlural)) {
+      return;
+    }
 
-    setNavigationMemorizedUrl((prev) => {
-      if (!prev) return prev;
-
-      const objectRouteRegex = new RegExp(
-        `^/objects/${previousNamePlural}(/|\\?|$)`,
-      );
-
-      if (!objectRouteRegex.test(prev)) {
-        return prev;
-      }
-
-      return prev.replace(
-        new RegExp(`^/objects/${previousNamePlural}`),
-        `/objects/${updatedNamePlural}`,
-      );
-    });
+    setNavigationMemorizedUrl((previousNavigationMemorizedUrl) =>
+      computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange(
+        previousNavigationMemorizedUrl,
+        objectMetadataItem.namePlural,
+        updatedObjectNamePlural,
+      ),
+    );
   };
 
   const updateObjectMetadata = async (
