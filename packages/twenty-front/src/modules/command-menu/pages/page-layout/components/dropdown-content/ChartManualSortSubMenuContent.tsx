@@ -7,7 +7,7 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { sortOptionsForManualOrder } from '@/page-layout/widgets/graph/utils/sortOptionsForManualOrder';
+import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -46,10 +46,11 @@ export const ChartManualSortSubMenuContent = ({
     axis,
   );
 
-  const sortedOptions = sortOptionsForManualOrder(
-    options,
-    currentManualSortOrder,
-  );
+  const sortedOptions = sortByManualOrder({
+    items: options,
+    manualSortOrder: currentManualSortOrder ?? [],
+    getRawValue: (option) => option.value,
+  });
 
   const handleDragEnd = (result: DropResult) => {
     if (!isDefined(result.destination)) {

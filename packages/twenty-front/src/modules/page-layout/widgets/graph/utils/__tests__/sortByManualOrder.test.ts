@@ -4,9 +4,9 @@ describe('sortByManualOrder', () => {
   describe('basic sorting', () => {
     it('should sort items according to manual order', () => {
       const items = [
-        { id: 'c', value: 3 },
-        { id: 'a', value: 1 },
-        { id: 'b', value: 2 },
+        { id: 'c', position: 2 },
+        { id: 'a', position: 0 },
+        { id: 'b', position: 1 },
       ];
       const manualSortOrder = ['a', 'b', 'c'];
 
@@ -21,9 +21,9 @@ describe('sortByManualOrder', () => {
 
     it('should handle reverse order', () => {
       const items = [
-        { id: 'a', value: 1 },
-        { id: 'b', value: 2 },
-        { id: 'c', value: 3 },
+        { id: 'a', position: 0 },
+        { id: 'b', position: 1 },
+        { id: 'c', position: 2 },
       ];
       const manualSortOrder = ['c', 'b', 'a'];
 
@@ -38,11 +38,11 @@ describe('sortByManualOrder', () => {
   });
 
   describe('empty manual sort order', () => {
-    it('should return items unchanged when manual order is empty', () => {
+    it('should sort by position when manual order is empty', () => {
       const items = [
-        { id: 'c', value: 3 },
-        { id: 'a', value: 1 },
-        { id: 'b', value: 2 },
+        { id: 'c', position: 2 },
+        { id: 'a', position: 0 },
+        { id: 'b', position: 1 },
       ];
 
       const result = sortByManualOrder({
@@ -51,16 +51,16 @@ describe('sortByManualOrder', () => {
         getRawValue: (item) => item.id,
       });
 
-      expect(result).toEqual(items);
+      expect(result.map((item) => item.id)).toEqual(['a', 'b', 'c']);
     });
   });
 
   describe('items not in manual order', () => {
     it('should place items not in manual order at the end', () => {
       const items = [
-        { id: 'unknown', value: 0 },
-        { id: 'b', value: 2 },
-        { id: 'a', value: 1 },
+        { id: 'unknown', position: 0 },
+        { id: 'b', position: 2 },
+        { id: 'a', position: 1 },
       ];
       const manualSortOrder = ['a', 'b'];
 
@@ -73,11 +73,11 @@ describe('sortByManualOrder', () => {
       expect(result.map((item) => item.id)).toEqual(['a', 'b', 'unknown']);
     });
 
-    it('should maintain relative order of items not in manual order', () => {
+    it('should sort items not in manual order by position', () => {
       const items = [
-        { id: 'unknown1', value: 0 },
-        { id: 'a', value: 1 },
-        { id: 'unknown2', value: 0 },
+        { id: 'unknown1', position: 2 },
+        { id: 'a', position: 0 },
+        { id: 'unknown2', position: 1 },
       ];
       const manualSortOrder = ['a'];
 
@@ -87,17 +87,19 @@ describe('sortByManualOrder', () => {
         getRawValue: (item) => item.id,
       });
 
-      expect(result[0].id).toBe('a');
-      expect(result[1].id).toBe('unknown1');
-      expect(result[2].id).toBe('unknown2');
+      expect(result.map((item) => item.id)).toEqual([
+        'a',
+        'unknown2',
+        'unknown1',
+      ]);
     });
   });
 
   describe('null and undefined values', () => {
     it('should handle null raw values', () => {
       const items = [
-        { id: null as string | null, value: 0 },
-        { id: 'a', value: 1 },
+        { id: null as string | null, position: 0 },
+        { id: 'a', position: 1 },
       ];
 
       const result = sortByManualOrder({
@@ -111,8 +113,8 @@ describe('sortByManualOrder', () => {
 
     it('should handle undefined raw values', () => {
       const items = [
-        { id: undefined as string | undefined, value: 0 },
-        { id: 'a', value: 1 },
+        { id: undefined as string | undefined, position: 0 },
+        { id: 'a', position: 1 },
       ];
 
       const result = sortByManualOrder({
@@ -123,14 +125,29 @@ describe('sortByManualOrder', () => {
 
       expect(result[0].id).toBe('a');
     });
+
+    it('should handle null positions as 0', () => {
+      const items = [
+        { id: 'b', position: 1 },
+        { id: 'a', position: null },
+      ];
+
+      const result = sortByManualOrder({
+        items,
+        manualSortOrder: [],
+        getRawValue: (item) => item.id,
+      });
+
+      expect(result.map((item) => item.id)).toEqual(['a', 'b']);
+    });
   });
 
   describe('immutability', () => {
     it('should not mutate the original array', () => {
       const items = [
-        { id: 'c', value: 3 },
-        { id: 'a', value: 1 },
-        { id: 'b', value: 2 },
+        { id: 'c', position: 2 },
+        { id: 'a', position: 0 },
+        { id: 'b', position: 1 },
       ];
       const originalItems = [...items];
 
