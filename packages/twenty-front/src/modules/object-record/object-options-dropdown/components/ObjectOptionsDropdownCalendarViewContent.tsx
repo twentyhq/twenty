@@ -12,6 +12,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Pill } from 'twenty-ui/components';
 import {
   IconCalendarMonth,
   IconCalendarWeek,
@@ -81,6 +82,8 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               text={t`Week`}
               selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
+              contextualText={<Pill label={t`Soon`} />}
+              contextualTextPosition="right"
               disabled
             />
           </SelectableListItem>
@@ -105,6 +108,8 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               text={t`Timeline`}
               selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
               focused={selectedItemId === ViewCalendarLayout.DAY}
+              contextualText={<Pill label={t`Soon`} />}
+              contextualTextPosition="right"
               disabled
             />
           </SelectableListItem>
