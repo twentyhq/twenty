@@ -2,6 +2,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
@@ -11,7 +12,6 @@ import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/ho
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -78,9 +78,9 @@ export const GraphWidgetBarChartRenderer = () => {
     }),
   );
 
-  const handleBarClick = (datum: ComputedDatum<BarDatum>) => {
-    const displayValue = datum.data[indexBy];
-    const rawValue = formattedToRawLookup.get(displayValue as string) ?? null;
+  const handleSliceClick = (slice: BarChartSlice) => {
+    const displayValue = slice.indexValue;
+    const rawValue = formattedToRawLookup.get(displayValue) ?? null;
 
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
@@ -128,7 +128,7 @@ export const GraphWidgetBarChartRenderer = () => {
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onBarClick={isPageLayoutInEditMode ? undefined : handleBarClick}
+        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
       />
     </Suspense>
   );

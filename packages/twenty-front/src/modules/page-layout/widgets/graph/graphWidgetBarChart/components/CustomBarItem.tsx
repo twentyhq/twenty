@@ -1,11 +1,12 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
-import { useCallback, useMemo, type MouseEvent } from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
@@ -22,6 +23,7 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
 const StyledBarRect = styled(animated.rect)<{
   $isInteractive?: boolean;
   $isDimmed?: boolean;
+  $isSliceHovered?: boolean;
 }>`
   cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
   transition:
@@ -29,25 +31,19 @@ const StyledBarRect = styled(animated.rect)<{
     opacity 0.15s ease-in-out;
   opacity: ${({ $isDimmed }) =>
     $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
-
-  &:hover {
-    filter: ${({ $isInteractive }) =>
-      $isInteractive
-        ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
-        : 'none'};
-  }
+  filter: ${({ $isSliceHovered, $isInteractive }) =>
+    $isSliceHovered && $isInteractive
+      ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
+      : 'none'};
 `;
 
 // This is a copy of the BarItem component from @nivo/bar with some design modifications
 export const CustomBarItem = <D extends BarDatum>({
-  bar: { data: barData, ...bar },
+  bar: { data: barData },
   style: { borderColor, color, height, transform, width },
   borderRadius,
   borderWidth,
   isInteractive,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
   isFocusable,
   ariaLabel,
   ariaLabelledBy,
@@ -65,30 +61,17 @@ export const CustomBarItem = <D extends BarDatum>({
     graphWidgetHighlightedLegendIdComponentState,
   );
 
+  const hoveredSliceIndex = useRecoilComponentValue(
+    graphWidgetHoveredSliceIndexComponentState,
+  );
+
   const isDimmed =
     isDefined(highlightedLegendId) &&
     String(highlightedLegendId) !== String(barData.id);
 
-  const handleClick = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      onClick?.({ color: bar.color, ...barData }, event);
-    },
-    [bar, barData, onClick],
-  );
-
-  const handleMouseEnter = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      onMouseEnter?.(barData, event);
-    },
-    [barData, onMouseEnter],
-  );
-
-  const handleMouseLeave = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      onMouseLeave?.(barData, event);
-    },
-    [barData, onMouseLeave],
-  );
+  const isSliceHovered =
+    isDefined(hoveredSliceIndex) &&
+    String(barData.indexValue) === hoveredSliceIndex;
 
   const isNegativeValue = useMemo(
     () => isNumber(barData.value) && barData.value < 0,
@@ -217,6 +200,7 @@ export const CustomBarItem = <D extends BarDatum>({
         <StyledBarRect
           $isInteractive={isInteractive}
           $isDimmed={isDimmed}
+          $isSliceHovered={isSliceHovered}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
           width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
           height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}
@@ -232,9 +216,6 @@ export const CustomBarItem = <D extends BarDatum>({
           }
           aria-disabled={ariaDisabled ? ariaDisabled(barData) : undefined}
           aria-hidden={ariaHidden ? ariaHidden(barData) : undefined}
-          onMouseEnter={isInteractive ? handleMouseEnter : undefined}
-          onMouseLeave={isInteractive ? handleMouseLeave : undefined}
-          onClick={isInteractive ? handleClick : undefined}
           data-testid={`bar.item.${barData.id}.${barData.index}`}
         />
       </animated.g>
