@@ -31,7 +31,7 @@ export class CreatePageLayoutWidgetInput {
 
   @Field(() => WidgetType, { nullable: false })
   @IsEnum(WidgetType)
-  @IsOptional()
+  @IsNotEmpty()
   type: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
