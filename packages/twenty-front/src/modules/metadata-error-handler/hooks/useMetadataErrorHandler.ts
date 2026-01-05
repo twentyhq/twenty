@@ -7,10 +7,19 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { type CrudOperationType } from 'twenty-shared/types';
+import { CrudOperationType } from 'twenty-shared/types';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const TRANSLATED_OPERATION_TYPE = {
+    [CrudOperationType.CREATE]: t`create`,
+    [CrudOperationType.UPDATE]: t`update`,
+    [CrudOperationType.DELETE]: t`delete`,
+    [CrudOperationType.RESTORE]: t`restore`,
+    [CrudOperationType.DESTROY]: t`destroy`,
+  } as const satisfies Record<CrudOperationType, string>;
+
   const TRANSLATED_METADATA_NAME = {
     objectMetadata: t`object`,
     fieldMetadata: t`field`,
@@ -72,7 +81,8 @@ export const useMetadataErrorHandler = () => {
           });
         }
 
-        const operationType = options.operationType.toLowerCase();
+        const translatedOperationType =
+          TRANSLATED_OPERATION_TYPE[options.operationType];
 
         if (
           targetErrors.length === 0 &&
@@ -83,7 +93,7 @@ export const useMetadataErrorHandler = () => {
             .join(', ');
 
           enqueueErrorSnackBar({
-            message: t`Failed to ${operationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
+            message: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
           });
         }
 
@@ -92,7 +102,7 @@ export const useMetadataErrorHandler = () => {
           relatedFailingMetadataNames.length === 0
         ) {
           enqueueErrorSnackBar({
-            message: t`Failed to ${operationType} ${translatedMetadataName}. Please try again.`,
+            message: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Please try again.`,
           });
         }
         break;
