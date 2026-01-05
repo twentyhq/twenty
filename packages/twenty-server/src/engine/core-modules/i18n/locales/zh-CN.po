@@ -3354,6 +3354,11 @@ msgstr "消息提供商访问令牌"
 msgid "Messaging provider refresh token"
 msgstr "消息提供商刷新令牌"
 
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
+
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
@@ -5882,11 +5887,6 @@ msgstr "用户首选的一周开始日"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "用户首选时间格式"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "验证失败，涉及 0 个对象和 0 个字段"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

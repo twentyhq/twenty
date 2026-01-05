@@ -3354,6 +3354,11 @@ msgstr "메시징 제공업체 액세스 토큰"
 msgid "Messaging provider refresh token"
 msgstr "메시징 제공업체 새로 고침 토큰"
 
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
+
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
@@ -5882,11 +5887,6 @@ msgstr "사용자가 선호하는 주간 시작일"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "사용자가 선호하는 시간 형식"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "개체(들) 및 필드(들)의 유효성 검사에 실패했습니다"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
