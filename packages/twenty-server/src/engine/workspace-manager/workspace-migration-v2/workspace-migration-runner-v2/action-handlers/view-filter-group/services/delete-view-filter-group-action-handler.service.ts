@@ -1,47 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type DeleteViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteViewFilterGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_view_filter_group',
+  'delete',
+  'viewFilterGroup',
 ) {
   constructor() {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewFilterGroupAction>): Partial<AllFlatEntityMaps> {
-    const { flatViewFilterGroupMaps } = allFlatEntityMaps;
-    const { viewFilterGroupId } = action;
-
-    const updatedFlatViewFilterGroupMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: viewFilterGroupId,
-        flatEntityMaps: flatViewFilterGroupMaps,
-      });
-
-    return {
-      flatViewFilterGroupMaps: updatedFlatViewFilterGroupMaps,
-    };
   }
 
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<DeleteViewFilterGroupAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { viewFilterGroupId } = action;
+    const { entityId } = action;
 
     const viewFilterGroupRepository =
       queryRunner.manager.getRepository<ViewFilterGroupEntity>(
@@ -49,7 +27,7 @@ export class DeleteViewFilterGroupActionHandlerService extends WorkspaceMigratio
       );
 
     await viewFilterGroupRepository.delete({
-      id: viewFilterGroupId,
+      id: entityId,
       workspaceId,
     });
   }

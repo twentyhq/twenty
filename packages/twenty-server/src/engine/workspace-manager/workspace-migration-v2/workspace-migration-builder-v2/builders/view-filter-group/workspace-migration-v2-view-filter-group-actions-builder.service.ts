@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewFilterGroupValidatorService.validateFlatViewFilterGroupCreation(
@@ -42,8 +42,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     return {
       status: 'success',
       action: {
-        type: 'create_view_filter_group',
-        viewFilterGroup: flatViewFilterGroupToValidate,
+        type: 'create',
+        metadataName: 'viewFilterGroup',
+        flatEntity: flatViewFilterGroupToValidate,
       },
     };
   }
@@ -52,7 +53,7 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewFilterGroupValidatorService.validateFlatViewFilterGroupDeletion(
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     return {
       status: 'success',
       action: {
-        type: 'delete_view_filter_group',
-        viewFilterGroupId: flatViewFilterGroupToValidate.id,
+        type: 'delete',
+        metadataName: 'viewFilterGroup',
+        entityId: flatViewFilterGroupToValidate.id,
       },
     };
   }
@@ -83,7 +85,7 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     >,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewFilterGroupValidatorService.validateFlatViewFilterGroupUpdate(
@@ -100,8 +102,9 @@ export class WorkspaceMigrationV2ViewFilterGroupActionsBuilderService extends Wo
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterGroupAction: UpdateViewFilterGroupAction = {
-      type: 'update_view_filter_group',
-      viewFilterGroupId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewFilterGroup',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

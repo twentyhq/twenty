@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteCronTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_cron_trigger',
+  'delete',
+  'cronTrigger',
 ) {
   constructor() {
     super();
@@ -18,13 +19,13 @@ export class DeleteCronTriggerActionHandlerService extends WorkspaceMigrationRun
     context: WorkspaceMigrationActionRunnerArgs<DeleteCronTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { cronTriggerId } = action;
+    const { entityId } = action;
 
     const cronTriggerRepository =
       queryRunner.manager.getRepository<CronTriggerEntity>(CronTriggerEntity);
 
     await cronTriggerRepository.delete({
-      id: cronTriggerId,
+      id: entityId,
       workspaceId,
     });
   }

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util';
@@ -25,15 +25,16 @@ export class FlatRoleValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<FlatRole> {
-    const validationResult: FailedFlatEntityValidation<FlatRole> = {
-      type: 'create_role',
-      errors: [],
+  >): FailedFlatEntityValidation<'role', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
         label: flatEntityToValidate.label,
       },
-    };
+      metadataName: 'role',
+      type: 'create',
+    });
 
     const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
       isDefined,
@@ -69,15 +70,16 @@ export class FlatRoleValidatorService {
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<FlatRole> {
-    const validationResult: FailedFlatEntityValidation<FlatRole> = {
-      type: 'delete_role',
-      errors: [],
+  >): FailedFlatEntityValidation<'role', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
         label: flatEntityToValidate.label,
       },
-    };
+      metadataName: 'role',
+      type: 'delete',
+    });
 
     const existingRole = optimisticFlatRoleMaps.byId[flatEntityToValidate.id];
 
@@ -110,16 +112,17 @@ export class FlatRoleValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
-  >): FailedFlatEntityValidation<FlatRole> {
-    const validationResult: FailedFlatEntityValidation<FlatRole> = {
-      type: 'update_role',
-      errors: [],
+  >): FailedFlatEntityValidation<'role', 'update'> {
+    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatEntityId,
+        universalIdentifier: fromFlatRole?.universalIdentifier,
       },
-    };
-
-    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
+      metadataName: 'role',
+      type: 'update',
+    });
 
     if (!isDefined(fromFlatRole)) {
       validationResult.errors.push({

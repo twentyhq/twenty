@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteDatabaseEventTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_database_event_trigger',
+  'delete',
+  'databaseEventTrigger',
 ) {
   constructor() {
     super();
@@ -18,7 +19,7 @@ export class DeleteDatabaseEventTriggerActionHandlerService extends WorkspaceMig
     context: WorkspaceMigrationActionRunnerArgs<DeleteDatabaseEventTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { databaseEventTriggerId } = action;
+    const { entityId } = action;
 
     const databaseEventTriggerRepository =
       queryRunner.manager.getRepository<DatabaseEventTriggerEntity>(
@@ -26,7 +27,7 @@ export class DeleteDatabaseEventTriggerActionHandlerService extends WorkspaceMig
       );
 
     await databaseEventTriggerRepository.delete({
-      id: databaseEventTriggerId,
+      id: entityId,
       workspaceId,
     });
   }
