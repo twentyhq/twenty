@@ -87,11 +87,16 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
     options: MigrationCommandOptions,
   ): Promise<void> {
     this.logger.log(
-      chalk.blue('Looking for orphaned records in workspace-related entities...'),
+      chalk.blue(
+        'Looking for orphaned records in workspace-related entities...',
+      ),
     );
 
     const allOrphanedRecords: OrphanedRecord[] = [];
-    const orphanedIdsByEntity = new Map<EntityTarget<ObjectLiteral>, string[]>();
+    const orphanedIdsByEntity = new Map<
+      EntityTarget<ObjectLiteral>,
+      string[]
+    >();
 
     for (const entity of WORKSPACE_RELATED_ENTITIES) {
       const entityName =
@@ -141,42 +146,20 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
     this.logger.log(
       chalk.yellow(
-        `\nTotal: ${allOrphanedRecords.length} orphaned record(s) across ${orphanedIdsByEntity.size} entity type(s)`,
+        `Total: ${allOrphanedRecords.length} orphaned record(s) across ${orphanedIdsByEntity.size} entity type(s)`,
       ),
     );
-
-    const orphanedWorkspaceIds = [
-      ...new Set(allOrphanedRecords.map((r) => r.workspaceId)),
-    ];
 
     this.logger.log(
-      chalk.yellow(
-        `Orphaned workspace IDs (${orphanedWorkspaceIds.length}): ${orphanedWorkspaceIds.join(', ')}`,
-      ),
+      chalk.yellow(`${allOrphanedRecords.length} record(s) to be deleted.`),
     );
 
-    for (const record of allOrphanedRecords) {
-      this.logger.log(
-        chalk.gray(
-          `  - ${record.entityName}: ID=${record.id}, WorkspaceId=${record.workspaceId}`,
-        ),
-      );
-    }
-
     if (options.dryRun) {
-      this.logger.log(
-        chalk.yellow(
-          `\nDry run mode: ${allOrphanedRecords.length} record(s) would be deleted.`,
-        ),
-      );
-
       return;
     }
 
     this.logger.log(
-      chalk.red(
-        `\nDeleting ${allOrphanedRecords.length} orphaned record(s)...`,
-      ),
+      `Deleting ${allOrphanedRecords.length} orphaned record(s)...`,
     );
 
     const deletionResults: DeletionResult[] = [];
@@ -201,10 +184,13 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         });
 
         this.logger.log(
-          chalk.green(`  ✓ Deleted ${result.affected || 0} ${entityName} record(s)`),
+          chalk.green(
+            `  ✓ Deleted ${result.affected || 0} ${entityName} record(s)`,
+          ),
         );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
 
         deletionResults.push({
           entityName,
@@ -213,7 +199,9 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         });
 
         this.logger.error(
-          chalk.red(`  ✗ Failed to delete ${entityName} records: ${errorMessage}`),
+          chalk.red(
+            `  ✗ Failed to delete ${entityName} records: ${errorMessage}`,
+          ),
         );
       }
     }
@@ -227,7 +215,9 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
     this.logger.log(chalk.blue('\n=== Deletion Summary ==='));
     this.logger.log(
-      chalk.green(`Successfully deleted: ${totalDeleted} record(s) across ${successfulDeletions.length} entity type(s)`),
+      chalk.green(
+        `Successfully deleted: ${totalDeleted} record(s) across ${successfulDeletions.length} entity type(s)`,
+      ),
     );
 
     if (failedDeletions.length > 0) {
@@ -236,7 +226,9 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       );
       this.logger.log(chalk.red('\nFailed entity types:'));
       for (const failure of failedDeletions) {
-        this.logger.log(chalk.red(`  - ${failure.entityName}: ${failure.error}`));
+        this.logger.log(
+          chalk.red(`  - ${failure.entityName}: ${failure.error}`),
+        );
       }
     }
   }
