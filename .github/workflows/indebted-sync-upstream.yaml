@@ -107,20 +107,30 @@ jobs:
 
           git checkout -b "$BRANCH_NAME"
 
-          # Attempt merge - fail if conflicts require manual resolution
+          # Attempt merge - may have conflicts
           if ! git merge "$TARGET_TAG" --no-edit -m "Merge upstream $TARGET_TAG"; then
-            echo "::error::Merge conflict detected. Resolve manually: git checkout -b $BRANCH_NAME && git merge $TARGET_TAG"
-            exit 1
+            # Get list of conflicted files
+            CONFLICTED_FILES=$(git diff --name-only --diff-filter=U)
+            echo "Conflicted files: $CONFLICTED_FILES"
+
+            # Only yarn.lock conflicts can be auto-resolved
+            if [ "$CONFLICTED_FILES" != "yarn.lock" ]; then
+              echo "::error::Merge conflicts require manual resolution: $CONFLICTED_FILES"
+              exit 1
+            fi
+
+            # Accept upstream's yarn.lock and complete merge
+            echo "Auto-resolving yarn.lock conflict..."
+            git checkout --theirs yarn.lock
+            git add yarn.lock
+            git commit --no-edit
           fi
 
-          # Regenerate yarn.lock to apply our resolutions
-          echo "Regenerating yarn.lock with our resolutions..."
+          # Apply our resolutions from package.json
           yarn install
-
-          # Commit yarn.lock changes if any
           if ! git diff --quiet yarn.lock; then
             git add yarn.lock
-            git commit -m "chore: regenerate yarn.lock with resolutions"
+            git commit -m "chore: apply yarn.lock resolutions"
           fi
 
           git push origin "$BRANCH_NAME"
