@@ -185,14 +185,14 @@ export const GraphWidgetBarChart = ({
 
   const handleSliceHover = useCallback(
     (sliceData: SliceHoverData | null) => {
-      debouncedHideTooltip.cancel();
       if (isDefined(sliceData)) {
+        debouncedHideTooltip.cancel();
         setActiveBarTooltip({
           slice: sliceData.slice,
           anchorElement: sliceData.virtualElement,
         });
       } else {
-        setActiveBarTooltip(null);
+        debouncedHideTooltip();
       }
     },
     [debouncedHideTooltip, setActiveBarTooltip],
