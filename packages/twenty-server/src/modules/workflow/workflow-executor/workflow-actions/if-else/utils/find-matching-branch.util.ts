@@ -55,6 +55,10 @@ export const findMatchingBranch = ({
       collectAllDescendantGroups(branch.filterGroupId, stepFilterGroups),
     );
 
+    if (branchFilterGroups.length === 0) {
+      return false;
+    }
+
     const branchFilterGroupIds = new Set(branchFilterGroups.map((g) => g.id));
     const branchFilters = resolvedFilters.filter((filter) =>
       branchFilterGroupIds.has(filter.stepFilterGroupId),
