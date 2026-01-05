@@ -541,6 +541,22 @@ describe('If/Else Workflow (e2e)', () => {
       }
 
       expect(workflowRun).toBeDefined();
+
+      if (workflowRun?.status === 'FAILED') {
+        const failedSteps = Object.entries(workflowRun.state?.stepInfos ?? {})
+          .filter(([_, info]) => info?.status === 'FAILED')
+          .map(([stepId, info]) => ({ stepId, info }));
+
+        console.error(
+          'Workflow failed. Failed steps:',
+          JSON.stringify(failedSteps, null, 2),
+        );
+        console.error(
+          'Workflow run state:',
+          JSON.stringify(workflowRun.state, null, 2),
+        );
+      }
+
       expect(workflowRun?.status).toBe('COMPLETED');
       expect(workflowRun?.state?.stepInfos).toBeDefined();
 
