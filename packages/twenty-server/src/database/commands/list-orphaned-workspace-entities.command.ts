@@ -151,7 +151,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
         typeof entity === 'function' ? entity.name : String(entity);
 
       try {
-        this.logger.log(`Scanning ${entityName}`)
+        this.logger.log(`Scanning ${entityName}`);
         const orphanedRecords = await this.dataSource
           .getRepository(entity)
           .createQueryBuilder('entity')
@@ -187,7 +187,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
             ),
           );
         }
-      } catch (error) {
+      } catch {
         this.logger.warn(
           chalk.gray(
             `  ${entityName}: Skipped (entity not found in current context)`,
