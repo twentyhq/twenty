@@ -454,6 +454,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.AISkillDetail}
           element={<SettingsSkillForm mode="edit" />}
         />
+        <Route
+          path={SettingsPath.ServerlessFunctionDetail}
+          element={<SettingsServerlessFunctionDetail />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route

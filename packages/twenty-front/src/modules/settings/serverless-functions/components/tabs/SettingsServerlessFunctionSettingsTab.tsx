@@ -1,6 +1,6 @@
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
-import { type ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionTabEnvironmentVariablesSection } from '@/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection';
+import { type ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
@@ -14,7 +14,6 @@ export const SettingsServerlessFunctionSettingsTab = ({
       <SettingsServerlessFunctionNewForm
         formValues={formValues}
         onChange={onChange}
-        readonly
       />
       <SettingsServerlessFunctionTabEnvironmentVariablesSection />
     </>

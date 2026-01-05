@@ -62,7 +62,7 @@ export const useMetadataErrorHandler = () => {
             relatedFailingMetadataNames,
           } = classification;
 
-          const targetErrors = extensions.errors[primaryMetadataName] || [];
+          const targetErrors = extensions.errors[primaryMetadataName] ?? [];
           if (targetErrors.length > 0) {
             targetErrors.forEach((entityError) => {
               entityError.errors.forEach((validationError) =>

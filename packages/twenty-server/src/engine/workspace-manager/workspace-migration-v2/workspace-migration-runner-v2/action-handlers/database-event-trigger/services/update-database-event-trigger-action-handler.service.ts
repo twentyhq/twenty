@@ -9,7 +9,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateDatabaseEventTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_database_event_trigger',
+  'update',
+  'databaseEventTrigger',
 ) {
   constructor() {
     super();
@@ -19,7 +20,7 @@ export class UpdateDatabaseEventTriggerActionHandlerService extends WorkspaceMig
     context: WorkspaceMigrationActionRunnerArgs<UpdateDatabaseEventTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { databaseEventTriggerId } = action;
+    const { entityId } = action;
 
     const databaseEventTriggerRepository =
       queryRunner.manager.getRepository<DatabaseEventTriggerEntity>(
@@ -27,7 +28,7 @@ export class UpdateDatabaseEventTriggerActionHandlerService extends WorkspaceMig
       );
 
     await databaseEventTriggerRepository.update(
-      databaseEventTriggerId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }

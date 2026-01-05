@@ -3,9 +3,11 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import {
@@ -42,6 +44,9 @@ export const CommandMenuItemNumberInput = ({
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
   const [hasError, setHasError] = useState(false);
+
+  const currentFocusId = useRecoilValue(currentFocusIdSelector);
+  const isNumberInputCurrentlyFocused = currentFocusId === focusId;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -105,7 +110,9 @@ export const CommandMenuItemNumberInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: handleClickOutside,
+    onClickOutside: isNumberInputCurrentlyFocused
+      ? handleClickOutside
+      : undefined,
   });
 
   const handleChange = (text: string) => {
