@@ -366,6 +366,46 @@ describe('If/Else Workflow (e2e)', () => {
   });
 
   describe('If/Else branching execution', () => {
+    const getIfElseStepWithBranches = async () => {
+      const getWorkflowVersionResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            query GetWorkflowVersion($id: UUID!) {
+              workflowVersion(filter: { id: { eq: $id } }) {
+                id
+                steps
+              }
+            }
+          `,
+          variables: { id: createdWorkflowVersionId },
+        });
+
+      expect(getWorkflowVersionResponse.body.errors).toBeUndefined();
+      const steps = getWorkflowVersionResponse.body.data.workflowVersion.steps;
+      const ifElseStep = steps.find(
+        (step: { id: string }) => step.id === ifElseStepId,
+      ) as
+        | {
+            id: string;
+            settings: {
+              input: {
+                branches: Array<{
+                  id: string;
+                  filterGroupId?: string;
+                  nextStepIds: string[];
+                }>;
+              };
+            };
+          }
+        | undefined;
+
+      expect(ifElseStep).toBeDefined();
+
+      return ifElseStep!;
+    };
+
     it('should execute IF branch when condition is true', async () => {
       const workflowRunId = await runWorkflowVersion({
         workflowVersionId: createdWorkflowVersionId!,
@@ -388,25 +428,8 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStepResult).toBeDefined();
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
-      const ifElseStep = workflowRun?.state?.flow?.steps?.find(
-        (step: { id: string }) => step.id === ifElseStepId,
-      ) as
-        | {
-            id: string;
-            settings: {
-              input: {
-                branches: Array<{
-                  id: string;
-                  filterGroupId?: string;
-                  nextStepIds: string[];
-                }>;
-              };
-            };
-          }
-        | undefined;
-
-      expect(ifElseStep).toBeDefined();
-      const matchedBranch = ifElseStep!.settings.input.branches.find(
+      const ifElseStep = await getIfElseStepWithBranches();
+      const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
 
@@ -439,25 +462,8 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStepResult).toBeDefined();
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
-      const ifElseStep = workflowRun?.state?.flow?.steps?.find(
-        (step: { id: string }) => step.id === ifElseStepId,
-      ) as
-        | {
-            id: string;
-            settings: {
-              input: {
-                branches: Array<{
-                  id: string;
-                  filterGroupId?: string;
-                  nextStepIds: string[];
-                }>;
-              };
-            };
-          }
-        | undefined;
-
-      expect(ifElseStep).toBeDefined();
-      const matchedBranch = ifElseStep!.settings.input.branches.find(
+      const ifElseStep = await getIfElseStepWithBranches();
+      const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
 
