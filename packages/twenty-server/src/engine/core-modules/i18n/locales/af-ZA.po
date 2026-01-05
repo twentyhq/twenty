@@ -3354,6 +3354,11 @@ msgstr "Boodskapverskaffer toegangstoken"
 msgid "Messaging provider refresh token"
 msgstr "Boodskapverskaffer ververstoken"
 
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
+
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
@@ -5882,11 +5887,6 @@ msgstr "Gebruiker se verkose begindag van die week"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Gebruiker se voorkeur tydformaat"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "Validering het misluk vir 0 objek(te) en 0 veld(e)"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

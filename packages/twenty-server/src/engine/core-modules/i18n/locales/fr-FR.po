@@ -3354,6 +3354,11 @@ msgstr "Jeton d'accès du fournisseur de messagerie"
 msgid "Messaging provider refresh token"
 msgstr "Jeton de rafraîchissement du fournisseur de messagerie"
 
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
+
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
@@ -5882,11 +5887,6 @@ msgstr "Jour de début de semaine préféré de l'utilisateur"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Format de l'heure préféré de l'utilisateur"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "Échec de la validation pour 0 objet(s) et 0 champ(s)"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
