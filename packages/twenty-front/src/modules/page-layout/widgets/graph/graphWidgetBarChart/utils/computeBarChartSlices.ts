@@ -5,15 +5,11 @@ import { BarChartLayout } from '~/generated/graphql';
 
 type ComputeBarChartSlicesParams = {
   bars: readonly ComputedBarDatum<BarDatum>[];
-  innerWidth: number;
-  innerHeight: number;
   layout: BarChartLayout;
 };
 
 export const computeBarChartSlices = ({
   bars,
-  innerWidth,
-  innerHeight,
   layout,
 }: ComputeBarChartSlicesParams): BarChartSlice[] => {
   if (bars.length === 0) {
@@ -37,6 +33,14 @@ export const computeBarChartSlices = ({
   const slices: BarChartSlice[] = [];
 
   for (const [indexValue, groupBars] of groupedBars) {
+    const hasNonZeroValue = groupBars.some(
+      (bar) => isDefined(bar.data.value) && Number(bar.data.value) !== 0,
+    );
+
+    if (!hasNonZeroValue) {
+      continue;
+    }
+
     let minPosition = Infinity;
     let maxPosition = -Infinity;
     let minAnchor = Infinity;
@@ -91,34 +95,6 @@ export const computeBarChartSlices = ({
   }
 
   slices.sort((a, b) => a.sliceLeft - b.sliceLeft);
-
-  const totalDimension = isVertical ? innerWidth : innerHeight;
-
-  const originalBoundaries = slices.map((slice) => ({
-    left: slice.sliceLeft,
-    right: slice.sliceRight,
-  }));
-
-  for (let i = 0; i < slices.length; i++) {
-    const slice = slices[i];
-    const previousOriginalBoundary = originalBoundaries[i - 1];
-    const nextOriginalBoundary = originalBoundaries[i + 1];
-    const currentOriginalBoundary = originalBoundaries[i];
-
-    if (isDefined(previousOriginalBoundary)) {
-      slice.sliceLeft =
-        (previousOriginalBoundary.right + currentOriginalBoundary.left) / 2;
-    } else {
-      slice.sliceLeft = 0;
-    }
-
-    if (isDefined(nextOriginalBoundary)) {
-      slice.sliceRight =
-        (currentOriginalBoundary.right + nextOriginalBoundary.left) / 2;
-    } else {
-      slice.sliceRight = totalDimension;
-    }
-  }
 
   return slices;
 };

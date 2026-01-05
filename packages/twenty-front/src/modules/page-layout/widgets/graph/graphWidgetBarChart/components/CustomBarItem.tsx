@@ -26,15 +26,16 @@ const StyledBarRect = styled(animated.rect)<{
   $isSliceHovered?: boolean;
 }>`
   cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
-  transition:
-    filter 0.15s ease-in-out,
-    opacity 0.15s ease-in-out;
-  opacity: ${({ $isDimmed }) =>
-    $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
   filter: ${({ $isSliceHovered, $isInteractive }) =>
     $isSliceHovered && $isInteractive
       ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
       : 'none'};
+  opacity: ${({ $isDimmed }) =>
+    $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
+  pointer-events: none;
+  transition:
+    filter 0.15s ease-in-out,
+    opacity 0.15s ease-in-out;
 `;
 
 // This is a copy of the BarItem component from @nivo/bar with some design modifications

@@ -11,7 +11,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useTheme } from '@emotion/react';
 import { type VirtualElement } from '@floating-ui/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
-import { animated, to, useSpring } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,11 +62,9 @@ export const CustomSliceHoverLayer = ({
     () =>
       computeBarChartSlices({
         bars,
-        innerWidth,
-        innerHeight,
         layout,
       }),
-    [bars, innerWidth, innerHeight, layout],
+    [bars, layout],
   );
 
   const buildSliceData = useCallback(
@@ -164,15 +162,16 @@ export const CustomSliceHoverLayer = ({
     return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
   }, [slices, hoveredSliceIndex]);
 
-  const highlightSpring = useSpring({
-    x: isVertical ? (hoveredSlice?.sliceLeft ?? 0) : 0,
-    y: isVertical ? 0 : (hoveredSlice?.sliceLeft ?? 0),
-    width: isVertical
-      ? (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0)
-      : innerWidth,
-    height: isVertical
-      ? innerHeight
-      : (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0),
+  const highlightX = isVertical ? (hoveredSlice?.sliceLeft ?? 0) : 0;
+  const highlightY = isVertical ? 0 : (hoveredSlice?.sliceLeft ?? 0);
+  const highlightWidth = isVertical
+    ? (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0)
+    : innerWidth;
+  const highlightHeight = isVertical
+    ? innerHeight
+    : (hoveredSlice?.sliceRight ?? 0) - (hoveredSlice?.sliceLeft ?? 0);
+
+  const { opacity } = useSpring({
     opacity: isDefined(hoveredSlice) ? 1 : 0,
     config: {
       tension: 300,
@@ -187,15 +186,12 @@ export const CustomSliceHoverLayer = ({
   return (
     <g>
       <animated.g
-        transform={to(
-          [highlightSpring.x, highlightSpring.y],
-          (x, y) => `translate(${x}, ${y})`,
-        )}
-        opacity={highlightSpring.opacity}
+        transform={`translate(${highlightX}, ${highlightY})`}
+        opacity={opacity}
       >
-        <animated.rect
-          width={highlightSpring.width}
-          height={highlightSpring.height}
+        <rect
+          width={highlightWidth}
+          height={highlightHeight}
           fill={theme.background.transparent.lighter}
           style={{ pointerEvents: 'none' }}
         />
