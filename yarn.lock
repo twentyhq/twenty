@@ -56780,7 +56780,6 @@ __metadata:
     "@types/marked": "npm:^6.0.0"
     "@types/react-grid-layout": "npm:^1"
     "@typescript-eslint/eslint-plugin": "npm:^8.39.0"
-    "@typescript-eslint/parser": "npm:^8.39.0"
     "@typescript-eslint/utils": "npm:^8.39.0"
     "@xyflow/react": "npm:^12.4.2"
     ai: "npm:5.0.52"

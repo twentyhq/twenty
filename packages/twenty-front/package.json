@@ -129,7 +129,6 @@
     "@types/json-logic-js": "^2",
     "@types/react-grid-layout": "^1",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
-    "@typescript-eslint/parser": "^8.39.0",
     "@typescript-eslint/utils": "^8.39.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^9.1.0",
