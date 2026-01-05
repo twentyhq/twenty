@@ -131,6 +131,12 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     dependencyFlatEntityMaps: undefined,
   });
 
+  // Page layout maps - empty for now, to be populated with dashboard seeding in the future
+  // The actual dashboard seeding for v2 will require full builder implementation
+  const flatPageLayoutMaps = createEmptyFlatEntityMaps();
+  const flatPageLayoutTabMaps = createEmptyFlatEntityMaps();
+  const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
+
   return {
     flatViewFieldMaps,
     flatViewFilterMaps,
@@ -142,5 +148,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatRoleMaps,
     flatAgentMaps,
     flatSkillMaps,
+    flatPageLayoutMaps,
+    flatPageLayoutTabMaps,
+    flatPageLayoutWidgetMaps,
   };
 };
