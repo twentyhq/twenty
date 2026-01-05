@@ -23,7 +23,7 @@ export class WhatsappGetAssociatedPhoneNumbersService {
       },
       url: preparedWhatsappAPIAddress(
         wabaId,
-        '/assigned_users?limit=100&fields=id,name,user_type',
+        '/assigned_users?limit=100&fields=id',
       ),
     };
 
@@ -47,7 +47,7 @@ export class WhatsappGetAssociatedPhoneNumbersService {
             },
             url: preparedWhatsappAPIAddress(
               wabaId,
-              '/assigned_users?limit=100&fields=id,name,user_type&after=',
+              '/assigned_users?limit=100&fields=id&after=',
               data.multiple_users.value.paging.cursors.after,
             ),
           };

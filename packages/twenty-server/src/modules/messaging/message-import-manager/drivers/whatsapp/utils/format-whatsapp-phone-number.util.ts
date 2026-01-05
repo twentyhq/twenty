@@ -1,3 +1,7 @@
 export const formatWhatsappPhoneNumberUtil = (phoneNumber: string): string => {
-  return phoneNumber.replace('(', '').replace(')', '').replace(' ', '');
+  return phoneNumber
+    .replace('(', '')
+    .replace(')', '')
+    .replace('-', '')
+    .replace(' ', '');
 };

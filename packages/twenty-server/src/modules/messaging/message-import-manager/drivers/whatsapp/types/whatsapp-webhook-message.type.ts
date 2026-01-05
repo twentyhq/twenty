@@ -67,7 +67,7 @@ export type WhatsappWebhookMessageContent = {
   audio?: {
     mime_type: string;
     sha256: string;
-    id: string;
+    id?: string;
     url: string;
     voice: boolean;
   };
@@ -124,14 +124,14 @@ export type WhatsappWebhookMessageContent = {
     filename: string;
     mime_type: string;
     sha256: string;
-    id: string;
+    id?: string;
     url: string;
   };
   image?: {
     caption: string;
     mime_type: string;
     sha256: string;
-    id: string;
+    id?: string;
     url: string;
   };
   interactive?: {
@@ -186,7 +186,7 @@ export type WhatsappWebhookMessageContent = {
   sticker?: {
     mime_type: string;
     sha256: string;
-    id: string;
+    id?: string;
     url: string;
     animated: boolean;
   };
@@ -202,7 +202,7 @@ export type WhatsappWebhookMessageContent = {
     caption: string;
     mime_type: string;
     sha256: string;
-    id: string;
+    id?: string;
     url: string;
   };
 };

@@ -17,6 +17,8 @@ export class WhatsappUpdatePersonService {
     wa_id: string | undefined,
     workspaceId: string,
   ) {
+    // if Twenty will allow importing historic messages by becoming a Business Solution Provider
+    // logic must be changed (probably)
     // "User <WHATSAPP_USER_PROFILE_NAME> changed from <WHATSAPP_USER_PHONE_NUMBER> to <NEW_WHATSAPP_USER_PHONE_NUMBER>"
     // @ts-expect-error there's a system message but compiler doesn't know
     const preparedString = systemMessage

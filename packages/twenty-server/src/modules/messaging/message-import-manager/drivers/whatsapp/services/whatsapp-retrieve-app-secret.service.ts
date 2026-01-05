@@ -21,7 +21,7 @@ export class WhatsappRetrieveAppSecretService {
       whatsappBusinessAccountId: whatsappBusinessAccountId,
     });
 
-    if (workspaceIdByWABAId === null || !workspaceIdByWABAId.workspace.id) {
+    if (workspaceIdByWABAId === null) {
       throw new Error(); // TODO: fix
     }
     const workspaceId = workspaceIdByWABAId.workspace.id;

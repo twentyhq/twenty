@@ -52,8 +52,15 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
             whatsappRecord.accessToken,
           );
 
-        participantsIds.splice(participantsIds.indexOf(senderId), 1);
-        participantsIds.splice(participantsIds.indexOf(businessAccountId), 1);
+        participantsIds.indexOf(senderId) !== -1
+          ? participantsIds.splice(participantsIds.indexOf(senderId), 1)
+          : null;
+        participantsIds.indexOf(businessAccountId) !== -1
+          ? participantsIds.splice(
+              participantsIds.indexOf(businessAccountId),
+              1,
+            )
+          : null;
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
             workspaceId,
@@ -66,13 +73,16 @@ export class WhatsappFormatGroupParticipantsToMessageParticipantsService {
               whatsAppId: participantId,
             }),
           );
-          const participant: MessageParticipant = {
-            role: MessageParticipantRole.TO,
-            handle: participantId,
-            displayName: participantName,
-          };
 
-          messageParticipants.push(participant);
+          if (participantName) {
+            const participant: MessageParticipant = {
+              role: MessageParticipantRole.TO,
+              handle: participantId,
+              displayName: participantName,
+            };
+
+            messageParticipants.push(participant);
+          }
         }
       },
     );
