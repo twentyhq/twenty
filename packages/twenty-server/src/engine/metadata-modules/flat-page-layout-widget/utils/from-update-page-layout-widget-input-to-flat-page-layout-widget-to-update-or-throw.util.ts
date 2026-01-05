@@ -12,6 +12,7 @@ import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export type UpdatePageLayoutWidgetInputWithId = {
@@ -46,6 +47,17 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       rawUpdatePageLayoutWidgetInput.update,
       FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
     );
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        updatedEditableFieldProperties,
+        'configuration',
+      )
+    ) {
+      validateWidgetConfigurationInput({
+        configuration: updatedEditableFieldProperties.configuration,
+      });
+    }
 
     return mergeUpdateInExistingRecord({
       existing: existingFlatPageLayoutWidgetToUpdate,

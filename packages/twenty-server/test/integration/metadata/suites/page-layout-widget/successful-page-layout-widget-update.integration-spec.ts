@@ -1,3 +1,13 @@
+import {
+  TEST_GAUGE_CHART_CONFIG,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG,
+  TEST_IFRAME_CONFIG_ALTERNATIVE,
+  TEST_LINE_CHART_CONFIG,
+  TEST_NUMBER_CHART_CONFIG,
+  TEST_PIE_CHART_CONFIG,
+  TEST_STANDALONE_RICH_TEXT_CONFIG,
+  TEST_VERTICAL_BAR_CHART_CONFIG,
+} from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
@@ -13,11 +23,13 @@ import {
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 type TestContext = {
   input: {
     title?: string;
     type?: WidgetType;
+    configuration?: AllPageLayoutWidgetConfiguration;
     gridPosition?: {
       row: number;
       column: number;
@@ -54,6 +66,78 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
           rowSpan: 2,
           columnSpan: 4,
         },
+      },
+    },
+  },
+  // Configuration update tests
+  {
+    title: 'update page layout widget to IFRAME configuration',
+    context: {
+      input: {
+        configuration: TEST_IFRAME_CONFIG_ALTERNATIVE,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to STANDALONE_RICH_TEXT configuration',
+    context: {
+      input: {
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to AGGREGATE_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_NUMBER_CHART_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to VERTICAL BAR_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_VERTICAL_BAR_CHART_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to HORIZONTAL BAR_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to PIE_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_PIE_CHART_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to LINE_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_LINE_CHART_CONFIG,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget to GAUGE_CHART configuration',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+        configuration: TEST_GAUGE_CHART_CONFIG,
       },
     },
   },

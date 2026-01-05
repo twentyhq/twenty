@@ -1,3 +1,20 @@
+import {
+  TEST_GAUGE_CHART_CONFIG,
+  TEST_GAUGE_CHART_CONFIG_MINIMAL,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+  TEST_IFRAME_CONFIG,
+  TEST_LINE_CHART_CONFIG,
+  TEST_LINE_CHART_CONFIG_MINIMAL,
+  TEST_NUMBER_CHART_CONFIG,
+  TEST_NUMBER_CHART_CONFIG_MINIMAL,
+  TEST_PIE_CHART_CONFIG,
+  TEST_PIE_CHART_CONFIG_MINIMAL,
+  TEST_STANDALONE_RICH_TEXT_CONFIG,
+  TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
+  TEST_VERTICAL_BAR_CHART_CONFIG,
+  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
+} from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
@@ -28,41 +45,205 @@ type TestContext = {
   };
 };
 
+const DEFAULT_GRID_POSITION = {
+  row: 0,
+  column: 0,
+  rowSpan: 1,
+  columnSpan: 1,
+};
+
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  // IFRAME widget tests
   {
-    title: 'create a page layout widget',
-    context: {
-      input: {
-        title: 'Test Widget',
-        type: WidgetType.IFRAME,
-        configuration: {
-          configurationType: WidgetConfigurationType.IFRAME,
-        },
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 1,
-        },
-      },
-    },
-  },
-  {
-    title: 'create a page layout widget with specific type',
+    title: 'create a page layout widget with IFRAME configuration',
     context: {
       input: {
         title: 'Iframe Widget',
         type: WidgetType.IFRAME,
+        configuration: TEST_IFRAME_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title: 'create a page layout widget with IFRAME minimal configuration',
+    context: {
+      input: {
+        title: 'Iframe Widget Minimal',
+        type: WidgetType.IFRAME,
         configuration: {
           configurationType: WidgetConfigurationType.IFRAME,
-          url: 'https://example.com',
         },
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 2,
-          columnSpan: 2,
-        },
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // STANDALONE_RICH_TEXT widget tests
+  {
+    title:
+      'create a page layout widget with STANDALONE_RICH_TEXT configuration',
+    context: {
+      input: {
+        title: 'Rich Text Widget',
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title:
+      'create a page layout widget with STANDALONE_RICH_TEXT minimal configuration',
+    context: {
+      input: {
+        title: 'Rich Text Widget Minimal',
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // AGGREGATE_CHART (number chart) widget tests
+  {
+    title:
+      'create a page layout widget with AGGREGATE_CHART full configuration',
+    context: {
+      input: {
+        title: 'Number Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_NUMBER_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title:
+      'create a page layout widget with AGGREGATE_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Number Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_NUMBER_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // BAR_CHART vertical widget tests
+  {
+    title:
+      'create a page layout widget with VERTICAL BAR_CHART full configuration',
+    context: {
+      input: {
+        title: 'Vertical Bar Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_VERTICAL_BAR_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title:
+      'create a page layout widget with VERTICAL BAR_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Vertical Bar Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // BAR_CHART horizontal widget tests
+  {
+    title:
+      'create a page layout widget with HORIZONTAL BAR_CHART full configuration',
+    context: {
+      input: {
+        title: 'Horizontal Bar Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title:
+      'create a page layout widget with HORIZONTAL BAR_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Horizontal Bar Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // PIE_CHART widget tests
+  {
+    title: 'create a page layout widget with PIE_CHART full configuration',
+    context: {
+      input: {
+        title: 'Pie Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_PIE_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title: 'create a page layout widget with PIE_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Pie Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_PIE_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // LINE_CHART widget tests
+  {
+    title: 'create a page layout widget with LINE_CHART full configuration',
+    context: {
+      input: {
+        title: 'Line Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_LINE_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title: 'create a page layout widget with LINE_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Line Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_LINE_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  // GAUGE_CHART widget tests
+  {
+    title: 'create a page layout widget with GAUGE_CHART full configuration',
+    context: {
+      input: {
+        title: 'Gauge Chart Widget',
+        type: WidgetType.GRAPH,
+        configuration: TEST_GAUGE_CHART_CONFIG,
+        gridPosition: DEFAULT_GRID_POSITION,
+      },
+    },
+  },
+  {
+    title: 'create a page layout widget with GAUGE_CHART minimal configuration',
+    context: {
+      input: {
+        title: 'Gauge Chart Widget Minimal',
+        type: WidgetType.GRAPH,
+        configuration: TEST_GAUGE_CHART_CONFIG_MINIMAL,
+        gridPosition: DEFAULT_GRID_POSITION,
       },
     },
   },

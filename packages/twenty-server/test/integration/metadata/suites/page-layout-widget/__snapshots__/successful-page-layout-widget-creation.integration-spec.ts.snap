@@ -23,6 +23,576 @@ exports[`Page layout widget creation should succeed should create a page layout 
 }
 `;
 
+exports[`Page layout widget creation should succeed should create a page layout widget with AGGREGATE_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "configurationType": "AGGREGATE_CHART",
+    "description": "Count of all records",
+    "displayDataLabel": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "format": "0,0",
+    "label": "Total Records",
+    "prefix": null,
+    "suffix": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Number Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with AGGREGATE_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "SUM",
+    "configurationType": "AGGREGATE_CHART",
+    "description": null,
+    "displayDataLabel": false,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "format": null,
+    "label": null,
+    "prefix": null,
+    "suffix": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Number Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with GAUGE_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "SUM",
+    "color": null,
+    "configurationType": "GAUGE_CHART",
+    "description": "Completion percentage",
+    "displayDataLabel": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Gauge Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with GAUGE_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT_TRUE",
+    "color": null,
+    "configurationType": "GAUGE_CHART",
+    "description": null,
+    "displayDataLabel": false,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Gauge Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with HORIZONTAL BAR_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "SUM",
+    "axisNameDisplay": "NONE",
+    "color": "blue",
+    "configurationType": "BAR_CHART",
+    "description": "Horizontal revenue breakdown",
+    "displayDataLabel": true,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupMode": null,
+    "isCumulative": null,
+    "layout": "HORIZONTAL",
+    "omitNullValues": true,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "FIELD_ASC",
+    "rangeMax": 100000,
+    "rangeMin": 0,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": null,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Horizontal Bar Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with HORIZONTAL BAR_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "axisNameDisplay": "NONE",
+    "color": null,
+    "configurationType": "BAR_CHART",
+    "description": null,
+    "displayDataLabel": false,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupMode": null,
+    "isCumulative": null,
+    "layout": "HORIZONTAL",
+    "omitNullValues": null,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "VALUE_DESC",
+    "rangeMax": null,
+    "rangeMin": null,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": null,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Horizontal Bar Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with IFRAME configuration 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://example.com/dashboard",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Iframe Widget",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with IFRAME minimal configuration 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": null,
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Iframe Widget Minimal",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with LINE_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "AVG",
+    "axisNameDisplay": "NONE",
+    "color": "cyan",
+    "configurationType": "LINE_CHART",
+    "description": "Trend over time",
+    "displayDataLabel": true,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "isCumulative": null,
+    "isStacked": null,
+    "omitNullValues": false,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "FIELD_ASC",
+    "rangeMax": 100,
+    "rangeMin": -100,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": Any<String>,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": "FIELD_DESC",
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Line Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with LINE_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "MAX",
+    "axisNameDisplay": "NONE",
+    "color": null,
+    "configurationType": "LINE_CHART",
+    "description": null,
+    "displayDataLabel": false,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "isCumulative": null,
+    "isStacked": null,
+    "omitNullValues": null,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "VALUE_ASC",
+    "rangeMax": null,
+    "rangeMin": null,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": null,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Line Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with PIE_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "SUM",
+    "color": "yellow",
+    "configurationType": "PIE_CHART",
+    "dateGranularity": "DAY",
+    "description": "Distribution by category",
+    "displayDataLabel": true,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupByFieldMetadataId": Any<String>,
+    "groupBySubFieldName": null,
+    "orderBy": "VALUE_DESC",
+    "showCenterMetric": true,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Pie Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with PIE_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "color": null,
+    "configurationType": "PIE_CHART",
+    "dateGranularity": "DAY",
+    "description": null,
+    "displayDataLabel": false,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupByFieldMetadataId": Any<String>,
+    "groupBySubFieldName": null,
+    "orderBy": "FIELD_ASC",
+    "showCenterMetric": true,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Pie Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with STANDALONE_RICH_TEXT configuration 1`] = `
+{
+  "configuration": {
+    "body": {
+      "blocknote": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}",
+      "markdown": "# Hello world",
+    },
+    "configurationType": "STANDALONE_RICH_TEXT",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Rich Text Widget",
+  "type": "STANDALONE_RICH_TEXT",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with STANDALONE_RICH_TEXT minimal configuration 1`] = `
+{
+  "configuration": {
+    "body": {
+      "blocknote": null,
+      "markdown": "Simple text",
+    },
+    "configurationType": "STANDALONE_RICH_TEXT",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Rich Text Widget Minimal",
+  "type": "STANDALONE_RICH_TEXT",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with VERTICAL BAR_CHART full configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "SUM",
+    "axisNameDisplay": "NONE",
+    "color": "red",
+    "configurationType": "BAR_CHART",
+    "description": "Monthly revenue breakdown",
+    "displayDataLabel": true,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupMode": null,
+    "isCumulative": null,
+    "layout": "VERTICAL",
+    "omitNullValues": true,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "FIELD_ASC",
+    "rangeMax": 100000,
+    "rangeMin": 0,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": null,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Vertical Bar Chart Widget",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget creation should succeed should create a page layout widget with VERTICAL BAR_CHART minimal configuration 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "axisNameDisplay": "NONE",
+    "color": null,
+    "configurationType": "BAR_CHART",
+    "description": null,
+    "displayDataLabel": false,
+    "displayLegend": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "groupMode": null,
+    "isCumulative": null,
+    "layout": "VERTICAL",
+    "omitNullValues": null,
+    "primaryAxisDateGranularity": "DAY",
+    "primaryAxisGroupByFieldMetadataId": Any<String>,
+    "primaryAxisGroupBySubFieldName": null,
+    "primaryAxisOrderBy": "VALUE_DESC",
+    "rangeMax": null,
+    "rangeMin": null,
+    "secondaryAxisGroupByDateGranularity": "DAY",
+    "secondaryAxisGroupByFieldMetadataId": null,
+    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisOrderBy": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Vertical Bar Chart Widget Minimal",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
+
 exports[`Page layout widget creation should succeed should create a page layout widget with specific type 1`] = `
 {
   "configuration": {

@@ -1,5 +1,4 @@
 import { isNotEmptyObject, type ValidationError } from 'class-validator';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
@@ -115,33 +114,75 @@ export const validateWidgetConfigurationInput = ({
       );
       break;
     case WidgetConfigurationType.VIEW:
-      throw new Error('View configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'View configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.FIELD:
-      throw new Error('Field configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Field configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.FIELDS:
-      throw new Error('Fields configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Fields configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.TIMELINE:
-      throw new Error('Timeline configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Timeline configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.TASKS:
-      throw new Error('Tasks configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Tasks configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.NOTES:
-      throw new Error('Notes configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Notes configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.FILES:
-      throw new Error('Files configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Files configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.EMAILS:
-      throw new Error('Emails configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Emails configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.CALENDAR:
-      throw new Error('Calendar configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Calendar configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.FIELD_RICH_TEXT:
-      throw new Error('Field rich text configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Field rich text configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.WORKFLOW:
-      throw new Error('Workflow configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Workflow configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.WORKFLOW_VERSION:
-      throw new Error('Workflow version configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Workflow version configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     case WidgetConfigurationType.WORKFLOW_RUN:
-      throw new Error('Workflow run configuration is not supported yet');
+      throw new PageLayoutWidgetException(
+        'Workflow run configuration is not supported yet',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     default:
-      assertUnreachable(configurationType);
+      throw new PageLayoutWidgetException(
+        `Unsupported configuration type: ${configurationType}`,
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
   }
 
   if (errors.length > 0) {
