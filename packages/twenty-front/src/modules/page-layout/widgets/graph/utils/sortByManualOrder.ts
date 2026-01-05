@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type ItemWithPosition = {
   position?: number | null;
 };
@@ -13,11 +15,8 @@ export const sortByManualOrder = <T extends ItemWithPosition>({
   manualSortOrder,
   getRawValue,
 }: SortByManualOrderParams<T>): T[] => {
-  const positionComparator = (a: T, b: T) =>
-    (a.position ?? 0) - (b.position ?? 0);
-
   if (manualSortOrder.length === 0) {
-    return items.toSorted(positionComparator);
+    return items.toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0));
   }
 
   const orderMap = new Map(
@@ -27,14 +26,21 @@ export const sortByManualOrder = <T extends ItemWithPosition>({
   return items.toSorted((a, b) => {
     const rawValueA = getRawValue(a) ?? '';
     const rawValueB = getRawValue(b) ?? '';
-    const indexA = orderMap.get(rawValueA) ?? -1;
-    const indexB = orderMap.get(rawValueB) ?? -1;
 
-    if (indexA === -1 && indexB === -1) {
-      return positionComparator(a, b);
+    const indexA = orderMap.get(rawValueA);
+    const indexB = orderMap.get(rawValueB);
+
+    if (!isDefined(indexA) && !isDefined(indexB)) {
+      return (a.position ?? 0) - (b.position ?? 0);
     }
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
+
+    if (!isDefined(indexA)) {
+      return 1;
+    }
+
+    if (!isDefined(indexB)) {
+      return -1;
+    }
 
     return indexA - indexB;
   });
