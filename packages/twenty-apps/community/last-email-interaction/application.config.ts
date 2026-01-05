@@ -1,10 +1,11 @@
-import { type ApplicationConfig } from 'twenty-sdk/application';
+import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
   universalIdentifier: '718ed9ab-53fc-49c8-8deb-0cff78ecf0d2',
   displayName: 'Last email interaction',
   description:
     'Updates Last interaction and Interaction status fields based on last received email',
+  icon: "IconMailFast",
   applicationVariables: {
     TWENTY_API_KEY: {
       universalIdentifier: 'aae3f523-4c1f-4805-b3ee-afeb676c381e',

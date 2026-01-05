@@ -177,7 +177,7 @@ export class FieldMetadataEntity<
       cascade: true,
     },
   )
-  indexFieldMetadatas: Relation<IndexFieldMetadataEntity>;
+  indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

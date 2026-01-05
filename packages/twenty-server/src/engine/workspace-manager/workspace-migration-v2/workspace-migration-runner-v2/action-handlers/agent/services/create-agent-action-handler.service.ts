@@ -1,39 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { CreateAgentAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/types/workspace-migration-v2-agent-action-builder.service';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_agent',
+  'create',
+  'agent',
 ) {
   constructor() {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateAgentAction>): Partial<AllFlatEntityMaps> {
-    const { flatAgentMaps } = allFlatEntityMaps;
-    const { flatEntity } = action;
-
-    const updatedFlatAgentMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity,
-      flatEntityMaps: flatAgentMaps,
-    });
-
-    return {
-      flatAgentMaps: updatedFlatAgentMaps,
-    };
   }
 
   async executeForMetadata(

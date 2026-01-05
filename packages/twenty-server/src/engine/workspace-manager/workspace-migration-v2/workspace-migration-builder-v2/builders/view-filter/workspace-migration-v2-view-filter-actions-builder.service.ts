@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterCreation(args);
@@ -40,8 +40,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'create_view_filter',
-        viewFilter: flatViewFilterToValidate,
+        type: 'create',
+        metadataName: 'viewFilter',
+        flatEntity: flatViewFilterToValidate,
       },
     };
   }
@@ -50,7 +51,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterDeletion(args);
@@ -67,8 +68,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'delete_view_filter',
-        viewFilterId: flatViewFilterToValidate.id,
+        type: 'delete',
+        metadataName: 'viewFilter',
+        entityId: flatViewFilterToValidate.id,
       },
     };
   }
@@ -77,7 +79,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatViewFilterValidatorService.validateFlatViewFilterUpdate(args);
@@ -92,8 +94,9 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterAction: UpdateViewFilterAction = {
-      type: 'update_view_filter',
-      viewFilterId: flatEntityId,
+      type: 'update',
+      metadataName: 'viewFilter',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

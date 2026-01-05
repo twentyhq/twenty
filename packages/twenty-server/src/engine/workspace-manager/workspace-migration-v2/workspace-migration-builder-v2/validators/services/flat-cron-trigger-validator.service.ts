@@ -5,8 +5,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CronTriggerExceptionCode } from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -24,17 +24,18 @@ export class FlatCronTriggerValidatorService {
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
-  >): FailedFlatEntityValidation<FlatCronTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'update_cron_trigger',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-    };
-
+  >): FailedFlatEntityValidation<'cronTrigger', 'update'> {
     const existingFlatCronTrigger =
       optimisticFlatCronTriggerMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: existingFlatCronTrigger?.universalIdentifier,
+      },
+      metadataName: 'cronTrigger',
+      type: 'update',
+    });
 
     if (!isDefined(existingFlatCronTrigger)) {
       validationResult.errors.push({
@@ -70,20 +71,21 @@ export class FlatCronTriggerValidatorService {
   }
 
   public validateFlatCronTriggerDeletion({
-    flatEntityToValidate: { id: cronTriggerIdToDelete },
+    flatEntityToValidate: { id: cronTriggerIdToDelete, universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
-  >): FailedFlatEntityValidation<FlatCronTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'delete_cron_trigger',
-      errors: [],
+  >): FailedFlatEntityValidation<'cronTrigger', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: cronTriggerIdToDelete,
+        universalIdentifier,
       },
-    };
+      metadataName: 'cronTrigger',
+      type: 'delete',
+    });
 
     const existingFlatCronTrigger =
       optimisticFlatCronTriggerMaps.byId[cronTriggerIdToDelete];
@@ -107,14 +109,15 @@ export class FlatCronTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
-  >): FailedFlatEntityValidation<FlatCronTrigger> {
-    const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
-      type: 'create_cron_trigger',
-      errors: [],
+  >): FailedFlatEntityValidation<'cronTrigger', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatCronTriggerToValidate.id,
+        universalIdentifier: flatCronTriggerToValidate.universalIdentifier,
       },
-    };
+      metadataName: 'cronTrigger',
+      type: 'create',
+    });
 
     if (
       isDefined(

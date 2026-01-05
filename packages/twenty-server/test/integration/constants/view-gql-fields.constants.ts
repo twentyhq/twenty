@@ -64,6 +64,7 @@ export const VIEW_FILTER_GROUP_GQL_FIELDS = `
     id
     logicalOperator
     parentViewFilterGroupId
+    positionInViewFilterGroup
     viewId
     createdAt
     updatedAt

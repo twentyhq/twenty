@@ -160,6 +160,16 @@ msgstr ""
 msgid "A role with this label already exists."
 msgstr "Er bestaat al een rol met dit label."
 
+#. js-lingui-id: HijTmf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "A skill with this name already exists"
+msgstr ""
+
+#. js-lingui-id: jX0IPx
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "A skill with this name already exists."
+msgstr ""
+
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
@@ -444,6 +454,8 @@ msgstr "Er is een onverwachte configuratiefout opgetreden."
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Er is een onverwachte fout opgetreden."
@@ -924,6 +936,12 @@ msgstr "Kan account niet verwijderen: u bent de enige beheerder. Wijs eerst een 
 msgid "Cannot delete standard agent"
 msgstr "Kan standaardagent niet verwijderen"
 
+#. js-lingui-id: EN2+6i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot delete standard skill"
+msgstr ""
+
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
@@ -990,6 +1008,12 @@ msgstr "Kan het berichtkanaal niet bijwerken terwijl synchronisatie bezig is. Wa
 msgid "Cannot update standard agent"
 msgstr "Kan standaardagent niet bijwerken"
 
+#. js-lingui-id: I2EmgT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
+msgstr ""
+
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -1005,6 +1029,12 @@ msgstr "Kanaal-ID"
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Channel Type"
 msgstr "Kanaaltype"
+
+#. js-lingui-id: 9uirl8
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "Circular dependency detected in view filter group hierarchy"
+msgstr ""
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1169,6 +1199,12 @@ msgstr "Telefoonnummers van contactpersoon"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "X/Twitter-account van contactpersoon"
+
+#. js-lingui-id: rx63gq
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+msgid "Content cannot be empty"
+msgstr ""
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -1983,11 +2019,16 @@ msgstr "Veldlabel identificator is verplicht"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Veldmetadata niet gevonden"
 
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
@@ -2639,10 +2680,25 @@ msgstr "Ongeldig type antwoordformaat"
 msgid "Invalid role target data."
 msgstr "Ongeldige roldoelgegevens."
 
+#. js-lingui-id: ppA1Aq
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Invalid row level permission predicate data."
+msgstr ""
+
+#. js-lingui-id: nwC2sc
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Invalid row level permission predicate group data."
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
 msgstr "Ongeldig instellingstype opgegeven in cron-trigger."
+
+#. js-lingui-id: TulNnA
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Invalid skill input."
+msgstr ""
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -2985,6 +3041,8 @@ msgid "Kanban view must have a main group by field"
 msgstr "Kanban-weergave moet een hoofdgroeperingsveld hebben"
 
 #. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
@@ -3295,6 +3353,11 @@ msgstr "Toegangstoken van de berichtenprovider"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Vernieuwingstoken van de berichtenprovider"
+
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -3678,12 +3741,17 @@ msgstr "Objectlabel is te kort"
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Objectmetadata niet gevonden"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
@@ -4031,6 +4099,22 @@ msgstr "Paginalay-outwidget met id {flatPageLayoutWidgetId} bestaat al"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
 msgstr "Map-ID bovenliggende map"
+
+#. js-lingui-id: Xsgh7b
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Parent row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: 6OzP7Y
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "Parent view filter group not found"
+msgstr ""
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -4425,6 +4509,14 @@ msgid "Role must have at least one target."
 msgstr "Rol moet minstens één doel hebben."
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -4437,6 +4529,8 @@ msgid "Role not found"
 msgstr ""
 
 #. js-lingui-id: /BTyf+
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -4520,6 +4614,74 @@ msgstr "Route met hetzelfde ID bestaat al"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route with same path already exists"
 msgstr "Route met hetzelfde pad bestaat al"
+
+#. js-lingui-id: va8c5P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: HBfLro
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Row level permission predicate group not found."
+msgstr ""
+
+#. js-lingui-id: vMP7nZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-delete-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to delete not found"
+msgstr ""
+
+#. js-lingui-id: h/Rc4f
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-destroy-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to destroy not found"
+msgstr ""
+
+#. js-lingui-id: NhW7fb
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-to-update-or-throw.util.ts
+msgid "Row level permission predicate group to update not found"
+msgstr ""
+
+#. js-lingui-id: LrJvM0
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Row level permission predicate group with this id already exists"
+msgstr ""
+
+#. js-lingui-id: fEazMl
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Row level permission predicate not found."
+msgstr ""
+
+#. js-lingui-id: zdTUvE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to delete not found"
+msgstr ""
+
+#. js-lingui-id: WzQYVM
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to destroy not found"
+msgstr ""
+
+#. js-lingui-id: aeNy7i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util.ts
+msgid "Row level permission predicate to update not found"
+msgstr ""
+
+#. js-lingui-id: CUT3wK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate with this id already exists"
+msgstr ""
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4611,6 +4773,24 @@ msgstr "Registreren is uitgeschakeld."
 msgid "Single sign-on authentication failed."
 msgstr "Single sign-on-authenticatie mislukt."
 
+#. js-lingui-id: OhD7+a
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Skill not found"
+msgstr ""
+
+#. js-lingui-id: 68ze54
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Skill not found."
+msgstr ""
+
+#. js-lingui-id: e6udqn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "Skill with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -4661,6 +4841,11 @@ msgstr "Standaardvelden kunnen niet worden verwijderd"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Standaardobjecten kunnen niet worden verwijderd"
+
+#. js-lingui-id: H8j7uw
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Standard skills cannot be modified."
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -4784,6 +4969,21 @@ msgstr "Tabblad niet gevonden voor duplicatie van widget."
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Doelobjectmetadata niet gevonden voor {connectFieldName}"
+
+#. js-lingui-id: 1ssKrE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not belong to the expected object"
+msgstr ""
+
+#. js-lingui-id: wG8PVB
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not reference the source object"
+msgstr ""
+
+#. js-lingui-id: xLsFda
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not reference this field"
+msgstr ""
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -5622,6 +5822,7 @@ msgstr "Gebruikers-id"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User is not a member of the workspace."
 msgstr "Gebruiker maakt geen deel uit van de werkruimte."
@@ -5686,11 +5887,6 @@ msgstr "Voorkeur voor startdag van de week van de gebruiker"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Voorkeurstijdformaat van de gebruiker"
-
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "Validatie mislukt voor 0 object(en) en 0 veld(en)"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -5796,6 +5992,36 @@ msgstr "Weergaveveld om bovenliggend weergaveobject bij te werken niet gevonden"
 msgid "View field with same fieldmetadataId and viewId already exists"
 msgstr "Beeldveld met dezelfde fieldmetadataId en viewId bestaat al"
 
+#. js-lingui-id: ENVlLK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group cannot be its own parent"
+msgstr ""
+
+#. js-lingui-id: tir/7Q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
+msgstr ""
+
+#. js-lingui-id: eUPMYZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group not found"
+msgstr ""
+
+#. js-lingui-id: UfIsQu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group with this id already exists"
+msgstr ""
+
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -5877,6 +6103,8 @@ msgstr "Kanban-geaggregeerde veldmetadata niet gevonden"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
