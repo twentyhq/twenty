@@ -135,9 +135,8 @@ export const CustomSliceHoverLayer = ({
   );
 
   const handleMouseLeave = useCallback(() => {
-    setHoveredSliceIndex(null);
     onSliceLeave();
-  }, [setHoveredSliceIndex, onSliceLeave]);
+  }, [onSliceLeave]);
 
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {

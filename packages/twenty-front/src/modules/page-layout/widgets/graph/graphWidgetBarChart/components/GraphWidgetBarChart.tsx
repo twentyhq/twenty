@@ -12,6 +12,7 @@ import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
+import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -110,6 +111,10 @@ export const GraphWidgetBarChart = ({
     graphWidgetBarTooltipComponentState,
   );
 
+  const setHoveredSliceIndex = useSetRecoilComponentState(
+    graphWidgetHoveredSliceIndexComponentState,
+  );
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -165,7 +170,11 @@ export const GraphWidgetBarChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const hideTooltip = () => setActiveBarTooltip(null);
+  const hideTooltip = useCallback(() => {
+    setActiveBarTooltip(null);
+    setHoveredSliceIndex(null);
+  }, [setActiveBarTooltip, setHoveredSliceIndex]);
+
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
   const handleTooltipMouseEnter = () => {
