@@ -5,18 +5,15 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
 } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('file')
 @ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
-export class FileEntity {
+export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,15 +28,6 @@ export class FileEntity {
 
   @Column({ nullable: false })
   type: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

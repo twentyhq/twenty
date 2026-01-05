@@ -14,6 +14,9 @@ import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captch
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
 import { MockedUnhandledExceptionFilter } from 'src/engine/core-modules/exception-handler/mocks/mock-unhandled-exception.filter';
+import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -25,6 +28,10 @@ interface TestingModuleCreatePreHook {
 export type TestingAppCreatePreHook = (
   app: NestExpressApplication,
 ) => Promise<void>;
+
+// Shared SyncDriver instance for all queues in tests
+// This enables synchronous processing of jobs during integration tests
+const syncDriver = new SyncDriver();
 
 /**
  * Sets basic integration testing module of app
@@ -38,7 +45,7 @@ export const createApp = async (
   const stripeSDKMockService = new StripeSDKMockService();
   const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
-    imports: [AppModule, CommandModule],
+    imports: [AppModule, CommandModule, MessageQueueModule.registerExplorer()],
     providers: [
       {
         provide: APP_FILTER,
@@ -53,7 +60,9 @@ export const createApp = async (
     .overrideProvider(CAPTCHA_DRIVER)
     .useValue({
       validate: async () => ({ success: true }),
-    });
+    })
+    .overrideProvider(QUEUE_DRIVER)
+    .useValue(syncDriver);
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);

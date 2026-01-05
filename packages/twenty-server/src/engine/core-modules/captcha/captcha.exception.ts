@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -7,11 +8,13 @@ export enum CaptchaExceptionCode {
   INVALID_CAPTCHA = 'INVALID_CAPTCHA',
 }
 
-const captchaExceptionUserFriendlyMessages: Record<
-  CaptchaExceptionCode,
-  MessageDescriptor
-> = {
-  [CaptchaExceptionCode.INVALID_CAPTCHA]: msg`Invalid captcha. Please try again.`,
+const getCaptchaExceptionUserFriendlyMessage = (code: CaptchaExceptionCode) => {
+  switch (code) {
+    case CaptchaExceptionCode.INVALID_CAPTCHA:
+      return msg`Invalid captcha. Please try again.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class CaptchaException extends CustomException<CaptchaExceptionCode> {
@@ -22,7 +25,7 @@ export class CaptchaException extends CustomException<CaptchaExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? captchaExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getCaptchaExceptionUserFriendlyMessage(code),
     });
   }
 }

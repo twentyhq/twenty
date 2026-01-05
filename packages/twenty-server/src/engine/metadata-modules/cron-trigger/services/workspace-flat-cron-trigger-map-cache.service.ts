@@ -6,13 +6,11 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import {
-  CRON_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  CronTriggerEntity,
-} from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -41,9 +39,10 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceCacheProvi
 
     for (const cronTriggerEntity of cronTriggers) {
       const flatCronTrigger = {
-        ...removePropertiesFromRecord(cronTriggerEntity, [
-          ...CRON_TRIGGER_ENTITY_RELATION_PROPERTIES,
-        ]),
+        ...removePropertiesFromRecord(
+          cronTriggerEntity,
+          getMetadataEntityRelationProperties('cronTrigger'),
+        ),
         universalIdentifier:
           cronTriggerEntity.universalIdentifier ?? cronTriggerEntity.id,
         createdAt: cronTriggerEntity.createdAt.toISOString(),

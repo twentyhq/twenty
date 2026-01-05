@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
 
+import { msg } from '@lingui/core/macro';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -12,15 +14,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  assertIsDefinedOrThrow: jest.fn((value, error) => {
-    if (value === null || value === undefined) {
-      throw error;
-    }
-  }),
-}));
-
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let workspaceRepository: any;
@@ -30,6 +23,8 @@ describe('JwtAuthStrategy', () => {
   let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
+  let globalWorkspaceOrmManager: any;
+  let workspaceMemberRepository: any;
 
   const jwt = {
     sub: 'sub-default',
@@ -64,6 +59,20 @@ describe('JwtAuthStrategy', () => {
     permissionsService = {
       userHasWorkspaceSettingPermission: jest.fn(),
     };
+
+    workspaceMemberRepository = {
+      findOne: jest.fn(),
+    };
+    workspaceMemberRepository.findOne.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
+    globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(async (_authContext, callback) => {
+        return await callback();
+      }),
+      getRepository: jest.fn(async () => workspaceMemberRepository),
+    };
   });
 
   afterEach(() => {
@@ -87,6 +96,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -118,6 +128,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -152,6 +163,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -186,6 +198,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       const result = await strategy.validate(payload as JwtPayload);
@@ -227,16 +240,19 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('User not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
         await strategy.validate(payload as JwtPayload);
       } catch (e) {
-        expect(e.code).toBe(AuthExceptionCode.USER_WORKSPACE_NOT_FOUND);
+        expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
       }
     });
 
@@ -266,10 +282,13 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -309,6 +328,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       const user = await strategy.validate(payload as JwtPayload);
@@ -342,10 +362,13 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('Application not found', expect.any(String)),
+        new AuthException('Application not found', expect.any(String), {
+          userFriendlyMessage: msg`Application not found.`,
+        }),
       );
 
       try {
@@ -393,6 +416,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -439,6 +463,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -487,6 +512,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -546,12 +572,14 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
           'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
           AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          { userFriendlyMessage: msg`User workspace not found.` },
         ),
       );
     });
@@ -599,6 +627,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -670,6 +699,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -740,6 +770,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -811,6 +842,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -875,6 +907,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       const result = await strategy.validate(payload as JwtPayload);
@@ -941,6 +974,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        globalWorkspaceOrmManager,
       );
 
       const result = await strategy.validate(payload as JwtPayload);

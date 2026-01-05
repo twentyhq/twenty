@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isValidUuid } from 'twenty-shared/utils';
 
 import {
@@ -10,6 +11,7 @@ export const assertIsValidUuid = (value: string) => {
     throw new WorkspaceQueryRunnerException(
       `Value "${value}" is not a valid UUID`,
       WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: msg`Invalid UUID format.` },
     );
   }
 };

@@ -24,7 +24,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
   ): Promise<
     FlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayoutWidget,
-      'created'
+      'create'
     >
   > {
     const validationResult =
@@ -42,8 +42,9 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout_widget',
-        pageLayoutWidget: args.flatEntityToValidate,
+        type: 'create',
+        metadataName: 'pageLayoutWidget',
+        flatEntity: args.flatEntityToValidate,
       },
     };
   }
@@ -52,7 +53,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetDeletion(
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout_widget',
-        pageLayoutWidgetId: flatPageLayoutWidgetToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayoutWidget',
+        entityId: flatPageLayoutWidgetToValidate.id,
       },
     };
   }
@@ -84,7 +86,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
   ): Promise<
     FlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayoutWidget,
-      'updated'
+      'update'
     >
   > {
     const validationResult =
@@ -102,8 +104,9 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutWidgetAction: UpdatePageLayoutWidgetAction = {
-      type: 'update_page_layout_widget',
-      pageLayoutWidgetId: flatEntityId,
+      type: 'update',
+      metadataName: 'pageLayoutWidget',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

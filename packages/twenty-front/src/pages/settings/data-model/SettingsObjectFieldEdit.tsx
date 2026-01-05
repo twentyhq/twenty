@@ -5,7 +5,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -13,7 +12,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -30,7 +29,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -84,11 +83,8 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const readonly = isObjectMetadataSettingsReadOnly({
+  const readonly = isObjectMetadataReadOnly({
     objectMetadataItem,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
   });
 
   const {
@@ -145,6 +141,17 @@ export const SettingsObjectFieldEdit = () => {
     fieldMetadataItem: fieldMetadataItem,
     objectMetadataItem: objectMetadataItem,
   });
+
+  const fieldNamesThatCannotBeDeactivated = [
+    'createdAt',
+    'createdBy',
+    'deletedAt',
+    'updatedAt',
+  ];
+
+  const fieldCanBeDeactivated = !fieldNamesThatCannotBeDeactivated.includes(
+    fieldMetadataItem.name,
+  );
 
   const handleSave = async (
     formValues: SettingsDataModelFieldEditFormValues,
@@ -376,7 +383,7 @@ export const SettingsObjectFieldEdit = () => {
               />
             </Section>
 
-            {!isLabelIdentifier && !readonly && (
+            {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
               <Section>
                 <H2Title
                   title={t`Danger zone`}

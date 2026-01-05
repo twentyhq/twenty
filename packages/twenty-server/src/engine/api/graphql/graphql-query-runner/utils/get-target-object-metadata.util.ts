@@ -1,3 +1,4 @@
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -14,6 +15,7 @@ export const getTargetObjectMetadataOrThrow = (
     throw new GraphqlQueryRunnerException(
       `Relation target object metadata id not found for field ${fieldMetadata.name}`,
       GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
@@ -24,6 +26,7 @@ export const getTargetObjectMetadataOrThrow = (
     throw new GraphqlQueryRunnerException(
       `Target object metadata not found for field ${fieldMetadata.name}`,
       GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 

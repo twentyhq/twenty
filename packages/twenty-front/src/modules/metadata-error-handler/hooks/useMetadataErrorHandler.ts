@@ -7,7 +7,6 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { type CrudOperationType } from 'twenty-shared/types';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -26,16 +25,19 @@ export const useMetadataErrorHandler = () => {
     role: t`role`,
     roleTarget: t`role target`,
     agent: t`agent`,
+    skill: t`skill`,
     pageLayout: t`page layout`,
     pageLayoutTab: t`page layout tab`,
     pageLayoutWidget: t`page layout widget`,
+    rowLevelPermissionPredicate: t`row level permission predicate`,
+    rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
+    viewFilterGroup: t`view filter group`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (
     error: ApolloError,
     options: {
       primaryMetadataName: AllMetadataName;
-      operationType: CrudOperationType;
     },
   ) => {
     const classification = classifyMetadataError({
@@ -55,10 +57,7 @@ export const useMetadataErrorHandler = () => {
         const { extensions, primaryMetadataName, relatedFailingMetadataNames } =
           classification;
 
-        const targetErrors = extensions.errors[primaryMetadataName] || [];
-
-        const operationType = options.operationType.toLowerCase();
-
+        const targetErrors = extensions.errors[primaryMetadataName] ?? [];
         if (targetErrors.length > 0) {
           targetErrors.forEach((entityError) => {
             entityError.errors.forEach((validationError) =>
@@ -80,7 +79,7 @@ export const useMetadataErrorHandler = () => {
             .join(', ');
 
           enqueueErrorSnackBar({
-            message: t`Failed to ${operationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
+            message: t`Failed to create ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
           });
         }
 
@@ -89,7 +88,7 @@ export const useMetadataErrorHandler = () => {
           relatedFailingMetadataNames.length === 0
         ) {
           enqueueErrorSnackBar({
-            message: t`Failed to ${operationType} ${translatedMetadataName}. Please try again.`,
+            message: t`Failed to create ${translatedMetadataName}. Please try again.`,
           });
         }
         break;

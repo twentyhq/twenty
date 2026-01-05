@@ -1,6 +1,6 @@
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
-import { VIEW_FILTER_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/view-filter-entity-relation-properties.constant';
+import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 
@@ -9,7 +9,7 @@ export const fromViewFilterEntityToFlatViewFilter = (
 ): FlatViewFilter => {
   const viewFilterEntityWithoutRelations = removePropertiesFromRecord(
     viewFilterEntity,
-    VIEW_FILTER_ENTITY_RELATION_PROPERTIES,
+    getMetadataEntityRelationProperties('viewFilter'),
   );
 
   return {

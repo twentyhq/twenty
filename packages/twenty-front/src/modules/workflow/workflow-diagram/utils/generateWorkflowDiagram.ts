@@ -12,6 +12,7 @@ import {
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateNodesAndEdgesForDefaultNode } from '@/workflow/workflow-diagram/utils/generateNodesAndEdgesForDefaultNode';
+import { generateNodesAndEdgesForIfElseNode } from '@/workflow/workflow-diagram/utils/generateNodesAndEdgesForIfElseNode';
 import { generateNodesAndEdgesForIteratorNode } from '@/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode';
 import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
@@ -84,6 +85,23 @@ export const generateWorkflowDiagram = ({
 
         nodes = iteratorNodes;
         edges = iteratorEdges;
+
+        break;
+      }
+      case 'IF_ELSE': {
+        const { nodes: ifElseNodes, edges: ifElseEdges } =
+          generateNodesAndEdgesForIfElseNode({
+            step,
+            steps,
+            xPos,
+            yPos: levelYPos,
+            nodes,
+            edges,
+            workflowContext,
+          });
+
+        nodes = ifElseNodes;
+        edges = ifElseEdges;
 
         break;
       }

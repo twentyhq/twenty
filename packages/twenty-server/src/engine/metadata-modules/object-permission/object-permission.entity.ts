@@ -6,13 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity('objectPermission')
 @Unique('IDX_OBJECT_PERMISSION_OBJECT_METADATA_ID_ROLE_ID_UNIQUE', [
@@ -20,7 +21,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
   'roleId',
 ])
 @Index('IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
-export class ObjectPermissionEntity {
+export class ObjectPermissionEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -57,9 +58,6 @@ export class ObjectPermissionEntity {
 
   @Column({ nullable: true, type: 'boolean' })
   canDestroyObjectRecords?: boolean;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

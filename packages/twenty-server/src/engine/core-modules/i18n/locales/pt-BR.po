@@ -149,11 +149,26 @@ msgstr "Um registro com este valor já existe."
 msgid "A required configuration is missing."
 msgstr "Falta uma configuração obrigatória."
 
+#. js-lingui-id: FVCXUT
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+msgid "A required field is missing."
+msgstr ""
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "A role with this label already exists."
 msgstr "Um rótulo com esse nome já existe."
+
+#. js-lingui-id: HijTmf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "A skill with this name already exists"
+msgstr ""
+
+#. js-lingui-id: jX0IPx
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "A skill with this name already exists."
+msgstr ""
 
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -167,7 +182,6 @@ msgstr "Um Alvo de Tarefa"
 
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
 msgstr "Ocorreu um erro temporário. Tente novamente."
 
@@ -392,6 +406,7 @@ msgstr "Ocorreu um erro com os dados da autenticação em duas etapas."
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
 msgid "An error occurred."
 msgstr "Ocorreu um erro."
 
@@ -433,41 +448,23 @@ msgstr "Ocorreu um erro inesperado de configuração."
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
 #: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
-#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/file/file.exception.ts
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Ocorreu um erro inesperado."
-
-#. js-lingui-id: ljwHbt
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
-msgid "An unexpected workflow error occurred."
-msgstr "Ocorreu um erro inesperado no fluxo de trabalho."
 
 #. js-lingui-id: q8ZbjA
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "Ocorreu um erro desconhecido no calendário."
-
-#. js-lingui-id: EV/5J1
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
-msgid "An unknown email error occurred."
-msgstr "Ocorreu um erro desconhecido de e-mail."
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -496,6 +493,7 @@ msgstr "Função da chave de API não encontrada."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
 msgstr "Aplicação não encontrada."
@@ -741,11 +739,6 @@ msgstr "Avatar"
 msgid "Avatar Url"
 msgstr "URL do Avatar"
 
-#. js-lingui-id: GVurVk
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Bad request."
-msgstr "Solicitação inválida."
-
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing customer not found."
@@ -943,6 +936,12 @@ msgstr "Não é possível excluir a conta: você é o único administrador. Atri
 msgid "Cannot delete standard agent"
 msgstr "Não é possível excluir o agente padrão"
 
+#. js-lingui-id: EN2+6i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot delete standard skill"
+msgstr ""
+
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
@@ -1009,6 +1008,12 @@ msgstr "Não é possível atualizar o canal de mensagens enquanto a sincronizaç
 msgid "Cannot update standard agent"
 msgstr "Não é possível atualizar o agente padrão"
 
+#. js-lingui-id: I2EmgT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
+msgstr ""
+
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -1025,15 +1030,16 @@ msgstr "ID do Canal"
 msgid "Channel Type"
 msgstr "Tipo de Canal"
 
+#. js-lingui-id: 9uirl8
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "Circular dependency detected in view filter group hierarchy"
+msgstr ""
+
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "Cidade"
-
-#. js-lingui-id: unYzAT
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Client not found."
-msgstr "Cliente não encontrado."
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1092,12 +1098,6 @@ msgstr "Falha na validação da configuração."
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
 msgstr "Variável de configuração não encontrada."
-
-#. js-lingui-id: xr7rlK
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Conflicting arguments provided."
-msgstr "Argumentos conflitantes fornecidos."
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -1199,6 +1199,12 @@ msgstr "Números de Telefone do Contato"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "Conta X/Twitter do Contato"
+
+#. js-lingui-id: rx63gq
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+msgid "Content cannot be empty"
+msgstr ""
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -1342,16 +1348,6 @@ msgstr "Título do Painel"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
 msgstr "Painéis"
-
-#. js-lingui-id: Gb2JdW
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Data not found."
-msgstr "Dados não encontrados."
-
-#. js-lingui-id: Bg/wIf
-#: src/engine/metadata-modules/data-source/data-source.exception.ts
-msgid "Data source not found."
-msgstr "Fonte de dados não encontrada."
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -1550,6 +1546,7 @@ msgstr "E-mail é obrigatório"
 #. js-lingui-id: Qof3ks
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Email is required."
 msgstr "E-mail é obrigatório."
 
@@ -1594,19 +1591,8 @@ msgstr "Permissões de campo vazias não são permitidas."
 msgid "End Date"
 msgstr "Data Final"
 
-#. js-lingui-id: z1wQ2q
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity already exists."
-msgstr "A entidade já existe."
-
-#. js-lingui-id: DAX1pY
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
-msgid "Entity data is malformed."
-msgstr "Os dados da entidade estão malformados."
-
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
-#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
 msgstr "Entidade não encontrada."
@@ -1617,7 +1603,6 @@ msgid "Enum operation failed."
 msgstr "Falha na operação de enum."
 
 #. js-lingui-id: AOk97Y
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
 msgstr "Tipo enum não encontrado."
@@ -1642,11 +1627,6 @@ msgstr "Empresa do Evento"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
 msgstr "Painel de eventos"
-
-#. js-lingui-id: NuQxIH
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Event data is corrupted."
-msgstr "Os dados do evento estão corrompidos."
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2039,11 +2019,16 @@ msgstr "O identificador do rótulo do campo é necessário"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Metadados do campo não encontrados"
 
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
@@ -2072,7 +2057,6 @@ msgstr "O nome do campo não está sincronizado com o rótulo."
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Field not found."
 msgstr "Campo não encontrado."
 
@@ -2396,18 +2380,6 @@ msgstr "Permissões insuficientes para acessar o calendário."
 msgid "Insufficient permissions."
 msgstr "Permissões insuficientes."
 
-#. js-lingui-id: mYSErp
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'first' argument."
-msgstr "Argumento 'first' inválido."
-
-#. js-lingui-id: k0JXYM
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid 'last' argument."
-msgstr "Argumento 'last' inválido."
-
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -2438,16 +2410,6 @@ msgstr "Entrada de auditoria inválida."
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
 msgstr "Tipo de auditoria inválido."
-
-#. js-lingui-id: kYec1W
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid authentication context."
-msgstr "Contexto de autenticação inválido."
-
-#. js-lingui-id: gxIicn
-#: src/engine/core-modules/auth/auth.exception.ts
-msgid "Invalid authentication token."
-msgstr "Token de autenticação inválido."
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2484,22 +2446,10 @@ msgstr "ID de conta conectada inválido."
 msgid "Invalid country code {countryCode}"
 msgstr "Código do país inválido {countryCode}"
 
-#. js-lingui-id: 0RwhuX
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid cursor provided."
-msgstr "Cursor inválido fornecido."
-
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Formato de dados inválido."
-
-#. js-lingui-id: 3o5vtu
-#: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid data provided."
-msgstr "Dados inválidos fornecidos."
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
@@ -2515,11 +2465,6 @@ msgstr "Valor do dia inválido. Deve ser um número inteiro maior que 1"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
 msgstr "Parâmetro de profundidade inválido."
-
-#. js-lingui-id: 4JreOU
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid direction provided."
-msgstr "Direção inválida fornecida."
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -2549,8 +2494,16 @@ msgstr "ID de arquivo inválido."
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
+#: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
 msgid "Invalid filter parameter."
 msgstr "Parâmetro de filtro inválido."
+
+#. js-lingui-id: /GCbsS
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter value: \"{value}\""
+msgstr ""
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
@@ -2583,11 +2536,6 @@ msgstr "Tipo de provedor de identidade inválido."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
 msgstr "Entrada inválida fornecida."
-
-#. js-lingui-id: vw9FMn
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invalid invitation."
-msgstr "Convite inválido."
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2681,11 +2629,6 @@ msgstr "Código de país do telefone inválido."
 msgid "Invalid phone number."
 msgstr "Número de telefone inválido."
 
-#. js-lingui-id: Hvv6QE
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Invalid post-hook payload."
-msgstr "Payload de pós-hook inválido."
-
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
@@ -2695,13 +2638,6 @@ msgstr "Preço inválido."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid pricing tiers."
 msgstr "Faixas de preço inválidas."
-
-#. js-lingui-id: 0Dexu8
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Invalid query input."
-msgstr "Entrada de consulta inválida."
 
 #. js-lingui-id: XBYAgs
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -2744,10 +2680,25 @@ msgstr "Tipo de formato de resposta inválido"
 msgid "Invalid role target data."
 msgstr "Dados de alvo de função inválidos."
 
+#. js-lingui-id: ppA1Aq
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Invalid row level permission predicate data."
+msgstr ""
+
+#. js-lingui-id: nwC2sc
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Invalid row level permission predicate group data."
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
 msgstr "Tipo de configuração inválido fornecido no disparo Cron"
+
+#. js-lingui-id: TulNnA
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Invalid skill input."
+msgstr ""
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -2779,12 +2730,6 @@ msgstr "Assinatura inválida."
 msgid "Invalid target URL."
 msgstr "URL de destino inválida."
 
-#. js-lingui-id: w58bhw
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid token type."
-msgstr "Tipo de token inválido."
-
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -2805,10 +2750,102 @@ msgstr "Formato de URL inválido."
 msgid "Invalid uuid {id}"
 msgstr "UUID inválido {id}"
 
+#. js-lingui-id: Z3Su9z
+#: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+msgid "Invalid UUID format."
+msgstr ""
+
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Invalid validation token."
 msgstr "Token de validação inválido."
+
+#. js-lingui-id: 56bPee
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
+msgid "Invalid value for actor."
+msgstr ""
+
+#. js-lingui-id: Y2KtrW
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
+msgid "Invalid value for address."
+msgstr ""
+
+#. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
+msgid "Invalid value for currency."
+msgstr ""
+
+#. js-lingui-id: AUbno1
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: mANTdg
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
+msgid "Invalid value for emails."
+msgstr ""
+
+#. js-lingui-id: SF3Mp4
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
+msgid "Invalid value for full name."
+msgstr ""
+
+#. js-lingui-id: UiMJoF
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: BgSFod
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
+msgid "Invalid value for JSON."
+msgstr ""
+
+#. js-lingui-id: GFYy9y
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
+msgid "Invalid value for links."
+msgstr ""
+
+#. js-lingui-id: Q6jO3x
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
+msgid "Invalid value for multi-select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
+msgid "Invalid value for number: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: oLqCzh
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
+msgid "Invalid value for phones."
+msgstr ""
+
+#. js-lingui-id: GLmyCK
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
+msgid "Invalid value for position: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+msgid "Invalid value for rich text."
+msgstr ""
+
+#. js-lingui-id: 9lVA5C
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for select: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
+msgid "Invalid value for UUID: \"{inspectedValue}\""
+msgstr ""
+
+#. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
+msgid "Invalid value: \"{inspectedValue}\""
+msgstr ""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -2819,11 +2856,6 @@ msgstr "Código de verificação inválido."
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Código de verificação inválido. Por favor, tente novamente."
-
-#. js-lingui-id: Ku4J80
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Invalid verification token."
-msgstr "Token de verificação inválido."
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -2874,11 +2906,6 @@ msgstr "Entrada de gatilho do fluxo de trabalho inválida."
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "Versão do fluxo de trabalho inválida."
-
-#. js-lingui-id: +WZMeN
-#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
-msgid "Invitation is corrupted."
-msgstr "O convite está corrompido."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3014,6 +3041,8 @@ msgid "Kanban view must have a main group by field"
 msgstr "A visualização Kanban deve ter um campo principal de agrupamento"
 
 #. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
@@ -3026,7 +3055,6 @@ msgstr "Campo identificador de rótulo não pode ser desativado"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
-#: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "Label identifier field not found."
 msgstr "Campo identificador de rótulo não encontrado."
 
@@ -3156,16 +3184,6 @@ msgstr "Março"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "O número máximo de registros para upsert é {QUERY_MAX_RECORDS}."
-
-#. js-lingui-id: p0qTse
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum query depth reached."
-msgstr "Profundidade máxima da consulta atingida."
-
-#. js-lingui-id: vLHXAB
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Maximum records exceeded for upsert."
-msgstr "Número máximo de registros excedido para upsert."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3336,6 +3354,11 @@ msgstr "Token de Acesso do Provedor de Mensagens"
 msgid "Messaging provider refresh token"
 msgstr "Token de Atualização do Provedor de Mensagens"
 
+#. js-lingui-id: PslTPV
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Metadata validation failed"
+msgstr ""
+
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
@@ -3366,11 +3389,6 @@ msgstr "Falta configuração do decorador."
 msgid "Missing main alias target."
 msgstr "Falta o alvo do alias principal."
 
-#. js-lingui-id: khQZlp
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Missing relation join column."
-msgstr "Falta a coluna de junção da relação."
-
 #. js-lingui-id: W5hpOP
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Missing request body."
@@ -3380,17 +3398,6 @@ msgstr "Falta o corpo da solicitação."
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Campos obrigatórios ausentes: pelo menos uma restrição única deve estar totalmente preenchida para '{connectFieldName}'."
-
-#. js-lingui-id: PIWoHs
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing required system field."
-msgstr "Falta o campo de sistema obrigatório."
-
-#. js-lingui-id: eM40XC
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Missing time zone for date group by."
-msgstr "Falta o fuso horário para o agrupamento por data."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3427,17 +3434,6 @@ msgstr "O campo de relação morph deve ter um ID de morph"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "Valor padrão do campo de seleção múltipla deve ser um array"
-
-#. js-lingui-id: /81w6M
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Multiple join columns found."
-msgstr "Múltiplas colunas de junção encontradas."
-
-#. js-lingui-id: ZEzn4X
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Multiple matching records found during upsert."
-msgstr "Vários registros correspondentes encontrados durante o upsert."
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
@@ -3553,6 +3549,11 @@ msgstr "Nenhum nome de evento fornecido no disparador de evento do banco de dado
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "No foreign tables found."
 msgstr "Nenhuma tabela externa encontrada."
+
+#. js-lingui-id: 6GG2MJ
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "No identifier to search by was found."
+msgstr ""
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3740,12 +3741,17 @@ msgstr "Rótulo do objeto é muito curto"
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Metadados do objeto não encontrados"
 
 #. js-lingui-id: rHce90
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
@@ -3757,7 +3763,6 @@ msgstr "Metadados do objeto não encontrados."
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Object not found."
 msgstr "Objeto não encontrado."
 
@@ -3818,6 +3823,11 @@ msgstr "Outubro"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Um ou mais objetos para os quais você está tentando definir permissões não puderam ser encontrados. Eles podem ter sido deletados."
+
+#. js-lingui-id: JZB2eY
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "One or more records were not found."
+msgstr ""
 
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4090,6 +4100,27 @@ msgstr "O widget de layout de página com id {flatPageLayoutWidgetId} já existe
 msgid "Parent Folder ID"
 msgstr "ID da Pasta Pai"
 
+#. js-lingui-id: Xsgh7b
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Parent row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: 6OzP7Y
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "Parent view filter group not found"
+msgstr ""
+
+#. js-lingui-id: /GJDxy
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Password is too weak."
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
@@ -4186,10 +4217,21 @@ msgstr "Por favor, forneça os detalhes da conexão para configurar sua conta de
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "Por favor, selecione um tipo de conexão válido (IMAP, SMTP ou CalDAV) e tente novamente."
 
+#. js-lingui-id: sa9Q+R
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Please select at least 2 records to merge."
+msgstr ""
+
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Please use a company email domain."
 msgstr "Por favor, use um domínio de e-mail corporativo."
+
+#. js-lingui-id: Sguqn/
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
+#: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
+msgid "Please use Settings to remove a workspace member."
+msgstr ""
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4285,30 +4327,10 @@ msgstr "Domínio público não encontrado."
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "URL de domínio público não está definida. Por favor, defina a variável de ambiente PUBLIC_DOMAIN_URL"
 
-#. js-lingui-id: uzWClp
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr "A complexidade da consulta é muito alta. Uma relação um-para-muitos não pode ser aninhada em outra relação um-para-muitos."
-
-#. js-lingui-id: XkHjXW
-#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
-msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr "A complexidade da consulta é muito alta. Reduza a quantidade de campos de relacionamento solicitados. Complexidade da consulta: {queryComplexity}. Complexidade máxima: {maximumComplexity}."
-
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Query failed."
 msgstr "Falha na consulta."
-
-#. js-lingui-id: 0bX5JL
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
-msgid "Query is too complex."
-msgstr "A consulta é muito complexa."
-
-#. js-lingui-id: mn/6A3
-#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
-msgid "Query timed out."
-msgstr "A consulta expirou."
 
 #. js-lingui-id: 6H9kMC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4332,8 +4354,6 @@ msgstr "Recebido em"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Record not found."
 msgstr "Registro não encontrado."
 
@@ -4379,35 +4399,10 @@ msgstr "Payload de criação de relação é necessário"
 msgid "Relation field target metadata not found"
 msgstr "Metadados de alvo de campo de relação não encontrados"
 
-#. js-lingui-id: MvWdPg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation has join column on both sides."
-msgstr "A relação possui coluna de junção em ambos os lados."
-
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "A relação não está habilitada para este campo."
-
-#. js-lingui-id: oThEh8
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation object not found."
-msgstr "Objeto de relação não encontrado."
-
-#. js-lingui-id: +v6IlP
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation settings not found."
-msgstr "Configurações da relação não encontradas."
-
-#. js-lingui-id: 8ZgNmg
-#: src/engine/twenty-orm/exceptions/relation.exception.ts
-msgid "Relation target field not found."
-msgstr "Campo de destino da relação não encontrado."
-
-#. js-lingui-id: I0e0Bm
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Relation target not found."
-msgstr "Alvo da relação não encontrado."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -4514,6 +4509,14 @@ msgid "Role must have at least one target."
 msgstr "A função deve ter pelo menos um alvo."
 
 #. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -4526,6 +4529,8 @@ msgid "Role not found"
 msgstr ""
 
 #. js-lingui-id: /BTyf+
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -4610,6 +4615,74 @@ msgstr "Rota com o mesmo id já existe"
 msgid "Route with same path already exists"
 msgstr "Rota com o mesmo caminho já existe"
 
+#. js-lingui-id: va8c5P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate group not found"
+msgstr ""
+
+#. js-lingui-id: HBfLro
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Row level permission predicate group not found."
+msgstr ""
+
+#. js-lingui-id: vMP7nZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-delete-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to delete not found"
+msgstr ""
+
+#. js-lingui-id: h/Rc4f
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-destroy-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
+msgid "Row level permission predicate group to destroy not found"
+msgstr ""
+
+#. js-lingui-id: NhW7fb
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-to-update-or-throw.util.ts
+msgid "Row level permission predicate group to update not found"
+msgstr ""
+
+#. js-lingui-id: LrJvM0
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Row level permission predicate group with this id already exists"
+msgstr ""
+
+#. js-lingui-id: fEazMl
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Row level permission predicate not found."
+msgstr ""
+
+#. js-lingui-id: zdTUvE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to delete not found"
+msgstr ""
+
+#. js-lingui-id: WzQYVM
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
+msgid "Row level permission predicate to destroy not found"
+msgstr ""
+
+#. js-lingui-id: aeNy7i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util.ts
+msgid "Row level permission predicate to update not found"
+msgstr ""
+
+#. js-lingui-id: CUT3wK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate with this id already exists"
+msgstr ""
+
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -4620,11 +4693,6 @@ msgstr "Execuções"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Sábado"
-
-#. js-lingui-id: r20Bqy
-#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
-msgid "Schema enum operation failed."
-msgstr "Falha na operação de enum do esquema."
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -4705,6 +4773,24 @@ msgstr "O cadastro está desativado."
 msgid "Single sign-on authentication failed."
 msgstr "Falha na autenticação por SSO."
 
+#. js-lingui-id: OhD7+a
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
+msgid "Skill not found"
+msgstr ""
+
+#. js-lingui-id: 68ze54
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Skill not found."
+msgstr ""
+
+#. js-lingui-id: e6udqn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
+msgid "Skill with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -4755,6 +4841,11 @@ msgstr "Campos padrão não podem ser excluídos"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Objetos padrão não podem ser excluídos"
+
+#. js-lingui-id: H8j7uw
+#: src/engine/metadata-modules/skill/skill.exception.ts
+msgid "Standard skills cannot be modified."
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -4878,6 +4969,21 @@ msgstr "Aba não encontrada para duplicação de widget."
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Metadados do objeto de destino não encontrados para {connectFieldName}"
+
+#. js-lingui-id: 1ssKrE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not belong to the expected object"
+msgstr ""
+
+#. js-lingui-id: wG8PVB
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not reference the source object"
+msgstr ""
+
+#. js-lingui-id: xLsFda
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Target relation field does not reference this field"
+msgstr ""
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -5212,6 +5318,16 @@ msgstr "O status da versão do fluxo de trabalho"
 msgid "The workspace member who last updated the record"
 msgstr ""
 
+#. js-lingui-id: mTxjri
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "There is an issue with your invitation. Please try again."
+msgstr ""
+
+#. js-lingui-id: gH+wBS
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "There is an issue with your token. Please try again."
+msgstr ""
+
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "There was an issue with your connection settings. Please try again."
@@ -5287,11 +5403,6 @@ msgstr "Este e-mail já está em uso."
 msgid "This feature is not enabled."
 msgstr "Este recurso não está habilitado."
 
-#. js-lingui-id: Io3Xii
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "This feature is not implemented."
-msgstr "Este recurso não foi implementado."
-
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -5366,6 +5477,16 @@ msgstr "Este domínio público já está registrado."
 msgid "This record already exists. Please check your data and try again."
 msgstr "Este registro já existe. Por favor, verifique seus dados e tente novamente."
 
+#. js-lingui-id: 0arbc4
+#: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
+msgid "This record does not exist or has been deleted."
+msgstr ""
+
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "This remote server cannot be modified."
@@ -5403,6 +5524,11 @@ msgstr "Este papel não pode ser modificado porque é um papel do sistema. Apena
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
 msgstr "Este subdomínio já está em uso."
+
+#. js-lingui-id: aXBMTb
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "This type of record cannot be merged."
+msgstr ""
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5532,7 +5658,6 @@ msgstr "Muitos registros afetados."
 
 #. js-lingui-id: ExheIC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Too many records to update at once."
 msgstr "Muitos registros para atualizar de uma só vez."
 
@@ -5622,11 +5747,6 @@ msgstr "Tipo de agendamento Cron não suportado"
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "Tipo de metadados de campo não suportado {fieldType}"
 
-#. js-lingui-id: 9BAEgY
-#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
-msgid "Unsupported operator."
-msgstr "Operador não suportado."
-
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5673,6 +5793,12 @@ msgstr "O usuário já tem uma função atribuída."
 msgid "User does not have access to this workspace"
 msgstr "O usuário não tem acesso a este espaço de trabalho"
 
+#. js-lingui-id: kZ0tmK
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+msgid "User does not have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
@@ -5696,6 +5822,7 @@ msgstr "ID do usuário"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User is not a member of the workspace."
 msgstr "Usuário não faz parte do espaço de trabalho."
@@ -5732,6 +5859,7 @@ msgstr "Usuário não foi criado com email/senha"
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 msgid "User workspace not found."
 msgstr "Espaço de trabalho do usuário não encontrado."
 
@@ -5760,21 +5888,11 @@ msgstr "Dia de início da semana preferido pelo usuário"
 msgid "User's preferred time format"
 msgstr "Formato de hora preferido do usuário"
 
-#. js-lingui-id: xInMK/
-#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr "A validação falhou para 0 objeto(s) e 0 campo(s)"
-
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "O valor deve estar em MAIÚSCULAS e seguir o formato snake_case \"{sanitizedValue}\""
-
-#. js-lingui-id: gj6Gxm
-#: src/engine/core-modules/email-verification/email-verification.exception.ts
-msgid "Verification token has expired."
-msgstr "O token de verificação expirou."
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -5874,6 +5992,36 @@ msgstr "Campo de visualização para atualizar objeto de visualização pai não
 msgid "View field with same fieldmetadataId and viewId already exists"
 msgstr "Campo de visualização com o mesmo fieldmetadataId e viewId já existe"
 
+#. js-lingui-id: ENVlLK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group cannot be its own parent"
+msgstr ""
+
+#. js-lingui-id: tir/7Q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
+msgstr ""
+
+#. js-lingui-id: eUPMYZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group not found"
+msgstr ""
+
+#. js-lingui-id: UfIsQu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group with this id already exists"
+msgstr ""
+
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -5955,6 +6103,8 @@ msgstr "Metadados do campo agregado do kanban não encontrados"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
@@ -6097,6 +6247,11 @@ msgstr "Aresta do fluxo de trabalho não encontrada."
 msgid "Workflow linked to the run."
 msgstr "Workflow vinculado à execução."
 
+#. js-lingui-id: R67jts
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow not found."
+msgstr ""
+
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
@@ -6177,11 +6332,6 @@ msgstr "Execuções do Workflow vinculadas ao Workflow."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Workflow step not found."
 msgstr "Etapa do fluxo de trabalho não encontrada."
-
-#. js-lingui-id: wvR5lY
-#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
-msgid "Workflow trigger not found."
-msgstr "Gatilho do fluxo de trabalho não encontrado."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6264,6 +6414,11 @@ msgstr "Workflow da Versão do Workflow"
 msgid "Workspace creation is restricted to admins"
 msgstr "A criação de espaço de trabalho está restrita a administradores"
 
+#. js-lingui-id: qSQPRS
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Workspace does not exist."
+msgstr ""
+
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
@@ -6313,6 +6468,11 @@ msgstr "Cargo do membro do Workspace"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Membros do Workspace"
+
+#. js-lingui-id: JYc1v3
+#: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
+msgid "Workspace not found"
+msgstr ""
 
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -6378,15 +6538,24 @@ msgstr "Membro do Workspace"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "Senha incorreta"
+
+#. js-lingui-id: RksBK0
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "Wrong password."
+msgstr ""
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 84/Dko
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts

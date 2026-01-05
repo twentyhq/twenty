@@ -1,20 +1,18 @@
 import { z } from 'zod';
 
-import { type Skill } from 'src/engine/core-modules/skills/skills.service';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
 export const LOAD_SKILL_TOOL_NAME = 'load_skill';
 
 export const loadSkillInputSchema = z.object({
-  input: z.object({
-    skillNames: z
-      .array(z.string())
-      .describe(
-        'Names of the skills to load (e.g., ["workflow-building", "data-manipulation"])',
-      ),
-  }),
+  skillNames: z
+    .array(z.string())
+    .describe(
+      'Names of the skills to load (e.g., ["workflow-building", "data-manipulation"])',
+    ),
 });
 
-export type LoadSkillInput = z.infer<typeof loadSkillInputSchema>['input'];
+export type LoadSkillInput = z.infer<typeof loadSkillInputSchema>;
 
 export type LoadSkillResult = {
   skills: Array<{
@@ -25,18 +23,16 @@ export type LoadSkillResult = {
   message: string;
 };
 
-export type LoadSkillFunction = (names: string[]) => Skill[];
+export type LoadSkillFunction = (names: string[]) => Promise<FlatSkill[]>;
 
 export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   description:
     'Load specialized skills/expertise by name. Returns detailed instructions for workflows, data manipulation, dashboards, metadata, or research.',
   inputSchema: loadSkillInputSchema,
-  execute: async (parameters: {
-    input: LoadSkillInput;
-  }): Promise<LoadSkillResult> => {
-    const { skillNames } = parameters.input;
+  execute: async (parameters: LoadSkillInput): Promise<LoadSkillResult> => {
+    const { skillNames } = parameters;
 
-    const skills = loadSkills(skillNames);
+    const skills = await loadSkills(skillNames);
 
     if (skills.length === 0) {
       return {
