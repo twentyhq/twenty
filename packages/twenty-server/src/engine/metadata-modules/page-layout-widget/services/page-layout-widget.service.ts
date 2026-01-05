@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { DashboardTimestampService } from 'src/engine/metadata-modules/dashboard/services/dashboard-timestamp.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
@@ -47,6 +48,7 @@ export class PageLayoutWidgetService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardTimestampService: DashboardTimestampService,
   ) {}
 
   private async getFlatPageLayoutWidgetMaps(
@@ -227,6 +229,13 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while creating page layout widget',
     });
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByWidgetId(
+      {
+        widgetId: flatPageLayoutWidgetToCreate.id,
+        workspaceId,
+      },
+    );
+
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
@@ -332,6 +341,13 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while updating page layout widget',
     });
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByWidgetId(
+      {
+        widgetId: id,
+        workspaceId,
+      },
+    );
+
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
@@ -402,6 +418,13 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while deleting page layout widget',
     });
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByWidgetId(
+      {
+        widgetId: id,
+        workspaceId,
+      },
+    );
+
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
@@ -456,6 +479,13 @@ export class PageLayoutWidgetService {
       errorMessage:
         'Multiple validation errors occurred while restoring page layout widget',
     });
+
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByWidgetId(
+      {
+        widgetId: id,
+        workspaceId,
+      },
+    );
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 

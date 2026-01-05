@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DashboardTimestampService } from 'src/engine/metadata-modules/dashboard/services/dashboard-timestamp.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -44,6 +45,7 @@ export class PageLayoutService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardTimestampService: DashboardTimestampService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<PageLayoutDTO[]> {
@@ -254,6 +256,13 @@ export class PageLayoutService {
       );
     }
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+      },
+    );
+
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -309,6 +318,13 @@ export class PageLayoutService {
         'Multiple validation errors occurred while deleting page layout',
       );
     }
+
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+      },
+    );
 
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

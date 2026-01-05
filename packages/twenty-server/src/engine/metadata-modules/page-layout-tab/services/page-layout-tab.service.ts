@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DashboardTimestampService } from 'src/engine/metadata-modules/dashboard/services/dashboard-timestamp.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -36,6 +37,7 @@ export class PageLayoutTabService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardTimestampService: DashboardTimestampService,
   ) {}
 
   async findByPageLayoutId(
@@ -156,6 +158,13 @@ export class PageLayoutTabService {
       );
     }
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
+      {
+        tabId: flatPageLayoutTabToCreate.id,
+        workspaceId,
+      },
+    );
+
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -218,6 +227,13 @@ export class PageLayoutTabService {
       );
     }
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
+      {
+        tabId: id,
+        workspaceId,
+      },
+    );
+
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -273,6 +289,13 @@ export class PageLayoutTabService {
         'Multiple validation errors occurred while deleting page layout tab',
       );
     }
+
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
+      {
+        tabId: id,
+        workspaceId,
+      },
+    );
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -369,6 +392,13 @@ export class PageLayoutTabService {
         'Multiple validation errors occurred while restoring page layout tab',
       );
     }
+
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
+      {
+        tabId: id,
+        workspaceId,
+      },
+    );
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
