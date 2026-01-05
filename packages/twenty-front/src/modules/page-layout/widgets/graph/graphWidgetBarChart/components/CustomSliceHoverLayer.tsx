@@ -1,9 +1,8 @@
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
-import {
-  computeBarChartSlices,
-  findSliceAtPosition,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
+import { computeBarChartSlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
+import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
 import { createSliceVirtualElement } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createSliceVirtualElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -162,15 +161,20 @@ export const CustomSliceHoverLayer = ({
     return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
   }, [slices, hoveredSliceIndex]);
 
-  const HIGHLIGHT_THICKNESS = 1;
   const highlightX = isVertical
-    ? (hoveredSlice?.sliceCenter ?? 0) - HIGHLIGHT_THICKNESS / 2
+    ? (hoveredSlice?.sliceCenter ?? 0) -
+      BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS / 2
     : 0;
   const highlightY = isVertical
     ? 0
-    : (hoveredSlice?.sliceCenter ?? 0) - HIGHLIGHT_THICKNESS / 2;
-  const highlightWidth = isVertical ? HIGHLIGHT_THICKNESS : innerWidth;
-  const highlightHeight = isVertical ? innerHeight : HIGHLIGHT_THICKNESS;
+    : (hoveredSlice?.sliceCenter ?? 0) -
+      BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS / 2;
+  const highlightWidth = isVertical
+    ? BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS
+    : innerWidth;
+  const highlightHeight = isVertical
+    ? innerHeight
+    : BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS;
 
   const { opacity } = useSpring({
     opacity: isDefined(hoveredSlice) ? 1 : 0,

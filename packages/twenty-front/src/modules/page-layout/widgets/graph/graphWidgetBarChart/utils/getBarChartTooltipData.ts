@@ -5,7 +5,6 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { isDefined } from 'twenty-shared/utils';
 
 type GetBarChartTooltipDataParameters = {
   slice: BarChartSlice;
@@ -30,9 +29,6 @@ export const getBarChartTooltipData = ({
   }
 
   const firstBar = slice.bars[0];
-  if (!isDefined(firstBar)) {
-    return null;
-  }
 
   const keysToProcess =
     layout === 'vertical' ? [...enrichedKeys].reverse() : enrichedKeys;
