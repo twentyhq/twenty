@@ -7,6 +7,7 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
+import { type CrudOperationType } from 'twenty-shared/types';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -38,6 +39,7 @@ export const useMetadataErrorHandler = () => {
     error: ApolloError,
     options: {
       primaryMetadataName: AllMetadataName;
+      operationType: CrudOperationType;
     },
   ) => {
     const classification = classifyMetadataError({
@@ -70,6 +72,8 @@ export const useMetadataErrorHandler = () => {
           });
         }
 
+        const operationType = options.operationType.toLowerCase();
+
         if (
           targetErrors.length === 0 &&
           relatedFailingMetadataNames.length > 0
@@ -79,7 +83,7 @@ export const useMetadataErrorHandler = () => {
             .join(', ');
 
           enqueueErrorSnackBar({
-            message: t`Failed to create ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
+            message: t`Failed to ${operationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
           });
         }
 
@@ -88,7 +92,7 @@ export const useMetadataErrorHandler = () => {
           relatedFailingMetadataNames.length === 0
         ) {
           enqueueErrorSnackBar({
-            message: t`Failed to create ${translatedMetadataName}. Please try again.`,
+            message: t`Failed to ${operationType} ${translatedMetadataName}. Please try again.`,
           });
         }
         break;
