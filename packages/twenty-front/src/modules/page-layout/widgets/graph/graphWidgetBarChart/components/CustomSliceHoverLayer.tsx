@@ -6,13 +6,25 @@ import {
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
 import { createSliceVirtualElement } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createSliceVirtualElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { type VirtualElement } from '@floating-ui/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
+
+const StyledHighlightRect = styled.rect`
+  pointer-events: none;
+  transition:
+    x 0.15s ease-out,
+    y 0.15s ease-out,
+    width 0.15s ease-out,
+    height 0.15s ease-out;
+`;
 
 export type SliceHoverData = {
   slice: BarChartSlice;
@@ -42,6 +54,10 @@ export const CustomSliceHoverLayer = ({
   onSliceClick,
   onSliceLeave,
 }: CustomSliceHoverLayerProps) => {
+  const theme = useTheme();
+  const hoveredSliceIndex = useRecoilComponentValue(
+    graphWidgetHoveredSliceIndexComponentState,
+  );
   const hoveredSliceIndexState = useRecoilComponentCallbackState(
     graphWidgetHoveredSliceIndexComponentState,
   );
@@ -150,22 +166,49 @@ export const CustomSliceHoverLayer = ({
     [buildSliceData, onSliceClick],
   );
 
+  const hoveredSlice = useMemo(() => {
+    if (!isDefined(hoveredSliceIndex)) {
+      return null;
+    }
+    return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
+  }, [slices, hoveredSliceIndex]);
+
   if (bars.length === 0) {
     return null;
   }
 
   return (
-    <rect
-      x={0}
-      y={0}
-      width={innerWidth}
-      height={innerHeight}
-      fill="transparent"
-      style={{ cursor: 'pointer' }}
-      onMouseEnter={handleMouseMove}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-    />
+    <g>
+      {isDefined(hoveredSlice) && (
+        <StyledHighlightRect
+          x={isVertical ? hoveredSlice.sliceLeft : 0}
+          y={isVertical ? 0 : hoveredSlice.sliceLeft}
+          width={
+            isVertical
+              ? hoveredSlice.sliceRight - hoveredSlice.sliceLeft
+              : innerWidth
+          }
+          height={
+            isVertical
+              ? innerHeight
+              : hoveredSlice.sliceRight - hoveredSlice.sliceLeft
+          }
+          fill={theme.background.transparent.lighter}
+        />
+      )}
+
+      <rect
+        x={0}
+        y={0}
+        width={innerWidth}
+        height={innerHeight}
+        fill="transparent"
+        style={{ cursor: 'pointer' }}
+        onMouseEnter={handleMouseMove}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+      />
+    </g>
   );
 };
