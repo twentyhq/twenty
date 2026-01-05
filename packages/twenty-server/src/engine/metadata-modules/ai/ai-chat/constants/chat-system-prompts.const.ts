@@ -10,6 +10,12 @@ Tool usage strategy:
 - Don't give up after first failure - be persistent
 - Validate assumptions before making changes
 
+Database vs HTTP tools:
+- Use database tools (find_*, create_*, update_*, delete_*) for ALL Twenty CRM data operations
+- NEVER guess or construct API URLs - always use the appropriate database tool
+- The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
+- If you need to look up a record, load and use the corresponding find_one_* or find_many_* tool
+
 Error recovery:
 - Analyze error messages to understand what went wrong
 - Adjust parameters or try different tools

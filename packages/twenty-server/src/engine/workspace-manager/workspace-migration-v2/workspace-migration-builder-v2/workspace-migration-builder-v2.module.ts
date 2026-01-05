@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
+import { WorkspaceMigrationV2SkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/skill/workspace-migration-v2-skill-actions-builder.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService } 
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/workspace-migration-v2-view-filter-actions-builder.service';
+import { WorkspaceMigrationV2ViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter-group/workspace-migration-v2-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationV2ViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-group/workspace-migration-v2-view-group-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/workspace-migration-builder-validators.module';
@@ -31,6 +33,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2ViewActionsBuilderService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
     WorkspaceMigrationV2ViewFilterActionsBuilderService,
+    WorkspaceMigrationV2ViewFilterGroupActionsBuilderService,
     WorkspaceMigrationV2ViewGroupActionsBuilderService,
     WorkspaceMigrationV2IndexActionsBuilderService,
     WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
@@ -41,6 +44,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2SkillActionsBuilderService,
     WorkspaceMigrationV2PageLayoutActionsBuilderService,
     WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
@@ -53,6 +57,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2ObjectActionsBuilderService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
     WorkspaceMigrationV2ViewFilterActionsBuilderService,
+    WorkspaceMigrationV2ViewFilterGroupActionsBuilderService,
     WorkspaceMigrationV2ViewGroupActionsBuilderService,
     WorkspaceMigrationV2FieldActionsBuilderService,
     WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
@@ -62,6 +67,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2SkillActionsBuilderService,
     WorkspaceMigrationV2PageLayoutActionsBuilderService,
     WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
     WorkspaceMigrationV2PageLayoutTabActionsBuilderService,

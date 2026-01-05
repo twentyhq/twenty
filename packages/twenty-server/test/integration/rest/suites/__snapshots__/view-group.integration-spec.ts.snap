@@ -19,9 +19,11 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
     "rowLevelPermissionPredicate": [],
     "rowLevelPermissionPredicateGroup": [],
     "serverlessFunction": [],
+    "skill": [],
     "view": [],
     "viewField": [],
     "viewFilter": [],
+    "viewFilterGroup": [],
     "viewGroup": [
       {
         "errors": [
@@ -58,9 +60,11 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
     "invalidRowLevelPermissionPredicate": 0,
     "invalidRowLevelPermissionPredicateGroup": 0,
     "invalidServerlessFunction": 0,
+    "invalidSkill": 0,
     "invalidView": 0,
     "invalidViewField": 0,
     "invalidViewFilter": 0,
+    "invalidViewFilterGroup": 0,
     "invalidViewGroup": 0,
     "totalErrors": 0,
   },

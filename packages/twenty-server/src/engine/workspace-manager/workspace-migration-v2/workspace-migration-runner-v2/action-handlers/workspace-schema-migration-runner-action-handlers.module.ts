@@ -4,6 +4,9 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/delete-agent-action-handler.service';
 import { UpdateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/update-agent-action-handler.service';
+import { CreateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/create-skill-action-handler.service';
+import { DeleteSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/delete-skill-action-handler.service';
+import { UpdateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/skill/services/update-skill-action-handler.service';
 import { CreateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/create-cron-trigger-action-handler.service';
 import { DeleteCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/delete-cron-trigger-action-handler.service';
 import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/update-cron-trigger-action-handler.service';
@@ -51,6 +54,9 @@ import { UpdateViewFieldActionHandlerService } from 'src/engine/workspace-manage
 import { CreateViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/create-view-filter-action-handler.service';
 import { DeleteViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/delete-view-filter-action-handler.service';
 import { UpdateViewFilterActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter/services/update-view-filter-action-handler.service';
+import { CreateViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/create-view-filter-group-action-handler.service';
+import { DeleteViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/delete-view-filter-group-action-handler.service';
+import { UpdateViewFilterGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-filter-group/services/update-view-filter-group-action-handler.service';
 import { CreateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/create-view-group-action-handler.service';
 import { DeleteViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/delete-view-group-action-handler.service';
 import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/view-group/services/update-view-group-action-handler.service';
@@ -84,6 +90,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     UpdateViewFilterActionHandlerService,
     DeleteViewFilterActionHandlerService,
 
+    CreateViewFilterGroupActionHandlerService,
+    UpdateViewFilterGroupActionHandlerService,
+    DeleteViewFilterGroupActionHandlerService,
+
     CreateViewGroupActionHandlerService,
     UpdateViewGroupActionHandlerService,
     DeleteViewGroupActionHandlerService,
@@ -115,6 +125,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateAgentActionHandlerService,
     UpdateAgentActionHandlerService,
     DeleteAgentActionHandlerService,
+
+    CreateSkillActionHandlerService,
+    UpdateSkillActionHandlerService,
+    DeleteSkillActionHandlerService,
 
     CreatePageLayoutActionHandlerService,
     UpdatePageLayoutActionHandlerService,

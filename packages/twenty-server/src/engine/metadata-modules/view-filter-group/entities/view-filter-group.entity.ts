@@ -59,7 +59,7 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   view: Relation<ViewEntity>;
 
   @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.viewFilterGroup)
-  viewFilters: Relation<ViewFilterEntity>[];
+  viewFilters: Relation<ViewFilterEntity[]>;
 
   @ManyToOne(
     () => ViewFilterGroupEntity,
@@ -75,5 +75,5 @@ export class ViewFilterGroupEntity extends SyncableEntity {
     () => ViewFilterGroupEntity,
     (viewFilterGroup) => viewFilterGroup.parentViewFilterGroup,
   )
-  childViewFilterGroups: Relation<ViewFilterGroupEntity>[];
+  childViewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 }
