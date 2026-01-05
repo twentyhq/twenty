@@ -63,49 +63,59 @@ type DeletionResult = {
 };
 
 // All entities that extend WorkspaceRelatedEntity or SyncableEntity
+// Ordered by dependency: CHILDREN FIRST to minimize CASCADE overhead
 const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
-  AgentEntity,
-  ApiKeyEntity,
+  // Level 4: Deepest children - delete these first to avoid CASCADE overhead
+  ViewFieldEntity, // depends on ViewEntity + FieldMetadataEntity
+  ViewFilterEntity, // depends on ViewEntity + FieldMetadataEntity
+  ViewGroupEntity, // depends on ViewEntity + FieldMetadataEntity
+  ViewSortEntity, // depends on ViewEntity + FieldMetadataEntity
+  ViewFilterGroupEntity, // depends on ViewEntity
+  FieldPermissionEntity, // depends on FieldMetadataEntity + RoleEntity
+  ObjectPermissionEntity, // depends on ObjectMetadataEntity + RoleEntity
+  PermissionFlagEntity, // depends on RoleEntity
+  RoleTargetEntity, // depends on RoleEntity + UserWorkspaceEntity/ApiKeyEntity/AgentEntity
+  SearchFieldMetadataEntity, // depends on FieldMetadataEntity
+  RowLevelPermissionPredicateEntity, // depends on RowLevelPermissionPredicateGroupEntity
+  PageLayoutWidgetEntity, // depends on PageLayoutTabEntity
+  
+  // Level 3: Mid-level children
+  RowLevelPermissionPredicateGroupEntity, // depends on ObjectMetadataEntity
+  ViewEntity, // depends on ObjectMetadataEntity
+  IndexMetadataEntity, // depends on ObjectMetadataEntity
+  PageLayoutTabEntity, // depends on PageLayoutEntity
+  RemoteTableEntity, // depends on RemoteServerEntity
+  RouteTriggerEntity, // depends on ServerlessFunctionEntity
+  CronTriggerEntity, // depends on ServerlessFunctionEntity
+  DatabaseEventTriggerEntity, // depends on ServerlessFunctionEntity
+  
+  // Level 2: Children that depend on core entities
+  FieldMetadataEntity, // depends on ObjectMetadataEntity (has CASCADE)
+  PageLayoutEntity, // depends on ObjectMetadataEntity
+  SkillEntity, // depends on AgentEntity
+  ServerlessFunctionEntity, // depends on ServerlessFunctionLayerEntity
+  
+  // Level 1: Core entities with CASCADE deletes - delete after their children
+  ObjectMetadataEntity, // depends on DataSourceEntity (CASCADE is minimal now)
+  RoleEntity, // has CASCADE for permissions (already deleted)
+  AgentEntity, // has CASCADE for skills (already deleted)
+  RemoteServerEntity, // has CASCADE for remote tables (already deleted)
+  UserWorkspaceEntity, // has CASCADE for role targets (already deleted)
+  ApiKeyEntity, // has CASCADE for role targets (already deleted)
+  ServerlessFunctionLayerEntity, // referenced by ServerlessFunctionEntity (delete after)
+  
+  // Level 0: Independent entities (no foreign keys to other workspace entities)
   ApplicationEntity,
   ApprovedAccessDomainEntity,
   BillingCustomerEntity,
   BillingEntitlementEntity,
   BillingSubscriptionEntity,
-  CronTriggerEntity,
-  DatabaseEventTriggerEntity,
   DataSourceEntity,
   EmailingDomainEntity,
   FeatureFlagEntity,
-  FieldMetadataEntity,
-  FieldPermissionEntity,
   FileEntity,
-  IndexMetadataEntity,
-  ObjectMetadataEntity,
-  ObjectPermissionEntity,
-  PageLayoutEntity,
-  PageLayoutTabEntity,
-  PageLayoutWidgetEntity,
-  PermissionFlagEntity,
   PostgresCredentialsEntity,
   PublicDomainEntity,
-  RemoteServerEntity,
-  RemoteTableEntity,
-  RoleEntity,
-  RoleTargetEntity,
-  RouteTriggerEntity,
-  RowLevelPermissionPredicateEntity,
-  RowLevelPermissionPredicateGroupEntity,
-  SearchFieldMetadataEntity,
-  ServerlessFunctionEntity,
-  ServerlessFunctionLayerEntity,
-  SkillEntity,
-  UserWorkspaceEntity,
-  ViewEntity,
-  ViewFieldEntity,
-  ViewFilterEntity,
-  ViewFilterGroupEntity,
-  ViewGroupEntity,
-  ViewSortEntity,
   WebhookEntity,
   WorkspaceMigrationEntity,
   WorkspaceSSOIdentityProviderEntity,
@@ -128,6 +138,88 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
     private readonly dataSource: DataSource,
   ) {
     super();
+  }
+
+  private async deleteFieldMetadataInChunks(ids: string[]): Promise<number> {
+    // Smaller chunk size for FieldMetadata due to extensive CASCADE deletes
+    const CHUNK_SIZE = 50;
+    let totalDeleted = 0;
+
+    // Fetch all field metadata records to identify relation pairs
+    const fieldMetadataRepository =
+      this.dataSource.getRepository(FieldMetadataEntity);
+    const fields = await fieldMetadataRepository
+      .createQueryBuilder('field')
+      .where('field.id IN (:...ids)', { ids })
+      .getMany();
+
+    // Group fields by relation pairs (both sides of a relation go together)
+    const processedIds = new Set<string>();
+    const chunks: string[][] = [];
+    let currentChunk: string[] = [];
+
+    for (const field of fields) {
+      if (processedIds.has(field.id)) {
+        continue;
+      }
+
+      // Add the field
+      currentChunk.push(field.id);
+      processedIds.add(field.id);
+
+      // If this field has a relation target, add it to the same chunk
+      // Since relations are symmetrical, this handles both sides of the relation
+      if (field.relationTargetFieldMetadataId) {
+        const relatedField = fields.find(
+          (f) => f.id === field.relationTargetFieldMetadataId,
+        );
+        if (relatedField && !processedIds.has(relatedField.id)) {
+          currentChunk.push(relatedField.id);
+          processedIds.add(relatedField.id);
+        }
+      }
+
+      // When chunk is full, save it and start a new one
+      if (currentChunk.length >= CHUNK_SIZE) {
+        chunks.push([...currentChunk]);
+        currentChunk = [];
+      }
+    }
+
+    // Add remaining chunk
+    if (currentChunk.length > 0) {
+      chunks.push(currentChunk);
+    }
+
+    // Delete each chunk
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+
+      this.logger.log(
+        chalk.gray(
+          `    Deleting FieldMetadata chunk ${i + 1}/${chunks.length} (${chunk.length} fields with relations)...`,
+        ),
+      );
+
+      try {
+        const result = await fieldMetadataRepository
+          .createQueryBuilder()
+          .delete()
+          .from(FieldMetadataEntity)
+          .whereInIds(chunk)
+          .execute();
+
+        totalDeleted += result.affected || 0;
+      } catch (error) {
+        this.logger.warn(
+          chalk.yellow(
+            `    ⚠ Failed to delete chunk ${i + 1}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
+      }
+    }
+
+    return totalDeleted;
   }
 
   override async runMigrationCommand(
@@ -212,12 +304,13 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       chalk.yellow(`${allOrphanedRecords.length} record(s) to be deleted.`),
     );
 
-    if (options.dryRun) {
-      return;
-    }
-
     this.logger.log(
       `Deleting ${allOrphanedRecords.length} orphaned record(s)...`,
+    );
+    this.logger.log(
+      chalk.gray(
+        'Note: Some entities may show 0 deleted due to CASCADE deletes from parent entities',
+      ),
     );
 
     const deletionResults: DeletionResult[] = [];
@@ -226,25 +319,55 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       const entityName =
         typeof entity === 'function' ? entity.name : String(entity);
 
+      this.logger.log(
+        chalk.gray(`  Processing ${entityName} (${ids.length} records)...`),
+      );
+
       try {
-        const result = await this.dataSource
-          .getRepository(entity)
-          .createQueryBuilder()
-          .delete()
-          .from(entity)
-          .whereInIds(ids)
-          .execute();
+        let deletedCount = 0;
+
+        if (!options.dryRun) {
+          // Special handling for FieldMetadataEntity due to self-referencing FK
+          if (entity === FieldMetadataEntity) {
+            deletedCount = await this.deleteFieldMetadataInChunks(ids);
+          } else {
+            // Standard deletion for other entities
+            const queryRunner = this.dataSource.createQueryRunner();
+
+            try {
+              await queryRunner.connect();
+              await queryRunner.startTransaction();
+
+              const result = await queryRunner.manager
+                .getRepository(entity)
+                .createQueryBuilder()
+                .delete()
+                .from(entity)
+                .whereInIds(ids)
+                .execute();
+
+              deletedCount = result.affected || 0;
+
+              await queryRunner.commitTransaction();
+            } catch (error) {
+              if (queryRunner.isTransactionActive) {
+                await queryRunner.rollbackTransaction();
+              }
+              throw error;
+            } finally {
+              await queryRunner.release();
+            }
+          }
+        }
 
         deletionResults.push({
           entityName,
           success: true,
-          deletedCount: result.affected || 0,
+          deletedCount,
         });
 
         this.logger.log(
-          chalk.green(
-            `  ✓ Deleted ${result.affected || 0} ${entityName} record(s)`,
-          ),
+          chalk.green(`  ✓ Deleted ${deletedCount} ${entityName} record(s)`),
         );
       } catch (error) {
         const errorMessage =
