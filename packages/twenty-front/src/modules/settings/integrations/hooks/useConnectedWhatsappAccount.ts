@@ -1,25 +1,29 @@
 import {
-  type GetConnectedImapSmtpCaldavAccountQuery,
-  useGetConnectedImapSmtpCaldavAccountQuery,
+  type GetConnectedWhatsappAccountQuery,
+  useGetConnectedWhatsappAccountQuery,
 } from '~/generated-metadata/graphql';
 
-export type ConnectedImapSmtpCaldavAccount =
-  GetConnectedImapSmtpCaldavAccountQuery['getConnectedImapSmtpCaldavAccount'];
+export type ConnectedWhatsappAccount =
+  GetConnectedWhatsappAccountQuery['getConnectedWhatsappAccount'];
 
 export const useConnectedWhatsappAccount = (
   connectedAccountId: string | undefined,
-  onCompleted?: (data: ConnectedImapSmtpCaldavAccount) => void,
+  businessAccountId: string | undefined,
+  onCompleted?: (data: ConnectedWhatsappAccount) => void,
 ) => {
-  const { data, loading, error } = useGetConnectedImapSmtpCaldavAccountQuery({
-    variables: { id: connectedAccountId ?? '' },
+  const { data, loading, error } = useGetConnectedWhatsappAccountQuery({
+    variables: {
+      connectedAccountId: connectedAccountId ?? '',
+      businessAccountId: businessAccountId ?? '',
+    },
     skip: !connectedAccountId,
     onCompleted: (data) => {
-      onCompleted?.(data.getConnectedImapSmtpCaldavAccount);
+      onCompleted?.(data.getConnectedWhatsappAccount);
     },
   });
 
   return {
-    connectedAccount: data?.getConnectedImapSmtpCaldavAccount,
+    connectedAccount: data?.getConnectedWhatsappAccount,
     loading,
     error,
   };

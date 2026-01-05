@@ -4,33 +4,35 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  type ConnectedImapSmtpCaldavAccount,
-  useConnectedImapSmtpCaldavAccount,
-} from '@/settings/accounts/hooks/useConnectedImapSmtpCaldavAccount';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useSaveImapSmtpCaldavAccountMutation } from '~/generated-metadata/graphql';
+import { useSaveWhatsappAccountMutation } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { ApolloError } from '@apollo/client';
 import { connectionWhatsapp } from '@/settings/integrations/validation-schemas/connectionWhatsapp';
-import { useConnectedWhatsappAccount } from '@/settings/integrations/hooks/useConnectedWhatsappAccount';
+import {
+  type ConnectedWhatsappAccount,
+  useConnectedWhatsappAccount,
+} from '@/settings/integrations/hooks/useConnectedWhatsappAccount';
 
 export type ConnectionFormData = {
   businessId: string;
   webhookToken: string;
   appSecret: string;
+  bearerToken: string;
 };
 
 type UseConnectionFormProps = {
   isEditing?: boolean;
   connectedAccountId?: string;
+  businessAccountId?: string;
 };
 
 export const useWhatsappConnectionForm = ({
   isEditing = false,
   connectedAccountId,
+  businessAccountId,
 }: UseConnectionFormProps) => {
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -42,6 +44,7 @@ export const useWhatsappConnectionForm = ({
       businessId: '',
       webhookToken: '',
       appSecret: '',
+      bearerToken: '',
     },
   });
 
@@ -50,23 +53,17 @@ export const useWhatsappConnectionForm = ({
   const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
-    useConnectedWhatsappAccount(isEditing ? connectedAccountId : undefined,
+    useConnectedWhatsappAccount(
+      isEditing ? connectedAccountId : undefined,
+      isEditing ? businessAccountId : undefined,
       useCallback(
         (account: ConnectedWhatsappAccount | null) => {
-
-        }
-      ));
-  const { connectedAccount, loading: accountLoading } =
-    useConnectedImapSmtpCaldavAccount(
-      isEditing ? connectedAccountId : undefined,
-      useCallback(
-        (account: ConnectedImapSmtpCaldavAccount | null) => {
           if (isDefined(account)) {
             reset({
-              handle: account.handle || '',
-              IMAP: account.connectionParameters?.IMAP || undefined,
-              SMTP: account.connectionParameters?.SMTP || undefined,
-              CALDAV: account.connectionParameters?.CALDAV || undefined,
+              businessId: account.businessAccountId || '',
+              appSecret: account.appSecret || '',
+              bearerToken: account.bearerToken || '',
+              webhookToken: account.webhookToken || '',
             });
           }
         },
@@ -75,7 +72,7 @@ export const useWhatsappConnectionForm = ({
     );
 
   const [saveConnection, { loading: saveLoading }] =
-    useSaveImapSmtpCaldavAccountMutation();
+    useSaveWhatsappAccountMutation();
 
   const watchedValues = watch();
 
@@ -96,7 +93,10 @@ export const useWhatsappConnectionForm = ({
               ? { id: connectedAccountId }
               : {}),
             accountOwnerId: currentWorkspaceMember.id,
-            handle: formValues.businessId,
+            businessAccountId: formValues.businessId,
+            bearerToken: '',
+            appSecret: '',
+            webhookToken: '',
           },
         });
         if (!isDefined(data)) return;
@@ -108,7 +108,7 @@ export const useWhatsappConnectionForm = ({
         enqueueSuccessSnackBar({ message: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
-          data?.saveImapSmtpCaldavAccount || {};
+          data?.saveWhatsappAccount || {};
 
         navigate(SettingsPath.AccountsConfiguration, {
           connectedAccountId: returnedConnectedAccountId,

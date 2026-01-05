@@ -113,6 +113,8 @@ export const WorkflowEditActionSendEmail = ({
           return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
           return isDefined(connectedAccount.connectionParameters?.SMTP);
+        case ConnectedAccountProvider.WHATSAPP:
+          return false; // TODO: add in the future possibility to send messages
         default:
           assertUnreachable(
             connectedAccount.provider,

@@ -16,17 +16,28 @@ import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-man
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { WhatsappGetAllGroupParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-all-group-participants.service';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
+import { WhatsappResolver } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/resolvers/whatsapp-connection.resolver';
+import { WhatsappAccountService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-account.service';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { WhatsappGetAssociatedPhoneNumbersService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-get-associated-phone-numbers.service';
+import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/integrations.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WhatsappRetrieveAppSecretService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-retrieve-app-secret.service';
+import { MessageQueueCoreModule } from 'src/engine/core-modules/message-queue/message-queue-core.module';
 
 @Module({
   imports: [
     TwentyConfigModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity]),
+    TypeOrmModule.forFeature([FeatureFlagEntity, IntegrationsEntity]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     WorkspaceDataSourceModule,
     MessageParticipantManagerModule,
+    AuthModule,
+    PermissionsModule,
+    MessageQueueCoreModule,
   ],
   providers: [
     WhatsappConvertMessage,
@@ -34,9 +45,14 @@ import { WhatsappFindMessageService } from 'src/modules/messaging/message-import
     WhatsappFormatGroupParticipantsToMessageParticipantsService,
     WhatsappGetAllGroupParticipantsService,
     WhatsappUpdatePersonService,
+    WhatsappGetAssociatedPhoneNumbersService,
+    WhatsappAccountService,
+    WhatsappRetrieveAppSecretService,
+    WhatsappResolver,
   ],
   // TODO: check if it's correct (probably not but what's missing?)
+  // it's kinda working?
   controllers: [WhatsappController],
-  exports: [WhatsappController],
+  exports: [WhatsappResolver],
 })
 export class MessagingWhatsAppDriverModule {}

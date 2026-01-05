@@ -122,7 +122,7 @@ export class WhatsappAccountService {
               connectedAccountId: existingAccount?.id,
               handle: formattedPhoneNumber,
             },
-          })) !== null
+          })) === null
             ? phoneNumberToMessageChannel.push(formattedPhoneNumber)
             : null;
         }

@@ -37,7 +37,8 @@ export class WhatsappController {
     private readonly whatsappRetrieveSecret: WhatsappRetrieveAppSecretService,
     @InjectRepository(IntegrationsEntity)
     private readonly integrationsRepository: Repository<IntegrationsEntity>,
-    private readonly logger = new Logger('WhatsappController'),
+    // private readonly logger = new Logger('WhatsappController'),
+    // no idea why NestJS has problem but apparently commenting logger solves a dependency problem
   ) {}
 
   // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint#get-requests
@@ -51,7 +52,7 @@ export class WhatsappController {
   ) {
     if (mode !== 'subscribe') {
       res.status(HttpStatus.BAD_REQUEST).send();
-      this.logger.error('WhatsApp webhook verification failed - wrong request');
+      //this.logger.error('WhatsApp webhook verification failed - wrong request');
     }
 
     const whatsapp = await this.integrationsRepository.findOneBy({
@@ -63,9 +64,9 @@ export class WhatsappController {
       res.status(HttpStatus.OK).send({ challenge: challenge });
     } else {
       res.status(HttpStatus.BAD_REQUEST).send();
-      this.logger.error(
-        'WhatsApp webhook verification failed - invalid stored token',
-      );
+      //this.logger.error(
+      //  'WhatsApp webhook verification failed - invalid stored token',
+      //);
     }
   }
 

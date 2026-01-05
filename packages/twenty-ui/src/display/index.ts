@@ -42,6 +42,7 @@ export { IconRelationManyToOne } from './icon/components/IconRelationManyToOne';
 export { IconTrashXOff } from './icon/components/IconTrashXOff';
 export { IconTwentyStar } from './icon/components/IconTwentyStar';
 export { IconTwentyStarFilled } from './icon/components/IconTwentyStarFilled';
+export { IconWhatsapp } from './icon/components/IconWhatsapp';
 export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
 export { IllustrationIconCalendarEvent } from './icon/components/IllustrationIconCalendarEvent';
 export { IllustrationIconCalendarTime } from './icon/components/IllustrationIconCalendarTime';

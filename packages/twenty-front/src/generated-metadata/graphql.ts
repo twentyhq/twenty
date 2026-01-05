@@ -667,6 +667,17 @@ export type ConnectedImapSmtpCaldavAccount = {
   provider: Scalars['String'];
 };
 
+export type ConnectedWhatsappAccountDto = {
+  __typename?: 'ConnectedWhatsappAccountDTO';
+  accountOwnerId: Scalars['UUID'];
+  appSecret?: Maybe<Scalars['String']>;
+  bearerToken?: Maybe<Scalars['String']>;
+  businessAccountId: Scalars['String'];
+  id: Scalars['UUID'];
+  provider: Scalars['String'];
+  webhookToken?: Maybe<Scalars['String']>;
+};
+
 export type ConnectionParameters = {
   host: Scalars['String'];
   password: Scalars['String'];
@@ -1902,6 +1913,7 @@ export type Mutation = {
   runEvaluationInput: AgentTurn;
   runWorkflowVersion: RunWorkflowVersionOutput;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
+  saveWhatsappAccount: WhatsappConnectionStatusDto;
   sendInvitations: SendInvitationsOutput;
   setMeteredSubscriptionPrice: BillingUpdateOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
@@ -2561,6 +2573,16 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type MutationSaveWhatsappAccountArgs = {
+  accountOwnerId: Scalars['UUID'];
+  appSecret: Scalars['String'];
+  bearerToken: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  webhookToken: Scalars['String'];
 };
 
 
@@ -3286,6 +3308,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getConnectedWhatsappAccount: ConnectedWhatsappAccountDto;
   getCoreView?: Maybe<CoreView>;
   getCoreViewField?: Maybe<CoreViewField>;
   getCoreViewFields: Array<CoreViewField>;
@@ -3453,6 +3476,12 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryGetConnectedWhatsappAccountArgs = {
+  businessAccountId: Scalars['String'];
+  connectedAccountId: Scalars['UUID'];
 };
 
 
@@ -4797,6 +4826,12 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
+export type WhatsappConnectionStatusDto = {
+  __typename?: 'WhatsappConnectionStatusDTO';
+  connectedAccountId: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
 
 export enum WidgetType {
@@ -5879,6 +5914,26 @@ export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
+
+export type SaveWhatsappAccountMutationVariables = Exact<{
+  accountOwnerId: Scalars['UUID'];
+  bearerToken: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  appSecret: Scalars['String'];
+  webhookToken: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type SaveWhatsappAccountMutation = { __typename?: 'Mutation', saveWhatsappAccount: { __typename?: 'WhatsappConnectionStatusDTO', success: boolean, connectedAccountId: string } };
+
+export type GetConnectedWhatsappAccountQueryVariables = Exact<{
+  connectedAccountId: Scalars['UUID'];
+  businessAccountId: Scalars['String'];
+}>;
+
+
+export type GetConnectedWhatsappAccountQuery = { __typename?: 'Query', getConnectedWhatsappAccount: { __typename?: 'ConnectedWhatsappAccountDTO', appSecret?: string | null, bearerToken?: string | null, id: string, businessAccountId: string, provider: string, accountOwnerId: string, webhookToken?: string | null } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -11619,6 +11674,97 @@ export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
 export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
 export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
+export const SaveWhatsappAccountDocument = gql`
+    mutation SaveWhatsappAccount($accountOwnerId: UUID!, $bearerToken: String!, $businessAccountId: String!, $appSecret: String!, $webhookToken: String!, $id: UUID) {
+  saveWhatsappAccount(
+    accountOwnerId: $accountOwnerId
+    appSecret: $appSecret
+    webhookToken: $webhookToken
+    businessAccountId: $businessAccountId
+    bearerToken: $bearerToken
+    id: $id
+  ) {
+    success
+    connectedAccountId
+  }
+}
+    `;
+export type SaveWhatsappAccountMutationFn = Apollo.MutationFunction<SaveWhatsappAccountMutation, SaveWhatsappAccountMutationVariables>;
+
+/**
+ * __useSaveWhatsappAccountMutation__
+ *
+ * To run a mutation, you first call `useSaveWhatsappAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveWhatsappAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveWhatsappAccountMutation, { data, loading, error }] = useSaveWhatsappAccountMutation({
+ *   variables: {
+ *      accountOwnerId: // value for 'accountOwnerId'
+ *      bearerToken: // value for 'bearerToken'
+ *      businessAccountId: // value for 'businessAccountId'
+ *      appSecret: // value for 'appSecret'
+ *      webhookToken: // value for 'webhookToken'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSaveWhatsappAccountMutation(baseOptions?: Apollo.MutationHookOptions<SaveWhatsappAccountMutation, SaveWhatsappAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveWhatsappAccountMutation, SaveWhatsappAccountMutationVariables>(SaveWhatsappAccountDocument, options);
+      }
+export type SaveWhatsappAccountMutationHookResult = ReturnType<typeof useSaveWhatsappAccountMutation>;
+export type SaveWhatsappAccountMutationResult = Apollo.MutationResult<SaveWhatsappAccountMutation>;
+export type SaveWhatsappAccountMutationOptions = Apollo.BaseMutationOptions<SaveWhatsappAccountMutation, SaveWhatsappAccountMutationVariables>;
+export const GetConnectedWhatsappAccountDocument = gql`
+    query GetConnectedWhatsappAccount($connectedAccountId: UUID!, $businessAccountId: String!) {
+  getConnectedWhatsappAccount(
+    connectedAccountId: $connectedAccountId
+    businessAccountId: $businessAccountId
+  ) {
+    appSecret
+    bearerToken
+    id
+    businessAccountId
+    provider
+    accountOwnerId
+    webhookToken
+  }
+}
+    `;
+
+/**
+ * __useGetConnectedWhatsappAccountQuery__
+ *
+ * To run a query within a React component, call `useGetConnectedWhatsappAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConnectedWhatsappAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConnectedWhatsappAccountQuery({
+ *   variables: {
+ *      connectedAccountId: // value for 'connectedAccountId'
+ *      businessAccountId: // value for 'businessAccountId'
+ *   },
+ * });
+ */
+export function useGetConnectedWhatsappAccountQuery(baseOptions: Apollo.QueryHookOptions<GetConnectedWhatsappAccountQuery, GetConnectedWhatsappAccountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConnectedWhatsappAccountQuery, GetConnectedWhatsappAccountQueryVariables>(GetConnectedWhatsappAccountDocument, options);
+      }
+export function useGetConnectedWhatsappAccountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConnectedWhatsappAccountQuery, GetConnectedWhatsappAccountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConnectedWhatsappAccountQuery, GetConnectedWhatsappAccountQueryVariables>(GetConnectedWhatsappAccountDocument, options);
+        }
+export type GetConnectedWhatsappAccountQueryHookResult = ReturnType<typeof useGetConnectedWhatsappAccountQuery>;
+export type GetConnectedWhatsappAccountLazyQueryHookResult = ReturnType<typeof useGetConnectedWhatsappAccountLazyQuery>;
+export type GetConnectedWhatsappAccountQueryResult = Apollo.QueryResult<GetConnectedWhatsappAccountQuery, GetConnectedWhatsappAccountQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {

@@ -50,6 +50,7 @@ import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modul
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
+import { MessagingWhatsAppDriverModule } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/messaging-whatsapp-driver.module';
 @Module({
   imports: [
     RefreshTokensManagerModule,
@@ -58,6 +59,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,
     MessagingIMAPDriverModule,
+    MessagingWhatsAppDriverModule,
     MessagingSmtpDriverModule,
     MessagingCommonModule,
     TypeOrmModule.forFeature([

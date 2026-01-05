@@ -18,7 +18,7 @@ export const SettingsIntegrationsWhatsapp = () => {
     canSave,
     isSubmitting,
     loading,
-  } = useWhatsappConnectionForm();
+  } = useWhatsappConnectionForm({});
 
   const { control } = formMethods;
   return (
@@ -42,7 +42,7 @@ export const SettingsIntegrationsWhatsapp = () => {
           isSaveDisabled={!canSave}
           isCancelDisabled={isSubmitting}
           isLoading={loading}
-          onCancel={() => navigate(SettingsPath.Accounts)}
+          onCancel={() => navigate(SettingsPath.Integrations)}
           onSave={handleSubmit((data) => handleSave(data))}
         />
       }

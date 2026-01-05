@@ -122,6 +122,8 @@ export const CommandMenuMessageThreadPage = () => {
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         throw new Error('Account provider not supported');
+      case ConnectedAccountProvider.WHATSAPP:
+        throw new Error('Account provider not supported');
       case null:
         throw new Error('Account provider not provided');
       default:
