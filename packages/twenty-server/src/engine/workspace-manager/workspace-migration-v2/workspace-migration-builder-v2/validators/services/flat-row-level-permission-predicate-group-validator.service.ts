@@ -8,8 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RowLevelPermissionPredicateGroupExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
@@ -21,7 +21,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
-  >): FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> {
+  >): FailedFlatEntityValidation<'rowLevelPermissionPredicateGroup', 'create'> {
     const {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
@@ -30,14 +30,14 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
       flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
     }>;
-    const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> =
-      {
-        type: 'create_row_level_permission_predicate_group',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatPredicateGroupToValidate.id,
-        },
-      };
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatPredicateGroupToValidate.id,
+        universalIdentifier: flatPredicateGroupToValidate.universalIdentifier,
+      },
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      type: 'create',
+    });
 
     const existingPredicateGroup =
       optimisticFlatPredicateGroupMaps?.byId[flatPredicateGroupToValidate.id];
@@ -94,21 +94,21 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
-  >): FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> {
+  >): FailedFlatEntityValidation<'rowLevelPermissionPredicateGroup', 'delete'> {
     const {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
       flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
     }>;
-    const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> =
-      {
-        type: 'delete_row_level_permission_predicate_group',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatPredicateGroupToDelete.id,
-        },
-      };
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatPredicateGroupToDelete.id,
+        universalIdentifier: flatPredicateGroupToDelete.universalIdentifier,
+      },
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      type: 'delete',
+    });
 
     const existingPredicateGroup =
       optimisticFlatPredicateGroupMaps?.byId[flatPredicateGroupToDelete.id];
@@ -130,7 +130,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
-  >): FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> {
+  >): FailedFlatEntityValidation<'rowLevelPermissionPredicateGroup', 'update'> {
     const {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
@@ -139,17 +139,18 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
       flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
     }>;
-    const validationResult: FailedFlatEntityValidation<FlatRowLevelPermissionPredicateGroup> =
-      {
-        type: 'update_row_level_permission_predicate_group',
-        errors: [],
-        flatEntityMinimalInformation: {
-          id: flatEntityId,
-        },
-      };
 
     const existingPredicateGroup =
       optimisticFlatPredicateGroupMaps?.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: existingPredicateGroup?.universalIdentifier,
+      },
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      type: 'update',
+    });
 
     if (!isDefined(existingPredicateGroup)) {
       validationResult.errors.push({

@@ -17,7 +17,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_serverless_function',
+  'update',
+  'serverlessFunction',
 ) {
   constructor(
     private readonly fileStorageService: FileStorageService,
@@ -30,7 +31,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     context: WorkspaceMigrationActionRunnerArgs<UpdateServerlessFunctionAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { serverlessFunctionId, code } = action;
+    const { entityId, code } = action;
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -38,12 +39,12 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
       );
 
     await serverlessFunctionRepository.update(
-      serverlessFunctionId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
 
     const serverlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: serverlessFunctionId,
+      flatEntityId: entityId,
       flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
     });
 
