@@ -17,7 +17,7 @@ export class WhatsappGetAllGroupParticipantsService {
       headers: {
         Authorization: `Bearer ${bearerToken}`,
       },
-      url: preparedWhatsappAPIAddress('/', group_id),
+      url: preparedWhatsappAPIAddress(group_id),
     };
 
     const data = await axios.request(options);

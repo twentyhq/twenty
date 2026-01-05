@@ -11,7 +11,7 @@ import { WhatsappWebhookHistory } from 'src/modules/messaging/message-import-man
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { WhatsappConvertHistoricMessagesService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-historic-messages.service';
 import { WhatsappConvertMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-convert-message';
-import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
+import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/integrations.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {

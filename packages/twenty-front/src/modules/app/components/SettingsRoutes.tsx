@@ -227,6 +227,14 @@ const SettingsIntegrations = lazy(() =>
   ),
 );
 
+const SettingsIntegrationsWhatsapp = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrationsWhatsapp').then(
+    (module) => ({
+      default: module.SettingsIntegrationsWhatsapp,
+    }),
+  ),
+);
+
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
@@ -557,6 +565,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.Integrations}
           element={<SettingsIntegrations />}
+        />
+        <Route
+          path={SettingsPath.IntegrationsWhatsapp}
+          element={<SettingsIntegrationsWhatsapp />}
         />
       </Route>
 

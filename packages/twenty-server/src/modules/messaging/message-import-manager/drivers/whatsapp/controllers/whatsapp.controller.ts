@@ -17,7 +17,7 @@ import { Response } from 'express';
 
 import { WhatsAppWebhookMessage } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-message.type';
 import { validateWebhookPayload } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/utils/validate-webhook-payload.util';
-import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/whatsapp/integrations.entity';
+import { IntegrationsEntity } from 'src/engine/metadata-modules/integrations/integrations.entity';
 import { WhatsappWebhookHistory } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-webhook-history.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -55,7 +55,7 @@ export class WhatsappController {
     }
 
     const whatsapp = await this.integrationsRepository.findOneBy({
-      whatsappToken: token,
+      whatsappWebhookToken: token,
     });
 
     if (whatsapp !== null) {
@@ -83,6 +83,7 @@ export class WhatsappController {
     );
 
     if (
+      appSecret === null ||
       !validateWebhookPayload(
         req.headers.get('X-Hub-Signature-256'),
         body.toString(),
@@ -114,6 +115,7 @@ export class WhatsappController {
     );
 
     if (
+      appSecret === null ||
       !validateWebhookPayload(
         req.headers.get('X-Hub-Signature-256'),
         body.toString(),
