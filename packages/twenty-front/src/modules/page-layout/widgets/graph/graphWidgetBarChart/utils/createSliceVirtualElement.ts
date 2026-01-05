@@ -1,5 +1,6 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { findAnchorBar } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findAnchorBar';
 import { type VirtualElement } from '@floating-ui/react';
 import { BarChartLayout } from '~/generated/graphql';
 
@@ -8,25 +9,6 @@ type CreateSliceVirtualElementParams = {
   svgBoundingRectangle: DOMRect;
   layout: BarChartLayout;
   groupMode: 'grouped' | 'stacked';
-};
-
-const findAnchorBar = (
-  bars: BarChartSlice['bars'],
-  layout: BarChartLayout,
-  groupMode: 'grouped' | 'stacked',
-) => {
-  if (groupMode === 'grouped') {
-    return bars[0];
-  }
-
-  const isVertical = layout === BarChartLayout.VERTICAL;
-
-  return bars.reduce((anchor, bar) => {
-    if (isVertical) {
-      return bar.y < anchor.y ? bar : anchor;
-    }
-    return bar.x + bar.width > anchor.x + anchor.width ? bar : anchor;
-  }, bars[0]);
 };
 
 export const createSliceVirtualElement = ({

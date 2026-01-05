@@ -1,25 +1,19 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { type SliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/SliceHoverData';
+import { buildSliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/buildSliceHoverData';
 import { computeBarChartSlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
-import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
-import { createSliceVirtualElement } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createSliceVirtualElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
-import { type VirtualElement } from '@floating-ui/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { animated, useSpring } from '@react-spring/web';
-import { useCallback, useMemo, type MouseEvent } from 'react';
+import { useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
-
-export type SliceHoverData = {
-  slice: BarChartSlice;
-  virtualElement: VirtualElement;
-};
 
 type CustomSliceHoverLayerProps = {
   bars: readonly ComputedBarDatum<BarDatum>[];
@@ -68,45 +62,17 @@ export const CustomSliceHoverLayer = ({
     [bars, layout],
   );
 
-  const buildSliceData = useCallback(
-    (event: MouseEvent<SVGRectElement>): SliceHoverData | null => {
-      const svgBoundingRectangle =
-        event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-      if (!isDefined(svgBoundingRectangle)) {
-        return null;
-      }
-
-      const mouseXPosition =
-        event.clientX - svgBoundingRectangle.left - marginLeft;
-      const mouseYPosition =
-        event.clientY - svgBoundingRectangle.top - marginTop;
-
-      const position = isVertical ? mouseXPosition : mouseYPosition;
-      const slice = findSliceAtPosition(slices, position);
-
-      if (!isDefined(slice)) {
-        return null;
-      }
-
-      const virtualElement = createSliceVirtualElement({
-        slice,
-        svgBoundingRectangle,
-        layout,
-        groupMode,
-      });
-
-      return {
-        slice,
-        virtualElement,
-      };
-    },
-    [marginLeft, marginTop, isVertical, slices, layout, groupMode],
-  );
-
   const handleMouseMove = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent<SVGRectElement>) => {
-        const sliceData = buildSliceData(event);
+        const sliceData = buildSliceHoverData({
+          mouseEvent: event,
+          slices,
+          marginLeft,
+          marginTop,
+          layout,
+          groupMode,
+        });
         const currentHoveredSliceIndex = snapshot
           .getLoadable(hoveredSliceIndexState)
           .getValue();
@@ -127,32 +93,41 @@ export const CustomSliceHoverLayer = ({
         onSliceHover(sliceData);
       },
     [
-      buildSliceData,
+      slices,
+      marginLeft,
+      marginTop,
+      layout,
+      groupMode,
       hoveredSliceIndexState,
       setHoveredSliceIndex,
       onSliceHover,
     ],
   );
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     onSliceLeave();
-  }, [onSliceLeave]);
+  };
 
-  const handleClick = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      if (!isDefined(onSliceClick)) {
-        return;
-      }
+  const handleClick = (event: MouseEvent<SVGRectElement>) => {
+    if (!isDefined(onSliceClick)) {
+      return;
+    }
 
-      const sliceData = buildSliceData(event);
-      if (!isDefined(sliceData)) {
-        return;
-      }
+    const sliceData = buildSliceHoverData({
+      mouseEvent: event,
+      slices,
+      marginLeft,
+      marginTop,
+      layout,
+      groupMode,
+    });
 
-      onSliceClick(sliceData.slice);
-    },
-    [buildSliceData, onSliceClick],
-  );
+    if (!isDefined(sliceData)) {
+      return;
+    }
+
+    onSliceClick(sliceData.slice);
+  };
 
   const hoveredSlice = useMemo(() => {
     if (!isDefined(hoveredSliceIndex)) {

@@ -18,17 +18,16 @@ export const computeBarChartSlices = ({
 
   const isVertical = layout === BarChartLayout.VERTICAL;
 
-  const groupedBars = new Map<string, ComputedBarDatum<BarDatum>[]>();
-
-  for (const bar of bars) {
+  const groupedBars = bars.reduce((map, bar) => {
     const key = String(bar.data.indexValue);
-    const existing = groupedBars.get(key);
+    const existing = map.get(key);
     if (isDefined(existing)) {
       existing.push(bar);
     } else {
-      groupedBars.set(key, [bar]);
+      map.set(key, [bar]);
     }
-  }
+    return map;
+  }, new Map<string, ComputedBarDatum<BarDatum>[]>());
 
   const slices: BarChartSlice[] = [];
 
@@ -41,18 +40,14 @@ export const computeBarChartSlices = ({
       continue;
     }
 
-    let minPosition = Infinity;
-    let maxPosition = -Infinity;
-
-    for (const bar of groupBars) {
-      if (isVertical) {
-        minPosition = Math.min(minPosition, bar.x);
-        maxPosition = Math.max(maxPosition, bar.x + bar.width);
-      } else {
-        minPosition = Math.min(minPosition, bar.y);
-        maxPosition = Math.max(maxPosition, bar.y + bar.height);
-      }
-    }
+    const minPosition = Math.min(
+      ...groupBars.map((bar) => (isVertical ? bar.x : bar.y)),
+    );
+    const maxPosition = Math.max(
+      ...groupBars.map((bar) =>
+        isVertical ? bar.x + bar.width : bar.y + bar.height,
+      ),
+    );
 
     const sliceCenter = (minPosition + maxPosition) / 2;
 

@@ -2,10 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
-import {
-  CustomSliceHoverLayer,
-  type SliceHoverData,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomSliceHoverLayer';
+import { CustomSliceHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomSliceHoverLayer';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
@@ -15,6 +12,7 @@ import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
+import { type SliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/SliceHoverData';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
@@ -39,7 +37,7 @@ import {
   type BarItemProps,
   type ComputedBarDatum,
 } from '@nivo/bar';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated/graphql';
@@ -170,10 +168,10 @@ export const GraphWidgetBarChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const hideTooltip = useCallback(() => {
+  const hideTooltip = () => {
     setActiveBarTooltip(null);
     setHoveredSliceIndex(null);
-  }, [setActiveBarTooltip, setHoveredSliceIndex]);
+  };
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
@@ -183,24 +181,21 @@ export const GraphWidgetBarChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleSliceHover = useCallback(
-    (sliceData: SliceHoverData | null) => {
-      if (isDefined(sliceData)) {
-        debouncedHideTooltip.cancel();
-        setActiveBarTooltip({
-          slice: sliceData.slice,
-          anchorElement: sliceData.virtualElement,
-        });
-      } else {
-        debouncedHideTooltip();
-      }
-    },
-    [debouncedHideTooltip, setActiveBarTooltip],
-  );
+  const handleSliceHover = (sliceData: SliceHoverData | null) => {
+    if (isDefined(sliceData)) {
+      debouncedHideTooltip.cancel();
+      setActiveBarTooltip({
+        slice: sliceData.slice,
+        anchorElement: sliceData.virtualElement,
+      });
+    } else {
+      debouncedHideTooltip();
+    }
+  };
 
-  const handleSliceLeave = useCallback(() => {
+  const handleSliceLeave = () => {
     debouncedHideTooltip();
-  }, [debouncedHideTooltip]);
+  };
 
   const {
     axisBottom: axisBottomConfig,
