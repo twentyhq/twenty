@@ -1,5 +1,7 @@
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import {
   DEFAULT_HANDLER_NAME,
@@ -55,5 +57,15 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
           JSON.stringify(rawCreateServerlessFunctionInput.code),
         )
       : null,
+    // If no schema provided and no code provided, use default schema
+    // (because the default template will be used)
+    toolInputSchema: isDefined(
+      rawCreateServerlessFunctionInput?.toolInputSchema,
+    )
+      ? rawCreateServerlessFunctionInput.toolInputSchema
+      : !isDefined(rawCreateServerlessFunctionInput?.code)
+        ? DEFAULT_TOOL_INPUT_SCHEMA
+        : null,
+    isTool: rawCreateServerlessFunctionInput?.isTool ?? false,
   };
 };
