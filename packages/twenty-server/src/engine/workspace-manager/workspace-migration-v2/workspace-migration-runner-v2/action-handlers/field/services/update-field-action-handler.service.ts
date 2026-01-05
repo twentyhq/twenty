@@ -211,7 +211,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
             {
               name: currentFlatFieldMetadata.name,
               type: 'tsvector',
-              isNullable: currentFlatFieldMetadata.isNullable,
               ...update.to,
             },
           ],

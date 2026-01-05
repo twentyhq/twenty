@@ -1,5 +1,5 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { findOrThrow } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -26,15 +26,7 @@ export const handleLabelIdentifierChangesDuringFieldUpdate = ({
   const hasNameChanged =
     fromFlatFieldMetadata.name !== toFlatFieldMetadata.name;
 
-  if (!hasNameChanged) {
-    return undefined;
-  }
-
-  if (!isSearchableFieldType(toFlatFieldMetadata.type)) {
-    return undefined;
-  }
-
-  if (!isDefined(flatObjectMetadata.fieldMetadataIds)) {
+  if (!hasNameChanged || !isSearchableFieldType(toFlatFieldMetadata.type)) {
     return undefined;
   }
 
