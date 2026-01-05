@@ -176,8 +176,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
     return {
       flatFieldMetadatasToUpdate: [
-        toFlatFieldMetadata,
         ...accumulator.flatFieldMetadatasToUpdate,
+        toFlatFieldMetadata,
         ...flatFieldMetadatasToUpdateFromSideEffect,
       ],
       flatIndexMetadatasToUpdate: [
