@@ -6,7 +6,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
-  type WorkflowAction,
   type WorkflowActionType,
   type WorkflowIfElseAction,
 } from '@/workflow/types/Workflow';
@@ -43,30 +42,22 @@ export const CommandMenuWorkflowCreateStepContent = () => {
 
   const handleIfElseParentStep = async ({
     parentStep,
-    createdStep,
+    createdStepId,
   }: {
     parentStep: WorkflowIfElseAction;
-    createdStep: WorkflowAction;
+    createdStepId: string;
   }) => {
     const branches = parentStep.settings.input.branches;
-
-    const stepFilterGroups = parentStep.settings.input.stepFilterGroups ?? [];
-    const stepFilters = parentStep.settings.input.stepFilters ?? [];
 
     const { filterGroup, filter, branchId, filterGroupId } =
       createElseIfBranch();
 
-    const newBranch = {
+    const updatedBranches = [...branches];
+    updatedBranches.splice(branches.length - 1, 0, {
       id: branchId,
       filterGroupId,
-      nextStepIds: [createdStep.id],
-    };
-
-    const updatedBranches = [...branches];
-    updatedBranches.splice(branches.length - 1, 0, newBranch);
-
-    const updatedStepFilterGroups = [...stepFilterGroups, filterGroup];
-    const updatedStepFilters = [...stepFilters, filter];
+      nextStepIds: [createdStepId],
+    });
 
     await updateStep({
       ...parentStep,
@@ -74,8 +65,11 @@ export const CommandMenuWorkflowCreateStepContent = () => {
         ...parentStep.settings,
         input: {
           ...parentStep.settings.input,
-          stepFilterGroups: updatedStepFilterGroups,
-          stepFilters: updatedStepFilters,
+          stepFilterGroups: [
+            ...parentStep.settings.input.stepFilterGroups,
+            filterGroup,
+          ],
+          stepFilters: [...parentStep.settings.input.stepFilters, filter],
           branches: updatedBranches,
         },
       },
@@ -113,7 +107,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
     if (parentStep?.type === 'IF_ELSE') {
       await handleIfElseParentStep({
         parentStep,
-        createdStep,
+        createdStepId: createdStep.id,
       });
     }
 
