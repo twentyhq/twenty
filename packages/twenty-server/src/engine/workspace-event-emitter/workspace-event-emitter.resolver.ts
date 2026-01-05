@@ -61,36 +61,41 @@ export class WorkspaceEventEmitterResolver {
     nullable: true,
     resolve: async function (
       this: WorkspaceEventEmitterResolver,
-      payload: { onDbEvent: OnDbEventDTO },
+      payload: { onDbEvents: OnDbEventDTO[] },
       args: { subscriptions: SubscriptionInput[] },
       context: { req: { workspace: { id: string } } },
     ): Promise<SubscriptionMatchesDTO> {
       const workspaceId = context.req.workspace.id;
 
-      const matchedSubscriptionIds = await Promise.all(
-        args.subscriptions.map(async (subscription) => {
-          const matches =
-            await this.subscriptionService.isSubscriptionMatchingEvent(
-              subscription,
-              payload.onDbEvent,
-              workspaceId,
-            );
+      const matches: { subscriptionIds: string[]; event: OnDbEventDTO }[] = [];
 
-          return matches ? subscription.id : null;
-        }),
-      );
+      for (const event of payload.onDbEvents) {
+        const matchedSubscriptionIds = await Promise.all(
+          args.subscriptions.map(async (subscription) => {
+            const isMatch =
+              await this.subscriptionService.isSubscriptionMatchingEvent(
+                subscription,
+                event,
+                workspaceId,
+              );
 
-      const filteredIds = matchedSubscriptionIds.filter(
-        (id): id is string => id !== null,
-      );
+            return isMatch ? subscription.id : null;
+          }),
+        );
 
-      if (filteredIds.length === 0) {
-        return { subscriptions: [] };
+        const filteredIds = matchedSubscriptionIds.filter(
+          (id): id is string => id !== null,
+        );
+
+        if (filteredIds.length > 0) {
+          matches.push({
+            subscriptionIds: filteredIds,
+            event,
+          });
+        }
       }
 
-      return {
-        subscriptions: filteredIds.map((id) => ({ id })),
-      };
+      return { matches };
     },
   })
   onSubscriptionMatch(
@@ -99,7 +104,7 @@ export class WorkspaceEventEmitterResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.subscriptionService.subscribe({
-      channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
+      channel: SubscriptionChannel.DATABASE_BATCH_EVENTS_CHANNEL,
       workspaceId: workspace.id,
     });
   }

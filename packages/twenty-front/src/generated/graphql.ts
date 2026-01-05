@@ -4076,12 +4076,13 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Scalars['String'];
+  event: OnDbEvent;
+  subscriptionIds: Array<Scalars['String']>;
 };
 
 export type SubscriptionMatches = {
   __typename?: 'SubscriptionMatches';
-  subscriptions: Array<SubscriptionMatch>;
+  matches: Array<SubscriptionMatch>;
 };
 
 export enum SubscriptionStatus {
@@ -5104,7 +5105,7 @@ export type OnSubscriptionMatchSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', subscriptions: Array<{ __typename?: 'SubscriptionMatch', id: string }> } | null };
+export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', matches: Array<{ __typename?: 'SubscriptionMatch', subscriptionIds: Array<string>, event: { __typename?: 'OnDbEvent', action: DatabaseEventAction, objectNameSingular: string, eventDate: string, record: any, updatedFields?: Array<string> | null } }> } | null };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -5770,8 +5771,15 @@ export type OnDbEventSubscriptionResult = Apollo.SubscriptionResult<OnDbEventSub
 export const OnSubscriptionMatchDocument = gql`
     subscription OnSubscriptionMatch($subscriptions: [SubscriptionInput!]!) {
   onSubscriptionMatch(subscriptions: $subscriptions) {
-    subscriptions {
-      id
+    matches {
+      subscriptionIds
+      event {
+        action
+        objectNameSingular
+        eventDate
+        record
+        updatedFields
+      }
     }
   }
 }

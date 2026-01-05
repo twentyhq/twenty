@@ -4284,12 +4284,13 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Scalars['String'];
+  event: OnDbEvent;
+  subscriptionIds: Array<Scalars['String']>;
 };
 
 export type SubscriptionMatches = {
   __typename?: 'SubscriptionMatches';
-  subscriptions: Array<SubscriptionMatch>;
+  matches: Array<SubscriptionMatch>;
 };
 
 export enum SubscriptionStatus {
