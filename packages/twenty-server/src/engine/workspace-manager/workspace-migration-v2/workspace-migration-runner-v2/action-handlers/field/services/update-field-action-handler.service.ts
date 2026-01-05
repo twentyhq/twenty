@@ -190,6 +190,38 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           },
         };
       }
+      if (
+        isPropertyUpdate(update, 'settings') &&
+        isDefined(update.to?.asExpression) &&
+        isDefined(update.from?.asExpression) &&
+        (update.to.asExpression !== update.from.asExpression ||
+          update.to.generatedType !== update.from.generatedType)
+      ) {
+        await this.workspaceSchemaManagerService.columnManager.dropColumns({
+          queryRunner,
+          schemaName,
+          tableName,
+          columnNames: [currentFlatFieldMetadata.name],
+        });
+        await this.workspaceSchemaManagerService.columnManager.addColumns({
+          queryRunner,
+          schemaName,
+          tableName,
+          columnDefinitions: [
+            {
+              name: currentFlatFieldMetadata.name,
+              type: 'tsvector',
+              isNullable: currentFlatFieldMetadata.isNullable,
+              ...update.to,
+            },
+          ],
+        });
+
+        optimisticFlatFieldMetadata = {
+          ...optimisticFlatFieldMetadata,
+          settings: update.to,
+        };
+      }
     }
   }
 
