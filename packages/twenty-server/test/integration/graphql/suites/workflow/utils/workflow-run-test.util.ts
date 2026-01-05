@@ -85,7 +85,7 @@ export const runWorkflowVersion = async ({
       variables: {
         input: {
           workflowVersionId,
-          payload: payload ?? {},
+          payload,
         },
       },
     });
