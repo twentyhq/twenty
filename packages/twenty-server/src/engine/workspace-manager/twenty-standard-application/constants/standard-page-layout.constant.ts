@@ -1,10 +1,3 @@
-/**
- * Standard Page Layout constants for the Revenue Overview Dashboard.
- *
- * These universalIdentifiers are stable UUIDs used to identify page layouts,
- * tabs, and widgets across workspaces for sync purposes.
- */
-
 export const STANDARD_PAGE_LAYOUTS = {
   revenueOverview: {
     universalIdentifier: '20202020-d001-4d01-8d01-da5ab0a00001',

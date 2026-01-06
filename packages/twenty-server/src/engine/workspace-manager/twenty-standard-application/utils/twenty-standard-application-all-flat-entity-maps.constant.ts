@@ -135,7 +135,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     dependencyFlatEntityMaps: undefined,
   });
 
-  // Page layout maps for Revenue Overview Dashboard
   const standardPageLayoutMetadataRelatedEntityIds =
     getStandardPageLayoutMetadataRelatedEntityIds();
 

@@ -1,7 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
-import { v4 } from 'uuid';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { getNextPeriodStart, getPeriodStart } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -73,16 +73,12 @@ type WidgetDefinition = {
   title: string;
   type: WidgetType;
   gridPosition: GridPosition;
-  // Configuration is typed as Record<string, unknown> because the helper functions
-  // (createRichTextConfiguration, createFilterConfig, etc.) return dynamic objects
-  // that TypeScript cannot properly narrow to the discriminated union type.
-  // Cast to AllPageLayoutWidgetConfiguration when creating FlatPageLayoutWidget.
-  configuration: Record<string, unknown>;
+  configuration: AllPageLayoutWidgetConfiguration;
   objectMetadataId: string | null;
 };
 
 const createRichTextConfiguration = (headingText: string) => ({
-  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
   body: {
     blocknote: JSON.stringify([
       {
@@ -157,7 +153,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds.revenueOverview;
   const layoutDef = STANDARD_PAGE_LAYOUTS.revenueOverview;
 
-  // Get object and field IDs
   const opportunityObjectId =
     standardObjectMetadataRelatedEntityIds.opportunity.id;
   const opportunityFields =
@@ -167,22 +162,15 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
   const companyObjectId = standardObjectMetadataRelatedEntityIds.company.id;
   const companyFields = standardObjectMetadataRelatedEntityIds.company.fields;
 
-  // Tab 1: Revenue Overview
   const revenueOverviewTabId = layoutIds.tabs.revenueOverview.id;
   const revenueOverviewTabWidgets = layoutIds.tabs.revenueOverview.widgets;
   const revenueOverviewTabDef = layoutDef.tabs.revenueOverview.widgets;
 
-  // Tab 2: Lead Exploration
   const leadExplorationTabId = layoutIds.tabs.leadExploration.id;
   const leadExplorationTabWidgets = layoutIds.tabs.leadExploration.widgets;
   const leadExplorationTabDef = layoutDef.tabs.leadExploration.widgets;
 
   const widgets: WidgetDefinition[] = [
-    // ==========================================
-    // TAB 1: Revenue Overview
-    // ==========================================
-
-    // Rich Text Header: Revenue to date
     {
       id: revenueOverviewTabWidgets.headerRevenueToDate.id,
       universalIdentifier:
@@ -195,7 +183,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: null,
     },
 
-    // KPI: Amount Closed This Year
     {
       id: revenueOverviewTabWidgets.amountClosedThisYear.id,
       universalIdentifier:
@@ -238,7 +225,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Deals Won This Year
     {
       id: revenueOverviewTabWidgets.dealsWonThisYear.id,
       universalIdentifier:
@@ -281,7 +267,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Won Rate This Year
     {
       id: revenueOverviewTabWidgets.wonRateThisYear.id,
       universalIdentifier:
@@ -323,7 +308,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // Rich Text Header: Current Pipeline
     {
       id: revenueOverviewTabWidgets.headerCurrentPipeline.id,
       universalIdentifier:
@@ -336,7 +320,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: null,
     },
 
-    // Bar Chart: Deal Revenue by Stage
     {
       id: revenueOverviewTabWidgets.dealRevenueByStage.id,
       universalIdentifier:
@@ -372,7 +355,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // Rich Text Header: Performance This Quarter
     {
       id: revenueOverviewTabWidgets.headerPerformanceThisQuarter.id,
       universalIdentifier:
@@ -385,7 +367,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: null,
     },
 
-    // KPI: Leads Created This Quarter
     {
       id: revenueOverviewTabWidgets.leadsCreatedThisQuarter.id,
       universalIdentifier:
@@ -420,7 +401,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: personObjectId,
     },
 
-    // KPI: Opps Created This Quarter
     {
       id: revenueOverviewTabWidgets.oppsCreatedThisQuarter.id,
       universalIdentifier:
@@ -455,7 +435,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Won Opps Created Count
     {
       id: revenueOverviewTabWidgets.wonOppsCreatedCount.id,
       universalIdentifier:
@@ -498,7 +477,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Won Opps Created Amount
     {
       id: revenueOverviewTabWidgets.wonOppsCreatedAmount.id,
       universalIdentifier:
@@ -541,7 +519,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Opps Won Count
     {
       id: revenueOverviewTabWidgets.oppsWonCount.id,
       universalIdentifier:
@@ -584,7 +561,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: opportunityObjectId,
     },
 
-    // KPI: Opps Won Amount
     {
       id: revenueOverviewTabWidgets.oppsWonAmount.id,
       universalIdentifier:
@@ -626,8 +602,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       },
       objectMetadataId: opportunityObjectId,
     },
-
-    // Bar Chart: Opps by Seller
     {
       id: revenueOverviewTabWidgets.oppsBySeller.id,
       universalIdentifier:
@@ -673,8 +647,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       },
       objectMetadataId: opportunityObjectId,
     },
-
-    // Bar Chart: Revenue by Seller
     {
       id: revenueOverviewTabWidgets.revenueBySeller.id,
       universalIdentifier:
@@ -728,12 +700,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       },
       objectMetadataId: opportunityObjectId,
     },
-
-    // ==========================================
-    // TAB 2: Lead Exploration
-    // ==========================================
-
-    // Line Chart: Lead Creation Over Time
     {
       id: leadExplorationTabWidgets.leadCreationOverTime.id,
       universalIdentifier:
@@ -759,8 +725,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       },
       objectMetadataId: personObjectId,
     },
-
-    // Line Chart: Company Creation Over Time
     {
       id: leadExplorationTabWidgets.companyCreationOverTime.id,
       universalIdentifier:
@@ -787,7 +751,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: companyObjectId,
     },
 
-    // Line Chart: Companies by Size
     {
       id: leadExplorationTabWidgets.companiesBySize.id,
       universalIdentifier:
@@ -813,7 +776,6 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       objectMetadataId: companyObjectId,
     },
 
-    // Pie Chart: Companies by Industry (using idealCustomerProfile as proxy since industry doesn't exist)
     {
       id: leadExplorationTabWidgets.companiesByIndustry.id,
       universalIdentifier:
@@ -849,8 +811,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       title: widget.title,
       type: widget.type,
       gridPosition: widget.gridPosition,
-      configuration:
-        widget.configuration as unknown as AllPageLayoutWidgetConfiguration,
+      configuration: widget.configuration,
       objectMetadataId: widget.objectMetadataId,
       createdAt: now,
       updatedAt: now,
