@@ -282,6 +282,7 @@ export class MigratePageLayoutWidgetConfigurationCommand extends ActiveOrSuspend
 
       const flatCacheToInvalidate =
         getMetadataRelatedMetadataNames('pageLayoutWidget');
+
       await this.workspaceCacheService.invalidateAndRecompute(
         workspaceId,
         flatCacheToInvalidate.map(getMetadataFlatEntityMapsKey),

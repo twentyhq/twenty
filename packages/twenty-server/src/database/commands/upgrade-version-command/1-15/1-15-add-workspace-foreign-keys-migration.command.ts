@@ -66,4 +66,3 @@ export class AddWorkspaceForeignKeysMigrationCommand extends ActiveOrSuspendedWo
     }
   }
 }
-

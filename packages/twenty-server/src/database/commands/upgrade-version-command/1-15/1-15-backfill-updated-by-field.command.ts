@@ -189,4 +189,3 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
     );
   }
 }
-
