@@ -24,17 +24,17 @@ const StyledRelationChipsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-type FieldWidgetMorphRelationProps = {
+type FieldWidgetMorphRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
   isInRightDrawer: boolean;
 };
 
-export const FieldWidgetMorphRelation = ({
+export const FieldWidgetMorphRelationField = ({
   fieldDefinition,
   recordId,
   isInRightDrawer,
-}: FieldWidgetMorphRelationProps) => {
+}: FieldWidgetMorphRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
 
   const recordsWithObjectNameSingular =

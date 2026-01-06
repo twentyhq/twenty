@@ -24,17 +24,17 @@ const StyledRelationChipsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-type FieldWidgetRelationProps = {
+type FieldWidgetRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
   isInRightDrawer: boolean;
 };
 
-export const FieldWidgetRelation = ({
+export const FieldWidgetRelationField = ({
   fieldDefinition,
   relationValue,
   isInRightDrawer,
-}: FieldWidgetRelationProps) => {
+}: FieldWidgetRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
   const isOneToMany = fieldMetadata.relationType === 'ONE_TO_MANY';
   const relationObjectNameSingular =
