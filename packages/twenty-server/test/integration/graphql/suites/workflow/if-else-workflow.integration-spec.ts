@@ -5,7 +5,7 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -358,14 +358,12 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStep.settings.input.branches.length).toBe(2);
 
       const ifBranch = ifElseStep.settings.input.branches.find(
-        (branch: { filterGroupId?: string }) => isDefined(branch.filterGroupId),
+        (branch: StepIfElseBranch) =>
+          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
       );
       const elseBranch = ifElseStep.settings.input.branches.find(
-        (
-          branch: { filterGroupId?: string },
-          index: number,
-          branches: Array<{ filterGroupId?: string }>,
-        ) => index === branches.length - 1 && !isDefined(branch.filterGroupId),
+        (branch: StepIfElseBranch) =>
+          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
       );
 
       expect(ifBranch).toBeDefined();
@@ -460,15 +458,14 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
+      // Identify branches by their nextStepIds (most reliable identifier)
       const ifBranch = ifElseStep.settings.input.branches.find(
-        (branch: { filterGroupId?: string }) => isDefined(branch.filterGroupId),
+        (branch: { nextStepIds: string[] }) =>
+          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
       );
       const elseBranch = ifElseStep.settings.input.branches.find(
-        (
-          branch: { filterGroupId?: string },
-          index: number,
-          branches: Array<{ filterGroupId?: string }>,
-        ) => index === branches.length - 1 && !isDefined(branch.filterGroupId),
+        (branch: { nextStepIds: string[] }) =>
+          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
       );
 
       expect(ifBranch).toBeDefined();
