@@ -14,10 +14,10 @@ import {
 import { TEST_ROCKET_ID_1 } from 'test/integration/constants/test-rocket-ids.constants';
 import { TEST_SURVEY_RESULT_1_ID } from 'test/integration/constants/test-survey-result-ids.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -647,7 +647,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.data.updatePet).toBeDefined();
-    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeDefined();
+    expect(
+      response.body.data.updatePet.polymorphicOwnerSurveyResult,
+    ).toBeDefined();
     expect(response.body.data.updatePet.polymorphicOwnerSurveyResult.id).toBe(
       TEST_SURVEY_RESULT_ID,
     );
@@ -698,7 +700,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
 
-    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeDefined();
+    expect(
+      response.body.data.updatePet.polymorphicOwnerSurveyResult,
+    ).toBeDefined();
 
     const updatePetOwnerSurveyResultDisconnectOp = updateOneOperationFactory({
       objectMetadataSingularName: PET_OBJECT_NAME,
@@ -714,7 +718,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     response = await makeGraphqlAPIRequest(
       updatePetOwnerSurveyResultDisconnectOp,
     );
-    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeFalsy();
+    expect(
+      response.body.data.updatePet.polymorphicOwnerSurveyResult,
+    ).toBeFalsy();
   });
 
   // TODO: run this test when validations are implemented in commonAPI
