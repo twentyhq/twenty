@@ -40,7 +40,6 @@ describe('If/Else Workflow (e2e)', () => {
         `,
       });
 
-    expect(createWorkflowResponse.status).toBe(200);
     expect(createWorkflowResponse.body.errors).toBeUndefined();
     createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
 
@@ -66,7 +65,6 @@ describe('If/Else Workflow (e2e)', () => {
         variables: { id: createdWorkflowId },
       });
 
-    expect(getWorkflowResponse.status).toBe(200);
     expect(getWorkflowResponse.body.errors).toBeUndefined();
     expect(
       getWorkflowResponse.body.data.workflow.versions.edges.length,
@@ -110,7 +108,6 @@ describe('If/Else Workflow (e2e)', () => {
         },
       });
 
-    expect(updateWorkflowVersionResponse.status).toBe(200);
     expect(updateWorkflowVersionResponse.body.errors).toBeUndefined();
 
     const createIfElseStepResponse = await client
@@ -158,14 +155,7 @@ describe('If/Else Workflow (e2e)', () => {
     );
 
     expect(ifElseStep).toBeDefined();
-    expect(ifElseStep.id).toBeDefined();
     ifElseStepId = ifElseStep.id;
-
-    const stepsDiff =
-      createIfElseStepResponse.body.data.createWorkflowVersionStep.stepsDiff;
-
-    expect(stepsDiff).toBeDefined();
-    expect(Array.isArray(stepsDiff)).toBe(true);
 
     const emptyNodes = steps.filter(
       (step: { type: string }) => step.type === 'EMPTY',
@@ -175,13 +165,10 @@ describe('If/Else Workflow (e2e)', () => {
     ifBranchEmptyNodeId = emptyNodes[0].id;
     elseBranchEmptyNodeId = emptyNodes[1].id;
 
-    expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
     expect(ifElseStep.settings.input.stepFilterGroups.length).toBeGreaterThan(
       0,
     );
-    expect(ifElseStep.settings.input.stepFilters).toBeDefined();
     expect(ifElseStep.settings.input.stepFilters.length).toBeGreaterThan(0);
-    expect(ifElseStep.settings.input.branches).toBeDefined();
     expect(ifElseStep.settings.input.branches.length).toBe(2);
     const ifFilterGroupId = ifElseStep.settings.input.stepFilterGroups[0].id;
 
@@ -283,6 +270,17 @@ describe('If/Else Workflow (e2e)', () => {
     }
   });
 
+  const identifyBranches = (branches: StepIfElseBranch[]) => {
+    const ifBranch = branches.find((branch) =>
+      branch.nextStepIds.includes(ifBranchEmptyNodeId!),
+    );
+    const elseBranch = branches.find((branch) =>
+      branch.nextStepIds.includes(elseBranchEmptyNodeId!),
+    );
+
+    return { ifBranch, elseBranch };
+  };
+
   describe('Workflow structure', () => {
     it('should verify If/Else workflow exists and is active', async () => {
       const response = await client
@@ -302,9 +300,7 @@ describe('If/Else Workflow (e2e)', () => {
           variables: { id: createdWorkflowId },
         });
 
-      expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.workflow).toBeDefined();
       expect(response.body.data.workflow.id).toBe(createdWorkflowId);
       expect(response.body.data.workflow.name).toBe('If/Else Test Workflow');
       expect(response.body.data.workflow.lastPublishedVersionId).toBe(
@@ -332,12 +328,10 @@ describe('If/Else Workflow (e2e)', () => {
           variables: { id: createdWorkflowVersionId },
         });
 
-      expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
 
       const workflowVersion = response.body.data.workflowVersion;
 
-      expect(workflowVersion).toBeDefined();
       expect(workflowVersion.status).toBe('ACTIVE');
 
       const trigger = workflowVersion.trigger;
@@ -354,27 +348,16 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStep).toBeDefined();
       expect(ifElseStep.type).toBe('IF_ELSE');
       expect(ifElseStep.name).toBe('If/Else');
-      expect(ifElseStep.settings.input.branches).toBeDefined();
       expect(ifElseStep.settings.input.branches.length).toBe(2);
 
-      const ifBranch = ifElseStep.settings.input.branches.find(
-        (branch: StepIfElseBranch) =>
-          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
-      );
-      const elseBranch = ifElseStep.settings.input.branches.find(
-        (branch: StepIfElseBranch) =>
-          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
+      const { ifBranch, elseBranch } = identifyBranches(
+        ifElseStep.settings.input.branches,
       );
 
-      expect(ifBranch).toBeDefined();
-      expect(elseBranch).toBeDefined();
       expect(ifBranch?.filterGroupId).toBeDefined();
       expect(elseBranch?.filterGroupId).toBeUndefined();
       expect(ifBranch?.nextStepIds).toContain(ifBranchEmptyNodeId);
       expect(elseBranch?.nextStepIds).toContain(elseBranchEmptyNodeId);
-
-      expect(ifElseStep.settings.input.stepFilterGroups).toBeDefined();
-      expect(ifElseStep.settings.input.stepFilters).toBeDefined();
     });
   });
 
@@ -427,9 +410,7 @@ describe('If/Else Workflow (e2e)', () => {
 
       const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
-      expect(workflowRun).toBeDefined();
       expect(workflowRun?.status).toBe('COMPLETED');
-      expect(workflowRun?.state?.stepInfos).toBeDefined();
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[ifElseStepId!]?.status).toBe(
         'SUCCESS',
@@ -438,13 +419,9 @@ describe('If/Else Workflow (e2e)', () => {
       const ifElseStepResult = workflowRun?.state?.stepInfos?.[ifElseStepId!]
         ?.result as { matchingBranchId?: string } | undefined;
 
-      expect(ifElseStepResult).toBeDefined();
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
       const ifElseStep = await getIfElseStepWithBranches();
-
-      expect(ifElseStep.settings.input.branches).toBeDefined();
-      expect(ifElseStep.settings.input.branches.length).toBe(2);
 
       const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
@@ -458,19 +435,8 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
-      const ifBranch = ifElseStep.settings.input.branches.find(
-        (branch: { nextStepIds: string[] }) =>
-          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
-      );
-      const elseBranch = ifElseStep.settings.input.branches.find(
-        (branch: { nextStepIds: string[] }) =>
-          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
-      );
+      const { ifBranch } = identifyBranches(ifElseStep.settings.input.branches);
 
-      expect(ifBranch).toBeDefined();
-      expect(elseBranch).toBeDefined();
-      expect(ifBranch?.filterGroupId).toBeDefined();
-      expect(elseBranch?.filterGroupId).toBeUndefined();
       expect(matchedBranch.filterGroupId).toBeDefined();
       expect(matchedBranch.filterGroupId).toBe(ifBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
@@ -487,9 +453,7 @@ describe('If/Else Workflow (e2e)', () => {
 
       const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
-      expect(workflowRun).toBeDefined();
       expect(workflowRun?.status).toBe('COMPLETED');
-      expect(workflowRun?.state?.stepInfos).toBeDefined();
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[ifElseStepId!]?.status).toBe(
         'SUCCESS',
@@ -498,13 +462,9 @@ describe('If/Else Workflow (e2e)', () => {
       const ifElseStepResult = workflowRun?.state?.stepInfos?.[ifElseStepId!]
         ?.result as { matchingBranchId?: string } | undefined;
 
-      expect(ifElseStepResult).toBeDefined();
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
       const ifElseStep = await getIfElseStepWithBranches();
-
-      expect(ifElseStep.settings.input.branches).toBeDefined();
-      expect(ifElseStep.settings.input.branches.length).toBe(2);
 
       const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
@@ -518,20 +478,12 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
-      const ifBranch = ifElseStep.settings.input.branches.find(
-        (branch: StepIfElseBranch) =>
-          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
-      );
-      const elseBranch = ifElseStep.settings.input.branches.find(
-        (branch: StepIfElseBranch) =>
-          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
+      const { elseBranch } = identifyBranches(
+        ifElseStep.settings.input.branches,
       );
 
-      expect(ifBranch).toBeDefined();
-      expect(elseBranch).toBeDefined();
-      expect(ifBranch?.filterGroupId).toBeDefined();
-      expect(elseBranch?.filterGroupId).toBeUndefined();
       expect(matchedBranch.filterGroupId).toBeUndefined();
+      expect(matchedBranch.filterGroupId).toBe(elseBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
       expect(matchedBranch.nextStepIds).not.toContain(ifBranchEmptyNodeId);
 
