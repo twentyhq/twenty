@@ -1,23 +1,13 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
+import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
-type RichTextV2Body = {
-  blocknote?: string | null;
-  markdown?: string | null;
-};
-
-type StandaloneRichTextConfiguration = {
-  configurationType?: WidgetConfigurationType;
-  body?: RichTextV2Body;
-};
-
-const validateConfigurationType = (
-  configuration: StandaloneRichTextConfiguration,
+export const validateStandaloneRichTextConfigurationType = (
+  configuration: StandaloneRichTextConfigurationDTO,
   widgetTitle: string,
 ): FlatPageLayoutWidgetValidationError[] => {
   const errors: FlatPageLayoutWidgetValidationError[] = [];
@@ -52,8 +42,8 @@ const validateConfigurationType = (
   return errors;
 };
 
-const validateBody = (
-  configuration: StandaloneRichTextConfiguration,
+export const validateStandaloneRichTextBody = (
+  configuration: StandaloneRichTextConfigurationDTO,
   widgetTitle: string,
 ): FlatPageLayoutWidgetValidationError[] => {
   const errors: FlatPageLayoutWidgetValidationError[] = [];
@@ -76,39 +66,6 @@ const validateBody = (
       value: configuration.body,
     });
   }
-
-  return errors;
-};
-
-export const validateStandaloneRichTextFlatPageLayoutWidget = ({
-  flatEntityToValidate,
-}: GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs): FlatPageLayoutWidgetValidationError[] => {
-  const { configuration, title } = flatEntityToValidate;
-  const errors: FlatPageLayoutWidgetValidationError[] = [];
-
-  if (!isDefined(configuration)) {
-    errors.push({
-      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Configuration is required for standalone rich text widget "${title}"`,
-      userFriendlyMessage: msg`Configuration is required for standalone rich text widget`,
-    });
-
-    return errors;
-  }
-
-  const standaloneRichTextConfiguration =
-    configuration as StandaloneRichTextConfiguration;
-
-  const configurationTypeErrors = validateConfigurationType(
-    standaloneRichTextConfiguration,
-    title,
-  );
-
-  errors.push(...configurationTypeErrors);
-
-  const bodyErrors = validateBody(standaloneRichTextConfiguration, title);
-
-  errors.push(...bodyErrors);
 
   return errors;
 };
