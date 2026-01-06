@@ -4,10 +4,9 @@ import { CurrencyCode } from 'twenty-shared/constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const getFieldMetadataItemInitialValues = (
-  fieldMetadataItem: FieldMetadataItem | null | undefined,
+  fieldMetadataItem: FieldMetadataItem | undefined,
 ) => {
   if (fieldMetadataItem?.type !== FieldMetadataType.CURRENCY) {
     return {
@@ -21,12 +20,10 @@ export const getFieldMetadataItemInitialValues = (
     decimals: DEFAULT_DECIMAL_VALUE,
   };
 
-  const rawCurrencyCode = fieldMetadataItem.defaultValue?.currencyCode ?? null;
-  const strippedCurrencyCode = rawCurrencyCode
-    ? stripSimpleQuotesFromString(rawCurrencyCode)
-    : null;
-  const currencyCode = isNonEmptyString(strippedCurrencyCode)
-    ? applySimpleQuotesToString(strippedCurrencyCode)
+  const currencyCode = isNonEmptyString(
+    fieldMetadataItem.defaultValue?.currencyCode,
+  )
+    ? fieldMetadataItem.defaultValue?.currencyCode
     : applySimpleQuotesToString(CurrencyCode.USD);
 
   const defaultValue = {
