@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -449,6 +450,10 @@ describe('If/Else Workflow (e2e)', () => {
       const matchedBranch = ifElseStep.settings.input.branches.find(
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
+
+      console.log({ matchedBranch });
+      console.log({ ifElseStepResult });
+      console.log({ ifElseStep });
 
       if (!matchedBranch) {
         const branchIds = ifElseStep.settings.input.branches.map((b) => b.id);
