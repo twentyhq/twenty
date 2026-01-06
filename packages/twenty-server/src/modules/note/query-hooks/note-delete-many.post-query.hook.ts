@@ -10,10 +10,10 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 
 @Injectable()
 @WorkspaceQueryHook({
-  key: `note.deleteOne`,
+  key: `note.deleteMany`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class NoteDeleteOnePostQueryHook
+export class NoteDeleteManyPostQueryHook
   implements WorkspacePostQueryHookInstance
 {
   constructor(

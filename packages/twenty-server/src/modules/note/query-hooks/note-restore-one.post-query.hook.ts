@@ -10,10 +10,10 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 
 @Injectable()
 @WorkspaceQueryHook({
-  key: `note.deleteOne`,
+  key: `note.restoreOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class NoteDeleteOnePostQueryHook
+export class NoteRestoreOnePostQueryHook
   implements WorkspacePostQueryHookInstance
 {
   constructor(
@@ -25,9 +25,10 @@ export class NoteDeleteOnePostQueryHook
     _objectName: string,
     payload: NoteWorkspaceEntity[],
   ): Promise<void> {
-    await this.notePostQueryHookService.handleNoteTargetsDelete(
+    await this.notePostQueryHookService.handleNoteTargetsRestore(
       authContext,
       payload,
     );
   }
 }
+
