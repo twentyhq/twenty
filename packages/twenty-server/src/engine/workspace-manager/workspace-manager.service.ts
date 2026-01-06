@@ -23,7 +23,6 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
-import { prefillDashboard } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboard';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -183,15 +182,6 @@ export class WorkspaceManagerService {
       flatFieldMetadataMaps,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
-    });
-
-    await prefillDashboard({
-      coreDataSource: this.coreDataSource,
-      workspaceId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceSchemaName: dataSourceMetadata.schema,
-      twentyStandardFlatApplication,
     });
   }
 

@@ -36,7 +36,9 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = ({
       const tabDefinition = layoutDefinition.tabs[tabName];
       const tabIds = layoutIds.tabs[tabName];
 
-      const widgetIds = Object.values(tabIds.widgets).map((widget) => widget.id);
+      const widgetIds = Object.values(tabIds.widgets).map(
+        (widget) => widget.id,
+      );
 
       const flatPageLayoutTab: FlatPageLayoutTab = {
         id: tabIds.id,

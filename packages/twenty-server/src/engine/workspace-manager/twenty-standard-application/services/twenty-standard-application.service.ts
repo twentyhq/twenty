@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +25,8 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 
 @Injectable()
 export class TwentyStandardApplicationService {
+  private readonly logger = new Logger(TwentyStandardApplicationService.name);
+
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -91,6 +93,9 @@ export class TwentyStandardApplicationService {
           });
 
           if (!isDefined(pageLayout)) {
+            this.logger.warn(
+              `Standard dashboard '${dashboardDef.title}' skipped: page layout with identifier '${dashboardDef.pageLayoutUniversalIdentifier}' not found`,
+            );
             continue;
           }
 
@@ -104,6 +109,9 @@ export class TwentyStandardApplicationService {
           });
 
           if (isDefined(existingDashboard)) {
+            this.logger.debug(
+              `Standard dashboard '${dashboardDef.title}' already exists, skipping creation`,
+            );
             continue;
           }
 

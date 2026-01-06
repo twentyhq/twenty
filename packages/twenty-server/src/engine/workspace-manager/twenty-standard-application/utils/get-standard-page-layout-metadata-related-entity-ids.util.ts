@@ -1,17 +1,5 @@
 import { v4 } from 'uuid';
 
-import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-
-type WidgetIds = Record<string, { id: string }>;
-
-type TabIds = Record<
-  string,
-  {
-    id: string;
-    widgets: WidgetIds;
-  }
->;
-
 export type StandardPageLayoutMetadataRelatedEntityIds = {
   revenueOverview: {
     id: string;
@@ -51,8 +39,6 @@ export type StandardPageLayoutMetadataRelatedEntityIds = {
 
 export const getStandardPageLayoutMetadataRelatedEntityIds =
   (): StandardPageLayoutMetadataRelatedEntityIds => {
-    const layout = STANDARD_PAGE_LAYOUTS.revenueOverview;
-
     const revenueOverviewWidgets: StandardPageLayoutMetadataRelatedEntityIds['revenueOverview']['tabs']['revenueOverview']['widgets'] =
       {
         headerRevenueToDate: { id: v4() },

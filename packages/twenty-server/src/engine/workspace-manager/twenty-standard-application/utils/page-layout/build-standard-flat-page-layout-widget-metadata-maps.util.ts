@@ -26,6 +26,9 @@ export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = {
   standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
 };
 
+// TODO: Replace hardcoded dates (2025-01-01, 2025-10-01) with relative date filters
+// when the filter system supports dynamic date calculation
+
 type WidgetDefinition = {
   id: string;
   universalIdentifier: string;
@@ -33,8 +36,10 @@ type WidgetDefinition = {
   title: string;
   type: WidgetType;
   gridPosition: GridPosition;
-  // Using Record<string, unknown> for flexibility in defining configurations
-  // Cast to AllPageLayoutWidgetConfiguration when creating FlatPageLayoutWidget
+  // Configuration is typed as Record<string, unknown> because the helper functions
+  // (createRichTextConfiguration, createFilterConfig, etc.) return dynamic objects
+  // that TypeScript cannot properly narrow to the discriminated union type.
+  // Cast to AllPageLayoutWidgetConfiguration when creating FlatPageLayoutWidget.
   configuration: Record<string, unknown>;
   objectMetadataId: string | null;
 };
@@ -116,8 +121,10 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
   const layoutDef = STANDARD_PAGE_LAYOUTS.revenueOverview;
 
   // Get object and field IDs
-  const opportunityObjectId = standardObjectMetadataRelatedEntityIds.opportunity.id;
-  const opportunityFields = standardObjectMetadataRelatedEntityIds.opportunity.fields;
+  const opportunityObjectId =
+    standardObjectMetadataRelatedEntityIds.opportunity.id;
+  const opportunityFields =
+    standardObjectMetadataRelatedEntityIds.opportunity.fields;
   const personObjectId = standardObjectMetadataRelatedEntityIds.person.id;
   const personFields = standardObjectMetadataRelatedEntityIds.person.fields;
   const companyObjectId = standardObjectMetadataRelatedEntityIds.company.id;
@@ -141,7 +148,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Rich Text Header: Revenue to date
     {
       id: revenueOverviewTabWidgets.headerRevenueToDate.id,
-      universalIdentifier: revenueOverviewTabDef.headerRevenueToDate.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.headerRevenueToDate.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Revenue to date header',
       type: WidgetType.STANDALONE_RICH_TEXT,
@@ -153,7 +161,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Amount Closed This Year
     {
       id: revenueOverviewTabWidgets.amountClosedThisYear.id,
-      universalIdentifier: revenueOverviewTabDef.amountClosedThisYear.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.amountClosedThisYear.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Amount Closed this year',
       type: WidgetType.GRAPH,
@@ -187,7 +196,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Deals Won This Year
     {
       id: revenueOverviewTabWidgets.dealsWonThisYear.id,
-      universalIdentifier: revenueOverviewTabDef.dealsWonThisYear.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.dealsWonThisYear.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Number of deals won this year',
       type: WidgetType.GRAPH,
@@ -221,7 +231,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Won Rate This Year
     {
       id: revenueOverviewTabWidgets.wonRateThisYear.id,
-      universalIdentifier: revenueOverviewTabDef.wonRateThisYear.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.wonRateThisYear.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won rate this year',
       type: WidgetType.GRAPH,
@@ -254,7 +265,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Rich Text Header: Current Pipeline
     {
       id: revenueOverviewTabWidgets.headerCurrentPipeline.id,
-      universalIdentifier: revenueOverviewTabDef.headerCurrentPipeline.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.headerCurrentPipeline.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Current Pipeline header',
       type: WidgetType.STANDALONE_RICH_TEXT,
@@ -266,7 +278,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Bar Chart: Deal Revenue by Stage
     {
       id: revenueOverviewTabWidgets.dealRevenueByStage.id,
-      universalIdentifier: revenueOverviewTabDef.dealRevenueByStage.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.dealRevenueByStage.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Deal revenue by stage',
       type: WidgetType.GRAPH,
@@ -301,7 +314,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Rich Text Header: Performance This Quarter
     {
       id: revenueOverviewTabWidgets.headerPerformanceThisQuarter.id,
-      universalIdentifier: revenueOverviewTabDef.headerPerformanceThisQuarter.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.headerPerformanceThisQuarter.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Performance This Quarter header',
       type: WidgetType.STANDALONE_RICH_TEXT,
@@ -313,7 +327,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Leads Created This Quarter
     {
       id: revenueOverviewTabWidgets.leadsCreatedThisQuarter.id,
-      universalIdentifier: revenueOverviewTabDef.leadsCreatedThisQuarter.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.leadsCreatedThisQuarter.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Leads created this quarter',
       type: WidgetType.GRAPH,
@@ -339,7 +354,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Opps Created This Quarter
     {
       id: revenueOverviewTabWidgets.oppsCreatedThisQuarter.id,
-      universalIdentifier: revenueOverviewTabDef.oppsCreatedThisQuarter.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.oppsCreatedThisQuarter.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps created this quarter',
       type: WidgetType.GRAPH,
@@ -365,7 +381,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Won Opps Created Count
     {
       id: revenueOverviewTabWidgets.wonOppsCreatedCount.id,
-      universalIdentifier: revenueOverviewTabDef.wonOppsCreatedCount.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.wonOppsCreatedCount.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won opps created count',
       type: WidgetType.GRAPH,
@@ -399,7 +416,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Won Opps Created Amount
     {
       id: revenueOverviewTabWidgets.wonOppsCreatedAmount.id,
-      universalIdentifier: revenueOverviewTabDef.wonOppsCreatedAmount.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.wonOppsCreatedAmount.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won opps created amount',
       type: WidgetType.GRAPH,
@@ -433,7 +451,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Opps Won Count
     {
       id: revenueOverviewTabWidgets.oppsWonCount.id,
-      universalIdentifier: revenueOverviewTabDef.oppsWonCount.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.oppsWonCount.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps won count',
       type: WidgetType.GRAPH,
@@ -467,7 +486,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // KPI: Opps Won Amount
     {
       id: revenueOverviewTabWidgets.oppsWonAmount.id,
-      universalIdentifier: revenueOverviewTabDef.oppsWonAmount.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.oppsWonAmount.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps won amount',
       type: WidgetType.GRAPH,
@@ -501,7 +521,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Bar Chart: Opps by Seller
     {
       id: revenueOverviewTabWidgets.oppsBySeller.id,
-      universalIdentifier: revenueOverviewTabDef.oppsBySeller.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.oppsBySeller.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps by seller',
       type: WidgetType.GRAPH,
@@ -539,7 +560,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Bar Chart: Revenue by Seller
     {
       id: revenueOverviewTabWidgets.revenueBySeller.id,
-      universalIdentifier: revenueOverviewTabDef.revenueBySeller.universalIdentifier,
+      universalIdentifier:
+        revenueOverviewTabDef.revenueBySeller.universalIdentifier,
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Revenue by seller',
       type: WidgetType.GRAPH,
@@ -589,7 +611,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Line Chart: Lead Creation Over Time
     {
       id: leadExplorationTabWidgets.leadCreationOverTime.id,
-      universalIdentifier: leadExplorationTabDef.leadCreationOverTime.universalIdentifier,
+      universalIdentifier:
+        leadExplorationTabDef.leadCreationOverTime.universalIdentifier,
       pageLayoutTabId: leadExplorationTabId,
       title: 'Lead creation over time',
       type: WidgetType.GRAPH,
@@ -615,7 +638,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Line Chart: Company Creation Over Time
     {
       id: leadExplorationTabWidgets.companyCreationOverTime.id,
-      universalIdentifier: leadExplorationTabDef.companyCreationOverTime.universalIdentifier,
+      universalIdentifier:
+        leadExplorationTabDef.companyCreationOverTime.universalIdentifier,
       pageLayoutTabId: leadExplorationTabId,
       title: 'Company creation over time',
       type: WidgetType.GRAPH,
@@ -641,7 +665,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Line Chart: Companies by Size
     {
       id: leadExplorationTabWidgets.companiesBySize.id,
-      universalIdentifier: leadExplorationTabDef.companiesBySize.universalIdentifier,
+      universalIdentifier:
+        leadExplorationTabDef.companiesBySize.universalIdentifier,
       pageLayoutTabId: leadExplorationTabId,
       title: 'Companies by size',
       type: WidgetType.GRAPH,
@@ -666,7 +691,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     // Pie Chart: Companies by Industry (using idealCustomerProfile as proxy since industry doesn't exist)
     {
       id: leadExplorationTabWidgets.companiesByIndustry.id,
-      universalIdentifier: leadExplorationTabDef.companiesByIndustry.universalIdentifier,
+      universalIdentifier:
+        leadExplorationTabDef.companiesByIndustry.universalIdentifier,
       pageLayoutTabId: leadExplorationTabId,
       title: 'Companies by industry',
       type: WidgetType.GRAPH,
