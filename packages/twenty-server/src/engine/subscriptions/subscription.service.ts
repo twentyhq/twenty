@@ -58,19 +58,19 @@ export class SubscriptionService {
   }
 
   public async isSubscriptionMatchingEvent(
-    subscription: SubscriptionInput,
+    subscriptionInput: SubscriptionInput,
     event: OnDbEventDTO,
     workspaceId: string,
   ): Promise<boolean> {
-    const objectName = this.parseQueryObjectName(subscription.query);
+    const objectName = this.parseQueryObjectName(subscriptionInput.query);
 
     if (!objectName) {
       return false;
     }
 
     if (
-      subscription.selectedEventActions &&
-      !subscription.selectedEventActions.includes(event.action)
+      subscriptionInput.selectedEventActions &&
+      !subscriptionInput.selectedEventActions.includes(event.action)
     ) {
       return false;
     }
@@ -105,12 +105,7 @@ export class SubscriptionService {
 
   private parseQueryObjectName(queryString: string): string | null {
     try {
-      const { query } = JSON.parse(queryString) as {
-        query: string;
-        variables?: Record<string, unknown>;
-      };
-
-      const ast = parse(query);
+      const ast = parse(queryString);
 
       const firstOperation = ast.definitions.find(
         (def): def is OperationDefinitionNode =>

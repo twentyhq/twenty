@@ -10,6 +10,7 @@ import { RecordTableAggregateFooter } from '@/object-record/record-table/record-
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { RecordTableVirtualizedRowTreadmillEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
+import { RecordTableVirtualizedSSEEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedSSEEffect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableNoRecordGroupBody = () => {
@@ -37,6 +38,7 @@ export const RecordTableNoRecordGroupBody = () => {
         )}
         <RecordTableVirtualizedRowTreadmillEffect />
         <RecordTableVirtualizedDataChangedEffect />
+        <RecordTableVirtualizedSSEEffect />
       </RecordTableBodyNoRecordGroupDragDropContextProvider>
     </RecordTableNoRecordGroupBodyContextProvider>
   );
