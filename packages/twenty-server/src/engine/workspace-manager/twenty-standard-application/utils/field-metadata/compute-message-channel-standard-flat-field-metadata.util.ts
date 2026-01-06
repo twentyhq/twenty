@@ -517,6 +517,23 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  customData: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'customData',
+      type: FieldMetadataType.RAW_JSON,
+      label: 'Custom Data',
+      description: 'JSON object containing custom data',
+      icon: 'IconDatabase',
+      isNullable: true,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   connectedAccount: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -260,4 +260,27 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  attachments: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'attachments',
+      label: 'Attachments',
+      description: 'Attachments linked to the message',
+      icon: 'IconFileUpload',
+      isSystem: true,
+      isNullable: false,
+      targetObjectName: 'attachment',
+      targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });
