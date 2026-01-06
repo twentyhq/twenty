@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -451,10 +450,6 @@ describe('If/Else Workflow (e2e)', () => {
         (branch) => branch.id === ifElseStepResult?.matchingBranchId,
       );
 
-      console.log({ matchedBranch });
-      console.log({ ifElseStepResult });
-      console.log({ ifElseStep });
-
       if (!matchedBranch) {
         const branchIds = ifElseStep.settings.input.branches.map((b) => b.id);
 
@@ -463,7 +458,6 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
-      // Identify branches by their nextStepIds (most reliable identifier)
       const ifBranch = ifElseStep.settings.input.branches.find(
         (branch: { nextStepIds: string[] }) =>
           branch.nextStepIds.includes(ifBranchEmptyNodeId!),
@@ -477,9 +471,10 @@ describe('If/Else Workflow (e2e)', () => {
       expect(elseBranch).toBeDefined();
       expect(ifBranch?.filterGroupId).toBeDefined();
       expect(elseBranch?.filterGroupId).toBeUndefined();
-      expect(matchedBranch.id).toBe(ifBranch?.id);
       expect(matchedBranch.filterGroupId).toBeDefined();
+      expect(matchedBranch.filterGroupId).toBe(ifBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
+      expect(matchedBranch.nextStepIds).not.toContain(elseBranchEmptyNodeId);
 
       await destroyWorkflowRun(workflowRunId);
     });
@@ -523,8 +518,22 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
+      const ifBranch = ifElseStep.settings.input.branches.find(
+        (branch: StepIfElseBranch) =>
+          branch.nextStepIds.includes(ifBranchEmptyNodeId!),
+      );
+      const elseBranch = ifElseStep.settings.input.branches.find(
+        (branch: StepIfElseBranch) =>
+          branch.nextStepIds.includes(elseBranchEmptyNodeId!),
+      );
+
+      expect(ifBranch).toBeDefined();
+      expect(elseBranch).toBeDefined();
+      expect(ifBranch?.filterGroupId).toBeDefined();
+      expect(elseBranch?.filterGroupId).toBeUndefined();
       expect(matchedBranch.filterGroupId).toBeUndefined();
       expect(matchedBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
+      expect(matchedBranch.nextStepIds).not.toContain(ifBranchEmptyNodeId);
 
       await destroyWorkflowRun(workflowRunId);
     });
