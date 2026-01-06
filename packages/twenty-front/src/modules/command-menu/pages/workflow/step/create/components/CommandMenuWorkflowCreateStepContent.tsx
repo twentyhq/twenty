@@ -13,7 +13,7 @@ import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useClo
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
+import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,33 +47,12 @@ export const CommandMenuWorkflowCreateStepContent = () => {
     parentStep: WorkflowIfElseAction;
     createdStepId: string;
   }) => {
-    const branches = parentStep.settings.input.branches;
-
-    const { filterGroup, filter, branchId, filterGroupId } =
-      createElseIfBranch();
-
-    const updatedBranches = [...branches];
-    updatedBranches.splice(branches.length - 1, 0, {
-      id: branchId,
-      filterGroupId,
-      nextStepIds: [createdStepId],
+    const updatedStep = prepareIfElseStepWithNewBranch({
+      parentStep,
+      targetStepId: createdStepId,
     });
 
-    await updateStep({
-      ...parentStep,
-      settings: {
-        ...parentStep.settings,
-        input: {
-          ...parentStep.settings.input,
-          stepFilterGroups: [
-            ...parentStep.settings.input.stepFilterGroups,
-            filterGroup,
-          ],
-          stepFilters: [...parentStep.settings.input.stepFilters, filter],
-          branches: updatedBranches,
-        },
-      },
-    });
+    await updateStep(updatedStep);
   };
 
   const handleCreateStep = async (actionType: WorkflowActionType) => {
