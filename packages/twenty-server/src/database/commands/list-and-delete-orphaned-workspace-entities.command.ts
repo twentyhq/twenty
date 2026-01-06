@@ -128,7 +128,7 @@ type OrphanedRecord = {
 };
 
 @Command({
-  name: 'workspace:list-orphaned-entities',
+  name: 'workspace:list-and-delete-orphaned-entities',
   description:
     'List and optionally delete records from workspace-related entities that reference a workspaceId not present in the workspace table',
 })
