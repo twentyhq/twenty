@@ -179,7 +179,18 @@ describe('If/Else Workflow (e2e)', () => {
     );
     expect(ifElseStep.settings.input.stepFilters.length).toBeGreaterThan(0);
     expect(ifElseStep.settings.input.branches.length).toBe(2);
-    const ifFilterGroupId = ifElseStep.settings.input.stepFilterGroups[0].id;
+
+    // Use the filterGroupId from the IF branch to ensure it matches
+    const ifFilterGroupId = ifBranch.filterGroupId;
+
+    expect(ifFilterGroupId).toBeDefined();
+
+    // Verify the filterGroupId exists in stepFilterGroups
+    const filterGroup = ifElseStep.settings.input.stepFilterGroups.find(
+      (g: { id: string }) => g.id === ifFilterGroupId,
+    );
+
+    expect(filterGroup).toBeDefined();
 
     const updateIfElseStepResponse = await client
       .post('/graphql')
@@ -280,12 +291,9 @@ describe('If/Else Workflow (e2e)', () => {
   });
 
   const identifyBranches = (branches: StepIfElseBranch[]) => {
-    const ifBranch = branches.find((branch) =>
-      branch.nextStepIds.includes(ifBranchEmptyNodeId!),
-    );
-    const elseBranch = branches.find((branch) =>
-      branch.nextStepIds.includes(elseBranchEmptyNodeId!),
-    );
+    // Identify branches by filterGroupId: IF branch has filterGroupId, ELSE branch doesn't
+    const ifBranch = branches.find((branch) => branch.filterGroupId);
+    const elseBranch = branches.find((branch) => !branch.filterGroupId);
 
     return { ifBranch, elseBranch };
   };
