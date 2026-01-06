@@ -1,5 +1,7 @@
+import { Temporal } from 'temporal-polyfill';
 import { v4 } from 'uuid';
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { getNextPeriodStart, getPeriodStart } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -26,8 +28,43 @@ export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = {
   standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
 };
 
-// TODO: Replace hardcoded dates (2025-01-01, 2025-10-01) with relative date filters
-// when the filter system supports dynamic date calculation
+const formatDateForFilter = (
+  now: string,
+  period: 'YEAR' | 'QUARTER',
+): {
+  start: { value: string; display: string };
+  end: { value: string; display: string };
+} => {
+  const instant = Temporal.Instant.from(now);
+  const dateTime = instant.toZonedDateTimeISO('UTC');
+  const periodStart = getPeriodStart(dateTime, period);
+  const periodEnd = getNextPeriodStart(dateTime, period);
+
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const formatDate = (dt: Temporal.ZonedDateTime) => ({
+    value: dt.toInstant().toString(),
+    display: `${monthNames[dt.month - 1]} ${dt.day}, ${dt.year}`,
+  });
+
+  return {
+    start: formatDate(periodStart),
+    end: formatDate(periodEnd),
+  };
+};
 
 type WidgetDefinition = {
   id: string;
@@ -166,7 +203,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Amount Closed this year',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 0, rowSpan: 5, columnSpan: 4 },
+      gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 4 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -183,9 +220,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'YEAR').start.value,
+            displayValue: formatDateForFilter(now, 'YEAR').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'YEAR').end.value,
+            displayValue: formatDateForFilter(now, 'YEAR').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -201,7 +246,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Number of deals won this year',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 4, rowSpan: 5, columnSpan: 4 },
+      gridPosition: { row: 2, column: 4, rowSpan: 4, columnSpan: 4 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -218,9 +263,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'YEAR').start.value,
+            displayValue: formatDateForFilter(now, 'YEAR').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'YEAR').end.value,
+            displayValue: formatDateForFilter(now, 'YEAR').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -236,7 +289,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won rate this year',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 8, rowSpan: 5, columnSpan: 4 },
+      gridPosition: { row: 2, column: 8, rowSpan: 4, columnSpan: 4 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.stage.id,
@@ -248,9 +301,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'YEAR').start.value,
+            displayValue: formatDateForFilter(now, 'YEAR').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'YEAR').end.value,
+            displayValue: formatDateForFilter(now, 'YEAR').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -270,7 +331,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Current Pipeline header',
       type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 7, column: 0, rowSpan: 2, columnSpan: 12 },
+      gridPosition: { row: 6, column: 0, rowSpan: 2, columnSpan: 12 },
       configuration: createRichTextConfiguration('Current Pipeline'),
       objectMetadataId: null,
     },
@@ -283,7 +344,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Deal revenue by stage',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 9, column: 0, rowSpan: 6, columnSpan: 12 },
+      gridPosition: { row: 8, column: 0, rowSpan: 5, columnSpan: 12 },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -319,7 +380,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Performance This Quarter header',
       type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 15, column: 0, rowSpan: 2, columnSpan: 12 },
+      gridPosition: { row: 13, column: 0, rowSpan: 2, columnSpan: 12 },
       configuration: createRichTextConfiguration('Performance This Quarter'),
       objectMetadataId: null,
     },
@@ -332,7 +393,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Leads created this quarter',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 17, column: 0, rowSpan: 3, columnSpan: 4 },
+      gridPosition: { row: 15, column: 0, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: personFields.id.id,
@@ -341,9 +402,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Created',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: personFields.createdAt.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Created',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: personFields.createdAt.id,
           },
         ]),
@@ -359,7 +428,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps created this quarter',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 17, column: 4, rowSpan: 3, columnSpan: 4 },
+      gridPosition: { row: 15, column: 2, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -368,9 +437,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Created',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.createdAt.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Created',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
@@ -386,7 +463,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won opps created count',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 17, column: 8, rowSpan: 3, columnSpan: 2 },
+      gridPosition: { row: 15, column: 4, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -403,9 +480,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Created',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.createdAt.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Created',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
@@ -421,7 +506,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Won opps created amount',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 17, column: 10, rowSpan: 3, columnSpan: 2 },
+      gridPosition: { row: 15, column: 6, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -438,9 +523,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Created',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.createdAt.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Created',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
@@ -456,7 +549,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps won count',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 20, column: 0, rowSpan: 3, columnSpan: 4 },
+      gridPosition: { row: 15, column: 8, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -473,9 +566,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -491,7 +592,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps won amount',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 20, column: 4, rowSpan: 3, columnSpan: 4 },
+      gridPosition: { row: 15, column: 10, rowSpan: 5, columnSpan: 2 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -508,9 +609,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -526,7 +635,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Opps by seller',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 23, column: 0, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 20, column: 0, rowSpan: 8, columnSpan: 7 },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -547,9 +656,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Created',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.createdAt.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Created',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
@@ -565,7 +682,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: revenueOverviewTabId,
       title: 'Revenue by seller',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 23, column: 6, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 20, column: 7, rowSpan: 8, columnSpan: 5 },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -594,9 +711,17 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
           {
             type: 'DATE_TIME',
             label: 'Close date',
-            value: '2025-01-01T00:00:00.000Z',
-            displayValue: 'Jan 1, 2025',
+            value: formatDateForFilter(now, 'QUARTER').start.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
             operand: 'IS_AFTER',
+            fieldMetadataId: opportunityFields.closeDate.id,
+          },
+          {
+            type: 'DATE_TIME',
+            label: 'Close date',
+            value: formatDateForFilter(now, 'QUARTER').end.value,
+            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
+            operand: 'IS_BEFORE',
             fieldMetadataId: opportunityFields.closeDate.id,
           },
         ]),
@@ -616,7 +741,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: leadExplorationTabId,
       title: 'Lead creation over time',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 0, column: 0, rowSpan: 7, columnSpan: 6 },
       configuration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: personFields.id.id,
@@ -643,7 +768,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: leadExplorationTabId,
       title: 'Company creation over time',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 0, column: 6, rowSpan: 7, columnSpan: 6 },
       configuration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: companyFields.id.id,
@@ -670,7 +795,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: leadExplorationTabId,
       title: 'Companies by size',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 7, column: 0, rowSpan: 7, columnSpan: 6 },
       configuration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: companyFields.id.id,
@@ -696,7 +821,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
       pageLayoutTabId: leadExplorationTabId,
       title: 'Companies by industry',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 6, column: 6, rowSpan: 6, columnSpan: 6 },
+      gridPosition: { row: 7, column: 6, rowSpan: 7, columnSpan: 6 },
       configuration: {
         configurationType: WidgetConfigurationType.PIE_CHART,
         groupByFieldMetadataId: companyFields.idealCustomerProfile.id,
