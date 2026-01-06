@@ -437,6 +437,9 @@ describe('If/Else Workflow (e2e)', () => {
 
       const { ifBranch } = identifyBranches(ifElseStep.settings.input.branches);
 
+      console.log('matchedBranch', matchedBranch);
+      console.log('ifBranch', ifBranch);
+
       expect(matchedBranch.filterGroupId).toBeDefined();
       expect(matchedBranch.filterGroupId).toBe(ifBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
@@ -481,6 +484,9 @@ describe('If/Else Workflow (e2e)', () => {
       const { elseBranch } = identifyBranches(
         ifElseStep.settings.input.branches,
       );
+
+      console.log('matchedBranch', matchedBranch);
+      console.log('elseBranch', elseBranch);
 
       expect(matchedBranch.filterGroupId).toBeUndefined();
       expect(matchedBranch.filterGroupId).toBe(elseBranch?.filterGroupId);
