@@ -109,5 +109,5 @@ export const useTidyUpWorkflowVersion = () => {
     return tidiedUpDiagram;
   };
 
-  return { tidyUpWorkflowVersion };
+  return { tidyUpWorkflowVersion, updateWorkflowVersionPosition };
 };

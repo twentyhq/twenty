@@ -56,8 +56,8 @@ npx nx storybook:build twenty-front         # Build Storybook
 npx nx storybook:serve-and-test:static     # Run Storybook tests
 
 # Development
-npx nx lint:changed twenty-front            # Lint changed files only (fastest)
-npx nx lint:changed twenty-front --configuration=fix  # Auto-fix changed files
+npx nx lint:diff-with-main twenty-front            # Lint files changed vs main (fastest)
+npx nx lint:diff-with-main twenty-front --configuration=fix  # Auto-fix changed files
 npx nx lint twenty-front                    # Lint all files (slower)
 npx nx typecheck twenty-front               # Type checking
 npx nx run twenty-front:graphql:generate    # Generate GraphQL types
@@ -72,8 +72,8 @@ npx nx run twenty-server:database:migrate:prod # Run migrations
 
 # Development
 npx nx run twenty-server:start             # Start the server
-npx nx lint:changed twenty-server          # Lint changed files only (fastest)
-npx nx lint:changed twenty-server --configuration=fix  # Auto-fix changed files
+npx nx lint:diff-with-main twenty-server          # Lint files changed vs main (fastest)
+npx nx lint:diff-with-main twenty-server --configuration=fix  # Auto-fix changed files
 npx nx run twenty-server:lint              # Lint all files (slower)
 npx nx run twenty-server:typecheck         # Type checking
 npx nx run twenty-server:test              # Run unit tests

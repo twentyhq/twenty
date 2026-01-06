@@ -8,6 +8,7 @@ export enum WorkflowActionType {
   FIND_RECORDS = 'FIND_RECORDS',
   FORM = 'FORM',
   FILTER = 'FILTER',
+  IF_ELSE = 'IF_ELSE',
   HTTP_REQUEST = 'HTTP_REQUEST',
   AI_AGENT = 'AI_AGENT',
   ITERATOR = 'ITERATOR',

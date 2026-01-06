@@ -1,26 +1,9 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreateViewAction = {
-  type: 'create_view';
-  view: FlatView;
-};
+export type CreateViewAction = BaseCreateWorkspaceMigrationAction<'view'>;
 
-export type UpdateViewAction = {
-  type: 'update_view';
-  viewId: string;
-  updates: FlatEntityPropertiesUpdates<'view'>;
-};
+export type UpdateViewAction = BaseUpdateWorkspaceMigrationAction<'view'>;
 
-export type DeleteViewAction = {
-  type: 'delete_view';
-  viewId: string;
-};
-
-export type WorkspaceMigrationViewActionV2 =
-  | CreateViewAction
-  | UpdateViewAction
-  | DeleteViewAction;
-
-export type WorkspaceMigrationViewActionTypeV2 =
-  WorkspaceMigrationViewActionV2['type'];
+export type DeleteViewAction = BaseDeleteWorkspaceMigrationAction<'view'>;

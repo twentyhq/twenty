@@ -20,6 +20,7 @@ import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-versio
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
+import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-workspace-foreign-keys-migration.command';
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -59,6 +60,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.16 Commands
     protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
+    protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -90,7 +92,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.fixNanPositionValuesInNotesCommand,
     ];
 
-    const commands_1160: VersionCommands = [this.backfillUpdatedByFieldCommand];
+    const commands_1160: VersionCommands = [
+      this.backfillUpdatedByFieldCommand,
+      this.addWorkspaceForeignKeysMigrationCommand,
+    ];
 
     this.allCommands = {
       '1.12.0': commands_1120,

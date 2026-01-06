@@ -31,8 +31,12 @@ export const useTimelineActivities = (
 
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
     (field) =>
-      field.relation?.targetObjectMetadata?.nameSingular ===
-      targetableObject.targetObjectNameSingular,
+      isDefined(field.morphRelations) &&
+      field.morphRelations.some(
+        (morphRelation) =>
+          morphRelation.targetObjectMetadata?.nameSingular ===
+          targetableObject.targetObjectNameSingular,
+      ),
   );
 
   const { recordGqlFields: depthOneRecordGqlFields } =

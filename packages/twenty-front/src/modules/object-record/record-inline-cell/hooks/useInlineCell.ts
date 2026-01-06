@@ -33,7 +33,6 @@ export const useInlineCell = (
 
   const closeInlineCell = () => {
     onCloseEditMode?.();
-
     goBackToPreviousDropdownFocusId();
   };
 

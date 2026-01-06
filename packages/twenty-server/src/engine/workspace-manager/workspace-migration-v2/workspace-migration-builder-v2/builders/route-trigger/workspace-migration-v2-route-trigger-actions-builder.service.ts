@@ -23,7 +23,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'created'
+    'create'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
@@ -42,8 +42,9 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     return {
       status: 'success',
       action: {
-        type: 'create_route_trigger',
-        routeTrigger: flatRouteTriggerToValidate,
+        type: 'create',
+        metadataName: 'routeTrigger',
+        flatEntity: flatRouteTriggerToValidate,
       },
     };
   }
@@ -52,7 +53,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion(
@@ -71,8 +72,9 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     return {
       status: 'success',
       action: {
-        type: 'delete_route_trigger',
-        routeTriggerId: flatRouteTriggerToValidate.id,
+        type: 'delete',
+        metadataName: 'routeTrigger',
+        entityId: flatRouteTriggerToValidate.id,
       },
     };
   }
@@ -81,7 +83,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.routeTrigger,
-    'updated'
+    'update'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(
@@ -98,8 +100,9 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
-      type: 'update_route_trigger',
-      routeTriggerId: flatEntityId,
+      type: 'update',
+      metadataName: 'routeTrigger',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

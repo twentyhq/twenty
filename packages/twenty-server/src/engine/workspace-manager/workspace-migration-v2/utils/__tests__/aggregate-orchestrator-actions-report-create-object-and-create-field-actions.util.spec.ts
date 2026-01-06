@@ -28,10 +28,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -40,13 +41,14 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -66,8 +68,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -85,14 +87,15 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [],
+            create: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -105,7 +108,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -118,7 +122,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -131,8 +136,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -149,10 +154,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -161,8 +167,9 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-2',
                   id: 'object-2',
                   nameSingular: 'company',
@@ -171,13 +178,14 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -190,7 +198,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-2',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -210,8 +219,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -230,10 +239,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'user',
@@ -242,13 +252,14 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -261,7 +272,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-2',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -274,8 +286,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -295,14 +307,15 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [],
-            updated: [],
-            deleted: [],
+            create: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -315,7 +328,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -328,7 +342,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -341,8 +356,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -370,10 +385,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         input: {
           ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_object',
-                flatObjectMetadata: getFlatObjectMetadataMock({
+                type: 'create',
+                metadataName: 'objectMetadata',
+                flatEntity: getFlatObjectMetadataMock({
                   universalIdentifier: 'object-1',
                   id: 'object-1',
                   nameSingular: 'attachment',
@@ -382,13 +398,14 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 flatFieldMetadatas: [],
               } satisfies CreateObjectAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
           fieldMetadata: {
-            created: [
+            create: [
               {
-                type: 'create_field',
+                type: 'create',
+                metadataName: 'fieldMetadata',
                 objectMetadataId: 'object-1',
                 flatFieldMetadatas: [
                   getFlatFieldMetadataMock({
@@ -401,8 +418,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
                 ],
               } satisfies CreateFieldAction,
             ],
-            updated: [],
-            deleted: [],
+            update: [],
+            delete: [],
           },
         } satisfies OrchestratorActionsReport,
         expected: {
@@ -425,7 +442,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           orchestratorActionsReport: input,
         });
 
-      const fieldActions = result.fieldMetadata.created as CreateFieldAction[];
+      const fieldActions = result.fieldMetadata.create as CreateFieldAction[];
       const fieldActionCounts = fieldActions.reduce(
         (acc, action) => {
           acc[action.objectMetadataId] =
@@ -437,11 +454,10 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       );
 
       const objectActions = result.objectMetadata
-        .created as CreateObjectAction[];
+        .create as CreateObjectAction[];
       const objectActionCounts = objectActions.reduce(
         (acc, action) => {
-          acc[action.flatObjectMetadata.id] =
-            (acc[action.flatObjectMetadata.id] || 0) + 1;
+          acc[action.flatEntity.id] = (acc[action.flatEntity.id] || 0) + 1;
 
           return acc;
         },
