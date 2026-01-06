@@ -9,8 +9,8 @@ export const prepareIfElseStepWithNewBranch = ({
   targetStepId: string;
 }): WorkflowIfElseAction => {
   const branches = parentStep.settings.input.branches;
-  const stepFilterGroups = parentStep.settings.input.stepFilterGroups ?? [];
-  const stepFilters = parentStep.settings.input.stepFilters ?? [];
+  const stepFilterGroups = parentStep.settings.input.stepFilterGroups;
+  const stepFilters = parentStep.settings.input.stepFilters;
 
   const { filterGroup, filter, branchId, filterGroupId } = createElseIfBranch();
 
