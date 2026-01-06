@@ -165,7 +165,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -203,7 +207,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput1',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -226,7 +234,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           includedObjectNameSingulars: ['pet'],
           limit: 50,
         },
@@ -254,7 +266,12 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'person', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'person',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -284,7 +301,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           filter: { id: { eq: searchInput1Pet.id } },
           limit: 50,
         },
@@ -307,7 +328,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 4,
         },
         eval: {
@@ -334,7 +359,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 2,
         },
         eval: {
@@ -356,7 +385,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           after: encodeCursorData({
             lastRanks: { tsRank: 0, tsRankCD: 0 },
             lastRecordIdsPerObject: {
@@ -384,7 +417,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 4,
         },
         eval: {
@@ -412,7 +449,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 2,
         },
         eval: {
@@ -435,7 +476,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
@@ -465,7 +510,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
@@ -495,7 +544,12 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'person', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'person',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 1,
         },
         eval: {
@@ -517,7 +571,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           includedObjectNameSingulars: ['pet'],
           limit: 1,
         },
@@ -540,7 +598,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 0,
         },
         eval: {
@@ -558,7 +620,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'jose',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -581,7 +647,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'garcia',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -604,7 +674,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'cafe',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -634,7 +708,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'naive',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -664,7 +742,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'muller',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -687,7 +769,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'francois',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -709,7 +795,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '2071234567',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -731,7 +821,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '+442071234567',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -753,7 +847,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '442071234567',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -775,7 +873,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '02071234567',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -797,7 +899,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '0123456789',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -819,7 +925,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '5551234567',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -841,7 +951,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '555123',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -864,7 +978,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '123456789',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -887,7 +1005,11 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput1',
-          excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
           limit: 50,
         },
         eval: {
@@ -945,7 +1067,11 @@ describe('SearchResolver', () => {
   it('should return cursor for each search edge', async () => {
     const response = await search({
       searchInput: 'searchInput',
-      excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+      excludedObjectNameSingulars: [
+        'workspaceMember',
+        'employmentHistory',
+        'petCareAgreement',
+      ],
       limit: 2,
       expectToFail: false,
     });
@@ -991,7 +1117,11 @@ describe('SearchResolver', () => {
   it('should return cursor for each search edge with after cursor input', async () => {
     const response = await search({
       searchInput: 'searchInput',
-      excludedObjectNameSingulars: ['workspaceMember', 'employmentHistory', 'petCareAgreement'],
+      excludedObjectNameSingulars: [
+        'workspaceMember',
+        'employmentHistory',
+        'petCareAgreement',
+      ],
       limit: 2,
       after: encodeCursorData({
         lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },

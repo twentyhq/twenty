@@ -107,6 +107,14 @@ export const useUpdateJunctionRelationFromCell = ({
         const targetFieldName = targetFieldInfo.fieldName;
         const targetJoinColumnName = targetFieldInfo.settings?.joinColumnName;
 
+        // Both join column names must be defined for junction operations
+        if (
+          !isDefined(sourceJoinColumnName) ||
+          !isDefined(targetJoinColumnName)
+        ) {
+          return;
+        }
+
         // Read current junction records from the store (always fresh)
         const currentJunctionRecords =
           snapshot

@@ -32,4 +32,3 @@ export const buildRecordLabelPayload = ({
 
   return { id, name: searchInput ?? '' };
 };
-
