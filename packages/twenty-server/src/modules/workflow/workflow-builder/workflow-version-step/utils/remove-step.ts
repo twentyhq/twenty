@@ -83,11 +83,7 @@ export const removeStep = ({
     });
   }
 
-  const allRemovedStepIds = [
-    stepIdToDelete,
-    ...(stepToDeleteChildrenIds || []),
-    ...emptyChildStepIds,
-  ];
+  const allRemovedStepIds = [stepIdToDelete, ...emptyChildStepIds];
 
   const allStepToDeleteChildrenIds = [
     ...(stepToDeleteChildrenIds || []),
