@@ -35,13 +35,13 @@ const PERSON_GQL_FIELDS_WITH_COMPANY = `
 const PET_GQL_FIELDS_WITH_OWNER = `
   id
   name
-  ownerSurveyResultId
-  ownerSurveyResult {
+  polymorphicOwnerSurveyResultId
+  polymorphicOwnerSurveyResult {
     id
     name
   }
-  ownerRocketId
-  ownerRocket {
+  polymorphicOwnerRocketId
+  polymorphicOwnerRocket {
     id
     name
   }
@@ -602,7 +602,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(insertedPerson.company?.id).toBe(TEST_COMPANY_2_ID);
   });
 
-  it('should connect a morph relation ownerSurveyResult on pet via the connect feature', async () => {
+  it('should connect a morph relation polymorphicOwnerSurveyResult on pet via the connect feature', async () => {
     const PET_OBJECT_NAME = 'pet';
     const SURVEY_RESULT_OBJECT_NAME = 'surveyResult';
     const TEST_PET_ID = TEST_PET_ID_1;
@@ -636,7 +636,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       recordId: TEST_PET_ID,
       gqlFields: PET_GQL_FIELDS_WITH_OWNER,
       data: {
-        ownerSurveyResult: {
+        polymorphicOwnerSurveyResult: {
           connect: {
             where: { id: TEST_SURVEY_RESULT_ID },
           },
@@ -647,11 +647,11 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.data.updatePet).toBeDefined();
-    expect(response.body.data.updatePet.ownerSurveyResult).toBeDefined();
-    expect(response.body.data.updatePet.ownerSurveyResult.id).toBe(
+    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeDefined();
+    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult.id).toBe(
       TEST_SURVEY_RESULT_ID,
     );
-    expect(response.body.data.updatePet.ownerRocketId).toBeFalsy();
+    expect(response.body.data.updatePet.polymorphicOwnerRocketId).toBeFalsy();
   });
 
   it('should disconnect a morph relation successfully', async () => {
@@ -688,7 +688,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       recordId: TEST_PET_ID,
       gqlFields: PET_GQL_FIELDS_WITH_OWNER,
       data: {
-        ownerSurveyResult: {
+        polymorphicOwnerSurveyResult: {
           connect: {
             where: { id: TEST_SURVEY_RESULT_ID },
           },
@@ -698,14 +698,14 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
 
-    expect(response.body.data.updatePet.ownerSurveyResult).toBeDefined();
+    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeDefined();
 
     const updatePetOwnerSurveyResultDisconnectOp = updateOneOperationFactory({
       objectMetadataSingularName: PET_OBJECT_NAME,
       recordId: TEST_PET_ID,
       gqlFields: PET_GQL_FIELDS_WITH_OWNER,
       data: {
-        ownerSurveyResult: {
+        polymorphicOwnerSurveyResult: {
           disconnect: true,
         },
       },
@@ -714,7 +714,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     response = await makeGraphqlAPIRequest(
       updatePetOwnerSurveyResultDisconnectOp,
     );
-    expect(response.body.data.updatePet.ownerSurveyResult).toBeFalsy();
+    expect(response.body.data.updatePet.polymorphicOwnerSurveyResult).toBeFalsy();
   });
 
   // TODO: run this test when validations are implemented in commonAPI
@@ -741,12 +741,12 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       recordId: TEST_PET_ID,
       gqlFields: PET_GQL_FIELDS_WITH_OWNER,
       data: {
-        ownerSurveyResult: {
+        polymorphicOwnerSurveyResult: {
           connect: {
             where: { id: TEST_SURVEY_RESULT_ID },
           },
         },
-        ownerRocket: {
+        polymorphicOwnerRocket: {
           connect: {
             where: { id: TEST_ROCKET_ID },
           },

@@ -55,16 +55,9 @@ export const MultipleRecordPickerMenuItemContent = ({
   );
 
   const handleSelectChange = (isSelected: boolean) => {
-    // Derive the correct objectMetadataId from searchRecord.objectNameSingular
-    // This is more reliable than objectMetadataItem.id which may come from stale state
-    const correctObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === searchRecord.objectNameSingular,
-    );
-    const objectMetadataId = correctObjectMetadata?.id ?? objectMetadataItem.id;
-
     onChange({
       recordId: searchRecord.recordId,
-      objectMetadataId,
+      objectMetadataId: objectMetadataItem.id,
       isSelected,
       isMatchingSearchFilter: true,
     });
