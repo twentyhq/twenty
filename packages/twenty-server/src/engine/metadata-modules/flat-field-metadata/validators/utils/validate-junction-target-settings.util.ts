@@ -1,4 +1,5 @@
-import { msg, type MessageDescriptor } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
