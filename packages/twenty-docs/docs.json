@@ -605,6 +605,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/fr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -763,7 +764,7 @@
                       "l/fr/user-guide/settings/capabilities/profile-settings",
                       "l/fr/user-guide/settings/capabilities/experience-settings",
                       "l/fr/user-guide/settings/capabilities/domains-settings",
-                      "l/fr/user-guide/settings/capabilities/releases-settings"
+                      "l/fr/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -1045,6 +1046,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ar/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ar/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -1203,7 +1205,7 @@
                       "l/ar/user-guide/settings/capabilities/profile-settings",
                       "l/ar/user-guide/settings/capabilities/experience-settings",
                       "l/ar/user-guide/settings/capabilities/domains-settings",
-                      "l/ar/user-guide/settings/capabilities/releases-settings"
+                      "l/ar/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -1485,6 +1487,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/cs/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -1643,7 +1646,7 @@
                       "l/cs/user-guide/settings/capabilities/profile-settings",
                       "l/cs/user-guide/settings/capabilities/experience-settings",
                       "l/cs/user-guide/settings/capabilities/domains-settings",
-                      "l/cs/user-guide/settings/capabilities/releases-settings"
+                      "l/cs/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -1925,6 +1928,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/de/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/de/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -2083,7 +2087,7 @@
                       "l/de/user-guide/settings/capabilities/profile-settings",
                       "l/de/user-guide/settings/capabilities/experience-settings",
                       "l/de/user-guide/settings/capabilities/domains-settings",
-                      "l/de/user-guide/settings/capabilities/releases-settings"
+                      "l/de/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -2365,6 +2369,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/es/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/es/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/es/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -2523,7 +2528,7 @@
                       "l/es/user-guide/settings/capabilities/profile-settings",
                       "l/es/user-guide/settings/capabilities/experience-settings",
                       "l/es/user-guide/settings/capabilities/domains-settings",
-                      "l/es/user-guide/settings/capabilities/releases-settings"
+                      "l/es/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -2805,6 +2810,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/it/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/it/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/it/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -2963,7 +2969,7 @@
                       "l/it/user-guide/settings/capabilities/profile-settings",
                       "l/it/user-guide/settings/capabilities/experience-settings",
                       "l/it/user-guide/settings/capabilities/domains-settings",
-                      "l/it/user-guide/settings/capabilities/releases-settings"
+                      "l/it/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -3245,6 +3251,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ja/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -3403,7 +3410,7 @@
                       "l/ja/user-guide/settings/capabilities/profile-settings",
                       "l/ja/user-guide/settings/capabilities/experience-settings",
                       "l/ja/user-guide/settings/capabilities/domains-settings",
-                      "l/ja/user-guide/settings/capabilities/releases-settings"
+                      "l/ja/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -3685,6 +3692,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ko/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -3843,7 +3851,7 @@
                       "l/ko/user-guide/settings/capabilities/profile-settings",
                       "l/ko/user-guide/settings/capabilities/experience-settings",
                       "l/ko/user-guide/settings/capabilities/domains-settings",
-                      "l/ko/user-guide/settings/capabilities/releases-settings"
+                      "l/ko/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -4125,6 +4133,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/pt/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/pt/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -4283,7 +4292,7 @@
                       "l/pt/user-guide/settings/capabilities/profile-settings",
                       "l/pt/user-guide/settings/capabilities/experience-settings",
                       "l/pt/user-guide/settings/capabilities/domains-settings",
-                      "l/pt/user-guide/settings/capabilities/releases-settings"
+                      "l/pt/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -4565,6 +4574,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ro/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ro/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -4723,7 +4733,7 @@
                       "l/ro/user-guide/settings/capabilities/profile-settings",
                       "l/ro/user-guide/settings/capabilities/experience-settings",
                       "l/ro/user-guide/settings/capabilities/domains-settings",
-                      "l/ro/user-guide/settings/capabilities/releases-settings"
+                      "l/ro/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5005,6 +5015,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/ru/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/ru/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -5163,7 +5174,7 @@
                       "l/ru/user-guide/settings/capabilities/profile-settings",
                       "l/ru/user-guide/settings/capabilities/experience-settings",
                       "l/ru/user-guide/settings/capabilities/domains-settings",
-                      "l/ru/user-guide/settings/capabilities/releases-settings"
+                      "l/ru/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5445,6 +5456,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/tr/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -5603,7 +5615,7 @@
                       "l/tr/user-guide/settings/capabilities/profile-settings",
                       "l/tr/user-guide/settings/capabilities/experience-settings",
                       "l/tr/user-guide/settings/capabilities/domains-settings",
-                      "l/tr/user-guide/settings/capabilities/releases-settings"
+                      "l/tr/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
@@ -5885,6 +5897,7 @@
                         "group": "CRM Automations",
                         "pages": [
                           "l/zh/user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "l/zh/user-guide/workflows/how-tos/crm-automations/notify-teammates-of-note-to-review",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
@@ -6043,7 +6056,7 @@
                       "l/zh/user-guide/settings/capabilities/profile-settings",
                       "l/zh/user-guide/settings/capabilities/experience-settings",
                       "l/zh/user-guide/settings/capabilities/domains-settings",
-                      "l/zh/user-guide/settings/capabilities/releases-settings"
+                      "l/zh/user-guide/settings/capabilities/updates-settings"
                     ]
                   },
                   {
