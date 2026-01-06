@@ -126,8 +126,9 @@ jobs:
           fi
 
           # Regenerate yarn.lock from package.json (applies our resolutions)
+          # Disable hardened mode to allow lockfile creation
           rm -f yarn.lock
-          yarn install
+          YARN_ENABLE_HARDENED_MODE=false yarn install
           git add yarn.lock
           git commit -m "chore: regenerate yarn.lock with resolutions"
 
