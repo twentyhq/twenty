@@ -1,5 +1,7 @@
 import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import {
   BaseGraphQLError,
@@ -18,6 +20,18 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       i18n,
     );
 
+  const message = `Validation failed for ${Object.values(ALL_METADATA_NAME)
+    .flatMap((metadataName) => {
+      const count = summary[metadataName];
+
+      if (!isDefined(count) || count === 0) {
+        return [];
+      }
+
+      return [`${count} ${metadataName}${count > 1 ? 's' : ''}`];
+    })
+    .join(', ')}`;
+
   throw new BaseGraphQLError(
     error.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
@@ -25,8 +39,8 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       code: 'METADATA_VALIDATION_ERROR',
       errors,
       summary,
-      message: `Validation failed for 0 object(s) and 0 field(s)`,
-      userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
+      message,
+      userFriendlyMessage: msg`Metadata validation failed`,
     },
   );
 };

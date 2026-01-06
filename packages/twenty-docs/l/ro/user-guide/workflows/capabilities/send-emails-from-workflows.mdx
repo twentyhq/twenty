@@ -1,149 +1,149 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: Trimiterea e-mailurilor prin fluxuri de lucru
+description: Trimiteți automat e-mailuri personalizate folosind acțiunile fluxurilor de lucru.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Trimiteți automat e-mailuri atunci când au loc evenimente specifice în CRM—întâmpinați noile contacte, urmăriți oportunitățile sau notificați membrii echipei.
 
 ## Cerințe
 
-Before you can send emails from workflows:
+Înainte de a putea trimite e-mailuri din fluxuri de lucru:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Conectați un cont de e-mail în **Settings → Accounts**
+2. Asigurați-vă că contul are activate permisiunile de trimitere
 
-## Basic Email Workflow
+## Flux de lucru de bază pentru e-mail
 
-### Example: Welcome Email for New Contacts
+### Exemplu: E-mail de bun venit pentru contacte noi
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Obiectiv**: Trimiteți un e-mail de bun venit atunci când o persoană nouă este adăugată în CRM.
 
 **Configurare**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Creați fluxul de lucru**: Accesați **Settings → Workflows** și faceți clic pe **+ New Workflow**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Adăugați declanșator**: Selectați **Record is Created** → **People**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Adăugați acțiunea Send Email**:
+   * Faceți clic pe **+** pentru a adăuga o acțiune
+   * Selectați **Send Email**
+   * Configurați e-mailul:
 
 | Câmp        | Valoare                                |
 | ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Bun venit la {{Your Company Name}}`   |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| **Către**   | `{{trigger.object.email}}`             |
+| **Subiect** | `Bun venit la {{Your Company Name}}`   |
+| **Corp**    | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Testați și activați**: Testați cu o înregistrare de probă, apoi activați
 
-## Using Variables in Emails
+## Utilizarea variabilelor în e-mailuri
 
-Reference data from previous steps using `{{variable}}` syntax:
+Faceți referire la date din pașii anteriori folosind sintaxa `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+Bună, {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+Vă mulțumim că ați luat legătura cu noi!
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+Compania dvs., {{trigger.object.company.name}}, a fost adăugată în sistemul nostru.
 
-Best regards,
-The Team
+Cu stimă,
+Echipa
 ```
 
-### Available Variables from Triggers
+### Variabile disponibile din declanșatoare
 
-| Tipul Trigger-ului         | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Tipul Trigger-ului                  | Variabile comune                       |
+| ----------------------------------- | -------------------------------------- |
+| **Înregistrare creată/actualizată** | `{{trigger.object.fieldName}}`         |
+| **Manual**                          | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                         | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Avansat: e-mailuri condiționale
 
-### Example: Different Emails Based on Lead Source
+### Exemplu: E-mailuri diferite în funcție de sursa lead-ului
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**Configurare**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Obiectiv**: Trimiteți e-mailuri de bun venit diferite în funcție de sursa lead-ului.
 
 **Configurare**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Declanșator**: Record is Created (People)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Adăugați acțiunea de filtrare**:
+   * Condiție: `{{trigger.object.source}}` este egal cu `"Website"`
+   * Dacă este adevărat → continuați către e-mailul de bun venit pentru website
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Ramificație pentru alte surse**:
+   * Creați ramificații paralele pentru surse diferite
+   * Fiecare ramificație are propria acțiune Send Email
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## Trimiterea e-mailurilor către mai mulți destinatari
 
-## Scheduled Follow-up Emails
+### Exemplu: Notificați echipa când se finalizează tranzacția
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Obiectiv**: Trimiteți un e-mail reprezentantului de vânzări și managerului său atunci când o oportunitate este câștigată.
 
 **Configurare**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Declanșator**: Record is Updated (Opportunities, Stage = "Closed Won")
 
-2. **Delay action**: Wait 3 days
+2. **Search Records**: Găsiți managerul proprietarului oportunității
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **Send Email #1**: Către proprietarul oportunității
+   * Către: `{{trigger.object.owner.email}}`
+   * Subiect: `Felicitări pentru închiderea {{trigger.object.name}}!`
+
+4. **Send Email #2**: Către manager
+   * Către: `{{searchRecords.manager.email}}`
+   * Subiect: `Tranzacție câștigată: {{trigger.object.name}}`
+
+## E-mailuri de urmărire programate
+
+### Exemplu: Urmărire la 3 zile după întâlnire
+
+**Obiectiv**: Trimiteți un e-mail de urmărire la 3 zile după ce o întâlnire este înregistrată.
+
+**Configurare**:
+
+1. **Declanșator**: Record is Created (Activities, Type = "Meeting")
+
+2. **Acțiune de întârziere**: Așteptați 3 zile
+
+3. **Trimite email**:
+   * Către: Participantul la întâlnire
+   * Subiect: Revenire la discuția noastră
+   * Conținut: Faceți referire la detaliile întâlnirii din declanșator
 
 ## Cele mai bune practici
 
-### Email Content
+### Conținutul emailului
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* Păstrați liniile de subiect concise și relevante
+* Personalizați cu numele destinatarului
+* Includeți un apel clar la acțiune
+* Testați emailurile înainte de activare
 
-### Deliverability
+### Livrabilitate
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* Nu trimiteți prea multe emailuri prea repede
+* Folosiți semnături de email profesionale
+* Evitați cuvintele care declanșează filtrele de spam
+* Asigurați opțiuni de dezabonare pentru emailurile de marketing
 
 ### Depanare
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* Verificați că contul de email este conectat și activ
+* Verificați că adresa de email a destinatarului este validă
+* Revizuiți rulările fluxului de lucru pentru mesaje de eroare
+* Testați mai întâi cu propria dvs. adresă de email
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **În curând**: Atașamentele de email vor fi disponibile în Q1 2026.
 </Note>
 
-## Related
+## Conexe
 
-* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)

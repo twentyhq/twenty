@@ -2,22 +2,68 @@
 
 import type Stripe from 'stripe';
 
-import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
+import {
+  type AutomaticTaxJson,
+  type CancellationDetailsJson,
+} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
+import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+
+// Converts Stripe AutomaticTax to serialized JSON for JSONB storage
+// Normalizes expandable fields (e.g., liability.account) to string IDs
+const toAutomaticTaxJson = (
+  value: Stripe.Subscription.AutomaticTax | null | undefined,
+): AutomaticTaxJson | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  return {
+    disabled_reason: value.disabled_reason,
+    enabled: value.enabled,
+    liability: value.liability
+      ? {
+          type: value.liability.type,
+          account:
+            typeof value.liability.account === 'string'
+              ? value.liability.account
+              : value.liability.account?.id,
+        }
+      : null,
+  };
+};
+
+// Converts Stripe CancellationDetails to serialized JSON for JSONB storage
+const toCancellationDetailsJson = (
+  value: Stripe.Subscription.CancellationDetails | null | undefined,
+): CancellationDetailsJson | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  return {
+    comment: value.comment,
+    feedback: value.feedback,
+    reason: value.reason,
+  };
+};
 
 export const transformStripeSubscriptionEventToDatabaseSubscription = (
   workspaceId: string,
   subscription: SubscriptionWithSchedule,
 ) => {
+  // In Stripe SDK v19+, current_period_start/end moved from Subscription to SubscriptionItem
+  const firstItem = subscription.items.data[0];
+
   return {
     workspaceId,
     stripeCustomerId: String(subscription.customer),
     stripeSubscriptionId: subscription.id,
     status: getSubscriptionStatus(subscription.status),
-    interval: subscription.items.data[0].plan.interval as SubscriptionInterval,
+    interval: firstItem.plan.interval as SubscriptionInterval,
     phases: subscription.schedule
       ? transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase(
           subscription.schedule,
@@ -25,22 +71,18 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
       : [],
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
     currency: subscription.currency.toUpperCase(),
-    currentPeriodEnd: getDateFromTimestamp(subscription.current_period_end),
-    currentPeriodStart: getDateFromTimestamp(subscription.current_period_start),
+    currentPeriodEnd: getDateFromTimestamp(firstItem.current_period_end),
+    currentPeriodStart: getDateFromTimestamp(firstItem.current_period_start),
     metadata: subscription.metadata,
     collectionMethod:
       // @ts-expect-error legacy noImplicitAny
       BillingSubscriptionCollectionMethod[
         subscription.collection_method.toUpperCase()
       ],
-    automaticTax:
-      subscription.automatic_tax === null
-        ? undefined
-        : subscription.automatic_tax,
-    cancellationDetails:
-      subscription.cancellation_details === null
-        ? undefined
-        : subscription.cancellation_details,
+    automaticTax: toAutomaticTaxJson(subscription.automatic_tax),
+    cancellationDetails: toCancellationDetailsJson(
+      subscription.cancellation_details,
+    ),
     endedAt: subscription.ended_at
       ? getDateFromTimestamp(subscription.ended_at)
       : undefined,

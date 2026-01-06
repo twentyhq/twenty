@@ -101,8 +101,9 @@ export const RecordInlineCellAnchoredPortal = ({
             >
               <RecordInlineCellAnchoredPortalContext>
                 {children}
+
+                <RecordInlineCellCloseOnCommandMenuOpeningEffect />
               </RecordInlineCellAnchoredPortalContext>
-              <RecordInlineCellCloseOnCommandMenuOpeningEffect />
             </RecordFieldComponentInstanceContext.Provider>,
             anchorElement,
           )}

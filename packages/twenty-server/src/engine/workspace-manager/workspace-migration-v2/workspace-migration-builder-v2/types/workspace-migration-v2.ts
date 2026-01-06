@@ -6,5 +6,6 @@ export type WorkspaceMigrationV2<
 > = {
   actions: TActions[];
   workspaceId: string;
+  // TODO remove from workspaceMigration once we've refactored the actions to have metadata and action type grain
   relatedFlatEntityMapsKeys?: (keyof AllFlatEntityMaps)[];
 };

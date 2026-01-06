@@ -1,67 +1,67 @@
 ---
-title: Update Existing Records via Import
-description: Complete step-by-step guide to bulk updating records using CSV import.
+title: Aktualizace existujících záznamů pomocí importu
+description: Kompletní podrobný průvodce hromadnou aktualizací záznamů pomocí importu CSV.
 ---
 
 ## Přehled
 
-Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
+Potřebujete aktualizovat mnoho záznamů najednou? Místo ruční úpravy jednoho po druhém použijte import CSV k hromadné aktualizaci existujících záznamů.
 
 **Případy použití:**
 
-* Update job titles for multiple people
-* Change company information in bulk
-* Add data to new custom fields
-* Correct data errors across many records
+* Aktualizujte pracovní pozice pro více lidí
+* Hromadně změňte informace o společnosti
+* Přidejte data do nových vlastních polí
+* Opravte chyby v datech napříč mnoha záznamy
 
 ## Jak to funguje
 
-When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
+Když naimportujete soubor obsahující **jedinečný identifikátor**, který odpovídá existujícímu záznamu, Twenty tento záznam aktualizuje místo vytvoření duplicitního.
 
-| If unique identifier...    | Twenty will...                                   |
-| -------------------------- | ------------------------------------------------ |
-| Matches an existing record | **Update** the existing record                   |
-| Doesn't match any record   | **Create** a new record                          |
-| Is missing from your file  | **Create** a new record (with auto-generated ID) |
+| Pokud jedinečný identifikátor... | Twenty provede...                                       |
+| -------------------------------- | ------------------------------------------------------- |
+| Odpovídá existujícímu záznamu    | **Aktualizovat** existující záznam                      |
+| Neodpovídá žádnému záznamu       | **Vytvořit** nový záznam                                |
+| V souboru chybí                  | **Vytvořit** nový záznam (s automaticky generovaným ID) |
 
 <Warning>
-  **Multi-Select fields are overwritten, not merged.**
+  **Pole s vícenásobným výběrem se přepisují, neslučují.**
 
-  If a record has `Option A` and `Option B` selected, and you import `["Option C"]`, the record will only have `Option C` after import. The import replaces all previous selections—it does not add to them.
+  Pokud má záznam vybrané `Option A` a `Option B` a vy importujete `["Option C"]`, záznam bude po importu obsahovat pouze `Option C`. Import nahradí všechny předchozí volby — nepřidává k nim.
 
-  To keep existing values, include them all in your import: `["Option A","Option B","Option C"]`
+  Chcete-li zachovat stávající hodnoty, zahrňte je všechny do importu: `["Option A","Option B","Option C"]`
 </Warning>
 
-## Step 1: Export Your Current Data
+## Krok 1: Exportujte svá aktuální data
 
-First, export the records you want to update:
+Nejprve exportujte záznamy, které chcete aktualizovat:
 
-1. Navigate to the object (People, Companies, etc.)
-2. **Add the columns you need** — click **Options → Fields** to show the fields you want to update
-3. **Filter if needed** — narrow down to only the records you want to update
-4. Click **⋮** → **Export view**
-5. Save the CSV file
+1. Přejděte k objektu (Lidé, Společnosti atd.)
+2. **Přidejte potřebné sloupce** — klikněte na **Options → Fields** a zobrazte pole, která chcete aktualizovat
+3. **V případě potřeby filtrujte** — zúžte výběr jen na záznamy, které chcete aktualizovat
+4. Klikněte na **⋮** → **Export view**
+5. Uložte soubor CSV
 
-<Note>**Why export first?** The exported file has the correct format, includes unique identifiers, and maps automatically during import.</Note>
+<Note>**Proč nejdřív exportovat?** Exportovaný soubor má správný formát, obsahuje jedinečné identifikátory a během importu se mapuje automaticky.</Note>
 
-### What Gets Exported
+### Co se exportuje
 
-* All visible columns in your current view
-* The record's unique identifiers (`id`, `email`, `domain`)
-* Current field values you can modify
+* Všechny viditelné sloupce v aktuálním zobrazení
+* Jedinečné identifikátory záznamu (`id`, `email`, `domain`)
+* Aktuální hodnoty polí, které můžete upravit
 
-## Step 2: Edit the CSV File
+## Krok 2: Upravte soubor CSV
 
-Open the exported file in your spreadsheet application (Excel, Google Sheets, etc.):
+Otevřete exportovaný soubor v tabulkovém editoru (Excel, Google Sheets apod.):
 
-1. **Keep the unique identifier column** — don't delete `id`, `email`, or `domain`
-2. **Update the values** in the columns you want to change
-3. **Remove columns you don't need to update** (optional, but cleaner)
-4. **Don't change unique identifier values** — or Twenty will create new records
+1. **Nechte sloupec s jedinečným identifikátorem** — nemažte `id`, `email` ani `domain`
+2. **Aktualizujte hodnoty** ve sloupcích, které chcete změnit
+3. **Odstraňte sloupce, které není třeba aktualizovat** (volitelné, ale přehlednější)
+4. **Neměňte hodnoty jedinečných identifikátorů** — jinak Twenty vytvoří nové záznamy
 
-### Example: Updating Job Titles
+### Příklad: Aktualizace pracovních pozic
 
-**Exported file:**
+**Exportovaný soubor:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -70,7 +70,7 @@ id,email,firstName,lastName,jobTitle
 550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
 ```
 
-**After your edits:**
+**Po vašich úpravách:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -80,63 +80,63 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Don't change the unique identifier values.**
+  **Neměňte hodnoty jedinečných identifikátorů.**
 
-  If you change `john@acme.com` to `john.smith@acme.com`, Twenty will create a new record instead of updating the existing one.
+  Pokud změníte `john@acme.com` na `john.smith@acme.com`, Twenty vytvoří nový záznam místo aktualizace stávajícího.
 </Warning>
 
-## Step 3: Import the Updated File
+## Krok 3: Importujte aktualizovaný soubor
 
-1. Navigate to the object
-2. Click **⋮** → **Import records**
-3. Upload your edited CSV file
-4. **Ensure the unique identifier is mapped** — verify `email`, `domain`, or `id` is mapped correctly
-5. Review the field mappings
-6. Check for errors
-7. Click **Confirm**
+1. Přejděte k objektu
+2. Klikněte na **⋮** → **Import records**
+3. Nahrajte upravený soubor CSV
+4. **Ujistěte se, že je jedinečný identifikátor namapován** — ověřte, že `email`, `domain` nebo `id` je namapováno správně
+5. Zkontrolujte mapování polí
+6. Zkontrolujte chyby
+7. Klikněte na **Confirm**
 
-Twenty matches records by the unique identifier and updates them with new values.
+Twenty porovnává záznamy podle jedinečného identifikátoru a aktualizuje je novými hodnotami.
 
-## Choosing the Right Unique Identifier
+## Výběr správného jedinečného identifikátoru
 
-| Objekt              | Recommended      | Alternative | Poznámky                     |
-| ------------------- | ---------------- | ----------- | ---------------------------- |
-| **People**          | `email`          | `id`        | Email is human-readable      |
-| **Společnosti**     | `doména`         | `id`        | Domain is human-readable     |
-| **Vlastní objekty** | Any unique field | `id`        | Use your custom unique field |
+| Objekt              | Doporučeno              | Alternativa | Poznámky                            |
+| ------------------- | ----------------------- | ----------- | ----------------------------------- |
+| **Osoby**           | `email`                 | `id`        | E-mail je pro lidi čitelný          |
+| **Společnosti**     | `doména`                | `id`        | Doména je pro lidi čitelná          |
+| **Vlastní objekty** | Jakékoli jedinečné pole | `id`        | Použijte své vlastní jedinečné pole |
 
-<Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
+<Note>**Použijte pouze JEDEN jedinečný identifikátor.** Nemapujte současně `email` A `id`. To může způsobit nejasnosti a chyby.</Note>
 
-### Using Custom Unique Fields
+### Použití vlastních jedinečných polí
 
-If you have a custom field marked as unique (like an external ID from another system):
+Pokud máte vlastní pole označené jako jedinečné (například externí ID z jiného systému):
 
-1. Include that field in your export and import
-2. Map it during import
-3. Twenty will match on that field
+1. Zahrňte toto pole do exportu i importu
+2. Namapujte jej během importu
+3. Twenty bude párovat podle tohoto pole
 
-## Step 4: Verify the Updates
+## Krok 4: Ověřte aktualizace
 
-After importing:
+Po importu:
 
-1. Open a few updated records
-2. Verify the changes were applied
-3. Check that no duplicate records were created
+1. Otevřete několik aktualizovaných záznamů
+2. Ověřte, že byly změny použity
+3. Zkontrolujte, že nevznikly duplicitní záznamy
 
-## What About Fields Not in Your File?
+## Co pole, která nejsou ve vašem souboru?
 
-**Fields not included in your import file remain unchanged.**
+**Pole, která nejsou v importním souboru zahrnuta, zůstávají beze změny.**
 
-| Your file includes...        | Výsledek                                               |
-| ---------------------------- | ------------------------------------------------------ |
-| `email`, `jobTitle`          | Only `jobTitle` is updated; other fields stay the same |
-| `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated                     |
+| Váš soubor obsahuje...       | Výsledek                                                       |
+| ---------------------------- | -------------------------------------------------------------- |
+| `email`, `jobTitle`          | Aktualizuje se pouze `jobTitle`; ostatní pole zůstávají stejná |
+| `email`, `jobTitle`, `phone` | `jobTitle` a `phone` jsou aktualizovány                        |
 
-This means you only need to include the fields you want to change (plus the unique identifier).
+To znamená, že stačí zahrnout pouze pole, která chcete změnit (plus jedinečný identifikátor).
 
-## Combining Updates and New Records
+## Kombinace aktualizací a nových záznamů
 
-You can update existing records AND create new ones in the same import:
+V rámci jednoho importu můžete aktualizovat existující záznamy A také vytvářet nové:
 
 ```csv
 email,firstName,lastName,jobTitle
@@ -144,55 +144,55 @@ john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
 newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 ```
 
-## Common Mistakes to Avoid
+## Časté chyby, kterým se vyhnout
 
-| Mistake                        | Problem                                                 | Výsledek                               | Solution                                  |
-| ------------------------------ | ------------------------------------------------------- | -------------------------------------- | ----------------------------------------- |
-| **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com`        | Creates new record instead of updating | Keep unique identifiers unchanged         |
-| **Multiple unique fields**     | Mapping both `email` AND `id`                           | Potential matching conflicts           | Map only ONE unique identifier            |
-| **No unique identifier**       | File only has `firstName`, `lastName`, `jobTitle`       | All rows create new records            | Always include `email`, `domain`, or `id` |
-| **Case mismatch**              | File has `John@acme.com` but Twenty has `john@acme.com` | Creates new record                     | Export from Twenty to get exact values    |
+| Chyba                                | Problém                                                       | Výsledek                              | Řešení                                             |
+| ------------------------------------ | ------------------------------------------------------------- | ------------------------------------- | -------------------------------------------------- |
+| **Změna jedinečného identifikátoru** | Změněno z `john@acme.com` na `john.smith@acme.com`            | Vytvoří nový záznam místo aktualizace | Nechte jedinečné identifikátory beze změny         |
+| **Více jedinečných polí**            | Mapování jak `email`, tak `id`                                | Potenciální konflikty při párování    | Mapujte pouze JEDEN jedinečný identifikátor        |
+| **Žádný jedinečný identifikátor**    | Soubor obsahuje pouze `firstName`, `lastName`, `jobTitle`     | Všechny řádky vytvoří nové záznamy    | Vždy zahrňte `email`, `domain` nebo `id`           |
+| **Rozdílná velikost písmen**         | V souboru je `John@acme.com`, ale v Twenty je `john@acme.com` | Vytvoří nový záznam                   | Exportujte z Twenty, abyste získali přesné hodnoty |
 
-## FAQ
+## Časté dotazy
 
 <AccordionGroup>
-  <Accordion title="What if some records don't exist yet?">
-    Records with unique identifiers that don't match existing records will be created as new records. This lets you update and create in the same import.
+  <Accordion title="Co když některé záznamy ještě neexistují?">
+    Záznamy s jedinečnými identifikátory, které neodpovídají existujícím záznamům, budou vytvořeny jako nové. To vám umožní aktualizovat i vytvářet v rámci jednoho importu.
   </Accordion>
 
-  <Accordion title="Can I clear/empty a field value?">
-    Yes, leave the cell empty in your CSV. The import will clear that field's value on the existing record.
+  <Accordion title="Mohu vymazat/vyprázdnit hodnotu pole?">
+    Ano, v CSV nechte buňku prázdnou. Import vymaže hodnotu tohoto pole u existujícího záznamu.
   </Accordion>
 
-  <Accordion title="What happens to fields I don't include in the import?">
-    Fields not in your import file remain unchanged on existing records. Only fields you include are updated.
+  <Accordion title="Co se stane s poli, která do importu nezahrnu?">
+    Pole, která nejsou ve vašem importním souboru, zůstávají u existujících záznamů beze změny. Aktualizují se pouze pole, která zahrnete.
   </Accordion>
 
-  <Accordion title="Can I update relation fields (like Company)?">
-    Ano! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+  <Accordion title="Mohu aktualizovat relační pole (například Company)?">
+    Ano! Zahrňte jedinečný identifikátor relace (např. `companyDomain`) a namapujte jej na relační pole. Relace bude aktualizována.
   </Accordion>
 
-  <Accordion title="How do I know which records will be updated vs. created?">
-    During the import review step, Twenty shows you how many records will be updated vs. created based on unique identifier matches.
+  <Accordion title="Jak poznám, které záznamy se aktualizují a které se vytvoří?">
+    Během kroku kontroly importu vám Twenty zobrazí, kolik záznamů bude aktualizováno a kolik vytvořeno na základě shody jedinečných identifikátorů.
   </Accordion>
 
-  <Accordion title="Can I undo a bulk update?">
-    There's no automatic undo. We recommend exporting your data as a backup before making bulk updates.
+  <Accordion title="Lze vrátit hromadnou aktualizaci zpět?">
+    Automatické vrácení zpět není k dispozici. Před provedením hromadných aktualizací doporučujeme exportovat svá data jako zálohu.
   </Accordion>
 </AccordionGroup>
 
 ## Osvědčené postupy
 
-1. **Export first** — always start from an export to ensure correct format
-2. **Backup before updating** — export your data before making bulk changes
-3. **Test with a few records** — try updating 5-10 records first before doing a large batch
-4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
-5. **Only include necessary columns** — fewer columns means less chance for errors
+1. **Nejprve exportujte** — vždy začínejte exportem, abyste zajistili správný formát
+2. **Zálohujte před aktualizací** — před hromadnými změnami exportujte svá data
+3. **Otestujte na několika záznamech** — nejprve zkuste aktualizovat 5–10 záznamů, než spustíte velkou dávku
+4. **Používejte lidem srozumitelné identifikátory** — `email` a `domain` se ověřují snáze než `id`
+5. **Zahrňte pouze nezbytné sloupce** — méně sloupců znamená menší šanci na chyby
 
 ## Řešení potíží
 
-Having issues? Check:
+Máte potíže? Podívejte se na:
 
-* [How to Fix Import Errors](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
-* [Uniqueness Constraints](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Field Mapping Reference](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)

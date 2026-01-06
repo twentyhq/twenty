@@ -1,67 +1,67 @@
 ---
-title: Update Existing Records via Import
-description: Complete step-by-step guide to bulk updating records using CSV import.
+title: Обновление существующих записей через импорт
+description: Полное пошаговое руководство по массовому обновлению записей с помощью импорта CSV.
 ---
 
 ## Обзор
 
-Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
+Нужно обновить много записей сразу? Вместо того чтобы редактировать их по одной, используйте импорт CSV для массового обновления существующих записей.
 
 **Сценарии использования:**
 
-* Update job titles for multiple people
-* Change company information in bulk
-* Add data to new custom fields
-* Correct data errors across many records
+* Обновить должности для нескольких людей
+* Массово изменить информацию о компаниях
+* Добавить данные в новые настраиваемые поля
+* Исправить ошибки данных во множестве записей
 
 ## Как это работает
 
-When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
+Когда вы импортируете файл, содержащий **уникальный идентификатор**, который совпадает с существующей записью, Twenty обновляет эту запись вместо создания дубликата.
 
-| If unique identifier...    | Twenty will...                                   |
-| -------------------------- | ------------------------------------------------ |
-| Matches an existing record | **Update** the existing record                   |
-| Doesn't match any record   | **Create** a new record                          |
-| Is missing from your file  | **Create** a new record (with auto-generated ID) |
+| Если уникальный идентификатор... | Twenty выполнит...                                            |
+| -------------------------------- | ------------------------------------------------------------- |
+| Совпадает с существующей записью | **Обновит** существующую запись                               |
+| Не совпадает ни с одной записью  | **Создаст** новую запись                                      |
+| Отсутствует в вашем файле        | **Создаст** новую запись (с автоматически сгенерированным ID) |
 
 <Warning>
-  **Multi-Select fields are overwritten, not merged.**
+  **Поля с множественным выбором перезаписываются, а не объединяются.**
 
-  If a record has `Option A` and `Option B` selected, and you import `["Option C"]`, the record will only have `Option C` after import. The import replaces all previous selections—it does not add to them.
+  Если в записи выбраны `Option A` и `Option B`, и вы импортируете `["Option C"]`, после импорта в записи останется только `Option C`. Импорт заменяет все предыдущие выбранные значения — он не добавляет к ним новые.
 
-  To keep existing values, include them all in your import: `["Option A","Option B","Option C"]`
+  Чтобы сохранить существующие значения, включите их все в импорт: `["Option A","Option B","Option C"]`
 </Warning>
 
-## Step 1: Export Your Current Data
+## Шаг 1: Экспортируйте текущие данные
 
-First, export the records you want to update:
+Сначала экспортируйте записи, которые хотите обновить:
 
-1. Navigate to the object (People, Companies, etc.)
-2. **Add the columns you need** — click **Options → Fields** to show the fields you want to update
-3. **Filter if needed** — narrow down to only the records you want to update
-4. Click **⋮** → **Export view**
-5. Save the CSV file
+1. Перейдите к объекту (Люди, Компании и т. д.)
+2. **Добавьте нужные столбцы** — нажмите **Options → Fields**, чтобы отобразить поля, которые хотите обновить
+3. **При необходимости примените фильтр** — сузьте выборку до тех записей, которые хотите обновить
+4. Нажмите **⋮** → **Экспорт представления**
+5. Сохраните файл CSV
 
-<Note>**Why export first?** The exported file has the correct format, includes unique identifiers, and maps automatically during import.</Note>
+<Note>**Зачем сначала экспорт?** Экспортированный файл имеет корректный формат, включает уникальные идентификаторы и автоматически сопоставляется при импорте.</Note>
 
-### What Gets Exported
+### Что экспортируется
 
-* All visible columns in your current view
-* The record's unique identifiers (`id`, `email`, `domain`)
-* Current field values you can modify
+* Все видимые столбцы в текущем представлении
+* Уникальные идентификаторы записи (`id`, `email`, `domain`)
+* Текущие значения полей, которые можно изменить
 
-## Step 2: Edit the CSV File
+## Шаг 2: Отредактируйте файл CSV
 
-Open the exported file in your spreadsheet application (Excel, Google Sheets, etc.):
+Откройте экспортированный файл в табличном редакторе (Excel, Google Sheets и т. д.):
 
-1. **Keep the unique identifier column** — don't delete `id`, `email`, or `domain`
-2. **Update the values** in the columns you want to change
-3. **Remove columns you don't need to update** (optional, but cleaner)
-4. **Don't change unique identifier values** — or Twenty will create new records
+1. **Сохраните столбец с уникальным идентификатором** — не удаляйте `id`, `email` или `domain`
+2. **Обновите значения** в столбцах, которые хотите изменить
+3. **Удалите столбцы, которые не нужно обновлять** (необязательно, но так будет аккуратнее)
+4. **Не изменяйте значения уникальных идентификаторов** — иначе Twenty создаст новые записи
 
-### Example: Updating Job Titles
+### Пример: обновление должностей
 
-**Exported file:**
+**Экспортированный файл:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -70,7 +70,7 @@ id,email,firstName,lastName,jobTitle
 550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
 ```
 
-**After your edits:**
+**После ваших изменений:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -80,63 +80,63 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Don't change the unique identifier values.**
+  **Не изменяйте значения уникальных идентификаторов.**
 
-  If you change `john@acme.com` to `john.smith@acme.com`, Twenty will create a new record instead of updating the existing one.
+  Если вы измените `john@acme.com` на `john.smith@acme.com`, Twenty создаст новую запись вместо обновления существующей.
 </Warning>
 
-## Step 3: Import the Updated File
+## Шаг 3: Импортируйте обновлённый файл
 
-1. Navigate to the object
-2. Click **⋮** → **Import records**
-3. Upload your edited CSV file
-4. **Ensure the unique identifier is mapped** — verify `email`, `domain`, or `id` is mapped correctly
-5. Review the field mappings
-6. Check for errors
-7. Click **Confirm**
+1. Перейдите к объекту
+2. Нажмите **⋮** → **Импорт записей**
+3. Загрузите отредактированный файл CSV
+4. **Убедитесь, что уникальный идентификатор сопоставлен** — проверьте, что `email`, `domain` или `id` сопоставлены корректно
+5. Проверьте сопоставление полей
+6. Проверьте наличие ошибок
+7. Нажмите **Подтвердить**
 
-Twenty matches records by the unique identifier and updates them with new values.
+Twenty сопоставляет записи по уникальному идентификатору и обновляет их новыми значениями.
 
-## Choosing the Right Unique Identifier
+## Выбор подходящего уникального идентификатора
 
-| Объект                       | Recommended         | Alternative | Заметки                      |
-| ---------------------------- | ------------------- | ----------- | ---------------------------- |
-| **People**                   | `электронная почта` | `id`        | Email is human-readable      |
-| **Компании**                 | `домен`             | `id`        | Domain is human-readable     |
-| **Пользовательские объекты** | Any unique field    | `id`        | Use your custom unique field |
+| Объект                       | Рекомендуется         | Альтернатива | Заметки                                           |
+| ---------------------------- | --------------------- | ------------ | ------------------------------------------------- |
+| **Люди**                     | `электронная почта`   | `id`         | Email человекочитаем                              |
+| **Компании**                 | `домен`               | `id`         | Домен человекочитаем                              |
+| **Пользовательские объекты** | Любое уникальное поле | `id`         | Используйте своё пользовательское уникальное поле |
 
-<Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
+<Note>**Используйте только ОДИН уникальный идентификатор.** Не сопоставляйте одновременно `email` И `id`. Это может привести к путанице и ошибкам.</Note>
 
-### Using Custom Unique Fields
+### Использование пользовательских уникальных полей
 
-If you have a custom field marked as unique (like an external ID from another system):
+Если у вас есть пользовательское поле, помеченное как уникальное (например, внешний ID из другой системы):
 
-1. Include that field in your export and import
-2. Map it during import
-3. Twenty will match on that field
+1. Включите это поле в экспорт и импорт
+2. Сопоставьте его при импорте
+3. Twenty будет сопоставлять по этому полю
 
-## Step 4: Verify the Updates
+## Шаг 4: Проверьте обновления
 
-After importing:
+После импорта:
 
-1. Open a few updated records
-2. Verify the changes were applied
-3. Check that no duplicate records were created
+1. Откройте несколько обновлённых записей
+2. Убедитесь, что изменения применены
+3. Проверьте, что не были созданы дубликаты записей
 
-## What About Fields Not in Your File?
+## Что с полями, которых нет в вашем файле?
 
-**Fields not included in your import file remain unchanged.**
+**Поля, не включённые в файл импорта, остаются без изменений.**
 
-| Your file includes...        | Результат                                              |
-| ---------------------------- | ------------------------------------------------------ |
-| `email`, `jobTitle`          | Only `jobTitle` is updated; other fields stay the same |
-| `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated                     |
+| Ваш файл включает...         | Результат                                                       |
+| ---------------------------- | --------------------------------------------------------------- |
+| `email`, `jobTitle`          | Обновляется только `jobTitle`; остальные поля остаются прежними |
+| `email`, `jobTitle`, `phone` | Обновляются `jobTitle` и `phone`                                |
 
-This means you only need to include the fields you want to change (plus the unique identifier).
+Это означает, что нужно включать только те поля, которые вы хотите изменить (плюс уникальный идентификатор).
 
-## Combining Updates and New Records
+## Совмещение обновлений и новых записей
 
-You can update existing records AND create new ones in the same import:
+Вы можете обновлять существующие записи И создавать новые в одном и том же импорте:
 
 ```csv
 email,firstName,lastName,jobTitle
@@ -144,55 +144,55 @@ john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
 newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 ```
 
-## Common Mistakes to Avoid
+## Распространённые ошибки, которых следует избегать
 
-| Mistake                        | Problem                                                 | Результат                              | Solution                                  |
-| ------------------------------ | ------------------------------------------------------- | -------------------------------------- | ----------------------------------------- |
-| **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com`        | Creates new record instead of updating | Keep unique identifiers unchanged         |
-| **Multiple unique fields**     | Mapping both `email` AND `id`                           | Potential matching conflicts           | Map only ONE unique identifier            |
-| **No unique identifier**       | File only has `firstName`, `lastName`, `jobTitle`       | All rows create new records            | Always include `email`, `domain`, or `id` |
-| **Case mismatch**              | File has `John@acme.com` but Twenty has `john@acme.com` | Creates new record                     | Export from Twenty to get exact values    |
+| Ошибка                                   | Проблема                                              | Результат                              | Решение                                                 |
+| ---------------------------------------- | ----------------------------------------------------- | -------------------------------------- | ------------------------------------------------------- |
+| **Изменение уникального идентификатора** | Заменили `john@acme.com` на `john.smith@acme.com`     | Создаёт новую запись вместо обновления | Не изменяйте уникальные идентификаторы                  |
+| **Несколько уникальных полей**           | Сопоставлены одновременно `email` И `id`              | Возможные конфликты сопоставления      | Сопоставляйте только ОДИН уникальный идентификатор      |
+| **Нет уникального идентификатора**       | В файле только `firstName`, `lastName`, `jobTitle`    | Все строки создают новые записи        | Всегда включайте `email`, `domain` или `id`             |
+| **Несовпадение регистра**                | В файле `John@acme.com`, а в Twenty — `john@acme.com` | Создаёт новую запись                   | Экспортируйте из Twenty, чтобы получить точные значения |
 
-## FAQ
+## Часто задаваемые вопросы
 
 <AccordionGroup>
-  <Accordion title="What if some records don't exist yet?">
-    Records with unique identifiers that don't match existing records will be created as new records. This lets you update and create in the same import.
+  <Accordion title="Что, если некоторых записей ещё нет?">
+    Записи с уникальными идентификаторами, которые не совпадают с существующими, будут созданы как новые. Это позволяет обновлять и создавать в одном импорте.
   </Accordion>
 
-  <Accordion title="Can I clear/empty a field value?">
-    Yes, leave the cell empty in your CSV. The import will clear that field's value on the existing record.
+  <Accordion title="Можно ли очистить значение поля?">
+    Да, оставьте ячейку пустой в вашем CSV. Импорт очистит значение этого поля в существующей записи.
   </Accordion>
 
-  <Accordion title="What happens to fields I don't include in the import?">
-    Fields not in your import file remain unchanged on existing records. Only fields you include are updated.
+  <Accordion title="Что происходит с полями, которые я не включаю в импорт?">
+    Поля, отсутствующие в файле импорта, остаются без изменений в существующих записях. Обновляются только включённые вами поля.
   </Accordion>
 
-  <Accordion title="Can I update relation fields (like Company)?">
-    Да! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+  <Accordion title="Можно ли обновлять поля связей (например, Company)?">
+    Да! Включите уникальный идентификатор связи (например, `companyDomain`) и сопоставьте его с полем связи. Связь будет обновлена.
   </Accordion>
 
-  <Accordion title="How do I know which records will be updated vs. created?">
-    During the import review step, Twenty shows you how many records will be updated vs. created based on unique identifier matches.
+  <Accordion title="Как узнать, какие записи будут обновлены, а какие созданы?">
+    На этапе проверки импорта Twenty показывает, сколько записей будет обновлено и сколько создано, исходя из совпадений уникальных идентификаторов.
   </Accordion>
 
-  <Accordion title="Can I undo a bulk update?">
-    There's no automatic undo. We recommend exporting your data as a backup before making bulk updates.
+  <Accordion title="Можно ли отменить массовое обновление?">
+    Автоматической отмены нет. Рекомендуем экспортировать ваши данные в качестве резервной копии перед массовыми обновлениями.
   </Accordion>
 </AccordionGroup>
 
 ## Лучшие практики
 
-1. **Export first** — always start from an export to ensure correct format
-2. **Backup before updating** — export your data before making bulk changes
-3. **Test with a few records** — try updating 5-10 records first before doing a large batch
-4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
-5. **Only include necessary columns** — fewer columns means less chance for errors
+1. **Сначала экспорт** — всегда начинайте с экспорта, чтобы обеспечить корректный формат
+2. **Создайте резервную копию перед обновлением** — экспортируйте данные перед массовыми изменениями
+3. **Протестируйте на нескольких записях** — сначала попробуйте обновить 5–10 записей, прежде чем делать большой пакет
+4. **Используйте человекочитаемые идентификаторы** — `email` и `domain` легче проверить, чем `id`
+5. **Включайте только нужные столбцы** — меньше столбцов означает меньший риск ошибок
 
 ## Устранение неполадок
 
-Having issues? Check:
+Возникли проблемы? Проверьте:
 
-* [How to Fix Import Errors](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
-* [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Field Mapping Reference](/l/ru/user-guide/data-migration/capabilities/field-mapping)
+* [Как исправить ошибки импорта](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
+* [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Справочник по сопоставлению полей](/l/ru/user-guide/data-migration/capabilities/field-mapping)

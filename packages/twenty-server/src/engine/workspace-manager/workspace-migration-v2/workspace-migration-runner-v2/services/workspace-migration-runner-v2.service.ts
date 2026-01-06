@@ -10,6 +10,9 @@ import {
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataNameFromFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-name-from-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -33,24 +36,15 @@ export class WorkspaceMigrationRunnerV2Service {
   private getLegacyCacheInvalidationPromises({
     workspaceMigration: { actions, workspaceId },
   }: {
-    workspaceMigration: WorkspaceMigrationV2;
+    workspaceMigration: Omit<WorkspaceMigrationV2, 'relatedFlatEntityMapsKeys'>;
   }): Promise<void>[] {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
-        switch (action.type) {
-          case 'delete_field':
-          case 'create_field':
-          case 'update_field':
-          case 'delete_object':
-          case 'create_object':
-          case 'update_object': {
-            return true;
-          }
-          default: {
-            return false;
-          }
-        }
+        return (
+          action.metadataName === 'objectMetadata' ||
+          action.metadataName === 'fieldMetadata'
+        );
       },
     );
 
@@ -62,28 +56,15 @@ export class WorkspaceMigrationRunnerV2Service {
       );
     }
 
+    const viewRelatedMetadataNames = [
+      'view',
+      'viewFilter',
+      'viewGroup',
+      'viewField',
+      'viewFilterGroup',
+    ];
     const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) => {
-        switch (action.type) {
-          case 'delete_view':
-          case 'create_view':
-          case 'update_view':
-          case 'delete_view_filter':
-          case 'create_view_filter':
-          case 'update_view_filter':
-          case 'delete_view_group':
-          case 'create_view_group':
-          case 'update_view_group':
-          case 'delete_view_field':
-          case 'create_view_field':
-          case 'update_view_field': {
-            return true;
-          }
-          default: {
-            return false;
-          }
-        }
-      },
+      (action) => viewRelatedMetadataNames.includes(action.metadataName),
     );
 
     if (
@@ -99,19 +80,9 @@ export class WorkspaceMigrationRunnerV2Service {
     }
 
     const shouldInvalidateRoleMapCache = actions.some((action) => {
-      switch (action.type) {
-        case 'create_role':
-        case 'delete_role':
-        case 'update_role':
-        case 'create_role_target':
-        case 'delete_role_target':
-        case 'update_role_target': {
-          return true;
-        }
-        default: {
-          return false;
-        }
-      }
+      return (
+        action.metadataName === 'role' || action.metadataName === 'roleTarget'
+      );
     });
 
     if (
@@ -164,7 +135,7 @@ export class WorkspaceMigrationRunnerV2Service {
         const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
-              actionType: action.type,
+              action,
               context: {
                 action,
                 allFlatEntityMaps,
@@ -178,8 +149,10 @@ export class WorkspaceMigrationRunnerV2Service {
         ) as (keyof AllFlatEntityMaps)[];
 
         flatEntityMapsToInvalidate = [
-          ...optimisticallyUpdatedFlatEntityMapsKeys,
-          ...flatEntityMapsToInvalidate,
+          ...new Set([
+            ...optimisticallyUpdatedFlatEntityMapsKeys,
+            ...flatEntityMapsToInvalidate,
+          ]),
         ];
 
         allFlatEntityMaps = {
@@ -195,7 +168,10 @@ export class WorkspaceMigrationRunnerV2Service {
       const flatEntitiesCacheToInvalidate = [
         ...new Set([
           ...flatEntityMapsToInvalidate,
-          ...(relatedFlatEntityMapsKeys ?? []),
+          ...flatEntityMapsToInvalidate
+            .map(getMetadataNameFromFlatEntityMapsKey)
+            .flatMap(getMetadataRelatedMetadataNames)
+            .map(getMetadataFlatEntityMapsKey),
         ]),
       ];
 
@@ -207,18 +183,12 @@ export class WorkspaceMigrationRunnerV2Service {
       const invalidationResults = await Promise.allSettled([
         this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
           workspaceId,
-          flatMapsKeys: [
-            ...new Set([
-              ...flatEntityMapsToInvalidate,
-              ...(relatedFlatEntityMapsKeys ?? []),
-            ]),
-          ],
+          flatMapsKeys: flatEntitiesCacheToInvalidate,
         }),
         ...this.getLegacyCacheInvalidationPromises({
           workspaceMigration: {
             actions,
             workspaceId,
-            relatedFlatEntityMapsKeys,
           },
         }),
       ]);
@@ -255,7 +225,7 @@ export class WorkspaceMigrationRunnerV2Service {
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
           {
-            actionType: invertedAction.type,
+            action: invertedAction,
             context: {
               action: invertedAction,
               allFlatEntityMaps: allFlatEntityMaps,

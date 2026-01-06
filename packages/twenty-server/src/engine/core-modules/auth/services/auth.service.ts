@@ -8,10 +8,10 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -191,7 +191,7 @@ export class AuthService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`Wrong password`,
+          userFriendlyMessage: msg`Wrong password.`,
         },
       );
     }
@@ -357,6 +357,9 @@ export class AuthService {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Email is required.`,
+        },
       );
     }
 
@@ -603,6 +606,9 @@ export class AuthService {
       throw new AuthException(
         'Password is too weak',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Password is too weak.`,
+        },
       );
     }
 
@@ -650,6 +656,9 @@ export class AuthService {
       throw new AuthException(
         'Workspace does not exist',
         AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Workspace does not exist.`,
+        },
       );
     }
 

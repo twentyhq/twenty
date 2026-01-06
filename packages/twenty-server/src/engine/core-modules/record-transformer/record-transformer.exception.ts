@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -13,17 +14,27 @@ export enum RecordTransformerExceptionCode {
   CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE = 'CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE',
 }
 
-const recordTransformerExceptionUserFriendlyMessages: Record<
-  RecordTransformerExceptionCode,
-  MessageDescriptor
-> = {
-  [RecordTransformerExceptionCode.INVALID_URL]: msg`Invalid URL format.`,
-  [RecordTransformerExceptionCode.INVALID_PHONE_NUMBER]: msg`Invalid phone number.`,
-  [RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE]: msg`Invalid phone country code.`,
-  [RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE]: msg`Invalid phone calling code.`,
-  [RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE]: msg`Conflicting phone country code.`,
-  [RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE]: msg`Conflicting phone calling code.`,
-  [RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE]: msg`Conflicting phone calling code and country code.`,
+const getRecordTransformerExceptionUserFriendlyMessage = (
+  code: RecordTransformerExceptionCode,
+) => {
+  switch (code) {
+    case RecordTransformerExceptionCode.INVALID_URL:
+      return msg`Invalid URL format.`;
+    case RecordTransformerExceptionCode.INVALID_PHONE_NUMBER:
+      return msg`Invalid phone number.`;
+    case RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE:
+      return msg`Invalid phone country code.`;
+    case RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE:
+      return msg`Invalid phone calling code.`;
+    case RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE:
+      return msg`Conflicting phone country code.`;
+    case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE:
+      return msg`Conflicting phone calling code.`;
+    case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE:
+      return msg`Conflicting phone calling code and country code.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class RecordTransformerException extends CustomException<RecordTransformerExceptionCode> {
@@ -35,7 +46,7 @@ export class RecordTransformerException extends CustomException<RecordTransforme
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        recordTransformerExceptionUserFriendlyMessages[code],
+        getRecordTransformerExceptionUserFriendlyMessage(code),
     });
   }
 }

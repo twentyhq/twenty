@@ -13,6 +13,10 @@ import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from '
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -70,10 +74,13 @@ export class BillingWebhookSubscriptionService {
       withDeleted: true,
     });
 
+    if (!workspace) {
+      return { noWorkspace: true };
+    }
+
     if (
-      !workspace ||
-      (isDefined(workspace?.deletedAt) &&
-        type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED)
+      isDefined(workspace.deletedAt) &&
+      type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
       return { noWorkspace: true };
     }
@@ -108,7 +115,10 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (!updatedBillingSubscription) {
-      throw new Error('Billing subscription not found');
+      throw new BillingException(
+        'Billing subscription not found after upsert',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
     }
 
     await this.updateBillingSubscriptionItems(
@@ -116,25 +126,21 @@ export class BillingWebhookSubscriptionService {
       event,
     );
 
-    if (
-      this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus == WorkspaceActivationStatus.ACTIVE
-    ) {
-      await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
-      });
-    }
+    const shouldSuspend = this.shouldSuspendWorkspace(data);
 
-    if (
-      this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      await this.workspaceService.deleteWorkspace(workspace.id);
-    }
-
-    if (
-      !this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
+    if (shouldSuspend) {
+      if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+        await this.workspaceRepository.update(workspaceId, {
+          activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        });
+      } else if (
+        workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        await this.workspaceService.deleteWorkspace(workspace.id);
+      }
+    } else if (
+      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -177,23 +183,24 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent.Data
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ) {
-    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
-    const hasTrialJustEnded =
-      timeSinceTrialEnd < 60 * 60 * 24 && timeSinceTrialEnd > 0;
+  ): boolean {
+    const status = data.object.status as SubscriptionStatus;
 
-    if (
-      [
-        SubscriptionStatus.Canceled,
-        SubscriptionStatus.Unpaid,
-        SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
-      ].includes(data.object.status as SubscriptionStatus) ||
-      (hasTrialJustEnded && data.object.status === SubscriptionStatus.PastDue)
-    ) {
+    const suspendedStatuses = [
+      SubscriptionStatus.Canceled,
+      SubscriptionStatus.Unpaid,
+      SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
+    ];
+
+    if (suspendedStatuses.includes(status)) {
       return true;
     }
 
-    return false;
+    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const hasTrialJustEnded =
+      timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
+
+    return hasTrialJustEnded && status === SubscriptionStatus.PastDue;
   }
 
   async updateBillingSubscriptionItems(

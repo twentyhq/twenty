@@ -44,7 +44,6 @@ export const getCurrentUser = async ({
         currentUserWorkspace {
           id
           userId
-          workspaceId
         }
       }
     }

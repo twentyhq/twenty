@@ -1,46 +1,46 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: Отправка писем через рабочие процессы
+description: Отправляйте персонализированные письма автоматически с помощью действий рабочего процесса.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Автоматически отправляйте письма при наступлении определённых событий в вашей CRM — приветствуйте новых контактов, делайте последующие касания по возможностям или уведомляйте членов команды.
 
 ## Требования
 
-Before you can send emails from workflows:
+Прежде чем отправлять письма из рабочих процессов:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Подключите учетную запись электронной почты в разделе **Настройки → Учетные записи**
+2. Убедитесь, что для учетной записи включены разрешения на отправку
 
-## Basic Email Workflow
+## Базовый рабочий процесс электронной почты
 
-### Example: Welcome Email for New Contacts
+### Пример: приветственное письмо для новых контактов
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Цель**: отправлять приветственное письмо, когда в CRM добавляется новый контакт.
 
 **Настройка**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Создайте рабочий процесс**: перейдите в **Настройки → Рабочие процессы** и нажмите **+ Новый рабочий процесс**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Добавьте триггер**: выберите **Запись создана** → **Люди**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Добавьте действие Отправить письмо**:
+   * Нажмите **+**, чтобы добавить действие
+   * Выберите **Отправить письмо**
+   * Настройте письмо:
 
-| Поле        | Значение                                   |
-| ----------- | ------------------------------------------ |
-| **To**      | `{{trigger.object.email}}`                 |
-| **Subject** | `Добро пожаловать в {{Your Company Name}}` |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...`     |
+| Поле           | Значение                                   |
+| -------------- | ------------------------------------------ |
+| **Кому**       | `{{trigger.object.email}}`                 |
+| **Тема**       | `Добро пожаловать в {{Your Company Name}}` |
+| **Содержимое** | `Hi {{trigger.object.firstName}}, ...`     |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Протестируйте и активируйте**: протестируйте на тестовой записи, затем активируйте
 
-## Using Variables in Emails
+## Использование переменных в письмах
 
-Reference data from previous steps using `{{variable}}` syntax:
+Ссылайтесь на данные из предыдущих шагов, используя синтаксис `{{variable}}`:
 
 ```text
 Hi {{trigger.object.firstName}},
@@ -53,97 +53,97 @@ Best regards,
 The Team
 ```
 
-### Available Variables from Triggers
+### Доступные переменные из триггеров
 
-| Тип триггера               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Тип триггера                 | Общие переменные                       |
+| ---------------------------- | -------------------------------------- |
+| **Запись создана/обновлена** | `{{trigger.object.fieldName}}`         |
+| **Вручную**                  | `{{trigger.selectedRecord.fieldName}}` |
+| **Вебхук**                   | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Продвинутое: условные письма
 
-### Example: Different Emails Based on Lead Source
+### Пример: разные письма в зависимости от источника лида
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**Настройка**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Цель**: отправлять разные приветственные письма в зависимости от того, откуда пришёл лид.
 
 **Настройка**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Триггер**: запись создана (Люди)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Добавьте действие Фильтр**:
+   * Условие: `{{trigger.object.source}}` равно `"Website"`
+   * Если верно → перейти к приветственному письму для сайта
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Ветка для других источников**:
+   * Создайте параллельные ветки для разных источников
+   * В каждой ветке есть собственное действие Отправить письмо
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## Отправка писем нескольким получателям
 
-## Scheduled Follow-up Emails
+### Пример: уведомление команды при закрытии сделки
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Цель**: отправить письмо менеджеру по продажам и его руководителю, когда возможность помечена как выигранная.
 
 **Настройка**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Триггер**: запись обновлена (Возможности, стадия = "Закрыта выиграна")
 
-2. **Delay action**: Wait 3 days
+2. **Поиск записей**: найдите руководителя владельца возможности
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **Отправить письмо №1**: владельцу возможности
+   * Кому: `{{trigger.object.owner.email}}`
+   * Тема: `Congratulations on closing {{trigger.object.name}}!`
+
+4. **Отправить письмо №2**: руководителю
+   * Кому: `{{searchRecords.manager.email}}`
+   * Тема: `Deal Won: {{trigger.object.name}}`
+
+## Запланированные последующие письма
+
+### Пример: последующее письмо через 3 дня после встречи
+
+**Цель**: отправить последующее письмо через 3 дня после регистрации встречи.
+
+**Настройка**:
+
+1. **Триггер**: запись создана (Активности, тип = "Встреча")
+
+2. **Действие Задержка**: подождите 3 дня
+
+3. **Отправить письмо**:
+   * Кому: участнику встречи
+   * Тема: Продолжение нашего разговора
+   * Содержимое: укажите детали встречи из триггера
 
 ## Лучшие практики
 
-### Email Content
+### Содержимое письма
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* Делайте темы писем краткими и по существу
+* Персонализируйте, используя имя получателя
+* Добавляйте чёткий призыв к действию
+* Тестируйте письма перед активацией
 
-### Deliverability
+### Доставляемость
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* Не отправляйте слишком много писем за короткое время
+* Используйте профессиональные подписи в письмах
+* Избегайте слов, которые запускают спам-фильтры
+* Обеспечьте наличие опции отписки для маркетинговых писем
 
 ### Устранение неполадок
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* Убедитесь, что учетная запись электронной почты подключена и активна
+* Проверьте, что адрес электронной почты получателя действителен
+* Проверьте запуски рабочего процесса на наличие сообщений об ошибках
+* Сначала протестируйте на собственном адресе электронной почты
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **Скоро**: вложения к письмам будут доступны в первом квартале 2026 года.
 </Note>
 
-## Related
+## Связанные материалы
 
-* [Workflow Triggers](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)

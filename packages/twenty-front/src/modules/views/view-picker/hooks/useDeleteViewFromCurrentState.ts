@@ -6,6 +6,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -67,11 +68,18 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
           );
         }
 
+        set(
+          coreViewsByObjectMetadataIdFamilySelector(objectMetadataItem.id),
+          (views) =>
+            views.filter((view) => view.id !== viewPickerReferenceViewId),
+        );
+
         await deleteView({ id: viewPickerReferenceViewId });
       },
     [
       currentView,
       closeAndResetViewPicker,
+      objectMetadataItem.id,
       changeView,
       deleteView,
       viewPickerIsDirtyCallbackState,

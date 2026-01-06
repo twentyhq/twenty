@@ -65,7 +65,7 @@ export const useGlobalHotkeysCallback = (
         if (preventDefault === true) {
           if (DEBUG_FOCUS_STACK) {
             logDebug(
-              `DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
+              `DEBUG: %cI prevent global default for hotkey (${hotkeysEvent.keys})`,
               'color: gray;',
             );
           }

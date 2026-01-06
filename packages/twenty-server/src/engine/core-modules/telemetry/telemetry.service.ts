@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -10,8 +10,6 @@ type CreateEventInput = {
 
 @Injectable()
 export class TelemetryService {
-  private readonly logger = new Logger(TelemetryService.name);
-
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly httpService: HttpService,
@@ -39,14 +37,7 @@ export class TelemetryService {
 
     try {
       await this.httpService.axiosRef.post(`/selfHostingEvent`, data);
-    } catch (error) {
-      this.logger.error('Error occurred:', error);
-      if (error.response) {
-        this.logger.error(
-          `Error response body: ${JSON.stringify(error.response.data)}`,
-        );
-      }
-
+    } catch {
       return { success: false };
     }
 

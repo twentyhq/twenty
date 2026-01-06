@@ -9,6 +9,9 @@ type DashboardDataSeed = {
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
   position: number;
 };
 
@@ -19,6 +22,9 @@ export const DASHBOARD_DATA_SEED_COLUMNS: (keyof DashboardDataSeed)[] = [
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
   'position',
 ];
 
@@ -41,6 +47,9 @@ export const getDashboardDataSeeds = (
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim Apple',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    updatedByName: 'Tim Apple',
     position: 0,
   },
   {
@@ -53,6 +62,9 @@ export const getDashboardDataSeeds = (
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     createdByName: 'Jony Ive',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    updatedByName: 'Jony Ive',
     position: 1,
   },
   {
@@ -62,6 +74,9 @@ export const getDashboardDataSeeds = (
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     createdByName: 'Phil Schiller',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+    updatedByName: 'Phil Schiller',
     position: 2,
   },
 ];

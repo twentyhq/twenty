@@ -1,6 +1,23 @@
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 describe('getFieldLinkDefinedLinks', () => {
+  describe('Field value', () => {
+    it('should return an empty array if fieldValue is undefined', () => {
+      const result = getFieldLinkDefinedLinks(
+        undefined as unknown as FieldLinksValue,
+      );
+      expect(result).toEqual([]);
+    });
+
+    it('should return an empty array if fieldValue is null', () => {
+      const result = getFieldLinkDefinedLinks(
+        null as unknown as FieldLinksValue,
+      );
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('Primary link', () => {
     it('should not return primary link when primaryLinkUrl is null', () => {
       expect(

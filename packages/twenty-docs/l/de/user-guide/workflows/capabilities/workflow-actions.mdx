@@ -1,21 +1,21 @@
 ---
 title: Workflow-Aktionen
-description: Learn about the actions available in Twenty workflows.
+description: Erfahren Sie mehr über die in Twenty-Workflows verfügbaren Aktionen.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## Über Aktionen
 
-Aktionen definieren, was nach dem Auslösen passiert. You can chain multiple actions together to build complex automations.
+Aktionen definieren, was nach dem Auslösen passiert. Sie können mehrere Aktionen verketten, um komplexe Automatisierungen zu erstellen.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Verwenden Sie die Variablenauswahl (klicken Sie auf das Symbol `(x+)`), um verfügbare Daten aus vorherigen Schritten zu durchsuchen
+  * Bewegen Sie den Mauszeiger über ein beliebiges Eingabefeld, um zu sehen, aus welchem Schritt eine Variable stammt — hilfreich, wenn dasselbe Feld (z. B. ID) in mehreren vorherigen Schritten vorhanden ist
+  * Geben Sie jeder Aktion einen aussagekräftigen Namen, um die Wartung zu erleichtern
 </Tip>
 
-## Record Actions
+## Datensatz-Aktionen
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ Fügt einem ausgewählten Objekt einen neuen Datensatz hinzu.
 
 * Wählen Sie das Zielobjekt aus
 * Füllen Sie die erforderlichen und optionalen Felder aus
-* Use data from previous steps or input values manually to populate fields
+* Verwenden Sie Daten aus vorherigen Schritten oder geben Sie Werte manuell ein, um Felder auszufüllen
 
 **Ausgabe**: Die neu erstellten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
 
@@ -41,8 +41,8 @@ Fügt einem ausgewählten Objekt einen neuen Datensatz hinzu.
 
 * Wählen Sie das Zielobjekt aus
 * Wählen Sie den spezifischen Datensatz zum Aktualisieren aus.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Sie können entweder einen festen Datensatz auswählen, indem Sie das Dropdown-Menü verwenden, das alle verfügbaren Datensätze anzeigt.
+  * Oder Sie lassen den Datensatz dynamisch auswählen, indem Sie einen in einem vorherigen Schritt gefundenen Datensatz über `(x+)` angeben. In diesem Schritt können Sie den Datensatz nicht anhand verschiedener Kriterien suchen. Wenn Sie den Datensatz noch nicht identifiziert haben, fügen Sie vor diesem Schritt `Update Record` einen Schritt `Search Record` hinzu.
 * Wählen Sie zu ändernde Felder aus und geben Sie neue Werte ein
 
 **Ausgabe**: Die aktualisierten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
@@ -71,25 +71,25 @@ Findet Datensätze innerhalb eines ausgewählten Objekts mittels Filterkondition
 **Ausgabe**: Gibt passende Datensätze zurück, die in nachfolgenden Schritten verwendet werden können.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Limit**: Search Records gibt maximal **200 Datensätze** zurück. Wenn Sie mehr verarbeiten müssen, fügen Sie spezifische Filter hinzu, um die Ergebnisse zu reduzieren, oder verwenden Sie geplante Workflows, um stapelweise zu verarbeiten.
 </Note>
 
-**Best Practice**: Use [branches](/l/de/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Best Practice**: Verwenden Sie [Verzweigungen](/l/de/user-guide/workflows/capabilities/workflow-branches) nach dem Durchsuchen von Datensätzen, um "gefunden" vs "nicht gefunden" Szenarien zu behandeln.
 
-### Upsert Record
+### Datensatz einfügen oder aktualisieren
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Übereinstimmungskriterien. Das ist hilfreich, wenn Sie nicht sicher sind, ob ein Datensatz bereits vorhanden ist.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Konfiguration**:
 
 * Wählen Sie das Zielobjekt aus
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Beachten Sie, welche Felder für den Abgleich verwendet werden können: E-Mail für Personen, Domain für Unternehmen, ID für beliebige Objekte oder jedes Feld, das als eindeutig markiert ist. Unten müssen Sie mindestens eines davon ausfüllen.
+* Füllen Sie die Feldwerte aus. Vergessen Sie nicht, mindestens einen der eindeutigen Bezeichner auszufüllen.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **Der Abgleich funktioniert in der Regel noch besser, wenn Sie nur einen eindeutigen Bezeichner hinzufügen.** Beispielsweise werden im untenstehenden Screenshot Unternehmen anhand ihrer Domain abgeglichen. Die ID ist nicht unbedingt erforderlich.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

@@ -1,7 +1,7 @@
 import {
+  useApolloClient,
   type ApolloClient,
   type NormalizedCacheObject,
-  useApolloClient,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -36,15 +36,13 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import {
-  GraphOrderBy,
-  GraphType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
   AxisNameDisplay,
+  BarChartLayout,
   PageLayoutType,
+  WidgetConfigurationType,
 } from '~/generated/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -268,7 +266,7 @@ export const WithNumberChart: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -353,7 +351,7 @@ export const WithGaugeChart: Story = {
       },
       configuration: {
         __typename: 'GaugeChartConfiguration',
-        graphType: GraphType.GAUGE,
+        configurationType: WidgetConfigurationType.GAUGE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: false,
@@ -438,7 +436,8 @@ export const WithBarChart: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -533,7 +532,7 @@ export const SmallWidget: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -625,7 +624,8 @@ export const MediumWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -720,7 +720,8 @@ export const LargeWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -815,7 +816,7 @@ export const WideWidget: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -907,7 +908,8 @@ export const TallWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -1003,6 +1005,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: accountOwnerField.id,
         layout: 'FIELD',
       },
@@ -1116,6 +1119,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
         layout: 'FIELD',
       },
@@ -1181,6 +1185,201 @@ export const WithOneToManyRelationFieldWidget: Story = {
                   <WidgetComponentInstanceContext.Provider
                     value={{
                       instanceId: WIDGET_ID_ONE_TO_MANY_RELATION,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+};
+
+export const OnMobile: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+    docs: {
+      description: {
+        story:
+          'Widget on mobile viewport should use side-column variant instead of record-page variant.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-mobile',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.GRAPH,
+      title: 'Mobile Widget',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '100%', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: 'widget-mobile',
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+};
+
+export const InSidePanel: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Widget in side panel (right drawer) should use side-column variant instead of record-page variant.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-side-panel',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.GRAPH,
+      title: 'Side Panel Widget',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: true,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: 'widget-side-panel',
                     }}
                   >
                     <WidgetRenderer widget={widget} />
@@ -1284,7 +1483,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,

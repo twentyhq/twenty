@@ -1,21 +1,21 @@
 ---
 title: Действия рабочего процесса
-description: Learn about the actions available in Twenty workflows.
+description: Узнайте о действиях, доступных в рабочих процессах Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## О действиях
 
-Действия определяют, что произойдет после срабатывания триггера. You can chain multiple actions together to build complex automations.
+Действия определяют, что произойдет после срабатывания триггера. Вы можете связывать несколько действий вместе, чтобы создавать сложные автоматизации.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Используйте средство выбора переменных (нажмите значок `(x+)`), чтобы просматривать доступные данные из предыдущих шагов
+  * Наведите курсор на любое поле ввода, чтобы увидеть, из какого шага поступает переменная — это полезно, когда одно и то же поле (например, ID) существует в нескольких предыдущих шагах
+  * Присваивайте каждому действию описательное имя для упрощения сопровождения
 </Tip>
 
-## Record Actions
+## Действия с записями
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * Выберите целевой объект
 * Заполните обязательные и необязательные поля
-* Use data from previous steps or input values manually to populate fields
+* Используйте данные из предыдущих шагов или введите значения вручную, чтобы заполнить поля
 
 **Вывод**: Данные вновь созданной записи доступны для использования на последующих шагах.
 
@@ -41,8 +41,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * Выберите целевой объект
 * Выберите конкретную запись для обновления.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Вы можете либо выбрать конкретную запись, используя раскрывающееся меню, где показаны все доступные записи.
+  * Либо можно выбрать запись динамически, указав запись, найденную на предыдущем шаге, с помощью `(x+)`. На этом этапе вы не можете искать запись по различным критериям. Если вы ещё не определили запись, добавьте шаг `Search Record` перед шагом `Update Record`.
 * Выберите поля для изменения и введите новые значения
 
 **Вывод**: Данные обновленной записи доступны для использования в последующих шагах.
@@ -71,25 +71,25 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 **Вывод**: Возвращает записи, которые могут быть использованы в последующих шагах.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Ограничение**: Search Records возвращает максимум **200 записей**. Если нужно обработать больше, добавьте точные фильтры, чтобы сократить результаты, или используйте запланированные рабочие процессы для пакетной обработки.
 </Note>
 
-**Best Practice**: Use [branches](/l/ru/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Рекомендация**: Используйте [ветвления](/l/ru/user-guide/workflows/capabilities/workflow-branches) после Search Records для обработки сценариев "найдено" и "не найдено".
 
-### Upsert Record
+### Добавить или обновить запись
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Создаёт новую запись или обновляет существующую на основе критериев сопоставления. Это полезно, если вы не уверены, существует ли уже запись.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Настройка**:
 
 * Выберите целевой объект
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Обратите внимание, какие поля можно использовать для сопоставления: email — для People, домен — для Companies, ID — для любого объекта или любое поле, помеченное как Unique. Ниже нужно заполнить как минимум одно из них.
+* Заполните значения полей. Не забудьте указать как минимум один уникальный идентификатор.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **Сопоставление обычно работает даже лучше, если указывать только один уникальный идентификатор.** Например, на скриншоте ниже компании сопоставляются по их домену. Указывать ID не обязательно.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

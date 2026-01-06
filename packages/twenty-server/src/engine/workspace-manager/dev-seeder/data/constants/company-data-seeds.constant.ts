@@ -11,6 +11,9 @@ type CompanyDataSeed = {
   createdByWorkspaceMemberId: string;
   createdByName: string;
   accountOwnerId: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
   position: number;
 };
 
@@ -25,6 +28,9 @@ export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
   'createdByWorkspaceMemberId',
   'createdByName',
   'accountOwnerId',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
   'position',
 ];
 
@@ -8524,6 +8530,9 @@ const COMPANY_DATA_SEEDS_RAW = [
 export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = COMPANY_DATA_SEEDS_RAW.map(
   (company, index) => ({
     ...company,
+    updatedBySource: company.createdBySource,
+    updatedByWorkspaceMemberId: company.createdByWorkspaceMemberId,
+    updatedByName: company.createdByName,
     position: index + 1,
   }),
 );

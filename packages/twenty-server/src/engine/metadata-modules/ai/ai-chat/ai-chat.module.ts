@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { SkillsModule } from 'src/engine/core-modules/skills/skills.module';
+import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -37,12 +38,13 @@ import { ChatExecutionService } from './services/chat-execution.service';
       UserWorkspaceEntity,
     ]),
     AiAgentExecutionModule,
+    BillingModule,
     ThrottlerModule,
     FeatureFlagModule,
     FileUploadModule,
     FileModule,
     PermissionsModule,
-    SkillsModule,
+    SkillModule,
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,

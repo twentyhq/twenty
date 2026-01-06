@@ -4,7 +4,9 @@
     "libsDir": "packages"
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*"],
+    "default": [
+      "{projectRoot}/**/*"
+    ],
     "excludeStories": [
       "default",
       "!{projectRoot}/.storybook/*",
@@ -32,17 +34,26 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "inputs": ["^production", "production"],
-      "dependsOn": ["^build"]
+      "inputs": [
+        "^production",
+        "production"
+      ],
+      "dependsOn": [
+        "^build"
+      ]
     },
     "start": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "cache": true,
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "eslintConfig": "{projectRoot}/eslint.config.mjs",
         "cache": true,
@@ -56,7 +67,22 @@
           "fix": true
         }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "lint:diff-with-main": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs \"$@\"; fi' _",
+        "pattern": "\\.(ts|tsx|js|jsx)$"
+      },
+      "configurations": {
+        "fix": {
+          "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs --fix \"$@\"; fi' _"
+        }
+      }
     },
     "fmt": {
       "executor": "nx:run-commands",
@@ -77,7 +103,9 @@
           "write": true
         }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -91,22 +119,30 @@
           "watch": true
         }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "^default",
         "excludeStories",
         "{workspaceRoot}/jest.preset.js"
       ],
-      "outputs": ["{projectRoot}/coverage"],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs",
         "coverage": true,
-        "coverageReporters": ["text-summary"],
+        "coverageReporters": [
+          "text-summary"
+        ],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
       },
       "configurations": {
@@ -115,7 +151,10 @@
           "maxWorkers": 3
         },
         "coverage": {
-          "coverageReporters": ["lcov", "text"]
+          "coverageReporters": [
+            "lcov",
+            "text"
+          ]
         },
         "watch": {
           "watch": true
@@ -124,25 +163,36 @@
     },
     "test:e2e": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/{options.output-dir}"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
+      "outputs": [
+        "{projectRoot}/{options.output-dir}"
+      ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
+        "command": "NODE_OPTIONS='--max-old-space-size=10240' VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "storybook:serve:dev": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "storybook dev",
@@ -151,7 +201,9 @@
     },
     "storybook:serve:static": {
       "executor": "nx:run-commands",
-      "dependsOn": ["storybook:build"],
+      "dependsOn": [
+        "storybook:build"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
@@ -164,8 +216,13 @@
     "storybook:test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/coverage/storybook"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/storybook"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -181,7 +238,10 @@
     },
     "storybook:test:no-coverage": {
       "executor": "nx:run-commands",
-      "inputs": ["^default", "excludeTests"],
+      "inputs": [
+        "^default",
+        "excludeTests"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -271,12 +331,20 @@
     },
     "@nx/vite:test": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": [
+        "default",
+        "^default"
+      ]
     },
     "@nx/vite:build": {
       "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ]
     }
   },
   "installation": {
@@ -308,7 +376,9 @@
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": ["storybook:build"]
+        "cacheableOperations": [
+          "storybook:build"
+        ]
       }
     }
   },

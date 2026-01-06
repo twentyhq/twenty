@@ -1,67 +1,67 @@
 ---
-title: Update Existing Records via Import
-description: Complete step-by-step guide to bulk updating records using CSV import.
+title: İçe Aktarma Yoluyla Mevcut Kayıtları Güncelleyin
+description: CSV içe aktarma kullanarak kayıtları toplu olarak güncelleme için eksiksiz adım adım kılavuz.
 ---
 
 ## Genel Bakış
 
-Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
+Birçok kaydı aynı anda güncellemeniz mi gerekiyor? Tek tek düzenlemek yerine, mevcut kayıtları toplu olarak güncellemek için CSV içe aktarmayı kullanın.
 
 **Kullanım alanları:**
 
-* Update job titles for multiple people
-* Change company information in bulk
-* Add data to new custom fields
-* Correct data errors across many records
+* Birden fazla kişi için iş unvanlarını güncelleyin
+* Şirket bilgilerini toplu olarak değiştirin
+* Yeni özel alanlara veri ekleyin
+* Birçok kayıttaki veri hatalarını düzeltin
 
 ## Nasıl Çalışır
 
-When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
+Var olan bir kayıtla eşleşen bir **benzersiz tanımlayıcı** içeren bir dosyayı içe aktardığınızda, Twenty yinelenen bir kayıt oluşturmak yerine o kaydı günceller.
 
-| If unique identifier...    | Twenty will...                                   |
-| -------------------------- | ------------------------------------------------ |
-| Matches an existing record | **Update** the existing record                   |
-| Doesn't match any record   | **Create** a new record                          |
-| Is missing from your file  | **Create** a new record (with auto-generated ID) |
+| Eğer benzersiz tanımlayıcı... | Twenty şunu yapar...                                     |
+| ----------------------------- | -------------------------------------------------------- |
+| Mevcut bir kayıtla eşleşir    | Mevcut kaydı **güncelle**                                |
+| Herhangi bir kayıtla eşleşmez | Yeni bir kayıt **oluştur**                               |
+| Dosyanızda eksik              | Yeni bir kayıt **oluştur** (otomatik oluşturulan ID ile) |
 
 <Warning>
-  **Multi-Select fields are overwritten, not merged.**
+  **Çoklu Seçim alanları birleştirilmez, üzerine yazılır.**
 
-  If a record has `Option A` and `Option B` selected, and you import `["Option C"]`, the record will only have `Option C` after import. The import replaces all previous selections—it does not add to them.
+  Bir kayıtta `Option A` ve `Option B` seçiliyse ve siz `["Option C"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `Option C` bulunur. İçe aktarma önceki tüm seçimlerin yerini alır—onlara ekleme yapmaz.
 
-  To keep existing values, include them all in your import: `["Option A","Option B","Option C"]`
+  Mevcut değerleri korumak için, hepsini içe aktarımınıza dahil edin: `["Option A","Option B","Option C"]`
 </Warning>
 
-## Step 1: Export Your Current Data
+## Adım 1: Mevcut Verilerinizi Dışa Aktarın
 
-First, export the records you want to update:
+Önce, güncellemek istediğiniz kayıtları dışa aktarın:
 
-1. Navigate to the object (People, Companies, etc.)
-2. **Add the columns you need** — click **Options → Fields** to show the fields you want to update
-3. **Filter if needed** — narrow down to only the records you want to update
-4. Click **⋮** → **Export view**
-5. Save the CSV file
+1. Nesneye gidin (Kişiler, Şirketler vb.)
+2. **İhtiyacınız olan sütunları ekleyin** — güncellemek istediğiniz alanları göstermek için **Options → Fields**'a tıklayın
+3. **Gerekirse filtreleyin** — yalnızca güncellemek istediğiniz kayıtlara daraltın
+4. **⋮** → **Görünümü Dışa Aktar**'a tıklayın
+5. CSV dosyasını kaydedin
 
-<Note>**Why export first?** The exported file has the correct format, includes unique identifiers, and maps automatically during import.</Note>
+<Note>**Neden önce dışa aktarmalısınız?** Dışa aktarılan dosya doğru biçimdedir, benzersiz tanımlayıcıları içerir ve içe aktarma sırasında otomatik olarak eşleştirilir.</Note>
 
-### What Gets Exported
+### Neler Dışa Aktarılır
 
-* All visible columns in your current view
-* The record's unique identifiers (`id`, `email`, `domain`)
-* Current field values you can modify
+* Geçerli görünümünüzdeki tüm görünür sütunlar
+* Kaydın benzersiz tanımlayıcıları (`id`, `email`, `domain`)
+* Değiştirebileceğiniz mevcut alan değerleri
 
-## Step 2: Edit the CSV File
+## Adım 2: CSV Dosyasını Düzenleyin
 
-Open the exported file in your spreadsheet application (Excel, Google Sheets, etc.):
+Dışa aktarılan dosyayı hesap tablosu uygulamanızda açın (Excel, Google Sheets vb.):
 
-1. **Keep the unique identifier column** — don't delete `id`, `email`, or `domain`
-2. **Update the values** in the columns you want to change
-3. **Remove columns you don't need to update** (optional, but cleaner)
-4. **Don't change unique identifier values** — or Twenty will create new records
+1. **Benzersiz tanımlayıcı sütununu koruyun** — `id`, `email` veya `domain` alanlarını silmeyin
+2. Değiştirmek istediğiniz sütunlardaki değerleri **güncelleyin**
+3. **Güncellemeniz gerekmeyen sütunları kaldırın** (isteğe bağlı, ancak daha temizdir)
+4. **Benzersiz tanımlayıcı değerlerini değiştirmeyin** — aksi halde Twenty yeni kayıtlar oluşturur
 
-### Example: Updating Job Titles
+### Örnek: İş Unvanlarını Güncelleme
 
-**Exported file:**
+**Dışa aktarılan dosya:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -70,7 +70,7 @@ id,email,firstName,lastName,jobTitle
 550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
 ```
 
-**After your edits:**
+**Düzenlemelerinizden sonra:**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -80,63 +80,63 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Don't change the unique identifier values.**
+  **Benzersiz tanımlayıcı değerlerini değiştirmeyin.**
 
-  If you change `john@acme.com` to `john.smith@acme.com`, Twenty will create a new record instead of updating the existing one.
+  `john@acme.com` adresini `john.smith@acme.com` olarak değiştirirseniz, Twenty mevcut kaydı güncellemek yerine yeni bir kayıt oluşturur.
 </Warning>
 
-## Step 3: Import the Updated File
+## Adım 3: Güncellenen Dosyayı İçe Aktarın
 
-1. Navigate to the object
-2. Click **⋮** → **Import records**
-3. Upload your edited CSV file
-4. **Ensure the unique identifier is mapped** — verify `email`, `domain`, or `id` is mapped correctly
-5. Review the field mappings
-6. Check for errors
-7. Click **Confirm**
+1. Nesneye gidin
+2. **⋮** → **Kayıtları içe aktar**'ı tıklayın
+3. Düzenlediğiniz CSV dosyasını yükleyin
+4. **Benzersiz tanımlayıcının eşlendiğinden emin olun** — `email`, `domain` veya `id` alanlarının doğru şekilde eşlendiğini doğrulayın
+5. Alan eşlemelerini gözden geçirin
+6. Hataları kontrol edin
+7. **Onayla**'ya tıklayın
 
-Twenty matches records by the unique identifier and updates them with new values.
+Twenty, kayıtları benzersiz tanımlayıcıya göre eşleştirir ve yeni değerlerle günceller.
 
-## Choosing the Right Unique Identifier
+## Doğru Benzersiz Tanımlayıcıyı Seçme
 
-| Nesne             | Recommended      | Alternative | Notlar                       |
-| ----------------- | ---------------- | ----------- | ---------------------------- |
-| **People**        | `e-posta`        | `id`        | Email is human-readable      |
-| **Şirketler**     | `alan Adı`       | `id`        | Domain is human-readable     |
-| **Özel nesneler** | Any unique field | `id`        | Use your custom unique field |
+| Nesne             | Önerilen                    | Alternatif | Notlar                                  |
+| ----------------- | --------------------------- | ---------- | --------------------------------------- |
+| **Kişiler**       | `e-posta`                   | `id`       | E-posta insan tarafından okunabilirdir  |
+| **Şirketler**     | `alan Adı`                  | `id`       | Alan adı insan tarafından okunabilirdir |
+| **Özel nesneler** | Herhangi bir benzersiz alan | `id`       | Özel benzersiz alanınızı kullanın       |
 
-<Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
+<Note>**Yalnızca TEK bir benzersiz tanımlayıcı kullanın.** Hem `email` HEM de `id` eşlemeyin. Bu, karışıklığa ve hatalara neden olabilir.</Note>
 
-### Using Custom Unique Fields
+### Özel Benzersiz Alanları Kullanma
 
-If you have a custom field marked as unique (like an external ID from another system):
+Benzersiz olarak işaretlenmiş özel bir alanınız varsa (başka bir sistemden gelen harici bir ID gibi):
 
-1. Include that field in your export and import
-2. Map it during import
-3. Twenty will match on that field
+1. Bu alanı dışa aktarma ve içe aktarma işlemlerinize dahil edin
+2. İçe aktarma sırasında onu eşleyin
+3. Twenty, o alana göre eşleştirme yapar
 
-## Step 4: Verify the Updates
+## Adım 4: Güncellemeleri Doğrulayın
 
-After importing:
+İçe aktardıktan sonra:
 
-1. Open a few updated records
-2. Verify the changes were applied
-3. Check that no duplicate records were created
+1. Güncellenen kayıtlardan birkaçını açın
+2. Değişikliklerin uygulandığını doğrulayın
+3. Yinelenen kayıtların oluşturulmadığını kontrol edin
 
-## What About Fields Not in Your File?
+## Dosyanızda Olmayan Alanlar Ne Olacak?
 
-**Fields not included in your import file remain unchanged.**
+**İçe aktarma dosyanıza dahil edilmeyen alanlar değişmeden kalır.**
 
-| Your file includes...        | Sonuç                                                  |
-| ---------------------------- | ------------------------------------------------------ |
-| `email`, `jobTitle`          | Only `jobTitle` is updated; other fields stay the same |
-| `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated                     |
+| Dosyanız şunları içerir...   | Sonuç                                                     |
+| ---------------------------- | --------------------------------------------------------- |
+| `email`, `jobTitle`          | Yalnızca `jobTitle` güncellenir; diğer alanlar aynı kalır |
+| `email`, `jobTitle`, `phone` | `jobTitle` ve `phone` güncellenir                         |
 
-This means you only need to include the fields you want to change (plus the unique identifier).
+Bu, yalnızca değiştirmek istediğiniz alanları (artı benzersiz tanımlayıcıyı) dahil etmeniz gerektiği anlamına gelir.
 
-## Combining Updates and New Records
+## Güncellemeleri ve Yeni Kayıtları Birleştirme
 
-You can update existing records AND create new ones in the same import:
+Aynı içe aktarma işleminde mevcut kayıtları güncelleyebilir VE yeni kayıtlar oluşturabilirsiniz:
 
 ```csv
 email,firstName,lastName,jobTitle
@@ -144,55 +144,55 @@ john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
 newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 ```
 
-## Common Mistakes to Avoid
+## Kaçınılması Gereken Yaygın Hatalar
 
-| Mistake                        | Problem                                                 | Sonuç                                  | Solution                                  |
-| ------------------------------ | ------------------------------------------------------- | -------------------------------------- | ----------------------------------------- |
-| **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com`        | Creates new record instead of updating | Keep unique identifiers unchanged         |
-| **Multiple unique fields**     | Mapping both `email` AND `id`                           | Potential matching conflicts           | Map only ONE unique identifier            |
-| **No unique identifier**       | File only has `firstName`, `lastName`, `jobTitle`       | All rows create new records            | Always include `email`, `domain`, or `id` |
-| **Case mismatch**              | File has `John@acme.com` but Twenty has `john@acme.com` | Creates new record                     | Export from Twenty to get exact values    |
+| Hata                                    | Sorun                                                                 | Sonuç                                   | Çözüm                                                 |
+| --------------------------------------- | --------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------- |
+| **Benzersiz tanımlayıcıyı değiştirmek** | `john@acme.com` `john.smith@acme.com` olarak değiştirildi             | Güncellemek yerine yeni kayıt oluşturur | Benzersiz tanımlayıcıları değiştirmeden bırakın       |
+| **Birden fazla benzersiz alan**         | Hem `email` HEM DE `id` alanlarını eşleme                             | Olası eşleştirme çakışmaları            | Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin      |
+| **Benzersiz tanımlayıcı yok**           | Dosyada yalnızca `firstName`, `lastName`, `jobTitle` var              | Tüm satırlar yeni kayıtlar oluşturur    | Her zaman `email`, `domain` veya `id` öğesini ekleyin |
+| **Büyük/küçük harf uyumsuzluğu**        | Dosyada `John@acme.com` var ancak Twenty'de `john@acme.com` bulunuyor | Yeni kayıt oluşturur                    | Tam değerleri almak için Twenty'den dışa aktarın      |
 
-## FAQ
+## SSS
 
 <AccordionGroup>
-  <Accordion title="What if some records don't exist yet?">
-    Records with unique identifiers that don't match existing records will be created as new records. This lets you update and create in the same import.
+  <Accordion title="Bazı kayıtlar henüz yoksa ne olur?">
+    Benzersiz tanımlayıcıları mevcut kayıtlarla eşleşmeyen kayıtlar, yeni kayıtlar olarak oluşturulacaktır. Bu, aynı içe aktarma işleminde güncelleme ve oluşturma yapmanıza olanak tanır.
   </Accordion>
 
-  <Accordion title="Can I clear/empty a field value?">
-    Yes, leave the cell empty in your CSV. The import will clear that field's value on the existing record.
+  <Accordion title="Bir alan değerini temizleyebilir/boşaltabilir miyim?">
+    Evet, CSV'nizde hücreyi boş bırakın. İçe aktarma, mevcut kayıttaki o alanın değerini temizleyecektir.
   </Accordion>
 
-  <Accordion title="What happens to fields I don't include in the import?">
-    Fields not in your import file remain unchanged on existing records. Only fields you include are updated.
+  <Accordion title="İçe aktarmaya dahil etmediğim alanlara ne olur?">
+    İçe aktarma dosyanızda olmayan alanlar mevcut kayıtlarda değişmeden kalır. Yalnızca dahil ettiğiniz alanlar güncellenir.
   </Accordion>
 
-  <Accordion title="Can I update relation fields (like Company)?">
-    Evet! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+  <Accordion title="İlişki alanlarını (ör. Şirket) güncelleyebilir miyim?">
+    Evet! İlişkinin benzersiz tanımlayıcısını (ör. `companyDomain`) ekleyin ve ilişki alanına eşleyin. İlişki güncellenecektir.
   </Accordion>
 
-  <Accordion title="How do I know which records will be updated vs. created?">
-    During the import review step, Twenty shows you how many records will be updated vs. created based on unique identifier matches.
+  <Accordion title="Hangi kayıtların güncelleneceğini ve hangilerinin oluşturulacağını nasıl anlarım?">
+    İçe aktarmayı gözden geçirme adımında, Twenty benzersiz tanımlayıcı eşleşmelerine göre kaç kaydın güncelleneceğini ve kaçının oluşturulacağını gösterir.
   </Accordion>
 
-  <Accordion title="Can I undo a bulk update?">
-    There's no automatic undo. We recommend exporting your data as a backup before making bulk updates.
+  <Accordion title="Toplu bir güncellemeyi geri alabilir miyim?">
+    Otomatik geri alma yoktur. Toplu güncellemeler yapmadan önce verilerinizi yedek olarak dışa aktarmanızı öneririz.
   </Accordion>
 </AccordionGroup>
 
 ## En İyi Uygulamalar
 
-1. **Export first** — always start from an export to ensure correct format
-2. **Backup before updating** — export your data before making bulk changes
-3. **Test with a few records** — try updating 5-10 records first before doing a large batch
-4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
-5. **Only include necessary columns** — fewer columns means less chance for errors
+1. **Önce dışa aktarın** — doğru biçimi sağlamak için her zaman bir dışa aktarmayla başlayın
+2. **Güncellemeden önce yedekleyin** — toplu değişiklikler yapmadan önce verilerinizi dışa aktarın
+3. **Birkaç kayıtla test edin** — büyük bir toplu işlem yapmadan önce 5-10 kaydı güncellemeyi deneyin
+4. **İnsan tarafından okunabilir tanımlayıcılar kullanın** — `email` ve `domain`, `id`'den daha kolay doğrulanır
+5. **Yalnızca gerekli sütunları dahil edin** — daha az sütun, hata olasılığını azaltır
 
 ## Sorun Giderme
 
-Having issues? Check:
+Sorun mu yaşıyorsunuz? Şunları kontrol edin:
 
-* [How to Fix Import Errors](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Uniqueness Constraints](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Field Mapping Reference](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)

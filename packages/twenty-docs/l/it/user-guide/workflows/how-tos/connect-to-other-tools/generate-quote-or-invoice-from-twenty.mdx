@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Genera un preventivo o una fattura da Twenty
+description: Crea automaticamente fatture negli strumenti esterni quando le opportunità vengono chiuse.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Invia automaticamente i dati dell'opportunità al tuo sistema di fatturazione (Stripe, QuickBooks, Xero, ecc.) quando un'opportunità è chiusa come vinta.
 
-## Workflow Structure
+## Struttura del flusso di lavoro
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Trigger**: Il Record è Aggiornato (Opportunità)
+2. **Filtro**: Fase = Closed Won
+3. **Search Record**: Recupera i dettagli dell'azienda
+4. **Code** (opzionale): Formatta il payload
+5. **HTTP Request**: Invia al sistema di fatturazione
 
-## Step 1: Set Up the Trigger
+## Passaggio 1: Configura il trigger
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Crea un nuovo flusso di lavoro
+2. Seleziona il trigger **Record is Updated**
+3. Scegli **Opportunity** come oggetto
 
-## Step 2: Filter for Closed Won
+## Passaggio 2: Filtra per Closed Won
 
-Add a **Filter** action to only continue when the deal is won:
+Aggiungi un'azione **Filtro** per proseguire solo quando l'opportunità è chiusa come vinta:
 
-| Setting       | Valore                            |
-| ------------- | --------------------------------- |
-| **Field**     | Fase                              |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| Impostazione   | Valore                                  |
+| -------------- | --------------------------------------- |
+| **Campo**      | Fase                                    |
+| **Condizione** | Uguale a                                |
+| **Valore**     | `CLOSED_WON` (o il nome della tua fase) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  Il trigger si attiva a ogni aggiornamento di un'Opportunità. Il filtro garantisce che il flusso di lavoro prosegua solo quando la fase cambia in Closed Won.
 </Tip>
 
-## Step 3: Get Company Details
+## Passaggio 3: Ottieni i dettagli dell'azienda
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Il record Opportunity potrebbe non includere tutti i campi dell'azienda necessari per la fattura. Aggiungi un'azione **Search Record**:
 
-| Setting      | Valore                                   |
-| ------------ | ---------------------------------------- |
-| **Object**   | Azienda                                  |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| Impostazione           | Valore                                     |
+| ---------------------- | ------------------------------------------ |
+| **Oggetto**            | Azienda                                    |
+| **Corrispondenza per** | ID uguale a `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+Questo recupera il record completo dell'azienda con indirizzo di fatturazione, partita IVA, ecc.
 
-## Step 4: Format the Payload (Optional)
+## Passaggio 4: Formatta il payload (opzionale)
 
-If your invoicing system expects a specific format, add a **Code** action:
+Se il tuo sistema di fatturazione richiede un formato specifico, aggiungi un'azione **Code**:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Passaggio 5: Invia al sistema di fatturazione
 
-Add an **HTTP Request** action:
+Aggiungi un'azione **HTTP Request**:
 
-| Setting     | Valore                                    |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Impostazione     | Valore                                          |
+| ---------------- | ----------------------------------------------- |
+| **Metodo**       | POST                                            |
+| **URL**          | L'endpoint API del tuo sistema di fatturazione  |
+| **Intestazioni** | `Authorization: Bearer YOUR_API_KEY`            |
+| **Corpo**        | `{{code.invoice}}` o mappa direttamente i campi |
 
-### Example: Stripe Invoice
+### Esempio: Fattura Stripe
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Esempio: Fattura QuickBooks
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Riepilogo completo del flusso di lavoro
 
-| Step | Azione                  | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filtro                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Codice                  | Format data for invoicing API        |
-| 5    | Richiesta HTTP          | Create invoice in external system    |
+| Passaggio | Azione                  | Scopo                                                     |
+| --------- | ----------------------- | --------------------------------------------------------- |
+| 1         | Trigger: Record Updated | Si attiva a ogni modifica di un'Opportunità               |
+| 2         | Filtro                  | Procedi solo se Fase = Closed Won                         |
+| 3         | Search Record           | Ottieni tutti i dettagli dell'azienda per la fatturazione |
+| 4         | Codice                  | Formatta i dati per l'API di fatturazione                 |
+| 5         | Richiesta HTTP          | Crea la fattura in un sistema esterno                     |
 
-## Tips
+## Suggerimenti
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Memorizza gli ID esterni**: Salva l'ID della fattura restituito dall'API nell'Opportunity utilizzando un'azione **Update Record**
+* **Gestione degli errori**: Aggiungi un ramo per inviare una notifica se la richiesta HTTP non riesce
+* **Prima prova**: Usa la modalità sandbox/test del tuo sistema di fatturazione prima di andare in produzione
 
-## Related
+## Correlati
 
-* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Automazioni Closed Won](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

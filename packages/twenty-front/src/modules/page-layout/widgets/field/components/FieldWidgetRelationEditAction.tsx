@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import {
@@ -18,6 +19,7 @@ import {
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -32,11 +34,14 @@ type FieldWidgetRelationEditActionProps = {
   recordId: string;
 };
 
-const StyledEditButton = styled(LightIconButton)<{ isDropdownOpen: boolean }>`
-  ${({ isDropdownOpen, theme }) =>
+const StyledEditButton = styled(LightIconButton)<{
+  isDropdownOpen: boolean;
+  isMobile: boolean;
+}>`
+  ${({ isDropdownOpen, isMobile, theme }) =>
     !isDropdownOpen &&
     css`
-      opacity: 0;
+      opacity: ${isMobile ? 1 : 0};
       pointer-events: none;
       transition: opacity ${theme.animation.duration.instant}s ease;
     `}
@@ -51,6 +56,8 @@ export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (item) =>
@@ -89,6 +96,7 @@ export const FieldWidgetRelationEditAction = ({
     getRecordFieldCardRelationPickerDropdownId({
       fieldDefinition,
       recordId,
+      instanceId: scopeInstanceId,
     });
 
   const isRelationSelectionDropdownOpen = useRecoilComponentValue(
@@ -96,9 +104,12 @@ export const FieldWidgetRelationEditAction = ({
     relationSelectionDropdownId,
   );
 
+  const isMobile = useIsMobile();
+
   const dropdownTriggerClickableComponent = (
     <StyledEditButton
       isDropdownOpen={isRelationSelectionDropdownOpen}
+      isMobile={isMobile}
       Icon={IconPencil}
       accent="secondary"
     />

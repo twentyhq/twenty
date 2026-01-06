@@ -20,7 +20,7 @@ runs:
       id: cache-primary-key-builder
       shell: bash
       run: |
-        echo "CACHE_PRIMARY_KEY_PREFIX=v3-${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
+        echo "CACHE_PRIMARY_KEY_PREFIX=v4-${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
     - name: Restore cache
       uses: actions/cache/restore@v4
       id: restore-cache

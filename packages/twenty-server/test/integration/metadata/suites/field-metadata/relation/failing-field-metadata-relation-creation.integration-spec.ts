@@ -154,6 +154,56 @@ describe('Field metadata relation creation should fail', () => {
           },
         },
       },
+      {
+        title:
+          '(relationCreationPayload) when targetObjectMetadataId is not a valid uuid format',
+        context: {
+          input: {
+            relationCreationPayload: {
+              targetObjectMetadataId: 'not-a-valid-uuid',
+            },
+          },
+        },
+      },
+      {
+        title: 'when source field name conflicts with existing field name',
+        context: ({ collisionFieldName }) => ({
+          input: {
+            name: collisionFieldName,
+            relationCreationPayload: {
+              targetFieldLabel: 'Unique Target Label',
+            },
+          },
+        }),
+      },
+      {
+        title:
+          'when self-relation source field join column would conflict with target field name',
+        context: {
+          input: {
+            name: 'parent',
+            relationCreationPayload: {
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.sourceObjectId,
+              targetFieldLabel: 'Parent Id',
+            },
+          },
+        },
+      },
+      {
+        title:
+          'when self-relation target join column would conflict with source field name',
+        context: {
+          input: {
+            name: 'childrenId',
+            relationCreationPayload: {
+              targetObjectMetadataId:
+                globalTestContext.objectMetadataIds.sourceObjectId,
+              targetFieldLabel: 'Children',
+            },
+          },
+        },
+      },
     ];
 
   beforeAll(async () => {

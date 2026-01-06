@@ -1,149 +1,149 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: Invia email dai flussi di lavoro
+description: Invia automaticamente email personalizzate utilizzando le azioni dei flussi di lavoro.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Invia automaticamente email quando si verificano eventi specifici nel tuo CRM—dai il benvenuto ai nuovi contatti, effettua il follow-up delle opportunità o avvisa i membri del team.
 
 ## Prerequisiti
 
-Before you can send emails from workflows:
+Prima di poter inviare email dai flussi di lavoro:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Collega un account email in **Impostazioni → Account**
+2. Assicurati che l'account abbia le autorizzazioni di invio abilitate
 
-## Basic Email Workflow
+## Flusso di lavoro email di base
 
-### Example: Welcome Email for New Contacts
+### Esempio: Email di benvenuto per i nuovi contatti
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Obiettivo**: Inviare un'email di benvenuto quando una nuova persona viene aggiunta al CRM.
 
 **Impostazione**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Crea flusso di lavoro**: Vai su **Impostazioni → Flussi di lavoro** e fai clic su **+ Nuovo flusso di lavoro**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Aggiungi trigger**: Seleziona **Record creato** → **Persone**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Aggiungi l'azione Invia email**:
+   * Fai clic su **+** per aggiungere un'azione
+   * Seleziona **Invia email**
+   * Configura l'email:
 
 | Campo       | Valore                                 |
 | ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Benvenuto in {{Your Company Name}}`   |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| **A**       | `{{trigger.object.email}}`             |
+| **Oggetto** | `Benvenuto in {{Your Company Name}}`   |
+| **Corpo**   | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Testa e attiva**: Esegui un test con un record di esempio, quindi attiva
 
-## Using Variables in Emails
+## Uso delle variabili nelle email
 
-Reference data from previous steps using `{{variable}}` syntax:
+Richiama i dati dai passaggi precedenti usando la sintassi `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+Ciao {{trigger.object.firstName}},
 
-Thank you for connecting with us!
+Grazie per esserti messo in contatto con noi!
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+La tua azienda, {{trigger.object.company.name}}, è ora nel nostro sistema.
 
-Best regards,
-The Team
+Cordiali saluti,
+Il Team
 ```
 
-### Available Variables from Triggers
+### Variabili disponibili dai trigger
 
-| Tipo di trigger            | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Tipo di trigger              | Variabili comuni                       |
+| ---------------------------- | -------------------------------------- |
+| **Record creato/aggiornato** | `{{trigger.object.fieldName}}`         |
+| **Manuale**                  | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                  | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Avanzato: Email condizionali
 
-### Example: Different Emails Based on Lead Source
+### Esempio: Email diverse in base all'origine del lead
 
-**Goal**: Send different welcome emails based on where the lead came from.
-
-**Impostazione**:
-
-1. **Trigger**: Record is Created (People)
-
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
-
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
-
-## Sending Emails to Multiple Recipients
-
-### Example: Notify Team When Deal Closes
-
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Obiettivo**: Inviare email di benvenuto diverse in base alla provenienza del lead.
 
 **Impostazione**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Trigger**: Record creato (Persone)
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Aggiungi l'azione Filtro**:
+   * Condizione: `{{trigger.object.source}}` uguale a `"Website"`
+   * Se vero → continua con l'email di benvenuto per il sito web
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Diramazione per altre origini**:
+   * Crea diramazioni parallele per origini diverse
+   * Ogni diramazione ha la propria azione Invia email
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+## Inviare email a più destinatari
 
-## Scheduled Follow-up Emails
+### Esempio: Notifica al team quando un'opportunità viene chiusa
 
-### Example: Follow Up 3 Days After Meeting
-
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Obiettivo**: Inviare un'email al commerciale e al suo responsabile quando un'opportunità viene vinta.
 
 **Impostazione**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Trigger**: Record aggiornato (Opportunità, Fase = "Chiusa vinta")
 
-2. **Delay action**: Wait 3 days
+2. **Cerca record**: Trova il responsabile del proprietario dell'opportunità
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **Invia email n. 1**: Al proprietario dell'opportunità
+   * A: `{{trigger.object.owner.email}}`
+   * Oggetto: `Congratulazioni per la chiusura di {{trigger.object.name}}!`
+
+4. **Invia email n. 2**: Al responsabile
+   * A: `{{searchRecords.manager.email}}`
+   * Oggetto: `Opportunità vinta: {{trigger.object.name}}`
+
+## Email di follow-up programmate
+
+### Esempio: Follow-up 3 giorni dopo la riunione
+
+**Obiettivo**: Inviare un'email di follow-up 3 giorni dopo la registrazione di una riunione.
+
+**Impostazione**:
+
+1. **Trigger**: Record creato (Attività, Tipo = "Riunione")
+
+2. **Azione di ritardo**: Attendi 3 giorni
+
+3. **Invia email**:
+   * A: Partecipante alla riunione
+   * Oggetto: Seguito alla nostra conversazione
+   * Corpo: Richiama i dettagli della riunione dal trigger
 
 ## Migliori Pratiche
 
-### Email Content
+### Contenuto dell'email
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+* Mantieni le righe dell'oggetto concise e pertinenti
+* Personalizza con il nome del destinatario
+* Includi una chiara chiamata all'azione
+* Testa le email prima di attivare
 
-### Deliverability
+### Recapito
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+* Non inviare troppe email troppo rapidamente
+* Usa firme email professionali
+* Evita parole che attivano i filtri antispam
+* Assicurati che le email di marketing includano opzioni di disiscrizione
 
 ### Risoluzione dei problemi
 
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+* Verifica che l'account email sia connesso e attivo
+* Controlla che l'indirizzo email del destinatario sia valido
+* Esamina le esecuzioni dei flussi di lavoro per eventuali messaggi di errore
+* Prova prima con il tuo indirizzo email
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  **In arrivo**: Gli allegati email saranno disponibili nel Q1 2026.
 </Note>
 
-## Related
+## Correlati
 
-* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)

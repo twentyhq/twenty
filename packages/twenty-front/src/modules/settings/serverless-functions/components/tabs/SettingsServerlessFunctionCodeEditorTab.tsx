@@ -21,11 +21,13 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   handleExecute,
   onChange,
   isTesting = false,
+  isManaged = false,
 }: {
   files: File[];
   handleExecute: () => void;
   onChange: (filePath: string, value: string) => void;
   isTesting?: boolean;
+  isManaged?: boolean;
 }) => {
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -64,12 +66,16 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
           files={files}
           currentFilePath={activeTabId}
           onChange={(newCodeValue) => onChange(activeTabId, newCodeValue)}
-          options={{
-            readOnly: true,
-            readOnlyMessage: {
-              value: t`Managed serverless functions are not editable`,
-            },
-          }}
+          options={
+            isManaged
+              ? {
+                  readOnly: true,
+                  readOnlyMessage: {
+                    value: t`Managed serverless functions are not editable`,
+                  },
+                }
+              : undefined
+          }
         />
       )}
     </Section>

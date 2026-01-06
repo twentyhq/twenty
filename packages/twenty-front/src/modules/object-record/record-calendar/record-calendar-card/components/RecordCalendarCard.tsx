@@ -6,10 +6,12 @@ import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-cale
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
 import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardHeader';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
+import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
@@ -78,22 +80,26 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
         instanceId: recordId,
       }}
     >
-      <StyledContainer onContextMenu={handleContextMenuOpen}>
-        <StyledRecordCard
-          data-selected={isCurrentCardSelected}
-          data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
-        >
-          <RecordCalendarCardHeader recordId={recordId} />
-          <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
-            <RecordCalendarCardBody
-              recordId={recordId}
-              isRecordReadOnly={false}
-            />
-          </AnimatedEaseInOut>
-        </StyledRecordCard>
-        <RecordCalendarCardCellHoveredPortal recordId={recordId} />
-        <RecordCalendarCardCellEditModePortal recordId={recordId} />
-      </StyledContainer>
+      <RecordFieldsScopeContextProvider
+        value={{ scopeInstanceId: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX }}
+      >
+        <StyledContainer onContextMenu={handleContextMenuOpen}>
+          <StyledRecordCard
+            data-selected={isCurrentCardSelected}
+            data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
+          >
+            <RecordCalendarCardHeader recordId={recordId} />
+            <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
+              <RecordCalendarCardBody
+                recordId={recordId}
+                isRecordReadOnly={false}
+              />
+            </AnimatedEaseInOut>
+          </StyledRecordCard>
+          <RecordCalendarCardCellHoveredPortal recordId={recordId} />
+          <RecordCalendarCardCellEditModePortal recordId={recordId} />
+        </StyledContainer>
+      </RecordFieldsScopeContextProvider>
     </RecordCalendarCardComponentInstanceContext.Provider>
   );
 };

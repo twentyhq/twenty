@@ -10,6 +10,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
@@ -49,7 +50,11 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
             isRecordFieldReadOnly: false,
           }}
         >
-          <Story />
+          <RecordFieldsScopeContextProvider
+            value={{ scopeInstanceId: 'mock-instance-id' }}
+          >
+            <Story />
+          </RecordFieldsScopeContextProvider>
         </FieldContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     ),

@@ -1,4 +1,4 @@
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { BarChartLayout } from '~/generated/graphql';
 
 export const calculateWidthPerTick = ({
   layout,

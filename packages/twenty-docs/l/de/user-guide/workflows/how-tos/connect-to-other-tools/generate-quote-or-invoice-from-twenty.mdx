@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Ein Angebot oder eine Rechnung aus Twenty erstellen.
+description: Rechnungen in externen Tools automatisch erstellen, wenn Deals abgeschlossen werden.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Deal-Daten automatisch an Ihr Rechnungsstellungssystem senden (Stripe, QuickBooks, Xero usw.) wenn eine Opportunity gewonnen wird.
 
-## Workflow Structure
+## Workflow-Struktur
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Auslöser**: Datensatz wird aktualisiert (Opportunity)
+2. **Filter**: Phase = Closed Won
+3. **Datensatz suchen**: Unternehmensdetails abrufen
+4. **Code** (optional): Nutzlast formatieren
+5. **HTTP-Anfrage**: An Rechnungsstellungssystem senden
 
-## Step 1: Set Up the Trigger
+## Schritt 1: Auslöser einrichten
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Erstellen Sie einen neuen Workflow
+2. Wählen Sie den Auslöser **Datensatz wird aktualisiert** aus
+3. Wählen Sie **Opportunity** als Objekt
 
-## Step 2: Filter for Closed Won
+## Schritt 2: Nach Closed Won filtern
 
-Add a **Filter** action to only continue when the deal is won:
+Fügen Sie eine **Filter**-Aktion hinzu, damit nur fortgefahren wird, wenn der Deal gewonnen wurde:
 
-| Setting       | Wert                              |
-| ------------- | --------------------------------- |
-| **Field**     | Phase                             |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| Einstellung   | Wert                                     |
+| ------------- | ---------------------------------------- |
+| **Feld**      | Phase                                    |
+| **Bedingung** | Gleich                                   |
+| **Wert**      | `CLOSED_WON` (oder der Name Ihrer Phase) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  Der Auslöser wird bei jeder Opportunity-Aktualisierung ausgelöst. Der Filter stellt sicher, dass der Workflow nur fortgesetzt wird, wenn die Phase auf Closed Won geändert wird.
 </Tip>
 
-## Step 3: Get Company Details
+## Schritt 3: Unternehmensdetails abrufen
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Der Opportunity-Datensatz enthält möglicherweise nicht alle Unternehmensfelder, die Sie für die Rechnung benötigen. Fügen Sie eine **Datensatz suchen**-Aktion hinzu:
 
-| Setting      | Wert                                     |
-| ------------ | ---------------------------------------- |
-| **Object**   | Unternehmen                              |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| Einstellung           | Wert                                         |
+| --------------------- | -------------------------------------------- |
+| **Objekt**            | Unternehmen                                  |
+| **Abgleichen anhand** | ID entspricht `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+Dadurch wird der vollständige Unternehmensdatensatz mit Rechnungsadresse, Steuernummer usw. abgerufen.
 
-## Step 4: Format the Payload (Optional)
+## Schritt 4: Nutzlast formatieren (optional)
 
-If your invoicing system expects a specific format, add a **Code** action:
+Wenn Ihr Rechnungsstellungssystem ein bestimmtes Format erwartet, fügen Sie eine **Code**-Aktion hinzu:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Schritt 5: An Rechnungsstellungssystem senden
 
-Add an **HTTP Request** action:
+Fügen Sie eine **HTTP-Anfrage**-Aktion hinzu:
 
-| Setting     | Wert                                      |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Einstellung | Wert                                           |
+| ----------- | ---------------------------------------------- |
+| **Methode** | POST                                           |
+| **URL**     | Ihr API-Endpunkt für die Rechnungsstellung     |
+| **Header**  | `Authorization: Bearer YOUR_API_KEY`           |
+| **Inhalt**  | `{{code.invoice}}` oder Felder direkt zuordnen |
 
-### Example: Stripe Invoice
+### Beispiel: Stripe-Rechnung
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Beispiel: QuickBooks-Rechnung
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Vollständige Workflow-Zusammenfassung
 
-| Step | Aktion                  | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filter                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Code                    | Format data for invoicing API        |
-| 5    | HTTP-Anfrage            | Create invoice in external system    |
+| Schritt | Aktion                           | Zweck                                                              |
+| ------- | -------------------------------- | ------------------------------------------------------------------ |
+| 1       | Auslöser: Datensatz aktualisiert | Wird ausgelöst, wenn sich eine beliebige Opportunity ändert        |
+| 2       | Filter                           | Nur fortfahren, wenn Phase = Closed Won                            |
+| 3       | Datensatz suchen                 | Vollständige Unternehmensdetails für die Rechnungsstellung abrufen |
+| 4       | Code                             | Daten für die Rechnungsstellungs-API formatieren                   |
+| 5       | HTTP-Anfrage                     | Rechnung im externen System erstellen                              |
 
-## Tips
+## Tipps
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Externe IDs speichern**: Speichern Sie die von der API zurückgegebene Rechnungs-ID mithilfe einer **Datensatz aktualisieren**-Aktion in der Opportunity
+* **Fehlerbehandlung**: Fügen Sie einen Zweig hinzu, um eine Benachrichtigung zu senden, wenn die HTTP-Anfrage fehlschlägt
+* **Zuerst testen**: Verwenden Sie den Sandbox-/Testmodus Ihres Rechnungsstellungssystems, bevor Sie live gehen
 
-## Related
+## Verwandt
 
-* [Workflow Triggers](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Automatisierungen für Closed Won](/l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

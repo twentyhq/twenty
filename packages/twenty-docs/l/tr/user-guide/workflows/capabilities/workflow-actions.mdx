@@ -1,21 +1,21 @@
 ---
 title: İş Akışı Aksiyonları
-description: Learn about the actions available in Twenty workflows.
+description: Twenty iş akışlarında kullanılabilen eylemler hakkında bilgi edinin.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## Eylemler Hakkında
 
-Aksiyonlar, bir tetikleyici devreye girdiğinde neler olacağını tanımlar. You can chain multiple actions together to build complex automations.
+Aksiyonlar, bir tetikleyici devreye girdiğinde neler olacağını tanımlar. Karmaşık otomasyonlar oluşturmak için birden fazla eylemi birbirine zincirleyebilirsiniz.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Önceki adımlardaki kullanılabilir verileri gözden geçirmek için değişken seçicisini kullanın (`(x+)` simgesine tıklayın)
+  * Bir değişkenin hangi adımdan geldiğini görmek için herhangi bir giriş alanının üzerine gelin — aynı alanın (örn., ID) birden çok önceki adımda bulunduğu durumlarda faydalıdır
+  * Bakımı kolaylaştırmak için her eyleme açıklayıcı bir ad verin
 </Tip>
 
-## Record Actions
+## Kayıt Eylemleri
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ Seçilen bir nesneye yeni bir kayıt ekler.
 
 * Hedef nesneyi seçin
 * Gerekli ve isteğe bağlı alanları doldurun
-* Use data from previous steps or input values manually to populate fields
+* Alanları doldurmak için önceki adımlardan gelen verileri kullanın veya değerleri el ile girin
 
 **Çıktı**: Yeni oluşturulan kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
 
@@ -41,8 +41,8 @@ Seçilen bir nesnedeki mevcut bir kaydı değiştirir.
 
 * Hedef nesneyi seçin
 * Güncellenecek belirli kaydı seçin.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Tüm mevcut kayıtları gösteren açılır menüyü kullanarak sabit bir kayıt seçebilirsiniz.
+  * Veya `(x+)` kullanarak önceki bir adımda bulunan bir kaydı belirleyip kaydın dinamik olarak seçilmesini sağlayabilirsiniz. Bu aşamada kaydı farklı ölçütlere göre arayamazsınız. Kaydı henüz belirlemediyseniz, bu `Update Record` adımından önce bir `Search Record` adımı ekleyin.
 * Değiştirilecek alanları seçin ve yeni değerler girin
 
 **Çıktı**: Güncellenmiş kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
@@ -71,25 +71,25 @@ Seçilen bir nesnede filtreleme koşulları kullanarak kayıt bulur.
 **Çıktı**: Belirlenen filtre koşullarına uyan kayıtlar, sonraki adımlarda kullanılmak üzere döner.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Sınır**: Search Records en fazla **200 kayıt** döndürür. Daha fazlasını işlemeniz gerekiyorsa, sonuçları azaltmak için belirli filtreler ekleyin veya toplu olarak işlemek için zamanlanmış iş akışlarını kullanın.
 </Note>
 
-**Best Practice**: Use [branches](/l/tr/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**En İyi Uygulama**: "bulundu" ve "bulunmadı" senaryolarını yönetmek için Search Records sonrasında [dallar](/l/tr/user-guide/workflows/capabilities/workflow-branches) kullanın.
 
-### Upsert Record
+### Kayıt Ekle/Güncelle
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kaydı günceller. Bir kaydın zaten var olup olmadığından emin olmadığınızda faydalıdır.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Yapılandırma**:
 
 * Hedef nesneyi seçin
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Eşleştirme için hangi alanların kullanılabileceğine dikkat edin: Kişiler için e-posta, Şirketler için alan adı (domain), herhangi bir nesne için ID veya Benzersiz olarak işaretlenmiş herhangi bir alan. Aşağıdakilerden en az birini doldurmanız gerekecek.
+* Alan değerlerini doldurun. Benzersiz tanımlayıcılardan en az birini doldurmayı unutmayın.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **Yalnızca bir benzersiz tanımlayıcı eklemek, genellikle eşleştirmenin daha iyi çalışmasını sağlar.** Örneğin, aşağıdaki ekran görüntüsü şirketleri alan adlarına göre eşleştirecektir. ID mutlaka gerekli değildir.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />

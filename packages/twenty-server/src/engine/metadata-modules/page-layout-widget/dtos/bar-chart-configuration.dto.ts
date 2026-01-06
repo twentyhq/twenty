@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsIn,
@@ -23,16 +24,20 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('BarChartConfiguration')
-export class BarChartConfigurationDTO {
-  @Field(() => GraphType)
-  @IsIn([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR])
+export class BarChartConfigurationDTO
+  implements PageLayoutWidgetConfigurationBase
+{
+  @Field(() => WidgetConfigurationType)
+  @IsIn([WidgetConfigurationType.BAR_CHART])
   @IsNotEmpty()
-  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR;
+  configurationType: WidgetConfigurationType.BAR_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -67,6 +72,12 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   primaryAxisOrderBy?: GraphOrderBy;
 
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  primaryAxisManualSortOrder?: string[];
+
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
@@ -89,6 +100,12 @@ export class BarChartConfigurationDTO {
   @IsEnum(GraphOrderBy)
   @IsOptional()
   secondaryAxisOrderBy?: GraphOrderBy;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  secondaryAxisManualSortOrder?: string[];
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
@@ -144,6 +161,11 @@ export class BarChartConfigurationDTO {
   @IsEnum(BarChartGroupMode)
   @IsOptional()
   groupMode?: BarChartGroupMode;
+
+  @Field(() => BarChartLayout)
+  @IsEnum(BarChartLayout)
+  @IsNotEmpty()
+  layout: BarChartLayout;
 
   @Field(() => Boolean, {
     nullable: true,

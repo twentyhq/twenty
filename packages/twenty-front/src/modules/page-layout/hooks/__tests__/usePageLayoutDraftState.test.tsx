@@ -1,11 +1,12 @@
-import { act, renderHook } from '@testing-library/react';
-import {
-  GraphOrderBy,
-  GraphType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
-import { AggregateOperations, PageLayoutType } from '~/generated/graphql';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
+import { act, renderHook } from '@testing-library/react';
+import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
+import {
+  AggregateOperations,
+  BarChartLayout,
+  PageLayoutType,
+  WidgetConfigurationType,
+} from '~/generated/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -100,7 +101,8 @@ describe('usePageLayoutDraftState', () => {
                 type: WidgetType.GRAPH,
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
                 configuration: {
-                  graphType: GraphType.VERTICAL_BAR,
+                  configurationType: WidgetConfigurationType.BAR_CHART,
+                  layout: BarChartLayout.VERTICAL,
                   aggregateOperation: AggregateOperations.COUNT,
                   aggregateFieldMetadataId: 'id',
                   primaryAxisGroupByFieldMetadataId: 'createdAt',

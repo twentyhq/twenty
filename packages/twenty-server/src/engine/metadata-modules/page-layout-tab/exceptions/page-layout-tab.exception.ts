@@ -17,12 +17,17 @@ export enum PageLayoutTabExceptionMessageKey {
   PAGE_LAYOUT_TAB_NOT_DELETED = 'PAGE_LAYOUT_TAB_NOT_DELETED',
 }
 
-const pageLayoutTabExceptionUserFriendlyMessages: Record<
-  PageLayoutTabExceptionCode,
-  MessageDescriptor
-> = {
-  [PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND]: msg`Page layout tab not found.`,
-  [PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA]: msg`Invalid page layout tab data.`,
+const getPageLayoutTabExceptionUserFriendlyMessage = (
+  code: PageLayoutTabExceptionCode,
+) => {
+  switch (code) {
+    case PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND:
+      return msg`Page layout tab not found.`;
+    case PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA:
+      return msg`Invalid page layout tab data.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class PageLayoutTabException extends CustomException<PageLayoutTabExceptionCode> {
@@ -33,7 +38,8 @@ export class PageLayoutTabException extends CustomException<PageLayoutTabExcepti
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? pageLayoutTabExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ??
+        getPageLayoutTabExceptionUserFriendlyMessage(code),
     });
   }
 }

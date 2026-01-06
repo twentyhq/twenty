@@ -19,12 +19,12 @@ import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
+import { BarChartLayout } from '~/generated/graphql';
 
 export const getBarChartSettings = (
-  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR,
+  layout: BarChartLayout,
 ): ChartSettingsGroup[] => {
-  const isHorizontal = graphType === GraphType.HORIZONTAL_BAR;
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
   const dataDisplayXIcon = isHorizontal ? IconAxisY : IconAxisX;
   const dataDisplayYIcon = isHorizontal ? IconAxisX : IconAxisY;

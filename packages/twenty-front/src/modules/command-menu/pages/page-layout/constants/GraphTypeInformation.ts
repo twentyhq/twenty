@@ -3,6 +3,7 @@ import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
@@ -15,7 +16,7 @@ import {
   IconGauge,
   IconSum,
 } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
+import { BarChartLayout } from '~/generated/graphql';
 
 export const GRAPH_TYPE_INFORMATION: Record<
   GraphType,
@@ -28,12 +29,12 @@ export const GRAPH_TYPE_INFORMATION: Record<
   [GraphType.VERTICAL_BAR]: {
     label: msg`Vertical Bar Chart`,
     icon: IconChartBar,
-    settings: getBarChartSettings(GraphType.VERTICAL_BAR),
+    settings: getBarChartSettings(BarChartLayout.VERTICAL),
   },
   [GraphType.HORIZONTAL_BAR]: {
     label: msg`Horizontal Bar Chart`,
     icon: IconChartBarHorizontal,
-    settings: getBarChartSettings(GraphType.HORIZONTAL_BAR),
+    settings: getBarChartSettings(BarChartLayout.HORIZONTAL),
   },
   [GraphType.PIE]: {
     label: msg`Pie Chart`,

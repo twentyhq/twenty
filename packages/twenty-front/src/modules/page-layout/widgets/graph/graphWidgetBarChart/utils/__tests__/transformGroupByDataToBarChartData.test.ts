@@ -4,8 +4,11 @@ import {
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { GraphType } from '~/generated-metadata/graphql';
-import { AxisNameDisplay } from '~/generated/graphql';
+import {
+  AxisNameDisplay,
+  BarChartLayout,
+  WidgetConfigurationType,
+} from '~/generated/graphql';
 
 jest.mock(
   '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData',
@@ -73,7 +76,8 @@ describe('transformGroupByDataToBarChartData', () => {
       __typename: 'BarChartConfiguration',
       aggregateFieldMetadataId: aggregateField.id,
       aggregateOperation: 'COUNT',
-      graphType: GraphType.VERTICAL_BAR,
+      configurationType: WidgetConfigurationType.BAR_CHART,
+      layout: BarChartLayout.VERTICAL,
       primaryAxisGroupByFieldMetadataId: groupByField.id,
       primaryAxisGroupBySubFieldName: 'createdAt',
       primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,

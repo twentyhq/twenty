@@ -1,3 +1,4 @@
+import { usePageLayoutShouldUseWhiteBackground } from '@/page-layout/hooks/usePageLayoutShouldUseWhiteBackground';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -11,11 +12,16 @@ import {
 } from '@hello-pangea/dnd';
 import { useId } from 'react';
 
-const StyledVerticalListContainer = styled.div`
+const StyledVerticalListContainer = styled.div<{
+  shouldUseWhiteBackground: boolean;
+}>`
+  background: ${({ theme, shouldUseWhiteBackground }) =>
+    shouldUseWhiteBackground
+      ? theme.background.primary
+      : theme.background.secondary};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDraggableWrapper = styled.div<{ isDragging: boolean }>`
@@ -36,6 +42,8 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
+  const { shouldUseWhiteBackground } = usePageLayoutShouldUseWhiteBackground();
+
   const setDraggingWidgetId = useSetRecoilComponentState(
     pageLayoutDraggingWidgetIdComponentState,
   );
@@ -54,6 +62,7 @@ export const PageLayoutVerticalListEditor = ({
         {(provided) => (
           <StyledVerticalListContainer
             ref={provided.innerRef}
+            shouldUseWhiteBackground={shouldUseWhiteBackground}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >

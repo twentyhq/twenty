@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Gestire gli array nelle azioni Code
+description: Scopri come gestire correttamente gli input di tipo array nelle azioni Code dei workflow.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Quando lavori con gli array nelle azioni Code, potresti incontrare due problemi comuni:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **Array passati come stringhe** — i dati provenienti da sistemi esterni o da passaggi precedenti arrivano come stringa invece che come un vero array
+2. **Impossibile selezionare singoli elementi** — puoi selezionare solo l'intero array, non i campi specifici al suo interno
 
-Both can be solved with a Code node.
+Entrambi i casi si possono risolvere con un nodo Code.
 
-## Parsing Arrays from Strings
+## Analizzare gli array dalle stringhe
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Gli array vengono spesso passati tra i passaggi del workflow come stringhe o JSON invece che come array nativi. Ciò accade quando:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* Ricezione di dati da API esterne tramite HTTP Request
+* Elaborazione dei payload dei webhook
+* Passaggio di dati tra i passaggi del workflow
 
-**Solution**: Add this pattern at the start of your Code action:
+**Soluzione**: aggiungi questo pattern all'inizio della tua azione Code:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+La riga chiave `typeof users === "string" ? JSON.parse(users) : users` verifica se l'input è una stringa, lo analizza se necessario o lo usa direttamente se è già un array.
 
-## Extracting Individual Fields from Arrays
+## Estrazione di campi specifici dagli array
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Un webhook potrebbe restituire un array come `answers: [...]`, ma nei passaggi successivi del workflow puoi selezionare solo l'**intero array** — non i singoli elementi al suo interno.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Soluzione**: aggiungi un nodo Code per estrarre campi specifici e restituirli come oggetto strutturato:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Il nodo Code restituisce un oggetto strutturato invece di un array. Nei passaggi successivi, ora puoi selezionare campi individuali come `answer.firstname` e `answer.name` dal selettore delle variabili.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Stiamo lavorando attivamente per rendere la gestione degli array più semplice nei prossimi aggiornamenti.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a tutto schermo — utile poiché la larghezza predefinita dell'editor è limitata.
 </Tip>
