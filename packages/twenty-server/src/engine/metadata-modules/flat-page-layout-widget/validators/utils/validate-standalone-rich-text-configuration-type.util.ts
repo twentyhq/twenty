@@ -41,31 +41,3 @@ export const validateStandaloneRichTextConfigurationType = (
 
   return errors;
 };
-
-export const validateStandaloneRichTextBody = (
-  configuration: StandaloneRichTextConfigurationDTO,
-  widgetTitle: string,
-): FlatPageLayoutWidgetValidationError[] => {
-  const errors: FlatPageLayoutWidgetValidationError[] = [];
-
-  if (!isDefined(configuration.body)) {
-    errors.push({
-      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Body is required for standalone rich text widget "${widgetTitle}"`,
-      userFriendlyMessage: msg`Body is required for standalone rich text widget`,
-    });
-
-    return errors;
-  }
-
-  if (typeof configuration.body !== 'object') {
-    errors.push({
-      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Body must be an object for widget "${widgetTitle}"`,
-      userFriendlyMessage: msg`Body must be an object`,
-      value: configuration.body,
-    });
-  }
-
-  return errors;
-};
