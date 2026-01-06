@@ -23,6 +23,7 @@ import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/wor
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
+import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import {
   addEdge,
@@ -60,7 +61,21 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { startNodeCreation } = useStartNodeCreation();
 
-  const onConnect = (edgeConnect: WorkflowConnection) => {
+  const onConnect = async (edgeConnect: WorkflowConnection) => {
+    const steps = workflowWithCurrentVersion?.currentVersion?.steps;
+    const sourceStep = isDefined(steps)
+      ? steps.find((step) => step.id === edgeConnect.source)
+      : undefined;
+
+    if (sourceStep?.type === 'IF_ELSE') {
+      const updatedStep = prepareIfElseStepWithNewBranch({
+        parentStep: sourceStep,
+        targetStepId: edgeConnect.target,
+      });
+
+      await updateStep(updatedStep);
+    }
+
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
@@ -73,6 +88,10 @@ export const WorkflowDiagramCanvasEditable = () => {
         edges: addEdge<WorkflowDiagramEdge>(edgeConnect, diagram.edges),
       };
     });
+
+    if (sourceStep?.type === 'IF_ELSE') {
+      return;
+    }
 
     createEdge({
       source: edgeConnect.source,
