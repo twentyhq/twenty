@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
