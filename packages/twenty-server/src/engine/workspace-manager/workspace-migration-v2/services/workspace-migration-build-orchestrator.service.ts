@@ -945,6 +945,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     const { aggregatedOrchestratorActionsReport } =
       aggregateOrchestratorActionsReport({
         orchestratorActionsReport,
+        flatFieldMetadataMaps:
+          optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
       });
 
     return {

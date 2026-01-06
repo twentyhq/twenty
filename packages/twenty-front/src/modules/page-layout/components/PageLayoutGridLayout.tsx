@@ -12,7 +12,6 @@ import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridM
 import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
-import { useShouldUseWhiteBackground } from '@/page-layout/hooks/useShouldUseWhiteBackground';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -37,13 +36,7 @@ import {
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledGridContainer = styled.div<{
-  shouldUseWhiteBackground: boolean;
-}>`
-  background: ${({ theme, shouldUseWhiteBackground }) =>
-    shouldUseWhiteBackground
-      ? theme.background.primary
-      : theme.background.secondary};
+const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -111,8 +104,6 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const { shouldUseWhiteBackground } = useShouldUseWhiteBackground();
-
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -152,10 +143,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   );
 
   return (
-    <StyledGridContainer
-      ref={gridContainerRef}
-      shouldUseWhiteBackground={shouldUseWhiteBackground}
-    >
+    <StyledGridContainer ref={gridContainerRef}>
       {isPageLayoutInEditMode && (
         <>
           <PageLayoutGridOverlay />

@@ -1,4 +1,4 @@
-import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToBarChartData';
+import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
 
 describe('applyCumulativeTransformToBarChartData', () => {
   const testCases = [

@@ -1,4 +1,5 @@
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
+import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -53,15 +54,27 @@ export const useGraphXSortOptionLabels = ({
         ? getAggregateOperationLabel(aggregateOperation)
         : t`Value`;
 
+    const groupBySortLabelSuffix = getSortLabelSuffixForFieldType({
+      fieldType: groupByField?.type,
+      orderBy: graphOrderBy,
+    });
+
+    const aggregateSortLabelSuffix = getSortLabelSuffixForFieldType({
+      fieldType: aggregateField?.type,
+      orderBy: graphOrderBy,
+    });
+
     switch (graphOrderBy) {
       case GraphOrderBy.FIELD_ASC:
-        return `${fieldLabel} ${t`Ascending`}`;
       case GraphOrderBy.FIELD_DESC:
-        return `${fieldLabel} ${t`Descending`}`;
+      case GraphOrderBy.FIELD_POSITION_ASC:
+      case GraphOrderBy.FIELD_POSITION_DESC:
+        return `${fieldLabel} ${groupBySortLabelSuffix}`;
       case GraphOrderBy.VALUE_ASC:
-        return `${valueLabel} ${t`Ascending`}`;
       case GraphOrderBy.VALUE_DESC:
-        return `${valueLabel} ${t`Descending`}`;
+        return `${valueLabel} ${aggregateSortLabelSuffix}`;
+      case GraphOrderBy.MANUAL:
+        return t`Manual`;
       default:
         assertUnreachable(graphOrderBy);
     }
