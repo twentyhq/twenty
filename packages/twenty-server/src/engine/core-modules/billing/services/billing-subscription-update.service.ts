@@ -269,27 +269,29 @@ export class BillingSubscriptionUpdateService {
         ...subscriptionOptions,
       });
 
-      await this.billingSubscriptionItemRepository.update(
-        { stripeSubscriptionId: subscription.stripeSubscriptionId },
-        { hasReachedCurrentPeriodCap: false },
-      );
-
-      const meteredPricingInfo =
-        await this.meteredCreditService.getMeteredPricingInfoFromPriceId(
-          toUpdateCurrentPrices.meteredPriceId,
+      if (subscriptionUpdate.type !== SubscriptionUpdateType.SEATS) {
+        await this.billingSubscriptionItemRepository.update(
+          { stripeSubscriptionId: subscription.stripeSubscriptionId },
+          { hasReachedCurrentPeriodCap: false },
         );
 
-      const creditBalance = await this.meteredCreditService.getCreditBalance(
-        subscription.stripeCustomerId,
-        meteredPricingInfo.unitPriceCents,
-      );
+        const meteredPricingInfo =
+          await this.meteredCreditService.getMeteredPricingInfoFromPriceId(
+            toUpdateCurrentPrices.meteredPriceId,
+          );
 
-      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
-        subscription.stripeCustomerId,
-        meteredPricingInfo.tierCap,
-        creditBalance,
-        subscription.currentPeriodStart,
-      );
+        const creditBalance = await this.meteredCreditService.getCreditBalance(
+          subscription.stripeCustomerId,
+          meteredPricingInfo.unitPriceCents,
+        );
+
+        await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+          subscription.stripeCustomerId,
+          meteredPricingInfo.tierCap,
+          creditBalance,
+          subscription.currentPeriodStart,
+        );
+      }
 
       if (isDefined(nextPhase)) {
         assertIsDefinedOrThrow(schedule);
