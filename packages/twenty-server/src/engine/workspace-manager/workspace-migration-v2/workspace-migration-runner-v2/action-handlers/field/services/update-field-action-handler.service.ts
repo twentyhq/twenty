@@ -201,7 +201,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           queryRunner,
           schemaName,
           tableName,
-          columnNames: [currentFlatFieldMetadata.name],
+          columnNames: [optimisticFlatFieldMetadata.name],
         });
         await this.workspaceSchemaManagerService.columnManager.addColumns({
           queryRunner,
@@ -209,7 +209,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tableName,
           columnDefinitions: [
             {
-              name: currentFlatFieldMetadata.name,
+              name: optimisticFlatFieldMetadata.name,
               type: 'tsvector',
               ...update.to,
             },

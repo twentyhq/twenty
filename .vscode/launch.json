@@ -68,6 +68,7 @@
         "./jest-integration.config.ts",
         "${relativeFile}",
         "--silent=false",
+        "-u"
       ],
       "cwd": "${workspaceFolder}/packages/twenty-server",
       "console": "integratedTerminal",

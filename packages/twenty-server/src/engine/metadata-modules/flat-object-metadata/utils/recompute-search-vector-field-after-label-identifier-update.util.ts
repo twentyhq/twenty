@@ -12,7 +12,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { type SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
 type RecomputeSearchVectorFieldAfterLabelIdentifierUpdateArgs = {
   existingFlatObjectMetadata: FlatObjectMetadata;
@@ -49,26 +49,26 @@ export const recomputeSearchVectorFieldAfterLabelIdentifierUpdate = ({
     );
   }
 
-  if (!isSearchableFieldType(newLabelIdentifierField.type)) {
+  try {
+    const newAsExpression = getTsVectorColumnExpressionFromFields([
+      {
+        name: newLabelIdentifierField.name,
+        type: newLabelIdentifierField.type as SearchableFieldType,
+      },
+    ]);
+
+    return {
+      ...searchVectorField,
+      settings: {
+        ...searchVectorField.settings,
+        asExpression: newAsExpression,
+        generatedType: 'STORED',
+      },
+    };
+  } catch {
     throw new ObjectMetadataException(
-      `New label identifier field is not searchable for object metadata ${existingFlatObjectMetadata.id}`,
+      `Failed to compute search vector column expression for field ${newLabelIdentifierField.name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
-
-  const newAsExpression = getTsVectorColumnExpressionFromFields([
-    {
-      name: newLabelIdentifierField.name,
-      type: newLabelIdentifierField.type,
-    },
-  ]);
-
-  return {
-    ...searchVectorField,
-    settings: {
-      ...searchVectorField.settings,
-      asExpression: newAsExpression,
-      generatedType: 'STORED',
-    },
-  };
 };

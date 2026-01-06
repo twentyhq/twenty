@@ -4,59 +4,12 @@ exports[`Object metadata update should fail when labelIdentifier is a UUID field
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
-      "errors": {
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId validation failed: field type uuid is reserved for system object metadata",
-                "userFriendlyMessage": "Field cannot be used as label identifier",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "namePlural": "whatevers",
-              "nameSingular": "whatever",
-              "universalIdentifier": Any<String>,
-            },
-            "metadataName": "objectMetadata",
-            "status": "fail",
-            "type": "update",
-          },
-        ],
-        "viewField": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_VIEW_DATA",
-                "message": "View field position cannot be lower than label identifier view field position",
-                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "fieldMetadataId": Any<String>,
-              "id": Any<String>,
-              "universalIdentifier": Any<String>,
-              "viewId": Any<String>,
-            },
-            "metadataName": "viewField",
-            "status": "fail",
-            "type": "create",
-          },
-        ],
-      },
-      "message": "Validation failed for 1 objectMetadata, 1 viewField",
-      "summary": {
-        "objectMetadata": 1,
-        "totalErrors": 2,
-        "viewField": 1,
-      },
-      "userFriendlyMessage": "Metadata validation failed",
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_OBJECT_INPUT",
+      "userFriendlyMessage": "Invalid object input.",
     },
-    "message": "Multiple validation errors occurred while updating object",
-    "name": "GraphQLError",
+    "message": "Failed to compute search vector column expression for field id",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -65,59 +18,12 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
-      "errors": {
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
-                "userFriendlyMessage": "Field cannot be used as label identifier",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "namePlural": "whatevers",
-              "nameSingular": "whatever",
-              "universalIdentifier": Any<String>,
-            },
-            "metadataName": "objectMetadata",
-            "status": "fail",
-            "type": "update",
-          },
-        ],
-        "viewField": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_VIEW_DATA",
-                "message": "View field position cannot be lower than label identifier view field position",
-                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "fieldMetadataId": Any<String>,
-              "id": Any<String>,
-              "universalIdentifier": Any<String>,
-              "viewId": Any<String>,
-            },
-            "metadataName": "viewField",
-            "status": "fail",
-            "type": "create",
-          },
-        ],
-      },
-      "message": "Validation failed for 1 objectMetadata, 1 viewField",
-      "summary": {
-        "objectMetadata": 1,
-        "totalErrors": 2,
-        "viewField": 1,
-      },
-      "userFriendlyMessage": "Metadata validation failed",
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_OBJECT_INPUT",
+      "userFriendlyMessage": "Invalid object input.",
     },
-    "message": "Multiple validation errors occurred while updating object",
-    "name": "GraphQLError",
+    "message": "Failed to compute search vector column expression for field testName",
+    "name": "UserInputError",
   },
 ]
 `;
@@ -126,64 +32,12 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
-      "errors": {
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
-                "userFriendlyMessage": "Field declared as label identifier not found",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "namePlural": "whatevers",
-              "nameSingular": "whatever",
-              "universalIdentifier": Any<String>,
-            },
-            "metadataName": "objectMetadata",
-            "status": "fail",
-            "type": "update",
-          },
-        ],
-        "viewField": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_VIEW_DATA",
-                "message": "Field metadata not found",
-                "userFriendlyMessage": "Field metadata not found",
-              },
-              {
-                "code": "INVALID_VIEW_DATA",
-                "message": "View field position cannot be lower than label identifier view field position",
-                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "fieldMetadataId": Any<String>,
-              "id": Any<String>,
-              "universalIdentifier": Any<String>,
-              "viewId": Any<String>,
-            },
-            "metadataName": "viewField",
-            "status": "fail",
-            "type": "create",
-          },
-        ],
-      },
-      "message": "Validation failed for 1 objectMetadata, 1 viewField",
-      "summary": {
-        "objectMetadata": 1,
-        "totalErrors": 2,
-        "viewField": 1,
-      },
-      "userFriendlyMessage": "Metadata validation failed",
+      "code": "BAD_USER_INPUT",
+      "subCode": "INVALID_OBJECT_INPUT",
+      "userFriendlyMessage": "Invalid object input.",
     },
-    "message": "Multiple validation errors occurred while updating object",
-    "name": "GraphQLError",
+    "message": "New label identifier field not found for object metadata 1158d8be-3531-4613-a81b-e201e24fdced",
+    "name": "UserInputError",
   },
 ]
 `;
