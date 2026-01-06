@@ -21,21 +21,18 @@ export const getFieldMetadataItemInitialValues = (
     decimals: DEFAULT_DECIMAL_VALUE,
   };
 
-  const defaultValue = fieldMetadataItem.defaultValue
-    ? {
-        amountMicros: fieldMetadataItem.defaultValue.amountMicros ?? null,
-        currencyCode: isNonEmptyString(
-          stripSimpleQuotesFromString(
-            fieldMetadataItem.defaultValue.currencyCode,
-          ),
-        )
-          ? fieldMetadataItem.defaultValue.currencyCode
-          : applySimpleQuotesToString(CurrencyCode.USD),
-      }
-    : {
-        amountMicros: null,
-        currencyCode: applySimpleQuotesToString(CurrencyCode.USD),
-      };
+  const rawCurrencyCode = fieldMetadataItem.defaultValue?.currencyCode ?? null;
+  const strippedCurrencyCode = rawCurrencyCode
+    ? stripSimpleQuotesFromString(rawCurrencyCode)
+    : null;
+  const currencyCode = isNonEmptyString(strippedCurrencyCode)
+    ? applySimpleQuotesToString(strippedCurrencyCode)
+    : applySimpleQuotesToString(CurrencyCode.USD);
+
+  const defaultValue = {
+    amountMicros: fieldMetadataItem.defaultValue?.amountMicros ?? null,
+    currencyCode,
+  };
 
   return { settings, defaultValue };
 };
