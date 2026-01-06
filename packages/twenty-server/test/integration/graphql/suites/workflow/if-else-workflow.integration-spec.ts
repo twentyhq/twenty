@@ -157,13 +157,22 @@ describe('If/Else Workflow (e2e)', () => {
     expect(ifElseStep).toBeDefined();
     ifElseStepId = ifElseStep.id;
 
-    const emptyNodes = steps.filter(
-      (step: { type: string }) => step.type === 'EMPTY',
+    // Identify branches by filterGroupId, not by array order
+    const branches = ifElseStep.settings.input.branches;
+    const ifBranch = branches.find(
+      (branch: StepIfElseBranch) => branch.filterGroupId,
+    );
+    const elseBranch = branches.find(
+      (branch: StepIfElseBranch) => !branch.filterGroupId,
     );
 
-    expect(emptyNodes.length).toBe(2);
-    ifBranchEmptyNodeId = emptyNodes[0].id;
-    elseBranchEmptyNodeId = emptyNodes[1].id;
+    expect(ifBranch).toBeDefined();
+    expect(elseBranch).toBeDefined();
+    expect(ifBranch.nextStepIds.length).toBeGreaterThan(0);
+    expect(elseBranch.nextStepIds.length).toBeGreaterThan(0);
+
+    ifBranchEmptyNodeId = ifBranch.nextStepIds[0];
+    elseBranchEmptyNodeId = elseBranch.nextStepIds[0];
 
     expect(ifElseStep.settings.input.stepFilterGroups.length).toBeGreaterThan(
       0,
