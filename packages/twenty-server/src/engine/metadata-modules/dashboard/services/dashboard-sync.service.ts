@@ -7,8 +7,8 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
-export class DashboardTimestampService {
-  private readonly logger = new Logger(DashboardTimestampService.name);
+export class DashboardSyncService {
+  private readonly logger = new Logger(DashboardSyncService.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,

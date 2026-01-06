@@ -4,7 +4,7 @@ import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { DashboardTimestampService } from 'src/engine/metadata-modules/dashboard/services/dashboard-timestamp.service';
+import { DashboardSyncService } from 'src/engine/metadata-modules/dashboard/services/dashboard-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
@@ -41,7 +41,7 @@ export class PageLayoutUpdateService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly dashboardTimestampService: DashboardTimestampService,
+    private readonly dashboardSyncService: DashboardSyncService,
   ) {}
 
   async updatePageLayoutWithTabs({
@@ -146,7 +146,7 @@ export class PageLayoutUpdateService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
       {
         pageLayoutId: id,
         workspaceId,

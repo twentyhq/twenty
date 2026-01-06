@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { DashboardTimestampService } from 'src/engine/metadata-modules/dashboard/services/dashboard-timestamp.service';
+import { DashboardSyncService } from 'src/engine/metadata-modules/dashboard/services/dashboard-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -37,7 +37,7 @@ export class PageLayoutTabService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly dashboardTimestampService: DashboardTimestampService,
+    private readonly dashboardSyncService: DashboardSyncService,
   ) {}
 
   async findByPageLayoutId(
@@ -158,12 +158,10 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
-      {
-        tabId: flatPageLayoutTabToCreate.id,
-        workspaceId,
-      },
-    );
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: flatPageLayoutTabToCreate.id,
+      workspaceId,
+    });
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -227,12 +225,10 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
-      {
-        tabId: id,
-        workspaceId,
-      },
-    );
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+    });
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -290,12 +286,10 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
-      {
-        tabId: id,
-        workspaceId,
-      },
-    );
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+    });
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -350,12 +344,10 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
-      {
-        tabId: id,
-        workspaceId,
-      },
-    );
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+    });
 
     return true;
   }
@@ -400,12 +392,10 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
-      {
-        tabId: id,
-        workspaceId,
-      },
-    );
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+    });
 
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
