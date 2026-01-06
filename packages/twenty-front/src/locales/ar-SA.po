@@ -1367,6 +1367,12 @@ msgstr "السماح برفع الملفات والمرفقات"
 msgid "Allow users to sign in with an email and password."
 msgstr "السماح للمستخدمين بتسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور."
 
+#. js-lingui-id: Yn0ZH1
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "alphabetical"
+msgstr ""
+
 #. js-lingui-id: uprOiC
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Amber"
@@ -1697,13 +1703,18 @@ msgstr "هل أنت متأكد؟ لن يتم حفظ معلوماتك الحال�
 msgid "As it will be displayed in the workspace"
 msgstr ""
 
+#. js-lingui-id: 54PdN4
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "ascending"
+msgstr ""
+
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Ascending"
 msgstr "تصاعدي"
 
@@ -3955,13 +3966,18 @@ msgstr "السجلات المحذوفة"
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "سيؤدي حذف هذه الطريقة إلى إزالتها نهائيًا من حسابك."
 
+#. js-lingui-id: O3LJh6
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "descending"
+msgstr ""
+
 #. js-lingui-id: Cko536
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Descending"
 msgstr "تنازلي"
 
@@ -7234,6 +7250,12 @@ msgstr "إدارة حساباتك على الإنترنت."
 msgid "Managed serverless functions are not editable"
 msgstr "لا يمكن تحرير الوظائف الخالية من الخوادم المُدارة"
 
+#. js-lingui-id: BWTzAb
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+msgid "Manual"
+msgstr ""
+
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Match {fieldLabel} ({unmatchedCount} Unmatched)"
@@ -7465,7 +7487,6 @@ msgid "month"
 msgstr "شهر"
 
 #. js-lingui-id: HajiZl
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -9076,6 +9097,16 @@ msgstr "البرتغالية — البرازيل"
 msgid "Portuguese — Portugal"
 msgstr "البرتغالية — البرتغال"
 
+#. js-lingui-id: JQw9es
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "position ascending"
+msgstr ""
+
+#. js-lingui-id: ZtUcct
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "position descending"
+msgstr ""
+
 #. js-lingui-id: ofTr89
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -9583,6 +9614,11 @@ msgstr "تاريخ التجديد"
 msgid "Reorder field"
 msgstr "إعادة ترتيب الحقل"
 
+#. js-lingui-id: a2EE6C
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
+msgid "Reorder options"
+msgstr ""
+
 #. js-lingui-id: ImOQa9
 #: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
@@ -9729,6 +9765,12 @@ msgstr "إعادة المحاولة للجميع"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
 msgstr "قيمة الإرجاع"
+
+#. js-lingui-id: wu55ly
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "reverse alphabetical"
+msgstr ""
 
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -10788,6 +10830,8 @@ msgstr "بعض المجلدات"
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Soon"
 msgstr "قريباً"
 
@@ -11657,7 +11701,6 @@ msgid "Time zone"
 msgstr "المنطقة الزمنية"
 
 #. js-lingui-id: cklVjM
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "الجدول الزمني"
@@ -12639,7 +12682,6 @@ msgid "Webhooks"
 msgstr "الويب هوكس"
 
 #. js-lingui-id: zx4BuL
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx

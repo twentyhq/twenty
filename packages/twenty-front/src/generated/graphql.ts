@@ -362,12 +362,14 @@ export type BarChartConfiguration = {
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -1527,6 +1529,9 @@ export type GetWebhookInput = {
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
   FIELD_DESC = 'FIELD_DESC',
+  FIELD_POSITION_ASC = 'FIELD_POSITION_ASC',
+  FIELD_POSITION_DESC = 'FIELD_POSITION_DESC',
+  MANUAL = 'MANUAL',
   VALUE_ASC = 'VALUE_ASC',
   VALUE_DESC = 'VALUE_DESC'
 }
@@ -1735,12 +1740,14 @@ export type LineChartConfiguration = {
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -3171,6 +3178,7 @@ export type PieChartConfiguration = {
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   hideEmptyCategory?: Maybe<Scalars['Boolean']>;
+  manualSortOrder?: Maybe<Array<Scalars['String']>>;
   orderBy?: Maybe<GraphOrderBy>;
   showCenterMetric?: Maybe<Scalars['Boolean']>;
   timezone?: Maybe<Scalars['String']>;
@@ -4076,12 +4084,13 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Scalars['String'];
+  event: OnDbEvent;
+  subscriptionIds: Array<Scalars['String']>;
 };
 
 export type SubscriptionMatches = {
   __typename?: 'SubscriptionMatches';
-  subscriptions: Array<SubscriptionMatch>;
+  matches: Array<SubscriptionMatch>;
 };
 
 export enum SubscriptionStatus {
@@ -5082,7 +5091,7 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } };
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } };
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
   id: Scalars['String'];
@@ -5090,7 +5099,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -5104,7 +5113,7 @@ export type OnSubscriptionMatchSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', subscriptions: Array<{ __typename?: 'SubscriptionMatch', id: string }> } | null };
+export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', matches: Array<{ __typename?: 'SubscriptionMatch', subscriptionIds: Array<string>, event: { __typename?: 'OnDbEvent', action: DatabaseEventAction, objectNameSingular: string, eventDate: string, record: any, updatedFields?: Array<string> | null } }> } | null };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -5416,10 +5425,12 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       primaryAxisGroupBySubFieldName
       primaryAxisDateGranularity
       primaryAxisOrderBy
+      primaryAxisManualSortOrder
       secondaryAxisGroupByFieldMetadataId
       secondaryAxisGroupBySubFieldName
       secondaryAxisGroupByDateGranularity
       secondaryAxisOrderBy
+      secondaryAxisManualSortOrder
       omitNullValues
       axisNameDisplay
       displayDataLabel
@@ -5443,10 +5454,12 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       primaryAxisGroupBySubFieldName
       primaryAxisDateGranularity
       primaryAxisOrderBy
+      primaryAxisManualSortOrder
       secondaryAxisGroupByFieldMetadataId
       secondaryAxisGroupBySubFieldName
       secondaryAxisGroupByDateGranularity
       secondaryAxisOrderBy
+      secondaryAxisManualSortOrder
       omitNullValues
       axisNameDisplay
       displayDataLabel
@@ -5469,6 +5482,7 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       groupBySubFieldName
       dateGranularity
       orderBy
+      manualSortOrder
       displayDataLabel
       showCenterMetric
       displayLegend
@@ -5770,8 +5784,15 @@ export type OnDbEventSubscriptionResult = Apollo.SubscriptionResult<OnDbEventSub
 export const OnSubscriptionMatchDocument = gql`
     subscription OnSubscriptionMatch($subscriptions: [SubscriptionInput!]!) {
   onSubscriptionMatch(subscriptions: $subscriptions) {
-    subscriptions {
-      id
+    matches {
+      subscriptionIds
+      event {
+        action
+        objectNameSingular
+        eventDate
+        record
+        updatedFields
+      }
     }
   }
 }

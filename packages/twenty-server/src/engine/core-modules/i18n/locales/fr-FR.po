@@ -2882,6 +2882,11 @@ msgstr "Exécution de workflow invalide."
 msgid "Invalid workflow status."
 msgstr "Statut de workflow invalide."
 
+#. js-lingui-id: v+ozTr
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "Invalid workflow step input."
+msgstr ""
+
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Invalid workflow step request."

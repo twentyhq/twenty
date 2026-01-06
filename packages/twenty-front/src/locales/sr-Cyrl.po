@@ -1367,6 +1367,12 @@ msgstr "Дозволи отпремање датотека и прилога"
 msgid "Allow users to sign in with an email and password."
 msgstr "Омогућите корисницима да се пријаве са е-мејлом и лозинком."
 
+#. js-lingui-id: Yn0ZH1
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "alphabetical"
+msgstr ""
+
 #. js-lingui-id: uprOiC
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Amber"
@@ -1697,13 +1703,18 @@ msgstr "Да ли сте сигурни? Тренутне информације
 msgid "As it will be displayed in the workspace"
 msgstr ""
 
+#. js-lingui-id: 54PdN4
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "ascending"
+msgstr ""
+
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Ascending"
 msgstr "Растуће"
 
@@ -3955,13 +3966,18 @@ msgstr "Избрисани записи"
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "Брисањем овог метода трајно ћете га уклонити са вашег налога."
 
+#. js-lingui-id: O3LJh6
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "descending"
+msgstr ""
+
 #. js-lingui-id: Cko536
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Descending"
 msgstr "Опадајуће"
 
@@ -7234,6 +7250,12 @@ msgstr "Управљање вашим интернетским налозима.
 msgid "Managed serverless functions are not editable"
 msgstr "Управљане бесерверске функције није могуће уређивати"
 
+#. js-lingui-id: BWTzAb
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+msgid "Manual"
+msgstr ""
+
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Match {fieldLabel} ({unmatchedCount} Unmatched)"
@@ -7465,7 +7487,6 @@ msgid "month"
 msgstr "месец"
 
 #. js-lingui-id: HajiZl
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -9076,6 +9097,16 @@ msgstr "Португалски — Бразил"
 msgid "Portuguese — Portugal"
 msgstr "Португалски — Португал"
 
+#. js-lingui-id: JQw9es
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "position ascending"
+msgstr ""
+
+#. js-lingui-id: ZtUcct
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "position descending"
+msgstr ""
+
 #. js-lingui-id: ofTr89
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -9583,6 +9614,11 @@ msgstr "Датум обнове"
 msgid "Reorder field"
 msgstr "Поново распореди поље"
 
+#. js-lingui-id: a2EE6C
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
+msgid "Reorder options"
+msgstr ""
+
 #. js-lingui-id: ImOQa9
 #: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
@@ -9729,6 +9765,12 @@ msgstr "Понови све неуспеле"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
 msgstr "Вредност повраћаја"
+
+#. js-lingui-id: wu55ly
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+msgid "reverse alphabetical"
+msgstr ""
 
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -10788,6 +10830,8 @@ msgstr "Неке фасцикле"
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Soon"
 msgstr "Ускоро"
 
@@ -11657,7 +11701,6 @@ msgid "Time zone"
 msgstr "Временска зона"
 
 #. js-lingui-id: cklVjM
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Трака времена"
@@ -12641,7 +12684,6 @@ msgid "Webhooks"
 msgstr "Вебхукс"
 
 #. js-lingui-id: zx4BuL
-#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx

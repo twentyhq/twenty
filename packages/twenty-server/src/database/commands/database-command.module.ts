@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ComputeTwentyStandardWorkspaceMigrationCommand } from 'src/database/commands/compute-twenty-standard-workspace-migration.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
+import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -62,6 +63,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     DataSeedWorkspaceCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
+    ListOrphanedWorkspaceEntitiesCommand,
   ],
 })
 export class DatabaseCommandModule {}
