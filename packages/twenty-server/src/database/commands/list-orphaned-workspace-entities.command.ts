@@ -150,7 +150,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
     ids: string[];
     entityName: string;
     chunkSize?: number;
-  }  ): Promise<number> {
+  }): Promise<number> {
     let totalDeleted = 0;
     const chunks: string[][] = [];
 
