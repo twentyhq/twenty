@@ -10,10 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
   type CreateCoreViewMutationVariables,
-  type DeleteCoreViewMutationVariables,
+  type DestroyCoreViewMutationVariables,
   type UpdateCoreViewMutationVariables,
   useCreateCoreViewMutation,
-  useDeleteCoreViewMutation,
+  useDestroyCoreViewMutation,
   useUpdateCoreViewMutation,
   ViewType,
 } from '~/generated/graphql';
@@ -21,7 +21,7 @@ import {
 export const usePersistView = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();
-  const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
+  const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -124,14 +124,14 @@ export const usePersistView = () => {
     [updateCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
-  const deleteView = useCallback(
+  const destroyView = useCallback(
     async (
-      variables: DeleteCoreViewMutationVariables,
+      variables: DestroyCoreViewMutationVariables,
     ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof deleteCoreViewMutation>>>
+      MetadataRequestResult<Awaited<ReturnType<typeof destroyCoreViewMutation>>>
     > => {
       try {
-        const result = await deleteCoreViewMutation({
+        const result = await destroyCoreViewMutation({
           variables,
         });
 
@@ -154,12 +154,12 @@ export const usePersistView = () => {
         };
       }
     },
-    [deleteCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
+    [destroyCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {
     createView,
     updateView,
-    deleteView,
+    destroyView,
   };
 };
