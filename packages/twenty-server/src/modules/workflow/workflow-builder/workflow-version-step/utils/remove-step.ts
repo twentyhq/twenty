@@ -98,14 +98,24 @@ export const removeStep = ({
           step.type === WorkflowActionType.IF_ELSE &&
           isWorkflowIfElseAction(step)
         ) {
-          const updatedBranches = step.settings.input.branches.map(
-            (branch) => ({
+          const updatedBranches = step.settings.input.branches.map((branch) => {
+            let updatedNextStepIds = branch.nextStepIds;
+
+            if (branch.nextStepIds.includes(stepIdToDelete)) {
+              updatedNextStepIds = computeUpdatedNextStepIds({
+                existingNextStepIds: branch.nextStepIds,
+                stepIdToRemove: stepIdToDelete,
+                stepToDeleteChildrenIds: allStepToDeleteChildrenIds,
+              });
+            }
+
+            return {
               ...branch,
-              nextStepIds: branch.nextStepIds.filter(
+              nextStepIds: updatedNextStepIds.filter(
                 (id) => !allRemovedStepIds.includes(id),
               ),
-            }),
-          );
+            };
+          });
 
           return {
             ...step,
