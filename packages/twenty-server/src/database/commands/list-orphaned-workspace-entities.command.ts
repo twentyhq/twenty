@@ -165,9 +165,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       processedIds.add(field.id);
 
       if (field.relationTargetFieldMetadataId) {
-        const relatedField = fieldsMap.get(
-          field.relationTargetFieldMetadataId,
-        );
+        const relatedField = fieldsMap.get(field.relationTargetFieldMetadataId);
 
         if (relatedField && !processedIds.has(relatedField.id)) {
           currentChunk.push(relatedField.id);
@@ -250,6 +248,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
             return `NOT EXISTS ${subQuery}`;
           })
+          .select(['entity.id', 'entity.workspaceId'])
           .withDeleted()
           .getMany();
 
