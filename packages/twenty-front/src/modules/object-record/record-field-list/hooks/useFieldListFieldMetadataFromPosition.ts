@@ -22,7 +22,6 @@ export const useFieldListFieldMetadataFromPosition = ({
   const {
     inlineFieldMetadataItems,
     inlineRelationFieldMetadataItems,
-    junctionRelationFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
@@ -32,7 +31,6 @@ export const useFieldListFieldMetadataFromPosition = ({
   const fieldMetadataItems = [
     ...inlineRelationFieldMetadataItems,
     ...inlineFieldMetadataItems,
-    ...junctionRelationFieldMetadataItems,
     ...boxedRelationFieldMetadataItems,
   ];
 

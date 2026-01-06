@@ -41,9 +41,14 @@ const findMorphTargetFieldInfo = (
     targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
   });
 
-  // For morph relations, don't pass settings because the field's joinColumnName
-  // refers to the first/primary target, not the computed target field name.
-  return { fieldName, settings: undefined };
+  // For morph relations, compute the join column name from the computed field name
+  // e.g., caretakerPerson → caretakerPersonId
+  return {
+    fieldName,
+    settings: {
+      joinColumnName: `${fieldName}Id`,
+    },
+  };
 };
 
 export const findTargetFieldInfo = (

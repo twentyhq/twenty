@@ -34,17 +34,35 @@ export const getJunctionConfig = ({
   }
 
   // Find the source field on junction (points back to the source object)
+  // Checks both RELATION and MORPH_RELATION fields
   const findSourceField = (
     excludeFieldId?: string,
   ): FieldMetadataItem | undefined => {
     if (!isDefined(sourceObjectMetadataId)) {
       return undefined;
     }
-    return junctionObjectMetadata.fields.find(
+
+    // First check regular RELATION fields
+    const relationField = junctionObjectMetadata.fields.find(
       (field) =>
         field.type === FieldMetadataType.RELATION &&
         field.relation?.targetObjectMetadata.id === sourceObjectMetadataId &&
         field.id !== excludeFieldId,
+    );
+
+    if (isDefined(relationField)) {
+      return relationField;
+    }
+
+    // Then check MORPH_RELATION fields that have a morphRelation targeting the source
+    return junctionObjectMetadata.fields.find(
+      (field) =>
+        field.type === FieldMetadataType.MORPH_RELATION &&
+        field.id !== excludeFieldId &&
+        field.morphRelations?.some(
+          (morphRelation) =>
+            morphRelation.targetObjectMetadata.id === sourceObjectMetadataId,
+        ),
     );
   };
 

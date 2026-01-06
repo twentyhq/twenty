@@ -74,7 +74,7 @@ export const useFieldListFieldMetadataItems = ({
         : 'inlineFieldMetadataItems',
   );
 
-  const { activityTargetFields, junctionRelationFields, boxedRelationFields } =
+  const { activityTargetFields, inlineRelationFields, boxedRelationFields } =
     categorizeRelationFields({
       relationFields: relationFieldMetadataItems ?? [],
       objectNameSingular,
@@ -82,11 +82,15 @@ export const useFieldListFieldMetadataItems = ({
       isJunctionRelationsEnabled,
     });
 
+  const allInlineFieldMetadataItems = [
+    ...(inlineFieldMetadataItems ?? []),
+    ...inlineRelationFields,
+  ].sort((a, b) => a.name.localeCompare(b.name));
+
   return {
-    inlineFieldMetadataItems,
-    // Keep backwards compatibility alias for activity targets
+    inlineFieldMetadataItems: allInlineFieldMetadataItems,
+    // Activity targets need special rendering with ActivityTargetsInlineCell
     inlineRelationFieldMetadataItems: activityTargetFields,
-    junctionRelationFieldMetadataItems: junctionRelationFields,
     boxedRelationFieldMetadataItems: boxedRelationFields,
   };
 };

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -86,9 +87,31 @@ export const useUpdateJunctionRelationFromCell = ({
           return;
         }
 
-        const sourceJoinColumnName = (
-          sourceFieldOnJunction.settings as FieldRelationMetadataSettings
-        )?.joinColumnName;
+        // Compute source join column name - handles both RELATION and MORPH_RELATION
+        let sourceJoinColumnName: string | undefined;
+        if (sourceFieldOnJunction.type === FieldMetadataType.MORPH_RELATION) {
+          // For morph relations, compute the field name based on source object
+          if (isDefined(sourceObjectMetadata)) {
+            const morphRelation = sourceFieldOnJunction.morphRelations?.find(
+              (mr) => mr.targetObjectMetadata.id === sourceObjectMetadata.id,
+            );
+            if (isDefined(morphRelation)) {
+              const computedFieldName = computeMorphRelationFieldName({
+                fieldName: morphRelation.sourceFieldMetadata.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  sourceObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural: sourceObjectMetadata.namePlural,
+              });
+              sourceJoinColumnName = `${computedFieldName}Id`;
+            }
+          }
+        } else {
+          sourceJoinColumnName = (
+            sourceFieldOnJunction.settings as FieldRelationMetadataSettings
+          )?.joinColumnName;
+        }
+
         const fieldName = fieldDefinition.metadata.fieldName;
         const junctionObjectName = junctionObjectMetadata.nameSingular;
 
@@ -219,6 +242,7 @@ export const useUpdateJunctionRelationFromCell = ({
       objectMetadataItems,
       recordId,
       sourceFieldOnJunction,
+      sourceObjectMetadata,
       targetFields,
     ],
   );
