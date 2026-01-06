@@ -11,6 +11,7 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
+import { getFieldMetadataItemInitialValues } from '@/object-metadata/utils/getFieldMetadataItemInitialValues';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -33,10 +34,10 @@ import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  IconTrash,
+    H2Title,
+    IconArchive,
+    IconArchiveOff,
+    IconTrash,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -107,33 +108,23 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
+  const { settings, defaultValue } = getFieldMetadataItemInitialValues(
+    fieldMetadataItem,
+  );
+
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
-    defaultValues: {
-      icon: 'Icon',
-      type: FieldMetadataType.TEXT as SettingsFieldType,
-      label: '',
-      description: null,
-      isLabelSyncedWithName: true,
-      settings: undefined,
-      defaultValue: undefined,
+    values: {
+      icon: fieldMetadataItem?.icon ?? 'Icon',
+      type: fieldMetadataItem?.type as SettingsFieldType,
+      label: fieldMetadataItem?.label ?? '',
+      description: fieldMetadataItem?.description,
+      isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
+      settings,
+      defaultValue,
     },
   });
-
-  useEffect(() => {
-    if (isDefined(fieldMetadataItem)) {
-      formConfig.reset({
-        icon: fieldMetadataItem.icon ?? 'Icon',
-        type: fieldMetadataItem.type as SettingsFieldType,
-        label: fieldMetadataItem.label ?? '',
-        description: fieldMetadataItem.description,
-        isLabelSyncedWithName: fieldMetadataItem.isLabelSyncedWithName ?? true,
-        settings: fieldMetadataItem.settings ?? undefined,
-        defaultValue: fieldMetadataItem.defaultValue ?? undefined,
-      });
-    }
-  }, [fieldMetadataItem, formConfig]);
 
   useEffect(() => {
     if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
