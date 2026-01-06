@@ -6,6 +6,7 @@ import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/gr
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
@@ -37,7 +38,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  indexValueColors?: Map<string, GraphColor>;
+  selectOptionColorMap?: SelectOptionColorMap;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -103,22 +104,23 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     isSelectField &&
     (!isDefined(configuration.color) || configuration.color === 'auto');
 
-  const indexValueColors = useSelectOptionColors
-    ? new Map<string, GraphColor>(
-        processedDataPoints
-          .map(({ xValue, rawXValue }) => {
-            const rawValueString = isDefined(rawXValue)
-              ? String(rawXValue)
-              : null;
-            const color = getSelectOptionColorForValue({
-              rawValue: rawValueString,
-              selectOptions: groupByFieldX.options,
-            });
-            return color ? ([xValue, color] as const) : null;
-          })
-          .filter(isDefined),
-      )
-    : undefined;
+  const selectOptionColorMap: SelectOptionColorMap | undefined =
+    useSelectOptionColors
+      ? new Map<string, GraphColor>(
+          processedDataPoints
+            .map(({ xValue, rawXValue }) => {
+              const rawValueString = isDefined(rawXValue)
+                ? String(rawXValue)
+                : null;
+              const color = getSelectOptionColorForValue({
+                rawValue: rawValueString,
+                selectOptions: groupByFieldX.options,
+              });
+              return color ? ([xValue, color] as const) : null;
+            })
+            .filter(isDefined),
+        )
+      : undefined;
 
   const series: BarChartSeries[] = [
     {
@@ -147,6 +149,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups:
       rawResults.length > BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     formattedToRawLookup,
-    indexValueColors,
+    selectOptionColorMap,
   };
 };

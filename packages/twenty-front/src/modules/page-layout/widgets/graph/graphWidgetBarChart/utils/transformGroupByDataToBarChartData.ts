@@ -8,9 +8,9 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
@@ -48,7 +48,7 @@ type TransformGroupByDataToBarChartDataResult = {
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  indexValueColors?: Map<string, GraphColor>;
+  selectOptionColorMap?: SelectOptionColorMap;
 };
 
 const EMPTY_BAR_CHART_RESULT: Omit<

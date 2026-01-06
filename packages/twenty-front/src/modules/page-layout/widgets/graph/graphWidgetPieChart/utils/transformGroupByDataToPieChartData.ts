@@ -100,7 +100,8 @@ export const transformGroupByDataToPieChartData = ({
 
   const isSelectField = isFieldMetadataSelectKind(groupByField.type);
   const useSelectOptionColors =
-    isSelectField && (!isDefined(configuration.color) || configuration.color === 'auto');
+    isSelectField &&
+    (!isDefined(configuration.color) || configuration.color === 'auto');
 
   const unsortedDataWithRawValues: PieChartDataItemWithRawValue[] =
     limitedProcessedDataPoints.map(({ xValue, rawXValue, aggregateValue }) => {

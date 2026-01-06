@@ -15,7 +15,7 @@ import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetB
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -60,7 +60,7 @@ type GraphWidgetBarChartProps = {
   rangeMax?: number;
   omitNullValues?: boolean;
   onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
-  indexValueColors?: Map<string, GraphColor>;
+  selectOptionColorMap?: SelectOptionColorMap;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -95,7 +95,7 @@ export const GraphWidgetBarChart = ({
   suffix,
   customFormatter,
   onBarClick,
-  indexValueColors,
+  selectOptionColorMap,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -126,7 +126,7 @@ export const GraphWidgetBarChart = ({
       series,
       colorRegistry,
       seriesLabels,
-      indexValueColors,
+      selectOptionColorMap,
     });
 
   const calculatedValueRange =

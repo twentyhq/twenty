@@ -2,12 +2,12 @@ import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
-    AggregateOperations,
-    FieldMetadataType,
+  AggregateOperations,
+  FieldMetadataType,
 } from '~/generated-metadata/graphql';
 import {
-    WidgetConfigurationType,
-    type PieChartConfiguration,
+  WidgetConfigurationType,
+  type PieChartConfiguration,
 } from '~/generated/graphql';
 
 jest.mock(

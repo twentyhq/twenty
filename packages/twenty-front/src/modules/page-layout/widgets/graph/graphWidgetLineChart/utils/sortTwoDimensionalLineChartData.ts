@@ -89,9 +89,7 @@ export const sortTwoDimensionalLineChartData = ({
         selectOptions: secondaryAxisSelectFieldOptions,
       });
 
-      return selectColor
-        ? { ...seriesItem, color: selectColor }
-        : seriesItem;
+      return selectColor ? { ...seriesItem, color: selectColor } : seriesItem;
     });
   }
 

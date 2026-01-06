@@ -10,7 +10,7 @@ import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 
 type UseBarChartDataProps = {
   data: BarDatum[];
@@ -20,7 +20,7 @@ type UseBarChartDataProps = {
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
-  indexValueColors?: Map<string, GraphColor>;
+  selectOptionColorMap?: SelectOptionColorMap;
 };
 
 export const useBarChartData = ({
@@ -30,7 +30,7 @@ export const useBarChartData = ({
   series,
   colorRegistry,
   seriesLabels,
-  indexValueColors,
+  selectOptionColorMap,
 }: UseBarChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
@@ -79,7 +79,7 @@ export const useBarChartData = ({
           return [];
         }
 
-        const indexValueColor = indexValueColors?.get(String(indexValue));
+        const indexValueColor = selectOptionColorMap?.get(String(indexValue));
         const colorScheme = isDefined(indexValueColor)
           ? getColorScheme({
               registry: colorRegistry,
@@ -101,7 +101,7 @@ export const useBarChartData = ({
     indexBy,
     visibleKeys,
     allEnrichedKeys,
-    indexValueColors,
+    selectOptionColorMap,
     colorRegistry,
   ]);
 

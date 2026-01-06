@@ -4,8 +4,8 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type BarDatum } from '@nivo/bar';
@@ -34,7 +34,7 @@ type UseGraphBarChartWidgetDataResult = {
   error?: Error;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  indexValueColors?: Map<string, GraphColor>;
+  selectOptionColorMap?: SelectOptionColorMap;
   objectMetadataItem: ReturnType<
     typeof useObjectMetadataItemById
   >['objectMetadataItem'];
