@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -24,15 +25,17 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
-  constructor() {}
+  constructor(
+    private readonly flatPageLayoutWidgetTypeValidatorService: FlatPageLayoutWidgetTypeValidatorService,
+  ) {}
 
   public async validateFlatPageLayoutWidgetUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     additionalCacheDataMaps: { featureFlagsMap },
+    workspaceId,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'update'>> {
@@ -40,7 +43,8 @@ export class FlatPageLayoutWidgetValidatorService {
       featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     const existingFlatPageLayoutWidget =
-      optimisticFlatPageLayoutWidgetMaps.byId[flatEntityId];
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
+        .byId[flatEntityId];
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -90,6 +94,22 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...featureFlagErrors);
 
+    const typeSpecificityErrors =
+      this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
+        {
+          flatEntityToValidate: updatedFlatPageLayoutWidget,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          updates: flatEntityUpdates,
+          additionalCacheDataMaps: { featureFlagsMap },
+          workspaceId,
+          buildOptions,
+          remainingFlatEntityMapsToValidate:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+        },
+      );
+
+    validationResult.errors.push(...typeSpecificityErrors);
+
     return validationResult;
   }
 
@@ -132,10 +152,10 @@ export class FlatPageLayoutWidgetValidatorService {
   public async validateFlatPageLayoutWidgetCreation({
     flatEntityToValidate: flatPageLayoutWidgetToValidate,
     additionalCacheDataMaps: { featureFlagsMap },
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutTabMaps,
-      flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    workspaceId,
+    buildOptions,
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'create'>> {
@@ -153,9 +173,8 @@ export class FlatPageLayoutWidgetValidatorService {
     });
 
     const existingFlatPageLayoutWidget =
-      optimisticFlatPageLayoutWidgetMaps.byId[
-        flatPageLayoutWidgetToValidate.id
-      ];
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
+        .byId[flatPageLayoutWidgetToValidate.id];
 
     if (isDefined(existingFlatPageLayoutWidget)) {
       const flatPageLayoutWidgetId = flatPageLayoutWidgetToValidate.id;
@@ -169,7 +188,8 @@ export class FlatPageLayoutWidgetValidatorService {
 
     const referencedPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatPageLayoutWidgetToValidate.pageLayoutTabId,
-      flatEntityMaps: flatPageLayoutTabMaps,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
 
     if (!isDefined(referencedPageLayoutTab)) {
@@ -195,6 +215,20 @@ export class FlatPageLayoutWidgetValidatorService {
     });
 
     validationResult.errors.push(...featureFlagErrors);
+
+    const typeSpecificityErrors =
+      this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
+        {
+          flatEntityToValidate: flatPageLayoutWidgetToValidate,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          additionalCacheDataMaps: { featureFlagsMap },
+          workspaceId,
+          buildOptions,
+          remainingFlatEntityMapsToValidate,
+        },
+      );
+
+    validationResult.errors.push(...typeSpecificityErrors);
 
     return validationResult;
   }
