@@ -32,6 +32,22 @@ describe('If/Else Workflow (e2e)', () => {
               name: "If/Else Test Workflow"
             }) {
               id
+            }
+          }
+        `,
+      });
+
+    expect(createWorkflowResponse.body.errors).toBeUndefined();
+    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+
+    const getWorkflowResponse = await client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send({
+        query: `
+          query GetWorkflow($id: UUID!) {
+            workflow(filter: { id: { eq: $id } }) {
+              id
               versions {
                 edges {
                   node {
@@ -43,15 +59,15 @@ describe('If/Else Workflow (e2e)', () => {
             }
           }
         `,
+        variables: { id: createdWorkflowId },
       });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    expect(getWorkflowResponse.body.errors).toBeUndefined();
     expect(
-      createWorkflowResponse.body.data.createWorkflow.versions.edges.length,
+      getWorkflowResponse.body.data.workflow.versions.edges.length,
     ).toBeGreaterThan(0);
     createdWorkflowVersionId =
-      createWorkflowResponse.body.data.createWorkflow.versions.edges[0].node.id;
+      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
     const manualTrigger = {
       name: 'Manual Trigger',
