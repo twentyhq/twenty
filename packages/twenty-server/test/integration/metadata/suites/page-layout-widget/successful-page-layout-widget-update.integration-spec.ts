@@ -53,6 +53,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     context: {
       input: {
         type: WidgetType.GRAPH,
+        configuration: TEST_NUMBER_CHART_CONFIG,
       },
     },
   },

@@ -337,3 +337,36 @@ exports[`Page layout widget update should succeed should update page layout widg
   "updatedAt": Any<String>,
 }
 `;
+
+exports[`Page layout widget update should succeed should update page layout widget type 1`] = `
+{
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "configurationType": "AGGREGATE_CHART",
+    "description": "Count of all records",
+    "displayDataLabel": true,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "format": "0,0",
+    "label": "Total Records",
+    "prefix": null,
+    "suffix": null,
+    "timezone": "UTC",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Original Widget Title",
+  "type": "GRAPH",
+  "updatedAt": Any<String>,
+}
+`;
