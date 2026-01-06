@@ -85,8 +85,6 @@ export const removeStep = ({
 
   const allRemovedStepIds = [stepIdToDelete, ...emptyChildStepIds];
 
-  const allStepToDeleteChildrenIds = [...(stepToDeleteChildrenIds || [])];
-
   const updatedSteps =
     existingSteps
       ?.filter((step) => !allRemovedStepIds.includes(step.id))
@@ -102,7 +100,7 @@ export const removeStep = ({
               updatedNextStepIds = computeUpdatedNextStepIds({
                 existingNextStepIds: branch.nextStepIds,
                 stepIdToRemove: stepIdToDelete,
-                stepToDeleteChildrenIds: allStepToDeleteChildrenIds,
+                stepToDeleteChildrenIds,
               });
             }
 
@@ -132,7 +130,7 @@ export const removeStep = ({
             nextStepIds: computeUpdatedNextStepIds({
               existingNextStepIds: step.nextStepIds,
               stepIdToRemove: stepIdToDelete,
-              stepToDeleteChildrenIds: allStepToDeleteChildrenIds,
+              stepToDeleteChildrenIds,
             }),
           };
         }
@@ -151,7 +149,7 @@ export const removeStep = ({
                 initialLoopStepIds: computeUpdatedNextStepIds({
                   existingNextStepIds: step.settings.input.initialLoopStepIds,
                   stepIdToRemove: stepIdToDelete,
-                  stepToDeleteChildrenIds: allStepToDeleteChildrenIds,
+                  stepToDeleteChildrenIds,
                 }),
               },
             },
@@ -170,7 +168,7 @@ export const removeStep = ({
         nextStepIds: computeUpdatedNextStepIds({
           existingNextStepIds: existingTrigger.nextStepIds,
           stepIdToRemove: stepIdToDelete,
-          stepToDeleteChildrenIds: allStepToDeleteChildrenIds,
+          stepToDeleteChildrenIds,
         }),
       };
     }
