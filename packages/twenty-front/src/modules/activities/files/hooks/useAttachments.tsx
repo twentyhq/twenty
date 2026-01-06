@@ -8,7 +8,6 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
-
   const { records: attachments, loading } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
