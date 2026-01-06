@@ -21,7 +21,10 @@ export const validateStandaloneRichTextBody = (
     return errors;
   }
 
-  if (typeof configuration.body !== 'object') {
+  if (
+    typeof configuration.body !== 'object' ||
+    Array.isArray(configuration.body)
+  ) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       message: t`Body must be an object for widget "${widgetTitle}"`,

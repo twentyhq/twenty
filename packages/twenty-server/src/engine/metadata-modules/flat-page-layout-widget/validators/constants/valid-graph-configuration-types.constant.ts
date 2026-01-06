@@ -7,4 +7,3 @@ export const VALID_GRAPH_CONFIGURATION_TYPES = [
   WidgetConfigurationType.PIE_CHART,
   WidgetConfigurationType.GAUGE_CHART,
 ] as const;
-
