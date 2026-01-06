@@ -61,7 +61,7 @@ exports[`Page layout widget creation should fail Edge case configuration validat
     "code": "BAD_USER_INPUT",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
-  "message": "Unsupported configuration type: UNSUPPORTED_TYPE",
+  "message": "Invalid configuration type: UNSUPPORTED_TYPE",
   "name": "UserInputError",
 }
 `;
@@ -183,67 +183,5 @@ exports[`Page layout widget creation should fail STANDALONE_RICH_TEXT widget con
   },
   "message": "body: nested property body must be either object or array",
   "name": "UserInputError",
-}
-`;
-
-exports[`Page layout widget creation should fail when gridPosition has invalid values 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "row must not be less than 0",
-  "name": "UserInputError",
-}
-`;
-
-exports[`Page layout widget creation should fail when pageLayoutTabId references non-existent tab 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "pageLayoutWidget": [
-        {
-          "errors": [
-            {
-              "code": "PAGE_LAYOUT_TAB_NOT_FOUND",
-              "message": "Page layout tab not found",
-              "userFriendlyMessage": "Page layout tab not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "pageLayoutTabId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "pageLayoutWidget",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 pageLayoutWidget",
-    "summary": {
-      "pageLayoutWidget": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
-  },
-  "message": "Multiple validation errors occurred while creating page layout widget",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`Page layout widget creation should fail when title is missing 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Field "title" of required type "String!" was not provided.",
-  "name": "GraphQLError",
 }
 `;

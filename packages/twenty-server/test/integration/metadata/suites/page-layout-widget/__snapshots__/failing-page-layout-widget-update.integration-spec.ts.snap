@@ -72,7 +72,7 @@ exports[`Page layout widget update should fail Widget configuration validation f
     "code": "BAD_USER_INPUT",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
-  "message": "Unsupported configuration type: UNSUPPORTED_TYPE",
+  "message": "Invalid configuration type: UNSUPPORTED_TYPE",
   "name": "UserInputError",
 }
 `;
