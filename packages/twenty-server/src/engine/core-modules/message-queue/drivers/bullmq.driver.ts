@@ -96,27 +96,27 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      if (this.metricsService) {
-        this.metricsService.incrementCounter({
-          key: MetricsKeys.JobCompleted,
-          attributes: { queue: queueName, job_name: job.name },
-          shouldStoreInCache: false,
-        });
-      }
+      this.metricsService.incrementCounter({
+        key: MetricsKeys.JobCompleted,
+        attributes: { queue: queueName, job_name: job?.name ?? '' },
+        shouldStoreInCache: false,
+      });
     });
 
     this.workerMap[queueName].on('failed', (job, error) => {
-      if (this.metricsService && job) {
-        this.metricsService.incrementCounter({
-          key: MetricsKeys.JobFailed,
-          attributes: {
-            queue: queueName,
-            job_name: job.name,
-            error_type: error.name,
-          },
-          shouldStoreInCache: false,
-        });
+      if (!isDefined(job) || !isDefined(error)) {
+        return;
       }
+
+      this.metricsService.incrementCounter({
+        key: MetricsKeys.JobFailed,
+        attributes: {
+          queue: queueName,
+          job_name: job.name,
+          error_type: error.name,
+        },
+        shouldStoreInCache: false,
+      });
     });
   }
 
