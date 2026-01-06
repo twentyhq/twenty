@@ -19,9 +19,11 @@ import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/inte
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
-import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
+import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -38,7 +40,10 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     Worker
   >;
 
-  constructor(private options: BullMQDriverOptions) {}
+  constructor(
+    private options: BullMQDriverOptions,
+    private metricsService?: MetricsService,
+  ) {}
 
   register(queueName: MessageQueue): void {
     this.queueMap[queueName] = new Queue(queueName, this.options);
@@ -89,6 +94,30 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       },
       workerOptions,
     );
+
+    this.workerMap[queueName].on('completed', (job) => {
+      if (this.metricsService) {
+        this.metricsService.incrementCounter({
+          key: MetricsKeys.JobCompleted,
+          attributes: { queue: queueName, job_name: job.name },
+          shouldStoreInCache: false,
+        });
+      }
+    });
+
+    this.workerMap[queueName].on('failed', (job, error) => {
+      if (this.metricsService && job) {
+        this.metricsService.incrementCounter({
+          key: MetricsKeys.JobFailed,
+          attributes: {
+            queue: queueName,
+            job_name: job.name,
+            error_type: error.name,
+          },
+          shouldStoreInCache: false,
+        });
+      }
+    });
   }
 
   async addCron<T>({
