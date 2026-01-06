@@ -119,19 +119,17 @@ jobs:
               exit 1
             fi
 
-            # Accept upstream's yarn.lock and complete merge
+            # Delete yarn.lock to resolve conflict, will regenerate after merge
             echo "Auto-resolving yarn.lock conflict..."
-            git checkout --theirs yarn.lock
-            git add yarn.lock
+            git rm yarn.lock
             git commit --no-edit
           fi
 
-          # Apply our resolutions from package.json
+          # Regenerate yarn.lock from package.json (applies our resolutions)
+          rm -f yarn.lock
           yarn install
-          if ! git diff --quiet yarn.lock; then
-            git add yarn.lock
-            git commit -m "chore: apply yarn.lock resolutions"
-          fi
+          git add yarn.lock
+          git commit -m "chore: regenerate yarn.lock with resolutions"
 
           git push origin "$BRANCH_NAME"
           echo "merge_success=true" >> $GITHUB_OUTPUT
