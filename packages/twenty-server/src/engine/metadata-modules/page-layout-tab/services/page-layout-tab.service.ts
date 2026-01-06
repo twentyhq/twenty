@@ -350,6 +350,13 @@ export class PageLayoutTabService {
       );
     }
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByTabId(
+      {
+        tabId: id,
+        workspaceId,
+      },
+    );
+
     return true;
   }
 

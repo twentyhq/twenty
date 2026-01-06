@@ -456,6 +456,13 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while destroying page layout widget',
     });
 
+    await this.dashboardTimestampService.updateLinkedDashboardsUpdatedAtByWidgetId(
+      {
+        widgetId: id,
+        workspaceId,
+      },
+    );
+
     return true;
   }
 
