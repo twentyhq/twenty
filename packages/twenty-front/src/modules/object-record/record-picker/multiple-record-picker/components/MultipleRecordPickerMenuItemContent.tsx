@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
@@ -39,6 +40,8 @@ export const MultipleRecordPickerMenuItemContent = ({
     MultipleRecordPickerComponentInstanceContext,
   );
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
@@ -55,9 +58,16 @@ export const MultipleRecordPickerMenuItemContent = ({
   );
 
   const handleSelectChange = (isSelected: boolean) => {
+    // Derive the correct objectMetadataId from searchRecord.objectNameSingular
+    // This is more reliable than objectMetadataItem.id which may come from stale state
+    const correctObjectMetadata = objectMetadataItems.find(
+      (item) => item.nameSingular === searchRecord.objectNameSingular,
+    );
+    const objectMetadataId = correctObjectMetadata?.id ?? objectMetadataItem.id;
+
     onChange({
       recordId: searchRecord.recordId,
-      objectMetadataId: objectMetadataItem.id,
+      objectMetadataId,
       isSelected,
       isMatchingSearchFilter: true,
     });

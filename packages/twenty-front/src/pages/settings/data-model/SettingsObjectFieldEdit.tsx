@@ -107,11 +107,17 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  // Extract junctionTargetRelationFieldIds from settings for the form
-  const junctionTargetRelationFieldIds =
+  // Extract junction settings from field settings for the form
+  const junctionTargetFieldId =
     fieldMetadataItem?.settings &&
-    'junctionTargetRelationFieldIds' in fieldMetadataItem.settings
-      ? fieldMetadataItem.settings.junctionTargetRelationFieldIds
+    'junctionTargetFieldId' in fieldMetadataItem.settings
+      ? fieldMetadataItem.settings.junctionTargetFieldId
+      : undefined;
+
+  const junctionTargetMorphId =
+    fieldMetadataItem?.settings &&
+    'junctionTargetMorphId' in fieldMetadataItem.settings
+      ? fieldMetadataItem.settings.junctionTargetMorphId
       : undefined;
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
@@ -124,7 +130,8 @@ export const SettingsObjectFieldEdit = () => {
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings: fieldMetadataItem?.settings,
-      junctionTargetRelationFieldIds,
+      junctionTargetFieldId,
+      junctionTargetMorphId,
     },
   });
 
@@ -197,11 +204,12 @@ export const SettingsObjectFieldEdit = () => {
     const otherDirtyFields = omit(dirtyFields, 'relation');
 
     if (Object.keys(otherDirtyFields).length > 0) {
-      // relationType and junctionTargetRelationFieldIds are stored at form root level
+      // relationType and junction settings are stored at form root level
       // but get merged into settings by formatFieldMetadataItemInput
       const dirtyFieldKeys = Object.keys(otherDirtyFields);
       const hasRelationSettingsChange =
-        dirtyFieldKeys.includes('junctionTargetRelationFieldIds') ||
+        dirtyFieldKeys.includes('junctionTargetFieldId') ||
+        dirtyFieldKeys.includes('junctionTargetMorphId') ||
         dirtyFieldKeys.includes('relationType');
       const effectiveDirtyKeys = hasRelationSettingsChange
         ? [...dirtyFieldKeys, 'settings']

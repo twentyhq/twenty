@@ -54,7 +54,7 @@ describe('getJunctionConfig', () => {
   describe('basic scenarios', () => {
     it('should return null when junction object metadata not found', () => {
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['field-id'] },
+        settings: { junctionTargetFieldId: 'field-id' },
         relationObjectMetadataId: 'non-existent-id',
         objectMetadataItems: [],
       });
@@ -89,8 +89,8 @@ describe('getJunctionConfig', () => {
     });
   });
 
-  describe('junctionMorphId configuration', () => {
-    it('should return morphFields when junctionMorphId is set', () => {
+  describe('junctionTargetMorphId configuration', () => {
+    it('should return targetFields when junctionTargetMorphId is set', () => {
       const morphField1 = createMockField({
         id: 'morph-field-1',
         name: 'company',
@@ -111,16 +111,16 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionMorphId: 'morph-group-1' },
+        settings: { junctionTargetMorphId: 'morph-group-1' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject],
       });
 
       expect(result).not.toBeNull();
       expect(result!.isMorphRelation).toBe(true);
-      expect(result!.morphFields).toHaveLength(2);
-      expect(result!.morphFields![0].name).toBe('company');
-      expect(result!.morphFields![1].name).toBe('person');
+      expect(result!.targetFields).toHaveLength(2);
+      expect(result!.targetFields[0].name).toBe('company');
+      expect(result!.targetFields[1].name).toBe('person');
     });
 
     it('should return null when no fields match the morphId', () => {
@@ -135,7 +135,7 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionMorphId: 'morph-group-1' },
+        settings: { junctionTargetMorphId: 'morph-group-1' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject],
       });
@@ -162,7 +162,7 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionMorphId: 'morph-group-1' },
+        settings: { junctionTargetMorphId: 'morph-group-1' },
         relationObjectMetadataId: 'junction-id',
         sourceObjectMetadataId: 'source-object-id',
         objectMetadataItems: [junctionObject],
@@ -174,8 +174,8 @@ describe('getJunctionConfig', () => {
     });
   });
 
-  describe('junctionTargetRelationFieldIds configuration', () => {
-    it('should return targetField for regular relation', () => {
+  describe('junctionTargetFieldId configuration', () => {
+    it('should return targetFields for regular relation', () => {
       const targetField = createMockField({
         id: 'target-field-id',
         name: 'company',
@@ -192,16 +192,15 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['target-field-id'] },
+        settings: { junctionTargetFieldId: 'target-field-id' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject, companyObject],
       });
 
       expect(result).not.toBeNull();
       expect(result!.isMorphRelation).toBe(false);
-      expect(result!.targetField).toBeDefined();
-      expect(result!.targetField!.name).toBe('company');
-      expect(result!.targetObjectMetadata!.nameSingular).toBe('company');
+      expect(result!.targetFields).toHaveLength(1);
+      expect(result!.targetFields[0].name).toBe('company');
     });
 
     it('should return null when target field not found', () => {
@@ -211,7 +210,7 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['non-existent-field'] },
+        settings: { junctionTargetFieldId: 'non-existent-field' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject],
       });
@@ -232,7 +231,7 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['target-field-id'] },
+        settings: { junctionTargetFieldId: 'target-field-id' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject],
       });
@@ -252,15 +251,15 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['morph-field-id'] },
+        settings: { junctionTargetFieldId: 'morph-field-id' },
         relationObjectMetadataId: 'junction-id',
         objectMetadataItems: [junctionObject],
       });
 
       expect(result).not.toBeNull();
       expect(result!.isMorphRelation).toBe(true);
-      expect(result!.targetField!.name).toBe('linkedObject');
-      expect(result!.targetObjectMetadata).toBeUndefined();
+      expect(result!.targetFields).toHaveLength(1);
+      expect(result!.targetFields[0].name).toBe('linkedObject');
     });
 
     it('should find sourceField excluding the target field', () => {
@@ -282,7 +281,7 @@ describe('getJunctionConfig', () => {
       });
 
       const result = getJunctionConfig({
-        settings: { junctionTargetRelationFieldIds: ['target-field-id'] },
+        settings: { junctionTargetFieldId: 'target-field-id' },
         relationObjectMetadataId: 'junction-id',
         sourceObjectMetadataId: 'source-object-id',
         objectMetadataItems: [junctionObject],

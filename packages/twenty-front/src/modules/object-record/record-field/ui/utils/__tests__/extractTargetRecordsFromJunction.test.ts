@@ -81,10 +81,8 @@ describe('extractTargetRecordsFromJunction', () => {
     it('should return empty array for undefined junction records', () => {
       const result = extractTargetRecordsFromJunction({
         junctionRecords: undefined,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
       });
       expect(result).toEqual([]);
     });
@@ -92,16 +90,29 @@ describe('extractTargetRecordsFromJunction', () => {
     it('should return empty array for null junction records', () => {
       const result = extractTargetRecordsFromJunction({
         junctionRecords: null,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
+      });
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array for empty targetFields', () => {
+      const junctionRecords = [
+        createMockJunctionRecord('junction-1', {
+          company: { id: 'company-1', name: 'Acme Corp' },
+        }),
+      ];
+
+      const result = extractTargetRecordsFromJunction({
+        junctionRecords,
+        targetFields: [],
+        objectMetadataItems: mockObjectMetadataItems,
       });
       expect(result).toEqual([]);
     });
   });
 
-  describe('with regular relations', () => {
+  describe('with single target field (regular relations)', () => {
     it('should extract target records from junction records', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
@@ -114,10 +125,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
       });
 
       expect(result).toEqual([
@@ -135,10 +144,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
         includeRecord: true,
       });
 
@@ -161,10 +168,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
       });
 
       expect(result).toHaveLength(1);
@@ -172,8 +177,8 @@ describe('extractTargetRecordsFromJunction', () => {
     });
   });
 
-  describe('with morph relations', () => {
-    it('should extract target records from different morph fields', () => {
+  describe('with multiple target fields (morph relations)', () => {
+    it('should extract target records from different target fields', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
           company: { id: 'company-1', name: 'Acme Corp' },
@@ -185,9 +190,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        morphFields: mockMorphFields,
+        targetFields: mockMorphFields,
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: true,
       });
 
       expect(result).toHaveLength(2);
@@ -201,7 +205,7 @@ describe('extractTargetRecordsFromJunction', () => {
       });
     });
 
-    it('should return correct object metadata for each morph field', () => {
+    it('should return correct object metadata for each target field', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
           person: { id: 'person-1', name: 'Jane Doe' },
@@ -210,9 +214,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        morphFields: mockMorphFields,
+        targetFields: mockMorphFields,
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: true,
       });
 
       expect(result[0].objectMetadataId).toBe('person-metadata-id');
@@ -227,9 +230,8 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        morphFields: mockMorphFields,
+        targetFields: mockMorphFields,
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: true,
         includeRecord: true,
       });
 
@@ -252,45 +254,24 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetField: mockTargetField,
-        targetObjectMetadataId: 'company-metadata-id',
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
       });
 
       expect(result).toHaveLength(1);
     });
 
-    it('should return empty for morph relations without morphFields', () => {
+    it('should return empty when no target field matches the junction record data', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
-          company: { id: 'company-1', name: 'Acme Corp' },
+          unknownField: { id: 'record-1', name: 'Unknown' },
         }),
       ];
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        morphFields: undefined,
+        targetFields: [mockTargetField],
         objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: true,
-      });
-
-      expect(result).toEqual([]);
-    });
-
-    it('should return empty for regular relations without targetField', () => {
-      const junctionRecords = [
-        createMockJunctionRecord('junction-1', {
-          company: { id: 'company-1', name: 'Acme Corp' },
-        }),
-      ];
-
-      const result = extractTargetRecordsFromJunction({
-        junctionRecords,
-        targetField: undefined,
-        targetObjectMetadataId: 'company-metadata-id',
-        objectMetadataItems: mockObjectMetadataItems,
-        isMorphRelation: false,
       });
 
       expect(result).toEqual([]);

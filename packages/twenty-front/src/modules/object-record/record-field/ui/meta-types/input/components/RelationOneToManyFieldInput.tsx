@@ -117,7 +117,17 @@ export const RelationOneToManyFieldInput = () => {
     objectMetadataItems,
   ]);
 
-  const junctionTargetObjectMetadata = junctionConfig?.targetObjectMetadata;
+  // For non-morph junctions, get the target object from the first target field
+  const junctionTargetObjectMetadata = useMemo(() => {
+    if (!junctionConfig || junctionConfig.isMorphRelation) {
+      return undefined;
+    }
+    const firstTargetField = junctionConfig.targetFields[0];
+    return objectMetadataItems.find(
+      (item) => item.id === firstTargetField?.relation?.targetObjectMetadata.id,
+    );
+  }, [junctionConfig, objectMetadataItems]);
+
   const isMorphJunction = junctionConfig?.isMorphRelation ?? false;
 
   const { objectMetadataItem: relationObjectMetadataItem } =
@@ -151,7 +161,7 @@ export const RelationOneToManyFieldInput = () => {
   // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
-      junctionConfig?.targetObjectMetadata?.nameSingular ??
+      junctionTargetObjectMetadata?.nameSingular ??
       relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -230,16 +240,17 @@ export const RelationOneToManyFieldInput = () => {
           isDefined(junctionConfig) &&
           !isMorphJunction
         ) {
-          const { targetObjectMetadata, targetField, sourceField } =
-            junctionConfig;
+          const { targetFields, sourceField } = junctionConfig;
+          const targetField = targetFields[0];
 
-          if (!targetField || !sourceField || !targetObjectMetadata) {
+          if (!targetField || !sourceField || !junctionTargetObjectMetadata) {
             return;
           }
 
           const newTargetId = v4();
-          const labelIdentifierType =
-            getLabelIdentifierFieldMetadataItem(targetObjectMetadata)?.type;
+          const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
+            junctionTargetObjectMetadata,
+          )?.type;
 
           await createTargetRecord(
             buildTargetPayload(newTargetId, searchInput, labelIdentifierType),
@@ -266,8 +277,8 @@ export const RelationOneToManyFieldInput = () => {
             });
           }
 
-          updatePickerState(newTargetId, targetObjectMetadata.id, [
-            targetObjectMetadata,
+          updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
+            junctionTargetObjectMetadata,
           ]);
           return;
         }
@@ -291,6 +302,7 @@ export const RelationOneToManyFieldInput = () => {
       isMorphJunction,
       isJunctionRelation,
       junctionConfig,
+      junctionTargetObjectMetadata,
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
       recordId,

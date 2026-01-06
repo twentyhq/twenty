@@ -7,7 +7,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { validateJunctionTargetRelationFieldIds } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-relation-field-ids.util';
+import { validateJunctionTargetSettings } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util';
 import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 
@@ -142,7 +142,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     );
 
     errors.push(
-      ...validateJunctionTargetRelationFieldIds({
+      ...validateJunctionTargetSettings({
         flatFieldMetadata: flatFieldMetadataToValidate,
         flatFieldMetadataMaps,
       }),

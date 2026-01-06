@@ -144,10 +144,12 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
 
 export type FieldRelationMetadataSettings = {
   relationType?: RelationType;
-  // For regular RELATION fields on junction (mutually exclusive with junctionMorphId)
-  junctionTargetRelationFieldIds?: string[];
-  // For MORPH_RELATION fields on junction (mutually exclusive with junctionTargetRelationFieldIds)
-  junctionMorphId?: string;
+  // Join column name for the foreign key (e.g., "petId" for a "pet" relation)
+  joinColumnName?: string | null;
+  // For regular RELATION junctions - points to ONE field on the junction object
+  junctionTargetFieldId?: string;
+  // For MORPH_RELATION junctions - auto-discovers all fields with this morphId
+  junctionTargetMorphId?: string;
 } | null;
 
 // for later: refactor this in order to directly use relation without mapping

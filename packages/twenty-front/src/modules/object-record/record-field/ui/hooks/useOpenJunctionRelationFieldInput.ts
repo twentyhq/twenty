@@ -1,4 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -19,6 +21,38 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+
+// Extract target object metadata IDs from a field (handles both RELATION and MORPH_RELATION)
+const getTargetObjectMetadataIdsFromField = (
+  field: FieldMetadataItem,
+): string[] => {
+  // Check morphRelations first - fields with morphId may have this populated
+  // even if type isn't explicitly MORPH_RELATION
+  if (isDefined(field.morphRelations) && field.morphRelations.length > 0) {
+    return field.morphRelations
+      .map((mr) => mr.targetObjectMetadata.id)
+      .filter(isDefined);
+  }
+
+  // Fallback to regular relation
+  const targetId = field.relation?.targetObjectMetadata.id;
+  return targetId ? [targetId] : [];
+};
+
+// Get searchable object metadata items from target fields
+const getSearchableObjectMetadataItems = (
+  targetFields: FieldMetadataItem[],
+  objectMetadataItems: ObjectMetadataItem[],
+): ObjectMetadataItem[] => {
+  const targetObjectIds = targetFields.flatMap(
+    getTargetObjectMetadataIdsFromField,
+  );
+  const uniqueTargetObjectIds = [...new Set(targetObjectIds)];
+
+  return uniqueTargetObjectIds
+    .map((id) => objectMetadataItems.find((item) => item.id === id))
+    .filter(isDefined);
+};
 
 export const useOpenJunctionRelationFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
@@ -66,21 +100,9 @@ export const useOpenJunctionRelationFieldInput = () => {
           return;
         }
 
-        const {
-          targetField,
-          morphFields,
-          targetObjectMetadata,
-          isMorphRelation,
-        } = junctionConfig;
-        const targetObjectMetadataId = targetObjectMetadata?.id;
+        const { targetFields } = junctionConfig;
 
-        // For regular relations, require target object metadata
-        if (!isMorphRelation && !isDefined(targetObjectMetadata)) {
-          return;
-        }
-
-        // For morph relations, require morphFields
-        if (isMorphRelation && !isDefined(morphFields)) {
+        if (targetFields.length === 0) {
           return;
         }
 
@@ -103,26 +125,16 @@ export const useOpenJunctionRelationFieldInput = () => {
         // Extract currently selected target objects from junction records
         const selectedTargetRecords = extractTargetRecordsFromJunction({
           junctionRecords,
-          morphFields,
-          targetField,
-          targetObjectMetadataId,
+          targetFields,
           objectMetadataItems,
-          isMorphRelation,
         });
 
-        // Determine searchable object types based on field type
-        // For morph relations, use the target objects from morphFields
-        const searchableObjectMetadataItems =
-          isMorphRelation && isDefined(morphFields)
-            ? morphFields
-                .map((field) =>
-                  objectMetadataItems.find(
-                    (item) =>
-                      item.id === field.relation?.targetObjectMetadata.id,
-                  ),
-                )
-                .filter(isDefined)
-            : [targetObjectMetadata!];
+        // Determine searchable object types based on target fields
+        // Handles both RELATION (via field.relation) and MORPH_RELATION (via field.morphRelations)
+        const searchableObjectMetadataItems = getSearchableObjectMetadataItems(
+          targetFields,
+          objectMetadataItems,
+        );
 
         const pickableMorphItems = selectedTargetRecords.map((record) => ({
           recordId: record.recordId,

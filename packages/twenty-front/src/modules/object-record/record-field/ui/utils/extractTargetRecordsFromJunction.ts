@@ -1,9 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
-type ExtractedTargetRecord = {
+export type ExtractedTargetRecord = {
   recordId: string;
   objectMetadataId: string;
   record?: ObjectRecord;
@@ -11,26 +12,22 @@ type ExtractedTargetRecord = {
 
 type ExtractTargetRecordsFromJunctionArgs = {
   junctionRecords: ObjectRecord[] | undefined | null;
-  // For morph relations - array of all fields in the morph group
-  morphFields?: FieldMetadataItem[];
-  // For regular relations - single target field
-  targetField?: FieldMetadataItem;
-  targetObjectMetadataId?: string;
+  targetFields: FieldMetadataItem[];
   objectMetadataItems: ObjectMetadataItem[];
-  isMorphRelation: boolean;
   includeRecord?: boolean;
 };
 
 export const extractTargetRecordsFromJunction = ({
   junctionRecords,
-  morphFields,
-  targetField,
-  targetObjectMetadataId,
+  targetFields,
   objectMetadataItems,
-  isMorphRelation,
   includeRecord = false,
 }: ExtractTargetRecordsFromJunctionArgs): ExtractedTargetRecord[] => {
   if (!isDefined(junctionRecords) || !Array.isArray(junctionRecords)) {
+    return [];
+  }
+
+  if (targetFields.length === 0) {
     return [];
   }
 
@@ -41,25 +38,12 @@ export const extractTargetRecordsFromJunction = ({
       continue;
     }
 
-    let extracted: ExtractedTargetRecord | null = null;
-
-    if (isMorphRelation && isDefined(morphFields) && morphFields.length > 0) {
-      // Use morphFields to extract - check each morph field's name
-      extracted = extractFromMorphFields(
-        junctionRecord,
-        morphFields,
-        objectMetadataItems,
-        includeRecord,
-      );
-    } else if (isDefined(targetField)) {
-      // Use single target field for regular relations
-      extracted = extractFromRegularRelation(
-        junctionRecord,
-        targetField,
-        targetObjectMetadataId,
-        includeRecord,
-      );
-    }
+    const extracted = extractFromTargetFields(
+      junctionRecord,
+      targetFields,
+      objectMetadataItems,
+      includeRecord,
+    );
 
     if (isDefined(extracted)) {
       extractedRecords.push(extracted);
@@ -69,15 +53,31 @@ export const extractTargetRecordsFromJunction = ({
   return extractedRecords;
 };
 
-// Extract target record from junction using morph fields (checks each field's name)
-const extractFromMorphFields = (
+// Extract target record from junction by checking each target field
+const extractFromTargetFields = (
   junctionRecord: ObjectRecord,
-  morphFields: FieldMetadataItem[],
+  targetFields: FieldMetadataItem[],
   objectMetadataItems: ObjectMetadataItem[],
   includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
-  for (const morphField of morphFields) {
-    const targetObject = junctionRecord[morphField.name];
+  for (const targetField of targetFields) {
+    // For MORPH_RELATION fields, we need to check each morphRelation entry
+    // because the actual field names in the record are computed (e.g., "caretakerPerson", "caretakerCompany")
+    if (targetField.type === FieldMetadataType.MORPH_RELATION) {
+      const result = extractFromMorphRelationField(
+        junctionRecord,
+        targetField,
+        objectMetadataItems,
+        includeRecord,
+      );
+      if (isDefined(result)) {
+        return result;
+      }
+      continue;
+    }
+
+    // For regular RELATION fields, access directly by field name
+    const targetObject = junctionRecord[targetField.name];
 
     if (
       isDefined(targetObject) &&
@@ -85,7 +85,7 @@ const extractFromMorphFields = (
       'id' in targetObject
     ) {
       const targetObjectMetadata = objectMetadataItems.find(
-        (item) => item.id === morphField.relation?.targetObjectMetadata.id,
+        (item) => item.id === targetField.relation?.targetObjectMetadata.id,
       );
 
       if (isDefined(targetObjectMetadata)) {
@@ -101,25 +101,50 @@ const extractFromMorphFields = (
   return null;
 };
 
-const extractFromRegularRelation = (
+// Extract target record from a MORPH_RELATION field by iterating over its morphRelations
+const extractFromMorphRelationField = (
   junctionRecord: ObjectRecord,
   targetField: FieldMetadataItem,
-  targetObjectMetadataId: string | undefined,
+  objectMetadataItems: ObjectMetadataItem[],
   includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
-  const targetObject = junctionRecord[targetField.name];
+  const morphRelations = targetField.morphRelations;
 
-  if (
-    isDefined(targetObject) &&
-    typeof targetObject === 'object' &&
-    'id' in targetObject &&
-    isDefined(targetObjectMetadataId)
-  ) {
-    return {
-      recordId: (targetObject as { id: string }).id,
-      objectMetadataId: targetObjectMetadataId,
-      ...(includeRecord && { record: targetObject as ObjectRecord }),
-    };
+  if (!Array.isArray(morphRelations) || morphRelations.length === 0) {
+    return null;
+  }
+
+  for (const morphRelation of morphRelations) {
+    // Compute the actual field name used in the junction record
+    // e.g., "caretaker" + "Person" -> "caretakerPerson"
+    const computedFieldName = computeMorphRelationFieldName({
+      fieldName: morphRelation.sourceFieldMetadata.name,
+      relationType: morphRelation.type,
+      targetObjectMetadataNameSingular:
+        morphRelation.targetObjectMetadata.nameSingular,
+      targetObjectMetadataNamePlural:
+        morphRelation.targetObjectMetadata.namePlural,
+    });
+
+    const targetObject = junctionRecord[computedFieldName];
+
+    if (
+      isDefined(targetObject) &&
+      typeof targetObject === 'object' &&
+      'id' in targetObject
+    ) {
+      const targetObjectMetadata = objectMetadataItems.find(
+        (item) => item.id === morphRelation.targetObjectMetadata.id,
+      );
+
+      if (isDefined(targetObjectMetadata)) {
+        return {
+          recordId: (targetObject as { id: string }).id,
+          objectMetadataId: targetObjectMetadata.id,
+          ...(includeRecord && { record: targetObject as ObjectRecord }),
+        };
+      }
+    }
   }
 
   return null;

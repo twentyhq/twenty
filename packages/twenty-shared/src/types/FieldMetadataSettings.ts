@@ -41,12 +41,12 @@ export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
-  // For ONE_TO_MANY relations that go through a junction table
-  // For regular RELATION fields on junction (mutually exclusive with junctionMorphId)
-  junctionTargetRelationFieldIds?: string[];
-  // For MORPH_RELATION fields on junction (mutually exclusive with junctionTargetRelationFieldIds)
-  // When set, all fields with matching morphId on the junction object are used as targets
-  junctionMorphId?: string;
+  // For regular RELATION junctions - points to ONE field on the junction object
+  // (mutually exclusive with junctionTargetMorphId)
+  junctionTargetFieldId?: string;
+  // For MORPH_RELATION junctions - auto-discovers all fields with this morphId
+  // (mutually exclusive with junctionTargetFieldId)
+  junctionTargetMorphId?: string;
 };
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];

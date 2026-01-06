@@ -20,8 +20,8 @@ type FieldMetadataItemInputWithRelationFormValues = Partial<
   // Relation form stores these at root level, not inside settings
   relationType?: RelationType;
   // Junction configuration (mutually exclusive)
-  junctionTargetRelationFieldIds?: string[];
-  junctionMorphId?: string;
+  junctionTargetFieldId?: string;
+  junctionTargetMorphId?: string;
 };
 
 export const formatFieldMetadataItemInput = (
@@ -33,21 +33,20 @@ export const formatFieldMetadataItemInput = (
 
   if (
     isDefined(input.relationType) ||
-    isDefined(input.junctionTargetRelationFieldIds) ||
-    isDefined(input.junctionMorphId)
+    isDefined(input.junctionTargetFieldId) ||
+    isDefined(input.junctionTargetMorphId)
   ) {
     // Handle junction config with mutual exclusivity
-    // When junctionMorphId is set, clear junctionTargetRelationFieldIds and vice versa
-    const junctionConfig = isDefined(input.junctionMorphId)
+    // When junctionTargetMorphId is set, clear junctionTargetFieldId and vice versa
+    const junctionConfig = isDefined(input.junctionTargetMorphId)
       ? {
-          junctionMorphId: input.junctionMorphId,
-          junctionTargetRelationFieldIds: undefined,
+          junctionTargetMorphId: input.junctionTargetMorphId,
+          junctionTargetFieldId: undefined,
         }
-      : isDefined(input.junctionTargetRelationFieldIds)
+      : isDefined(input.junctionTargetFieldId)
         ? {
-            junctionTargetRelationFieldIds:
-              input.junctionTargetRelationFieldIds,
-            junctionMorphId: undefined,
+            junctionTargetFieldId: input.junctionTargetFieldId,
+            junctionTargetMorphId: undefined,
           }
         : {};
 

@@ -128,26 +128,16 @@ export const RelationFromManyFieldDisplay = () => {
   }
 
   if (isJunctionRelation && isDefined(junctionConfig)) {
-    const { targetField, morphFields, targetObjectMetadata, isMorphRelation } =
-      junctionConfig;
+    const { targetFields } = junctionConfig;
 
-    // For regular relations, require target object metadata
-    if (!isMorphRelation && !targetObjectMetadata) {
-      return null;
-    }
-
-    // For morph relations, require morphFields
-    if (isMorphRelation && !isDefined(morphFields)) {
+    if (targetFields.length === 0) {
       return null;
     }
 
     const extractedRecords = extractTargetRecordsFromJunction({
       junctionRecords: fieldValue,
-      morphFields,
-      targetField,
-      targetObjectMetadataId: targetObjectMetadata?.id,
+      targetFields,
       objectMetadataItems,
-      isMorphRelation,
       includeRecord: true,
     });
 

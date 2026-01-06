@@ -4,55 +4,55 @@ import { isDefined } from 'twenty-shared/utils';
 
 type FieldMetadataItemSettings = FieldMetadataItem['settings'];
 
-type SettingsWithJunctionFieldIds =
+type SettingsWithJunctionTargetFieldId =
   NonNullable<FieldRelationMetadataSettings> & {
-    junctionTargetRelationFieldIds: string[];
+    junctionTargetFieldId: string;
   };
 
-type SettingsWithJunctionMorphId =
+type SettingsWithJunctionTargetMorphId =
   NonNullable<FieldRelationMetadataSettings> & {
-    junctionMorphId: string;
+    junctionTargetMorphId: string;
   };
 
-// Type guard to check if settings has junctionTargetRelationFieldIds (for regular relations)
-export const hasJunctionTargetRelationFieldIds = (
+// Type guard to check if settings has junctionTargetFieldId (for regular relations)
+export const hasJunctionTargetFieldId = (
   settings:
     | FieldMetadataItemSettings
     | FieldRelationMetadataSettings
     | undefined,
-): settings is SettingsWithJunctionFieldIds => {
+): settings is SettingsWithJunctionTargetFieldId => {
   if (!isDefined(settings) || typeof settings !== 'object') {
     return false;
   }
 
   return (
-    'junctionTargetRelationFieldIds' in settings &&
-    isDefined(settings.junctionTargetRelationFieldIds) &&
-    Array.isArray(settings.junctionTargetRelationFieldIds) &&
-    settings.junctionTargetRelationFieldIds.length > 0
+    'junctionTargetFieldId' in settings &&
+    isDefined(settings.junctionTargetFieldId) &&
+    typeof settings.junctionTargetFieldId === 'string' &&
+    settings.junctionTargetFieldId.length > 0
   );
 };
 
-// Type guard to check if settings has junctionMorphId (for morph relations)
-export const hasJunctionMorphId = (
+// Type guard to check if settings has junctionTargetMorphId (for morph relations)
+export const hasJunctionTargetMorphId = (
   settings:
     | FieldMetadataItemSettings
     | FieldRelationMetadataSettings
     | undefined,
-): settings is SettingsWithJunctionMorphId => {
+): settings is SettingsWithJunctionTargetMorphId => {
   if (!isDefined(settings) || typeof settings !== 'object') {
     return false;
   }
 
   return (
-    'junctionMorphId' in settings &&
-    isDefined(settings.junctionMorphId) &&
-    typeof settings.junctionMorphId === 'string' &&
-    settings.junctionMorphId.length > 0
+    'junctionTargetMorphId' in settings &&
+    isDefined(settings.junctionTargetMorphId) &&
+    typeof settings.junctionTargetMorphId === 'string' &&
+    settings.junctionTargetMorphId.length > 0
   );
 };
 
-// Check if field has any junction configuration (either morphId or fieldIds)
+// Check if field has any junction configuration
 export const hasJunctionConfig = (
   settings:
     | FieldMetadataItemSettings
@@ -60,6 +60,6 @@ export const hasJunctionConfig = (
     | undefined,
 ): boolean => {
   return (
-    hasJunctionTargetRelationFieldIds(settings) || hasJunctionMorphId(settings)
+    hasJunctionTargetFieldId(settings) || hasJunctionTargetMorphId(settings)
   );
 };
