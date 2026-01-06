@@ -1,12 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
@@ -98,13 +98,28 @@ export const transformGroupByDataToPieChartData = ({
     rawValue: string | null | undefined;
   };
 
+  const isSelectField = isFieldMetadataSelectKind(groupByField.type);
+  const useSelectOptionColors =
+    isSelectField && (!isDefined(configuration.color) || configuration.color === 'auto');
+
   const unsortedDataWithRawValues: PieChartDataItemWithRawValue[] =
-    limitedProcessedDataPoints.map(({ xValue, rawXValue, aggregateValue }) => ({
-      id: xValue,
-      value: aggregateValue,
-      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
-      rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
-    }));
+    limitedProcessedDataPoints.map(({ xValue, rawXValue, aggregateValue }) => {
+      const rawValueString = isDefined(rawXValue) ? String(rawXValue) : null;
+
+      const color: GraphColor | undefined = useSelectOptionColors
+        ? getSelectOptionColorForValue({
+            rawValue: rawValueString,
+            selectOptions: groupByField.options,
+          })
+        : (configuration.color as GraphColor | undefined);
+
+      return {
+        id: xValue,
+        value: aggregateValue,
+        color,
+        rawValue: rawValueString,
+      };
+    });
 
   const sortedDataWithRawValues = sortChartData({
     data: unsortedDataWithRawValues,

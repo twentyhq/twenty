@@ -7,6 +7,7 @@ import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
@@ -25,11 +26,12 @@ export const useLineChartData = ({
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
+      const hasExplicitColor = isDefined(series.color);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
         fallbackIndex: index,
-        totalGroups: data.length,
+        totalGroups: hasExplicitColor ? undefined : data.length,
       });
 
       const sanitizedSeriesId = series.id

@@ -10,6 +10,8 @@ import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+
 type UseBarChartDataProps = {
   data: BarDatum[];
   indexBy: string;
@@ -18,6 +20,7 @@ type UseBarChartDataProps = {
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
+  indexValueColors?: Map<string, GraphColor>;
 };
 
 export const useBarChartData = ({
@@ -27,6 +30,7 @@ export const useBarChartData = ({
   series,
   colorRegistry,
   seriesLabels,
+  indexValueColors,
 }: UseBarChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
@@ -39,11 +43,12 @@ export const useBarChartData = ({
 
   const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
+    const hasExplicitColor = isDefined(seriesConfig?.color);
     const colorScheme = getColorScheme({
       registry: colorRegistry,
       colorName: seriesConfig?.color,
       fallbackIndex: index,
-      totalGroups: keys.length,
+      totalGroups: hasExplicitColor ? undefined : keys.length,
     });
 
     return {
@@ -73,16 +78,32 @@ export const useBarChartData = ({
         if (!isDefined(enrichedKey)) {
           return [];
         }
+
+        const indexValueColor = indexValueColors?.get(String(indexValue));
+        const colorScheme = isDefined(indexValueColor)
+          ? getColorScheme({
+              registry: colorRegistry,
+              colorName: indexValueColor,
+            })
+          : enrichedKey.colorScheme;
+
         return [
           {
             key,
             indexValue,
-            colorScheme: enrichedKey.colorScheme,
+            colorScheme,
           },
         ];
       });
     });
-  }, [data, indexBy, visibleKeys, allEnrichedKeys]);
+  }, [
+    data,
+    indexBy,
+    visibleKeys,
+    allEnrichedKeys,
+    indexValueColors,
+    colorRegistry,
+  ]);
 
   return {
     seriesConfigMap,

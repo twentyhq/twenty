@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
@@ -8,10 +7,12 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
 import {
+  isDefined,
   type FirstDayOfTheWeek,
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
@@ -36,6 +37,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  indexValueColors?: Map<string, GraphColor>;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -96,11 +98,35 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
   );
 
+  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
+  const useSelectOptionColors =
+    isSelectField &&
+    (!isDefined(configuration.color) || configuration.color === 'auto');
+
+  const indexValueColors = useSelectOptionColors
+    ? new Map<string, GraphColor>(
+        processedDataPoints
+          .map(({ xValue, rawXValue }) => {
+            const rawValueString = isDefined(rawXValue)
+              ? String(rawXValue)
+              : null;
+            const color = getSelectOptionColorForValue({
+              rawValue: rawValueString,
+              selectOptions: groupByFieldX.options,
+            });
+            return color ? ([xValue, color] as const) : null;
+          })
+          .filter(isDefined),
+      )
+    : undefined;
+
   const series: BarChartSeries[] = [
     {
       key: aggregateValueKey,
       label: aggregateField.label,
-      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
+      color: useSelectOptionColors
+        ? undefined
+        : (configuration.color as GraphColor | undefined),
     },
   ];
 
@@ -121,5 +147,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups:
       rawResults.length > BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     formattedToRawLookup,
+    indexValueColors,
   };
 };

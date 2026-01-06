@@ -3,6 +3,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { type BarDatum } from '@nivo/bar';
@@ -51,11 +52,25 @@ export const sortTwoDimensionalBarChartData = ({
     getFormattedValue: (item) => item,
   });
 
-  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => ({
-    key,
-    label: key,
-    color: color as GraphColor,
-  }));
+  const useSelectOptionColors =
+    isDefined(secondaryAxisSelectFieldOptions) &&
+    (!isDefined(color) || color === 'auto');
+
+  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => {
+    const rawValue = secondaryAxisFormattedToRawLookup?.get(key);
+    const selectColor = useSelectOptionColors
+      ? getSelectOptionColorForValue({
+          rawValue: isDefined(rawValue) ? String(rawValue) : key,
+          selectOptions: secondaryAxisSelectFieldOptions,
+        })
+      : undefined;
+
+    return {
+      key,
+      label: key,
+      color: selectColor ?? (color as GraphColor | undefined),
+    };
+  });
 
   let sortedData: BarDatum[] = data;
 

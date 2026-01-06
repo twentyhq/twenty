@@ -7,6 +7,7 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UsePieChartDataProps = {
   data: PieChartDataItem[];
@@ -25,11 +26,12 @@ export const usePieChartData = ({
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
     return data.map((item, index) => {
+      const hasExplicitColor = isDefined(item.color);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
         fallbackIndex: index,
-        totalGroups: data.length,
+        totalGroups: hasExplicitColor ? undefined : data.length,
       });
 
       const percentage = calculatePieChartPercentage(item.value, totalValue);

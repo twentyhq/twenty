@@ -47,6 +47,7 @@ export const GraphWidgetBarChartRenderer = () => {
     loading,
     hasTooManyGroups,
     formattedToRawLookup,
+    indexValueColors,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -129,6 +130,7 @@ export const GraphWidgetBarChartRenderer = () => {
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
         onBarClick={isPageLayoutInEditMode ? undefined : handleBarClick}
+        indexValueColors={indexValueColors}
       />
     </Suspense>
   );
