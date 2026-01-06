@@ -1,4 +1,5 @@
 import { type BullMQDriverOptions } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
+import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 export enum MessageQueueDriverType {
   BullMQ = 'bull-mq',
@@ -8,6 +9,7 @@ export enum MessageQueueDriverType {
 export interface BullMQDriverFactoryOptions {
   type: MessageQueueDriverType.BullMQ;
   options: BullMQDriverOptions;
+  metricsService: MetricsService;
 }
 
 export interface SyncDriverFactoryOptions {
