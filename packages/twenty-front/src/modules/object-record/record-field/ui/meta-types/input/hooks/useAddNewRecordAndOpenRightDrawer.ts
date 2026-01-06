@@ -6,12 +6,12 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { getOperationName } from '@apollo/client/utilities';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -62,28 +62,12 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   return {
     createNewRecordAndOpenRightDrawer: async (searchInput?: string) => {
       const newRecordId = v4();
-      const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
-        relationObjectMetadataItem,
-      )?.type;
-      const createRecordPayload: {
-        id: string;
-        name:
-          | string
-          | { firstName: string | undefined; lastName: string | undefined };
-        [key: string]: any;
-      } =
-        labelIdentifierType === FieldMetadataType.FULL_NAME
-          ? {
-              id: newRecordId,
-              name:
-                searchInput && searchInput.split(' ').length > 1
-                  ? {
-                      firstName: searchInput.split(' ')[0],
-                      lastName: searchInput.split(' ').slice(1).join(' '),
-                    }
-                  : { firstName: searchInput, lastName: '' },
-            }
-          : { id: newRecordId, name: searchInput ?? '' };
+
+      const createRecordPayload = buildRecordLabelPayload({
+        id: newRecordId,
+        searchInput,
+        objectMetadataItem: relationObjectMetadataItem,
+      });
 
       if (relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE) {
         const gqlField =
@@ -97,7 +81,8 @@ export const useAddNewRecordAndOpenRightDrawer = ({
                 targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
               });
 
-        createRecordPayload[`${gqlField}Id`] = recordId;
+        (createRecordPayload as Record<string, unknown>)[`${gqlField}Id`] =
+          recordId;
       }
 
       await createOneRecord(createRecordPayload);
