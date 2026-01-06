@@ -1,8 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const getFieldMetadataItemInitialValues = (
   fieldMetadataItem: FieldMetadataItem | null | undefined,
@@ -22,7 +24,13 @@ export const getFieldMetadataItemInitialValues = (
   const defaultValue = fieldMetadataItem.defaultValue
     ? {
         amountMicros: fieldMetadataItem.defaultValue.amountMicros ?? null,
-        currencyCode: fieldMetadataItem.defaultValue.currencyCode,
+        currencyCode: isNonEmptyString(
+          stripSimpleQuotesFromString(
+            fieldMetadataItem.defaultValue.currencyCode,
+          ),
+        )
+          ? fieldMetadataItem.defaultValue.currencyCode
+          : applySimpleQuotesToString(CurrencyCode.USD),
       }
     : {
         amountMicros: null,

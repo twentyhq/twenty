@@ -34,10 +34,10 @@ import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconArchive,
-    IconArchiveOff,
-    IconTrash,
+  H2Title,
+  IconArchive,
+  IconArchiveOff,
+  IconTrash,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -108,9 +108,8 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  const { settings, defaultValue } = getFieldMetadataItemInitialValues(
-    fieldMetadataItem,
-  );
+  const { settings, defaultValue } =
+    getFieldMetadataItemInitialValues(fieldMetadataItem);
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
