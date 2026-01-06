@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 
-import type { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
