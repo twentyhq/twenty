@@ -180,7 +180,7 @@ export const validateWidgetConfigurationInput = ({
       );
     default:
       throw new PageLayoutWidgetException(
-        `Unsupported configuration type: ${configurationType}`,
+        `Invalid configuration type: ${configurationType}`,
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
   }
