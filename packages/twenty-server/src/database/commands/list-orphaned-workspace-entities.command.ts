@@ -152,6 +152,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       .getMany();
 
     const processedIds = new Set<string>();
+    const fieldsMap = new Map(fields.map((field) => [field.id, field]));
     const chunks: string[][] = [];
     let currentChunk: string[] = [];
 
@@ -164,8 +165,8 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       processedIds.add(field.id);
 
       if (field.relationTargetFieldMetadataId) {
-        const relatedField = fields.find(
-          (f) => f.id === field.relationTargetFieldMetadataId,
+        const relatedField = fieldsMap.get(
+          field.relationTargetFieldMetadataId,
         );
 
         if (relatedField && !processedIds.has(relatedField.id)) {
