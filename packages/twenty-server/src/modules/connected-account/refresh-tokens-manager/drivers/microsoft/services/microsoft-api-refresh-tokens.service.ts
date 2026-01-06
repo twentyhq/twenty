@@ -12,21 +12,19 @@ import { parseMsalError } from 'src/modules/connected-account/refresh-tokens-man
 
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
-  private msalClient: ConfidentialClientApplication;
+  constructor(private readonly config: TwentyConfigService) {}
 
-  constructor(private readonly config: TwentyConfigService) {
-    this.msalClient = new ConfidentialClientApplication({
+  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
+    const msalClient = new ConfidentialClientApplication({
       auth: {
         clientId: this.config.get('AUTH_MICROSOFT_CLIENT_ID'),
         clientSecret: this.config.get('AUTH_MICROSOFT_CLIENT_SECRET'),
         authority: 'https://login.microsoftonline.com/common',
       },
     });
-  }
 
-  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
     try {
-      const response = await this.msalClient.acquireTokenByRefreshToken({
+      const response = await msalClient.acquireTokenByRefreshToken({
         refreshToken,
         scopes: ['https://graph.microsoft.com/.default'],
         forceCache: true,
@@ -39,11 +37,9 @@ export class MicrosoftAPIRefreshAccessTokenService {
         );
       }
 
-      const freshRefreshToken = this.extractMicrosoftRefreshTokenFromCache();
-
       return {
         accessToken: response.accessToken,
-        refreshToken: freshRefreshToken,
+        refreshToken: this.extractRefreshTokenFromCache(msalClient),
       };
     } catch (error) {
       if (error instanceof ConnectedAccountRefreshAccessTokenException) {
@@ -54,12 +50,10 @@ export class MicrosoftAPIRefreshAccessTokenService {
     }
   }
 
-  /**
-   * Extracts the refresh token from the MSAL token cache.
-   * @see https://github.com/duolingo/metasearch/blob/3d782bba8c0068461acb442d89e7d555df5d0025/src/oauth.microsoft.ts#L42-L44
-   */
-  private extractMicrosoftRefreshTokenFromCache(): string {
-    const tokenCache = JSON.parse(this.msalClient.getTokenCache().serialize());
+  private extractRefreshTokenFromCache(
+    msalClient: ConfidentialClientApplication,
+  ): string {
+    const tokenCache = JSON.parse(msalClient.getTokenCache().serialize());
     const refreshTokenKey = Object.keys(tokenCache.RefreshToken)[0];
 
     return tokenCache.RefreshToken[refreshTokenKey].secret;
