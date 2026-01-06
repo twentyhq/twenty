@@ -228,7 +228,6 @@ describe('If/Else Workflow (e2e)', () => {
 
     expect(updateIfElseStepResponse.body.errors).toBeUndefined();
 
-    // Create else-if branch with filter: number === 20
     const createEmptyNodeResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -488,9 +487,9 @@ describe('If/Else Workflow (e2e)', () => {
       expect(ifElseStep).toBeDefined();
       expect(ifElseStep.type).toBe('IF_ELSE');
       expect(ifElseStep.name).toBe('If/Else');
-      expect(ifElseStep.settings.input.branches.length).toBe(2);
+      expect(ifElseStep.settings.input.branches.length).toBe(3);
 
-      const { ifBranch, elseBranch } = identifyBranches(
+      const { ifBranch, elseBranch, elseIfBranches } = identifyBranches(
         ifElseStep.settings.input.branches,
       );
 
@@ -498,6 +497,10 @@ describe('If/Else Workflow (e2e)', () => {
       expect(elseBranch?.filterGroupId).toBeUndefined();
       expect(ifBranch?.nextStepIds).toContain(ifBranchEmptyNodeId);
       expect(elseBranch?.nextStepIds).toContain(elseBranchEmptyNodeId);
+
+      expect(elseIfBranches.length).toBe(1);
+      expect(elseIfBranches[0].filterGroupId).toBeDefined();
+      expect(elseIfBranches[0].nextStepIds).toContain(elseIfBranchEmptyNodeId);
     });
   });
 
