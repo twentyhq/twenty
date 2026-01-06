@@ -29,6 +29,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
       const response = await this.msalClient.acquireTokenByRefreshToken({
         refreshToken,
         scopes: ['https://graph.microsoft.com/.default'],
+        forceCache: true,
       });
 
       if (!response) {
@@ -38,9 +39,11 @@ export class MicrosoftAPIRefreshAccessTokenService {
         );
       }
 
+      const freshRefreshToken = this.extractMicrosoftRefreshTokenFromCache();
+
       return {
         accessToken: response.accessToken,
-        refreshToken,
+        refreshToken: freshRefreshToken,
       };
     } catch (error) {
       if (error instanceof ConnectedAccountRefreshAccessTokenException) {
@@ -49,5 +52,16 @@ export class MicrosoftAPIRefreshAccessTokenService {
 
       throw parseMsalError(error);
     }
+  }
+
+  /**
+   * Extracts the refresh token from the MSAL token cache.
+   * @see https://github.com/duolingo/metasearch/blob/3d782bba8c0068461acb442d89e7d555df5d0025/src/oauth.microsoft.ts#L42-L44
+   */
+  private extractMicrosoftRefreshTokenFromCache(): string {
+    const tokenCache = JSON.parse(this.msalClient.getTokenCache().serialize());
+    const refreshTokenKey = Object.keys(tokenCache.RefreshToken)[0];
+
+    return tokenCache.RefreshToken[refreshTokenKey].secret;
   }
 }
