@@ -5,4 +5,3 @@ export type ExtractedTargetRecord = {
   objectMetadataId: string;
   record?: ObjectRecord;
 };
-

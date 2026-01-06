@@ -11,4 +11,3 @@ type SettingsInput =
 
 export const hasJunctionConfig = (settings: SettingsInput): boolean =>
   hasJunctionTargetFieldId(settings) || hasJunctionTargetMorphId(settings);
-

@@ -22,4 +22,3 @@ export const hasJunctionTargetFieldId = (
   const value = (settings as Record<string, unknown>).junctionTargetFieldId;
   return typeof value === 'string' && value.length > 0;
 };
-

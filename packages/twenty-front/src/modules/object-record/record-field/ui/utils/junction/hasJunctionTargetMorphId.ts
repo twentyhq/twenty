@@ -22,4 +22,3 @@ export const hasJunctionTargetMorphId = (
   const value = (settings as Record<string, unknown>).junctionTargetMorphId;
   return typeof value === 'string' && value.length > 0;
 };
-

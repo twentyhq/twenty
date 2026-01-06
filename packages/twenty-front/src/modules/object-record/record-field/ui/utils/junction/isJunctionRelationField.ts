@@ -7,4 +7,3 @@ export const isJunctionRelationField = (
 ): boolean =>
   fieldMetadataItem.type === FieldMetadataType.RELATION &&
   hasJunctionConfig(fieldMetadataItem.settings);
-

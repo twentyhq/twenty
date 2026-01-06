@@ -99,4 +99,3 @@ export const getJunctionConfig = ({
 
   return null;
 };
-

@@ -16,4 +16,3 @@ export const getSearchableObjectMetadataItems = (
     .map((id) => objectMetadataItems.find((item) => item.id === id))
     .filter(isDefined);
 };
-

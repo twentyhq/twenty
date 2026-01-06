@@ -15,4 +15,3 @@ export const getTargetObjectMetadataIdsFromField = (
   const targetId = field.relation?.targetObjectMetadata.id;
   return targetId ? [targetId] : [];
 };
-
