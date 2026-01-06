@@ -362,12 +362,14 @@ export type BarChartConfiguration = {
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -1365,7 +1367,6 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_RUN_STOPPAGE_ENABLED = 'IS_WORKFLOW_RUN_STOPPAGE_ENABLED',
   IS_WORKSPACE_CREATION_V2_ENABLED = 'IS_WORKSPACE_CREATION_V2_ENABLED'
 }
 
@@ -1562,6 +1563,9 @@ export type GetWebhookInput = {
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
   FIELD_DESC = 'FIELD_DESC',
+  FIELD_POSITION_ASC = 'FIELD_POSITION_ASC',
+  FIELD_POSITION_DESC = 'FIELD_POSITION_DESC',
+  MANUAL = 'MANUAL',
   VALUE_ASC = 'VALUE_ASC',
   VALUE_DESC = 'VALUE_DESC'
 }
@@ -1770,12 +1774,14 @@ export type LineChartConfiguration = {
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -3291,6 +3297,7 @@ export type PieChartConfiguration = {
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   hideEmptyCategory?: Maybe<Scalars['Boolean']>;
+  manualSortOrder?: Maybe<Array<Scalars['String']>>;
   orderBy?: Maybe<GraphOrderBy>;
   showCenterMetric?: Maybe<Scalars['Boolean']>;
   timezone?: Maybe<Scalars['String']>;
@@ -4287,12 +4294,13 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Scalars['String'];
+  event: OnDbEvent;
+  subscriptionIds: Array<Scalars['String']>;
 };
 
 export type SubscriptionMatches = {
   __typename?: 'SubscriptionMatches';
-  subscriptions: Array<SubscriptionMatch>;
+  matches: Array<SubscriptionMatch>;
 };
 
 export enum SubscriptionStatus {

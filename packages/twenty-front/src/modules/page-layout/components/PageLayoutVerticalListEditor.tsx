@@ -1,4 +1,4 @@
-import { useShouldUseWhiteBackground } from '@/page-layout/hooks/useShouldUseWhiteBackground';
+import { usePageLayoutShouldUseWhiteBackground } from '@/page-layout/hooks/usePageLayoutShouldUseWhiteBackground';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -42,7 +42,7 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
-  const { shouldUseWhiteBackground } = useShouldUseWhiteBackground();
+  const { shouldUseWhiteBackground } = usePageLayoutShouldUseWhiteBackground();
 
   const setDraggingWidgetId = useSetRecoilComponentState(
     pageLayoutDraggingWidgetIdComponentState,
