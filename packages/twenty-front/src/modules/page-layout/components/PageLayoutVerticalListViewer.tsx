@@ -1,4 +1,4 @@
-import { useShouldUseWhiteBackground } from '@/page-layout/hooks/useShouldUseWhiteBackground';
+import { usePageLayoutShouldUseWhiteBackground } from '@/page-layout/hooks/usePageLayoutShouldUseWhiteBackground';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
@@ -22,7 +22,7 @@ type PageLayoutVerticalListViewerProps = {
 export const PageLayoutVerticalListViewer = ({
   widgets,
 }: PageLayoutVerticalListViewerProps) => {
-  const { shouldUseWhiteBackground } = useShouldUseWhiteBackground();
+  const { shouldUseWhiteBackground } = usePageLayoutShouldUseWhiteBackground();
 
   return (
     <StyledVerticalListContainer
