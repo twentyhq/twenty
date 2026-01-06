@@ -46,9 +46,11 @@ export const findMatchingBranch = ({
   stepFilterGroups: StepFilterGroup[];
   resolvedFilters: ResolvedFilter[];
 }): StepIfElseBranch => {
-  const matchingBranch = branches.find((branch) => {
+  // First, try to find a matching IF/ELSE-IF branch (branches with filterGroupId)
+  for (const branch of branches) {
     if (!isDefined(branch.filterGroupId)) {
-      return true;
+      // Skip ELSE branch for now - we'll check it after all IF/ELSE-IF branches
+      continue;
     }
 
     const branchFilterGroups = Array.from(
@@ -60,18 +62,27 @@ export const findMatchingBranch = ({
       branchFilterGroupIds.has(filter.stepFilterGroupId),
     );
 
-    return evaluateFilterConditions({
+    const matches = evaluateFilterConditions({
       filterGroups: branchFilterGroups,
       filters: branchFilters,
     });
-  });
 
-  if (!isDefined(matchingBranch)) {
+    if (matches) {
+      return branch;
+    }
+  }
+
+  // If no IF/ELSE-IF branch matched, find the ELSE branch (branch without filterGroupId)
+  const elseBranch = branches.find(
+    (branch) => !isDefined(branch.filterGroupId),
+  );
+
+  if (!isDefined(elseBranch)) {
     throw new WorkflowStepExecutorException(
       'No matching branch found in if-else action',
       WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
     );
   }
 
-  return matchingBranch;
+  return elseBranch;
 };

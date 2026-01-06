@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -363,7 +362,14 @@ describe('If/Else Workflow (e2e)', () => {
   });
 
   describe('If/Else branching execution', () => {
-    const getIfElseStepWithBranches = async () => {
+    const getIfElseStepWithBranches = async (): Promise<{
+      id: string;
+      settings: {
+        input: {
+          branches: StepIfElseBranch[];
+        };
+      };
+    }> => {
       const getWorkflowVersionResponse = await client
         .post('/graphql')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -436,11 +442,15 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
-      const { ifBranch } = identifyBranches(ifElseStep.settings.input.branches);
+      const { ifBranch, elseBranch } = identifyBranches(
+        ifElseStep.settings.input.branches,
+      );
 
-      console.log('matchedBranch', matchedBranch);
-      console.log('ifBranch', ifBranch);
-
+      expect(ifBranch).toBeDefined();
+      expect(elseBranch).toBeDefined();
+      expect(ifBranch?.filterGroupId).toBeDefined();
+      expect(elseBranch?.filterGroupId).toBeUndefined();
+      // Verify matched branch is the IF branch by filterGroupId and nextStepIds
       expect(matchedBranch.filterGroupId).toBeDefined();
       expect(matchedBranch.filterGroupId).toBe(ifBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
@@ -482,13 +492,15 @@ describe('If/Else Workflow (e2e)', () => {
         );
       }
 
-      const { elseBranch } = identifyBranches(
+      const { ifBranch, elseBranch } = identifyBranches(
         ifElseStep.settings.input.branches,
       );
 
-      console.log('matchedBranch', matchedBranch);
-      console.log('elseBranch', elseBranch);
-
+      expect(ifBranch).toBeDefined();
+      expect(elseBranch).toBeDefined();
+      expect(ifBranch?.filterGroupId).toBeDefined();
+      expect(elseBranch?.filterGroupId).toBeUndefined();
+      // Verify matched branch is the ELSE branch (no filterGroupId)
       expect(matchedBranch.filterGroupId).toBeUndefined();
       expect(matchedBranch.filterGroupId).toBe(elseBranch?.filterGroupId);
       expect(matchedBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
