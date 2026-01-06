@@ -8,45 +8,67 @@ export type TargetFieldInfo = {
   settings?: FieldRelationMetadataSettings;
 };
 
+const findMorphTargetFieldInfo = (
+  field: FieldMetadataItem,
+  targetObjectMetadataId: string,
+  objectMetadataItems: ObjectMetadataItem[],
+): TargetFieldInfo | undefined => {
+  if (!isDefined(field.morphRelations) || field.morphRelations.length === 0) {
+    return undefined;
+  }
+
+  const matchingMorphRelation = field.morphRelations.find(
+    (morphRelation) =>
+      morphRelation.targetObjectMetadata.id === targetObjectMetadataId,
+  );
+
+  if (!isDefined(matchingMorphRelation)) {
+    return undefined;
+  }
+
+  const targetObjectMetadata = objectMetadataItems.find(
+    (item) => item.id === targetObjectMetadataId,
+  );
+
+  if (!isDefined(targetObjectMetadata)) {
+    return undefined;
+  }
+
+  const fieldName = computeMorphRelationFieldName({
+    fieldName: matchingMorphRelation.sourceFieldMetadata.name,
+    relationType: matchingMorphRelation.type,
+    targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
+    targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
+  });
+
+  // For morph relations, don't pass settings because the field's joinColumnName
+  // refers to the first/primary target, not the computed target field name.
+  return { fieldName, settings: undefined };
+};
+
 export const findTargetFieldInfo = (
   targetFields: FieldMetadataItem[],
   targetObjectMetadataId: string,
   objectMetadataItems: ObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
   for (const field of targetFields) {
-    // Check morphRelations first - fields with morphId may have this populated
-    if (isDefined(field.morphRelations) && field.morphRelations.length > 0) {
-      const matchingMorphRelation = field.morphRelations.find(
-        (morphRelation) =>
-          morphRelation.targetObjectMetadata.id === targetObjectMetadataId,
-      );
+    const morphResult = findMorphTargetFieldInfo(
+      field,
+      targetObjectMetadataId,
+      objectMetadataItems,
+    );
 
-      if (isDefined(matchingMorphRelation)) {
-        const targetObjectMetadata = objectMetadataItems.find(
-          (item) => item.id === targetObjectMetadataId,
-        );
+    if (isDefined(morphResult)) {
+      return morphResult;
+    }
 
-        if (isDefined(targetObjectMetadata)) {
-          const fieldName = computeMorphRelationFieldName({
-            fieldName: matchingMorphRelation.sourceFieldMetadata.name,
-            relationType: matchingMorphRelation.type,
-            targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
-            targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
-          });
-          // For morph relations, don't pass settings because the field's joinColumnName
-          // refers to the first/primary target, not the computed target field name.
-          return { fieldName, settings: undefined };
-        }
-      }
-    } else if (
-      field.relation?.targetObjectMetadata.id === targetObjectMetadataId
-    ) {
-      // For regular relations, use the field name and settings directly
+    if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
       return {
         fieldName: field.name,
         settings: field.settings as FieldRelationMetadataSettings,
       };
     }
   }
+
   return undefined;
 };

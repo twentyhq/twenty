@@ -4,7 +4,6 @@ export {
   findTargetFieldInfo,
   type TargetFieldInfo,
 } from './findTargetFieldInfo';
-export { getJoinColumnName } from './getJoinColumnName';
 export { getJunctionConfig, type JunctionConfig } from './getJunctionConfig';
 export { getSearchableObjectMetadataItems } from './getSearchableObjectMetadataItems';
 export { getTargetObjectMetadataIdsFromField } from './getTargetObjectMetadataIdsFromField';

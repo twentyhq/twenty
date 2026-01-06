@@ -18,7 +18,6 @@ import {
 import {
   findJunctionRecordByTargetId,
   findTargetFieldInfo,
-  getJoinColumnName,
   getJunctionConfig,
 } from '@/object-record/record-field/ui/utils/junction';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
@@ -87,12 +86,9 @@ export const useUpdateJunctionRelationFromCell = ({
           return;
         }
 
-        const sourceFieldName = sourceFieldOnJunction.name;
-        const sourceJoinColumnName = getJoinColumnName({
-          fieldName: sourceFieldName,
-          settings:
-            sourceFieldOnJunction.settings as FieldRelationMetadataSettings,
-        });
+        const sourceJoinColumnName = (
+          sourceFieldOnJunction.settings as FieldRelationMetadataSettings
+        )?.joinColumnName;
         const fieldName = fieldDefinition.metadata.fieldName;
         const junctionObjectName = junctionObjectMetadata.nameSingular;
 
@@ -109,10 +105,7 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         const targetFieldName = targetFieldInfo.fieldName;
-        const targetJoinColumnName = getJoinColumnName({
-          fieldName: targetFieldName,
-          settings: targetFieldInfo.settings,
-        });
+        const targetJoinColumnName = targetFieldInfo.settings?.joinColumnName;
 
         // Read current junction records from the store (always fresh)
         const currentJunctionRecords =
