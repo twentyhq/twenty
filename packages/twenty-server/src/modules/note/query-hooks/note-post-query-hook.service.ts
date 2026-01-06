@@ -4,6 +4,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -72,4 +73,3 @@ export class NotePostQueryHookService {
     );
   }
 }
-

@@ -16,4 +16,3 @@ import { TaskRestoreOnePostQueryHook } from 'src/modules/task/query-hooks/task-r
   ],
 })
 export class TaskQueryHookModule {}
-
