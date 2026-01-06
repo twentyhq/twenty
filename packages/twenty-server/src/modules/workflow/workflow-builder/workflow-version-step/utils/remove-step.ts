@@ -85,10 +85,7 @@ export const removeStep = ({
 
   const allRemovedStepIds = [stepIdToDelete, ...emptyChildStepIds];
 
-  const allStepToDeleteChildrenIds = [
-    ...(stepToDeleteChildrenIds || []),
-    ...emptyChildStepIds,
-  ];
+  const allStepToDeleteChildrenIds = [...(stepToDeleteChildrenIds || [])];
 
   const updatedSteps =
     existingSteps
