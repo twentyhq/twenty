@@ -464,6 +464,13 @@ export class PageLayoutService {
       );
     }
 
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+      },
+    );
+
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
