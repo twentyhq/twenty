@@ -12,7 +12,6 @@ import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
-import { type SliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/SliceHoverData';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
@@ -181,12 +180,19 @@ export const GraphWidgetBarChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleSliceHover = (sliceData: SliceHoverData | null) => {
+  const handleSliceHover = (
+    sliceData: {
+      slice: BarChartSlice;
+      offsetLeft: number;
+      offsetTop: number;
+    } | null,
+  ) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
       setActiveBarTooltip({
         slice: sliceData.slice,
-        anchorElement: sliceData.virtualElement,
+        offsetLeft: sliceData.offsetLeft,
+        offsetTop: sliceData.offsetTop,
       });
     } else {
       debouncedHideTooltip();
@@ -265,7 +271,6 @@ export const GraphWidgetBarChart = ({
         marginLeft={margins.left}
         marginTop={margins.top}
         layout={layout}
-        groupMode={groupMode ?? 'grouped'}
         onSliceHover={handleSliceHover}
         onSliceClick={onSliceClick}
         onSliceLeave={handleSliceLeave}

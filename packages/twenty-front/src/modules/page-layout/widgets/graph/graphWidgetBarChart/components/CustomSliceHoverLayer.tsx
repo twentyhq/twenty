@@ -1,19 +1,24 @@
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
-import { type SliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/SliceHoverData';
-import { buildSliceHoverData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/buildSliceHoverData';
-import { computeBarChartSlices } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartSlices';
+import { computeSliceHighlightPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceHighlightPosition';
+import { computeSlicesFromBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSlicesFromBars';
+import { findAnchorBarInSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findAnchorBarInSlice';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { animated, useSpring } from '@react-spring/web';
-import { useMemo, type MouseEvent } from 'react';
+import { useCallback, useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
+
+type SliceHoverCallbackData = {
+  slice: BarChartSlice;
+  offsetLeft: number;
+  offsetTop: number;
+};
 
 type CustomSliceHoverLayerProps = {
   bars: readonly ComputedBarDatum<BarDatum>[];
@@ -22,8 +27,7 @@ type CustomSliceHoverLayerProps = {
   marginLeft: number;
   marginTop: number;
   layout: BarChartLayout;
-  groupMode: 'grouped' | 'stacked';
-  onSliceHover: (data: SliceHoverData | null) => void;
+  onSliceHover: (data: SliceHoverCallbackData | null) => void;
   onSliceClick?: (slice: BarChartSlice) => void;
   onSliceLeave: () => void;
 };
@@ -35,7 +39,6 @@ export const CustomSliceHoverLayer = ({
   marginLeft,
   marginTop,
   layout,
-  groupMode,
   onSliceHover,
   onSliceClick,
   onSliceLeave,
@@ -51,28 +54,64 @@ export const CustomSliceHoverLayer = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const isVertical = layout === BarChartLayout.VERTICAL;
+  const isVerticalLayout = layout === BarChartLayout.VERTICAL;
 
   const slices = useMemo(
-    () =>
-      computeBarChartSlices({
-        bars,
-        layout,
-      }),
-    [bars, layout],
+    () => computeSlicesFromBars({ bars, isVerticalLayout }),
+    [bars, isVerticalLayout],
+  );
+
+  const findSliceAtMousePosition = useCallback(
+    (event: MouseEvent<SVGRectElement>) => {
+      const svgBoundingRectangle =
+        event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+
+      if (!isDefined(svgBoundingRectangle) || slices.length === 0) {
+        return null;
+      }
+
+      const mousePositionX =
+        event.clientX - svgBoundingRectangle.left - marginLeft;
+      const mousePositionY =
+        event.clientY - svgBoundingRectangle.top - marginTop;
+
+      const positionAlongAxis = isVerticalLayout
+        ? mousePositionX
+        : mousePositionY;
+
+      const nearestSlice = slices.reduce((nearest, slice) => {
+        const currentDistance = Math.abs(slice.sliceCenter - positionAlongAxis);
+        const nearestDistance = Math.abs(
+          nearest.sliceCenter - positionAlongAxis,
+        );
+        return currentDistance < nearestDistance ? slice : nearest;
+      });
+
+      const anchorBar = findAnchorBarInSlice(
+        nearestSlice.bars,
+        isVerticalLayout,
+      );
+
+      const offsetLeft = isVerticalLayout
+        ? nearestSlice.sliceCenter + marginLeft
+        : anchorBar.absX + anchorBar.width + marginLeft;
+      const offsetTop = isVerticalLayout
+        ? anchorBar.absY + marginTop
+        : nearestSlice.sliceCenter + marginTop;
+
+      return {
+        slice: nearestSlice,
+        offsetLeft,
+        offsetTop,
+      };
+    },
+    [slices, marginLeft, marginTop, isVerticalLayout],
   );
 
   const handleMouseMove = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent<SVGRectElement>) => {
-        const sliceData = buildSliceHoverData({
-          mouseEvent: event,
-          slices,
-          marginLeft,
-          marginTop,
-          layout,
-          groupMode,
-        });
+        const sliceData = findSliceAtMousePosition(event);
         const currentHoveredSliceIndex = snapshot
           .getLoadable(hoveredSliceIndexState)
           .getValue();
@@ -93,11 +132,7 @@ export const CustomSliceHoverLayer = ({
         onSliceHover(sliceData);
       },
     [
-      slices,
-      marginLeft,
-      marginTop,
-      layout,
-      groupMode,
+      findSliceAtMousePosition,
       hoveredSliceIndexState,
       setHoveredSliceIndex,
       onSliceHover,
@@ -113,14 +148,7 @@ export const CustomSliceHoverLayer = ({
       return;
     }
 
-    const sliceData = buildSliceHoverData({
-      mouseEvent: event,
-      slices,
-      marginLeft,
-      marginTop,
-      layout,
-      groupMode,
-    });
+    const sliceData = findSliceAtMousePosition(event);
 
     if (!isDefined(sliceData)) {
       return;
@@ -136,20 +164,12 @@ export const CustomSliceHoverLayer = ({
     return slices.find((slice) => slice.indexValue === hoveredSliceIndex);
   }, [slices, hoveredSliceIndex]);
 
-  const highlightX = isVertical
-    ? (hoveredSlice?.sliceCenter ?? 0) -
-      BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS / 2
-    : 0;
-  const highlightY = isVertical
-    ? 0
-    : (hoveredSlice?.sliceCenter ?? 0) -
-      BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS / 2;
-  const highlightWidth = isVertical
-    ? BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS
-    : innerWidth;
-  const highlightHeight = isVertical
-    ? innerHeight
-    : BAR_CHART_CONSTANTS.SLICE_HIGHLIGHT_THICKNESS;
+  const highlightPosition = computeSliceHighlightPosition({
+    sliceCenter: hoveredSlice?.sliceCenter ?? null,
+    isVerticalLayout,
+    innerWidth,
+    innerHeight,
+  });
 
   const { opacity } = useSpring({
     opacity: isDefined(hoveredSlice) ? 1 : 0,
@@ -166,12 +186,12 @@ export const CustomSliceHoverLayer = ({
   return (
     <g>
       <animated.g
-        transform={`translate(${highlightX}, ${highlightY})`}
+        transform={`translate(${highlightPosition.x}, ${highlightPosition.y})`}
         opacity={opacity}
       >
         <rect
-          width={highlightWidth}
-          height={highlightHeight}
+          width={highlightPosition.width}
+          height={highlightPosition.height}
           fill={theme.background.transparent.medium}
           style={{ pointerEvents: 'none' }}
         />

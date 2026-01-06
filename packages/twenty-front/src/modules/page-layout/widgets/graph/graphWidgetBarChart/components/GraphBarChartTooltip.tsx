@@ -4,6 +4,7 @@ import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
+import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RefObject } from 'react';
@@ -54,7 +55,13 @@ export const GraphBarChartTooltip = ({
         layout,
       });
 
-  const reference = isDefined(tooltipState) ? tooltipState.anchorElement : null;
+  const reference = !isDefined(tooltipState)
+    ? null
+    : createVirtualElementFromContainerOffset(
+        containerElement,
+        tooltipState.offsetLeft,
+        tooltipState.offsetTop,
+      );
 
   return (
     <GraphWidgetFloatingTooltip
