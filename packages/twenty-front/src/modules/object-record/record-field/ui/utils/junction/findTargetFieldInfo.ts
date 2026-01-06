@@ -5,7 +5,7 @@ import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export type TargetFieldInfo = {
   fieldName: string;
-  settings: FieldRelationMetadataSettings;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export const findTargetFieldInfo = (

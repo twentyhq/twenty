@@ -8,7 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const buildIdentifierGqlFields = (
   objectMetadata: Pick<
     ObjectMetadataItem,
-    'fields' | 'labelIdentifierFieldMetadataId'
+    | 'fields'
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId'
+    | 'nameSingular'
   >,
 ): RecordGqlFields => {
   const labelIdentifierField =
