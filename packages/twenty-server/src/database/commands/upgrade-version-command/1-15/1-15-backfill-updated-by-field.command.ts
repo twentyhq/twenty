@@ -33,7 +33,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 @Command({
-  name: 'upgrade:1-16:backfill-updated-by-field',
+  name: 'upgrade:1-15:backfill-updated-by-field',
   description: 'Backfill updatedBy field for all objects',
 })
 export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
@@ -189,3 +189,4 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
     );
   }
 }
+
