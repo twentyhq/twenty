@@ -5,6 +5,8 @@ import { SettingsIntegrationComponent } from '@/settings/integrations/components
 import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 interface SettingsIntegrationGroupProps {
   integrationGroup: SettingsIntegrationCategory;
@@ -36,28 +38,41 @@ const StyledIntegrationsSection = styled.div`
 
 export const SettingsIntegrationGroup = ({
   integrationGroup,
-}: SettingsIntegrationGroupProps) => (
-  <Section>
-    <StyledIntegrationGroupHeader>
-      <H2Title title={integrationGroup.title} />
-      {integrationGroup.hyperlink && (
-        <StyledGroupLink target="_blank" to={integrationGroup.hyperlink ?? ''}>
-          <div>{integrationGroup.hyperlinkText}</div>
-          <div>→</div>
-        </StyledGroupLink>
-      )}
-    </StyledIntegrationGroupHeader>
-    <StyledIntegrationsSection>
-      {integrationGroup.integrations.map((integration) => (
-        <SettingsIntegrationComponent
-          key={[
-            integrationGroup.key,
-            integration.from.key,
-            integration.to?.key,
-          ].join('-')}
-          integration={integration}
-        />
-      ))}
-    </StyledIntegrationsSection>
-  </Section>
-);
+}: SettingsIntegrationGroupProps) => {
+  const isWhatsappIntegrationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED,
+  );
+  const showIntegration =
+    integrationGroup.key !== 'native' ? true : isWhatsappIntegrationEnabled;
+
+  return (
+    showIntegration && (
+      <Section>
+        <StyledIntegrationGroupHeader>
+          <H2Title title={integrationGroup.title} />
+          {integrationGroup.hyperlink && (
+            <StyledGroupLink
+              target="_blank"
+              to={integrationGroup.hyperlink ?? ''}
+            >
+              <div>{integrationGroup.hyperlinkText}</div>
+              <div>→</div>
+            </StyledGroupLink>
+          )}
+        </StyledIntegrationGroupHeader>
+        <StyledIntegrationsSection>
+          {integrationGroup.integrations.map((integration) => (
+            <SettingsIntegrationComponent
+              key={[
+                integrationGroup.key,
+                integration.from.key,
+                integration.to?.key,
+              ].join('-')}
+              integration={integration}
+            />
+          ))}
+        </StyledIntegrationsSection>
+      </Section>
+    )
+  );
+};

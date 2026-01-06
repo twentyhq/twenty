@@ -27,6 +27,8 @@ import {
   WhatsappParseWebhookMessageJobData,
 } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/jobs/whatsapp-parse-webhook-message.job';
 import { WhatsappRetrieveAppSecretService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-retrieve-app-secret.service';
+import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @Injectable()
 @Controller('whatsapp')
@@ -42,6 +44,7 @@ export class WhatsappController {
 
   // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint#get-requests
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
+  @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
   @Get('/whatsapp_verification')
   public async whatsappVerification(
     @Query('hub.mode') mode: string,
@@ -71,6 +74,7 @@ export class WhatsappController {
 
   // TODO: add custom logic guard checking if request is from legitimate IP address (or maybe better to implement mTLS?)
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
+  @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
   @Post('/message')
   public async getMessages(
     @Req() req: Request,
@@ -103,6 +107,7 @@ export class WhatsappController {
   }
 
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
+  @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
   @Post('/history')
   public async getHistory(
     @Req() req: Request,

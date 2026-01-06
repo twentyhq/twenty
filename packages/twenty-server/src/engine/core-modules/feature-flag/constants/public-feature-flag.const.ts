@@ -20,6 +20,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED,
+    metadata: {
+      label: 'WhatsApp',
+      description: 'Enable WhatsApp integration',
+      imagePath: 'https://twenty.com/images/lab/is-whatsapp-integration.png', // TODO: add image
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

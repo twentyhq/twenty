@@ -667,6 +667,17 @@ export type ConnectedImapSmtpCaldavAccount = {
   provider: Scalars['String'];
 };
 
+export type ConnectedWhatsappAccountDto = {
+  __typename?: 'ConnectedWhatsappAccountDTO';
+  accountOwnerId: Scalars['UUID'];
+  appSecret?: Maybe<Scalars['String']>;
+  bearerToken?: Maybe<Scalars['String']>;
+  businessAccountId: Scalars['String'];
+  id: Scalars['UUID'];
+  provider: Scalars['String'];
+  webhookToken?: Maybe<Scalars['String']>;
+};
+
 export type ConnectionParameters = {
   host: Scalars['String'];
   password: Scalars['String'];
@@ -1299,6 +1310,7 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WHATSAPP_INTEGRATION_ENABLED = 'IS_WHATSAPP_INTEGRATION_ENABLED',
   IS_WORKFLOW_RUN_STOPPAGE_ENABLED = 'IS_WORKFLOW_RUN_STOPPAGE_ENABLED',
   IS_WORKSPACE_CREATION_V2_ENABLED = 'IS_WORKSPACE_CREATION_V2_ENABLED'
 }
@@ -1873,6 +1885,7 @@ export type Mutation = {
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: RunWorkflowVersionOutput;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
+  saveWhatsappAccount: WhatsappConnectionStatusDto;
   sendInvitations: SendInvitationsOutput;
   setMeteredSubscriptionPrice: BillingUpdateOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
@@ -2502,6 +2515,16 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
   id?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type MutationSaveWhatsappAccountArgs = {
+  accountOwnerId: Scalars['UUID'];
+  appSecret: Scalars['String'];
+  bearerToken: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  webhookToken: Scalars['String'];
 };
 
 
@@ -3200,6 +3223,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getConnectedWhatsappAccount: ConnectedWhatsappAccountDto;
   getCoreView?: Maybe<CoreView>;
   getCoreViewField?: Maybe<CoreViewField>;
   getCoreViewFields: Array<CoreViewField>;
@@ -3326,6 +3350,12 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryGetConnectedWhatsappAccountArgs = {
+  businessAccountId: Scalars['String'];
+  connectedAccountId: Scalars['UUID'];
 };
 
 
@@ -4614,6 +4644,12 @@ export type Webhook = {
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
+};
+
+export type WhatsappConnectionStatusDto = {
+  __typename?: 'WhatsappConnectionStatusDTO';
+  connectedAccountId: Scalars['String'];
+  success: Scalars['Boolean'];
 };
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
