@@ -16,7 +16,6 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util';
 import { handleLabelIdentifierChangesDuringFieldUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-label-identifier-changes-during-field-update.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
-import { isLabelIdentifierFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-label-identifier-field-metadata.util';
 import { type FlatViewFiltersToDeleteAndUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { type FlatViewGroupsToDeleteUpdateAndCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
 
@@ -143,7 +142,11 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatEntityId: fromFlatFieldMetadata.objectMetadataId,
   });
 
-  if (isLabelIdentifierFieldMetadata(toFlatFieldMetadata, flatObjectMetadata)) {
+  const isLabelIdentifierFieldMetadata =
+    flatObjectMetadata.labelIdentifierFieldMetadataId ===
+    toFlatFieldMetadata.id;
+
+  if (isLabelIdentifierFieldMetadata) {
     const flatSearchVectorFieldToUpdate =
       handleLabelIdentifierChangesDuringFieldUpdate({
         fromFlatFieldMetadata,
