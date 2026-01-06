@@ -197,8 +197,8 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     <>
       <SettingsOptionCardContentToggle
         Icon={IconLink}
-        title={t`Many-to-many`}
-        description={t`Show ${targetObjectLabel} directly instead of junction record`}
+        title={t`This is a relation to a Junction Object`}
+        description={t`Will show ${targetObjectLabel} directly instead of intermediate junction record`}
         checked={isJunctionConfigEnabled}
         onChange={handleJunctionToggle}
         divider={isJunctionConfigEnabled}
@@ -211,8 +211,8 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
           control={control}
           render={() => (
             <SettingsOptionCardContentSelect
-              title={t`Linked object`}
-              description={t`The type of records to display`}
+              title={t`Target relation on Junction Object`}
+              description={t`Skip the junction object (similar to many-to-many relations)`}
             >
               <Select
                 dropdownId="junction-target-field-select"
