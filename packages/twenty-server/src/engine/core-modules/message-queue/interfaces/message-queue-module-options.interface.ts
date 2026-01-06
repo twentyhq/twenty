@@ -9,7 +9,7 @@ export enum MessageQueueDriverType {
 export interface BullMQDriverFactoryOptions {
   type: MessageQueueDriverType.BullMQ;
   options: BullMQDriverOptions;
-  metricsService?: MetricsService;
+  metricsService: MetricsService;
 }
 
 export interface SyncDriverFactoryOptions {

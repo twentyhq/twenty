@@ -42,7 +42,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
 
   constructor(
     private options: BullMQDriverOptions,
-    private metricsService?: MetricsService,
+    private metricsService: MetricsService,
   ) {}
 
   register(queueName: MessageQueue): void {
