@@ -44,7 +44,7 @@ export const recomputeSearchVectorFieldAfterLabelIdentifierUpdate = ({
 
   if (!isDefined(newLabelIdentifierField)) {
     throw new ObjectMetadataException(
-      `New label identifier field not found for object metadata ${existingFlatObjectMetadata.id}`,
+      `New label identifier field not found for object metadata`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }

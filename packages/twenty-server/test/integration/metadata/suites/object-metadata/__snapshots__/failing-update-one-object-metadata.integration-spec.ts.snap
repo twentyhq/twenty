@@ -36,7 +36,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
       "subCode": "INVALID_OBJECT_INPUT",
       "userFriendlyMessage": "Invalid object input.",
     },
-    "message": "New label identifier field not found for object metadata 1158d8be-3531-4613-a81b-e201e24fdced",
+    "message": "New label identifier field not found for object metadata",
     "name": "UserInputError",
   },
 ]
