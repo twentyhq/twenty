@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import request from 'supertest';
 import {
   destroyWorkflowRun,
