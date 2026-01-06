@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/extractTargetRecordsFromJunction';
+import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -9,9 +9,10 @@ import { RelationType } from '~/generated-metadata/graphql';
 const createMockRelation = (
   targetObjectId: string,
   targetObjectName: string,
+  sourceFieldName = 'sourceField',
 ): FieldMetadataItemRelation => ({
   type: RelationType.MANY_TO_ONE,
-  sourceFieldMetadata: { id: 'source-field-id', name: 'sourceField' },
+  sourceFieldMetadata: { id: 'source-field-id', name: sourceFieldName },
   targetFieldMetadata: {
     id: 'target-field-id',
     name: 'targetField',
@@ -49,19 +50,30 @@ const mockTargetField: FieldMetadataItem = {
   relation: createMockRelation('company-metadata-id', 'company'),
 } as FieldMetadataItem;
 
-const mockMorphFields: FieldMetadataItem[] = [
+// Mock morph field with morphRelations (how real data looks)
+const mockMorphFieldWithRelations: FieldMetadataItem = {
+  id: 'morph-field-id',
+  name: 'caretaker',
+  morphId: 'morph-group-1',
+  type: FieldMetadataType.MORPH_RELATION,
+  morphRelations: [
+    createMockRelation('company-metadata-id', 'company', 'caretaker'),
+    createMockRelation('person-metadata-id', 'person', 'caretaker'),
+  ],
+} as FieldMetadataItem;
+
+// Mock multiple regular relation fields (for multiple target testing)
+const mockMultipleRelationFields: FieldMetadataItem[] = [
   {
-    id: 'morph-field-company-id',
+    id: 'relation-field-company-id',
     name: 'company',
-    morphId: 'morph-group-1',
-    type: FieldMetadataType.MORPH_RELATION,
+    type: FieldMetadataType.RELATION,
     relation: createMockRelation('company-metadata-id', 'company'),
   } as FieldMetadataItem,
   {
-    id: 'morph-field-person-id',
+    id: 'relation-field-person-id',
     name: 'person',
-    morphId: 'morph-group-1',
-    type: FieldMetadataType.MORPH_RELATION,
+    type: FieldMetadataType.RELATION,
     relation: createMockRelation('person-metadata-id', 'person'),
   } as FieldMetadataItem,
 ];
@@ -177,7 +189,7 @@ describe('extractTargetRecordsFromJunction', () => {
     });
   });
 
-  describe('with multiple target fields (morph relations)', () => {
+  describe('with multiple target fields (multiple regular relations)', () => {
     it('should extract target records from different target fields', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
@@ -190,7 +202,7 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetFields: mockMorphFields,
+        targetFields: mockMultipleRelationFields,
         objectMetadataItems: mockObjectMetadataItems,
       });
 
@@ -214,14 +226,14 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetFields: mockMorphFields,
+        targetFields: mockMultipleRelationFields,
         objectMetadataItems: mockObjectMetadataItems,
       });
 
       expect(result[0].objectMetadataId).toBe('person-metadata-id');
     });
 
-    it('should include record when includeRecord is true for morph relations', () => {
+    it('should include record when includeRecord is true', () => {
       const junctionRecords = [
         createMockJunctionRecord('junction-1', {
           company: { id: 'company-1', name: 'Acme Corp' },
@@ -230,7 +242,58 @@ describe('extractTargetRecordsFromJunction', () => {
 
       const result = extractTargetRecordsFromJunction({
         junctionRecords,
-        targetFields: mockMorphFields,
+        targetFields: mockMultipleRelationFields,
+        objectMetadataItems: mockObjectMetadataItems,
+        includeRecord: true,
+      });
+
+      expect(result[0]).toEqual({
+        recordId: 'company-1',
+        objectMetadataId: 'company-metadata-id',
+        record: { id: 'company-1', name: 'Acme Corp' },
+      });
+    });
+  });
+
+  describe('with morph relation field', () => {
+    // MORPH_RELATION fields use computed field names like "caretakerCompany", "caretakerPerson"
+    it('should extract target records from morph relation computed field names', () => {
+      const junctionRecords = [
+        createMockJunctionRecord('junction-1', {
+          caretakerCompany: { id: 'company-1', name: 'Acme Corp' },
+        }),
+        createMockJunctionRecord('junction-2', {
+          caretakerPerson: { id: 'person-1', name: 'John Doe' },
+        }),
+      ];
+
+      const result = extractTargetRecordsFromJunction({
+        junctionRecords,
+        targetFields: [mockMorphFieldWithRelations],
+        objectMetadataItems: mockObjectMetadataItems,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual({
+        recordId: 'company-1',
+        objectMetadataId: 'company-metadata-id',
+      });
+      expect(result[1]).toEqual({
+        recordId: 'person-1',
+        objectMetadataId: 'person-metadata-id',
+      });
+    });
+
+    it('should include record when includeRecord is true for morph relations', () => {
+      const junctionRecords = [
+        createMockJunctionRecord('junction-1', {
+          caretakerCompany: { id: 'company-1', name: 'Acme Corp' },
+        }),
+      ];
+
+      const result = extractTargetRecordsFromJunction({
+        junctionRecords,
+        targetFields: [mockMorphFieldWithRelations],
         objectMetadataItems: mockObjectMetadataItems,
         includeRecord: true,
       });

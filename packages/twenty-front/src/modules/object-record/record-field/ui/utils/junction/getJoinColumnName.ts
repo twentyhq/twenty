@@ -17,3 +17,4 @@ export const getJoinColumnName = ({
   }
   return `${fieldName}Id`;
 };
+

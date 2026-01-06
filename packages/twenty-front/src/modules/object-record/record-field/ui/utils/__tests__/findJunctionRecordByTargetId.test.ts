@@ -1,4 +1,4 @@
-import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/findJunctionRecordByTargetId';
+import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/junction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 const createMockJunctionRecord = (

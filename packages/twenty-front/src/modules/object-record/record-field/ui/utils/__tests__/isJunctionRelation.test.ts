@@ -2,41 +2,32 @@ import {
   hasJunctionConfig,
   hasJunctionTargetFieldId,
   hasJunctionTargetMorphId,
-} from '@/object-record/record-field/ui/utils/isJunctionRelation';
+  isJunctionRelationField,
+} from '@/object-record/record-field/ui/utils/junction';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('isJunctionRelation', () => {
   describe('hasJunctionTargetFieldId', () => {
-    it('should return false for undefined settings', () => {
-      expect(hasJunctionTargetFieldId(undefined)).toBe(false);
+    it.each([
+      { settings: undefined, expected: false, desc: 'undefined' },
+      { settings: null, expected: false, desc: 'null' },
+      { settings: {}, expected: false, desc: 'empty object' },
+      {
+        settings: { junctionTargetFieldId: '' },
+        expected: false,
+        desc: 'empty string',
+      },
+      {
+        settings: { junctionTargetFieldId: 'field-id' },
+        expected: true,
+        desc: 'valid value',
+      },
+    ])('returns $expected for $desc', ({ settings, expected }) => {
+      expect(hasJunctionTargetFieldId(settings)).toBe(expected);
     });
 
-    it('should return false for null settings', () => {
-      expect(hasJunctionTargetFieldId(null)).toBe(false);
-    });
-
-    it('should return false when junctionTargetFieldId is not present', () => {
-      expect(hasJunctionTargetFieldId({})).toBe(false);
-    });
-
-    it('should return false when junctionTargetFieldId is empty string', () => {
-      expect(
-        hasJunctionTargetFieldId({
-          junctionTargetFieldId: '',
-        }),
-      ).toBe(false);
-    });
-
-    it('should return true when junctionTargetFieldId has value', () => {
-      const result = hasJunctionTargetFieldId({
-        junctionTargetFieldId: 'field-id-1',
-      });
-      expect(result).toBe(true);
-    });
-
-    it('should narrow type correctly', () => {
-      const settings = {
-        junctionTargetFieldId: 'field-id-1',
-      };
+    it('narrows type correctly', () => {
+      const settings = { junctionTargetFieldId: 'field-id-1' };
       if (hasJunctionTargetFieldId(settings)) {
         expect(settings.junctionTargetFieldId).toBe('field-id-1');
       }
@@ -44,32 +35,25 @@ describe('isJunctionRelation', () => {
   });
 
   describe('hasJunctionTargetMorphId', () => {
-    it('should return false for undefined settings', () => {
-      expect(hasJunctionTargetMorphId(undefined)).toBe(false);
+    it.each([
+      { settings: undefined, expected: false, desc: 'undefined' },
+      { settings: null, expected: false, desc: 'null' },
+      { settings: {}, expected: false, desc: 'empty object' },
+      {
+        settings: { junctionTargetMorphId: '' },
+        expected: false,
+        desc: 'empty string',
+      },
+      {
+        settings: { junctionTargetMorphId: 'morph-id' },
+        expected: true,
+        desc: 'valid value',
+      },
+    ])('returns $expected for $desc', ({ settings, expected }) => {
+      expect(hasJunctionTargetMorphId(settings)).toBe(expected);
     });
 
-    it('should return false for null settings', () => {
-      expect(hasJunctionTargetMorphId(null)).toBe(false);
-    });
-
-    it('should return false when junctionTargetMorphId is not present', () => {
-      expect(hasJunctionTargetMorphId({})).toBe(false);
-    });
-
-    it('should return false when junctionTargetMorphId is empty string', () => {
-      expect(hasJunctionTargetMorphId({ junctionTargetMorphId: '' })).toBe(
-        false,
-      );
-    });
-
-    it('should return true when junctionTargetMorphId has value', () => {
-      const result = hasJunctionTargetMorphId({
-        junctionTargetMorphId: 'morph-id-123',
-      });
-      expect(result).toBe(true);
-    });
-
-    it('should narrow type correctly', () => {
+    it('narrows type correctly', () => {
       const settings = { junctionTargetMorphId: 'morph-id-123' };
       if (hasJunctionTargetMorphId(settings)) {
         expect(settings.junctionTargetMorphId).toBe('morph-id-123');
@@ -78,37 +62,62 @@ describe('isJunctionRelation', () => {
   });
 
   describe('hasJunctionConfig', () => {
-    it('should return false for undefined settings', () => {
-      expect(hasJunctionConfig(undefined)).toBe(false);
+    it.each([
+      { settings: undefined, expected: false, desc: 'undefined' },
+      { settings: {}, expected: false, desc: 'empty object' },
+      {
+        settings: { junctionTargetFieldId: 'field-id' },
+        expected: true,
+        desc: 'fieldId set',
+      },
+      {
+        settings: { junctionTargetMorphId: 'morph-id' },
+        expected: true,
+        desc: 'morphId set',
+      },
+      {
+        settings: {
+          junctionTargetFieldId: 'field-id',
+          junctionTargetMorphId: 'morph-id',
+        },
+        expected: true,
+        desc: 'both set',
+      },
+    ])('returns $expected for $desc', ({ settings, expected }) => {
+      expect(hasJunctionConfig(settings)).toBe(expected);
     });
+  });
 
-    it('should return false for empty settings', () => {
-      expect(hasJunctionConfig({})).toBe(false);
-    });
-
-    it('should return true when junctionTargetFieldId is set', () => {
-      expect(
-        hasJunctionConfig({
-          junctionTargetFieldId: 'field-id-1',
-        }),
-      ).toBe(true);
-    });
-
-    it('should return true when junctionTargetMorphId is set', () => {
-      expect(
-        hasJunctionConfig({
-          junctionTargetMorphId: 'morph-id-123',
-        }),
-      ).toBe(true);
-    });
-
-    it('should return true when both are set (even though invalid)', () => {
-      expect(
-        hasJunctionConfig({
-          junctionTargetFieldId: 'field-id-1',
-          junctionTargetMorphId: 'morph-id-123',
-        }),
-      ).toBe(true);
+  describe('isJunctionRelationField', () => {
+    it.each([
+      {
+        field: { type: FieldMetadataType.TEXT, settings: null },
+        expected: false,
+        desc: 'non-relation field',
+      },
+      {
+        field: { type: FieldMetadataType.RELATION, settings: null },
+        expected: false,
+        desc: 'relation without junction config',
+      },
+      {
+        field: {
+          type: FieldMetadataType.RELATION,
+          settings: { junctionTargetFieldId: 'field-id' },
+        },
+        expected: true,
+        desc: 'relation with junction config',
+      },
+      {
+        field: {
+          type: FieldMetadataType.MORPH_RELATION,
+          settings: { junctionTargetFieldId: 'field-id' },
+        },
+        expected: false,
+        desc: 'morph relation (not supported)',
+      },
+    ])('returns $expected for $desc', ({ field, expected }) => {
+      expect(isJunctionRelationField(field)).toBe(expected);
     });
   });
 });

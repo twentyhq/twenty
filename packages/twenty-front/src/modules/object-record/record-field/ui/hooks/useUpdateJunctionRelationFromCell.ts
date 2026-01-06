@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -16,66 +15,16 @@ import {
   type FieldRelationMetadataSettings,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/findJunctionRecordByTargetId';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/getJoinColumnName';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
+import {
+  findJunctionRecordByTargetId,
+  findTargetFieldInfo,
+  getJoinColumnName,
+  getJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-
-type TargetFieldInfo = {
-  fieldName: string;
-  settings: FieldRelationMetadataSettings;
-};
-
-// Find target field info for a given object metadata ID
-// Returns field name and settings for computing join column name
-// Handles both RELATION fields (direct) and MORPH_RELATION fields (via morphRelations)
-const findTargetFieldInfo = (
-  targetFields: FieldMetadataItem[],
-  targetObjectMetadataId: string,
-  objectMetadataItems: ObjectMetadataItem[],
-): TargetFieldInfo | undefined => {
-  for (const field of targetFields) {
-    // Check morphRelations first - fields with morphId may have this populated
-    // even if type isn't explicitly MORPH_RELATION
-    if (isDefined(field.morphRelations) && field.morphRelations.length > 0) {
-      const matchingMorphRelation = field.morphRelations.find(
-        (mr) => mr.targetObjectMetadata.id === targetObjectMetadataId,
-      );
-      if (isDefined(matchingMorphRelation)) {
-        const targetObjectMetadata = objectMetadataItems.find(
-          (item) => item.id === targetObjectMetadataId,
-        );
-        if (isDefined(targetObjectMetadata)) {
-          const fieldName = computeMorphRelationFieldName({
-            fieldName: matchingMorphRelation.sourceFieldMetadata.name,
-            relationType: matchingMorphRelation.type,
-            targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
-            targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
-          });
-          // For morph relations, don't pass settings because the field's joinColumnName
-          // refers to the first/primary target, not the computed target field name.
-          // getJoinColumnName will fall back to computing it from the field name.
-          return {
-            fieldName,
-            settings: undefined,
-          };
-        }
-      }
-    } else if (
-      field.relation?.targetObjectMetadata.id === targetObjectMetadataId
-    ) {
-      // For regular relations, use the field name and settings directly
-      return {
-        fieldName: field.name,
-        settings: field.settings as FieldRelationMetadataSettings,
-      };
-    }
-  }
-  return undefined;
-};
 
 type UseUpdateJunctionRelationFromCellArgs = {
   fieldMetadataItem: FieldMetadataItem;

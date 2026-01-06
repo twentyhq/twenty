@@ -10,9 +10,11 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
-import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/isJunctionRelation';
+import {
+  extractTargetRecordsFromJunction,
+  getJunctionConfig,
+  hasJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';

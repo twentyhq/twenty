@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 

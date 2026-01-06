@@ -1,6 +1,4 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -8,8 +6,11 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
+import {
+  extractTargetRecordsFromJunction,
+  getJunctionConfig,
+  getSearchableObjectMetadataItems,
+} from '@/object-record/record-field/ui/utils/junction';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -21,38 +22,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-
-// Extract target object metadata IDs from a field (handles both RELATION and MORPH_RELATION)
-const getTargetObjectMetadataIdsFromField = (
-  field: FieldMetadataItem,
-): string[] => {
-  // Check morphRelations first - fields with morphId may have this populated
-  // even if type isn't explicitly MORPH_RELATION
-  if (isDefined(field.morphRelations) && field.morphRelations.length > 0) {
-    return field.morphRelations
-      .map((mr) => mr.targetObjectMetadata.id)
-      .filter(isDefined);
-  }
-
-  // Fallback to regular relation
-  const targetId = field.relation?.targetObjectMetadata.id;
-  return targetId ? [targetId] : [];
-};
-
-// Get searchable object metadata items from target fields
-const getSearchableObjectMetadataItems = (
-  targetFields: FieldMetadataItem[],
-  objectMetadataItems: ObjectMetadataItem[],
-): ObjectMetadataItem[] => {
-  const targetObjectIds = targetFields.flatMap(
-    getTargetObjectMetadataIdsFromField,
-  );
-  const uniqueTargetObjectIds = [...new Set(targetObjectIds)];
-
-  return uniqueTargetObjectIds
-    .map((id) => objectMetadataItems.find((item) => item.id === id))
-    .filter(isDefined);
-};
 
 export const useOpenJunctionRelationFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();

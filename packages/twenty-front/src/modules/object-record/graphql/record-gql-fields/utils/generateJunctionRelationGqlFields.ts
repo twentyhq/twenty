@@ -1,10 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/getJunctionConfig';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/isJunctionRelation';
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
@@ -26,22 +24,8 @@ const buildRegularTargetFieldGqlFields = (
     return {};
   }
 
-  const labelIdentifierFieldMetadataItem =
-    getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
-
-  const imageIdentifierFieldMetadataItem =
-    getImageIdentifierFieldMetadataItem(targetObjectMetadata);
-
   return {
-    [targetField.name]: {
-      id: true,
-      ...(isDefined(labelIdentifierFieldMetadataItem)
-        ? { [labelIdentifierFieldMetadataItem.name]: true }
-        : {}),
-      ...(isDefined(imageIdentifierFieldMetadataItem)
-        ? { [imageIdentifierFieldMetadataItem.name]: true }
-        : {}),
-    },
+    [targetField.name]: buildIdentifierGqlFields(targetObjectMetadata),
   };
 };
 
@@ -68,7 +52,6 @@ const buildMorphTargetFieldGqlFields = (
       continue;
     }
 
-    // Compute the actual field name (e.g., "caretakerPerson")
     const computedFieldName = computeMorphRelationFieldName({
       fieldName: morphRelation.sourceFieldMetadata.name,
       relationType: morphRelation.type,
@@ -76,21 +59,7 @@ const buildMorphTargetFieldGqlFields = (
       targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
     });
 
-    const labelIdentifierFieldMetadataItem =
-      getLabelIdentifierFieldMetadataItem(targetObjectMetadata);
-
-    const imageIdentifierFieldMetadataItem =
-      getImageIdentifierFieldMetadataItem(targetObjectMetadata);
-
-    result[computedFieldName] = {
-      id: true,
-      ...(isDefined(labelIdentifierFieldMetadataItem)
-        ? { [labelIdentifierFieldMetadataItem.name]: true }
-        : {}),
-      ...(isDefined(imageIdentifierFieldMetadataItem)
-        ? { [imageIdentifierFieldMetadataItem.name]: true }
-        : {}),
-    };
+    result[computedFieldName] = buildIdentifierGqlFields(targetObjectMetadata);
   }
 
   return result;
@@ -125,34 +94,16 @@ export const generateJunctionRelationGqlFields = ({
 
   const { junctionObjectMetadata, targetFields } = junctionConfig;
 
-  let junctionTargetFields: RecordGqlFields = {};
-
-  for (const targetField of targetFields) {
-    Object.assign(
-      junctionTargetFields,
-      buildTargetFieldGqlFields(targetField, objectMetadataItems),
-    );
-  }
-
-  const junctionLabelIdentifierFieldMetadataItem =
-    getLabelIdentifierFieldMetadataItem(junctionObjectMetadata);
+  const junctionTargetFields = targetFields.reduce<RecordGqlFields>(
+    (acc, targetField) => ({
+      ...acc,
+      ...buildTargetFieldGqlFields(targetField, objectMetadataItems),
+    }),
+    {},
+  );
 
   return {
-    id: true,
-    ...(isDefined(junctionLabelIdentifierFieldMetadataItem)
-      ? { [junctionLabelIdentifierFieldMetadataItem.name]: true }
-      : {}),
+    ...buildIdentifierGqlFields(junctionObjectMetadata),
     ...junctionTargetFields,
   };
-};
-
-// Check if a field is a junction relation (has junction config)
-export const isJunctionRelationField = (
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'settings'>,
-): boolean => {
-  if (fieldMetadataItem.type !== FieldMetadataType.RELATION) {
-    return false;
-  }
-
-  return hasJunctionConfig(fieldMetadataItem.settings);
 };

@@ -1,9 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  hasJunctionTargetFieldId,
-  hasJunctionTargetMorphId,
-} from '@/object-record/record-field/ui/utils/isJunctionRelation';
+import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
+import { hasJunctionTargetMorphId } from './hasJunctionTargetMorphId';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -101,3 +99,4 @@ export const getJunctionConfig = ({
 
   return null;
 };
+
