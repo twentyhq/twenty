@@ -140,6 +140,56 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
     super();
   }
 
+  private async deleteInChunks({
+    entity,
+    entityName,
+    ids,
+    chunkSize = 2000,
+  }: {
+    entity: EntityTarget<ObjectLiteral>;
+    ids: string[];
+    entityName: string;
+    chunkSize?: number;
+  }  ): Promise<number> {
+    let totalDeleted = 0;
+    const chunks: string[][] = [];
+
+    let i = 0;
+
+    while (i < ids.length) {
+      chunks.push(ids.slice(i, i + chunkSize));
+      i += chunkSize;
+    }
+
+    for (const [index, chunk] of chunks.entries()) {
+      this.logger.log(
+        chalk.gray(
+          `    Deleting ${entityName} chunk ${index + 1}/${chunks.length} (${chunk.length} records)...`,
+        ),
+      );
+
+      try {
+        const result = await this.dataSource
+          .getRepository(entity)
+          .createQueryBuilder()
+          .delete()
+          .from(entity)
+          .whereInIds(chunk)
+          .execute();
+
+        totalDeleted += result.affected || 0;
+      } catch (error) {
+        this.logger.warn(
+          chalk.yellow(
+            `    ⚠ Failed to delete chunk ${index + 1}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
+      }
+    }
+
+    return totalDeleted;
+  }
+
   private async deleteFieldMetadataInChunks(ids: string[]): Promise<number> {
     const CHUNK_SIZE = 50;
     let totalDeleted = 0;
@@ -183,12 +233,10 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       chunks.push(currentChunk);
     }
 
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
-
+    for (const [index, chunk] of chunks.entries()) {
       this.logger.log(
         chalk.gray(
-          `    Deleting FieldMetadata chunk ${i + 1}/${chunks.length} (${chunk.length} fields with relations)...`,
+          `    Deleting FieldMetadata chunk ${index + 1}/${chunks.length} (${chunk.length} fields with relations)...`,
         ),
       );
 
@@ -204,7 +252,7 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
       } catch (error) {
         this.logger.warn(
           chalk.yellow(
-            `    ⚠ Failed to delete chunk ${i + 1}: ${error instanceof Error ? error.message : String(error)}`,
+            `    ⚠ Failed to delete chunk ${index + 1}: ${error instanceof Error ? error.message : String(error)}`,
           ),
         );
       }
@@ -322,15 +370,11 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
           if (entityName === 'FieldMetadataEntity') {
             deletedCount = await this.deleteFieldMetadataInChunks(ids);
           } else {
-            const result = await this.dataSource
-              .getRepository(entity)
-              .createQueryBuilder()
-              .delete()
-              .from(entity)
-              .whereInIds(ids)
-              .execute();
-
-            deletedCount = result.affected || 0;
+            deletedCount = await this.deleteInChunks({
+              entity,
+              ids,
+              entityName,
+            });
           }
         }
 
