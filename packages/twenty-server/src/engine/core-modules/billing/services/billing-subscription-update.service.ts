@@ -79,37 +79,7 @@ export class BillingSubscriptionUpdateService {
       newMeteredPriceId: meteredPriceId,
     } as const;
 
-    const isScheduledForPeriodEnd =
-      await this.shouldUpdateAtSubscriptionPeriodEnd(
-        billingSubscription,
-        subscriptionUpdate,
-      );
-
     await this.updateSubscription(billingSubscription.id, subscriptionUpdate);
-
-    if (!isScheduledForPeriodEnd) {
-      await this.billingSubscriptionItemRepository.update(
-        { stripeSubscriptionId: billingSubscription.stripeSubscriptionId },
-        { hasReachedCurrentPeriodCap: false },
-      );
-
-      const meteredPricingInfo =
-        await this.meteredCreditService.getMeteredPricingInfoFromPriceId(
-          meteredPriceId,
-        );
-
-      const creditBalance = await this.meteredCreditService.getCreditBalance(
-        billingSubscription.stripeCustomerId,
-        meteredPricingInfo.unitPriceCents,
-      );
-
-      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
-        billingSubscription.stripeCustomerId,
-        meteredPricingInfo.tierCap,
-        creditBalance,
-        billingSubscription.currentPeriodStart,
-      );
-    }
   }
 
   async cancelSwitchMeteredPrice(workspace: WorkspaceEntity): Promise<void> {
@@ -298,6 +268,28 @@ export class BillingSubscriptionUpdateService {
         seats: toUpdateCurrentPrices.seats,
         ...subscriptionOptions,
       });
+
+      await this.billingSubscriptionItemRepository.update(
+        { stripeSubscriptionId: subscription.stripeSubscriptionId },
+        { hasReachedCurrentPeriodCap: false },
+      );
+
+      const meteredPricingInfo =
+        await this.meteredCreditService.getMeteredPricingInfoFromPriceId(
+          toUpdateCurrentPrices.meteredPriceId,
+        );
+
+      const creditBalance = await this.meteredCreditService.getCreditBalance(
+        subscription.stripeCustomerId,
+        meteredPricingInfo.unitPriceCents,
+      );
+
+      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+        subscription.stripeCustomerId,
+        meteredPricingInfo.tierCap,
+        creditBalance,
+        subscription.currentPeriodStart,
+      );
 
       if (isDefined(nextPhase)) {
         assertIsDefinedOrThrow(schedule);
