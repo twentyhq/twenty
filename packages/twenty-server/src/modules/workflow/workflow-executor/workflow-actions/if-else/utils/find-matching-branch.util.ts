@@ -46,15 +46,32 @@ export const findMatchingBranch = ({
   stepFilterGroups: StepFilterGroup[];
   resolvedFilters: ResolvedFilter[];
 }): StepIfElseBranch => {
+  console.log('=== DEBUG findMatchingBranch ===');
+  console.log('Branches:', JSON.stringify(branches, null, 2));
+  console.log('StepFilterGroups:', JSON.stringify(stepFilterGroups, null, 2));
+  console.log('ResolvedFilters:', JSON.stringify(resolvedFilters, null, 2));
+
   // First, try to find a matching IF/ELSE-IF branch (branches with filterGroupId)
   for (const branch of branches) {
     if (!isDefined(branch.filterGroupId)) {
       // Skip ELSE branch for now - we'll check it after all IF/ELSE-IF branches
+      console.log(
+        `Skipping branch ${branch.id} - no filterGroupId (ELSE branch)`,
+      );
       continue;
     }
 
+    console.log(
+      `Checking branch ${branch.id} with filterGroupId ${branch.filterGroupId}`,
+    );
+
     const branchFilterGroups = Array.from(
       collectAllDescendantGroups(branch.filterGroupId, stepFilterGroups),
+    );
+
+    console.log(
+      `Branch ${branch.id} filterGroups:`,
+      JSON.stringify(branchFilterGroups, null, 2),
     );
 
     const branchFilterGroupIds = new Set(branchFilterGroups.map((g) => g.id));
@@ -62,12 +79,26 @@ export const findMatchingBranch = ({
       branchFilterGroupIds.has(filter.stepFilterGroupId),
     );
 
+    console.log(
+      `Branch ${branch.id} filters:`,
+      JSON.stringify(branchFilters, null, 2),
+    );
+    console.log(
+      `Branch ${branch.id} filterGroupIds:`,
+      Array.from(branchFilterGroupIds),
+    );
+
     const matches = evaluateFilterConditions({
       filterGroups: branchFilterGroups,
       filters: branchFilters,
     });
 
+    console.log(`Branch ${branch.id} matches:`, matches);
+
     if (matches) {
+      console.log(`Returning matching branch ${branch.id}`);
+      console.log('================================');
+
       return branch;
     }
   }
@@ -83,6 +114,9 @@ export const findMatchingBranch = ({
       WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
     );
   }
+
+  console.log(`No IF branch matched, returning ELSE branch ${elseBranch.id}`);
+  console.log('================================');
 
   return elseBranch;
 };

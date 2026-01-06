@@ -427,6 +427,22 @@ describe('If/Else Workflow (e2e)', () => {
     };
 
     it('should execute IF branch when condition is true', async () => {
+      // Debug: Log step structure before execution
+      const ifElseStepBeforeRun = await getIfElseStepWithBranches();
+      console.log('=== DEBUG: Step structure before execution ===');
+      console.log('Branches:', JSON.stringify(ifElseStepBeforeRun.settings.input.branches, null, 2));
+      console.log('StepFilterGroups:', JSON.stringify(ifElseStepBeforeRun.settings.input.stepFilterGroups, null, 2));
+      console.log('StepFilters:', JSON.stringify(ifElseStepBeforeRun.settings.input.stepFilters, null, 2));
+
+      const { ifBranch: ifBranchBefore, elseBranch: elseBranchBefore } = identifyBranches(
+        ifElseStepBeforeRun.settings.input.branches,
+      );
+      console.log('IF Branch ID:', ifBranchBefore?.id);
+      console.log('IF Branch filterGroupId:', ifBranchBefore?.filterGroupId);
+      console.log('ELSE Branch ID:', elseBranchBefore?.id);
+      console.log('ELSE Branch filterGroupId:', elseBranchBefore?.filterGroupId);
+      console.log('===========================================');
+
       const workflowRunId = await runWorkflowVersion({
         workflowVersionId: createdWorkflowVersionId!,
         payload: { number: 10 },
@@ -445,6 +461,12 @@ describe('If/Else Workflow (e2e)', () => {
 
       expect(ifElseStepResult?.matchingBranchId).toBeDefined();
 
+      console.log('=== DEBUG: Execution result ===');
+      console.log('Matched Branch ID:', ifElseStepResult?.matchingBranchId);
+      console.log('Expected IF Branch ID:', ifBranchBefore?.id);
+      console.log('Expected ELSE Branch ID:', elseBranchBefore?.id);
+      console.log('================================');
+
       const ifElseStep = await getIfElseStepWithBranches();
 
       const matchedBranch = ifElseStep.settings.input.branches.find(
@@ -462,6 +484,12 @@ describe('If/Else Workflow (e2e)', () => {
       const { ifBranch, elseBranch } = identifyBranches(
         ifElseStep.settings.input.branches,
       );
+
+      console.log('=== DEBUG: After execution ===');
+      console.log('Matched Branch:', JSON.stringify(matchedBranch, null, 2));
+      console.log('IF Branch:', JSON.stringify(ifBranch, null, 2));
+      console.log('ELSE Branch:', JSON.stringify(elseBranch, null, 2));
+      console.log('=============================');
 
       expect(ifBranch).toBeDefined();
       expect(elseBranch).toBeDefined();
