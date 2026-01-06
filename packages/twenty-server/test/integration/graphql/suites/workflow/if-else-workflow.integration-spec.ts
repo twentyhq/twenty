@@ -450,9 +450,7 @@ describe('If/Else Workflow (e2e)', () => {
       expect(elseBranch).toBeDefined();
       expect(ifBranch?.filterGroupId).toBeDefined();
       expect(elseBranch?.filterGroupId).toBeUndefined();
-      // Verify matched branch is the IF branch by filterGroupId and nextStepIds
-      expect(matchedBranch.filterGroupId).toBeDefined();
-      expect(matchedBranch.filterGroupId).toBe(ifBranch?.filterGroupId);
+      expect(matchedBranch.id).toBe(ifBranch?.id);
       expect(matchedBranch.nextStepIds).toContain(ifBranchEmptyNodeId);
       expect(matchedBranch.nextStepIds).not.toContain(elseBranchEmptyNodeId);
 
@@ -500,9 +498,7 @@ describe('If/Else Workflow (e2e)', () => {
       expect(elseBranch).toBeDefined();
       expect(ifBranch?.filterGroupId).toBeDefined();
       expect(elseBranch?.filterGroupId).toBeUndefined();
-      // Verify matched branch is the ELSE branch (no filterGroupId)
-      expect(matchedBranch.filterGroupId).toBeUndefined();
-      expect(matchedBranch.filterGroupId).toBe(elseBranch?.filterGroupId);
+      expect(matchedBranch.id).toBe(elseBranch?.id);
       expect(matchedBranch.nextStepIds).toContain(elseBranchEmptyNodeId);
       expect(matchedBranch.nextStepIds).not.toContain(ifBranchEmptyNodeId);
 
