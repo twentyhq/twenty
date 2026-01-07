@@ -323,4 +323,28 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  manualTriggers: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'manualTriggers',
+      label: 'Manual Triggers',
+      description: 'Manual triggers linked to the workflow version.',
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'workflowManualTrigger',
+      targetFieldName: 'workflowVersion',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });
