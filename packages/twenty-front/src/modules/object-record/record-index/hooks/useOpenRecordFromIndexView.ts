@@ -1,5 +1,5 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -39,6 +39,8 @@ export const useOpenRecordFromIndexView = () => {
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
+
+  const { closeCommandMenu } = useCommandMenu();
 
   const openRecordFromIndexView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -83,7 +85,7 @@ export const useOpenRecordFromIndexView = () => {
             resetNavigationStack: true,
           });
         } else {
-          set(isCommandMenuOpenedState, false);
+          closeCommandMenu();
           navigate(AppPath.RecordShowPage, {
             objectNameSingular,
             objectRecordId: recordId,
