@@ -53,13 +53,17 @@ export const compareDimensionValues = ({
 
     if (fieldType === FieldMetadataType.CURRENCY) {
       if (subFieldName === 'amountMicros') {
-        return applyDirection(Number(rawValueA) - Number(rawValueB));
+        if (isDefined(rawValueA) && isDefined(rawValueB)) {
+          return applyDirection(Number(rawValueA) - Number(rawValueB));
+        }
       }
       return applyDirection(formattedValueA.localeCompare(formattedValueB));
     }
 
     if (isFieldMetadataNumericKind(fieldType)) {
-      return applyDirection(Number(rawValueA) - Number(rawValueB));
+      if (isDefined(rawValueA) && isDefined(rawValueB)) {
+        return applyDirection(Number(rawValueA) - Number(rawValueB));
+      }
     }
   }
 
