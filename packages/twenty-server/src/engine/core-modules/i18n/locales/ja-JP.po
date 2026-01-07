@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
-msgstr "{fieldName} と {fieldName}Id は同時に指定できません。"
+msgstr "{fieldName}と{fieldName}Idは同時に指定できません。"
 
 #. js-lingui-id: ZkHTHm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -37,7 +37,7 @@ msgstr "{fieldType}フィールドにはデフォルト値を設定できませ�
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr "ドメイン「{domainName}」に {hostnameCount} 件のホスト名が見つかりました。1件である必要があります。"
+msgstr "ドメイン「{domainName}」に{hostnameCount}件のホスト名が見つかりました。1件である必要があります。"
 
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -567,7 +567,7 @@ msgstr "添付ファイル"
 #. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment author (deprecated - use createdBy)"
-msgstr "添付ファイルの著者（非推奨 - createdBy を使用）"
+msgstr "添付ファイルの著者（非推奨 - createdByを使用）"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -617,7 +617,7 @@ msgstr "添付ファイルのタスク"
 #. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment type (deprecated - use fileCategory)"
-msgstr "添付ファイルタイプ（非推奨 - fileCategory を使用してください）"
+msgstr "添付ファイルタイプ（非推奨 - fileCategoryを使用してください）"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -888,7 +888,7 @@ msgstr "カレンダー同期エラー。"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr "{connectFieldName} に接続できません。条件「{formattedConnectCondition}」に一致する一意のレコードが見つかりません。"
+msgstr "{connectFieldName}に接続できません。条件「{formattedConnectCondition}」に一致する一意のレコードが見つかりません。"
 
 #. js-lingui-id: 2oVE+z
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -1117,7 +1117,7 @@ msgstr "電話の国コードが競合しています。"
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
-msgstr "{objectMetadataNameSingular} に対して {connectFieldName} での接続は許可されていません。"
+msgstr "{objectMetadataNameSingular}に対して{connectFieldName}での接続は許可されていません。"
 
 #. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1421,7 +1421,7 @@ msgstr "デフォルト値「{defaultValue}」はオプションの値のいず�
 #. js-lingui-id: XeWfi3
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Default value cannot be null."
-msgstr "デフォルト値を null にはできません。"
+msgstr "デフォルト値をnullにはできません。"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1735,7 +1735,7 @@ msgstr "実行者"
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
-msgstr "{connectFieldName} のすべての操作で、同じ制約フィールドを一貫して使用することが期待されます。"
+msgstr "{connectFieldName}のすべての操作で、同じ制約フィールドを一貫して使用することが期待されます。"
 
 #. js-lingui-id: 5KfWxA
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2126,27 +2126,27 @@ msgstr "フィールド値が必要です"
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr "ビューフィールドを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィールドを作成するにはFieldMetadataIdが必要です。"
 
 #. js-lingui-id: NTyTR5
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr "ビューフィルターグループを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィルターグループを作成するにはFieldMetadataIdが必要です。"
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr "ビューフィルターを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィルターを作成するにはFieldMetadataIdが必要です。"
 
 #. js-lingui-id: DU4jcg
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr "ビューグループを作成するには FieldMetadataId が必要です。"
+msgstr "ビューグループを作成するにはFieldMetadataIdが必要です。"
 
 #. js-lingui-id: snEXuU
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr "ビューソートを作成するには FieldMetadataId が必要です。"
+msgstr "ビューソートを作成するにはFieldMetadataIdが必要です。"
 
 #. js-lingui-id: i+AQUz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -2459,7 +2459,7 @@ msgstr "無効なデータベースイベントトリガーです。"
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid day value. Should be integer greater than 1"
-msgstr "無効な日付の値。1 を超える整数であるべきです"
+msgstr "無効な日付の値。1を超える整数でなければなりません"
 
 #. js-lingui-id: i++4Wk
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -2518,13 +2518,13 @@ msgstr "無効なグループ化パラメータです。"
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer between 0 and 23"
-msgstr "無効な時間の値。0 から 23 までの整数でなければなりません"
+msgstr "無効な時間の値。0から23までの整数でなければなりません"
 
 #. js-lingui-id: 9xsjn9
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer greater than 1"
-msgstr "無効な時間の値。1 を超える整数であるべきです"
+msgstr "無効な時間の値。1を超える整数でなければなりません"
 
 #. js-lingui-id: 6WLJFQ
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2561,13 +2561,13 @@ msgstr "無効なマイグレーションアクションです。"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid minute value. Should be integer between 0 and 59"
-msgstr "無効な分の値。0 から 59 までの整数でなければなりません"
+msgstr "無効な分の値。0から59までの整数でなければなりません"
 
 #. js-lingui-id: hYcFSd
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid minute value. Should be integer greater than 1"
-msgstr "無効な分の値。1 を超える整数であるべきです"
+msgstr "無効な分の値。1を超える整数でなければなりません"
 
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -2693,7 +2693,7 @@ msgstr "無効な行レベル権限述語グループデータです。"
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
-msgstr "無効な設定タイプが cron トリガーに提供されています"
+msgstr "無効な設定タイプがcronトリガーに提供されています"
 
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
@@ -3443,7 +3443,7 @@ msgstr "マルチセレクトフィールドのデフォルト値は配列であ
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-msgstr "{conflictingFieldsValues} で同一のフィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
+msgstr "{conflictingFieldsValues}で同一のフィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
 
 #. js-lingui-id: B9dbXq
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3510,7 +3510,7 @@ msgstr "名前が短すぎます"
 #. js-lingui-id: HKHHTk
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name must be in camelCase format."
-msgstr "名前は camelCase 形式でなければなりません。"
+msgstr "名前はcamelCase形式でなければなりません。"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -3568,7 +3568,7 @@ msgstr "フォームステップに入力が提供されていません"
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
-msgstr "CUSTOM cron トリガーにパターンが提供されていません"
+msgstr "CUSTOM cronトリガーにパターンが提供されていません"
 
 #. js-lingui-id: 2iURlq
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3593,12 +3593,12 @@ msgstr "このユーザーにはワークスペース内のロールが見つか
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No schedule provided in cron trigger"
-msgstr "cron トリガーにスケジュールが提供されていません"
+msgstr "cronトリガーにスケジュールが提供されていません"
 
 #. js-lingui-id: cLUBlS
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No setting type provided in cron trigger"
-msgstr "cron トリガーに設定タイプが提供されていません"
+msgstr "cronトリガーに設定タイプが提供されていません"
 
 #. js-lingui-id: QwbSxD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3726,7 +3726,7 @@ msgstr "会社の従業員数"
 #. js-lingui-id: 08qKzD
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
-msgstr "OAuth アクセスが拒否されました。"
+msgstr "OAuthアクセスが拒否されました。"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -3817,7 +3817,7 @@ msgstr "オブジェクトは同じIDで既に存在します"
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr "ビューを作成するには ObjectMetadataId が必要です。"
+msgstr "ビューを作成するにはObjectMetadataIdが必要です。"
 
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4097,7 +4097,7 @@ msgstr "更新するページレイアウトウィジェットが見つかりま
 #. js-lingui-id: +4z9mT
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr "ID {flatPageLayoutWidgetId} のページレイアウトウィジェットはすでに存在します"
+msgstr "ID{flatPageLayoutWidgetId}のページレイアウトウィジェットはすでに存在します"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -4350,7 +4350,7 @@ msgstr "レート制限に達しました。後でもう一度お試しくださ
 #. js-lingui-id: 8G8dJM
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
-msgstr "生の SQL クエリは許可されていません。"
+msgstr "生のSQLクエリは許可されていません。"
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -4819,12 +4819,12 @@ msgstr "ソースオブジェクトはターゲットオブジェクトにでき
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO configuration error."
-msgstr "SSO の構成エラーです。"
+msgstr "SSOの構成エラーです。"
 
 #. js-lingui-id: NflMcG
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO is disabled."
-msgstr "SSO は無効です。"
+msgstr "SSOは無効です。"
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4973,7 +4973,7 @@ msgstr "ウィジェットの複製先のタブが見つかりません。"
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
-msgstr "{connectFieldName} のターゲットオブジェクトメタデータが見つかりません"
+msgstr "{connectFieldName}のターゲットオブジェクトメタデータが見つかりません"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -5351,12 +5351,12 @@ msgstr "このAPIキーは取り消され、もう使用できません。"
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
-msgstr "この APIキーは失効しています。"
+msgstr "このAPIキーは失効しています。"
 
 #. js-lingui-id: OLL1W0
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has expired."
-msgstr "この APIキーは有効期限が切れています。"
+msgstr "このAPIキーは有効期限が切れています。"
 
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -5366,7 +5366,7 @@ msgstr "このAPIキーは期限切れです。新しいものを作成してく
 #. js-lingui-id: 9J2vmW
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
-msgstr "この APIキーにはロールが割り当てられていません。"
+msgstr "このAPIキーにはロールが割り当てられていません。"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -5745,12 +5745,12 @@ msgstr "サポートされていない構成タイプです。"
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
-msgstr "サポートされていない cron スケジュールタイプ"
+msgstr "サポートされていないcronスケジュールタイプ"
 
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr "サポートされていないフィールドメタデータタイプ {fieldType}"
+msgstr "サポートされていないフィールドメタデータタイプ{fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -6149,27 +6149,27 @@ msgstr "ビューID"
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr "ビューフィールドを作成するには ViewId が必要です。"
+msgstr "ビューフィールドを作成するにはViewIdが必要です。"
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr "ビューフィルターグループを作成するには ViewId が必要です。"
+msgstr "ビューフィルターグループを作成するにはViewIdが必要です。"
 
 #. js-lingui-id: pCCxli
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr "ビューフィルターを作成するには ViewId が必要です。"
+msgstr "ビューフィルターを作成するにはViewIdが必要です。"
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr "ビューグループを作成するには ViewId が必要です。"
+msgstr "ビューグループを作成するにはViewIdが必要です。"
 
 #. js-lingui-id: uGUFcy
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr "ビューソートを作成するには ViewId が必要です。"
+msgstr "ビューソートを作成するにはViewIdが必要です。"
 
 #. js-lingui-id: 2q/Q7x
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -6187,7 +6187,7 @@ msgstr "データベースに一時的な問題が発生しています。しば
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
-msgstr "CalDAV サーバーへの接続ができませんでした。サーバー設定を確認して再試行してください。"
+msgstr "CalDAVサーバーへの接続ができませんでした。サーバー設定を確認して再試行してください。"
 
 #. js-lingui-id: ax8unE
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6212,7 +6212,7 @@ msgstr "メールアカウントへの接続に問題が発生しました。設
 #. js-lingui-id: b8g3PG
 #: src/engine/core-modules/webhook/webhook.exception.ts
 msgid "Webhook not found."
-msgstr "Webhook が見つかりません。"
+msgstr "Webhookが見つかりません。"
 
 #. js-lingui-id: VAcXNz
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6392,7 +6392,7 @@ msgstr "ワークフロー自動トリガー"
 #. js-lingui-id: 96bCgZ
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "WorkflowAutomatedTrigger workflow"
-msgstr "WorkflowAutomatedTrigger のワークフロー"
+msgstr "WorkflowAutomatedTriggerのワークフロー"
 
 #. js-lingui-id: 5z92T9
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -6412,7 +6412,7 @@ msgstr "WorkflowVersion"
 #. js-lingui-id: b4kire
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
-msgstr "WorkflowVersion のワークフロー"
+msgstr "WorkflowVersionのワークフロー"
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -6508,32 +6508,32 @@ msgstr "ワークスペーススキーマが見つかりません。"
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr "ビューフィールドを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィールドを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr "ビューフィルターグループを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィルターグループを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: jQMXtD
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr "ビューフィルターを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィルターを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: NAoJAX
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr "ビューグループを作成するには WorkspaceId が必要です。"
+msgstr "ビューグループを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: hU1QaN
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr "ビューソートを作成するには WorkspaceId が必要です。"
+msgstr "ビューソートを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: jtb/lI
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr "ビューを作成するには WorkspaceId が必要です。"
+msgstr "ビューを作成するにはWorkspaceIdが必要です。"
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
