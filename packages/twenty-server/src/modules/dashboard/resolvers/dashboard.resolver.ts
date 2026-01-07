@@ -6,9 +6,10 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
@@ -35,8 +36,14 @@ export class DashboardResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<DuplicatedDashboardDTO> {
-    const authContext: AuthContext = { user, workspace, workspaceMemberId };
+    const authContext: AuthContext = {
+      user,
+      workspace,
+      workspaceMemberId,
+      userWorkspaceId,
+    };
 
     return this.dashboardDuplicationService.duplicateDashboard(id, authContext);
   }
