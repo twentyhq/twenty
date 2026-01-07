@@ -3,6 +3,7 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
@@ -93,7 +94,19 @@ export const useResetVirtualizationBecauseDataChanged = (
           totalNumberOfRecordsToVirtualize,
         );
 
-        for (let i = 0; i < totalNumberOfRecordsToVirtualize; i++) {
+        const dataPagesLoaded = getSnapshotValue(
+          snapshot,
+          dataPagesLoadedCallbackState,
+        );
+
+        const minPage = Math.min(...dataPagesLoaded);
+        const maxPage = Math.max(...dataPagesLoaded);
+        const startIndex =
+          minPage * TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
+        const endIndex =
+          (maxPage + 1) * TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
+
+        for (let i = startIndex; i < endIndex; i++) {
           const indexIsInOverscanWindow =
             i >= firstRealIndexInOverscanWindow &&
             i <= lastRealIndexInOverscanWindow;
