@@ -247,10 +247,7 @@ export const RecordDetailRelationRecordsListItem = ({
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
         />
-        <StyledClickableZone
-          onClick={handleClick}
-          data-testid="expand-button"
-        >
+        <StyledClickableZone onClick={handleClick} data-testid="expand-button">
           <LightIconButton
             className="displayOnHover"
             Icon={AnimatedIconChevronDown}
