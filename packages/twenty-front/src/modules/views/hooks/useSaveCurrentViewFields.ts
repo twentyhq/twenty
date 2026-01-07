@@ -53,7 +53,7 @@ export const useSaveCurrentViewFields = () => {
           }>(
             (
               { viewFieldsToCreate, viewFieldsToUpdate },
-              { __typename, id: _id, ...viewFieldToCreateOrUpdate },
+              { __typename, ...viewFieldToCreateOrUpdate },
             ) => {
               const createViewFieldInput: CreateViewFieldInput = {
                 ...viewFieldToCreateOrUpdate,
@@ -81,11 +81,13 @@ export const useSaveCurrentViewFields = () => {
                     position: existingField.position,
                     size: existingField.size,
                     isVisible: existingField.isVisible,
+                    aggregateOperation: existingField.aggregateOperation,
                   },
                   {
                     position: createViewFieldInput.position,
                     size: createViewFieldInput.size,
                     isVisible: createViewFieldInput.isVisible,
+                    aggregateOperation: createViewFieldInput.aggregateOperation,
                   },
                 )
               ) {
