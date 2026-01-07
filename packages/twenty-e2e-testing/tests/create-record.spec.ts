@@ -68,7 +68,6 @@ test('Create and update record', async ({ page }) => {
     await emailInput.click({ force: true });
     await page.getByPlaceholder('Email').fill(randomEmail);
     await page.keyboard.press('Enter');
-    await page.keyboard.press('Escape');
     await recordFieldList.getByText('Emails').first().click();
 
 

@@ -60,13 +60,8 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
       Icon: IconPlayerStop,
-      shouldBeRegistered: ({
-        selectedRecord,
-        isWorkflowRunStoppageEnabled,
-      }) => {
-        return (
-          selectedRecord?.status === 'RUNNING' && isWorkflowRunStoppageEnabled
-        );
+      shouldBeRegistered: ({ selectedRecord }) => {
+        return selectedRecord?.status === 'RUNNING';
       },
       availableOn: [
         ActionViewType.SHOW_PAGE,

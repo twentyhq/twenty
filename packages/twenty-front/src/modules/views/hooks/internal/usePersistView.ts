@@ -6,14 +6,15 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
   type CreateCoreViewMutationVariables,
-  type DeleteCoreViewMutationVariables,
+  type DestroyCoreViewMutationVariables,
   type UpdateCoreViewMutationVariables,
   useCreateCoreViewMutation,
-  useDeleteCoreViewMutation,
+  useDestroyCoreViewMutation,
   useUpdateCoreViewMutation,
   ViewType,
 } from '~/generated/graphql';
@@ -21,7 +22,7 @@ import {
 export const usePersistView = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();
-  const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
+  const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -72,6 +73,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.CREATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -110,6 +112,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.UPDATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -124,14 +127,14 @@ export const usePersistView = () => {
     [updateCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
-  const deleteView = useCallback(
+  const destroyView = useCallback(
     async (
-      variables: DeleteCoreViewMutationVariables,
+      variables: DestroyCoreViewMutationVariables,
     ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof deleteCoreViewMutation>>>
+      MetadataRequestResult<Awaited<ReturnType<typeof destroyCoreViewMutation>>>
     > => {
       try {
-        const result = await deleteCoreViewMutation({
+        const result = await destroyCoreViewMutation({
           variables,
         });
 
@@ -143,6 +146,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.DELETE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -154,12 +158,12 @@ export const usePersistView = () => {
         };
       }
     },
-    [deleteCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
+    [destroyCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {
     createView,
     updateView,
-    deleteView,
+    destroyView,
   };
 };

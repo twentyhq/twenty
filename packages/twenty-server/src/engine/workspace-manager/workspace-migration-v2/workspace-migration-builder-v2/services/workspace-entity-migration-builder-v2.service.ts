@@ -57,6 +57,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     dependencyOptimisticFlatEntityMaps: inputDependencyOptimisticFlatEntityMaps,
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
+    additionalCacheDataMaps,
     workspaceId,
   }: ValidateAndBuildArgs<T>): ValidateAndBuildReturnType<T> {
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
@@ -125,6 +126,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       const validationResult = await this.validateFlatEntityCreation({
+        additionalCacheDataMaps,
         flatEntityToValidate: flatEntityToCreate,
         workspaceId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -193,6 +195,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToDelete,
         buildOptions,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        additionalCacheDataMaps,
       });
 
       if (validationResult.status === 'fail') {
@@ -237,6 +240,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         workspaceId,
         buildOptions,
+        additionalCacheDataMaps,
       });
 
       if (validationResult.status === 'fail') {
