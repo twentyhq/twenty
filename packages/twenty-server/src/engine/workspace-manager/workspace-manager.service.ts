@@ -5,12 +5,8 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -22,13 +18,10 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
-import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
-import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -56,8 +49,6 @@ export class WorkspaceManagerService {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
   ) {}
 
   public async init({
@@ -81,58 +72,21 @@ export class WorkspaceManagerService {
     );
 
     const dataSourceMetadataCreationStart = performance.now();
-    const dataSourceMetadata =
-      await this.dataSourceService.createDataSourceMetadata(
+
+    await this.applicationService.createTwentyStandardApplication({
+      workspaceId,
+    });
+
+    await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
+      {
         workspaceId,
-        schemaName,
-      );
+      },
+    );
 
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    const twentyStandardApplication =
-      await this.applicationService.createTwentyStandardApplication({
-        workspaceId,
-      });
-
-    const isV2SyncEnabled =
-      featureFlags[FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED];
-
-    if (isV2SyncEnabled) {
-      await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-      await this.prefillCreatedWorkspaceRecords({
-        workspaceId,
-        schemaName,
-      });
-    } else {
-      await this.workspaceSyncMetadataService.synchronize({
-        workspaceId,
-        dataSourceId: dataSourceMetadata.id,
-        featureFlags,
-      });
-
-      const prefillStandardObjectsStart = performance.now();
-
-      await this.prefillWorkspaceWithStandardObjectsRecords({
-        dataSourceMetadata,
-        workspaceId,
-        featureFlags,
-        twentyStandardFlatApplication: fromApplicationEntityToFlatApplication(
-          twentyStandardApplication,
-        ),
-      });
-
-      const prefillStandardObjectsEnd = performance.now();
-
-      this.logger.log(
-        `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
-      );
-    }
+    await this.prefillCreatedWorkspaceRecords({
+      workspaceId,
+      schemaName,
+    });
 
     const dataSourceMetadataCreationEnd = performance.now();
 
@@ -202,43 +156,6 @@ export class WorkspaceManagerService {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  private async prefillWorkspaceWithStandardObjectsRecords({
-    dataSourceMetadata,
-    workspaceId,
-    featureFlags,
-    twentyStandardFlatApplication,
-  }: {
-    dataSourceMetadata: DataSourceEntity;
-    workspaceId: string;
-    featureFlags: Record<string, boolean>;
-    twentyStandardFlatApplication: FlatApplication;
-  }) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    await standardObjectsPrefillData(
-      this.coreDataSource,
-      dataSourceMetadata.schema,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    );
-
-    await prefillCoreViews({
-      twentyStandardFlatApplication,
-      coreDataSource: this.coreDataSource,
-      workspaceId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceSchemaName: dataSourceMetadata.schema,
-      featureFlags,
-    });
   }
 
   /**
