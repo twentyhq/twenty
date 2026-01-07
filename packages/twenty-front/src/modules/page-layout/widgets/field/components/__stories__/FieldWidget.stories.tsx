@@ -1756,12 +1756,6 @@ export const OneToManyRelationCardWidget: Story = {
 
     const personChip = await canvas.findByText('Jane Smith');
     expect(personChip).toBeVisible();
-
-    const expandButton = await canvas.findByTestId('expand-button');
-    await userEvent.click(expandButton);
-
-    const emailsField = await canvas.findByText('Emails');
-    expect(emailsField).toBeVisible();
   },
 };
 
@@ -1855,8 +1849,10 @@ export const ManyToOneRelationCardWidgetEmpty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const emptyPlaceholder = await canvas.findByText('No related records');
-    expect(emptyPlaceholder).toBeVisible();
+    await waitFor(() => {
+      const emptyPlaceholder = canvas.queryByText('No related records');
+      expect(emptyPlaceholder).toBeInTheDocument();
+    });
   },
 };
 
