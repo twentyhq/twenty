@@ -123,17 +123,12 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const exceptions: FieldMetadataException[] = [];
 
     for (const fieldMetadataEntity of allFieldMetadataEntities) {
-      const shouldBecomeCustom =
-        isDefined(fieldMetadataEntity.standardId) &&
-        STANDARD_IDS_THAT_MUST_BECOME_CUSTOM.includes(
-          fieldMetadataEntity.standardId,
-        );
       const isStandardMetadataResult = isStandardMetadata(fieldMetadataEntity);
 
-      if (!isStandardMetadataResult || shouldBecomeCustom) {
+      if (!isStandardMetadataResult) {
         customFieldMetadataEntities.push({
           fieldMetadataEntity,
-          fromStandard: shouldBecomeCustom,
+          fromStandard: false,
         });
 
         continue;
