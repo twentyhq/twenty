@@ -59,7 +59,6 @@ export const CommandMenuItemTextInput = ({
   };
 
   const handleBlur = () => {
-    onChange(draftValue);
     removeFocusItemFromFocusStackById({ focusId });
   };
 
