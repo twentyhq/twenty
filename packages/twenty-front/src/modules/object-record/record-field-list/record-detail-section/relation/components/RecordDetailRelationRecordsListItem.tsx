@@ -199,6 +199,7 @@ export const RecordDetailRelationRecordsListItem = ({
           relationFieldMetadataItem?.name ?? '',
         )]: null,
       };
+
   const handleDetach = () => {
     closeDropdown(dropdownInstanceId);
 

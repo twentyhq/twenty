@@ -57,7 +57,7 @@ export const FieldWidgetRelationCard = ({
   const fieldMetadata = fieldDefinition.metadata;
   const relationObjectNameSingular =
     fieldMetadata.relationObjectMetadataNameSingular;
-  const fieldMetadataId = fieldDefinition.fieldMetadataId;
+  const relationFieldMetadataId = fieldMetadata.relationFieldMetadataId;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -157,7 +157,7 @@ export const FieldWidgetRelationCard = ({
                   relationObjectMetadataNameSingular={
                     relationObjectNameSingular
                   }
-                  relationFieldMetadataId={fieldMetadataId}
+                  relationFieldMetadataId={relationFieldMetadataId}
                 />
               </Fragment>
             ))}
