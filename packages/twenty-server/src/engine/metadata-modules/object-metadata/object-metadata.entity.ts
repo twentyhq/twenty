@@ -18,7 +18,7 @@ import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/obj
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
+import { SyncableEntityRequired } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity-required.interface';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -30,7 +30,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/type
   'workspaceId',
 ])
 export class ObjectMetadataEntity
-  extends SyncableEntity
+  extends SyncableEntityRequired
   implements Required<ObjectMetadataEntity>
 {
   @PrimaryGeneratedColumn('uuid')
