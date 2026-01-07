@@ -7,12 +7,12 @@ description: Troubleshooting missing emails on records.
 
 ### 1. Initial Sync Still in Progress
 
-Email sync takes time, especially for large mailboxes.
+Email sync takes time, especially for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting).
 
 * **Calendar sync**: Completes in minutes
-* **Email sync**: Can take several hours for large mailboxes
+* **Email sync**: Depends on mailbox size (e.g., 10,000 emails ≈ 25 minutes, 50,000 emails ≈ 2 hours)
 
-**Solution**: Wait up to a few hours for the initial import to complete.
+**Solution**: Wait for the initial import to complete. You can estimate timing based on your mailbox size.
 
 ### ٢. Contact Doesn't Exist in Twenty
 
