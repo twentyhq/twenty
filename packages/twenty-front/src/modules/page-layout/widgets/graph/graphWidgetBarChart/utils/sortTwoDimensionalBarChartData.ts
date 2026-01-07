@@ -1,9 +1,9 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { type BarDatum } from '@nivo/bar';
@@ -59,7 +59,7 @@ export const sortTwoDimensionalBarChartData = ({
       key,
       label: key,
       color: determineChartItemColor({
-        configurationColor: color as GraphColor | null | undefined,
+        configurationColor: parseGraphColor(color),
         selectOptions: secondaryAxisSelectFieldOptions,
         rawValue: isDefined(rawValue) ? String(rawValue) : key,
       }),

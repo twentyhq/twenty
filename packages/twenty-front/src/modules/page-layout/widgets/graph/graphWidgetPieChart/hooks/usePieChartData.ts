@@ -4,10 +4,10 @@ import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidg
 import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartPercentage';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { checkIsExplicitColorSelection } from '@/page-layout/widgets/graph/utils/checkIsExplicitColorSelection';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type UsePieChartDataProps = {
   data: PieChartDataItem[];
@@ -25,10 +25,9 @@ export const usePieChartData = ({
   const allEnrichedData = useMemo((): PieChartEnrichedData[] => {
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-    const allColors = data.map((item) => item.color);
-    const firstColor = allColors[0];
-    const isExplicitColorSelection =
-      isDefined(firstColor) && allColors.every((color) => color === firstColor);
+    const isExplicitColorSelection = checkIsExplicitColorSelection(
+      data.map((item) => item.color),
+    );
 
     return data.map((item, index) => {
       const colorScheme = getColorScheme({

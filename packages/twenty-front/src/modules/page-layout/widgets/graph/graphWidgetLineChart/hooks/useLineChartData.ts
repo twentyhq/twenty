@@ -3,11 +3,11 @@ import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphW
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { checkIsExplicitColorSelection } from '@/page-layout/widgets/graph/utils/checkIsExplicitColorSelection';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
@@ -25,10 +25,9 @@ export const useLineChartData = ({
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    const allColors = data.map((series) => series.color);
-    const firstColor = allColors[0];
-    const isExplicitColorSelection =
-      isDefined(firstColor) && allColors.every((color) => color === firstColor);
+    const isExplicitColorSelection = checkIsExplicitColorSelection(
+      data.map((series) => series.color),
+    );
 
     return data.map((series, index) => {
       const colorScheme = getColorScheme({

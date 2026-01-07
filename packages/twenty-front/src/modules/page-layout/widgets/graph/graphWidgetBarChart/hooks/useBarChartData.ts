@@ -3,9 +3,10 @@ import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { checkIsExplicitColorSelection } from '@/page-layout/widgets/graph/utils/checkIsExplicitColorSelection';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
@@ -38,11 +39,9 @@ export const useBarChartData = ({
     [series],
   );
 
-  const allSeriesColors = series?.map((s) => s.color) ?? [];
-  const firstSeriesColor = allSeriesColors[0];
-  const isExplicitColorSelection =
-    isDefined(firstSeriesColor) &&
-    allSeriesColors.every((color) => color === firstSeriesColor);
+  const isExplicitColorSelection = checkIsExplicitColorSelection(
+    series?.map((s) => s.color) ?? [],
+  );
 
   const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
@@ -75,7 +74,7 @@ export const useBarChartData = ({
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
-      const datumColor = dataPoint.color as GraphColor | undefined;
+      const datumColor = parseGraphColor(dataPoint.color as string | undefined);
 
       return visibleKeys.flatMap((key): BarChartConfig[] => {
         const enrichedKey = allEnrichedKeys.find((ek) => ek.key === key);

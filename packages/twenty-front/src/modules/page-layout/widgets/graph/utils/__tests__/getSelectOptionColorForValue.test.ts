@@ -49,6 +49,13 @@ describe('getSelectOptionColorForValue', () => {
     expect(
       getSelectOptionColorForValue({
         rawValue: 'ACTIVE',
+        selectOptions: undefined,
+      }),
+    ).toBeUndefined();
+
+    expect(
+      getSelectOptionColorForValue({
+        rawValue: 'ACTIVE',
         selectOptions: [],
       }),
     ).toBeUndefined();

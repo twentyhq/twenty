@@ -2,9 +2,9 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortLineChartDataBySecondaryDimensionSum';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { isDefined } from 'twenty-shared/utils';
@@ -84,7 +84,7 @@ export const sortTwoDimensionalLineChartData = ({
     return {
       ...seriesItem,
       color: determineChartItemColor({
-        configurationColor: color as GraphColor | null | undefined,
+        configurationColor: parseGraphColor(color),
         selectOptions: secondaryAxisSelectFieldOptions,
         rawValue: isDefined(rawValue) ? String(rawValue) : seriesItem.id,
       }),

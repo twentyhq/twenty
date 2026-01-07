@@ -6,9 +6,9 @@ import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/g
 import { buildTwoDimensionalLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/buildTwoDimensionalLineChartSeries';
 import { limitTwoDimensionalLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/limitTwoDimensionalLineChartData';
 import { sortTwoDimensionalLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortTwoDimensionalLineChartData';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
 import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -60,7 +60,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
   const { unsortedSeries } = buildTwoDimensionalLineChartSeries({
     processedDataPoints,
-    color: configuration.color as GraphColor,
+    color: parseGraphColor(configuration.color),
   });
 
   const { sortedSeries } = sortTwoDimensionalLineChartData({
