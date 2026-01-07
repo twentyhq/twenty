@@ -2,7 +2,12 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
 import { ApiService } from '@/cli/services/api.service';
-import { loadManifest } from '@/cli/utils/load-manifest';
+import { loadManifestAuto } from '@/cli/utils/load-manifest-auto';
+import {
+  ManifestValidationError,
+  type ValidationWarning,
+} from '@/cli/utils/validate-manifest';
+import { displayEntitySummary } from '@/cli/utils/display-entity-summary';
 
 export class AppDevCommand {
   private apiService = new ApiService();
@@ -33,13 +38,55 @@ export class AppDevCommand {
   }
 
   private async synchronize(appPath: string) {
-    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+    try {
+      const { manifest, packageJson, yarnLock, warnings, usedLoader } =
+        await loadManifestAuto(appPath);
 
-    await this.apiService.syncApplication({
-      manifest,
-      packageJson,
-      yarnLock,
-    });
+      // Display loader info
+      if (usedLoader === 'v2') {
+        console.log(chalk.green('  ✓ Using new config-based loader'));
+      }
+
+      // Display entity summary
+      displayEntitySummary(manifest);
+
+      // Display warnings
+      this.displayWarnings(warnings);
+
+      await this.apiService.syncApplication({
+        manifest,
+        packageJson,
+        yarnLock,
+      });
+
+      console.log(chalk.green('  ✓ Synced with server'));
+    } catch (error) {
+      if (error instanceof ManifestValidationError) {
+        this.displayValidationErrors(error);
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  private displayWarnings(warnings?: ValidationWarning[]): void {
+    if (!warnings || warnings.length === 0) {
+      return;
+    }
+
+    console.log('');
+    for (const warning of warnings) {
+      const path = warning.path ? `${warning.path}: ` : '';
+      console.log(chalk.yellow(`  ⚠ ${path}${warning.message}`));
+    }
+  }
+
+  private displayValidationErrors(error: ManifestValidationError): void {
+    console.log(chalk.red('\n  ✗ Manifest validation failed:\n'));
+    for (const err of error.errors) {
+      console.log(chalk.red(`    • ${err.path}: ${err.message}`));
+    }
+    console.log('');
   }
 
   private logStartupInfo(appPath: string, debounceMs: number): void {
