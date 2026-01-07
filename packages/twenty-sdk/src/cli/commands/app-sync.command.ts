@@ -3,12 +3,12 @@ import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-d
 import { ApiService } from '@/cli/services/api.service';
 import { GenerateService } from '@/cli/services/generate.service';
 import { type ApiResponse } from '@/cli/types/api-response.types';
-import { loadManifestAuto } from '@/cli/utils/load-manifest-auto';
 import {
   ManifestValidationError,
   type ValidationWarning,
 } from '@/cli/utils/validate-manifest';
 import { displayEntitySummary } from '@/cli/utils/display-entity-summary';
+import { loadManifest } from '@/cli/utils/load-manifest';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -34,19 +34,8 @@ export class AppSyncCommand {
 
   private async synchronize({ appPath }: { appPath: string }) {
     try {
-      const {
-        manifest,
-        packageJson,
-        yarnLock,
-        shouldGenerate,
-        warnings,
-        usedLoader,
-      } = await loadManifestAuto(appPath);
-
-      // Display loader info
-      if (usedLoader === 'v2') {
-        console.log(chalk.green('  ✓ Using new config-based loader'));
-      }
+      const { manifest, packageJson, yarnLock, shouldGenerate, warnings } =
+        await loadManifest(appPath);
 
       // Display entity summary
       displayEntitySummary(manifest);
@@ -63,8 +52,7 @@ export class AppSyncCommand {
       if (shouldGenerate) {
         await this.generateService.generateClient(appPath);
 
-        const { manifest: manifestWithClient } =
-          await loadManifestAuto(appPath);
+        const { manifest: manifestWithClient } = await loadManifest(appPath);
 
         serverlessSyncResult = await this.apiService.syncApplication({
           manifest: manifestWithClient,

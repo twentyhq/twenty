@@ -1,5 +1,5 @@
 import { createJiti } from 'jiti';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath } from 'url';
 
 // Create a jiti instance for loading TypeScript config files
 const createConfigLoader = () => {
@@ -41,7 +41,9 @@ export const loadConfig = async <T>(filepath: string): Promise<T> => {
     return config as T;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Failed to load config from ${filepath}: ${error.message}`);
+      throw new Error(
+        `Failed to load config from ${filepath}: ${error.message}`,
+      );
     }
     throw error;
   }
@@ -69,7 +71,9 @@ export const loadFunctionModule = async (
     // Find the config export
     const config = mod.config;
     if (!config) {
-      throw new Error(`Function file ${filepath} must export a "config" object`);
+      throw new Error(
+        `Function file ${filepath} must export a "config" object`,
+      );
     }
 
     // Find the handler (default export or any exported function that's not config)

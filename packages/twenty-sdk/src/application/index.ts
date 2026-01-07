@@ -7,14 +7,8 @@
  *                              |___/
  */
 
-// Define helpers (config-based approach)
-export { defineApp } from './define-app';
-export { defineObject, type ObjectDefinition } from './objects/define-object';
-export { defineFunction } from './functions/define-function';
-export { defineRole } from './roles/define-role';
-
-// Legacy decorator-based approach (kept for backward compatibility)
 export type { ApplicationConfig } from './application-config';
+export { defineApp } from './define-app';
 export type {
   ActorField,
   AddressField,
@@ -30,6 +24,7 @@ export { Field } from './fields/field.decorator';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { Relation } from './fields/relation.decorator';
+export { defineFunction } from './functions/define-function';
 export type { FunctionConfig } from './functions/function-config';
 export type { CronPayload } from './functions/triggers/cron-payload-type';
 export type {
@@ -43,8 +38,11 @@ export type {
   ObjectRecordRestoreEvent,
   ObjectRecordUpsertEvent,
 } from './functions/triggers/database-event-payload-type';
+export type { ObjectDefinition } from './objects/define-object';
+export { defineObject } from './objects/define-object';
 export { Object } from './objects/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { PermissionFlag } from './permission-flag-type';
 export type { RoleConfig } from './role-config';
+export { defineRole } from './roles/define-role';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

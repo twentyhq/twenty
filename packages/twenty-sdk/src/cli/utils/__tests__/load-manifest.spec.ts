@@ -1,8 +1,8 @@
 import { ensureDirSync, writeFileSync, removeSync } from 'fs-extra';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, resolve } from 'path';
 import { loadManifest } from '@/cli/utils/load-manifest';
-import { type ApplicationConfig } from '@/application';
+import { ManifestValidationError } from '../validate-manifest';
 
 const write = (root: string, file: string, content: string) => {
   const abs = join(root, file);
@@ -10,284 +10,46 @@ const write = (root: string, file: string, content: string) => {
   writeFileSync(abs, content, 'utf8');
 };
 
-const tsLibMock = `declare module 'tslib' {
-   export const __decorate: any;
-   export const __metadata: any;
-   export const __param: any;
-   export const __awaiter: any;
-   export const __read: any;
-   export const __spread: any;
-   export const __spreadArray: any;
-   export const __assign: any;
- }`;
-
+// Mock type definitions for twenty-sdk
 const twentySdkTypesMock = `
 declare module 'twenty-sdk' {
   export type SyncableEntityOptions = { universalIdentifier: string };
-
-  type ApplicationVariable = SyncableEntityOptions & {
-    value?: string;
-    description?: string;
-    isSecret?: boolean;
-  };
 
   export type ApplicationConfig = SyncableEntityOptions & {
     displayName?: string;
     description?: string;
     icon?: string;
-    applicationVariables?: Record<string, ApplicationVariable>;
-    functionRoleUniversalIdentifier?: string;
   };
-  
-  export type RoleConfig = SyncableEntityOptions & {
-    label: string;
-    description?: string;
-    icon?: string;
-    canReadAllObjectRecords?: boolean;
-    canUpdateAllObjectRecords?: boolean;
-    canSoftDeleteAllObjectRecords?: boolean;
-    canDestroyAllObjectRecords?: boolean;
-    objectPermissions?: any[];
-    fieldPermissions?: any[];
-    permissionFlags?: any[];
-  };
-
-  export enum PermissionFlag {
-    API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
-    WORKSPACE = 'WORKSPACE',
-    WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS',
-    ROLES = 'ROLES',
-    DATA_MODEL = 'DATA_MODEL',
-    SECURITY = 'SECURITY',
-    WORKFLOWS = 'WORKFLOWS',
-    IMPERSONATE = 'IMPERSONATE',
-    SSO_BYPASS = 'SSO_BYPASS',
-    APPLICATIONS = 'APPLICATIONS',
-    LAYOUTS = 'LAYOUTS',
-    BILLING = 'BILLING',
-    AI_SETTINGS = 'AI_SETTINGS',
-
-    // Tool permissions
-    AI = 'AI',
-    VIEWS = 'VIEWS',
-    UPLOAD_FILE = 'UPLOAD_FILE',
-    DOWNLOAD_FILE = 'DOWNLOAD_FILE',
-    SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
-    HTTP_REQUEST_TOOL = 'HTTP_REQUEST_TOOL',
-    IMPORT_CSV = 'IMPORT_CSV',
-    EXPORT_CSV = 'EXPORT_CSV',
-    CONNECTED_ACCOUNTS = 'CONNECTED_ACCOUNTS',
-    PROFILE_INFORMATION = 'PROFILE_INFORMATION',
-  }
-
-
-
-  type RouteTrigger = {
-    type: 'route';
-    path: string;
-    httpMethod: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-    isAuthRequired: boolean;
-  };
-
-  type CronTrigger = {
-    type: 'cron';
-    pattern: string;
-  };
-
-  type DatabaseEventTrigger = {
-    type: 'databaseEvent';
-    eventName: string;
-  };
-
-  type ServerlessFunctionTrigger = SyncableEntityOptions &
-    (RouteTrigger | CronTrigger | DatabaseEventTrigger);
 
   export type FunctionConfig = SyncableEntityOptions & {
     name?: string;
     description?: string;
     timeoutSeconds?: number;
-    triggers?: ServerlessFunctionTrigger[];
+    triggers?: any[];
   };
 
-  type ObjectMetadataOptions = SyncableEntityOptions & {
+  export type RoleConfig = SyncableEntityOptions & {
+    label: string;
+    description?: string;
+  };
+
+  export type ObjectDefinition = SyncableEntityOptions & {
     nameSingular: string;
     namePlural: string;
     labelSingular: string;
     labelPlural: string;
-    description?: string;
-    icon?: string;
+    fields: any[];
   };
-
-  export const Object = (_: ObjectMetadataOptions): ClassDecorator => {
-    return () => {};
-  };
-
-  export class BaseObjectMetadata {}
 
   export enum FieldType {
     TEXT = 'TEXT',
-    FULL_NAME = 'FULL_NAME',
-    ADDRESS = 'ADDRESS',
     SELECT = 'SELECT',
-    DATE_TIME = 'DATE_TIME',
   }
 
-  export const Field: (_: any) => PropertyDecorator;
-}
-`;
-
-const defaultRoleMock = `
-import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
-
-export const functionRole: RoleConfig = {
-  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-  label: 'hello-world-role',
-  description: 'A role to define app permissions',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
-  objectPermissions: [
-    {
-      objectNameSingular: 'postCard',
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
-}
-
-`;
-
-const serverlessFunctionMock = `
-import { type FunctionConfig } from 'twenty-sdk';
-
-export const main = async (params: any): Promise<any> => {
-  return {};
-}
-
-export const config: FunctionConfig = {
-  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-  name: 'hello',
-  timeoutSeconds: 2,
-  triggers: [
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/post-card/create',
-      httpMethod: 'GET',
-      isAuthRequired: false
-    },
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *', // Every year 1st of January
-    },
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.created'
-    }
-  ]
-};`;
-
-const objectMock = `import {
-  Object,
-  Field,
-  FieldType
-} from 'twenty-sdk';
-
-enum PostCardStatus {
-  DRAFT = 'DRAFT',
-  SENT = 'SENT',
-  DELIVERED = 'DELIVERED',
-  RETURNED = 'RETURNED',
-}
-
-@Object({
-  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-  nameSingular: 'postCard',
-  namePlural: 'postCards',
-  labelSingular: 'Post card',
-  labelPlural: 'Post cards',
-  description: ' A post card object',
-  icon: 'IconMail',
-})
-export class PostCard {
-  @Field({
-    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldType.TEXT,
-    label: 'Content',
-    description: "Postcard's content",
-  })
-  content: string;
-
-  @Field({
-    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldType.FULL_NAME,
-    label: 'Recipient name',
-  })
-  recipientName: string;
-
-  @Field({
-    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldType.ADDRESS,
-    label: 'Recipient address',
-  })
-  recipientAddress: string;
-
-  @Field({
-    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldType.SELECT,
-    label: 'Status',
-    defaultValue: \`'\${PostCardStatus.DRAFT}'\`,
-    options: [
-      {
-        value: PostCardStatus.DRAFT,
-        label: 'Draft',
-        position: 0,
-        color: 'gray',
-      },
-      {
-        value: PostCardStatus.SENT,
-        label: 'Sent',
-        position: 1,
-        color: 'orange',
-      },
-      {
-        value: PostCardStatus.DELIVERED,
-        label: 'Delivered',
-        position: 2,
-        color: 'green',
-      },
-      {
-        value: PostCardStatus.RETURNED,
-        label: 'Returned',
-        position: 3,
-        color: 'orange',
-      },
-    ],
-  })
-  status: 'draft' | 'sent' | 'delivered' | 'returned';
-
-  @Field({
-    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldType.DATE_TIME,
-    label: 'Delivered at',
-    isNullable: true,
-    defaultValue: null,
-  })
-  deliveredAt?: Date;
+  export const defineApp: <T>(config: T) => T;
+  export const defineObject: <T>(config: T) => T;
+  export const defineFunction: <T>(config: T) => T;
+  export const defineRole: <T>(config: T) => T;
 }
 `;
 
@@ -295,315 +57,329 @@ const packageJsonMock = {
   name: 'my-app',
   version: '0.0.1',
   license: 'MIT',
-  engines: {
-    node: '^24.5.0',
-    npm: 'please-use-yarn',
-    yarn: '>=4.0.2',
-  },
-  packageManager: 'yarn@4.9.2',
-  scripts: {
-    'create-entity': 'twenty app add',
-    dev: 'twenty app dev',
-    generate: 'twenty app generate',
-    sync: 'twenty app sync',
-    uninstall: 'twenty app uninstall',
-    auth: 'twenty auth login',
-  },
-  dependencies: {
-    'twenty-sdk': '0.1.0',
-  },
-  devDependencies: {
-    '@types/node': '^24.7.2',
-    typescript: '^5.9.3',
-  },
 };
 
 const tsConfigJsonMock = {
-  compileOnSave: false,
   compilerOptions: {
-    sourceMap: true,
-    declaration: true,
-    outDir: './dist',
-    rootDir: '.',
-    moduleResolution: 'node',
-    allowSyntheticDefaultImports: true,
-    emitDecoratorMetadata: true,
-    experimentalDecorators: true,
-    importHelpers: true,
-    allowUnreachableCode: false,
-    strictNullChecks: true,
-    alwaysStrict: true,
-    noImplicitAny: true,
-    strictBindCallApply: false,
-    target: 'es2018',
+    target: 'es2020',
     module: 'esnext',
-    lib: ['es2020', 'dom'],
+    moduleResolution: 'node',
+    esModuleInterop: true,
     skipLibCheck: true,
-    skipDefaultLibCheck: true,
-    resolveJsonModule: true,
   },
-
-  exclude: ['node_modules', 'dist', '**/*.test.ts', '**/*.spec.ts'],
 };
 
 const yarnLockMock = `# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
 # yarn lockfile v1
 `;
 
-const applicationMockConfig: ApplicationConfig = {
-  universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+// Shared constants file that will be imported by configs
+const constantsMock = `
+export const APP_ID = 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe';
+export const POST_CARD_ID = '54b589ca-eeed-4950-a176-358418b85c05';
+export const FIELD_ID = '58a0a314-d7ea-4865-9850-7fb84e72f30b';
+export const FUNCTION_ID = 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf';
+export const TRIGGER_ID = 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6';
+export const ROLE_ID = 'b648f87b-1d26-4961-b974-0908fd991061';
+`;
+
+// App config that imports from constants
+const appConfigMock = `
+import { APP_ID } from '../src/constants';
+
+export default {
+  universalIdentifier: APP_ID,
   displayName: 'My App',
   description: 'My app description',
   icon: 'IconWorld',
-  applicationVariables: {
-    TWENTY_API_KEY: {
-      universalIdentifier: '3a327392-3a0f-4605-9223-0633f063eaf6',
-      description: 'Twenty API Key',
-      isSecret: true,
-    },
-    TWENTY_API_URL: {
-      universalIdentifier: 'aa7210a6-75b0-46ca-bcbe-09a5b42a76ec',
-      description: 'Twenty API Url',
-      isSecret: false,
-    },
-  },
-  functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
 };
-
-const applicationConfigMock = `import { type ApplicationConfig } from 'twenty-sdk';
-
-const config: ApplicationConfig = ${JSON.stringify(applicationMockConfig)};
-
-export default config;
 `;
 
-describe('loadManifest (integration)', () => {
-  const appDirectory = join(tmpdir(), 'test-app');
+// Object config that imports from constants
+const objectConfigMock = `
+import { POST_CARD_ID, FIELD_ID } from '../../src/constants';
+
+export default {
+  universalIdentifier: POST_CARD_ID,
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: FIELD_ID,
+      type: 'TEXT',
+      label: 'Content',
+    },
+  ],
+};
+`;
+
+// Function config that imports from constants
+const functionConfigMock = `
+import { FUNCTION_ID, TRIGGER_ID } from '../../src/constants';
+
+export const config = {
+  universalIdentifier: FUNCTION_ID,
+  name: 'Send Postcard',
+  timeoutSeconds: 30,
+  triggers: [
+    {
+      universalIdentifier: TRIGGER_ID,
+      type: 'route',
+      path: '/postcards/send',
+      httpMethod: 'POST',
+      isAuthRequired: true,
+    },
+  ],
+};
+
+export default async function handler(params: any) {
+  return { success: true };
+}
+`;
+
+// Role config that imports from constants
+const roleConfigMock = `
+import { ROLE_ID } from '../../src/constants';
+
+export default {
+  universalIdentifier: ROLE_ID,
+  label: 'App User',
+  description: 'Standard user role',
+};
+`;
+
+describe('loadManifestV2 (integration)', () => {
+  const appDirectory = join(tmpdir(), 'test-app-v2-' + Date.now());
 
   beforeEach(async () => {
-    await ensureDirSync(appDirectory);
+    ensureDirSync(appDirectory);
 
+    // Create folder structure
     write(appDirectory, 'yarn.lock', yarnLockMock);
-
-    write(appDirectory, 'application.config.ts', applicationConfigMock);
-
+    write(
+      appDirectory,
+      'package.json',
+      JSON.stringify(packageJsonMock, null, 2),
+    );
     write(
       appDirectory,
       'tsconfig.json',
       JSON.stringify(tsConfigJsonMock, null, 2),
     );
 
+    // Type definitions
+    write(appDirectory, 'src/types/twenty-sdk.d.ts', twentySdkTypesMock);
+
+    // Shared constants
+    write(appDirectory, 'src/constants.ts', constantsMock);
+
+    // App config
+    write(appDirectory, 'app/application.config.ts', appConfigMock);
+
+    // Object
+    write(appDirectory, 'app/objects/post-card.object.ts', objectConfigMock);
+
+    // Function
     write(
       appDirectory,
-      'package.json',
-      JSON.stringify(packageJsonMock, null, 2),
+      'app/functions/send-postcard.function.ts',
+      functionConfigMock,
     );
 
-    write(appDirectory, 'src/Account.ts', objectMock);
-
-    write(appDirectory, 'src/hello.ts', serverlessFunctionMock);
-
-    write(appDirectory, 'src/defaultRole.ts', defaultRoleMock);
-
-    write(
-      appDirectory,
-      'src/types/twenty-sdk-application.d.ts',
-      twentySdkTypesMock,
-    );
-
-    write(
-      appDirectory,
-      'src/types/tslib.d.ts',
-      // minimal + future-proof
-      tsLibMock,
-    );
+    // Role
+    write(appDirectory, 'app/roles/app-user.role.ts', roleConfigMock);
   });
 
   afterEach(() => {
     removeSync(appDirectory);
   });
 
-  it('builds a full manifest for a valid workspace', async () => {
-    const { packageJson, yarnLock, manifest } =
-      await loadManifest(appDirectory);
+  it('should load manifest with imported constants resolved', async () => {
+    const { manifest, packageJson } = await loadManifest(appDirectory);
 
+    // Check package.json loaded
     expect(packageJson.name).toBe('my-app');
-    expect(packageJson.version).toBe('0.0.1');
-    expect(packageJson.license).toBe('MIT');
-    expect(yarnLock).toContain(
-      '# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.',
+
+    // Check application config - constants should be resolved!
+    expect(manifest.application.universalIdentifier).toBe(
+      'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+    );
+    expect(manifest.application.displayName).toBe('My App');
+
+    // Check object - constants should be resolved!
+    expect(manifest.objects).toHaveLength(1);
+    expect(manifest.objects[0].universalIdentifier).toBe(
+      '54b589ca-eeed-4950-a176-358418b85c05',
+    );
+    expect(manifest.objects[0].nameSingular).toBe('postCard');
+    expect(manifest.objects[0].fields).toHaveLength(1);
+    expect(manifest.objects[0].fields![0].universalIdentifier).toBe(
+      '58a0a314-d7ea-4865-9850-7fb84e72f30b',
     );
 
-    // application
-    expect(manifest.application).toEqual(applicationMockConfig);
+    // Check function - constants should be resolved!
+    expect(manifest.serverlessFunctions).toHaveLength(1);
+    expect(manifest.serverlessFunctions[0].universalIdentifier).toBe(
+      'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+    );
+    expect(manifest.serverlessFunctions[0].name).toBe('Send Postcard');
+    expect(manifest.serverlessFunctions[0].handlerName).toBe('default');
+    expect(manifest.serverlessFunctions[0].triggers).toHaveLength(1);
+    expect(
+      manifest.serverlessFunctions[0].triggers[0].universalIdentifier,
+    ).toBe('c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6');
 
-    expect(manifest.objects.length).toBe(1);
-
-    for (const object of manifest.objects) {
-      const { universalIdentifier: _, fields, ...otherInfo } = object;
-      expect(otherInfo).toEqual({
-        description: ' A post card object',
-        icon: 'IconMail',
-        labelPlural: 'Post cards',
-        labelSingular: 'Post card',
-        namePlural: 'postCards',
-        nameSingular: 'postCard',
-      });
-
-      expect(Array.isArray(fields)).toBe(true);
-
-      expect(fields).toEqual([
-        {
-          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-          type: 'TEXT',
-          label: 'Content',
-          description: "Postcard's content",
-          name: 'content',
-        },
-        {
-          universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-          type: 'FULL_NAME',
-          label: 'Recipient name',
-          name: 'recipientName',
-        },
-        {
-          universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-          type: 'ADDRESS',
-          label: 'Recipient address',
-          name: 'recipientAddress',
-        },
-        {
-          universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-          type: 'SELECT',
-          label: 'Status',
-          defaultValue: "'DRAFT'",
-          options: [
-            { value: 'DRAFT', label: 'Draft', position: 0, color: 'gray' },
-            { value: 'SENT', label: 'Sent', position: 1, color: 'orange' },
-            {
-              value: 'DELIVERED',
-              label: 'Delivered',
-              position: 2,
-              color: 'green',
-            },
-            {
-              value: 'RETURNED',
-              label: 'Returned',
-              position: 3,
-              color: 'orange',
-            },
-          ],
-          name: 'status',
-        },
-        {
-          universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-          type: 'DATE_TIME',
-          label: 'Delivered at',
-          isNullable: true,
-          defaultValue: null,
-          name: 'deliveredAt',
-        },
-      ]);
-    }
-
-    // serverless functions
-    for (const serverlessFunction of manifest.serverlessFunctions) {
-      const {
-        universalIdentifier: _,
-        handlerPath: __,
-        triggers,
-        ...otherInfo
-      } = serverlessFunction;
-
-      expect(otherInfo).toEqual({
-        handlerName: 'main',
-        name: 'hello',
-        timeoutSeconds: 2,
-      });
-
-      for (const trigger of triggers) {
-        const { universalIdentifier: _, ...otherInfo } = trigger;
-        switch (trigger.type) {
-          case 'route':
-            expect(otherInfo).toEqual({
-              isAuthRequired: false,
-              httpMethod: 'GET',
-              path: '/post-card/create',
-              type: 'route',
-            });
-            break;
-          case 'cron':
-            expect(otherInfo).toEqual({
-              pattern: '0 0 1 1 *',
-              type: 'cron',
-            });
-            break;
-          case 'databaseEvent':
-            expect(otherInfo).toEqual({
-              eventName: 'person.created',
-              type: 'databaseEvent',
-            });
-            break;
-        }
-      }
-    }
-
-    //Role
+    // Check role - constants should be resolved!
     expect(manifest.roles).toHaveLength(1);
+    expect(manifest.roles?.[0].universalIdentifier).toBe(
+      'b648f87b-1d26-4961-b974-0908fd991061',
+    );
+    expect(manifest.roles?.[0].label).toBe('App User');
 
-    for (const role of manifest.roles ?? []) {
-      const {
-        universalIdentifier: _,
-        objectPermissions,
-        fieldPermissions,
-        permissionFlags,
-        ...otherInfo
-      } = role;
-      expect(otherInfo).toEqual({
-        label: 'hello-world-role',
-        description: 'A role to define app permissions',
-        canReadAllObjectRecords: false,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-      });
-
-      expect(Array.isArray(objectPermissions)).toBe(true);
-      expect(Array.isArray(fieldPermissions)).toBe(true);
-      expect(Array.isArray(permissionFlags)).toBe(true);
-    }
+    // Check sources loaded
+    expect(manifest.sources).toBeDefined();
+    expect(manifest.sources['app']).toBeDefined();
+    expect(manifest.sources['src']).toBeDefined();
   });
 
-  it('should not define serverless for util file', async () => {
+  it('should support nested object folders', async () => {
+    // Add a nested object
+    const nestedObjectConfig = `
+export default {
+  universalIdentifier: 'nested-obj-id-1234',
+  nameSingular: 'contact',
+  namePlural: 'contacts',
+  labelSingular: 'Contact',
+  labelPlural: 'Contacts',
+  fields: [
+    {
+      universalIdentifier: 'nested-field-id-1234',
+      type: 'TEXT',
+      label: 'Name',
+    },
+  ],
+};
+`;
     write(
       appDirectory,
-      'src/utils/format.ts',
-      `
-export const format = async (params: any): Promise<any> => {
-  return {};
-}
-`,
+      'app/objects/crm/contact.object.ts',
+      nestedObjectConfig,
     );
 
     const { manifest } = await loadManifest(appDirectory);
-    expect(manifest.serverlessFunctions.length).toBe(1);
+
+    expect(manifest.objects).toHaveLength(2);
+    const contact = manifest.objects.find((o) => o.nameSingular === 'contact');
+    expect(contact).toBeDefined();
+    expect(contact?.universalIdentifier).toBe('nested-obj-id-1234');
   });
 
-  it('manifest should contains typescript sources', async () => {
+  it('should support nested function folders', async () => {
+    const nestedFunctionConfig = `
+export const config = {
+  universalIdentifier: 'nested-fn-id-1234',
+  name: 'Daily Report',
+  triggers: [
+    {
+      universalIdentifier: 'nested-trigger-id-1234',
+      type: 'cron',
+      pattern: '0 9 * * *',
+    },
+  ],
+};
+
+export const handler = async () => ({ sent: true });
+`;
+    write(
+      appDirectory,
+      'app/functions/jobs/daily-report.function.ts',
+      nestedFunctionConfig,
+    );
+
     const { manifest } = await loadManifest(appDirectory);
-    // the method is already exercised in loadManifest; just assert again:
-    expect(Object.keys(manifest.sources)).toEqual([
-      'application.config.ts',
-      'src',
-    ]);
-    expect(Object.keys(manifest.sources['src'])).toEqual([
-      'Account.ts',
-      'defaultRole.ts',
-      'hello.ts',
-    ]);
+
+    expect(manifest.serverlessFunctions).toHaveLength(2);
+    const dailyReport = manifest.serverlessFunctions.find(
+      (f) => f.name === 'Daily Report',
+    );
+    expect(dailyReport).toBeDefined();
+    expect(dailyReport?.handlerName).toBe('handler');
   });
 
-  it('manifest should contains typescript sources', async () => {
+  it('should throw error when app/ folder is missing', async () => {
+    const noAppDir = join(tmpdir(), 'test-no-app-' + Date.now());
+    ensureDirSync(noAppDir);
+    write(noAppDir, 'package.json', JSON.stringify(packageJsonMock, null, 2));
+    write(noAppDir, 'yarn.lock', yarnLockMock);
+
+    await expect(loadManifest(noAppDir)).rejects.toThrow('Missing app/ folder');
+
+    removeSync(noAppDir);
+  });
+
+  it('should throw error when application.config.ts is missing', async () => {
+    const noConfigDir = join(tmpdir(), 'test-no-config-' + Date.now());
+    ensureDirSync(noConfigDir);
+    ensureDirSync(join(noConfigDir, 'app'));
+    write(
+      noConfigDir,
+      'package.json',
+      JSON.stringify(packageJsonMock, null, 2),
+    );
+    write(noConfigDir, 'yarn.lock', yarnLockMock);
+
+    await expect(loadManifest(noConfigDir)).rejects.toThrow(
+      'Missing app/application.config.ts',
+    );
+
+    removeSync(noConfigDir);
+  });
+
+  it('should throw validation error for duplicate universalIdentifiers', async () => {
+    // Create a role with the same ID as the app
+    const duplicateRoleConfig = `
+export default {
+  universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe', // Same as app ID
+  label: 'Duplicate Role',
+};
+`;
+    write(appDirectory, 'app/roles/duplicate.role.ts', duplicateRoleConfig);
+
+    await expect(loadManifest(appDirectory)).rejects.toThrow(
+      ManifestValidationError,
+    );
+
+    try {
+      await loadManifest(appDirectory);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ManifestValidationError);
+      const validationError = error as ManifestValidationError;
+      expect(validationError.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            message: expect.stringContaining('Duplicate universalIdentifier'),
+          }),
+        ]),
+      );
+    }
+  });
+
+  it('should detect shouldGenerate when imports from generated folder', async () => {
+    // Add a file that imports from generated
+    const fileWithGenerated = `
+import { SomeType } from '../generated';
+export const foo = 'bar';
+`;
+    write(appDirectory, 'src/utils/helper.ts', fileWithGenerated);
+
+    const { shouldGenerate } = await loadManifest(appDirectory);
+    expect(shouldGenerate).toBe(true);
+  });
+
+  it('should not set shouldGenerate when no generated imports', async () => {
     const { shouldGenerate } = await loadManifest(appDirectory);
     expect(shouldGenerate).toBe(false);
   });
