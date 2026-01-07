@@ -1421,6 +1421,7 @@ msgstr "An error occurred while uploading the picture."
 #: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
 #: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
 #: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
@@ -3072,6 +3073,11 @@ msgstr "Country"
 msgid "Country Code"
 msgstr "Country Code"
 
+#. js-lingui-id: gJdfqX
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "create"
+msgstr "create"
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -3729,6 +3735,7 @@ msgstr "Delayed"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "delete"
 msgstr "delete"
 
@@ -4001,6 +4008,7 @@ msgstr "Description of the application"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "destroy"
 msgstr "destroy"
 
@@ -5284,20 +5292,20 @@ msgstr "Failed"
 msgid "Failed Jobs"
 msgstr "Failed Jobs"
 
+#. js-lingui-id: QvHpKb
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to {translatedOperationType} {translatedMetadataName}. Please try again."
+msgstr "Failed to {translatedOperationType} {translatedMetadataName}. Please try again."
+
+#. js-lingui-id: BZm3ZK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
+msgstr "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
+
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsSkillsTable.tsx
 msgid "Failed to activate skill"
 msgstr "Failed to activate skill"
-
-#. js-lingui-id: fsNGMi
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "Failed to create {translatedMetadataName}. Please try again."
-msgstr "Failed to create {translatedMetadataName}. Please try again."
-
-#. js-lingui-id: sOnoZ4
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
-msgstr "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 
 #. js-lingui-id: WM7GKt
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -9695,6 +9703,11 @@ msgstr "Restart"
 msgid "Restart Import"
 msgstr "Restart Import"
 
+#. js-lingui-id: o7CJMO
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "restore"
+msgstr "restore"
+
 #. js-lingui-id: yKu/3Y
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -12181,6 +12194,7 @@ msgstr "Upcoming execution time ({timeZone})"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "update"
 msgstr "update"
 
