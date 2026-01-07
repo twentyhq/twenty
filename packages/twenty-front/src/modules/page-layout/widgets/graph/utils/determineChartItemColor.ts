@@ -6,24 +6,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 type DetermineChartItemColorParams = {
   configurationColor: GraphColor | null | undefined;
-  isSelectField: boolean;
   selectOptions: FieldMetadataItemOption[] | null | undefined;
   rawValue: string | null | undefined;
-  index: number;
 };
 
 export const determineChartItemColor = ({
   configurationColor,
-  isSelectField,
   selectOptions,
   rawValue,
-  index,
 }: DetermineChartItemColorParams): GraphColor => {
   if (isDefined(configurationColor) && configurationColor !== 'auto') {
     return configurationColor;
   }
 
-  if (isSelectField && isDefined(selectOptions)) {
+  if (isDefined(selectOptions)) {
     const optionColor = getSelectOptionColorForValue({
       rawValue,
       selectOptions,
@@ -33,5 +29,5 @@ export const determineChartItemColor = ({
     }
   }
 
-  return GRAPH_COLORS[index % GRAPH_COLORS.length];
+  return GRAPH_COLORS[0];
 };

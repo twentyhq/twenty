@@ -25,13 +25,17 @@ export const usePieChartData = ({
   const allEnrichedData = useMemo((): PieChartEnrichedData[] => {
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
+    const allColors = data.map((item) => item.color);
+    const firstColor = allColors[0];
+    const isExplicitColorSelection =
+      isDefined(firstColor) && allColors.every((color) => color === firstColor);
+
     return data.map((item, index) => {
-      const hasExplicitColor = isDefined(item.color);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: item.color,
         fallbackIndex: index,
-        totalGroups: hasExplicitColor ? undefined : data.length,
+        totalGroups: isExplicitColorSelection ? data.length : undefined,
       });
 
       const percentage = calculatePieChartPercentage(item.value, totalValue);

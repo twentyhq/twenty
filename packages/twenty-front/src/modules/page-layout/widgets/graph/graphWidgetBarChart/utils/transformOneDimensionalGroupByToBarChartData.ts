@@ -73,10 +73,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       firstDayOfTheWeek,
     });
 
-  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
-
   const unsortedData: BarDatum[] = processedDataPoints.map(
-    ({ xValue, rawXValue, aggregateValue }, index) => ({
+    ({ xValue, rawXValue, aggregateValue }) => ({
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
       color: determineChartItemColor({
@@ -84,10 +82,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
           | GraphColor
           | null
           | undefined,
-        isSelectField,
         selectOptions: groupByFieldX.options,
         rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
-        index,
       }),
     }),
   );

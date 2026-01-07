@@ -38,14 +38,19 @@ export const useBarChartData = ({
     [series],
   );
 
+  const allSeriesColors = series?.map((s) => s.color) ?? [];
+  const firstSeriesColor = allSeriesColors[0];
+  const isExplicitColorSelection =
+    isDefined(firstSeriesColor) &&
+    allSeriesColors.every((color) => color === firstSeriesColor);
+
   const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
-    const hasExplicitColor = isDefined(seriesConfig?.color);
     const colorScheme = getColorScheme({
       registry: colorRegistry,
       colorName: seriesConfig?.color,
       fallbackIndex: index,
-      totalGroups: hasExplicitColor ? undefined : keys.length,
+      totalGroups: isExplicitColorSelection ? keys.length : undefined,
     });
 
     return {

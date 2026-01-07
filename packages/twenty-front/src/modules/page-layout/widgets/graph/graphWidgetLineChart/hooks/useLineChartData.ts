@@ -25,13 +25,17 @@ export const useLineChartData = ({
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
+    const allColors = data.map((series) => series.color);
+    const firstColor = allColors[0];
+    const isExplicitColorSelection =
+      isDefined(firstColor) && allColors.every((color) => color === firstColor);
+
     return data.map((series, index) => {
-      const hasExplicitColor = isDefined(series.color);
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
         fallbackIndex: index,
-        totalGroups: hasExplicitColor ? undefined : data.length,
+        totalGroups: isExplicitColorSelection ? data.length : undefined,
       });
 
       const sanitizedSeriesId = series.id
