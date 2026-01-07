@@ -3,11 +3,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
@@ -76,10 +76,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   const unsortedData: BarDatum[] = processedDataPoints.map(
     ({ xValue, rawXValue, aggregateValue }) => {
       const color = determineChartItemColor({
-        configurationColor: configuration.color as
-          | GraphColor
-          | null
-          | undefined,
+        configurationColor: parseGraphColor(configuration.color),
         selectOptions: isFieldMetadataSelectKind(groupByFieldX.type)
           ? groupByFieldX.options
           : undefined,
