@@ -116,6 +116,7 @@ export class WorkspaceManagerService {
         );
 
       const queryRunner = this.coreDataSource.createQueryRunner();
+
       await queryRunner.connect();
       try {
         await queryRunner.startTransaction();
