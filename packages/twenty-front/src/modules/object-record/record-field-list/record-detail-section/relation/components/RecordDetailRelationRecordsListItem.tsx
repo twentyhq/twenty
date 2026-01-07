@@ -156,7 +156,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationObjectMetadataNameSingular ===
     CoreObjectNameSingular.WorkspaceMember;
 
-  const dropdownInstanceId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
+  const dropdownInstanceId = `record-field-card-menu:${scopeInstanceId}:${relationFieldMetadataId}:${relationRecord.id}`;
 
   const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useRecoilComponentValue(

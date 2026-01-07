@@ -50,7 +50,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
 
-  const instanceId = `fields-widget-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
+  const instanceId = widget.id;
 
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,

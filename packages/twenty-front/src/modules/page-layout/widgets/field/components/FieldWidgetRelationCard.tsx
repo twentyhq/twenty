@@ -14,6 +14,8 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { t } from '@lingui/core/macro';
@@ -37,8 +39,17 @@ export const FieldWidgetRelationCard = ({
   relationValue,
   isInRightDrawer,
 }: FieldWidgetRelationCardProps) => {
+  const widget = useCurrentWidget();
+
   const [expandedItem, setExpandedItem] = useState('');
   const targetRecord = useTargetRecord();
+
+  const instanceId = getFieldWidgetInstanceId({
+    widgetId: widget.id,
+    recordId: targetRecord.id,
+    fieldName: fieldDefinition.metadata.fieldName,
+    isInRightDrawer,
+  });
 
   const handleItemClick = (recordId: string) =>
     setExpandedItem(recordId === expandedItem ? '' : recordId);
@@ -100,8 +111,6 @@ export const FieldWidgetRelationCard = ({
       ? [relationValue]
       : [];
 
-  const scopeInstanceId = `field-widget-relation-card-${targetRecord.id}-${fieldMetadataId}`;
-
   if (records.length === 0) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
@@ -122,7 +131,7 @@ export const FieldWidgetRelationCard = ({
 
   return (
     <RightDrawerProvider value={{ isInRightDrawer }}>
-      <RecordFieldsScopeContextProvider value={{ scopeInstanceId }}>
+      <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
         <FieldContext.Provider
           value={{
             recordId: targetRecord.id,
