@@ -12,7 +12,7 @@ export const computeRecordGroupOptionsFilter = ({
   recordGroupFieldMetadata: FieldMetadataItem | null | undefined;
   recordGroupValues: RecordGroupDefinition['value'][];
 }): RecordGqlOperationFilter => {
-  if (!isDefined(recordGroupFieldMetadata)) {
+  if (!isDefined(recordGroupFieldMetadata) || recordGroupValues.length === 0) {
     return {};
   }
 
@@ -34,7 +34,9 @@ export const computeRecordGroupOptionsFilter = ({
   return {
     or: [
       { [fieldName]: { is: 'NULL' } },
-      { [fieldName]: { in: nonNullValues } },
+      ...(nonNullValues.length > 0
+        ? [{ [fieldName]: { in: nonNullValues } }]
+        : []),
     ],
   };
 };
