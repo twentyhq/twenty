@@ -21,6 +21,8 @@ import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-versio
 import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-add-workspace-foreign-keys-migration.command';
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
+import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-identify-field-metadata.command';
+import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
@@ -61,6 +63,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migratePageLayoutWidgetConfigurationCommand: MigratePageLayoutWidgetConfigurationCommand,
     protected readonly fixNanPositionValuesInNotesCommand: FixNanPositionValuesInNotesCommand,
     protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
+    protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
 
     // 1.16 Commands
@@ -98,6 +102,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.fixNanPositionValuesInNotesCommand,
       this.backfillUpdatedByFieldCommand,
       this.addWorkspaceForeignKeysMigrationCommand,
+      this.identifyFieldMetadataCommand,
+      this
+        .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
     const commands_1160: VersionCommands = [
