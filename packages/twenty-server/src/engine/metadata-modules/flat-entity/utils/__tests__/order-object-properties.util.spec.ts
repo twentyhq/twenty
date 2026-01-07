@@ -1,4 +1,4 @@
-import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
+import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
 
 describe('orderObjectProperties', () => {
   it('orders simple object properties', () => {
