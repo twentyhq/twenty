@@ -24,6 +24,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { ManualTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/manual-trigger/manual-trigger.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
@@ -36,6 +37,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
+    private readonly manualTriggerWorkspaceService: ManualTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -312,7 +314,18 @@ export class WorkflowTriggerWorkspaceService {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
     switch (workflowVersion.trigger.type) {
-      case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.MANUAL: {
+        const settings = workflowVersion.trigger.settings;
+
+        await this.manualTriggerWorkspaceService.addManualTrigger({
+          workflowId: workflowVersion.workflowId,
+          workflowVersionId: workflowVersion.id,
+          settings,
+          workspaceId,
+        });
+
+        return;
+      }
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
@@ -362,6 +375,12 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+        await this.manualTriggerWorkspaceService.deleteManualTrigger({
+          workflowVersionId: workflowVersion.id,
+          workspaceId,
+        });
+
+        return;
       case WorkflowTriggerType.WEBHOOK:
         return;
       default:
