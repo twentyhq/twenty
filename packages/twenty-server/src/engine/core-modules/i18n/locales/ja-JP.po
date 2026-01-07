@@ -27,12 +27,12 @@ msgstr "{fieldName} と {fieldName}Id は同時に指定できません。"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr "{fieldType} 型のフィールドは一意に設定できません。"
+msgstr "{fieldType}型のフィールドは一意に設定できません。"
 
 #. js-lingui-id: LeIJhm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "{fieldType} fields cannot have a default value."
-msgstr "{fieldType} フィールドにはデフォルト値を設定できません。"
+msgstr "{fieldType}フィールドにはデフォルト値を設定できません。"
 
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -366,7 +366,7 @@ msgstr "AIエージェントステップの実行に失敗しました。"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr "全ての{objectLabelPlural}"
+msgstr "すべての{objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1498,7 +1498,7 @@ msgstr "重複するルートリゾルバが見つかりました。各ルート
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
-msgstr "重複したオプション {field}"
+msgstr "重複したオプション「{field}」"
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -2419,7 +2419,7 @@ msgstr "CALDAVの認証情報が無効です。ユーザー名とパスワード
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
-msgstr "無効なコーリングコード {callingCode}"
+msgstr "無効なコーリングコード「{callingCode}」"
 
 #. js-lingui-id: tG/2Q/
 #: src/engine/core-modules/captcha/captcha.guard.ts
@@ -2444,7 +2444,7 @@ msgstr "無効な連携アカウントIDです。"
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
-msgstr "無効な国コード {countryCode}"
+msgstr "無効な国コード「{countryCode}」"
 
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -3188,7 +3188,7 @@ msgstr "3月"
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "アップサートできるレコードの最大数は {QUERY_MAX_RECORDS} です。"
+msgstr "アップサートできるレコードの最大数は{QUERY_MAX_RECORDS}件です。"
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4290,7 +4290,7 @@ msgstr "プロンプトは空にできません"
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Property {property} is required for role"
-msgstr "プロパティ {property} はロールに必要です"
+msgstr "プロパティ「{property}」はロールに必要です"
 
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -4310,7 +4310,7 @@ msgstr "提供された国コードとコーリングコードが矛盾してい
 #. js-lingui-id: A4Ohxb
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided phone number is invalid {number}"
-msgstr "提供された電話番号は無効です {number}"
+msgstr "電話番号「{number}」は無効です"
 
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -5720,7 +5720,7 @@ msgstr "タイプ（非推奨）"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
-msgstr "フィールド {fieldName} のタイプ {fieldType} に一意なインデックスを作成できません"
+msgstr "フィールド「{fieldName}」のタイプ「{fieldType}」に一意なインデックスを作成できません"
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5947,7 +5947,7 @@ msgstr "ビュー フィールド メタデータはすでに存在します"
 #. js-lingui-id: Yvf7WL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata with id {flatViewFieldId} already exists"
-msgstr "ID {flatViewFieldId} のビュー フィールド メタデータはすでに存在します"
+msgstr "ID {flatViewFieldId}のビューフィールドメタデータはすでに存在します"
 
 #. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6007,7 +6007,7 @@ msgstr "ビューフィルターグループは自身の親にできません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
-msgstr "ビューフィルターグループの階層が最大深度 {VIEW_FILTER_GROUP_MAX_DEPTH} を超えています"
+msgstr "ビューフィルターグループの階層が最大深度{VIEW_FILTER_GROUP_MAX_DEPTH}を超えています"
 
 #. js-lingui-id: eUPMYZ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -6064,7 +6064,7 @@ msgstr "ビュー グループ メタデータはすでに存在します"
 #. js-lingui-id: lbyQO4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata with id {flatViewGroupId} already exists"
-msgstr "ID {flatViewGroupId} のビュー グループ メタデータはすでに存在します"
+msgstr "ID {flatViewGroupId}のビューグループメタデータはすでに存在します"
 
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -6560,7 +6560,7 @@ msgstr "X"
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
-msgstr "一度にマージできるレコードは最大 {MUTATION_MAX_MERGE_RECORDS} 件です。"
+msgstr "一度にマージできるレコードは最大{MUTATION_MAX_MERGE_RECORDS}件です。"
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
