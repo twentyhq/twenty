@@ -965,7 +965,7 @@ msgstr "非アクティブなワークフローバージョンは無効化でき
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr "重複データがあるため一意性を有効にできません。先にデータを確認・修正してください（削除済みレコードを含む）。"
+msgstr "重複データがあるため一意性を有効にできません。先にデータを確認・修正してください（ソフト削除済みレコードを含む）。"
 
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -990,12 +990,12 @@ msgstr "ワークスペースの最後の管理者は削除できません。"
 #. js-lingui-id: wNJvot
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription interval."
-msgstr "サブスクリプション期間は切り替えできません。"
+msgstr "サブスクリプション期間は切り替えられません。"
 
 #. js-lingui-id: U/P/gT
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
-msgstr "サブスクリプションプランは切り替えできません。"
+msgstr "サブスクリプションプランは切り替えられません。"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -4506,7 +4506,7 @@ msgstr "ロール「{roleLabel}」はユーザーに割り当てることがで�
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
-msgstr "このエンティティにはロールを割り当てできません。"
+msgstr "このエンティティにロールを割り当てられません。"
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5500,17 +5500,17 @@ msgstr "このリモートサーバーは変更できません。"
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "This role cannot be assigned to agents."
-msgstr "このロールはエージェントに割り当てできません。"
+msgstr "このロールはエージェントに割り当てられません。"
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This role cannot be assigned to API keys."
-msgstr "このロールはAPIキーに割り当てできません。"
+msgstr "このロールはAPIキーに割り当てられません。"
 
 #. js-lingui-id: c68K+k
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
-msgstr "このロールはユーザーに割り当てできません。"
+msgstr "このロールはユーザーに割り当てられません。"
 
 #. js-lingui-id: 2jnsqJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
