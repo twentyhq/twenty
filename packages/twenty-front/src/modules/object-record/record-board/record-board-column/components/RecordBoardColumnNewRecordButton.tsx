@@ -62,7 +62,7 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   return (
     <StyledNewButton
-      onClick={async() => {
+      onClick={async () => {
         closeCommandMenu();
         await createNewIndexRecord({
           position: 'last',
