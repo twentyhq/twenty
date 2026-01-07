@@ -161,7 +161,7 @@ describe('WorkspaceEntityManager', () => {
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       morphId: null,
-      applicationId: null,
+      applicationId: 'application-id',
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
