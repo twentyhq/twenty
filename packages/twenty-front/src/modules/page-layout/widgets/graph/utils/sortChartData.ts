@@ -50,13 +50,8 @@ export const sortChartData = <T>({
     case GraphOrderBy.VALUE_DESC:
       return data.toSorted((a, b) => getNumericValue(b) - getNumericValue(a));
     case GraphOrderBy.FIELD_ASC:
-      return data.toSorted((a, b) =>
-        getFieldValue(a).localeCompare(getFieldValue(b)),
-      );
     case GraphOrderBy.FIELD_DESC:
-      return data.toSorted((a, b) =>
-        getFieldValue(b).localeCompare(getFieldValue(a)),
-      );
+      return data;
     case GraphOrderBy.FIELD_POSITION_ASC:
       if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
         throw new Error('Select field options are required');

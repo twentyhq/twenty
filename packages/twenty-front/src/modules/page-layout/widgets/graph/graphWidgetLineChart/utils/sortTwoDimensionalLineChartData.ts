@@ -6,6 +6,7 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type SortTwoDimensionalLineChartDataConfiguration = {
@@ -15,6 +16,8 @@ type SortTwoDimensionalLineChartDataConfiguration = {
   primaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
   secondaryAxisFormattedToRawLookup?: Map<string, RawDimensionValue>;
   secondaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
+  secondaryAxisFieldType?: FieldMetadataType;
+  secondaryAxisSubFieldName?: string;
 };
 
 type SortTwoDimensionalLineChartDataResult = {
@@ -33,6 +36,8 @@ export const sortTwoDimensionalLineChartData = ({
   primaryAxisSelectFieldOptions,
   secondaryAxisFormattedToRawLookup,
   secondaryAxisSelectFieldOptions,
+  secondaryAxisFieldType,
+  secondaryAxisSubFieldName,
 }: SortTwoDimensionalLineChartDataConfiguration): SortTwoDimensionalLineChartDataResult => {
   let sortedSeries = series;
 
@@ -73,6 +78,8 @@ export const sortTwoDimensionalLineChartData = ({
     formattedToRawLookup: secondaryAxisFormattedToRawLookup,
     selectFieldOptions: secondaryAxisSelectFieldOptions,
     getFormattedValue: (item) => item.id,
+    fieldType: secondaryAxisFieldType,
+    subFieldName: secondaryAxisSubFieldName,
   });
 
   return {

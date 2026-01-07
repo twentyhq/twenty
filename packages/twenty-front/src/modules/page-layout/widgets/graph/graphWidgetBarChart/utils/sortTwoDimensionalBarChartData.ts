@@ -7,6 +7,7 @@ import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSec
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type SortTwoDimensionalBarChartDataConfiguration = {
@@ -18,6 +19,8 @@ type SortTwoDimensionalBarChartDataConfiguration = {
   primaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
   secondaryAxisFormattedToRawLookup?: Map<string, RawDimensionValue>;
   secondaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
+  secondaryAxisFieldType?: FieldMetadataType;
+  secondaryAxisSubFieldName?: string;
 };
 
 type SortTwoDimensionalBarChartDataResult = {
@@ -41,6 +44,8 @@ export const sortTwoDimensionalBarChartData = ({
   primaryAxisSelectFieldOptions,
   secondaryAxisFormattedToRawLookup,
   secondaryAxisSelectFieldOptions,
+  secondaryAxisFieldType,
+  secondaryAxisSubFieldName,
 }: SortTwoDimensionalBarChartDataConfiguration): SortTwoDimensionalBarChartDataResult => {
   const sortedKeys = sortSecondaryAxisData({
     items: keys,
@@ -49,6 +54,8 @@ export const sortTwoDimensionalBarChartData = ({
     formattedToRawLookup: secondaryAxisFormattedToRawLookup,
     selectFieldOptions: secondaryAxisSelectFieldOptions,
     getFormattedValue: (item) => item,
+    fieldType: secondaryAxisFieldType,
+    subFieldName: secondaryAxisSubFieldName,
   });
 
   const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => ({

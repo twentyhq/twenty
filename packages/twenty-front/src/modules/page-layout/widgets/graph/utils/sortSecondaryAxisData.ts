@@ -1,8 +1,10 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { compareDimensionValues } from '@/page-layout/widgets/graph/utils/compareDimensionValues';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { GraphOrderBy } from '~/generated/graphql';
 
 type SortSecondaryAxisDataParams<T> = {
@@ -12,6 +14,8 @@ type SortSecondaryAxisDataParams<T> = {
   formattedToRawLookup?: Map<string, RawDimensionValue>;
   selectFieldOptions?: FieldMetadataItemOption[] | null;
   getFormattedValue: (item: T) => string;
+  fieldType?: FieldMetadataType;
+  subFieldName?: string;
 };
 
 export const sortSecondaryAxisData = <T>({
@@ -21,17 +25,26 @@ export const sortSecondaryAxisData = <T>({
   formattedToRawLookup,
   selectFieldOptions,
   getFormattedValue,
+  fieldType,
+  subFieldName,
 }: SortSecondaryAxisDataParams<T>): T[] => {
   switch (orderBy) {
     case GraphOrderBy.FIELD_ASC:
-      return items.toSorted((a, b) =>
-        getFormattedValue(a).localeCompare(getFormattedValue(b)),
-      );
-
     case GraphOrderBy.FIELD_DESC:
-      return items.toSorted((a, b) =>
-        getFormattedValue(b).localeCompare(getFormattedValue(a)),
-      );
+      return items.toSorted((a, b) => {
+        const formattedValueA = getFormattedValue(a);
+        const formattedValueB = getFormattedValue(b);
+
+        return compareDimensionValues({
+          rawValueA: formattedToRawLookup?.get(formattedValueA),
+          rawValueB: formattedToRawLookup?.get(formattedValueB),
+          formattedValueA,
+          formattedValueB,
+          direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
+          fieldType,
+          subFieldName,
+        });
+      });
 
     case GraphOrderBy.FIELD_POSITION_ASC:
     case GraphOrderBy.FIELD_POSITION_DESC: {

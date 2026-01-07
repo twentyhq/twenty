@@ -1,0 +1,67 @@
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { Temporal } from 'temporal-polyfill';
+import {
+  isDefined,
+  isFieldMetadataDateKind,
+  isFieldMetadataNumericKind,
+} from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+const parseDate = (
+  rawValue: RawDimensionValue | undefined,
+  fieldType?: FieldMetadataType,
+): Temporal.PlainDate | null => {
+  if (!isDefined(rawValue)) return null;
+  const stringValue = String(rawValue);
+  return fieldType === FieldMetadataType.DATE
+    ? Temporal.PlainDate.from(stringValue)
+    : Temporal.Instant.from(stringValue)
+        .toZonedDateTimeISO('UTC')
+        .toPlainDate();
+};
+
+type CompareDimensionValuesParams = {
+  rawValueA: RawDimensionValue | undefined;
+  rawValueB: RawDimensionValue | undefined;
+  formattedValueA: string;
+  formattedValueB: string;
+  direction: 'ASC' | 'DESC';
+  fieldType?: FieldMetadataType;
+  subFieldName?: string;
+};
+
+export const compareDimensionValues = ({
+  rawValueA,
+  rawValueB,
+  formattedValueA,
+  formattedValueB,
+  direction,
+  fieldType,
+  subFieldName,
+}: CompareDimensionValuesParams): number => {
+  const applyDirection = (comparison: number) =>
+    direction === 'ASC' ? comparison : -comparison;
+
+  if (isDefined(fieldType)) {
+    if (isFieldMetadataDateKind(fieldType)) {
+      const dateA = parseDate(rawValueA, fieldType);
+      const dateB = parseDate(rawValueB, fieldType);
+      if (isDefined(dateA) && isDefined(dateB)) {
+        return applyDirection(Temporal.PlainDate.compare(dateA, dateB));
+      }
+    }
+
+    if (fieldType === FieldMetadataType.CURRENCY) {
+      if (subFieldName === 'amountMicros') {
+        return applyDirection(Number(rawValueA) - Number(rawValueB));
+      }
+      return applyDirection(formattedValueA.localeCompare(formattedValueB));
+    }
+
+    if (isFieldMetadataNumericKind(fieldType)) {
+      return applyDirection(Number(rawValueA) - Number(rawValueB));
+    }
+  }
+
+  return applyDirection(formattedValueA.localeCompare(formattedValueB));
+};
