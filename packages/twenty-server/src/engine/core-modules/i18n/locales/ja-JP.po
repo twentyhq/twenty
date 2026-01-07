@@ -27,7 +27,7 @@ msgstr "{fieldName} と {fieldName}Id の両方を提供することはできま
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr "{fieldType} フィールドは一意であることを許可されていません。"
+msgstr "{fieldType} 型のフィールドは一意に設定できません。"
 
 #. js-lingui-id: LeIJhm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -37,7 +37,7 @@ msgstr "{fieldType} フィールドにはデフォルト値を設定できませ
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr "{hostnameCount} ホスト名がドメイン '{domainName}' に見つかりました。1 を予期します。"
+msgstr "ドメイン「{domainName}」に {hostnameCount} 件のホスト名が見つかりました。1件である必要があります。"
 
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -888,7 +888,7 @@ msgstr "カレンダー同期エラー。"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr "{connectFieldName}に接続できません。条件: {formattedConnectCondition}に一致する一意のレコードが見つかりません"
+msgstr "{connectFieldName} に接続できません。条件「{formattedConnectCondition}」に一致する一意のレコードが見つかりません。"
 
 #. js-lingui-id: 2oVE+z
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -1266,7 +1266,7 @@ msgstr "作成日時"
 #. js-lingui-id: umhXiy
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern '{pattern}' is invalid"
-msgstr "Cron パターン '{pattern}' は無効です"
+msgstr "Cronパターン「{pattern}」は無効です"
 
 #. js-lingui-id: GuyjcQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -1416,7 +1416,7 @@ msgstr "デフォルトロールが見つかりません。"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr "デフォルト値 \"{defaultValue}\" はオプションの値の一つでなければなりません"
+msgstr "デフォルト値「{defaultValue}」はオプションの値のいずれかである必要があります"
 
 #. js-lingui-id: XeWfi3
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2503,7 +2503,7 @@ msgstr "無効なフィルターパラメータです。"
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
-msgstr "無効なフィルター値: \"{value}\""
+msgstr "無効なフィルター値:「{value}」"
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
@@ -2778,7 +2778,7 @@ msgstr "通貨の値が無効です。"
 #. js-lingui-id: AUbno1
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\""
-msgstr "日付の値が無効です: \"{inspectedValue}\""
+msgstr "日付の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
@@ -2793,7 +2793,7 @@ msgstr "氏名の値が無効です。"
 #. js-lingui-id: UiMJoF
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON: \"{inspectedValue}\""
-msgstr "JSONの値が無効です: \"{inspectedValue}\""
+msgstr "JSONの値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: BgSFod
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
@@ -2808,12 +2808,12 @@ msgstr "リンクの値が無効です。"
 #. js-lingui-id: Q6jO3x
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
 msgid "Invalid value for multi-select: \"{inspectedValue}\""
-msgstr "複数選択の値が無効です: \"{inspectedValue}\""
+msgstr "複数選択の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: WHM6K7
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
-msgstr "数値の値が無効です: \"{inspectedValue}\""
+msgstr "数値の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: oLqCzh
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
@@ -2823,7 +2823,7 @@ msgstr "電話番号の値が無効です。"
 #. js-lingui-id: GLmyCK
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
 msgid "Invalid value for position: \"{inspectedValue}\""
-msgstr "位置の値が無効です: \"{inspectedValue}\""
+msgstr "位置の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: Sf+6YJ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
@@ -2833,19 +2833,19 @@ msgstr "リッチテキストの値が無効です。"
 #. js-lingui-id: 9lVA5C
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
 msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr "選択の値が無効です: \"{inspectedValue}\""
+msgstr "選択の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
-msgstr "UUIDの値が無効です: \"{inspectedValue}\""
+msgstr "UUIDの値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: Og/MZQ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
 msgid "Invalid value: \"{inspectedValue}\""
-msgstr "無効な値: \"{inspectedValue}\""
+msgstr "無効な値:「{inspectedValue}」"
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -3382,7 +3382,7 @@ msgstr "マイグレーションファクトリが見つかりません。"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr "分の値は60を超えることはできません。60分を超える間隔の場合は、\"Hours\"トリガータイプまたはカスタムのcron式を使用してください。"
+msgstr "分の値は60を超えることはできません。60分を超える間隔の場合は、「Hours」トリガータイプまたはカスタムcron式を使用してください。"
 
 #. js-lingui-id: lCnasH
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
@@ -3402,7 +3402,7 @@ msgstr "リクエストボディがありません。"
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
-msgstr "必要なフィールドがありません: 少なくとも一つのユニーク制約が完全に指定されている必要があります '{connectFieldName}'。"
+msgstr "必要なフィールドがありません。「{connectFieldName}」には少なくとも1つの一意制約が完全に指定されている必要があります。"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3443,7 +3443,7 @@ msgstr "マルチセレクトフィールドのデフォルト値は配列であ
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-msgstr "{ConflictingFieldsValues} のために同一フィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
+msgstr "{conflictingFieldsValues} で同一のフィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
 
 #. js-lingui-id: B9dbXq
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3469,12 +3469,12 @@ msgstr "名前"
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr "名前 \"{name}\" は使用できません"
+msgstr "名前「{name}」は使用できません"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "名前 \"{name}\" は他のフィールドで既に使用されているため利用できません"
+msgstr "名前「{name}」は他のフィールドで既に使用されているため利用できません"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -3912,7 +3912,7 @@ msgstr "オプションIDが必要です"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
-msgstr "オプションラベル \"{sanitizedLabel}\" は1文字未満です"
+msgstr "オプションラベル「{sanitizedLabel}」は1文字未満です"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3940,7 +3940,7 @@ msgstr "オプションラベルは少なくとも1文字の文字列である�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
-msgstr "オプション値 \"{sanitizedValue}\" は1文字未満です"
+msgstr "オプション値「{sanitizedValue}」は1文字未満です"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -4461,17 +4461,17 @@ msgstr "リクエストがタイムアウトしました。"
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format type must be either \"text\" or \"json\""
-msgstr "レスポンス形式の種類は、\"text\" または \"json\" のいずれかでなければなりません"
+msgstr "レスポンス形式の種類は「text」または「json」のいずれかである必要があります"
 
 #. js-lingui-id: 6Plp3x
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include a schema"
-msgstr "種類が \"json\" のレスポンス形式にはスキーマを含める必要があります"
+msgstr "種類が「json」のレスポンス形式にはスキーマを含める必要があります"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"text\" should not include a schema"
-msgstr "種類が \"text\" のレスポンス形式にスキーマを含めるべきではありません"
+msgstr "種類が「text」のレスポンス形式にはスキーマを含めないでください"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -5066,22 +5066,22 @@ msgstr "ワークスペースメンバーに割り当てられたタスク"
 #. js-lingui-id: Ca/n4T
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks tied to the {label}"
-msgstr "{label}に結びつけられたタスク"
+msgstr "{label}に関連するタスク"
 
 #. js-lingui-id: M4rBti
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Tasks tied to the company"
-msgstr "会社に結びつけられたタスク"
+msgstr "会社に関連するタスク"
 
 #. js-lingui-id: /VaiDW
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Tasks tied to the contact"
-msgstr "連絡先に結びつけられたタスク"
+msgstr "連絡先に関連するタスク"
 
 #. js-lingui-id: 1TfX9U
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Tasks tied to the opportunity"
-msgstr "商談に結びつけられたタスク"
+msgstr "商談に関連するタスク"
 
 #. js-lingui-id: pP0Dt9
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
@@ -5444,7 +5444,7 @@ msgstr "この名前は使用できません。"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr "この名前は予約済みです。別の名前を使用しない場合は、システムが\"Custom\"という接尾辞を追加します。"
+msgstr "この名前は予約済みです。別の名前を使用するか、システムが「Custom」という接尾辞を追加します。"
 
 #. js-lingui-id: R8zIJd
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -5595,47 +5595,47 @@ msgstr "タイムライン活動"
 #. js-lingui-id: fqKMpF
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
-msgstr "会社にリンクしたタイムライン活動"
+msgstr "会社に関連するタイムライン活動"
 
 #. js-lingui-id: CNev+0
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Timeline activities linked to the dashboard"
-msgstr "ダッシュボードにリンクされたタイムライン活動"
+msgstr "ダッシュボードに関連するタイムライン活動"
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Timeline Activities linked to the note."
-msgstr "メモにリンクしたタイムライン活動。"
+msgstr "メモに関連するタイムライン活動"
 
 #. js-lingui-id: p6feIz
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Timeline Activities linked to the opportunity."
-msgstr "商談にリンクしたタイムライン活動。"
+msgstr "商談に関連するタイムライン活動"
 
 #. js-lingui-id: yvPwuF
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Timeline activities linked to the run"
-msgstr "実行にリンクされたタイムライン活動"
+msgstr "実行に関連するタイムライン活動"
 
 #. js-lingui-id: q96UvB
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Timeline Activities linked to the task."
-msgstr "タスクにリンクしたタイムライン活動。"
+msgstr "タスクに関連するタイムライン活動"
 
 #. js-lingui-id: N9HMa/
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Timeline activities linked to the version"
-msgstr "バージョンにリンクされたタイムライン活動"
+msgstr "バージョンに関連するタイムライン活動"
 
 #. js-lingui-id: B1CYKX
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline activities linked to the workflow"
-msgstr "ワークフローにリンクされたタイムライン活動"
+msgstr "ワークフローに関連するタイムライン活動"
 
 #. js-lingui-id: G0UmtQ
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities tied to the {label}"
-msgstr "{label}に関連したタイムライン活動"
+msgstr "{label}に関連するタイムライン活動"
 
 #. js-lingui-id: K/kU4E
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -6240,7 +6240,7 @@ msgstr "ワークフロー"
 #. js-lingui-id: hdtWQn
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow automated triggers linked to the workflow."
-msgstr "ワークフローにリンクされたワークフロー自動トリガー。"
+msgstr "ワークフローに関連する自動トリガー"
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -6250,7 +6250,7 @@ msgstr "ワークフローのエッジが見つかりません。"
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
-msgstr "実行にリンクされたワークフロー。"
+msgstr "実行に関連するワークフロー"
 
 #. js-lingui-id: R67jts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
@@ -6325,12 +6325,12 @@ msgstr "ワークフロー実行"
 #. js-lingui-id: 9nOy7k
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow runs linked to the version."
-msgstr "バージョンにリンクされたワークフロー実行。"
+msgstr "バージョンに関連するワークフロー実行"
 
 #. js-lingui-id: c37F3j
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
-msgstr "ワークフローにリンクされたワークフロー実行。"
+msgstr "ワークフローに関連するワークフロー実行"
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
@@ -6367,7 +6367,7 @@ msgstr "ワークフローバージョンは草稿状態ではありません"
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
-msgstr "実行にリンクされているワークフローバージョン。"
+msgstr "実行に関連するワークフローバージョン"
 
 #. js-lingui-id: 9l+pJT
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -6382,7 +6382,7 @@ msgstr "ワークフローバージョン"
 #. js-lingui-id: 018fP9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow versions linked to the workflow."
-msgstr "ワークフローにリンクされたワークフローバージョン。"
+msgstr "ワークフローに関連するワークフローバージョン"
 
 #. js-lingui-id: s7p+TL
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
