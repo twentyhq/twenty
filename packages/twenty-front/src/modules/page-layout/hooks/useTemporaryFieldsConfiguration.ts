@@ -25,26 +25,56 @@ export const useTemporaryFieldsConfiguration = (
         field.type !== FieldMetadataType.RICH_TEXT_V2,
     );
 
-    const fields = fieldsToDisplay.map((field, index) => ({
-      fieldMetadataId: field.id,
-      position: index,
-    }));
+    if (fieldsToDisplay.length === 0) {
+      return null;
+    }
 
-    if (fields.length === 0) {
+    const generalFields: Array<{ fieldMetadataId: string; position: number }> =
+      [];
+    const otherFields: Array<{ fieldMetadataId: string; position: number }> =
+      [];
+
+    fieldsToDisplay.forEach((field, index) => {
+      const fieldConfig = {
+        fieldMetadataId: field.id,
+        position: index,
+      };
+
+      if (field.type === FieldMetadataType.LINKS) {
+        otherFields.push(fieldConfig);
+      } else {
+        generalFields.push(fieldConfig);
+      }
+    });
+
+    const sections = [];
+
+    if (generalFields.length > 0) {
+      sections.push({
+        id: `${objectNameSingular}-section-general`,
+        title: t`General`,
+        position: 0,
+        fields: generalFields,
+      });
+    }
+
+    if (otherFields.length > 0) {
+      sections.push({
+        id: `${objectNameSingular}-section-other`,
+        title: t`Other`,
+        position: 1,
+        fields: otherFields,
+      });
+    }
+
+    if (sections.length === 0) {
       return null;
     }
 
     return {
       __typename: 'FieldsConfiguration',
       configurationType: 'FIELDS',
-      sections: [
-        {
-          id: `${objectNameSingular}-section-general`,
-          title: t`General`,
-          position: 0,
-          fields,
-        },
-      ],
+      sections,
     };
   }, [objectMetadataItem, objectNameSingular, t]);
 
