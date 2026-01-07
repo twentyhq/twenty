@@ -239,12 +239,18 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
-      <StyledListItem isDropdownOpen={isDropdownOpen}>
+      <StyledListItem
+        isDropdownOpen={isDropdownOpen}
+        data-testid="record-detail-records-list-item"
+      >
         <RecordChip
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
         />
-        <StyledClickableZone onClick={handleClick}>
+        <StyledClickableZone
+          onClick={handleClick}
+          data-testid="expand-button"
+        >
           <LightIconButton
             className="displayOnHover"
             Icon={AnimatedIconChevronDown}
