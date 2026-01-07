@@ -1048,22 +1048,22 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
           ///
 
-          // Row level permission predicates
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .delete,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .create,
-          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
-            .update,
-          ///
-
-          // Row level permission predicate groups
+          // Row level permission predicate groups (must be created before predicates due to FK constraint)
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.delete,
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.create,
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.update,
+          ///
+
+          // Row level permission predicates (depends on groups)
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .delete,
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .create,
+          ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
+            .update,
           ///
         ],
         workspaceId,

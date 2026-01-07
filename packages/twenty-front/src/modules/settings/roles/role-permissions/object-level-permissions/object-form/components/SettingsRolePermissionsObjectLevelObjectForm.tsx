@@ -13,8 +13,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import {
-  FeatureFlagKey,
-  useFindOneAgentQuery,
+    FeatureFlagKey,
+    useFindOneAgentQuery,
 } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
@@ -123,7 +123,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           roleId={roleId}
         />
         {isRowLevelPermissionPredicatesEnabled && (
-          <SettingsRolePermissionsObjectLevelRecordLevelSection />
+          <SettingsRolePermissionsObjectLevelRecordLevelSection
+            objectMetadataItem={objectMetadataItem}
+            roleId={roleId}
+          />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

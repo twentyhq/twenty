@@ -1,4 +1,9 @@
-import { type Role, type WorkspaceMember } from '~/generated-metadata/graphql';
+import {
+  type Role,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  type WorkspaceMember,
+} from '~/generated-metadata/graphql';
 
 export type PartialWorkspaceMember = Omit<
   WorkspaceMember,
@@ -15,4 +20,6 @@ export type PartialWorkspaceMember = Omit<
 
 export type RoleWithPartialMembers = Omit<Role, 'workspaceMembers'> & {
   workspaceMembers: PartialWorkspaceMember[];
+  rowLevelPermissionPredicates?: RowLevelPermissionPredicate[];
+  rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[];
 };
