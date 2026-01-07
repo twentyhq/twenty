@@ -47,7 +47,7 @@ msgstr "会社"
 #. js-lingui-id: +aeifv
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
-msgstr "接続されたアカウント"
+msgstr "連携済みアカウント"
 
 #. js-lingui-id: cOSBjW
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -62,7 +62,7 @@ msgstr "DNSマネージャーでエラーが発生しました。"
 #. js-lingui-id: Hjj8vT
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A duplicate entry was detected."
-msgstr ""
+msgstr "重複するエントリが検出されました。"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -72,7 +72,7 @@ msgstr "左メニューからアクセスできるお気に入り"
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
-msgstr ""
+msgstr "この名前のフィールドはすでに存在します。"
 
 #. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -82,7 +82,7 @@ msgstr "お気に入りフォルダ"
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "A function with this name already exists."
-msgstr ""
+msgstr "この名前の関数はすでに存在します。"
 
 #. js-lingui-id: sSGYmf
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
@@ -92,7 +92,7 @@ msgstr "関連するメッセージのグループ（例：メールスレッド
 #. js-lingui-id: 1Pylbk
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A many to one relation field should always declare a join column"
-msgstr ""
+msgstr "多対一のリレーションフィールドには必ず結合カラムを宣言する必要があります"
 
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -102,12 +102,12 @@ msgstr "メッセージングチャネル（メール、チャットなど）を
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
-msgstr ""
+msgstr "名前の競合が発生しました。"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
-msgstr ""
+msgstr "カレンダーへのアクセス中にネットワークエラーが発生しました。"
 
 #. js-lingui-id: bufuBA
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -122,37 +122,37 @@ msgstr "ノートターゲット"
 #. js-lingui-id: MtcxLV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A one to many relation field should never declare a join column"
-msgstr ""
+msgstr "一対多のリレーションフィールドには結合カラムを宣言しないでください"
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "A payment processing error occurred."
-msgstr ""
+msgstr "支払い処理エラーが発生しました。"
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
-msgstr "人物"
+msgstr "連絡先"
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A record with this relationship already exists."
-msgstr ""
+msgstr "このリレーションシップを持つレコードはすでに存在します。"
 
 #. js-lingui-id: j7gCou
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "A record with this value already exists."
-msgstr ""
+msgstr "この値を持つレコードはすでに存在します。"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A required configuration is missing."
-msgstr ""
+msgstr "必要な設定が不足しています。"
 
 #. js-lingui-id: FVCXUT
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
 msgid "A required field is missing."
-msgstr ""
+msgstr "必須フィールドが不足しています。"
 
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
@@ -163,12 +163,12 @@ msgstr "このラベルを持つ役割はすでに存在します。"
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
-msgstr ""
+msgstr "この名前のスキルはすでに存在します"
 
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
-msgstr ""
+msgstr "この名前のスキルはすでに存在します。"
 
 #. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -183,47 +183,47 @@ msgstr "タスクターゲット"
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
-msgstr ""
+msgstr "一時的なエラーが発生しました。もう一度お試しください。"
 
 #. js-lingui-id: reBsjo
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
-msgstr ""
+msgstr "一時的なネットワークエラーが発生しました。"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
-msgstr ""
+msgstr "このメールアドレスを持つユーザーはすでに存在します。"
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "A view error occurred."
-msgstr ""
+msgstr "ビューエラーが発生しました。"
 
 #. js-lingui-id: NsB3MF
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "A view field error occurred."
-msgstr ""
+msgstr "ビューフィールドエラーが発生しました。"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
-msgstr ""
+msgstr "ビューフィルターエラーが発生しました。"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "A view filter group error occurred."
-msgstr ""
+msgstr "ビューフィルターグループエラーが発生しました。"
 
 #. js-lingui-id: znJ6EA
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "A view group error occurred."
-msgstr ""
+msgstr "ビューグループエラーが発生しました。"
 
 #. js-lingui-id: gHC5sU
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "A view sort error occurred."
-msgstr ""
+msgstr "ビューソートエラーが発生しました。"
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -258,7 +258,7 @@ msgstr "アクセストークン"
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
-msgstr ""
+msgstr "アクセストークンが見つかりません。"
 
 #. js-lingui-id: pd81Qb
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -270,12 +270,12 @@ msgstr "アカウントオーナー"
 #. js-lingui-id: loqL/f
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account owner for companies"
-msgstr "企業のアカウントオーナー"
+msgstr "会社のアカウントオーナー"
 
 #. js-lingui-id: HZosRi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account Owner For Companies"
-msgstr "企業向けアカウントオーナー"
+msgstr "会社向けアカウントオーナー"
 
 #. js-lingui-id: 48AxkT
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
@@ -315,12 +315,12 @@ msgstr "会社の住所 - 新しい住所フィールドに取って代わられ
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Admin role not found."
-msgstr ""
+msgstr "管理者ロールが見つかりません。"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Agent execution failed."
-msgstr ""
+msgstr "エージェントの実行に失敗しました。"
 
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
@@ -348,7 +348,7 @@ msgstr "タイムラインに表示される集計／フィルタされたイベ
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "AI agent step execution failed."
-msgstr ""
+msgstr "AIエージェントステップの実行に失敗しました。"
 
 #. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
@@ -366,7 +366,7 @@ msgstr ""
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr "{objectLabelPlural}すべて"
+msgstr "全ての{objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -396,12 +396,12 @@ msgstr "メッセージのインポート中にエラーが発生しました"
 #. js-lingui-id: dhcf1B
 #: src/engine/workspace-manager/workspace-migration.exception.ts
 msgid "An error occurred during workspace migration."
-msgstr ""
+msgstr "ワークスペースのマイグレーション中にエラーが発生しました。"
 
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
-msgstr ""
+msgstr "二要素認証データでエラーが発生しました。"
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
@@ -413,7 +413,7 @@ msgstr "エラーが発生しました。"
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
-msgstr ""
+msgstr "インデックスメタデータエラーが発生しました。"
 
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -423,12 +423,12 @@ msgstr "インデックスには少なくとも1つのフィールドが必要�
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
-msgstr ""
+msgstr "このメールアドレスには既に招待が送信されています。"
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "An object with this name already exists."
-msgstr ""
+msgstr "この名前のオブジェクトはすでに存在します。"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -438,12 +438,12 @@ msgstr "商談"
 #. js-lingui-id: Tstlpf
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "An unexpected billing error occurred."
-msgstr ""
+msgstr "予期しない請求エラーが発生しました。"
 
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "An unexpected configuration error occurred."
-msgstr ""
+msgstr "予期しない設定エラーが発生しました。"
 
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -464,7 +464,7 @@ msgstr "予期しないエラーが発生しました."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
-msgstr ""
+msgstr "不明なカレンダーエラーが発生しました。"
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -474,34 +474,34 @@ msgstr "年間経常収益：企業の実際の年間売上高または推定年
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "API key is not configured."
-msgstr ""
+msgstr "APIキーが設定されていません。"
 
 #. js-lingui-id: MyJhTw
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "API key not found."
-msgstr ""
+msgstr "APIキーが見つかりません。"
 
 #. js-lingui-id: TLSelA
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "API key role configuration not found."
-msgstr ""
+msgstr "APIキーロールの設定が見つかりません。"
 
 #. js-lingui-id: tGfHmi
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "API key role not found."
-msgstr ""
+msgstr "APIキーロールが見つかりません。"
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
-msgstr ""
+msgstr "アプリケーションが見つかりません。"
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/applicationVariable/application-variable.exception.ts
 msgid "Application variable not found."
-msgstr ""
+msgstr "アプリケーション変数が見つかりません。"
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -522,7 +522,7 @@ msgstr "承認済みのアクセスドメインはすでに検証されていま
 #. js-lingui-id: paHOg2
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Approved access domain not found."
-msgstr ""
+msgstr "承認済みアクセスドメインが見つかりません。"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -572,7 +572,7 @@ msgstr "添付ファイルの著者（非推奨 - createdBy を使用）"
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
-msgstr "添付ファイルの会社"
+msgstr "添付ファイルの関連会社"
 
 #. js-lingui-id: wtcL/T
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -582,12 +582,12 @@ msgstr "添付ファイルダッシュボード"
 #. js-lingui-id: u3pBxa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment file category"
-msgstr "添付ファイルのカテゴリ"
+msgstr "添付ファイルカテゴリ"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
-msgstr "添付ファイルのフルパス"
+msgstr "添付ファイルフルパス"
 
 #. js-lingui-id: wjocwa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -602,22 +602,22 @@ msgstr "添付ファイルのメモ"
 #. js-lingui-id: YASWpH
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment opportunity"
-msgstr "添付ファイルの商談"
+msgstr "添付ファイルの関連商談"
 
 #. js-lingui-id: P38yED
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment person"
-msgstr "添付ファイルの人物"
+msgstr "添付ファイルの関連連絡先"
 
 #. js-lingui-id: Tx1DxS
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment task"
-msgstr "添付ファイルのタスク"
+msgstr "添付ファイルの関連タスク"
 
 #. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment type (deprecated - use fileCategory)"
-msgstr "添付ファイルのタイプ（非推奨 - fileCategory を使用）"
+msgstr "添付ファイルタイプ（非推奨 - fileCategory を使用してください）"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -697,7 +697,7 @@ msgstr "この機能にアクセスするには認証が必要です。サイン
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
-msgstr ""
+msgstr "認証が必要です。"
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -742,32 +742,32 @@ msgstr "アバターURL"
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing customer not found."
-msgstr ""
+msgstr "請求顧客が見つかりません。"
 
 #. js-lingui-id: HVTHL6
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing meter not found."
-msgstr ""
+msgstr "請求メーターが見つかりません。"
 
 #. js-lingui-id: FNftTK
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing plan not found."
-msgstr ""
+msgstr "請求プランが見つかりません。"
 
 #. js-lingui-id: LI7tcn
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing price not found."
-msgstr ""
+msgstr "請求価格が見つかりません。"
 
 #. js-lingui-id: DDKhmc
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing product not found."
-msgstr ""
+msgstr "請求商品が見つかりません。"
 
 #. js-lingui-id: Je6GWV
 #: src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception.ts
 msgid "Billing subscription not found."
-msgstr ""
+msgstr "請求サブスクリプションが見つかりません。"
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -830,7 +830,7 @@ msgstr "カレンダーチャンネルイベント関連"
 #. js-lingui-id: bQS4UN
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar channel is misconfigured."
-msgstr ""
+msgstr "カレンダーチャンネルの設定が正しくありません。"
 
 #. js-lingui-id: Znix/S
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -848,7 +848,7 @@ msgstr "カレンダーイベント"
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar event not found."
-msgstr ""
+msgstr "カレンダーイベントが見つかりません。"
 
 #. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -878,12 +878,12 @@ msgstr "カレンダーイベント"
 #. js-lingui-id: GtrALl
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "Calendar provider is not supported."
-msgstr ""
+msgstr "カレンダープロバイダーはサポートされていません。"
 
 #. js-lingui-id: CnNFfU
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar sync error."
-msgstr ""
+msgstr "カレンダー同期エラー。"
 
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
@@ -903,17 +903,17 @@ msgstr "草稿または最後に公開されたバージョン以外は有効化
 #. js-lingui-id: QYS2AB
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
-msgstr ""
+msgstr "システムオブジェクトにフィールド権限を追加することはできません。"
 
 #. js-lingui-id: FxFlC4
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
-msgstr ""
+msgstr "システムオブジェクトに権限を追加することはできません。"
 
 #. js-lingui-id: 6kqLHf
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Cannot complete operation due to related records."
-msgstr ""
+msgstr "関連レコードがあるため、操作を完了できません。"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -940,12 +940,12 @@ msgstr "標準エージェントを削除できません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 msgid "Cannot delete standard skill"
-msgstr ""
+msgstr "標準スキルは削除できません"
 
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
-msgstr ""
+msgstr "最後の管理者ユーザーを削除することはできません。"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
@@ -970,12 +970,12 @@ msgstr "既存の重複データがあるため、一意性を有効にできま
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
-msgstr ""
+msgstr "読み取り不可のオブジェクトには書き込み権限を付与できません。"
 
 #. js-lingui-id: r4uEo5
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
-msgstr ""
+msgstr "読み取り権限なしに書き込み権限を付与することはできません。"
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -985,17 +985,17 @@ msgstr "複数のアクティブなワークフローバージョンを持つこ
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
-msgstr ""
+msgstr "ワークスペースから最後の管理者を削除することはできません。"
 
 #. js-lingui-id: wNJvot
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription interval."
-msgstr ""
+msgstr "サブスクリプション期間を切り替えることはできません。"
 
 #. js-lingui-id: U/P/gT
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
-msgstr ""
+msgstr "サブスクリプションプランを切り替えることはできません。"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -1012,7 +1012,7 @@ msgstr "標準エージェントを更新できません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr ""
+msgstr "標準スキルのプロパティは更新できません（有効化/無効化のみ可能）"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1034,7 +1034,7 @@ msgstr "チャンネルタイプ"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Circular dependency detected in view filter group hierarchy"
-msgstr ""
+msgstr "ビューフィルターグループ階層で循環依存関係が検出されました"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1049,7 +1049,7 @@ msgstr "締切日"
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Code step execution failed."
-msgstr ""
+msgstr "コードステップの実行に失敗しました。"
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1081,7 +1081,7 @@ msgstr "会社レコードの位置"
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Composite type not found."
-msgstr ""
+msgstr "複合型が見つかりません。"
 
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1092,27 +1092,27 @@ msgstr "会議ソリューション"
 #. js-lingui-id: n8EtHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration validation failed."
-msgstr ""
+msgstr "設定の検証に失敗しました。"
 
 #. js-lingui-id: g/dGHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
-msgstr ""
+msgstr "設定変数が見つかりません。"
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone calling code and country code."
-msgstr ""
+msgstr "電話の国番号と国コードが競合しています。"
 
 #. js-lingui-id: gP+fzj
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone calling code."
-msgstr ""
+msgstr "電話の国番号が競合しています。"
 
 #. js-lingui-id: CmQEdn
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone country code."
-msgstr ""
+msgstr "電話の国コードが競合しています。"
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -1131,7 +1131,7 @@ msgstr "接続アカウント"
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Connected account not found."
-msgstr ""
+msgstr "連携済みアカウントが見つかりません。"
 
 #. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1204,7 +1204,7 @@ msgstr "連絡先のX/Twitterアカウント"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
-msgstr ""
+msgstr "コンテンツを空にすることはできません"
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -1229,7 +1229,7 @@ msgstr "インデックス関連オブジェクトメタデータが見つかり
 #. js-lingui-id: YzCaIm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "Could not find relation field parent flat object"
-msgstr ""
+msgstr "リレーションフィールドの親フラットオブジェクトが見つかりません"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1304,17 +1304,17 @@ msgstr "カスタム接続パラメータ"
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domain not found."
-msgstr ""
+msgstr "カスタムドメインが見つかりません。"
 
 #. js-lingui-id: zsYQk/
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domains are disabled for this workspace."
-msgstr ""
+msgstr "このワークスペースではカスタムドメインが無効になっています。"
 
 #. js-lingui-id: qHZppf
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
-msgstr ""
+msgstr "カスタムオブジェクトにラベル識別子フィールドがありません。"
 
 #. js-lingui-id: 7p5kLi
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1327,7 +1327,7 @@ msgstr "ダッシュボード"
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Dashboard not found."
-msgstr ""
+msgstr "ダッシュボードが見つかりません。"
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -1352,17 +1352,17 @@ msgstr "ダッシュボード"
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
-msgstr ""
+msgstr "データ構造が無効です。"
 
 #. js-lingui-id: /sRN4g
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data version mismatch. Please refresh and try again."
-msgstr ""
+msgstr "データバージョンが一致しません。更新してもう一度お試しください。"
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
-msgstr ""
+msgstr "データベース設定が無効になっています。"
 
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -1410,7 +1410,7 @@ msgstr "12月"
 #. js-lingui-id: cgV4xo
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Default role not found."
-msgstr ""
+msgstr "デフォルトロールが見つかりません。"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1503,7 +1503,7 @@ msgstr "重複したオプション {field}"
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
-msgstr ""
+msgstr "このメールアドレスは既に使用されています"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1513,22 +1513,22 @@ msgstr "メールはすでに確認済みです。"
 #. js-lingui-id: LT5dFi
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email can only be updated when you belong to a single workspace."
-msgstr ""
+msgstr "メールアドレスは単一のワークスペースに所属している場合のみ更新できます。"
 
 #. js-lingui-id: MYgdAv
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Email domain configuration error."
-msgstr ""
+msgstr "メールドメイン設定エラー。"
 
 #. js-lingui-id: Ik1o4d
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Email domain not found."
-msgstr ""
+msgstr "メールドメインが見つかりません。"
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email is already verified."
-msgstr ""
+msgstr "メールアドレスは既に確認済みです。"
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1553,17 +1553,17 @@ msgstr "メールが必要です."
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email is unchanged."
-msgstr ""
+msgstr "メールアドレスは変更されていません。"
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
-msgstr ""
+msgstr "メールアドレスの更新は単一ワークスペースのユーザーに制限されています。"
 
 #. js-lingui-id: PeMFTI
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email verification is not required."
-msgstr ""
+msgstr "メール認証は必要ありません。"
 
 #. js-lingui-id: y8LSMh
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1583,7 +1583,7 @@ msgstr "従業員"
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
-msgstr ""
+msgstr "空のフィールド権限は許可されていません。"
 
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1595,17 +1595,17 @@ msgstr "終了日"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
-msgstr ""
+msgstr "エンティティが見つかりません。"
 
 #. js-lingui-id: jxgcg/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Enum operation failed."
-msgstr ""
+msgstr "列挙型の操作に失敗しました。"
 
 #. js-lingui-id: AOk97Y
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
-msgstr ""
+msgstr "列挙型が見つかりません。"
 
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
@@ -1746,7 +1746,7 @@ msgstr "外部ID"
 #. js-lingui-id: AOxB/G
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "Failed to connect to remote server."
-msgstr ""
+msgstr "リモートサーバーへの接続に失敗しました。"
 
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
@@ -1756,12 +1756,12 @@ msgstr "評価の作成に失敗しました。もう一度お試しください
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Failed to create function."
-msgstr ""
+msgstr "関数の作成に失敗しました。"
 
 #. js-lingui-id: I71ur2
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to create record."
-msgstr ""
+msgstr "レコードの作成に失敗しました。"
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1771,7 +1771,7 @@ msgstr "ジョブの削除に失敗しました。後でもう一度お試しく
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
-msgstr ""
+msgstr "レコードの削除に失敗しました。"
 
 #. js-lingui-id: SkvO+5
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
@@ -1786,7 +1786,7 @@ msgstr "キュージョブの読み込みに失敗しました。後でもう一
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
-msgstr ""
+msgstr "請求イベントの記録に失敗しました。"
 
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1796,17 +1796,17 @@ msgstr "ジョブの再試行に失敗しました。後でもう一度お試し
 #. js-lingui-id: Cr+NSQ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
-msgstr ""
+msgstr "フィールド権限の更新に失敗しました。"
 
 #. js-lingui-id: nrcGtY
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to update record."
-msgstr ""
+msgstr "レコードの更新に失敗しました。"
 
 #. js-lingui-id: FiYPA2
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to upsert record."
-msgstr ""
+msgstr "レコードの更新/挿入に失敗しました。"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1964,7 +1964,7 @@ msgstr "{label}に関連するお気に入り"
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Feature configuration not found."
-msgstr ""
+msgstr "機能設定が見つかりません。"
 
 #. js-lingui-id: 4lgLew
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2052,13 +2052,13 @@ msgstr "フィールド名がフィールドラベルと同期していません
 #. js-lingui-id: XJmtgE
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field name is not synced with label."
-msgstr ""
+msgstr "フィールド名がラベルと同期されていません。"
 
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Field not found."
-msgstr ""
+msgstr "フィールドが見つかりません。"
 
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2073,7 +2073,7 @@ msgstr "インデックスで参照されたフィールドは存在しません
 #. js-lingui-id: ylQono
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
-msgstr ""
+msgstr "フィールド制限は読み取り可能なオブジェクトにのみ適用されます。"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2093,22 +2093,22 @@ msgstr "オブジェクトメタデータを更新するフィールドが見つ
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type NUMERIC is not supported. Use Number instead."
-msgstr ""
+msgstr "フィールドタイプNUMERICはサポートされていません。代わりにNumberを使用してください。"
 
 #. js-lingui-id: q2XPsD
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type POSITION is a system type and cannot be created manually."
-msgstr ""
+msgstr "フィールドタイプPOSITIONはシステムタイプであり、手動で作成することはできません。"
 
 #. js-lingui-id: FDPb27
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type TS_VECTOR is a system type and cannot be created manually."
-msgstr ""
+msgstr "フィールドタイプTS_VECTORはシステムタイプであり、手動で作成することはできません。"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
-msgstr ""
+msgstr "フィールドタイプの検証エラー。"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
@@ -2158,7 +2158,7 @@ msgstr "ファイルカテゴリー"
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "File not found."
-msgstr ""
+msgstr "ファイルが見つかりません。"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2203,42 +2203,42 @@ msgstr "完全なパス"
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function code is unchanged."
-msgstr ""
+msgstr "関数コードは変更されていません。"
 
 #. js-lingui-id: Ho3UAo
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function execution limit reached."
-msgstr ""
+msgstr "関数実行の上限に達しました。"
 
 #. js-lingui-id: mdxF/u
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function execution timed out."
-msgstr ""
+msgstr "関数の実行がタイムアウトしました。"
 
 #. js-lingui-id: IsdR/t
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function is currently building."
-msgstr ""
+msgstr "関数は現在ビルド中です。"
 
 #. js-lingui-id: GhVI/u
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function is not ready."
-msgstr ""
+msgstr "関数の準備ができていません。"
 
 #. js-lingui-id: 2ACKTg
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function not found."
-msgstr ""
+msgstr "関数が見つかりません。"
 
 #. js-lingui-id: zKksGw
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function version not found."
-msgstr ""
+msgstr "関数バージョンが見つかりません。"
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."
-msgstr ""
+msgstr "Google API認証が無効になっています。"
 
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2268,7 +2268,7 @@ msgstr "ハンドルの別名"
 #. js-lingui-id: CDiGGx
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
-msgstr ""
+msgstr "ハンドルエイリアスが必要です。"
 
 #. js-lingui-id: VehAU2
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2300,7 +2300,7 @@ msgstr "理想的な顧客プロフィール：会社が最も適切で価値の
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
-msgstr ""
+msgstr "IDプロバイダーが見つかりません。"
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2358,58 +2358,58 @@ msgstr "同じ名前のインデックスはすでに存在します"
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input exceeds maximum length."
-msgstr ""
+msgstr "入力が最大長を超えています。"
 
 #. js-lingui-id: nrH4HK
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input is too short."
-msgstr ""
+msgstr "入力が短すぎます。"
 
 #. js-lingui-id: 9sx+WQ
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Insufficient permissions for email domain."
-msgstr ""
+msgstr "メールドメインに対する権限が不足しています。"
 
 #. js-lingui-id: Bluaux
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Insufficient permissions to access calendar."
-msgstr ""
+msgstr "カレンダーにアクセスする権限が不足しています。"
 
 #. js-lingui-id: J1UlII
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Insufficient permissions."
-msgstr ""
+msgstr "権限が不足しています。"
 
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Invalid action type."
-msgstr ""
+msgstr "無効なアクションタイプです。"
 
 #. js-lingui-id: D/IcuN
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Invalid agent input."
-msgstr ""
+msgstr "無効なエージェント入力です。"
 
 #. js-lingui-id: hJpBT6
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
-msgstr ""
+msgstr "無効な集計フィールドパラメータです。"
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
-msgstr ""
+msgstr "無効な引数が指定されました。"
 
 #. js-lingui-id: Z5WSzG
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit input."
-msgstr ""
+msgstr "無効な監査入力です。"
 
 #. js-lingui-id: g/ne5t
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
-msgstr ""
+msgstr "無効な監査タイプです。"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2429,17 +2429,17 @@ msgstr "無効なキャプチャです。他のデバイスを試してくださ
 #. js-lingui-id: guEsvP
 #: src/engine/core-modules/captcha/captcha.exception.ts
 msgid "Invalid captcha. Please try again."
-msgstr ""
+msgstr "無効なキャプチャです。もう一度お試しください。"
 
 #. js-lingui-id: z4W/Ky
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid composite type."
-msgstr ""
+msgstr "無効な複合型です。"
 
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid connected account ID."
-msgstr ""
+msgstr "無効な連携アカウントIDです。"
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2449,12 +2449,12 @@ msgstr "無効な国コード {countryCode}"
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
-msgstr ""
+msgstr "無効なデータ形式です。"
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
 msgid "Invalid database event trigger."
-msgstr ""
+msgstr "無効なデータベースイベントトリガーです。"
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2464,56 +2464,56 @@ msgstr "無効な日付の値。1 を超える整数であるべきです"
 #. js-lingui-id: i++4Wk
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
-msgstr ""
+msgstr "無効な深さパラメータです。"
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid email address."
-msgstr ""
+msgstr "無効なメールアドレスです。"
 
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
-msgstr ""
+msgstr "無効な機能フラグキーです。"
 
 #. js-lingui-id: MaFFIW
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
-msgstr ""
+msgstr "無効なフィールド入力です。"
 
 #. js-lingui-id: UcOaIa
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid field metadata."
-msgstr ""
+msgstr "無効なフィールドメタデータです。"
 
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid file ID."
-msgstr ""
+msgstr "無効なファイルIDです。"
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 #: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
 #: src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util.ts
 msgid "Invalid filter parameter."
-msgstr ""
+msgstr "無効なフィルターパラメータです。"
 
 #. js-lingui-id: /GCbsS
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
-msgstr ""
+msgstr "無効なフィルター値: \"{value}\""
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
 msgid "Invalid foreign table input."
-msgstr ""
+msgstr "無効な外部テーブル入力です。"
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
-msgstr ""
+msgstr "無効なグループ化パラメータです。"
 
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2529,33 +2529,33 @@ msgstr "無効な時間の値。1 を超える整数であるべきです"
 #. js-lingui-id: 6WLJFQ
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
-msgstr ""
+msgstr "無効なIDプロバイダータイプです。"
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
-msgstr ""
+msgstr "無効な入力が指定されました。"
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid issuer URL."
-msgstr ""
+msgstr "無効な発行者URLです。"
 
 #. js-lingui-id: tm//h9
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid label format."
-msgstr ""
+msgstr "無効なラベル形式です。"
 
 #. js-lingui-id: Y8ap4e
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
-msgstr ""
+msgstr "無効な制限パラメータです。"
 
 #. js-lingui-id: 2VcEMI
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid migration action."
-msgstr ""
+msgstr "無効なマイグレーションアクションです。"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2577,62 +2577,62 @@ msgstr "無効なモーフ関連入力"
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid object input."
-msgstr ""
+msgstr "無効なオブジェクト入力です。"
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by parameter."
-msgstr ""
+msgstr "無効なソートパラメータです。"
 
 #. js-lingui-id: f7SWSg
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
-msgstr ""
+msgstr "グループ化と組み合わせた無効なソートパラメータです。"
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Invalid page layout data."
-msgstr ""
+msgstr "無効なページレイアウトデータです。"
 
 #. js-lingui-id: 5qj/ud
 #: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
-msgstr ""
+msgstr "無効なページレイアウトタブデータです。"
 
 #. js-lingui-id: mgipnr
 #: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
-msgstr ""
+msgstr "無効なページレイアウトウィジェットデータです。"
 
 #. js-lingui-id: HiaWGB
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
 msgid "Invalid parameters provided."
-msgstr ""
+msgstr "無効なパラメータが指定されました。"
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
-msgstr ""
+msgstr "無効な権限設定です。"
 
 #. js-lingui-id: 0D0YwP
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone calling code."
-msgstr ""
+msgstr "無効な電話国番号です。"
 
 #. js-lingui-id: P/5moy
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone country code."
-msgstr ""
+msgstr "無効な電話国コードです。"
 
 #. js-lingui-id: ZmVj5N
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
-msgstr ""
+msgstr "無効な電話番号です。"
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
-msgstr ""
+msgstr "無効な価格です。"
 
 #. js-lingui-id: tkzFzG
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -2653,7 +2653,7 @@ msgstr "無効な関係作成ペイロード"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
-msgstr ""
+msgstr "無効なリレーションフィールドターゲット"
 
 #. js-lingui-id: JQ+mZ6
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
@@ -2683,12 +2683,12 @@ msgstr "ロール対象データが無効です。"
 #. js-lingui-id: ppA1Aq
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Invalid row level permission predicate data."
-msgstr ""
+msgstr "無効な行レベル権限述語データです。"
 
 #. js-lingui-id: nwC2sc
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
-msgstr ""
+msgstr "無効な行レベル権限述語グループデータです。"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2698,7 +2698,7 @@ msgstr "無効な設定タイプが cron トリガーに提供されています
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Invalid skill input."
-msgstr ""
+msgstr "無効なスキル入力です。"
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -2753,7 +2753,7 @@ msgstr "無効なUUID {id}"
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
 msgid "Invalid UUID format."
-msgstr ""
+msgstr "無効なUUID形式です。"
 
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -2763,89 +2763,89 @@ msgstr "無効な検証トークンです。"
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
-msgstr ""
+msgstr "アクターの値が無効です。"
 
 #. js-lingui-id: Y2KtrW
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
 msgid "Invalid value for address."
-msgstr ""
+msgstr "住所の値が無効です。"
 
 #. js-lingui-id: D9hzmE
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
-msgstr ""
+msgstr "通貨の値が無効です。"
 
 #. js-lingui-id: AUbno1
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\""
-msgstr ""
+msgstr "日付の値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
 msgid "Invalid value for emails."
-msgstr ""
+msgstr "メールアドレスの値が無効です。"
 
 #. js-lingui-id: SF3Mp4
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
 msgid "Invalid value for full name."
-msgstr ""
+msgstr "氏名の値が無効です。"
 
 #. js-lingui-id: UiMJoF
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON: \"{inspectedValue}\""
-msgstr ""
+msgstr "JSONの値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: BgSFod
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON."
-msgstr ""
+msgstr "JSONの値が無効です。"
 
 #. js-lingui-id: GFYy9y
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Invalid value for links."
-msgstr ""
+msgstr "リンクの値が無効です。"
 
 #. js-lingui-id: Q6jO3x
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
 msgid "Invalid value for multi-select: \"{inspectedValue}\""
-msgstr ""
+msgstr "複数選択の値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: WHM6K7
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
-msgstr ""
+msgstr "数値の値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: oLqCzh
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
 msgid "Invalid value for phones."
-msgstr ""
+msgstr "電話番号の値が無効です。"
 
 #. js-lingui-id: GLmyCK
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
 msgid "Invalid value for position: \"{inspectedValue}\""
-msgstr ""
+msgstr "位置の値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: Sf+6YJ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
 msgid "Invalid value for rich text."
-msgstr ""
+msgstr "リッチテキストの値が無効です。"
 
 #. js-lingui-id: 9lVA5C
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
 msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr ""
+msgstr "選択の値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
-msgstr ""
+msgstr "UUIDの値が無効です: \"{inspectedValue}\""
 
 #. js-lingui-id: Og/MZQ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
 msgid "Invalid value: \"{inspectedValue}\""
-msgstr ""
+msgstr "無効な値: \"{inspectedValue}\""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -2885,7 +2885,7 @@ msgstr "無効なワークフローステータスです。"
 #. js-lingui-id: v+ozTr
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Invalid workflow step input."
-msgstr ""
+msgstr "無効なワークフローステップ入力です。"
 
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3362,7 +3362,7 @@ msgstr "メッセージングプロバイダーのリフレッシュトークン
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Metadata validation failed"
-msgstr ""
+msgstr "メタデータの検証に失敗しました"
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -3433,7 +3433,7 @@ msgstr "モーフ関連作成ペイロードは同じオブジェクトのメタ
 #. js-lingui-id: Lcqv5g
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Morph relation field must have a morph id"
-msgstr ""
+msgstr "モーフリレーションフィールドにはモーフIDが必要です"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3479,7 +3479,7 @@ msgstr "名前 \"{name}\" は他のフィールドで既に使用されている
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by join column name"
-msgstr ""
+msgstr "名前「{name}」は結合カラム名として既に使用されているため利用できません"
 
 #. js-lingui-id: Aam+mb
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -3538,7 +3538,7 @@ msgstr "名前がラベルと同期していません。"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
+msgstr "新しいメールアドレスは現在のメールアドレスと異なる必要があります"
 
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -3558,7 +3558,7 @@ msgstr "外部テーブルが見つかりません。"
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
-msgstr ""
+msgstr "検索用の識別子が見つかりませんでした。"
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3832,7 +3832,7 @@ msgstr "権限を設定しようとしているオブジェクトの1つ以上�
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
-msgstr ""
+msgstr "1つ以上のレコードが見つかりませんでした。"
 
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3874,7 +3874,7 @@ msgstr "\"商談の終了日\""
 #. js-lingui-id: 3NYczb
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity company"
-msgstr "\"商談企業\""
+msgstr "商談の会社"
 
 #. js-lingui-id: as45IN
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4111,7 +4111,7 @@ msgstr "親フォルダID"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Parent row level permission predicate group not found"
-msgstr ""
+msgstr "親の行レベル権限述語グループが見つかりません"
 
 #. js-lingui-id: 6OzP7Y
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
@@ -4119,12 +4119,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
-msgstr ""
+msgstr "親のビューフィルターグループが見つかりません"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
-msgstr ""
+msgstr "パスワードが弱すぎます。"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -4155,12 +4155,12 @@ msgstr "保留中の同期アクション"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
-msgstr "\"人\""
+msgstr "連絡先"
 
 #. js-lingui-id: E1zc7W
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
-msgstr "会社に紐づいた人々。"
+msgstr "会社に紐づいた連絡先。"
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4179,12 +4179,12 @@ msgstr "権限が見つかりません。"
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
-msgstr "\"人物\""
+msgstr "連絡先"
 
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
-msgstr "\"人物レコードの位置\""
+msgstr "連絡先レコードの位置"
 
 #. js-lingui-id: zmwvG2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -4204,7 +4204,7 @@ msgstr "接続設定を確認してください。サーバーホスト、ポー
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
-msgstr ""
+msgstr "更新されたメールアドレスを確認してください"
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -4225,7 +4225,7 @@ msgstr "有効な接続タイプ (IMAP、SMTP、またはCalDAV) を選択し、
 #. js-lingui-id: sa9Q+R
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Please select at least 2 records to merge."
-msgstr ""
+msgstr "マージするには少なくとも2つのレコードを選択してください。"
 
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -4236,7 +4236,7 @@ msgstr "会社のメールドメインを使用してください。"
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
 msgid "Please use Settings to remove a workspace member."
-msgstr ""
+msgstr "ワークスペースメンバーを削除するには設定を使用してください。"
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4290,7 +4290,7 @@ msgstr "プロンプトは空にできません"
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Property {property} is required for role"
-msgstr ""
+msgstr "プロパティ {property} はロールに必要です"
 
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -4489,19 +4489,19 @@ msgstr "役割"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to agents"
-msgstr ""
+msgstr "ロール「{roleLabel}」はエージェントに割り当てることができません"
 
 #. js-lingui-id: u1Fm8i
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
-msgstr ""
+msgstr "ロール「{roleLabel}」はAPIキーに割り当てることができません"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
-msgstr ""
+msgstr "ロール「{roleLabel}」はユーザーに割り当てることができません"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -4531,7 +4531,7 @@ msgstr "ロールには少なくとも1つの対象が必要です。"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role not found"
-msgstr ""
+msgstr "ロールが見つかりません"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -4551,7 +4551,7 @@ msgstr "ロールの対象に識別子がありません。"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
-msgstr ""
+msgstr "ロールターゲットにはapiKeyId、userWorkspaceId、またはagentIdのいずれか1つが必要です"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
@@ -4559,7 +4559,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role target not found"
-msgstr ""
+msgstr "ロールターゲットが見つかりません"
 
 #. js-lingui-id: gz6uii
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -4570,7 +4570,7 @@ msgstr "ロールの対象が見つかりません。"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this id already exists"
-msgstr ""
+msgstr "このIDを持つロールターゲットはすでに存在します"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -4626,67 +4626,67 @@ msgstr "同じパスを持つルートはすでに存在します"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate group not found"
-msgstr ""
+msgstr "行レベル権限述語グループが見つかりません"
 
 #. js-lingui-id: HBfLro
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate group not found."
-msgstr ""
+msgstr "行レベル権限述語グループが見つかりません。"
 
 #. js-lingui-id: vMP7nZ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-delete-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
 msgid "Row level permission predicate group to delete not found"
-msgstr ""
+msgstr "削除する行レベル権限述語グループが見つかりません"
 
 #. js-lingui-id: h/Rc4f
 #: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-destroy-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-or-throw.util.ts
 msgid "Row level permission predicate group to destroy not found"
-msgstr ""
+msgstr "破棄する行レベル権限述語グループが見つかりません"
 
 #. js-lingui-id: NhW7fb
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/metadata-modules/flat-row-level-permission-predicate-group/utils/from-update-row-level-permission-predicate-group-input-to-flat-row-level-permission-predicate-group-to-update-or-throw.util.ts
 msgid "Row level permission predicate group to update not found"
-msgstr ""
+msgstr "更新する行レベル権限述語グループが見つかりません"
 
 #. js-lingui-id: LrJvM0
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group with this id already exists"
-msgstr ""
+msgstr "このIDを持つ行レベル権限述語グループはすでに存在します"
 
 #. js-lingui-id: fEazMl
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Row level permission predicate not found."
-msgstr ""
+msgstr "行レベル権限述語が見つかりません。"
 
 #. js-lingui-id: zdTUvE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-delete-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
 msgid "Row level permission predicate to delete not found"
-msgstr ""
+msgstr "削除する行レベル権限述語が見つかりません"
 
 #. js-lingui-id: WzQYVM
 #: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-destroy-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-or-throw.util.ts
 msgid "Row level permission predicate to destroy not found"
-msgstr ""
+msgstr "破棄する行レベル権限述語が見つかりません"
 
 #. js-lingui-id: aeNy7i
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-update-row-level-permission-predicate-input-to-flat-row-level-permission-predicate-to-update-or-throw.util.ts
 msgid "Row level permission predicate to update not found"
-msgstr ""
+msgstr "更新する行レベル権限述語が見つかりません"
 
 #. js-lingui-id: CUT3wK
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this id already exists"
-msgstr ""
+msgstr "このIDを持つ行レベル権限述語はすでに存在します"
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -4784,17 +4784,17 @@ msgstr "シングルサインオンの認証に失敗しました。"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-skill-validator.service.ts
 msgid "Skill not found"
-msgstr ""
+msgstr "スキルが見つかりません"
 
 #. js-lingui-id: 68ze54
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Skill not found."
-msgstr ""
+msgstr "スキルが見つかりません。"
 
 #. js-lingui-id: e6udqn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "Skill with name \"{name}\" already exists"
-msgstr ""
+msgstr "「{name}」という名前のスキルはすでに存在します"
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -4809,12 +4809,12 @@ msgstr "選択した権限の一部が無効です。 有効な権限設定を�
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
-msgstr ""
+msgstr "一部のワークスペースメンバーシップが見つかりませんでした。このワークスペースへのアクセス権がなくなった可能性があります。"
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
-msgstr ""
+msgstr "ソースオブジェクトはターゲットオブジェクトにできません"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -4850,7 +4850,7 @@ msgstr "標準オブジェクトは削除できません"
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Standard skills cannot be modified."
-msgstr ""
+msgstr "標準スキルは変更できません。"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -4978,17 +4978,17 @@ msgstr "{connectFieldName} のターゲットオブジェクトメタデータ�
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
-msgstr ""
+msgstr "ターゲットリレーションフィールドは期待されるオブジェクトに属していません"
 
 #. js-lingui-id: wG8PVB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference the source object"
-msgstr ""
+msgstr "ターゲットリレーションフィールドはソースオブジェクトを参照していません"
 
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
-msgstr ""
+msgstr "ターゲットリレーションフィールドはこのフィールドを参照していません"
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -5096,7 +5096,7 @@ msgstr "タスクターゲットの商談"
 #. js-lingui-id: I1MiSs
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget person"
-msgstr "タスクターゲットの人物"
+msgstr "タスクターゲットの連絡先"
 
 #. js-lingui-id: pciKLT
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
@@ -5321,17 +5321,17 @@ msgstr "ワークフローバージョンのステータス"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The workspace member who last updated the record"
-msgstr ""
+msgstr "レコードを最後に更新したワークスペースメンバー"
 
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "There is an issue with your invitation. Please try again."
-msgstr ""
+msgstr "招待に問題があります。もう一度お試しください。"
 
 #. js-lingui-id: gH+wBS
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "There is an issue with your token. Please try again."
-msgstr ""
+msgstr "トークンに問題があります。もう一度お試しください。"
 
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -5490,7 +5490,7 @@ msgstr "このレコードはすでに存在します。データを確認して
 #: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
-msgstr ""
+msgstr "このレコードは存在しないか、削除されています。"
 
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
@@ -5533,7 +5533,7 @@ msgstr "このサブドメインはすでに使用されています。"
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
-msgstr ""
+msgstr "このタイプのレコードはマージできません。"
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5674,7 +5674,7 @@ msgstr "リクエストが多すぎます。後でもう一度お試しくださ
 #. js-lingui-id: mfqtz7
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Too many workspace invitations sent. Please try again later."
-msgstr ""
+msgstr "ワークスペースへの招待が多すぎます。後でもう一度お試しください。"
 
 #. js-lingui-id: VD8J6l
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
@@ -5775,7 +5775,7 @@ msgstr "更新フィールドの制限は更新可能なオブジェクトにの
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Updated by"
-msgstr ""
+msgstr "更新者"
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -5802,7 +5802,7 @@ msgstr "ユーザーはこのワークスペースにアクセスできません
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 msgid "User does not have access to this workspace."
-msgstr ""
+msgstr "ユーザーはこのワークスペースへのアクセス権がありません。"
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -6001,13 +6001,13 @@ msgstr "同じフィールドメタデータIDとビューIDを持つフィー�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group cannot be its own parent"
-msgstr ""
+msgstr "ビューフィルターグループは自身の親にできません"
 
 #. js-lingui-id: tir/7Q
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
-msgstr ""
+msgstr "ビューフィルターグループの階層が最大深度 {VIEW_FILTER_GROUP_MAX_DEPTH} を超えています"
 
 #. js-lingui-id: eUPMYZ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -6019,13 +6019,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group not found"
-msgstr ""
+msgstr "ビューフィルターグループが見つかりません"
 
 #. js-lingui-id: UfIsQu
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group with this id already exists"
-msgstr ""
+msgstr "このIDのビューフィルターグループは既に存在します"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -6255,7 +6255,7 @@ msgstr "実行にリンクされたワークフロー。"
 #. js-lingui-id: R67jts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
-msgstr ""
+msgstr "ワークフローが見つかりません。"
 
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -6422,7 +6422,7 @@ msgstr "ワークスペースの作成は管理者に限定されています"
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
-msgstr ""
+msgstr "ワークスペースが存在しません。"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -6477,7 +6477,7 @@ msgstr "ワークスペースメンバー"
 #. js-lingui-id: JYc1v3
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "Workspace not found"
-msgstr ""
+msgstr "ワークスペースが見つかりません"
 
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -6549,7 +6549,7 @@ msgstr "間違ったパスワード"
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
-msgstr ""
+msgstr "パスワードが正しくありません。"
 
 #. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -6560,12 +6560,12 @@ msgstr "X"
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
-msgstr ""
+msgstr "一度にマージできるレコードは最大 {MUTATION_MAX_MERGE_RECORDS} 件です。"
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
-msgstr ""
+msgstr "一度に更新できるレコードは最大 {QUERY_MAX_RECORDS} 件です。"
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts
@@ -6639,7 +6639,7 @@ msgstr "これらのフィールドを更新する権限がありません: {fie
 #. js-lingui-id: ZPo5fR
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "プロフィール画像をアップロードする権限がありません。アクセス権については、ワークスペース管理者にお問い合わせください。"
 
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
