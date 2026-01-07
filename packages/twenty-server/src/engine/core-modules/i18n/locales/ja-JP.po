@@ -4097,7 +4097,7 @@ msgstr "更新するページレイアウトウィジェットが見つかりま
 #. js-lingui-id: +4z9mT
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr "ID{flatPageLayoutWidgetId}のページレイアウトウィジェットはすでに存在します"
+msgstr "ID {flatPageLayoutWidgetId}のページレイアウトウィジェットはすでに存在します"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -5149,7 +5149,7 @@ msgstr "APIキーに有効なロールが割り当てられていません。API
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
-msgstr "連絡先のLinkedinアカウント"
+msgstr "会社のLinkedInアカウント"
 
 #. js-lingui-id: N31Pso
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -5978,7 +5978,7 @@ msgstr "破棄するフィールドが見つかりません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
-msgstr "更新するフィールドを表示して更新が見つかりません"
+msgstr "更新するビューフィールドが見つかりません"
 
 #. js-lingui-id: AprfQL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6288,7 +6288,7 @@ msgstr "ワークフロー実行がキューに入った時間"
 #. js-lingui-id: C5dusT
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Workflow run is not running"
-msgstr "ワークフローランは実行されていません"
+msgstr "ワークフロー実行は実行中ではありません"
 
 #. js-lingui-id: AzylSS
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
