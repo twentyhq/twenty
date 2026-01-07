@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
-msgstr "{fieldName} と {fieldName}Id の両方を提供することはできません。"
+msgstr "{fieldName} と {fieldName}Id は同時に指定できません。"
 
 #. js-lingui-id: ZkHTHm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -893,22 +893,22 @@ msgstr "{connectFieldName} に接続できません。条件「{formattedConnect
 #. js-lingui-id: 2oVE+z
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "Can't impersonate user via api key"
-msgstr "APIキーを介してユーザーを偽装することはできません。"
+msgstr "APIキーではユーザーの代理ログインはできません。"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
-msgstr "草稿または最後に公開されたバージョン以外は有効化できません"
+msgstr "下書きまたは最終公開バージョン以外は有効化できません"
 
 #. js-lingui-id: QYS2AB
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
-msgstr "システムオブジェクトにフィールド権限を追加することはできません。"
+msgstr "システムオブジェクトにはフィールド権限を追加できません。"
 
 #. js-lingui-id: FxFlC4
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
-msgstr "システムオブジェクトに権限を追加することはできません。"
+msgstr "システムオブジェクトには権限を追加できません。"
 
 #. js-lingui-id: 6kqLHf
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -918,17 +918,17 @@ msgstr "関連レコードがあるため、操作を完了できません。"
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
-msgstr "同じワークフローに対して複数の草稿バージョンを作成することはできません"
+msgstr "同じワークフローに複数の下書きバージョンは作成できません"
 
 #. js-lingui-id: RggZr4
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
-msgstr "草稿以外のステータスでワークフローバージョンを作成することはできません"
+msgstr "下書き以外のステータスではワークフローバージョンを作成できません"
 
 #. js-lingui-id: VPXcr5
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
-msgstr "アカウントを削除できません: あなたは唯一の管理者です。別の管理者を割り当てるか、最初にワークスペースを削除してください。"
+msgstr "アカウントを削除できません。あなたは唯一の管理者です。先に別の管理者を割り当てるか、ワークスペースを削除してください。"
 
 #. js-lingui-id: RYRFbW
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
@@ -945,12 +945,12 @@ msgstr "標準スキルは削除できません"
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
-msgstr "最後の管理者ユーザーを削除することはできません。"
+msgstr "最後の管理者は削除できません。"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
-msgstr "ワークスペースのカスタムアプリケーションによって作成されていない一意のインデックスは削除できません"
+msgstr "ワークスペースのカスタムアプリケーションで作成されていない一意インデックスは削除できません"
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -960,12 +960,12 @@ msgstr "削除できません。まずラベル識別子フィールドを更新
 #. js-lingui-id: FrNWt0
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
-msgstr "非アクティブなワークフローバージョンを無効化することはできません"
+msgstr "非アクティブなワークフローバージョンは無効化できません"
 
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr "既存の重複データがあるため、一意性を有効にできません。まずデータを見直して修正してください（ソフト削除されたレコードを含む）。"
+msgstr "重複データがあるため一意性を有効にできません。先にデータを確認・修正してください（削除済みレコードを含む）。"
 
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -975,27 +975,27 @@ msgstr "読み取り不可のオブジェクトには書き込み権限を付与
 #. js-lingui-id: r4uEo5
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
-msgstr "読み取り権限なしに書き込み権限を付与することはできません。"
+msgstr "読み取り権限なしに書き込み権限は付与できません。"
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr "複数のアクティブなワークフローバージョンを持つことはできません"
+msgstr "アクティブなワークフローバージョンは1つまでです"
 
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
-msgstr "ワークスペースから最後の管理者を削除することはできません。"
+msgstr "ワークスペースの最後の管理者は削除できません。"
 
 #. js-lingui-id: wNJvot
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription interval."
-msgstr "サブスクリプション期間を切り替えることはできません。"
+msgstr "サブスクリプション期間は切り替えできません。"
 
 #. js-lingui-id: U/P/gT
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
-msgstr "サブスクリプションプランを切り替えることはできません。"
+msgstr "サブスクリプションプランは切り替えできません。"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -1017,7 +1017,7 @@ msgstr "標準スキルのプロパティは更新できません（有効化/�
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
-msgstr "ワークフローバージョンのステータスを手動で更新することはできません"
+msgstr "ワークフローバージョンのステータスは手動で更新できません"
 
 #. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -1204,7 +1204,7 @@ msgstr "連絡先のX/Twitterアカウント"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
-msgstr "コンテンツを空にすることはできません"
+msgstr "コンテンツは空にできません"
 
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -1421,7 +1421,7 @@ msgstr "デフォルト値「{defaultValue}」はオプションの値のいず�
 #. js-lingui-id: XeWfi3
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Default value cannot be null."
-msgstr "デフォルト値を null にすることはできません。"
+msgstr "デフォルト値を null にはできません。"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1541,7 +1541,7 @@ msgstr "メールは未確認です。"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Email is required"
-msgstr "メールが必要です"
+msgstr "メールアドレスは必須です"
 
 #. js-lingui-id: Qof3ks
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -2098,12 +2098,12 @@ msgstr "フィールドタイプNUMERICはサポートされていません。�
 #. js-lingui-id: q2XPsD
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type POSITION is a system type and cannot be created manually."
-msgstr "フィールドタイプPOSITIONはシステムタイプであり、手動で作成することはできません。"
+msgstr "フィールドタイプPOSITIONはシステム専用のため、手動で作成できません。"
 
 #. js-lingui-id: FDPb27
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type TS_VECTOR is a system type and cannot be created manually."
-msgstr "フィールドタイプTS_VECTORはシステムタイプであり、手動で作成することはできません。"
+msgstr "フィールドタイプTS_VECTORはシステム専用のため、手動で作成できません。"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -3056,7 +3056,7 @@ msgstr "ラベルは空にできません"
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Label identifier field cannot be deactivated"
-msgstr "ラベル識別子フィールドを無効にすることはできません"
+msgstr "ラベル識別子フィールドは無効化できません"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -3092,13 +3092,13 @@ msgstr "ラベルは必須です。"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
-msgstr "ラベルを空にすることはできません"
+msgstr "ラベルは空にできません"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
-msgstr "ラベルにコンマを含めることはできません"
+msgstr "ラベルにコンマは使用できません"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3382,7 +3382,7 @@ msgstr "マイグレーションファクトリが見つかりません。"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr "分の値は60を超えることはできません。60分を超える間隔の場合は、「Hours」トリガータイプまたはカスタムcron式を使用してください。"
+msgstr "分の値は60を超えられません。60分を超える間隔の場合は、「Hours」トリガータイプまたはカスタムcron式を使用してください。"
 
 #. js-lingui-id: lCnasH
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
@@ -4506,7 +4506,7 @@ msgstr "ロール「{roleLabel}」はユーザーに割り当てることがで�
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
-msgstr "このエンティティにロールを割り当てることはできません。"
+msgstr "このエンティティにはロールを割り当てできません。"
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5192,7 +5192,7 @@ msgstr "メッセージ受信日"
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role cannot be deleted as it is required for the workspace to function properly."
-msgstr "デフォルトロールはワークスペースの正しい機能に必要なため削除することはできません。"
+msgstr "デフォルトロールはワークスペースの動作に必要なため削除できません。"
 
 #. js-lingui-id: 0biWRI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5272,12 +5272,12 @@ msgstr "修正しようとしているロールが見つかりませんでした
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
-msgstr "オブジェクトの単数形と複数形のラベルを同じにすることはできません"
+msgstr "オブジェクトの単数形と複数形のラベルは同一にできません"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
-msgstr "オブジェクトの単数形と複数形の名前を同じにすることはできません"
+msgstr "オブジェクトの単数形と複数形の名前は同一にできません"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -5500,17 +5500,17 @@ msgstr "このリモートサーバーは変更できません。"
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "This role cannot be assigned to agents."
-msgstr "このロールはエージェントに割り当てることはできません。"
+msgstr "このロールはエージェントに割り当てできません。"
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This role cannot be assigned to API keys."
-msgstr "このロールは API キーに割り当てることはできません。"
+msgstr "このロールはAPIキーに割り当てできません。"
 
 #. js-lingui-id: c68K+k
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
-msgstr "このロールはユーザーに割り当てることはできません。"
+msgstr "このロールはユーザーに割り当てできません。"
 
 #. js-lingui-id: 2jnsqJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5953,7 +5953,7 @@ msgstr "ID {flatViewFieldId} のビュー フィールド メタデータはす�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field position cannot be lower than label identifier view field position"
-msgstr "ビュー項目の位置はラベル識別子ビュー項目の位置より低くすることはできません"
+msgstr "ビュー項目の位置はラベル識別子ビュー項目の位置より低くできません"
 
 #. js-lingui-id: WZzm3R
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6362,7 +6362,7 @@ msgstr "ワークフローバージョンにはトリガーが含まれていま
 #. js-lingui-id: bqFL4g
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
-msgstr "ワークフローバージョンは草稿状態ではありません"
+msgstr "ワークフローバージョンは下書き状態ではありません"
 
 #. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6570,18 +6570,18 @@ msgstr "一度に更新できるレコードは最大 {QUERY_MAX_RECORDS} 件で
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
-msgstr "自分のロールを変更することはできません。別の管理者にロールの更新を依頼してください。"
+msgstr "自分のロールは変更できません。別の管理者にロールの更新を依頼してください。"
 
 #. js-lingui-id: y5haJ4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
-msgstr "読み取りアクセスも付与せずに編集権限を付与することはできません。最初に読み取りアクセスを有効にしてください。"
+msgstr "読み取りアクセスなしでは編集権限を付与できません。最初に読み取りアクセスを有効にしてください。"
 
 #. js-lingui-id: 8wovNr
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
-msgstr "最後の管理者から管理者ロールを削除することはできません。最初に別の管理者を割り当ててください。"
+msgstr "最後の管理者から管理者ロールは削除できません。最初に別の管理者を割り当ててください。"
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -6596,7 +6596,7 @@ msgstr "システムオブジェクトにはアクセス権を設定できませ
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
-msgstr "自分のロールを更新することはできません。"
+msgstr "自分のロールは更新できません。"
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
@@ -6616,7 +6616,7 @@ msgstr "このユーザーをワークスペースから削除する権限があ
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
-msgstr "ユーザーの偽装権限がありません。アクセス権については、ワークスペース管理者にお問い合わせください。"
+msgstr "ユーザーの代理ログイン権限がありません。アクセス権については、ワークスペース管理者にお問い合わせください。"
 
 #. js-lingui-id: q5OVn+
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
