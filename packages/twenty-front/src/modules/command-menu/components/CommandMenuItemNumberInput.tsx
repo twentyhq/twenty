@@ -87,6 +87,7 @@ export const CommandMenuItemNumberInput = ({
   };
 
   const handleBlur = () => {
+    handleCommit(draftValue);
     removeFocusItemFromFocusStackById({ focusId });
   };
 
