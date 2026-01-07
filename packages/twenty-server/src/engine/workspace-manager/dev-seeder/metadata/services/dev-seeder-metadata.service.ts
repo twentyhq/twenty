@@ -322,7 +322,7 @@ export class DevSeederMetadataService {
         });
       }
 
-      // Update Company/Person petCareAgreements to show Pet names via junction config
+      // Update Company/Person caredForPets to show Pet names via junction config
       // Need to refresh cache since Pet.caretakers just created PetCareAgreement.pet
       if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
         await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
@@ -360,7 +360,7 @@ export class DevSeederMetadataService {
         for (const objName of ['company', 'person']) {
           const fieldId = this.findFieldIdByObjectAndName({
             objectName: objName,
-            fieldName: 'petCareAgreements',
+            fieldName: 'caredForPets',
             objectIdByNameSingular: refreshedObjectIdByNameSingular,
             flatFieldMetadataMaps: fieldMaps,
             flatObjectMetadataMaps: objectMaps,
