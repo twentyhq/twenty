@@ -2,14 +2,14 @@ import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widget
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { computeSliceHighlightPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSliceHighlightPosition';
 import { computeSlicesFromBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeSlicesFromBars';
-import { findAnchorBarInSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findAnchorBarInSlice';
+import { findSliceAtPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/findSliceAtPosition';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { animated, useSpring } from '@react-spring/web';
-import { useCallback, useMemo, type MouseEvent } from 'react';
+import { useMemo, type MouseEvent } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated/graphql';
@@ -61,57 +61,16 @@ export const CustomSliceHoverLayer = ({
     [bars, isVerticalLayout],
   );
 
-  const findSliceAtMousePosition = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      const svgBoundingRectangle =
-        event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-
-      if (!isDefined(svgBoundingRectangle) || slices.length === 0) {
-        return null;
-      }
-
-      const mousePositionX =
-        event.clientX - svgBoundingRectangle.left - marginLeft;
-      const mousePositionY =
-        event.clientY - svgBoundingRectangle.top - marginTop;
-
-      const positionAlongAxis = isVerticalLayout
-        ? mousePositionX
-        : mousePositionY;
-
-      const nearestSlice = slices.reduce((nearest, slice) => {
-        const currentDistance = Math.abs(slice.sliceCenter - positionAlongAxis);
-        const nearestDistance = Math.abs(
-          nearest.sliceCenter - positionAlongAxis,
-        );
-        return currentDistance < nearestDistance ? slice : nearest;
-      });
-
-      const anchorBar = findAnchorBarInSlice(
-        nearestSlice.bars,
-        isVerticalLayout,
-      );
-
-      const offsetLeft = isVerticalLayout
-        ? nearestSlice.sliceCenter + marginLeft
-        : anchorBar.absX + anchorBar.width + marginLeft;
-      const offsetTop = isVerticalLayout
-        ? anchorBar.absY + marginTop
-        : nearestSlice.sliceCenter + marginTop;
-
-      return {
-        slice: nearestSlice,
-        offsetLeft,
-        offsetTop,
-      };
-    },
-    [slices, marginLeft, marginTop, isVerticalLayout],
-  );
-
   const handleMouseMove = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent<SVGRectElement>) => {
-        const sliceData = findSliceAtMousePosition(event);
+        const sliceData = findSliceAtPosition({
+          event,
+          slices,
+          marginLeft,
+          marginTop,
+          isVerticalLayout,
+        });
         const currentHoveredSliceIndex = snapshot
           .getLoadable(hoveredSliceIndexState)
           .getValue();
@@ -132,10 +91,13 @@ export const CustomSliceHoverLayer = ({
         onSliceHover(sliceData);
       },
     [
-      findSliceAtMousePosition,
       hoveredSliceIndexState,
       setHoveredSliceIndex,
       onSliceHover,
+      slices,
+      marginLeft,
+      marginTop,
+      isVerticalLayout,
     ],
   );
 
@@ -148,7 +110,13 @@ export const CustomSliceHoverLayer = ({
       return;
     }
 
-    const sliceData = findSliceAtMousePosition(event);
+    const sliceData = findSliceAtPosition({
+      event,
+      slices,
+      marginLeft,
+      marginTop,
+      isVerticalLayout,
+    });
 
     if (!isDefined(sliceData)) {
       return;
