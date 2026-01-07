@@ -26,6 +26,7 @@ import {
   TASK_TARGET_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
   WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS,
+  WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS,
   WORKFLOW_RUN_STANDARD_FIELD_IDS,
   WORKFLOW_STANDARD_FIELD_IDS,
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
@@ -1675,6 +1676,9 @@ export const STANDARD_OBJECTS = {
       automatedTriggers: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
       },
+      manualTriggers: {
+        universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.manualTriggers,
+      },
       favorites: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.favorites },
       timelineActivities: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
@@ -1749,6 +1753,43 @@ export const STANDARD_OBJECTS = {
     indexes: {
       workflowIdIndex: {
         universalIdentifier: '7072b7c1-8003-4a5d-7b4c-01f2a03f4f03',
+      },
+    },
+  },
+  workflowManualTrigger: {
+    universalIdentifier: STANDARD_OBJECT_IDS.workflowManualTrigger,
+    fields: {
+      id: {
+        universalIdentifier: '20202020-f02a-4181-8a81-abcdefabcdef',
+      },
+      createdAt: {
+        universalIdentifier: '20202020-f02b-4182-9b82-bcdefabcdefa',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-f02c-4183-8c83-cdefabcdefab',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-f02d-4184-9d84-defabcdefabc',
+      },
+      workflowVersion: {
+        universalIdentifier:
+          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowVersion,
+      },
+      workflow: {
+        universalIdentifier:
+          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflow,
+      },
+      settings: {
+        universalIdentifier:
+          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,
+      },
+    },
+    indexes: {
+      workflowVersionIdIndex: {
+        universalIdentifier: '20202020-f02e-4185-8e85-efabcdefabcd',
+      },
+      workflowIdIndex: {
+        universalIdentifier: '20202020-f02f-4186-8f86-fabcdefabcde',
       },
     },
   },
@@ -1866,6 +1907,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
       },
       runs: { universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.runs },
+      manualTriggers: {
+        universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.manualTriggers,
+      },
       steps: { universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps },
       favorites: {
         universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,
