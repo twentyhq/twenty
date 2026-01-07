@@ -12,10 +12,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
-import {
-  RecordFieldsScopeContextProvider,
-  useRecordFieldsScopeContextOrThrow,
-} from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListItemContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListItemContainer';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -31,7 +28,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { t } from '@lingui/core/macro';
@@ -113,7 +109,6 @@ export const RecordDetailRelationRecordsListItem = ({
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const { openModal } = useModal();
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   const { relationType, objectMetadataNameSingular } =
     fieldDefinition.metadata as FieldRelationMetadata;
@@ -291,21 +286,15 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <RecordFieldsScopeContextProvider
-          value={{
-            scopeInstanceId: `record-detail-relation-${relationRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`,
-          }}
-        >
-          <RecordFieldList
-            instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
-            objectNameSingular={relationObjectMetadataNameSingular}
-            objectRecordId={relationRecord.id}
-            showDuplicatesSection={false}
-            showRelationSections={false}
-            excludeCreatedAtAndUpdatedAt={true}
-            excludeFieldMetadataIds={[relationFieldMetadataId]}
-          />
-        </RecordFieldsScopeContextProvider>
+        <RecordFieldList
+          instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
+          objectNameSingular={relationObjectMetadataNameSingular}
+          objectRecordId={relationRecord.id}
+          showDuplicatesSection={false}
+          showRelationSections={false}
+          excludeCreatedAtAndUpdatedAt={true}
+          excludeFieldMetadataIds={[relationFieldMetadataId]}
+        />
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
