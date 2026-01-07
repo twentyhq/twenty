@@ -1,6 +1,6 @@
-import { type StandardRoleDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/types/standard-role-definition.interface';
+import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
-export const ADMIN_ROLE: StandardRoleDefinition = {
+export const ADMIN_ROLE = {
   standardId: '20202020-0001-0001-0001-000000000001',
   label: 'Admin',
   description: 'Admin role',
@@ -16,4 +16,21 @@ export const ADMIN_ROLE: StandardRoleDefinition = {
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
   applicationId: null, // TODO: Replace with Twenty application ID
-};
+} as const satisfies  Pick<
+  FlatRole,
+  | 'standardId'
+  | 'label'
+  | 'description'
+  | 'icon'
+  | 'isEditable'
+  | 'canUpdateAllSettings'
+  | 'canAccessAllTools'
+  | 'canReadAllObjectRecords'
+  | 'canUpdateAllObjectRecords'
+  | 'canSoftDeleteAllObjectRecords'
+  | 'canDestroyAllObjectRecords'
+  | 'canBeAssignedToUsers'
+  | 'canBeAssignedToAgents'
+  | 'canBeAssignedToApiKeys'
+  | 'applicationId'
+>;
