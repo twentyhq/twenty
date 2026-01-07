@@ -333,13 +333,13 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-        updatedAt: new Date(deletedLayout.updatedAt),
-      },
-    );
+    await this.dashboardSyncService.softDeleteLinkedDashboardsByPageLayoutId({
+      pageLayoutId: id,
+      workspaceId,
+      deletedAt: isDefined(deletedLayout.deletedAt)
+        ? new Date(deletedLayout.deletedAt)
+        : new Date(),
+    });
 
     return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
   }
@@ -479,13 +479,10 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-        updatedAt: new Date(restoredLayout.updatedAt),
-      },
-    );
+    await this.dashboardSyncService.restoreLinkedDashboardsByPageLayoutId({
+      pageLayoutId: id,
+      workspaceId,
+    });
 
     return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
   }

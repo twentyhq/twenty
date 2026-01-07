@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -15,6 +16,28 @@ export class DashboardSyncService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
+  private async isPageLayoutOfTypeDashboard({
+    pageLayoutId,
+    workspaceId,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const { flatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
+    const pageLayout = flatPageLayoutMaps.byId[pageLayoutId];
+
+    return (
+      isDefined(pageLayout) && pageLayout.type === PageLayoutType.DASHBOARD
+    );
+  }
+
   async updateLinkedDashboardsUpdatedAtByPageLayoutId({
     pageLayoutId,
     workspaceId,
@@ -24,6 +47,15 @@ export class DashboardSyncService {
     workspaceId: string;
     updatedAt: Date;
   }): Promise<void> {
+    const isDashboard = await this.isPageLayoutOfTypeDashboard({
+      pageLayoutId,
+      workspaceId,
+    });
+
+    if (!isDashboard) {
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
@@ -47,6 +79,89 @@ export class DashboardSyncService {
     }
   }
 
+  async softDeleteLinkedDashboardsByPageLayoutId({
+    pageLayoutId,
+    workspaceId,
+    deletedAt,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+    deletedAt: Date;
+  }): Promise<void> {
+    const isDashboard = await this.isPageLayoutOfTypeDashboard({
+      pageLayoutId,
+      workspaceId,
+    });
+
+    if (!isDashboard) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    try {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          await dashboardRepository.update({ pageLayoutId }, { deletedAt });
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to soft delete dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
+  }
+
+  async restoreLinkedDashboardsByPageLayoutId({
+    pageLayoutId,
+    workspaceId,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const isDashboard = await this.isPageLayoutOfTypeDashboard({
+      pageLayoutId,
+      workspaceId,
+    });
+
+    if (!isDashboard) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    try {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          await dashboardRepository.update(
+            { pageLayoutId },
+            { deletedAt: null },
+          );
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to restore dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
+  }
+
   async updateLinkedDashboardsUpdatedAtByTabId({
     tabId,
     workspaceId,
@@ -56,17 +171,26 @@ export class DashboardSyncService {
     workspaceId: string;
     updatedAt: Date;
   }): Promise<void> {
-    const { flatPageLayoutTabMaps } =
+    const { flatPageLayoutTabMaps, flatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
+          flatMapsKeys: ['flatPageLayoutTabMaps', 'flatPageLayoutMaps'],
         },
       );
 
     const tab = flatPageLayoutTabMaps.byId[tabId];
 
     if (!isDefined(tab)) {
+      return;
+    }
+
+    const pageLayout = flatPageLayoutMaps.byId[tab.pageLayoutId];
+
+    if (
+      !isDefined(pageLayout) ||
+      pageLayout.type !== PageLayoutType.DASHBOARD
+    ) {
       return;
     }
 
@@ -86,11 +210,19 @@ export class DashboardSyncService {
     workspaceId: string;
     updatedAt: Date;
   }): Promise<void> {
-    const { flatPageLayoutWidgetMaps, flatPageLayoutTabMaps } =
+    const {
+      flatPageLayoutWidgetMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutWidgetMaps', 'flatPageLayoutTabMaps'],
+          flatMapsKeys: [
+            'flatPageLayoutWidgetMaps',
+            'flatPageLayoutTabMaps',
+            'flatPageLayoutMaps',
+          ],
         },
       );
 
@@ -103,6 +235,15 @@ export class DashboardSyncService {
     const tab = flatPageLayoutTabMaps.byId[widget.pageLayoutTabId];
 
     if (!isDefined(tab)) {
+      return;
+    }
+
+    const pageLayout = flatPageLayoutMaps.byId[tab.pageLayoutId];
+
+    if (
+      !isDefined(pageLayout) ||
+      pageLayout.type !== PageLayoutType.DASHBOARD
+    ) {
       return;
     }
 
