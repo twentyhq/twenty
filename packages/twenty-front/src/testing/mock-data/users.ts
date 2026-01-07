@@ -12,7 +12,7 @@ import {
   type Workspace,
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
