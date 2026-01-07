@@ -4,7 +4,7 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useUpdateView } from '@/views/hooks/internal/useUpdateView';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -20,7 +20,7 @@ export const useUpdateViewAggregate = () => {
   const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { updateView } = usePersistView();
+  const { updateView } = useUpdateView();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const updateViewAggregate = useRecoilCallback(

@@ -11,7 +11,7 @@ import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/Dropdo
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useUpdateView } from '@/views/hooks/internal/useUpdateView';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
@@ -61,7 +61,7 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { updateView } = usePersistView();
+  const { updateView } = useUpdateView();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();

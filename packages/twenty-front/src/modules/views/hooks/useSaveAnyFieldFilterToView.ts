@@ -1,6 +1,6 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useUpdateView } from '@/views/hooks/internal/useUpdateView';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveAnyFieldFilterToView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { updateView } = usePersistView();
+  const { updateView } = useUpdateView();
 
   const { currentView } = useGetCurrentViewOnly();
 

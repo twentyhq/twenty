@@ -11,16 +11,13 @@ import { v4 } from 'uuid';
 import {
   type CreateCoreViewMutationVariables,
   type DestroyCoreViewMutationVariables,
-  type UpdateCoreViewMutationVariables,
   useCreateCoreViewMutation,
   useDestroyCoreViewMutation,
-  useUpdateCoreViewMutation,
   ViewType,
 } from '~/generated/graphql';
 
 export const usePersistView = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
-  const [updateCoreViewMutation] = useUpdateCoreViewMutation();
   const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
@@ -91,39 +88,6 @@ export const usePersistView = () => {
     ],
   );
 
-  const updateView = useCallback(
-    async (
-      variables: UpdateCoreViewMutationVariables,
-    ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof updateCoreViewMutation>>>
-    > => {
-      try {
-        const result = await updateCoreViewMutation({
-          variables,
-        });
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (error instanceof ApolloError) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'view',
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [updateCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
-  );
-
   const destroyView = useCallback(
     async (
       variables: DestroyCoreViewMutationVariables,
@@ -159,7 +123,6 @@ export const usePersistView = () => {
 
   return {
     createView,
-    updateView,
     destroyView,
   };
 };
