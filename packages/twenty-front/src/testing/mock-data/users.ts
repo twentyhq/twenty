@@ -4,7 +4,6 @@ import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceSta
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionInterval,
@@ -13,7 +12,7 @@ import {
   type Workspace,
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberTimeFormatEnum
 } from '~/generated/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -80,16 +79,7 @@ export const mockCurrentWorkspace = {
     customUrl: undefined,
     subdomainUrl: 'twenty.twenty.com',
   },
-  featureFlags: [
-    {
-      key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
-      value: true,
-    },
-    {
-      key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
-      value: true,
-    },
-  ],
+  featureFlags: [],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
