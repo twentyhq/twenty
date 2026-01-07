@@ -36,7 +36,12 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  computeMorphRelationFieldName,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
@@ -228,10 +233,32 @@ export const RelationOneToManyFieldInput = () => {
             return;
           }
 
-          // Get join column names from settings (the proper way)
-          const sourceJoinColumnName = (
-            sourceField.settings as FieldRelationMetadataSettings
-          )?.joinColumnName;
+          // Get source join column name - handle morph source fields
+          let sourceJoinColumnName: string | undefined;
+          if (
+            sourceField.type === FieldMetadataType.MORPH_RELATION &&
+            isDefined(objectMetadataItem)
+          ) {
+            // For morph source fields, compute the join column from the source object
+            const morphRelation = sourceField.morphRelations?.find(
+              (mr) => mr.targetObjectMetadata.id === objectMetadataItem.id,
+            );
+            if (isDefined(morphRelation)) {
+              const computedFieldName = computeMorphRelationFieldName({
+                fieldName: morphRelation.sourceFieldMetadata.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  objectMetadataItem.nameSingular,
+                targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+              });
+              sourceJoinColumnName = `${computedFieldName}Id`;
+            }
+          } else {
+            sourceJoinColumnName = (
+              sourceField.settings as FieldRelationMetadataSettings
+            )?.joinColumnName ?? undefined;
+          }
+
           const targetJoinColumnName = (
             targetField.settings as FieldRelationMetadataSettings
           )?.joinColumnName;
