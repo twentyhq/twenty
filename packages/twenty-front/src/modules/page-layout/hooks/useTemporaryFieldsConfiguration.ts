@@ -34,16 +34,20 @@ export const useTemporaryFieldsConfiguration = (
     const otherFields: Array<{ fieldMetadataId: string; position: number }> =
       [];
 
-    fieldsToDisplay.forEach((field, index) => {
-      const fieldConfig = {
-        fieldMetadataId: field.id,
-        position: index,
-      };
+    let generalPosition = 0;
+    let otherPosition = 0;
 
+    fieldsToDisplay.forEach((field) => {
       if (field.type === FieldMetadataType.LINKS) {
-        otherFields.push(fieldConfig);
+        otherFields.push({
+          fieldMetadataId: field.id,
+          position: otherPosition++,
+        });
       } else {
-        generalFields.push(fieldConfig);
+        generalFields.push({
+          fieldMetadataId: field.id,
+          position: generalPosition++,
+        });
       }
     });
 
