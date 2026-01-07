@@ -77,6 +77,10 @@ export class GraphqlQueryParser {
   private checkForDeletedAtFilter = (
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
   ): boolean => {
+    if (!filter) {
+      return false;
+    }
+
     if (Array.isArray(filter)) {
       return filter.some((subFilter) =>
         this.checkForDeletedAtFilter(subFilter),
