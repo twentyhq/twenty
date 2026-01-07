@@ -332,4 +332,60 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
       });
     });
   });
+
+  describe('Non-dashboard page layout operations should not trigger sync', () => {
+    let nonDashboardPageLayoutId: string;
+    let dashboardContext: TestContext;
+
+    beforeEach(async () => {
+      dashboardContext = await createTestContext();
+
+      const { data: pageLayoutData } = await createOnePageLayout({
+        expectToFail: false,
+        input: {
+          name: 'Non-Dashboard Page Layout',
+          type: PageLayoutType.RECORD_INDEX,
+        },
+      });
+
+      nonDashboardPageLayoutId = pageLayoutData.createPageLayout.id;
+    });
+
+    afterEach(async () => {
+      await destroyOnePageLayout({
+        expectToFail: false,
+        input: { id: nonDashboardPageLayoutId },
+      });
+
+      await cleanupTestContext(dashboardContext);
+    });
+
+    it('should not update existing dashboard updatedAt when non-dashboard page layout is updated', async () => {
+      const dashboardBefore = await findDashboardWithGraphQL(
+        dashboardContext.dashboardId,
+      );
+
+      expect(dashboardBefore).not.toBeNull();
+
+      const updatedAtBefore = new Date(dashboardBefore!.updatedAt);
+
+      await updateOnePageLayout({
+        expectToFail: false,
+        input: {
+          id: nonDashboardPageLayoutId,
+          name: 'Updated Non-Dashboard Page Layout',
+        },
+      });
+
+      const dashboardAfter = await findDashboardWithGraphQL(
+        dashboardContext.dashboardId,
+      );
+
+      expect(dashboardAfter).not.toBeNull();
+
+      const updatedAtAfter = new Date(dashboardAfter!.updatedAt);
+
+      expect(updatedAtAfter.getTime()).toBe(updatedAtBefore.getTime());
+    });
+  });
 });
