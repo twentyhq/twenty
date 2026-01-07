@@ -928,7 +928,7 @@ msgstr "下書き以外のステータスではワークフローバージョン
 #. js-lingui-id: VPXcr5
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
-msgstr "アカウントを削除できません。あなたは唯一の管理者です。先に別の管理者を割り当てるか、ワークスペースを削除してください。"
+msgstr "アカウントを削除できません。唯一の管理者のため、先に別の管理者を割り当てるか、ワークスペースを削除してください。"
 
 #. js-lingui-id: RYRFbW
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
@@ -5207,7 +5207,7 @@ msgstr "このワークスペースのデフォルトロールが見つかりま
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "The domain does not match your email domain."
-msgstr "そのドメインはあなたのメールドメインと一致しません。"
+msgstr "ドメインがメールドメインと一致しません。"
 
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
