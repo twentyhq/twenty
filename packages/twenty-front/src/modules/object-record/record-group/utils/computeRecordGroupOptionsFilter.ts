@@ -18,25 +18,22 @@ export const computeRecordGroupOptionsFilter = ({
 
   const fieldName = recordGroupFieldMetadata.name;
   const hasNullValue = recordGroupValues.some(isNull);
-
-  if (!hasNullValue) {
-    return {
-      [fieldName]: {
-        in: recordGroupValues,
-      },
-    };
-  }
-
   const nonNullValues = recordGroupValues.filter(
     (value): value is NonNullable<typeof value> => !isNull(value),
   );
 
-  return {
-    or: [
-      { [fieldName]: { is: 'NULL' } },
-      ...(nonNullValues.length > 0
-        ? [{ [fieldName]: { in: nonNullValues } }]
-        : []),
-    ],
-  };
+  return hasNullValue
+    ? {
+        or: [
+          { [fieldName]: { is: 'NULL' } },
+          ...(nonNullValues.length > 0
+            ? [{ [fieldName]: { in: nonNullValues } }]
+            : []),
+        ],
+      }
+    : nonNullValues.length > 0
+      ? {
+          [fieldName]: { in: recordGroupValues },
+        }
+      : {};
 };
