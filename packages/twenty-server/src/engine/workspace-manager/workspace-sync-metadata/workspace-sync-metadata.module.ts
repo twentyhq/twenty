@@ -14,8 +14,6 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { SyncWorkspaceLoggerService } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.service';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { workspaceSyncMetadataComparators } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators';
 import { workspaceSyncMetadataFactories } from 'src/engine/workspace-manager/workspace-sync-metadata/factories';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
@@ -57,13 +55,10 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceSyncIndexMetadataService,
     WorkspaceSyncRoleService,
     WorkspaceSyncAgentService,
-    SyncWorkspaceLoggerService,
-    SyncWorkspaceMetadataCommand,
   ],
   exports: [
     ...workspaceSyncMetadataFactories,
     WorkspaceSyncMetadataService,
-    SyncWorkspaceMetadataCommand,
   ],
 })
 export class WorkspaceSyncMetadataModule {}
