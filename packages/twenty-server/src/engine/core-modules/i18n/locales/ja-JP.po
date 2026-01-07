@@ -2419,7 +2419,7 @@ msgstr "CALDAVの認証情報が無効です。ユーザー名とパスワード
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
-msgstr "無効なコーリングコード「{callingCode}」"
+msgstr "無効な国番号「{callingCode}」"
 
 #. js-lingui-id: tG/2Q/
 #: src/engine/core-modules/captcha/captcha.guard.ts
@@ -4295,7 +4295,7 @@ msgstr "プロパティ「{property}」はロールに必要です"
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
-msgstr "指定されたコーリングコードと推論されたコーリングコードが矛盾しています"
+msgstr "指定された国番号と推論された国番号が矛盾しています"
 
 #. js-lingui-id: Vq/afT
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -4305,7 +4305,7 @@ msgstr "提供された国コードと推論された国コードが矛盾して
 #. js-lingui-id: HZ45ox
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided country code and calling code are conflicting"
-msgstr "提供された国コードとコーリングコードが矛盾しています"
+msgstr "提供された国コードと国番号が矛盾しています"
 
 #. js-lingui-id: A4Ohxb
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -5966,12 +5966,12 @@ msgstr "ビュー項目関連のオブジェクトメタデータが見つかり
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
-msgstr "削除するフィールドが見つかりません"
+msgstr "削除するビューフィールドが見つかりません"
 
 #. js-lingui-id: DXyYuh
 #: src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to destroy not found"
-msgstr "破棄するフィールドが見つかりません"
+msgstr "破棄するビューフィールドが見つかりません"
 
 #. js-lingui-id: Fpy/K1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6043,18 +6043,18 @@ msgstr "削除するビューフィルターが見つかりません。"
 #. js-lingui-id: 9gedIx
 #: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
 msgid "View filter to destroy not found"
-msgstr "破棄するフィルターが見つかりません"
+msgstr "破棄するビューフィルターが見つかりません"
 
 #. js-lingui-id: GzthLy
 #: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
 msgid "View filter to update not found"
-msgstr "更新するフィルターが見つかりません"
+msgstr "更新するビューフィルターが見つかりません"
 
 #. js-lingui-id: LnNgrI
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter with this id already exists"
-msgstr "同じIDを持つフィルターはすでに存在します"
+msgstr "同じIDを持つビューフィルターはすでに存在します"
 
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
