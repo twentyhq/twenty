@@ -101,6 +101,7 @@ export const useOpenRecordFromIndexView = () => {
       navigate,
       openRecordInCommandMenu,
       isMobile,
+      closeCommandMenu,
     ],
   );
 
