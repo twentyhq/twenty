@@ -43,4 +43,3 @@ export const useUpsertRowLevelPermissionPredicatesMutation = () => {
     { input: UpsertRowLevelPermissionPredicatesInput }
   >(UPSERT_ROW_LEVEL_PERMISSION_PREDICATES);
 };
-

@@ -31,11 +31,6 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
-const RLP_CACHE_KEYS = [
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-] as const;
-
 @Injectable()
 export class RowLevelPermissionPredicateService {
   constructor(
@@ -609,11 +604,6 @@ export class RowLevelPermissionPredicateService {
         'Validation errors occurred while upserting row level permission predicates',
       );
     }
-
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: [...RLP_CACHE_KEYS],
-    });
   }
 
   private async runMigration({
@@ -648,10 +638,5 @@ export class RowLevelPermissionPredicateService {
         'Validation errors occurred while applying row level permission predicate mutation',
       );
     }
-
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: [...RLP_CACHE_KEYS],
-    });
   }
 }

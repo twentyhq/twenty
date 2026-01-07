@@ -15,7 +15,6 @@ import {
   type RowLevelPermissionPredicateOperand,
 } from '~/generated-metadata/graphql';
 
-// Converts a RowLevelPermissionPredicate to a RecordFilter structure
 export const convertPredicateToRecordFilter = (
   predicate: RowLevelPermissionPredicate,
   fieldMetadataItem: FieldMetadataItem | undefined,
@@ -60,7 +59,6 @@ export const convertPredicateToRecordFilter = (
   };
 };
 
-// Converts a RecordFilter back to a RowLevelPermissionPredicate
 export const convertRecordFilterToPredicate = (
   filter: RecordFilter,
   roleId: string,
@@ -103,7 +101,6 @@ export const convertRecordFilterToPredicate = (
   };
 };
 
-// Converts a RowLevelPermissionPredicateGroup to a RecordFilterGroup
 export const convertPredicateGroupToRecordFilterGroup = (
   predicateGroup: RowLevelPermissionPredicateGroup,
 ): RecordFilterGroup => {
@@ -121,7 +118,6 @@ export const convertPredicateGroupToRecordFilterGroup = (
   };
 };
 
-// Converts a RecordFilterGroup back to a RowLevelPermissionPredicateGroup
 export const convertRecordFilterGroupToPredicateGroup = (
   filterGroup: RecordFilterGroup,
   roleId: string,

@@ -3762,8 +3762,8 @@ export type Role = {
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlag>>;
-  rowLevelPermissionPredicateGroups: Array<RowLevelPermissionPredicateGroup>;
-  rowLevelPermissionPredicates: Array<RowLevelPermissionPredicate>;
+  rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
+  rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
   standardId?: Maybe<Scalars['UUID']>;
   universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;

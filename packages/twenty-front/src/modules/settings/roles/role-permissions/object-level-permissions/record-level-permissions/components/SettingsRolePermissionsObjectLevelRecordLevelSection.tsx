@@ -4,10 +4,11 @@ import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RLSFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/RLSFilterBuilder';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
 
 const StyledContent = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
@@ -23,10 +24,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
     <Section>
       <H2Title
         title={t`Record-level`}
-        description={t`Ability to interact with specific records of this object.`}
+        description={t`Ability to filter the records a user can interact with.`}
       />
       <StyledContent>
-        <RLSFilterBuilder
+        <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
         />

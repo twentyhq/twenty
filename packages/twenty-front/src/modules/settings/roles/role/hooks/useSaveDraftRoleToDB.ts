@@ -242,7 +242,6 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    // Handle row-level permission predicates
     if (
       isDefined(dirtyFields.rowLevelPermissionPredicates) ||
       isDefined(dirtyFields.rowLevelPermissionPredicateGroups)
@@ -254,12 +253,10 @@ export const useSaveDraftRoleToDB = ({
   const upsertRowLevelPermissionPredicatesForRole = async (
     targetRoleId: string,
   ) => {
-    // Get unique object metadata IDs from predicates
     const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
     const predicateGroups =
       settingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
 
-    // Group predicates by objectMetadataId
     const predicatesByObject = predicates.reduce(
       (acc, predicate) => {
         const objectMetadataId = predicate.objectMetadataId;
@@ -274,7 +271,43 @@ export const useSaveDraftRoleToDB = ({
       {} as Record<string, typeof predicates>,
     );
 
-    // Upsert predicates for each object
+    const persistedPredicates =
+      settingsPersistedRole?.rowLevelPermissionPredicates ?? [];
+    const persistedObjectIds = new Set(
+      persistedPredicates.map((predicate) => predicate.objectMetadataId),
+    );
+
+    for (const objectMetadataId of persistedObjectIds) {
+      if (!predicatesByObject[objectMetadataId]) {
+        predicatesByObject[objectMetadataId] = [];
+      }
+    }
+
+    const usedGroupIds = new Set(
+      predicates
+        .map((p) => p.rowLevelPermissionPredicateGroupId)
+        .filter(isDefined),
+    );
+
+    const includeParentGroups = (groupId: string) => {
+      const group = predicateGroups.find((g) => g.id === groupId);
+      if (
+        isDefined(group?.parentRowLevelPermissionPredicateGroupId) &&
+        !usedGroupIds.has(group.parentRowLevelPermissionPredicateGroupId)
+      ) {
+        usedGroupIds.add(group.parentRowLevelPermissionPredicateGroupId);
+        includeParentGroups(group.parentRowLevelPermissionPredicateGroupId);
+      }
+    };
+
+    for (const groupId of usedGroupIds) {
+      includeParentGroups(groupId);
+    }
+
+    const activePredicateGroups = predicateGroups.filter((group) =>
+      usedGroupIds.has(group.id),
+    );
+
     for (const [objectMetadataId, objectPredicates] of Object.entries(
       predicatesByObject,
     )) {
@@ -298,7 +331,7 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
-            predicateGroups: predicateGroups.map((group) => ({
+            predicateGroups: activePredicateGroups.map((group) => ({
               id: group.id,
               parentRowLevelPermissionPredicateGroupId:
                 group.parentRowLevelPermissionPredicateGroupId,
@@ -370,7 +403,6 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    // Handle row-level permission predicates for new roles
     if (
       isDefined(dirtyFields.rowLevelPermissionPredicates) ||
       isDefined(dirtyFields.rowLevelPermissionPredicateGroups)

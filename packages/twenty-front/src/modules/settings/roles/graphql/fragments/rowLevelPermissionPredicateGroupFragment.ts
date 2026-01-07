@@ -9,4 +9,3 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT = gql`
     roleId
   }
 `;
-

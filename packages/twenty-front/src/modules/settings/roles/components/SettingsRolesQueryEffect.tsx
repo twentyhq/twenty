@@ -43,7 +43,10 @@ export const SettingsRolesQueryEffect = () => {
             return;
           }
 
-          set(settingsPersistedRoleFamilyState(normalizedRole.id), normalizedRole);
+          set(
+            settingsPersistedRoleFamilyState(normalizedRole.id),
+            normalizedRole,
+          );
 
           // Always sync draft to server state when persisted state changes
           // This ensures draft matches server after saves and prevents stale isDirty checks

@@ -337,14 +337,15 @@ export class RoleResolver {
     }));
   }
 
-  @ResolveField('rowLevelPermissionPredicates', () => [
-    RowLevelPermissionPredicateDTO,
-  ])
+  @ResolveField(
+    'rowLevelPermissionPredicates',
+    () => [RowLevelPermissionPredicateDTO],
+    { nullable: true },
+  )
   async getRowLevelPermissionPredicatesForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RowLevelPermissionPredicateDTO[]> {
-    // Note: Returns predicates for all objects; filtering by objectMetadataId should be done client-side
     const allPredicates =
       await this.rowLevelPermissionPredicateService.findByWorkspaceId(
         workspace.id,
@@ -353,9 +354,11 @@ export class RoleResolver {
     return allPredicates.filter((predicate) => predicate.roleId === role.id);
   }
 
-  @ResolveField('rowLevelPermissionPredicateGroups', () => [
-    RowLevelPermissionPredicateGroupDTO,
-  ])
+  @ResolveField(
+    'rowLevelPermissionPredicateGroups',
+    () => [RowLevelPermissionPredicateGroupDTO],
+    { nullable: true },
+  )
   async getRowLevelPermissionPredicateGroupsForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,

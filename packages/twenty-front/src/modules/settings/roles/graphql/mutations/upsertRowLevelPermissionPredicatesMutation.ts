@@ -18,4 +18,3 @@ export const UPSERT_ROW_LEVEL_PERMISSION_PREDICATES = gql`
     }
   }
 `;
-
