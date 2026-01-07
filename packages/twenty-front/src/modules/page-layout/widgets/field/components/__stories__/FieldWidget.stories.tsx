@@ -4,7 +4,7 @@ import {
   useApolloClient,
 } from '@apollo/client';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 
@@ -2056,6 +2056,9 @@ export const TimelineActivityRelationCardWidgetEmpty: Story = {
     const canvas = within(canvasElement);
 
     const emptyPlaceholder = await canvas.findByText('No related records');
-    expect(emptyPlaceholder).toBeVisible();
+
+    await waitFor(() => {
+      expect(emptyPlaceholder).toBeVisible();
+    });
   },
 };
