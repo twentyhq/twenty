@@ -10,8 +10,8 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import {
-    type BarChartConfiguration,
-    type BarChartLayout,
+  type BarChartConfiguration,
+  type BarChartLayout,
 } from '~/generated/graphql';
 
 type UseGraphBarChartWidgetDataProps = {

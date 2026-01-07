@@ -2,8 +2,9 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortLineChartDataBySecondaryDimensionSum';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
 import { isDefined } from 'twenty-shared/utils';
@@ -77,21 +78,18 @@ export const sortTwoDimensionalLineChartData = ({
     getFormattedValue: (item) => item.id,
   });
 
-  const useSelectOptionColors =
-    isDefined(secondaryAxisSelectFieldOptions) &&
-    (!isDefined(color) || color === 'auto');
+  sortedSeries = sortedSeries.map((seriesItem) => {
+    const rawValue = secondaryAxisFormattedToRawLookup?.get(seriesItem.id);
 
-  if (useSelectOptionColors) {
-    sortedSeries = sortedSeries.map((seriesItem) => {
-      const rawValue = secondaryAxisFormattedToRawLookup?.get(seriesItem.id);
-      const selectColor = getSelectOptionColorForValue({
-        rawValue: isDefined(rawValue) ? String(rawValue) : seriesItem.id,
+    return {
+      ...seriesItem,
+      color: determineChartItemColor({
+        configurationColor: color as GraphColor | null | undefined,
         selectOptions: secondaryAxisSelectFieldOptions,
-      });
-
-      return selectColor ? { ...seriesItem, color: selectColor } : seriesItem;
-    });
-  }
+        rawValue: isDefined(rawValue) ? String(rawValue) : seriesItem.id,
+      }),
+    };
+  });
 
   return {
     sortedSeries,

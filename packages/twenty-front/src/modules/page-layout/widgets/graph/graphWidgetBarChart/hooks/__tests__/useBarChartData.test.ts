@@ -217,7 +217,7 @@ describe('useBarChartData', () => {
     expect(result.current.legendItems[0]).toMatchObject({
       id: 'sales',
       label: 'Sales',
-      color: 'green5',
+      color: 'greenSolid',
     });
   });
 

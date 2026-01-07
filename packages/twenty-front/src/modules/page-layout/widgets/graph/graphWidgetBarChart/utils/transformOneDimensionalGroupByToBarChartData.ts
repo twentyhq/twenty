@@ -74,18 +74,24 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     });
 
   const unsortedData: BarDatum[] = processedDataPoints.map(
-    ({ xValue, rawXValue, aggregateValue }) => ({
-      [indexByKey]: xValue,
-      [aggregateValueKey]: aggregateValue,
-      color: determineChartItemColor({
+    ({ xValue, rawXValue, aggregateValue }) => {
+      const color = determineChartItemColor({
         configurationColor: configuration.color as
           | GraphColor
           | null
           | undefined,
-        selectOptions: groupByFieldX.options,
+        selectOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+          ? groupByFieldX.options
+          : undefined,
         rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
-      }),
-    }),
+      });
+
+      return {
+        [indexByKey]: xValue,
+        [aggregateValueKey]: aggregateValue,
+        ...(isDefined(color) && { color }),
+      };
+    },
   );
 
   const sortedData = sortChartData({

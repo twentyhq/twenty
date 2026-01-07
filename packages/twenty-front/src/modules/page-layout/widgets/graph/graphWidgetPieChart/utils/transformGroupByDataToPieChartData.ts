@@ -6,7 +6,7 @@ import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPi
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
@@ -98,26 +98,23 @@ export const transformGroupByDataToPieChartData = ({
     rawValue: string | null | undefined;
   };
 
-  const isSelectField = isFieldMetadataSelectKind(groupByField.type);
-  const useSelectOptionColors =
-    isSelectField &&
-    (!isDefined(configuration.color) || configuration.color === 'auto');
-
   const unsortedDataWithRawValues: PieChartDataItemWithRawValue[] =
     limitedProcessedDataPoints.map(({ xValue, rawXValue, aggregateValue }) => {
       const rawValueString = isDefined(rawXValue) ? String(rawXValue) : null;
 
-      const color: GraphColor | undefined = useSelectOptionColors
-        ? getSelectOptionColorForValue({
-            rawValue: rawValueString,
-            selectOptions: groupByField.options,
-          })
-        : (configuration.color as GraphColor | undefined);
-
       return {
         id: xValue,
         value: aggregateValue,
-        color,
+        color: determineChartItemColor({
+          configurationColor: configuration.color as
+            | GraphColor
+            | null
+            | undefined,
+          selectOptions: isFieldMetadataSelectKind(groupByField.type)
+            ? groupByField.options
+            : undefined,
+          rawValue: rawValueString,
+        }),
         rawValue: rawValueString,
       };
     });
