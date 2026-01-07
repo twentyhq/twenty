@@ -7,6 +7,13 @@
  *                              |___/
  */
 
+// Define helpers (config-based approach)
+export { defineApp } from './define-app';
+export { defineObject, type ObjectDefinition } from './objects/define-object';
+export { defineFunction } from './functions/define-function';
+export { defineRole } from './roles/define-role';
+
+// Legacy decorator-based approach (kept for backward compatibility)
 export type { ApplicationConfig } from './application-config';
 export type {
   ActorField,
