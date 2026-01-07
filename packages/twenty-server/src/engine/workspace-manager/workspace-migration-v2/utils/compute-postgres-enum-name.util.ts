@@ -11,4 +11,3 @@ export const computePostgresEnumName = ({
 }: ComputePostgresEnumNameParams): string => {
   return removeSqlDDLInjection(`${tableName}_${columnName}_enum`);
 };
-

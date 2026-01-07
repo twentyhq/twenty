@@ -20,4 +20,3 @@ export const convertOnDeleteActionToOnDelete = (
       throw new Error('Invalid onDeleteAction');
   }
 };
-
