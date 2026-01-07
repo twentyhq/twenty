@@ -17,7 +17,7 @@ export const PET_CARE_AGREEMENT_CARETAKER_MORPH_SEED: FieldMetadataSeed & {
     {
       type: RelationType.MANY_TO_ONE,
       targetObjectMetadataId: 'to-be-resolved-later',
-      targetFieldLabel: 'Pet Care Agreements',
+      targetFieldLabel: 'Cared For Pets',
       targetFieldIcon: 'IconPaw',
     },
   ],

@@ -46,17 +46,23 @@ export const RelationFromManyFieldDisplay = () => {
     fieldDefinition.metadata.settings,
   );
 
+  const sourceObjectMetadataId = objectMetadataItems.find(
+    (item) => item.nameSingular === objectMetadataNameSingular,
+  )?.id;
+
   const junctionConfig = useMemo(
     () =>
       getJunctionConfig({
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId:
           fieldDefinition.metadata.relationObjectMetadataId,
+        sourceObjectMetadataId,
         objectMetadataItems,
       }),
     [
       fieldDefinition.metadata.settings,
       fieldDefinition.metadata.relationObjectMetadataId,
+      sourceObjectMetadataId,
       objectMetadataItems,
     ],
   );
