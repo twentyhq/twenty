@@ -1,24 +1,16 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction';
+import {
+  getJunctionConfig,
+  type JunctionObjectMetadataItem,
+} from '@/object-record/record-field/ui/utils/junction';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 type JunctionFieldMetadataItem = Pick<
   FieldMetadataItem,
   'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
->;
-
-type JunctionObjectMetadataItem = Pick<
-  ObjectMetadataItem,
-  | 'id'
-  | 'fields'
-  | 'labelIdentifierFieldMetadataId'
-  | 'imageIdentifierFieldMetadataId'
-  | 'nameSingular'
-  | 'namePlural'
 >;
 
 type GenerateJunctionRelationGqlFieldsArgs = {

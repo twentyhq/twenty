@@ -5,8 +5,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
 import { hasJunctionTargetMorphId } from './hasJunctionTargetMorphId';
 
+export type JunctionObjectMetadataItem = Pick<
+  ObjectMetadataItem,
+  | 'id'
+  | 'fields'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
+  | 'nameSingular'
+  | 'namePlural'
+>;
+
 export type JunctionConfig = {
-  junctionObjectMetadata: ObjectMetadataItem;
+  junctionObjectMetadata: JunctionObjectMetadataItem;
   targetFields: FieldMetadataItem[];
   sourceField?: FieldMetadataItem;
   isMorphRelation: boolean;
@@ -16,7 +26,7 @@ type GetJunctionConfigArgs = {
   settings: FieldMetadataItem['settings'] | undefined;
   relationObjectMetadataId: string;
   sourceObjectMetadataId?: string;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
 export const getJunctionConfig = ({

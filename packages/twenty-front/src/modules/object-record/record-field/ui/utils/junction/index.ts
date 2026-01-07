@@ -4,7 +4,11 @@ export {
   findTargetFieldInfo,
   type TargetFieldInfo,
 } from './findTargetFieldInfo';
-export { getJunctionConfig, type JunctionConfig } from './getJunctionConfig';
+export {
+  getJunctionConfig,
+  type JunctionConfig,
+  type JunctionObjectMetadataItem,
+} from './getJunctionConfig';
 export { getSearchableObjectMetadataItems } from './getSearchableObjectMetadataItems';
 export { getTargetObjectMetadataIdsFromField } from './getTargetObjectMetadataIdsFromField';
 export { hasJunctionConfig } from './hasJunctionConfig';
