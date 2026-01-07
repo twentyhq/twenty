@@ -3,14 +3,13 @@ import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
 
 type UseBarChartDataProps = {
   data: BarDatum[];
@@ -20,7 +19,6 @@ type UseBarChartDataProps = {
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
-  selectOptionColorMap?: SelectOptionColorMap;
 };
 
 export const useBarChartData = ({
@@ -30,7 +28,6 @@ export const useBarChartData = ({
   series,
   colorRegistry,
   seriesLabels,
-  selectOptionColorMap,
 }: UseBarChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
@@ -73,17 +70,18 @@ export const useBarChartData = ({
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
+      const datumColor = dataPoint.color as GraphColor | undefined;
+
       return visibleKeys.flatMap((key): BarChartConfig[] => {
         const enrichedKey = allEnrichedKeys.find((ek) => ek.key === key);
         if (!isDefined(enrichedKey)) {
           return [];
         }
 
-        const indexValueColor = selectOptionColorMap?.get(String(indexValue));
-        const colorScheme = isDefined(indexValueColor)
+        const colorScheme = isDefined(datumColor)
           ? getColorScheme({
               registry: colorRegistry,
-              colorName: indexValueColor,
+              colorName: datumColor,
             })
           : enrichedKey.colorScheme;
 
@@ -96,14 +94,7 @@ export const useBarChartData = ({
         ];
       });
     });
-  }, [
-    data,
-    indexBy,
-    visibleKeys,
-    allEnrichedKeys,
-    selectOptionColorMap,
-    colorRegistry,
-  ]);
+  }, [data, indexBy, visibleKeys, allEnrichedKeys, colorRegistry]);
 
   return {
     seriesConfigMap,

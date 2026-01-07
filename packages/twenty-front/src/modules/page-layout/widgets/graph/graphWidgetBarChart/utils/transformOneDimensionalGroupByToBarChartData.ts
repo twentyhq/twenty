@@ -6,16 +6,15 @@ import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/gr
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { type SelectOptionColorMap } from '@/page-layout/widgets/graph/types/SelectOptionColorMap';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
-import { getSelectOptionColorForValue } from '@/page-layout/widgets/graph/utils/getSelectOptionColorForValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
 import {
   isDefined,
-  type FirstDayOfTheWeek,
   isFieldMetadataSelectKind,
+  type FirstDayOfTheWeek,
 } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -38,7 +37,6 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  selectOptionColorMap?: SelectOptionColorMap;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -75,10 +73,22 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       firstDayOfTheWeek,
     });
 
+  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
+
   const unsortedData: BarDatum[] = processedDataPoints.map(
-    ({ xValue, aggregateValue }) => ({
+    ({ xValue, rawXValue, aggregateValue }, index) => ({
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
+      color: determineChartItemColor({
+        configurationColor: configuration.color as
+          | GraphColor
+          | null
+          | undefined,
+        isSelectField,
+        selectOptions: groupByFieldX.options,
+        rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
+        index,
+      }),
     }),
   );
 
@@ -99,36 +109,10 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
   );
 
-  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
-  const useSelectOptionColors =
-    isSelectField &&
-    (!isDefined(configuration.color) || configuration.color === 'auto');
-
-  const selectOptionColorMap: SelectOptionColorMap | undefined =
-    useSelectOptionColors
-      ? new Map<string, GraphColor>(
-          processedDataPoints
-            .map(({ xValue, rawXValue }) => {
-              const rawValueString = isDefined(rawXValue)
-                ? String(rawXValue)
-                : null;
-              const color = getSelectOptionColorForValue({
-                rawValue: rawValueString,
-                selectOptions: groupByFieldX.options,
-              });
-              return color ? ([xValue, color] as const) : null;
-            })
-            .filter(isDefined),
-        )
-      : undefined;
-
   const series: BarChartSeries[] = [
     {
       key: aggregateValueKey,
       label: aggregateField.label,
-      color: useSelectOptionColors
-        ? undefined
-        : (configuration.color as GraphColor | undefined),
     },
   ];
 
@@ -149,6 +133,5 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups:
       rawResults.length > BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     formattedToRawLookup,
-    selectOptionColorMap,
   };
 };

@@ -1,6 +1,34 @@
-import { type ThemeType } from 'twenty-ui/theme';
+import { type ThemeColor, type ThemeType } from 'twenty-ui/theme';
 
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+
+export const GRAPH_COLORS: ThemeColor[] = [
+  'blue',
+  'purple',
+  'turquoise',
+  'orange',
+  'pink',
+  'yellow',
+  'red',
+  'green',
+  'sky',
+  'gray',
+  'tomato',
+  'ruby',
+  'crimson',
+  'plum',
+  'violet',
+  'iris',
+  'cyan',
+  'jade',
+  'grass',
+  'mint',
+  'lime',
+  'bronze',
+  'gold',
+  'brown',
+  'amber',
+];
 
 export const createGraphColorRegistry = (
   theme: ThemeType,
