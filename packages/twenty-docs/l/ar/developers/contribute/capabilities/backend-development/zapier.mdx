@@ -1,0 +1,83 @@
+---
+title: تطبيق Zapier
+---
+
+قم بمزامنة Twenty مع أكثر من 3000 تطبيق باستخدام [Zapier](https://zapier.com/) بسهولة. قم بأتمتة المهام، وزيادة الإنتاجية، وتعزيز علاقاتك مع العملاء!
+
+## حول Zapier
+
+Zapier هي أداة تتيح لك أتمتة سير العمل من خلال ربط التطبيقات التي يستخدمها فريقك يوميًا. المفهوم الأساسي ل Zapier هو سير العمل الآلي، المسمى Zaps، والذي يتضمن محفزات وإجراءات.
+
+يمكنك معرفة المزيد حول كيفية عمل Zapier [هنا](https://zapier.com/how-it-works).
+
+## إعداد
+
+### الخطوة 1: تثبيت حزم Zapier
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### الخطوة 2: تسجيل الدخول باستخدام CLI
+
+استخدم بيانات اعتماد Zapier الخاصة بك لتسجيل الدخول باستخدام CLI:
+
+```bash
+zapier login
+```
+
+### الخطوة 3: تعيين متغيرات البيئة
+
+من مجلد `packages/twenty-zapier`، قم بتشغيل:
+
+```bash
+cp .env.example .env
+```
+
+شغل التطبيق محليًا، اذهب إلى [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)، وولد مفتاح API.
+
+استبدل قيمة **YOUR_API_KEY** في ملف `.env` بمفتاح API الذي قمت بتوليده للتو.
+
+## التطوير
+
+<Warning>
+  تأكد من تشغيل `yarn build` قبل أي أمر `zapier`.
+</Warning>
+
+### تجربة
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### راقب وقم بالتحويل عند تحرير الكود
+
+```bash
+yarn watch
+```
+
+### تحقق من صحة تطبيق Zapier الخاص بك
+
+```bash
+yarn validate
+```
+
+### قم بنشر تطبيق Zapier الخاص بك
+
+```bash
+yarn deploy
+```
+
+### اعرض جميع أوامر Zapier CLI
+
+```bash
+zapier
+```

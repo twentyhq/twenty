@@ -1,0 +1,198 @@
+---
+title: الصلاحيات
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+نظام أذونات Twenty يمكنك من التحكم في الوصول إلى ثلاثة مجالات رئيسية:
+
+* **الكائنات والحقول**: التحكم بمن يمكنه عرض أو تعديل أو حذف السجلات والحقول الفردية
+* **Settings**: Manage access to workspace configuration and administrative functions
+* **الإجراءات**: التحكم في الإجراءات العامة لمساحة العمل مثل استيراد البيانات أو إرسال رسائل البريد الإلكتروني
+
+## إنشاء دور
+
+لإنشاء دور جديد:
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. تحت **كل الأدوار**، انقر على **+ إنشاء دور**
+3. أدخل اسم الدور
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Click **Save** to finish
+
+## حذف دور
+
+لحذف دور:
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. انقر على الدور الذي ترغب في إزالته
+3. افتح علامة التبويب **الإعدادات**، ثم انقر على **حذف الدور**
+4. انقر على **تأكيد** في النافذة المنبثقة
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. يجب دائمًا أن يكون هناك عضو واحد على الأقل معين على دور **المشرف**.
+</Note>
+
+## تخصيص الأدوار للأعضاء
+
+### عرض التعيينات الحالية
+
+* اذهب إلى **الإعدادات → الأدوار**
+* رؤية جميع الأدوار وعدد الأعضاء المعينين لكل منها
+* عرض الأعضاء الذين لديهم الأدوار المختلفة
+
+### تعيين دور لعضو
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. انقر على الدور الذي ترغب في تعيينه
+3. افتح علامة التبويب **التعيين**
+4. انقر على **+ تعيين لعضو**
+5. اختر عضو مساحة العمل من القائمة
+6. أكد التعيين
+
+### تعيين الدور الافتراضي
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. في قسم **الخيارات**، اعثر على **الدور الافتراضي**
+3. اختر أي دور يجب أن يحصل عليه الأعضاء الجدد تلقائيًا
+4. سيتم تعيين أعضاء مساحة العمل الجدد هذا الدور عند انضمامهم
+
+<Note>
+  You can only assign roles to existing workspace members. لدعوة أعضاء جدد، استخدم [إدارة الأعضاء](/l/ar/user-guide/settings/capabilities/member-management).
+</Note>
+
+## تخصيص الأذونات
+
+Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                        | الوصف                                  |
+| --------------------------------- | -------------------------------------- |
+| **عرض السجلات في جميع العناصر**   | View records in lists and detail pages |
+| **تحرير السجلات في جميع العناصر** | Modify existing records                |
+| **حذف السجلات من جميع العناصر**   | Soft-delete records (can be restored)  |
+| **إتلاف السجلات في جميع العناصر** | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | الوصف                      |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### إدارة تجاوزات الأذونات
+
+To override inherited permissions:
+
+1. انقر على **X** لإزالة القاعدة الموروثة
+2. Select the specific permissions you want
+3. انقر على أيقونة **تراجع** البرتقالية (السهم الدائري) للتراجع عن التغييرات
+
+عند الانتهاء، انقر على **إنهاء**، ثم **حفظ** عند العودة إلى صفحة الدور.
+
+### أذونات إعدادات مساحة العمل
+
+تحكم في الوصول إلى إعدادات مساحة العمل بطريقتين:
+
+* تبديل **الوصول الكامل للإعدادات** لمنح الوصول الكامل
+* أو تمكين أذونات محددة (مثل توليد مفتاح API، تفضيلات مساحة العمل، تعيين الأدوار، تكوين نموذج البيانات، إعدادات الأمان، وإدارة الحركات)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### أذونات الإجراءات في مساحة العمل
+
+التحكم في الوصول إلى الإجراءت العامة لمساحة العمل:
+
+* تبديل **الوصول الكامل للتطبيق** لمنح الأذونات الكاملة
+* أو تمكين الإجراءات الفردية مثل **إرسال البريد الإلكتروني**، **استيراد CSV**، و**تصدير CSV**
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. انقر على الدور الذي ترغب في تعيينه
+3. افتح علامة التبويب **التعيين**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. أكد التعيين
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. انقر على الدور الذي ترغب في تعيينه
+3. افتح علامة التبويب **التعيين**
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. أكد التعيين
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

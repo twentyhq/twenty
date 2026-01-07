@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -149,6 +150,7 @@ export const computeWhereConditionParts = ({
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
         GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
   }
 };

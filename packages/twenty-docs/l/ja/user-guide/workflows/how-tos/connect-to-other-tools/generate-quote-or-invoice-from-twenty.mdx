@@ -1,0 +1,143 @@
+---
+title: Generate a Quote or Invoice from Twenty
+description: Automatically create invoices in external tools when deals close.
+---
+
+Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+
+## Workflow Structure
+
+1. **Trigger**: Record is Updated (Opportunity)
+2. **Filter**: Stage = Closed Won
+3. **Search Record**: Get Company details
+4. **Code** (optional): Format payload
+5. **HTTP Request**: Send to invoicing system
+
+## Step 1: Set Up the Trigger
+
+1. Create a new workflow
+2. Select **Record is Updated** trigger
+3. Choose **Opportunity** as the object
+
+## Step 2: Filter for Closed Won
+
+Add a **Filter** action to only continue when the deal is won:
+
+| Setting       | Value                             |
+| ------------- | --------------------------------- |
+| **Field**     | Stage                             |
+| **Condition** | Equals                            |
+| **Value**     | `CLOSED_WON` (or your stage name) |
+
+<Tip>
+  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+</Tip>
+
+## Step 3: Get Company Details
+
+The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+
+| Setting      | Value                                    |
+| ------------ | ---------------------------------------- |
+| **Object**   | Company                                  |
+| **Match by** | ID equals `{{trigger.object.companyId}}` |
+
+This retrieves the full Company record with billing address, tax ID, etc.
+
+## Step 4: Format the Payload (Optional)
+
+If your invoicing system expects a specific format, add a **Code** action:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Step 5: Send to Invoicing System
+
+Add an **HTTP Request** action:
+
+| Setting     | Value                                     |
+| ----------- | ----------------------------------------- |
+| **Method**  | POST                                      |
+| **URL**     | Your invoicing API endpoint               |
+| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
+| **Body**    | `{{code.invoice}}` or map fields directly |
+
+### Example: Stripe Invoice
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Example: QuickBooks Invoice
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Complete Workflow Summary
+
+| Step | Action                  | Purpose                              |
+| ---- | ----------------------- | ------------------------------------ |
+| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
+| 2    | Filter                  | Only proceed if Stage = Closed Won   |
+| 3    | Search Record           | Get full Company details for billing |
+| 4    | Code                    | Format data for invoicing API        |
+| 5    | HTTP Request            | Create invoice in external system    |
+
+## Tips
+
+* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
+* **Error handling**: Add a branch to send a notification if the HTTP request fails
+* **Test first**: Use your invoicing system's sandbox/test mode before going live
+
+## Related
+
+* [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [Closed Won Automations](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

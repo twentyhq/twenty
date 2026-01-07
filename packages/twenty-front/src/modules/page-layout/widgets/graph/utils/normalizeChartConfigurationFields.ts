@@ -1,5 +1,4 @@
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import {
   type BarChartConfiguration,
   type GraphOrderBy,
@@ -21,7 +20,11 @@ export const normalizeChartConfigurationFields = (
     | LineChartConfiguration
     | PieChartConfiguration,
 ): NormalizedChartConfigurationFields => {
-  if (isBarOrLineChartConfiguration(configuration)) {
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
+  if (isBarOrLineChart) {
     return {
       groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
       groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
@@ -30,7 +33,7 @@ export const normalizeChartConfigurationFields = (
     };
   }
 
-  if (isPieChartConfiguration(configuration)) {
+  if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
     return {
       groupByFieldMetadataId: configuration.groupByFieldMetadataId,
       groupBySubFieldName: configuration.groupBySubFieldName,

@@ -1,5 +1,5 @@
-import { type SelectionBox } from '../../types/SelectionBox';
-import { isValidSelectionStart } from '../selectionBoxValidation';
+import { type SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox';
+import { isValidSelectionStart } from '@/ui/utilities/drag-select/utils/selectionBoxValidation';
 
 describe('selectionBoxValidation', () => {
   describe('isValidSelectionStart', () => {

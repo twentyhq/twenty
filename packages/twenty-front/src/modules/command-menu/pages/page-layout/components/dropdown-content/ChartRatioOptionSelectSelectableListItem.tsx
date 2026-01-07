@@ -1,7 +1,7 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { isAggregateChartConfiguration } from '@/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -38,8 +38,9 @@ export const ChartRatioOptionSelectSelectableListItem = ({
     dropdownId,
   );
 
-  const currentRatioConfig = isAggregateChartConfiguration(
+  const currentRatioConfig = isWidgetConfigurationOfType(
     widgetInEditMode?.configuration,
+    'AggregateChartConfiguration',
   )
     ? widgetInEditMode.configuration.ratioAggregateConfig
     : undefined;

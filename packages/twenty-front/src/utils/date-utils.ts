@@ -19,6 +19,8 @@ import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
 import { logError } from './logError';
 
+// TODO: review all of this with Temporal
+// - also break down this into small files
 export const parseDate = (dateToParse: Date | string | number): Date => {
   if (dateToParse === 'now') return new Date();
 
@@ -152,8 +154,8 @@ export const beautifyDateDiff = (
 
   if (years !== 0) {
     result = plural(Math.abs(years), {
-      one: `${years} ${t`year`}`,
-      other: `${years} ${t`years`}`,
+      one: `${years} year`,
+      other: `${years} years`,
     });
 
     if (short) return result;
@@ -165,8 +167,8 @@ export const beautifyDateDiff = (
 
   if (days !== 0) {
     const daysPart = plural(Math.abs(days), {
-      one: `${days} ${t`day`}`,
-      other: `${days} ${t`days`}`,
+      one: `${days} day`,
+      other: `${days} days`,
     });
     result += daysPart;
   }

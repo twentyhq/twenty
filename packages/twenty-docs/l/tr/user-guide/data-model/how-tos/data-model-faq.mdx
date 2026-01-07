@@ -1,0 +1,155 @@
+---
+title: Veri Modeli SSS
+description: Frequently asked questions about Twenty's data model.
+---
+
+## Nesne Yönetimi
+
+<AccordionGroup>
+  <Accordion title="Can I delete a custom object?">
+    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  </Accordion>
+
+  <Accordion title="Standart nesneleri (Kişiler, Şirketler vb.) silebilir miyim?">
+    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+  </Accordion>
+
+  <Accordion title="How many custom objects can I create?">
+    You can create as many custom objects and fields as you need — the price doesn't change.
+  </Accordion>
+
+  <Accordion title="Can I rename a standard object?">
+    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  </Accordion>
+
+  <Accordion title="Can I change an object's icon?">
+    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  </Accordion>
+
+  <Accordion title="Sol navigasyon çubuğundaki nesneleri sıralayabilir miyim?">
+    Henüz değil. Navigasyon içindeki nesne sıralaması şu anda sabit, ancak bu özellik gelecekteki bir sürüm için planlanmıştır.
+  </Accordion>
+
+  <Accordion title="Sol navigasyon çubuğundan nesneleri gizleyebilir miyim?">
+    Tüm aktif nesneler gezinme menüsünde görünür. **Ayarlar → Veri Modeli** altında ihtiyaç duymadığınız nesneleri devre dışı bırakabilirsiniz.
+  </Accordion>
+</AccordionGroup>
+
+## Alan Yetkinlikleri
+
+<AccordionGroup>
+  <Accordion title="Can I change a field type after creation?">
+    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  </Accordion>
+
+  <Accordion title="Neden farklı tekil ve çoğul adlara ihtiyacım var?">
+    GraphQL API'miz farklı işlemler için her iki biçimi de kullanır:
+
+    * Tek bir kayıt eylemleri için `createPerson` (tekil)
+    * Toplu işlemler için `createPeople` (çoğul)
+
+    Bu, tekil ve çoğul biçimler aynı olduğunda sınırlamalar yaratır ancak geliştirici deneyimini iyileştirir.
+  </Accordion>
+
+  <Accordion title="Neden bazı alan adları korunmuş durumda?">
+    `Tür` veya `Uygulama` gibi bazı alan adları sistem kullanımı için ayrılmıştır. Bunun yerine `Kategori` veya `Sınıflandırma` gibi alternatif adlar seçin.
+  </Accordion>
+
+  <Accordion title="What happens when I deactivate a field?">
+    * The field is hidden from the interface
+    * Existing data is preserved
+    * You can still access the field via API
+    * Existing relations remain but you can't create new ones
+    * You can reactivate the field later
+  </Accordion>
+
+  <Accordion title="Can I make a field required?">
+    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  </Accordion>
+
+  <Accordion title="What's the difference between unique and required?">
+    * **Unique**: No two records can have the same value in this field
+    * **Required**: The field must have a value (not currently supported for custom fields)
+  </Accordion>
+
+  <Accordion title="Formül alanları oluşturabilir miyim?">
+    Formül alanları **2026'nın ilk çeyreğinde** gelmektedir. Bu arada, alan değerlerini otomatik olarak hesaplamak ve güncellemek için iş akışlarını kullanabilirsiniz.
+  </Accordion>
+
+  <Accordion title="Nesnelerimde iç içe alanlar bulundurabilir miyim?">
+    İç içe alanlar **2026'nın ilk çeyreğinde** gelmektedir. Şu anda, ilişkili nesnelerden alan değerleri getirmek için iş akışlarını kullanabilirsiniz. Örneğin, bir Kişi kaydında bir şirketin sektörünü görüntülemek için, Kişiler üzerinde özel bir alan oluşturun ve değeri eşzamanlamak için bir iş akışı kullanın.
+  </Accordion>
+
+  <Accordion title="Nesnelerde alanları yeniden düzenleyebilir miyim?">
+    Alan yeniden düzenlemesi, **2025'in dördüncü çeyreğinde** özel düzenlerle birlikte kullanılabilir olacaktır. Currently, fields appear in alphabetical order.
+  </Accordion>
+</AccordionGroup>
+
+## İlişkiler
+
+<AccordionGroup>
+  <Accordion title="Can I have a relation pointing to the same object?">
+    Evet! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  </Accordion>
+
+  <Accordion title="Çoktan-çoka ilişkiler oluşturabilir miyim?">
+    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+
+    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+
+    * A relation to People (many assignments → one person)
+    * A relation to Projects (many assignments → one project)
+  </Accordion>
+
+  <Accordion title="What are relations to multiple object types (Morph relationships)?">
+    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+
+    Each Note links to one Person, one Company, and one Opportunity at the same time.
+
+    Learn more in [Relation Fields](/l/tr/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Can I have multiple relations between the same objects?">
+    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  </Accordion>
+
+  <Accordion title="What happens to relations when I delete a record?">
+    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  </Accordion>
+
+  <Accordion title="Can I create circular relations?">
+    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  </Accordion>
+</AccordionGroup>
+
+## Erişim ve İzinler
+
+<AccordionGroup>
+  <Accordion title="Nerede veri modelimi görebilir ve düzenleyebilirim?">
+    Go to **Settings → Data Model** to view and edit all your objects and fields.
+  </Accordion>
+
+  <Accordion title="Neden Ayarlar altında Veri Modelini göremiyorum?">
+    Çalışma alanı yöneticinize ulaşın. Veri modeli erişimi genellikle yalnızca yöneticiler tarafından sınırlıdır.
+  </Accordion>
+</AccordionGroup>
+
+## Data Management
+
+<AccordionGroup>
+  <Accordion title="Is there a limit to how many records I can have?">
+    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  </Accordion>
+
+  <Accordion title="Can I import data into custom objects?">
+    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Can I export my data model configuration?">
+    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  </Accordion>
+</AccordionGroup>
+
+## Daha Fazla Yardım mı İhtiyacınız Var?
+
+Check our [Implementation Services](/l/tr/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.

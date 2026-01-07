@@ -1,0 +1,89 @@
+---
+title: Datenmigration
+description: Importieren und exportieren Sie Ihre CRM-Daten über CSV-Dateien oder die API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Datenmigration" />
+</Frame>
+
+## Importmethoden
+
+Twenty unterstützt zwei Hauptmethoden zum Importieren von Daten:
+
+| Methode        | Am besten geeignet                                | Volumenlimit                |
+| -------------- | ------------------------------------------------- | --------------------------- |
+| **CSV-Import** | Standardmigrationen, regelmäßige Aktualisierungen | 10.000 Datensätze pro Datei |
+| **API-Import** | Groß angelegte Migrationen, Automatisierung       | Unbegrenzt                  |
+
+<Note>Für sehr große Datensätze (Hunderttausende von Datensätzen) verwenden Sie die API. Unsere [Implementierungspartner](/l/de/user-guide/getting-started/capabilities/implementation-services) können bei Bedarf diese Skripte ausführen.</Note>
+
+## Grundlagen des CSV-Imports
+
+Sie können Daten für jedes Objekt mit CSV-, XLSX- oder XLS-Dateien importieren. Jede Datei sollte **nur einen Objekttyp** enthalten (z. B. nur Personen-Datensätze).
+
+<Note>**Felder müssen vor dem Import existieren.** Das Hochladen einer CSV erstellt Datensätze, erstellt jedoch keine Felder. Wenn Sie benutzerdefinierte Felder benötigen, erstellen Sie diese zuerst unter **Einstellungen → Datenmodell**.</Note>
+
+### Schritte
+
+1. Navigieren Sie zu dem Objekt, in das Sie Daten importieren möchten
+2. Klicken Sie oben rechts auf das Symbol **⋮** (dies ist das Befehlsmenü) und klicken Sie auf **Datensätze importieren**
+3. Laden Sie die Vorlagendatei herunter, um sicherzustellen, dass Ihre Daten im erwarteten Format vorliegen
+4. Laden Sie Ihre formatierte CSV-Datei hoch
+5. Ordnen Sie Ihre Spalten den Twenty-Feldern zu
+6. Überprüfen Sie Fehler (gelb hervorgehoben) und beheben Sie sie, indem Sie sie direkt in der Benutzeroberfläche bearbeiten
+7. Bestätigen Sie den Import
+
+### Beziehungen zwischen Objekten importieren
+
+Sie können Beziehungen zwischen Objekte n mithilfe der CSV-Importfunktion importieren. Sie müssen auf das verknüpfte Objekt über ein eindeutiges Feld dieses Objekts verweisen: die `id`, die `email` für Personen und Workspace-Mitglieder, die `domain` für Unternehmen, jedes andere im Datenmodell als eindeutig festgelegte Feld für andere Objekte.
+
+<Note>**Gelöschte Datensätze zählen zur Eindeutigkeit.** Softgelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) werden in die Eindeutigkeitsprüfungen einbezogen. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz wiederhergestellt.</Note>
+
+<Warning>
+  **Die Importreihenfolge ist wichtig!**
+
+  Beim Import verknüpfter Objekte laden Sie die Dateien in dieser Reihenfolge hoch:
+
+  1. **Unternehmen** zuerst (die „one“-Seite der Beziehungen)
+  2. **Personen** an zweiter Stelle (über companyId mit Unternehmen verknüpft)
+  3. **Verkaufschancen** an dritter Stelle (mit Unternehmen/Personen verknüpft)
+  4. **Benutzerdefinierte Objekte** mit Beziehungen zuletzt
+
+  Warum? Die „one“-Seite einer Eins-zu-viele-Beziehung muss existieren, bevor Sie darauf verweisen können. Beispielsweise muss der Unternehmensdatensatz existieren, bevor Sie eine Person mit der ID dieses Unternehmens importieren.
+</Warning>
+
+Weitere Informationen finden Sie in [diesem Artikel](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) mit einer Schritt-für-Schritt-Anleitung zum Vorgehen.
+
+## Daten exportieren
+
+Exportieren Sie die Daten Ihres Arbeitsbereichs für Backups, Berichte oder Migrationen.
+
+### Schritte
+
+1. Navigieren Sie zu dem Objekt, das Sie exportieren möchten
+2. Konfigurieren Sie die Ansicht mit den benötigten Spalten
+3. Klicken Sie auf **⋮** → **Ansicht exportieren**
+4. Speichern Sie die CSV-Datei
+
+<Note>**Nur sichtbare Spalten werden exportiert.** Die CSV-Datei enthält nur die Spalten, die in Ihrer aktuellen Ansicht angezeigt werden. Fügen Sie vor dem Export Spalten hinzu oder blenden Sie sie aus, um zu steuern, welche Daten enthalten sind.</Note>
+
+<Note>**Exportgrenzen**: Bis zu 20.000 Datensätze pro Export.</Note>
+
+## Berechtigungen
+
+Datenimport und -export erfordern bestimmte Berechtigungen:
+
+* **Import**: Erfordert die Berechtigung "Import CSV"
+* **Export**: Erfordert die Berechtigung "Export CSV"
+
+Wenden Sie sich an Ihren Arbeitsbereichsadministrator, wenn Sie diese Berechtigungen nicht haben.
+
+## Nächste Schritte
+
+* [Bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Beziehungen zwischen Objekten importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Über die API für große Datensätze importieren](/l/de/user-guide/data-migration/how-tos/import-data-via-api)

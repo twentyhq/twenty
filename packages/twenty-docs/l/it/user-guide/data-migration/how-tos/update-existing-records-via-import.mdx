@@ -1,0 +1,198 @@
+---
+title: Aggiorna i record esistenti tramite importazione
+description: Guida completa passo dopo passo per aggiornare in blocco i record usando l'importazione CSV.
+---
+
+## Panoramica
+
+Devi aggiornare molti record in una sola volta? Invece di modificarli uno per uno, usa l'importazione CSV per aggiornare in blocco i record esistenti.
+
+**Casi di utilizzo:**
+
+* Aggiorna i titoli professionali per più persone
+* Modifica in blocco le informazioni sulle aziende
+* Aggiungi dati ai nuovi campi personalizzati
+* Correggi gli errori dei dati su molti record
+
+## Come Funziona
+
+Quando importi un file che contiene un **identificatore univoco** corrispondente a un record esistente, Twenty aggiorna quel record invece di crearne un duplicato.
+
+| Se l'identificatore univoco...    | Twenty farà...                                             |
+| --------------------------------- | ---------------------------------------------------------- |
+| Corrisponde a un record esistente | **Aggiorna** il record esistente                           |
+| Non corrisponde ad alcun record   | **Crea** un nuovo record                                   |
+| Manca nel tuo file                | **Crea** un nuovo record (con ID generato automaticamente) |
+
+<Warning>
+  **I campi Multi-Select vengono sovrascritti, non uniti.**
+
+  Se un record ha `Option A` e `Option B` selezionate e importi `["Option C"]`, il record avrà solo `Option C` dopo l'importazione. L'importazione sostituisce tutte le selezioni precedenti: non le aggiunge.
+
+  Per mantenere i valori esistenti, includili tutti nella tua importazione: `["Option A","Option B","Option C"]`
+</Warning>
+
+## Passaggio 1: Esporta i tuoi dati correnti
+
+Per prima cosa, esporta i record che vuoi aggiornare:
+
+1. Vai all'oggetto (Persone, Aziende, ecc.)
+2. **Aggiungi le colonne necessarie** — fai clic su **Options → Fields** per mostrare i campi che vuoi aggiornare
+3. **Filtra se necessario** — limita ai soli record che vuoi aggiornare
+4. Fai clic su **⋮** → **Esporta vista**
+5. Salva il file CSV
+
+<Note>**Perché esportare prima?** Il file esportato ha il formato corretto, include gli identificatori univoci e viene mappato automaticamente durante l'importazione.</Note>
+
+### Cosa viene esportato
+
+* Tutte le colonne visibili nella vista corrente
+* Gli identificatori univoci del record (`id`, `email`, `domain`)
+* Valori attuali dei campi che puoi modificare
+
+## Passaggio 2: Modifica il file CSV
+
+Apri il file esportato nella tua applicazione di fogli di calcolo (Excel, Google Sheets, ecc.):
+
+1. **Mantieni la colonna dell'identificatore univoco** — non eliminare `id`, `email` o `domain`
+2. **Aggiorna i valori** nelle colonne che vuoi modificare
+3. **Rimuovi le colonne che non devi aggiornare** (opzionale, ma più pulito)
+4. **Non modificare i valori dell'identificatore univoco** — altrimenti Twenty creerà nuovi record
+
+### Esempio: aggiornare i titoli professionali
+
+**File esportato:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**Dopo le tue modifiche:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+  **Non modificare i valori dell'identificatore univoco.**
+
+  Se modifichi `john@acme.com` in `john.smith@acme.com`, Twenty creerà un nuovo record invece di aggiornare quello esistente.
+</Warning>
+
+## Passaggio 3: Importa il file aggiornato
+
+1. Vai all'oggetto
+2. Fai clic su **⋮** → **Importa record**
+3. Carica il file CSV modificato
+4. **Assicurati che l'identificatore univoco sia mappato** — verifica che `email`, `domain` o `id` siano mappati correttamente
+5. Rivedi le mappature dei campi
+6. Verifica la presenza di errori
+7. Fai clic su **Conferma**
+
+Twenty abbina i record in base all'identificatore univoco e li aggiorna con i nuovi valori.
+
+## Scegliere l'identificatore univoco giusto
+
+| Oggetto                    | Consigliato             | Alternativa | Note                                    |
+| -------------------------- | ----------------------- | ----------- | --------------------------------------- |
+| **Persone**                | `email`                 | `id`        | L'email è leggibile                     |
+| **Aziende**                | `dominio`               | `id`        | Il dominio è leggibile                  |
+| **Oggetti personalizzati** | Qualsiasi campo univoco | `id`        | Usa il tuo campo univoco personalizzato |
+
+<Note>**Usa un solo identificatore univoco.** Non mappare sia `email` che `id`. Questo può causare confusione ed errori.</Note>
+
+### Utilizzo di campi univoci personalizzati
+
+Se hai un campo personalizzato contrassegnato come univoco (come un ID esterno da un altro sistema):
+
+1. Includi quel campo nell'esportazione e nell'importazione
+2. Mappalo durante l'importazione
+3. Twenty abbinerà in base a quel campo
+
+## Passaggio 4: Verifica gli aggiornamenti
+
+Dopo l'importazione:
+
+1. Apri alcuni record aggiornati
+2. Verifica che le modifiche siano state applicate
+3. Controlla che non siano stati creati record duplicati
+
+## Che cosa succede ai campi non presenti nel tuo file?
+
+**I campi non inclusi nel file di importazione rimangono invariati.**
+
+| Il tuo file include...       | Risultato                                                           |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `email`, `jobTitle`          | Viene aggiornato solo `jobTitle`; gli altri campi restano invariati |
+| `email`, `jobTitle`, `phone` | Vengono aggiornati `jobTitle` e `phone`                             |
+
+Ciò significa che devi includere solo i campi che vuoi modificare (più l'identificatore univoco).
+
+## Combinare aggiornamenti e nuovi record
+
+Puoi aggiornare i record esistenti E creare nuovi record nella stessa importazione:
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Aggiorna esistente (l'email corrisponde)
+newperson@acme.com,New,Person,Analyst      ← Crea nuovo (l'email non corrisponde)
+```
+
+## Errori comuni da evitare
+
+| Errore                                    | Problema                                                  | Risultato                                 | Soluzione                                      |
+| ----------------------------------------- | --------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
+| **Modifica dell'identificatore univoco**  | Modificato `john@acme.com` in `john.smith@acme.com`       | Crea un nuovo record invece di aggiornare | Mantieni invariati gli identificatori univoci  |
+| **Più campi univoci**                     | Mappare sia `email` che `id`                              | Possibili conflitti di corrispondenza     | Mappa un solo identificatore univoco           |
+| **Nessun identificatore univoco**         | Il file contiene solo `firstName`, `lastName`, `jobTitle` | Tutte le righe creano nuovi record        | Includi sempre `email`, `domain` o `id`        |
+| **Discrepanza tra maiuscole e minuscole** | Il file ha `John@acme.com` ma Twenty ha `john@acme.com`   | Crea un nuovo record                      | Esporta da Twenty per ottenere i valori esatti |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Cosa succede se alcuni record non esistono ancora?">
+    I record con identificatori univoci che non corrispondono a record esistenti verranno creati come nuovi record. Questo ti consente di aggiornare e creare nella stessa importazione.
+  </Accordion>
+
+  <Accordion title="Posso svuotare il valore di un campo?">
+    Sì, lascia la cella vuota nel tuo CSV. L'importazione cancellerà il valore di quel campo nel record esistente.
+  </Accordion>
+
+  <Accordion title="Cosa succede ai campi che non includo nell'importazione?">
+    I campi non presenti nel file di importazione rimangono invariati nei record esistenti. Vengono aggiornati solo i campi che includi.
+  </Accordion>
+
+  <Accordion title="Posso aggiornare i campi di relazione (come Azienda)?">
+    Sì! Includi l'identificatore univoco della relazione (ad es., `companyDomain`) e mappalo sul campo di relazione. La relazione verrà aggiornata.
+  </Accordion>
+
+  <Accordion title="Come faccio a sapere quali record saranno aggiornati e quali creati?">
+    Durante la fase di revisione dell'importazione, Twenty ti mostra quanti record verranno aggiornati e quanti creati in base alle corrispondenze dell'identificatore univoco.
+  </Accordion>
+
+  <Accordion title="Posso annullare un aggiornamento in blocco?">
+    Non è disponibile un annullamento automatico. Ti consigliamo di esportare i tuoi dati come backup prima di effettuare aggiornamenti in blocco.
+  </Accordion>
+</AccordionGroup>
+
+## Migliori Pratiche
+
+1. **Esporta per prima cosa** — inizia sempre da un'esportazione per assicurarti del formato corretto
+2. **Fai un backup prima di aggiornare** — esporta i tuoi dati prima di effettuare modifiche in blocco
+3. **Esegui una prova con pochi record** — prova ad aggiornare prima 5-10 record, prima di eseguire un lotto di grandi dimensioni
+4. **Usa identificatori leggibili** — `email` e `domain` sono più facili da verificare rispetto a `id`
+5. **Includi solo le colonne necessarie** — meno colonne significa meno possibilità di errori
+
+## Risoluzione dei problemi
+
+Hai problemi? Controlla:
+
+* [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
+* [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)

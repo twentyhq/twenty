@@ -2,9 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   endOfDay,
   endOfHour,
-  endOfSecond,
   endOfMinute,
   endOfMonth,
+  endOfSecond,
   endOfWeek,
   endOfYear,
   isWithinInterval,
@@ -25,6 +25,8 @@ import {
   subUnitFromDateTime,
 } from 'twenty-shared/utils';
 
+// TODO: Merge this logic with resolveRelativeDateFilter in twenty-shared
+// But it is not urgent since we force all workflow filters to be in UTC
 export const parseAndEvaluateRelativeDateFilter = ({
   dateToCheck,
   relativeDateString,

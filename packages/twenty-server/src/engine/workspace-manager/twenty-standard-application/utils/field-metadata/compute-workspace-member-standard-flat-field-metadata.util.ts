@@ -118,6 +118,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -135,6 +136,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Workspace member name',
       icon: 'IconCircleUser',
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -152,6 +154,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconColorSwatch',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'System'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -170,6 +173,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconLanguage',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'en'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -188,6 +192,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -205,6 +210,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconMail',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -223,6 +229,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 7,
       settings: {
         dataType: NumberDataType.INT,
@@ -244,6 +251,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCircleUsers',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -261,6 +269,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconTimezone',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'system'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -279,6 +288,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarEvent',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SYSTEM'",
       options: [
         { value: 'SYSTEM', label: 'System', position: 0, color: 'turquoise' },
@@ -313,6 +323,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconClock2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SYSTEM'",
       options: [
         { value: 'SYSTEM', label: 'System', position: 0, color: 'sky' },
@@ -336,6 +347,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconNumbers',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: `'${WorkspaceMemberNumberFormatEnum.SYSTEM}'`,
       options: [
         {
@@ -386,6 +398,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
@@ -409,6 +422,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Tasks assigned to the workspace member',
       icon: 'IconCheckbox',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'assignee',
       settings: {
@@ -431,6 +445,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Favorites linked to the workspace member',
       icon: 'IconHeart',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'forWorkspaceMember',
       settings: {
@@ -453,6 +468,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Account owner for companies',
       icon: 'IconBriefcase',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'accountOwner',
       settings: {
@@ -475,6 +491,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Connected accounts',
       icon: 'IconAt',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'accountOwner',
       settings: {
@@ -497,6 +514,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -519,6 +537,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Blocklisted handles',
       icon: 'IconForbid2',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'blocklist',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -541,6 +560,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Calendar Event Participants',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -564,6 +584,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workspaceMember',
       settings: {

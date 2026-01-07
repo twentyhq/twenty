@@ -1,6 +1,5 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
@@ -9,6 +8,7 @@ import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
+import { BarChartLayout } from '~/generated/graphql';
 
 type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   keys?: string[];

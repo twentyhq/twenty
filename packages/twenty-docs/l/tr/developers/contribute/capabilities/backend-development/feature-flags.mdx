@@ -1,0 +1,46 @@
+---
+title: Özellik Bayrakları
+---
+
+Özellik bayrakları deneysel özellikleri gizlemek için kullanılır. Twenty için, çalışma alanı seviyesinde ayarlanırlar, kullanıcı seviyesinde değil.
+
+## Yeni bir özellik bayrağı ekleme
+
+`FeatureFlagKey.ts` dosyasında özellik bayrağını ekleyin:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Ayrıca `feature-flag.entity.ts` enumuna ekleyin:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Bir **backend** özelliği üzerinde bir özellik bayrağı uygulamak için kullanın:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Bir **frontend** özelliği üzerinde bir özellik bayrağı uygulamak için kullanın:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Dağıtım için özellik bayraklarını yapılandırın
+
+`core.featureFlag` Tablosundaki ilgili kaydı değiştirin:
+
+| kimlik   | anahtar                  | çalışma alanı kimliği | değer   |
+| -------- | ------------------------ | --------------------- | ------- |
+| Rastgele | `IS_FEATURENAME_ENABLED` | Çalışma Alanı kimliği | `doğru` |

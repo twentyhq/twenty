@@ -1,0 +1,253 @@
+---
+title: 1-Click w/ Docker Compose
+---
+
+<Warning>
+  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/cs/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## Přehled
+
+Tato příručka poskytuje podrobný návod k instalaci a konfiguraci aplikace Twenty pomocí Docker Compose. Cílem je zjednodušit proces a zabránit běžným úskalím, která by mohla narušit vaše nastavení.
+
+**Důležité:** Měňte pouze nastavení výslovně uvedená v tomto průvodci. Změna jiných konfigurací může vést k problémům.
+
+Podívejte se na dokumentaci [Nastavení Proměnných Prostředí](/l/cs/developers/self-host/capabilities/setup) pro pokročilou konfiguraci. Všechny proměnné prostředí musí být deklarovány v souboru docker-compose.yml na úrovni serveru a/nebo pracovníka v závislosti na proměnné.
+
+## Systémové Požadavky
+
+* RAM: Ujistěte se, že vaše prostředí má alespoň 2GB RAM. Nedostatek paměti může způsobit zhroucení procesů.
+* Docker & Docker Compose: Ujistěte se, že obě jsou nainstalovány a aktuální.
+
+## Možnost 1: Jednořádkový skript
+
+Nainstalujte nejnovější stabilní verzi Twenty jedním příkazem:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Pro instalaci konkrétní verze nebo větve vypište:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Nahraďte x.y.z požadovaným číslem verze.
+* Nahraďte branch-name názvem větve, kterou chcete nainstalovat.
+
+## Možnost 2: Manuální kroky
+
+Postupujte podle těchto kroků pro ruční nastavení.
+
+### Krok 1: Nastavení souboru Prostředí
+
+1. **Vytvořte soubor .env**
+
+   Zkopírujte příklad souboru prostředí do nového souboru .env ve vašem pracovním adresáři:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Generate Secret Tokens**
+
+   Spusťte následující příkaz k generování jedinečného náhodného řetězce:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Důležité:** Udržujte tuto hodnotu v tajnosti / nesdílejte ji.
+
+3. **Aktualizujte `.env` soubor**
+
+   Nahraďte místoblokovou hodnotu ve svém .env souboru vygenerovaným tokenem:
+
+   ```ini
+   APP_SECRET=první_náhodný_řetězec
+   ```
+
+4. **Nastavte Heslo pro Postgres**
+
+   Aktualizujte hodnotu `PG_DATABASE_PASSWORD` ve vašem .env souboru silným heslem bez speciálních znaků.
+
+   ```ini
+   PG_DATABASE_PASSWORD=moje_silné_heslo
+   ```
+
+### Krok 2: Získání souboru Docker Compose
+
+Stáhněte soubor `docker-compose.yml` do svého pracovního adresáře:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Krok 3: Spuštění aplikace
+
+Spusťte Docker kontejnery:
+
+```bash
+docker compose up -d
+```
+
+### Krok 4: Přístup k aplikaci
+
+Pokud hostujete twentyCRM na svém vlastním počítači, otevřete svůj prohlížeč a přejděte na stránku [http://localhost:3000](http://localhost:3000).
+
+If you host it on a server, check that the server is running and that everything is ok with
+
+```bash
+curl http://localhost:3000
+```
+
+## Konfigurace
+
+### Otevření Twenty pro Externí Přístup
+
+Ve výchozím nastavení běží Twenty na `localhost` na portu `3000`. Pro přístup přes externí doménu nebo IP adresu musíte nakonfigurovat `SERVER_URL` ve vašem `.env` souboru.
+
+#### Porozumění `SERVER_URL`
+
+* **Protokol:** Použijte `http` nebo `https` v závislosti na vašem nastavení.
+  * Použijte `http` pokud nemáte nastavené SSL.
+  * Použijte `https` pokud máte SSL nakonfigurované.
+* **Doména/IP:** Toto je doménové jméno nebo IP adresa, kde je vaše aplikace přístupná.
+* **Port:** Uveďte číslo portu, pokud nepoužíváte výchozí porty (`80` pro `http`, `443` pro `https`).
+
+### Požadavky na SSL
+
+SSL (HTTPS) je potřebné pro správné fungování některých funkcí prohlížeče. I když tyto funkce mohou fungovat během místního vývoje (protože prohlížeče zacházejí s localhost jinak), správná konfigurace SSL je nutná při hostování Twenty na běžné doméně.
+
+Například rozhraní schránky může vyžadovat zabezpečený kontext - některé funkce jako tlačítka kopírování v aplikaci nemusí fungovat bez povoleného HTTPS.
+
+Důrazně doporučujeme nastavit Twenty za reverzní proxy se SSL ukončením pro optimální bezpečnost a funkčnost.
+
+#### Konfigurace `SERVER_URL`
+
+1. **Určete svou přístupovou URL**
+   * **Bez Reverzní Proxy (Přímý Přístup):**
+
+     Pokud přistupujete k aplikaci přímo bez reverzní proxy:
+
+     ```ini
+     SERVER_URL=http://vaše-doména-nebo-ip:3000
+     ```
+
+   * **S Reverzní Proxy (Standardní Porty):**
+
+     Pokud používáte reverzní proxy jako Nginx nebo Traefik a máte SSL nakonfigurované:
+
+     ```ini
+     SERVER_URL=https://vaše-doména-nebo-ip
+     ```
+
+   * **S Reverzní Proxy (Vlastní Porty):**
+
+     Pokud používáte nestandardní porty:
+
+     ```ini
+     SERVER_URL=https://vaše-doména-nebo-ip:vlastní-port
+     ```
+
+2. **Aktualizujte `.env` Soubor**
+
+   Otevřete svůj `.env` soubor a aktualizujte `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://vaše-doména-nebo-ip:váš-port
+   ```
+
+   **Příklady:**
+
+   * Přímý přístup bez SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * Přístup přes doménu s SSL:
+     ```ini
+     SERVER_URL=https://mojeaplikace.com
+     ```
+
+3. **Restartujte Aplikaci**
+
+   Pro aplikaci změn restartujte Docker kontejnery:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Úvahy
+
+* **Konfigurace reverzního proxy:**
+
+  Ujistěte se, že váš reverzní proxy přesměruje požadavky na správný interní port (výchozí `3000`). Configure SSL termination and any necessary headers.
+
+* **Nastavení firewallu:**
+
+  Otevřete nezbytné porty v firewallu, aby byl umožněn externí přístup.
+
+* **Konzistence:**
+
+  `SERVER_URL` musí odpovídat způsobu, jakým uživatelé přistupují k vaší aplikaci ve svých prohlížečích.
+
+#### Perzistence
+
+* **Datové svazky:**
+
+  Konfigurace Docker Compose používá svazky k ukládání dat pro databázi a úložiště serverů.
+
+* **Bezstavová prostředí:**
+
+  Pokud nasazujete do bezstavového prostředí (např. některé cloudové služby), nakonfigurujte externí úložiště pro uchování dat.
+
+## Backup and Restore
+
+Regular backups protect your CRM data from loss.
+
+### Create a Database Backup
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automate Daily Backups
+
+Add to your crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restore from Backup
+
+1. Stop the application:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restore the database:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Restart services:
+
+```bash
+docker compose up -d
+```
+
+### Backup Best Practices
+
+* **Test restores regularly** — verify backups actually work
+* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
+* **Encrypt sensitive data** — protect backups with encryption
+* **Retain multiple copies** — keep daily, weekly, and monthly backups
+
+## Řešení potíží
+
+Pokud narazíte na jakýkoli problém, zkontrolujte sekci [Řešení potíží](/l/cs/developers/self-host/capabilities/troubleshooting) pro možná řešení.

@@ -1,4 +1,4 @@
-import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
+import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
 
 export const COMMAND_MENU_CONSTRAINTS: ResizablePanelConstraints = {
   min: 320,

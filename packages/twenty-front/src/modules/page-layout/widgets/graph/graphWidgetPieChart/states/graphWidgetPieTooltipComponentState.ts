@@ -1,7 +1,7 @@
-import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { type ComputedDatum } from '@nivo/pie';
-import { type PieChartDataItem } from '../types/PieChartDataItem';
+import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 
 export const graphWidgetPieTooltipComponentState = createComponentState<{
   datum: ComputedDatum<PieChartDataItem>;
@@ -10,5 +10,5 @@ export const graphWidgetPieTooltipComponentState = createComponentState<{
 } | null>({
   key: 'graphWidgetPieTooltipComponentState',
   defaultValue: null,
-  componentInstanceContext: GraphWidgetComponentInstanceContext,
+  componentInstanceContext: WidgetComponentInstanceContext,
 });

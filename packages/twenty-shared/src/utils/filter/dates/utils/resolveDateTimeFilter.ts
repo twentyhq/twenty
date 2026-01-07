@@ -4,7 +4,7 @@ import { resolveRelativeDateTimeFilterStringified } from '@/utils/filter/dates/u
 export type ResolvedDateTimeFilterValue<O extends ViewFilterOperand> =
   O extends ViewFilterOperand.IS_RELATIVE
     ? ReturnType<typeof resolveRelativeDateTimeFilterStringified>
-    : Date | null;
+    : string | null;
 
 type PartialViewFilter<O extends ViewFilterOperand> = {
   value: string;
@@ -21,5 +21,5 @@ export const resolveDateTimeFilter = <O extends ViewFilterOperand>(
       viewFilter.value,
     ) as ResolvedDateTimeFilterValue<O>;
   }
-  return new Date(viewFilter.value) as ResolvedDateTimeFilterValue<O>;
+  return viewFilter.value as ResolvedDateTimeFilterValue<O>;
 };

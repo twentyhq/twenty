@@ -1,0 +1,126 @@
+---
+title: Nejčastější dotazy k oprávněním
+description: Často kladené otázky týkající se rolí a oprávnění.
+---
+
+## Role
+
+<AccordionGroup>
+  <Accordion title="Jaké role jsou ve Twenty ve výchozím nastavení?">
+    Twenty ve výchozím stavu obsahuje role **Administrátor** a **Člen**. Můžete vytvářet další vlastní role podle potřeb vašeho týmu (např. obchodní zástupce, manažer, uživatel pouze pro čtení).
+  </Accordion>
+
+  <Accordion title="Mohu smazat roli Administrátor?">
+    Ne, roli Administrátor nelze smazat. Musí být vždy alespoň jeden člen přiřazen k roli Administrátor.
+  </Accordion>
+
+  <Accordion title="Co se stane, když smažu roli?">
+    Každý člen pracovního prostoru přiřazený k této roli bude automaticky přeřazen na výchozí roli.
+  </Accordion>
+
+  <Accordion title="Jak nastavím výchozí roli pro nové členy?">
+    Přejděte do **Nastavení → Role**, najděte možnost **Výchozí role** a vyberte, kterou roli mají noví členové po připojení automaticky získat.
+  </Accordion>
+
+  <Accordion title="Mohu jednomu uživateli přiřadit více rolí?">
+    Ne, každý uživatel může mít najednou pouze jednu roli. Pokud potřebujete kombinaci oprávnění, vytvořte vlastní roli.
+  </Accordion>
+</AccordionGroup>
+
+## Oprávnění
+
+<AccordionGroup>
+  <Accordion title="Jaký je rozdíl mezi oprávněními objektu a pole?">
+    * **Oprávnění objektu**: Řídí přístup k celým záznamům (např. může zobrazovat/upravovat/mazat záznamy People)
+    * **Oprávnění pole**: Řídí přístup ke konkrétním polím v rámci objektu (např. může vidět pole Salary, ale nemůže ho upravovat)
+
+    Oprávnění na úrovni pole umožňují podrobnější kontrolu nad citlivými daty.
+  </Accordion>
+
+  <Accordion title="Jak fungují přepsání oprávnění?">
+    Oprávnění se kaskádovitě aplikují od globálních ke specifickým:
+
+    1. **Všechny objekty** určují základní nastavení pro všechny objekty
+    2. **Oprávnění na úrovni objektu** mohou přepsat globální nastavení pro konkrétní objekty
+    3. **Oprávnění na úrovni pole** mohou přepsat nastavení objektu pro konkrétní pole
+
+    Specifičtější nastavení mají vždy přednost.
+  </Accordion>
+
+  <Accordion title="Co znamenají jednotlivé úrovně oprávnění?">
+    Pro objekty:
+
+    * **Zobrazit záznamy**: Zobrazit záznamy v seznamech a na detailních stránkách
+    * **Upravit záznamy**: Upravit existující záznamy
+    * **Smazat záznamy**: Dočasně smazat záznamy (lze obnovit)
+    * **Trvale odstranit záznamy**: Trvale smazat záznamy
+
+    Pro pole:
+
+    * **Zobrazit pole**: Zobrazit hodnotu pole
+    * **Upravit pole**: Změnit hodnotu pole
+    * **Bez přístupu**: Pole je zcela skryté
+  </Accordion>
+
+  <Accordion title="Mohu omezit přístup ke konkrétním záznamům (oprávnění na úrovni řádků)?">
+    Oprávnění na úrovni řádků budou k dispozici v tarifu **Organization** v 1. čtvrtletí 2026. To umožní omezit přístup ke konkrétním záznamům na základě kritérií (např. zobrazovat pouze vlastní příležitosti).
+  </Accordion>
+
+  <Accordion title="Jak nastavím pole jen pro čtení pro určité uživatele?">
+    1. Přejděte na **Nastavení → Role**
+    2. Vyberte roli
+    3. Přejděte k objektu, který pole obsahuje
+    4. Nastavte oprávnění pole na **Zobrazit pole** (bez Upravit pole)
+  </Accordion>
+</AccordionGroup>
+
+## Nastavení a akce
+
+<AccordionGroup>
+  <Accordion title="Jaká oprávnění k nastavení jsou k dispozici?">
+    Můžete řídit přístup k:
+
+    * Generování klíčů API
+    * Předvolby pracovního prostoru
+    * Přiřazování rolí
+    * Konfigurace datového modelu
+    * Nastavení zabezpečení
+    * Správa pracovních postupů
+
+    Použijte **Settings All Access** pro udělení plného přístupu, nebo povolte konkrétní oprávnění.
+  </Accordion>
+
+  <Accordion title="Jaká oprávnění k akcím jsou k dispozici?">
+    Můžete řídit:
+
+    * **Odeslat e-mail**: Možnost odesílat e-maily z Twenty
+    * **Import CSV**: Možnost importovat data přes CSV
+    * **Export CSV**: Možnost exportovat data do CSV
+
+    Použijte **Application All Access** k povolení všech akcí, nebo povolte jen konkrétní.
+  </Accordion>
+</AccordionGroup>
+
+## Jednotné přihlášení
+
+<AccordionGroup>
+  <Accordion title="Je SSO dostupné ve všech tarifech?">
+    Ne, SSO je prémiová funkce dostupná pouze v tarifu **Organization**.
+  </Accordion>
+
+  <Accordion title="Kteří poskytovatelé identity jsou podporováni?">
+    Twenty podporuje:
+
+    * **SAML 2.0** (funguje s většinou podnikových poskytovatelů identity)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (dříve Azure AD)
+  </Accordion>
+
+  <Accordion title="Co je zřizování Just-in-Time (JIT)?">
+    Při zřizování JIT se uživatelské účty v Twenty vytvoří automaticky, když se někdo poprvé přihlásí přes SSO. Automaticky jim je přiřazena výchozí role.
+  </Accordion>
+
+  <Accordion title="Mohu vyžadovat SSO pro všechny uživatele?">
+    Ano, jakmile je SSO nakonfigurováno, můžete pro uživatele SSO zakázat přihlášení heslem a vynutit ověřování přes vašeho poskytovatele identity.
+  </Accordion>
+</AccordionGroup>

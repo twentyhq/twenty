@@ -1,0 +1,333 @@
+---
+title: Локальная настройка
+description: Руководство для участников (или любопытных разработчиков), которые хотят запускать Twenty локально.
+---
+
+## Требования
+
+<Tabs>
+  <Tab title="Linux и MacOS">
+    Прежде чем установить и использовать Twenty, убедитесь, что у вас установлено следующее:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm` не будет работать, используйте `yarn`. Yarn теперь поставляется в комплекте с Node.js, так что устанавливать его отдельно не нужно.
+      Нужно лишь выполнить `corepack enable`, чтобы активировать Yarn, если вы еще этого не сделали.
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    1. Установите WSL
+       Откройте PowerShell от имени администратора и выполните:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Теперь должно появиться приглашение на перезагрузку компьютера. Если нет, перезагрузите его вручную.
+
+    После перезагрузки откроется окно PowerShell и установит Ubuntu. Это может занять некоторое время.
+    Появится запрос на создание имени пользователя и пароля для вашей установки Ubuntu.
+
+    2. Установите и настройте git
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Your Name"
+
+    git config --global user.email "youremail@domain.com"
+    ```
+
+    3. Установите nvm, node.js и yarn
+
+    <Warning>
+      Используйте `nvm`, чтобы установить правильную версию `node`. `.nvmrc` гарантирует, что все участники используют одну и ту же версию.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    Закройте и откройте снова терминал, чтобы использовать nvm. Затем выполните следующие команды.
+
+    ```bash
+
+    nvm install # устанавливает рекомендуемую версию node
+
+    nvm use # использовать рекомендуемую версию node
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Шаг 1: Клонирование с помощью Git
+
+Выполните следующую команду в терминале.
+
+<Tabs>
+  <Tab title="SSH (Рекомендовано)">
+    Если вы еще не настроили SSH ключи, вы можете узнать, как это сделать [здесь](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## Шаг 2: Перейдите в корень
+
+```bash
+cd twenty
+```
+
+Все команды в следующих шагах следует выполнять из корня проекта.
+
+## Шаг 3: Настройка базы данных PostgreSQL
+
+<Tabs>
+  <Tab title="Linux">
+    **Опция 1 (предпочтительно):** Чтобы настроить вашу базу данных локально:
+    Используйте следующую ссылку для установки Postgresql на вашу Linux машину: [Установка Postgresql](https://www.postgresql.org/download/linux/)
+
+    ```bash
+    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Примечание: Возможно, вам потребуется добавить `sudo -u postgres` к команде перед `psql`, чтобы избежать ошибок с правами.
+
+    **Опция 2:** Если у вас установлен docker:
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Опция 1 (предпочтительно):** Чтобы настроить вашу базу данных локально с помощью `brew`:
+
+    ```bash
+    brew install postgresql@16
+    export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+    brew services start postgresql@16
+    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Вы можете проверить, запущен ли сервер PostgreSQL, выполнив:
+
+    ```bash
+    brew services list
+    ```
+
+    Установщик может не создать пользователя `postgres` по умолчанию при установке
+    через Homebrew на MacOS. Вместо этого он создает роль PostgreSQL, которая совпадает с вашим именем пользователя в MacOS
+    например, "john".
+    Чтобы проверить и создать пользователя `postgres`, при необходимости выполните следующие шаги:
+
+    ```bash
+    # Подключитесь к PostgreSQL
+    psql postgres
+    или
+    psql -U $(whoami) -d postgres
+    ```
+
+    Оказавшись в приглашении psql (postgres=#), выполните:
+
+    ```bash
+    # Список существующих ролей PostgreSQL
+    \du
+    ```
+
+    Вы увидите вывод, похожий на следующий:
+
+    ```bash
+    Role name | Attributes  | Member of
+    -----------+-------------+-----------
+    john      | Superuser   | {}
+    ```
+
+    Если вы не видите роль `postgres` в списке, перейдите к следующему шагу.
+    Создайте роль `postgres` вручную:
+
+    ```bash
+    CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    Это создает роль суперпользователя с именем `postgres` с доступом для входа.
+
+    **Опция 2:** Если у вас установлен docker:
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Все последующие шаги следует выполнять в терминале WSL (внутри вашей виртуальной машины)
+
+    **Опция 1:** Чтобы настроить вашу базу данных Postgresql локально:
+    Используйте следующую ссылку для установки Postgresql на вашу Linux виртуальную машину: [Установка Postgresql](https://www.postgresql.org/download/linux/)
+
+    ```bash
+    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Примечание: Возможно, вам потребуется добавить `sudo -u postgres` к команде перед `psql`, чтобы избежать ошибок с правами.
+
+    **Опция 2:** Если у вас установлен docker:
+    Запуск Docker на WSL добавляет дополнительный уровень сложности.
+    Используйте эту опцию только если вы комфортно себя чувствуете с дополнительными шагами, включая включение [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Теперь вы можете получить доступ к базе данных по адресу [localhost:5432](localhost:5432), с пользователем `postgres` и паролем `postgres`.
+
+## Шаг 4: Настройка базы данных Redis (кэш)
+
+Twenty требует кэша Redis для обеспечения наилучшей производительности
+
+<Tabs>
+  <Tab title="Linux">
+    **Опция 1:** Чтобы настроить Redis локально:
+    Используйте следующую ссылку для установки Redis на вашу Linux машину: [Установка Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Опция 2:** Если у вас установлен docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Опция 1 (предпочтительно):** Чтобы настроить Redis локально с помощью `brew`:
+
+    ```bash
+    brew install redis
+    ```
+
+    Запустите сервер redis:
+    `brew services start redis`
+
+    **Опция 2:** Если у вас установлен docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    **Опция 1:** Чтобы настроить Redis локально:
+    Используйте следующую ссылку для установки Redis на вашу Linux виртуальную машину: [Установка Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Опция 2:** Если у вас установлен docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Если вам нужен графический интерфейс клиента, мы рекомендуем [redis insight](https://redis.io/insight/) (доступна бесплатная версия)
+
+## Шаг 5: Настройка переменных окружения
+
+Используйте переменные окружения или файлы `.env` для настройки вашего проекта. More info [here](/l/ru/developers/self-host/capabilities/setup)
+
+Скопируйте `.env.example` файлы в `/front` и `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ru/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
+## Шаг 6: Установка зависимостей
+
+Чтобы собрать сервер Twenty и добавить данные в вашу базу данных, выполните следующую команду:
+
+```bash
+yarn
+```
+
+Обратите внимание, что `npm` или `pnpm` не будут работать
+
+## Шаг 7: Запуск проекта
+
+<Tabs>
+  <Tab title="Linux">
+    В зависимости от вашего дистрибутива Linux, сервер Redis может быть запущен автоматически.
+    Если нет, проверьте [Руководство по установке Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) для вашего дистрибутива.
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redis должен уже работать. Если нет, выполните:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    В зависимости от вашей дистрибуции Linux, сервер Redis может быть запущен автоматически.
+    Если нет, проверьте [руководство по установке Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) для вашего дистрибутива.
+  </Tab>
+</Tabs>
+
+Настройте вашу базу данных с помощью следующей команды:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Запустите сервер, рабочую программу и сервисы фронтенда:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+В качестве альтернативы, вы можете запустить все сервисы сразу:
+
+```bash
+npx nx start
+```
+
+## Шаг 8: Использовать Twenty
+
+**Frontend**
+
+Фронтенд Twenty будет работать на [http://localhost:3001](http://localhost:3001).
+Вы можете войти, используя учетную запись демо по умолчанию: `tim@apple.dev` (пароль: `tim@apple.dev`)
+
+**Backend**
+
+* Сервер Twenty будет работать на [http://localhost:3000](http://localhost:3000).
+* К GraphQL API можно получить доступ по адресу [http://localhost:3000/graphql](http://localhost:3000/graphql).
+* К REST API можно обратиться по адресу [http://localhost:3000/rest](http://localhost:3000/rest).
+
+## Устранение неполадок
+
+Если у вас возникли проблемы, проверьте [Устранение неполадок](/l/ru/developers/self-host/capabilities/troubleshooting) для получения решений.

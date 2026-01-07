@@ -1,0 +1,199 @@
+---
+title: Formula Fields
+description: Create formula fields using workflows until native support is available.
+---
+
+Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+
+## Common Use Cases
+
+| Use Case | Formula Example |
+|----------|-----------------|
+| **Full name** | First Name + " " + Last Name |
+| **Expected amount** | Amount × Probability |
+| **Days until due** | Due Date - Today |
+| **Days in stage** | Today - Stage Entry Date |
+| **Lead score** | Points based on multiple criteria |
+
+<Tip>
+For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/user-guide/views-pipelines/how-tos/track-time-in-stage).
+</Tip>
+
+## Basic Formula: Concatenation
+
+### Example: Auto-Fill Full Name
+
+**Goal**: Automatically combine first and last name into a full name field.
+
+### Setup
+
+1. **Trigger**: Record is Updated or Created (People)
+
+2. **Filter**: Check that first name or last name changed
+
+3. **Code action**:
+
+```javascript
+export const main = async (params) => {
+  const { firstName, lastName } = params;
+
+  const fullName = [firstName, lastName]
+    .filter(Boolean)
+    .join(' ');
+
+  return { fullName };
+};
+```
+
+4. **Update Record**: Set Full Name to `{{code.fullName}}`
+
+## Numeric Formula: Expected Amount
+
+### Example: Calculate Expected Revenue
+
+**Goal**: Multiply opportunity amount by probability to get expected amount.
+
+See [How to Show Expected Amount in Pipeline](/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+
+### Quick Setup
+
+1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+
+2. **Code action**:
+
+```javascript
+export const main = async (params) => {
+  const { amount, probability } = params;
+
+  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+
+  return { expectedAmount };
+};
+```
+
+3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+
+## Date Formula: Days Calculation
+
+### Example: Days Until Task Due
+
+**Goal**: Calculate how many days remain until a task's due date.
+
+### Setup
+
+1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+
+2. **Code action**:
+
+```javascript
+export const main = async (params) => {
+  const { dueDate } = params;
+
+  if (!dueDate) {
+    return { daysUntilDue: null };
+  }
+
+  const due = new Date(dueDate);
+  const today = new Date();
+  const diffTime = due - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return { daysUntilDue: diffDays };
+};
+```
+
+3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+
+<Note>
+Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+</Note>
+
+## Conditional Formula: Lead Score
+
+### Example: Calculate Lead Score Based on Criteria
+
+**Goal**: Score leads based on company size, industry, and engagement.
+
+### Setup
+
+1. **Trigger**: Record is Updated (People or Companies)
+
+2. **Code action**:
+
+```javascript
+export const main = async (params) => {
+  const { companySize, industry, hasEmail, hasPhone, source } = params;
+
+  let score = 0;
+
+  // Company size scoring
+  if (companySize === 'Enterprise') score += 30;
+  else if (companySize === 'Mid-Market') score += 20;
+  else if (companySize === 'SMB') score += 10;
+
+  // Industry scoring
+  const targetIndustries = ['Technology', 'Finance', 'Healthcare'];
+  if (targetIndustries.includes(industry)) score += 25;
+
+  // Contact info scoring
+  if (hasEmail) score += 10;
+  if (hasPhone) score += 15;
+
+  // Source scoring
+  if (source === 'Referral') score += 20;
+  else if (source === 'Website') score += 10;
+
+  return { leadScore: score };
+};
+```
+
+3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+
+## Text Formula: Domain Extraction
+
+### Example: Extract Domain from Email
+
+**Goal**: Automatically extract and store the email domain.
+
+### Setup
+
+1. **Trigger**: Record is Updated (People, Email field)
+
+2. **Code action**:
+
+```javascript
+export const main = async (params) => {
+  const { email } = params;
+
+  if (!email) return { domain: null };
+
+  const domain = email.split('@')[1]?.toLowerCase();
+
+  return { domain };
+};
+```
+
+3. **Update Record**: Set Domain field to `{{code.domain}}`
+
+## Best Practices
+
+### Performance
+- Only trigger on relevant field changes
+- Use filters to skip records that don't need calculation
+- Avoid complex calculations in high-volume workflows
+
+### Error Handling
+- Check for null/undefined values before calculations
+- Use default values when data is missing
+- Return clear error messages when calculations fail
+
+### Testing
+- Test with edge cases (empty fields, zero values)
+- Verify calculations manually before activating
+- Monitor workflow runs for unexpected results
+
+## Related
+
+- [How to Show Expected Amount in Pipeline](/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [How to Track Time in Stage](/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)

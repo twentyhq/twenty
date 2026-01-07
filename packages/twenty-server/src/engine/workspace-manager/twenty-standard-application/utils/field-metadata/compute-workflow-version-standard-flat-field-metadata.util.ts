@@ -114,6 +114,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'The workflow version name',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -130,6 +131,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Json object to provide trigger',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -146,6 +148,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Json object to provide steps',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -162,6 +165,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'The workflow version status',
       icon: 'IconStatusChange',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'DRAFT'",
       options: [
         { value: 'DRAFT', label: 'Draft', position: 0, color: 'yellow' },
@@ -191,6 +195,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -209,6 +214,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
@@ -232,6 +238,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'WorkflowVersion workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'versions',
       settings: {
@@ -256,6 +263,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Workflow runs linked to the version.',
       icon: 'IconRun',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowRun',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -279,6 +287,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -302,6 +311,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetWorkflowVersion',
       settings: {

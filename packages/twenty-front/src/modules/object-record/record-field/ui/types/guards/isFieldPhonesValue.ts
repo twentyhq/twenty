@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type FieldPhonesValue } from '../FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const phonesSchema = z.object({
   primaryPhoneNumber: z.string(),

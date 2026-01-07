@@ -17,14 +17,14 @@ import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/se
 import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
+import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
-import { getBarChartSettings } from '../getBarChartSettings';
+import { BarChartLayout } from '~/generated/graphql';
 
 describe('getBarChartSettings', () => {
   describe('Vertical bar chart', () => {
     it('should place primary axis items under "X axis" heading', () => {
-      const result = getBarChartSettings(GraphType.VERTICAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.VERTICAL);
 
       const xAxisGroup = result.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.X_AXIS.id,
@@ -41,7 +41,7 @@ describe('getBarChartSettings', () => {
     });
 
     it('should place secondary axis items under "Y axis" heading', () => {
-      const result = getBarChartSettings(GraphType.VERTICAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.VERTICAL);
 
       const yAxisGroup = result.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.Y_AXIS.id,
@@ -61,7 +61,7 @@ describe('getBarChartSettings', () => {
     });
 
     it('should have all expected groups in correct order', () => {
-      const result = getBarChartSettings(GraphType.VERTICAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.VERTICAL);
 
       expect(result).toHaveLength(4);
       expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
@@ -73,7 +73,7 @@ describe('getBarChartSettings', () => {
 
   describe('Horizontal bar chart', () => {
     it('should place SECONDARY axis items under "X axis" heading', () => {
-      const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       const xAxisGroup = result.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.X_AXIS.id,
@@ -93,7 +93,7 @@ describe('getBarChartSettings', () => {
     });
 
     it('should place PRIMARY axis items under "Y axis" heading', () => {
-      const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       const yAxisGroup = result.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.Y_AXIS.id,
@@ -110,7 +110,7 @@ describe('getBarChartSettings', () => {
     });
 
     it('should have all expected groups in correct order', () => {
-      const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
+      const result = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       expect(result).toHaveLength(4);
       expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
@@ -122,8 +122,8 @@ describe('getBarChartSettings', () => {
 
   describe('Common groups', () => {
     it('should have consistent Data group for both orientations', () => {
-      const verticalResult = getBarChartSettings(GraphType.VERTICAL_BAR);
-      const horizontalResult = getBarChartSettings(GraphType.HORIZONTAL_BAR);
+      const verticalResult = getBarChartSettings(BarChartLayout.VERTICAL);
+      const horizontalResult = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       const verticalDataGroup = verticalResult.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.DATA.id,
@@ -140,8 +140,8 @@ describe('getBarChartSettings', () => {
     });
 
     it('should have consistent Style group for both orientations', () => {
-      const verticalResult = getBarChartSettings(GraphType.VERTICAL_BAR);
-      const horizontalResult = getBarChartSettings(GraphType.HORIZONTAL_BAR);
+      const verticalResult = getBarChartSettings(BarChartLayout.VERTICAL);
+      const horizontalResult = getBarChartSettings(BarChartLayout.HORIZONTAL);
 
       const verticalStyleGroup = verticalResult.find(
         (group) => group.heading.id === CHART_SETTINGS_HEADINGS.STYLE.id,

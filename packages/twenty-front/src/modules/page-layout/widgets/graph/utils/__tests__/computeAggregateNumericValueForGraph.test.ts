@@ -1,6 +1,6 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { computeAggregateNumericValueForGraph } from '../computeAggregateNumericValueForGraph';
+import { computeAggregateNumericValueForGraph } from '@/page-layout/widgets/graph/utils/computeAggregateNumericValueForGraph';
 
 describe('computeAggregateNumericValueForGraph', () => {
   it('should throw error for empty data', () => {

@@ -113,6 +113,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Visibility',
       icon: 'IconEyeglass',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SHARE_EVERYTHING'",
       options: [
         { value: 'METADATA', label: 'Metadata', position: 0, color: 'green' },
@@ -140,6 +141,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -156,6 +158,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Channel Type',
       icon: 'IconMessage',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: `'${MessageChannelType.EMAIL}'`,
       options: [
         {
@@ -187,6 +190,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Is Contact Auto Creation Enabled',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -205,6 +209,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
         'Automatically create People records when receiving or sending emails',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SENT'",
       options: [
         {
@@ -232,6 +237,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Message folder import policy',
       icon: 'IconFolder',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'ALL_FOLDERS'",
       options: [
         {
@@ -263,6 +269,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Exclude non professional emails',
       icon: 'IconBriefcase',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -280,6 +287,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Exclude group emails',
       icon: 'IconUsersGroup',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -297,6 +305,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Pending action for group emails',
       icon: 'IconUsersGroup',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'NONE'",
       options: [
         {
@@ -329,6 +338,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Is Sync Enabled',
       icon: 'IconRefresh',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -346,6 +356,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Last sync cursor',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -362,6 +373,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Last sync date',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -378,6 +390,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Sync status',
       icon: 'IconStatusChange',
       isNullable: true,
+      isUIReadOnly: true,
       options: [
         { value: 'ONGOING', label: 'Ongoing', position: 1, color: 'yellow' },
         {
@@ -416,6 +429,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Sync stage',
       icon: 'IconStatusChange',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'PENDING_CONFIGURATION'",
       options: [
         {
@@ -478,6 +492,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Sync stage started at',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -494,6 +509,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Throttle Failure Count',
       icon: 'IconX',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -512,6 +528,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Connected Account',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'messageChannels',
       settings: {
@@ -536,6 +553,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'messageChannel',
       settings: {
@@ -558,6 +576,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Message Folders',
       icon: 'IconFolder',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageFolder',
       targetFieldName: 'messageChannel',
       settings: {

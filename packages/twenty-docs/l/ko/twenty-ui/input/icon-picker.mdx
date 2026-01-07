@@ -1,5 +1,5 @@
 ---
-title: 아이콘 선택기
+title: Icon Picker
 image: /images/user-guide/github/github-header.png
 ---
 
@@ -7,50 +7,46 @@ image: /images/user-guide/github/github-header.png
   <img src="/images/user-guide/github/github-header.png" alt="Header" />
 </Frame>
 
-드롭다운 기반의 아이콘 선택기로 사용자가 목록에서 아이콘을 선택할 수 있습니다.
+A dropdown-based icon picker that allows users to select an icon from a list.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
 
-```jsx
-import { RecoilRoot } from "recoil";
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
 
-export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
-
-  return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 프로퍼티           | 유형       | 설명                                                                                                         |
-| -------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
-| disabled       | 부울       | `true`로 설정하면 아이콘 선택기가 비활성화됩니다.                                                             |
-| onChange       | function | 사용자가 아이콘을 선택할 때 호출되는 콜백 함수입니다. `iconKey`와 `Icon` 속성을 포함한 객체를 수신합니다.        |
-| 선택된 아이콘 키      | 문자열      | 처음 선택된 아이콘의 키입니다.                                                                          |
-| onClickOutside | function | 사용자가 드롭다운 외부를 클릭했을 때 호출되는 콜백 함수입니다.                                                        |
-| onClose        | function | 드롭다운이 닫힐 때 호출되는 콜백 함수입니다.                                                                  |
-| onOpen         | function | 드롭다운이 열릴 때 호출되는 콜백 함수입니다.                                                                  |
-| 변형             | 문자열      | 클릭 가능한 아이콘의 시각적 스타일 변형입니다. 옵션에는 `primary`, `secondary`, `tertiary`가 포함됩니다. |
-
-</Tab>
+  <Tab title="Props">
+    | Props           | Type     | Description                                                                                                               |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+    | disabled        | boolean  | Disables the icon picker if set to `true`                                                                                 |
+    | onChange        | function | The callback function triggered when the user selects an icon. It receives an object with `iconKey` and `Icon` properties |
+    | selectedIconKey | string   | The key of the initially selected icon                                                                                    |
+    | onClickOutside  | function | Callback function triggered when the user clicks outside the dropdown                                                     |
+    | onClose         | function | Callback function triggered when the dropdown is closed                                                                   |
+    | onOpen          | function | Callback function triggered when the dropdown is opened                                                                   |
+    | variant         | string   | The visual style variant of the clickable icon. Options include: `primary`, `secondary`, and `tertiary`                   |
+  </Tab>
 </Tabs>

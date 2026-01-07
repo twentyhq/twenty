@@ -1,0 +1,136 @@
+---
+title: İş Akışı Tetikleyicileri
+description: Learn about the different triggers that start your workflows.
+---
+
+## About Triggers
+
+İş akışları, otomasyonun ne zaman çalıştırılacağını tanımlayan tek bir tetikleyici ile başlar.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+
+  * Çalışma Alanı Üyeleri
+  * Calendar Events
+  * Messages (Emails)
+  * Tasks, Notes, and many other system objects
+
+  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+</Tip>
+
+## Kayıt Oluşturuldu
+
+Seçilen bir nesneye (Kişiler, Şirketler, Fırsatlar veya herhangi bir özel nesne) yeni bir kayıt oluşturulduğunda iş akışını başlatır.
+
+**Yapılandırma**: Yeni kayıtları izlemek için nesne türünü seçin.
+
+<Note>
+  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+</Note>
+
+## Kayıt Güncellendi
+
+Mevcut bir kayıtta değişiklik yapıldığında iş akışını başlatır.
+
+**Yapılandırma**:
+
+* Nesne türünü seçin
+* Hangi alanların değişiklikler için izleneceğini isteğe bağlı olarak belirtin
+
+## Kayıt Güncellendi veya Oluşturuldu
+
+Bir kaydın seçili bir nesnede oluşturulması veya güncellenmesi durumunda iş akışını başlatır.
+
+**Neden Bu Önemli**: Bu tetikleyici özellikle faydalıdır çünkü farklı yöntemlerle oluşturulan kayıtlar farklı davranır:
+
+* **API/CSV içe aktarmaları**: Kayıtlar tüm alanlar doldurulmuş olarak hemen oluşturulur
+* **Manuel oluşturma**: Önce kayıtlar oluşturulur, ardından alanlar sonraki güncellemelerde eklenir
+
+**Yapılandırma**:
+
+* İzlenecek nesne türünü seçin
+* Hangi alanların değişiklikler için izleneceğini isteğe bağlı olarak belirtin
+* İş akışı, hem ilk oluşturma sırasında hem de sonraki güncellemelerde tetiklenecektir
+
+## Kayıt Silindi
+
+Bir nesneden kayıt kaldırıldığında iş akışını başlatır.
+
+**Yapılandırma**: Silme işlemlerini izlemek için nesne türünü seçin.
+
+## Manual Trigger
+
+Bir kullanıcı eylemi tarafından tetiklendiğinde iş akışını başlatır. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Kullanılabilirlik Yapılandırması**:
+İş akışının kayıt seçimini nasıl ele alacağını seçin:
+
+* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+
+* **Single**: The selected record(s) will be passed to your workflow. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. The workflow will run from beginning to end as many times as there are records selected.
+
+  <Note>
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+  </Note>
+
+* **Bulk**: The selected record(s) will be passed to your workflow. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı bir kere çalışacak, tüm kayıt listesini girdi olarak sağlayacak. This means the workflow needs to contain an [Iterator action](/l/tr/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  This is more advanced, and best for people who want to optimize the number of workflow runs.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Ek Yapılandırma**:
+
+* Hedef nesneyi seçin (Tek ve Toplu kullanılabilirlik için)
+* İş akışı tetikleyicisi için bir komut simgesi seçin
+* Gezinme çubuğundaki konumu yapılandırın (Sabitlenmiş veya Sabitlenmemiş)
+
+**Erişim Yöntemleri**:
+
+* `Cmd+K` menu to find and launch manual workflows
+* Üst gezinme çubuğunda (yapılandırılmışsa) özel bir düğme
+
+## Time-Based Trigger: On a Schedule
+
+Belirlediğiniz aralıklarla iş akışını başlatır.
+
+**Yapılandırma**:
+
+* Zaman birimini seçin (dakika, saat, gün)
+* İleri düzey zamanlama için bir değer girin veya özel cron ifadeleri kullanın.
+
+<Note>
+  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+</Note>
+
+## External Trigger: Webhook
+
+İş akışı, harici bir hizmetten bir GET veya POST isteği alındığında başlar.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Yapılandırma**:
+
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
+
+## Choosing the Right Trigger
+
+| Use Case                    | Recommended Trigger                |
+| --------------------------- | ---------------------------------- |
+| New leads need processing   | Kayıt Oluşturuldu                  |
+| Data changes need sync      | Kayıt Güncellendi                  |
+| Import/manual data handling | Kayıt Güncellendi veya Oluşturuldu |
+| Cleanup after deletion      | Kayıt Silindi                      |
+| User-initiated action       | Manuel Olarak Başlat               |
+| Recurring reports           | On a Schedule                      |
+| External integration        | Webhook or On a Schedule           |

@@ -1,0 +1,311 @@
+---
+title: Acțiuni Workflow
+description: Aflați despre acțiunile disponibile în fluxurile de lucru Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Despre acțiuni
+
+Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți înlănțui mai multe acțiuni pentru a construi automatizări complexe.
+
+<Tip>
+  * Folosiți selectorul de variabile (faceți clic pe pictograma `(x+)`) pentru a răsfoi datele disponibile din pașii anteriori
+  * Plasați cursorul peste orice câmp de intrare pentru a vedea din care pas provine o variabilă — util atunci când același câmp (de ex., ID) există în mai mulți pași anteriori
+  * Dați fiecărei acțiuni un nume descriptiv pentru o mentenanță mai ușoară
+</Tip>
+
+## Acțiuni asupra înregistrărilor
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Creați o Înregistrare
+
+Adaugă o nouă înregistrare la un obiect selectat.
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Completați câmpurile obligatorii și opționale
+* Folosiți date din pașii anteriori sau introduceți manual valori pentru a completa câmpurile
+
+**Output**: Datele noii înregistrări create sunt disponibile pentru utilizare în pașii următori.
+
+### Actualizați Înregistrarea
+
+Modifică o înregistrare existentă într-un obiect selectat.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Alegeți înregistrarea specifică de actualizat.
+  * Puteți alege fie o înregistrare specifică, folosind meniul derulant care afișează toate înregistrările disponibile.
+  * Sau puteți selecta dinamic înregistrarea, desemnând o înregistrare găsită într-un pas anterior, folosind `(x+)`. Nu puteți căuta înregistrarea pe baza unor criterii diferite în această etapă. Dacă încă nu ați identificat înregistrarea, adăugați un pas `Search Record` înaintea acestui pas `Update Record`.
+* Selectați câmpurile de modificat și introduceți valori noi
+
+**Output**: Datele înregistrării actualizate sunt disponibile pentru utilizare în pașii următori.
+
+### Ștergeți Înregistrarea
+
+Îndepărtează o înregistrare dintr-un obiect selectat.
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Alegeți înregistrarea specifică de șters
+
+**Output**: Datele înregistrării șterse rămân disponibile pentru utilizare în pașii următori.
+
+### Căutați Înregistrări
+
+Găsește înregistrări într-un obiect selectat folosind condițiile de filtrare.
+
+**Configurare**:
+
+* Selectați obiectul de căutat
+* Setați criterii de filtrare pentru a restrânge rezultatele
+* Configurați ordonarea și limitele
+
+**Output**: Returnează înregistrările care se potrivesc care pot fi utilizate în pașii următori.
+
+<Note>
+  **Limită**: Search Records returnează maximum **200 de înregistrări**. Dacă aveți nevoie să procesați mai multe, adăugați filtre specifice pentru a reduce rezultatele sau folosiți fluxuri de lucru programate pentru a procesa în loturi.
+</Note>
+
+**Cea mai bună practică**: Utilizați [ramuri](/l/ro/user-guide/workflows/capabilities/workflow-branches) după Search Records pentru a gestiona scenariile "găsit" vs "ne-găsit".
+
+### Upsert Record
+
+Creează o înregistrare nouă sau actualizează una existentă pe baza criteriilor de potrivire. Este util când nu sunteți sigur dacă o înregistrare există deja.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Rețineți ce câmpuri pot fi folosite pentru potrivire: email pentru Persoane, domeniu pentru Companii, ID pentru orice obiect sau orice câmp marcat ca Unique. Va trebui să completați cel puțin unul dintre acestea mai jos.
+* Completați valorile câmpurilor. Nu uitați să completați cel puțin unul dintre identificatorii unici.
+
+<Note>
+  **Potrivirea funcționează de obicei și mai bine când adăugați un singur identificator unic.** De exemplu, captura de ecran de mai jos va potrivi companiile pe baza domeniului lor. ID-ul nu este neapărat necesar.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Folosiți datele din pașii anteriori pentru a completa câmpurile
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### Iterator
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**Configurare**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Define the actions to perform on each record in the loop.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Demonstrație video" />
+
+### Filter
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Configurare**:
+
+* Select the record to filter
+* Definiți condițiile și criteriile de filtrare
+* Configurați care înregistrări ar trebui să treacă la pașii următori
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Tip                | Descriere                                                          |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Cazuri de utilizare**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### Send Email
+
+Trimite un email din fluxul dumneavoastră de lucru. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**Configurare**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* Introduceți adresa de email a destinatarului.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* Setați linia de subiect.
+* Compuneți corpul mesajului. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### Formular
+
+Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+</Warning>
+
+**Configurare**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Demonstrație video" />
+
+## Integration Actions
+
+### Cod
+
+Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
+
+**Configurare**:
+
+* Accesați variabilele din pașii anteriori. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Demonstrație video" />
+
+* Scrieți cod JavaScript în editor
+* Returnați variabilele pentru utilizare în pașii următori
+* Testați codul direct în pas
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### Solicitare HTTP
+
+Trimite o cerere la un API extern ca parte a fluxului dumneavoastră de lucru.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Introduceți URL-ul punctului final API. Using parameters from previous steps is possible.
+* Selectați metoda HTTP (GET, POST, PUT, PATCH, DELETE)
+* Adăugați anteturile și valorile necesare
+* Oferiți un exemplu de răspuns pentru previzualizarea structurii
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Configurare**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ro/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ro/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

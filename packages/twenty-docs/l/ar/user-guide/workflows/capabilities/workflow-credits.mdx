@@ -1,0 +1,76 @@
+---
+title: رصيد سير العمل
+description: Understand workflow credit consumption and management.
+---
+
+Workflow credits power your automations in Twenty. فهم كيفية عملها يساعدك على تحسين التكاليف وإدارة ميزانية الأتمتة بفعالية.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## كيف يعمل استهلاك الرصيد
+
+Credits are consumed when workflows execute, not when you create them. يستهلك كل إجراء سير عمل الرصيد بناءً على تعقيده.
+
+### استهلاك الرصيد حسب نوع الإجراء
+
+* **العمليات الأساسية الداخلية**: استهلاك رصيد منخفض جدًا
+  * البحث في السجلات
+  * إنشاء سجل
+  * تحديث السجل
+  * حذف السجل
+  * Form actions
+
+* **Complex operations**: Higher credit consumption
+  * إجراءات الكود (تنفيذ JavaScript)
+  * طلبات HTTP إلى الخدمات الخارجية
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### الخصم في الوقت الحقيقي
+
+يتم خصم الرصيد في الوقت الفعلي عند تنفيذ سير العمل. هذا يعني:
+
+* Draft workflows don't consume credits
+* Only active, running workflows use your credit allocation
+* Failed workflows still consume credits for completed steps
+
+## إدارة الرصيد
+
+### التحقق من استخدام الرصيد
+
+1. اذهب إلى **الإعدادات → الفواتير**
+2. View your current credit consumption and remaining balance
+3. Monitor usage patterns to optimize your workflows
+
+### شراء رصيد إضافي
+
+If you need more credits beyond your plan allocation:
+
+1. اذهب إلى **الإعدادات → الفواتير**
+2. اضغط على الخيار لشراء رصيد إضافي. توفر باقات بأحجام مختلفة.
+3. يتم إضافة الرصيد إلى الرصيد الحالي الخاص بك.
+
+## أفضل الممارسات
+
+* **المعالجة الدفعية**: استخدم العمليات الجماعية وإجراءات المكرر بفعالية
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* تحسين إجراءات الكود للكفاءة
+* قم بتجميع العمليات لتقليل طلبات الإجراءات الفردية

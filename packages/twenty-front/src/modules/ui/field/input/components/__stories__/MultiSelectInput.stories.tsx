@@ -18,7 +18,7 @@ import {
 import { type SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { MultiSelectInput } from '../MultiSelectInput';
+import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 
 type RenderProps = {
   values: FieldMultiSelectValue;

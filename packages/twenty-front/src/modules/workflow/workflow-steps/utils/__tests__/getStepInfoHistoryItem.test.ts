@@ -1,6 +1,6 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { type WorkflowRunStepInfo, StepStatus } from 'twenty-shared/workflow';
-import { getStepInfoHistoryItem } from '../getStepInfoHistoryItem';
+import { getStepInfoHistoryItem } from '@/workflow/workflow-steps/utils/getStepInfoHistoryItem';
 
 describe('getStepInfoHistoryItem', () => {
   const iteratorStep: WorkflowStep = {

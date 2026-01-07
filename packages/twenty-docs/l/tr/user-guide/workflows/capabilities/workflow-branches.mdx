@@ -1,0 +1,66 @@
+---
+title: İş Akışı Dalları
+description: İş akışlarınızda paralel yollar ve koşullu mantık oluşturun.
+---
+
+Dallar, iş akışınızı verilerinize bağlı olarak eşzamanlı veya koşullu olarak çalışabilen birden çok yola ayırmanıza olanak tanır.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Dallar Nasıl Çalışır
+
+Tek bir düğümden birden fazla bağlantı oluşturduğunuzda, her yol bir dala dönüşür. Varsayılan olarak, **tüm dallar paralel olarak çalışır**—birbirlerini beklemezler.
+
+## Dal Oluşturma
+
+### Yeni Bir Dal Ekle
+
+1. **İş akışının ana tuvaline sağ tıklayın** (mevcut bir düğümün üzerine değil)
+2. **Düğüm ekle** seçeneğine tıklayın.
+3. Yeni dalınız için düğüm türünü seçin
+4. Önceki adımın altından bu yeni eylemin üstüne bir ok sürükleyin
+5. Aynı düğümden daha fazla dal eklemek için tekrarlayın
+
+<Note>
+  Her dal bağımsızdır. Bir dal eklemek, o düğümdeki diğer mevcut yolları etkilemez.
+</Note>
+
+### Görsel Düzen
+
+Dallar, iş akışı düzenleyicisinde paralel yollar olarak görünür. Yürütmeyi etkilemeden görsel düzeni yeniden düzenlemek için düğümleri sürükleyebilirsiniz.
+
+## Koşullu Dallar
+
+Tüm dallar varsayılan olarak çalıştığından, hangi yolların gerçekten yürütüleceğini denetlemek için **Filtre** düğümlerini kullanın:
+
+| Dal | Filtre Koşulu        | Eylem                   |
+| --- | -------------------- | ----------------------- |
+| A   | Aşama = "Kazanıldı"  | Tebrik e-postası gönder |
+| B   | Aşama = "Kaybedildi" | Takip görevi oluştur    |
+| C   | Aşama = "Müzakere"   | Yöneticiyi bilgilendir  |
+
+1. Tetikleyicinizden veya eyleminizden dallar oluşturun
+2. Her dalın ilk adımı olarak bir **Filtre** düğümü ekleyin
+3. Her filtreyi birbirini dışlayan koşullarla yapılandırın
+4. Her filtrenin ardından eylemlerinizi ekleyin
+
+Yalnızca filtre koşulunun sağlandığı dallar yürütülmeye devam eder.
+
+## Dalları Birleştirme
+
+**Dallar otomatik olarak birleştirilmez.** Her dal, bitene kadar bağımsız olarak çalışır. Bunu nasıl ele alacağınız konusunda tam esnekliğe sahipsiniz:
+
+* **Seçenek 1: Dalları ayrı tutun**
+  Her dal, kendi takip eylemlerini bağımsız olarak yürütür. Dalların birleşmesi gerekmiyorsa bu en basit yaklaşımdır.
+
+* **Seçenek 2: Dalları el ile birleştirin**
+  İş akışınızı oluştururken birden fazla dalı aynı sonraki eyleme manuel olarak bağlayabilirsiniz. Her dalın sonundan ortak bir düğüme okları sürüklemeniz yeterlidir.
+
+<Note>
+  Yürütmeyi duraklatmak için bir [Delay](/l/tr/user-guide/workflows/capabilities/workflow-actions#delay) düğümü kullanabilirsiniz, ancak şu anda "başka bir dal bitene kadar" bekleyecek şekilde yapılandırılamaz.
+</Note>
+
+## İlgili
+
+* [İş Akışlarında Dallar Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows) - Adım adım kılavuz
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) - Filtre de dahil olmak üzere kullanılabilir eylemler

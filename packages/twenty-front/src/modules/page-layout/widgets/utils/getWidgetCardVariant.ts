@@ -6,12 +6,16 @@ type GetWidgetCardVariantParams = {
   layoutMode: PageLayoutTabLayoutMode;
   isInPinnedTab: boolean;
   pageLayoutType: PageLayoutType | null;
+  isMobile: boolean;
+  isInRightDrawer: boolean;
 };
 
 export const getWidgetCardVariant = ({
   layoutMode,
   isInPinnedTab,
   pageLayoutType,
+  isMobile,
+  isInRightDrawer,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
   if (pageLayoutType === PageLayoutType.DASHBOARD) {
     return 'dashboard';
@@ -21,7 +25,7 @@ export const getWidgetCardVariant = ({
     return 'canvas';
   }
 
-  if (isInPinnedTab) {
+  if (isInPinnedTab || isMobile || isInRightDrawer) {
     return 'side-column';
   }
 

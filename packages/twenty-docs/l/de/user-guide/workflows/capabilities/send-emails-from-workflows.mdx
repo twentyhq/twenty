@@ -1,0 +1,149 @@
+---
+title: E-Mails über Workflows senden
+description: Senden Sie personalisierte E-Mails automatisch mit Workflow-Aktionen.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Senden Sie automatisch E-Mails, wenn bestimmte Ereignisse in Ihrem CRM auftreten—heißen Sie neue Kontakte willkommen, führen Sie Nachfassaktionen bei Verkaufschancen durch oder benachrichtigen Sie Teammitglieder.
+
+## Voraussetzungen
+
+Bevor Sie E-Mails aus Workflows senden können:
+
+1. Verbinden Sie ein E-Mail-Konto unter **Einstellungen → Konten**
+2. Stellen Sie sicher, dass für das Konto Sendeberechtigungen aktiviert sind
+
+## Grundlegender E-Mail-Workflow
+
+### Beispiel: Willkommens-E-Mail für neue Kontakte
+
+**Ziel**: Senden Sie eine Willkommens-E-Mail, wenn eine neue Person zum CRM hinzugefügt wird.
+
+**Einrichtung**:
+
+1. **Workflow erstellen**: Gehen Sie zu **Einstellungen → Workflows** und klicken Sie auf **+ Neuer Workflow**
+
+2. **Auslöser hinzufügen**: Wählen Sie **Datensatz wird erstellt** → **Personen**
+
+3. **Aktion "E-Mail senden" hinzufügen**:
+   * Klicken Sie auf **+**, um eine Aktion hinzuzufügen
+   * Wählen Sie **E-Mail senden**
+   * Konfigurieren Sie die E-Mail:
+
+| Feld        | Wert                                   |
+| ----------- | -------------------------------------- |
+| **An**      | `{{trigger.object.email}}`             |
+| **Betreff** | `Willkommen bei {{Your Company Name}}` |
+| **Inhalt**  | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Testen und aktivieren**: Testen Sie mit einem Beispieldatensatz und aktivieren Sie anschließend
+
+## Variablen in E-Mails verwenden
+
+Verweisen Sie mit der Syntax `{{variable}}` auf Daten aus vorherigen Schritten:
+
+```text
+Hallo {{trigger.object.firstName}},
+
+Vielen Dank, dass Sie mit uns Kontakt aufgenommen haben!
+
+Ihr Unternehmen, {{trigger.object.company.name}}, ist jetzt in unserem System.
+
+Mit freundlichen Grüßen,
+Das Team
+```
+
+### Verfügbare Variablen aus Auslösern
+
+| Auslöser-Typ                        | Häufige Variablen                      |
+| ----------------------------------- | -------------------------------------- |
+| **Datensatz erstellt/aktualisiert** | `{{trigger.object.fieldName}}`         |
+| **Manuell**                         | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                         | `{{trigger.body.fieldName}}`           |
+
+## Erweitert: Bedingte E-Mails
+
+### Beispiel: Unterschiedliche E-Mails basierend auf der Lead-Quelle
+
+**Ziel**: Senden Sie unterschiedliche Willkommens-E-Mails, je nachdem, woher der Lead stammt.
+
+**Einrichtung**:
+
+1. **Auslöser**: Datensatz wird erstellt (Personen)
+
+2. **Aktion "Filter" hinzufügen**:
+   * Bedingung: `{{trigger.object.source}}` ist gleich `"Website"`
+   * Wenn wahr → mit der Website-Willkommens-E-Mail fortfahren
+
+3. **Verzweigung für andere Quellen**:
+   * Erstellen Sie parallele Verzweigungen für verschiedene Quellen
+   * Jede Verzweigung hat ihre eigene Aktion "E-Mail senden"
+
+## E-Mails an mehrere Empfänger senden
+
+### Beispiel: Team benachrichtigen, wenn ein Deal abgeschlossen wird
+
+**Ziel**: Senden Sie E-Mails an den Vertriebsmitarbeiter und dessen Manager, wenn eine Verkaufschance gewonnen wird.
+
+**Einrichtung**:
+
+1. **Auslöser**: Datensatz wird aktualisiert (Chancen, Phase = "Closed Won")
+
+2. **Datensätze durchsuchen**: Finden Sie den Manager des Eigentümers der Verkaufschance
+
+3. **E-Mail senden #1**: An den Eigentümer der Verkaufschance
+   * An: `{{trigger.object.owner.email}}`
+   * Betreff: `Glückwunsch zum Abschluss von {{trigger.object.name}}!`
+
+4. **E-Mail senden #2**: An den Manager
+   * An: `{{searchRecords.manager.email}}`
+   * Betreff: `Deal gewonnen: {{trigger.object.name}}`
+
+## Geplante Nachfass-E-Mails
+
+### Beispiel: 3 Tage nach der Besprechung nachfassen
+
+**Ziel**: Senden Sie 3 Tage, nachdem eine Besprechung protokolliert wurde, eine Nachfass-E-Mail.
+
+**Einrichtung**:
+
+1. **Auslöser**: Datensatz wird erstellt (Aktivitäten, Typ = "Besprechung")
+
+2. **Verzögerungsaktion**: 3 Tage warten
+
+3. **E-Mail senden**:
+   * An: Besprechungsteilnehmer
+   * Betreff: Rückmeldung zu unserem Gespräch
+   * Text: Verweisen Sie auf Besprechungsdetails aus dem Auslöser
+
+## Beste Praktiken
+
+### E-Mail-Inhalt
+
+* Formulieren Sie Betreffzeilen prägnant und relevant
+* Personalisieren Sie mit dem Namen des Empfängers
+* Fügen Sie eine klare Handlungsaufforderung hinzu
+* Testen Sie E-Mails vor der Aktivierung
+
+### Zustellbarkeit
+
+* Senden Sie nicht zu viele E-Mails in zu kurzer Zeit
+* Verwenden Sie professionelle E-Mail-Signaturen
+* Vermeiden Sie Spam-Trigger-Wörter
+* Stellen Sie sicher, dass Marketing-E-Mails eine Abmeldemöglichkeit enthalten
+
+### Fehlerbehebung
+
+* Überprüfen Sie, dass das E-Mail-Konto verbunden und aktiv ist
+* Prüfen Sie, ob die E-Mail-Adresse des Empfängers gültig ist
+* Überprüfen Sie Workflow-Ausführungen auf Fehlermeldungen
+* Testen Sie zunächst mit Ihrer eigenen E-Mail-Adresse
+
+<Note>
+  **Bald verfügbar**: E-Mail-Anhänge werden im Q1 2026 verfügbar sein.
+</Note>
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)

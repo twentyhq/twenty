@@ -217,7 +217,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Documentation`,
           onClick: () =>
             window.open(
-              getDocumentationUrl(currentWorkspaceMember?.locale),
+              getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
               '_blank',
             ),
           Icon: IconHelpCircle,

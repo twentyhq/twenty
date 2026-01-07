@@ -20,12 +20,17 @@ export enum PageLayoutWidgetExceptionMessageKey {
   INVALID_WIDGET_CONFIGURATION = 'INVALID_WIDGET_CONFIGURATION',
 }
 
-const pageLayoutWidgetExceptionUserFriendlyMessages: Record<
-  PageLayoutWidgetExceptionCode,
-  MessageDescriptor
-> = {
-  [PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND]: msg`Page layout widget not found.`,
-  [PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA]: msg`Invalid page layout widget data.`,
+const getPageLayoutWidgetExceptionUserFriendlyMessage = (
+  code: PageLayoutWidgetExceptionCode,
+) => {
+  switch (code) {
+    case PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND:
+      return msg`Page layout widget not found.`;
+    case PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA:
+      return msg`Invalid page layout widget data.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetExceptionCode> {
@@ -37,7 +42,7 @@ export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetE
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        pageLayoutWidgetExceptionUserFriendlyMessages[code],
+        getPageLayoutWidgetExceptionUserFriendlyMessage(code),
     });
   }
 }

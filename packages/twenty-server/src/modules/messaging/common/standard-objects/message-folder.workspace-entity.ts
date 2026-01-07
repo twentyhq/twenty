@@ -10,6 +10,8 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -39,6 +41,10 @@ registerEnumType(MessageFolderPendingSyncAction, {
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
+@WorkspaceIndex(['messageChannelId', 'externalId'], {
+  isUnique: true,
+  indexWhereClause: '"deletedAt" IS NULL',
+})
 export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,
@@ -47,6 +53,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Folder name`,
     icon: 'IconFolder',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   name: string | null;
 
@@ -60,6 +67,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageFolders',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   messageChannel: Relation<MessageChannelWorkspaceEntity>;
 
   @WorkspaceField({
@@ -69,6 +77,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sync Cursor`,
     icon: 'IconHash',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   syncCursor: string | null;
 
@@ -80,6 +89,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheck',
     defaultValue: false,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isSentFolder: boolean;
 
   @WorkspaceField({
@@ -90,6 +100,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheck',
     defaultValue: false,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isSynced: boolean;
 
   @WorkspaceField({
@@ -100,6 +111,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFolder',
     defaultValue: null,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   parentFolderId: string | null;
 
@@ -111,6 +123,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHash',
     defaultValue: null,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   externalId: string | null;
 
@@ -136,6 +149,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${MessageFolderPendingSyncAction.NONE}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   pendingSyncAction: MessageFolderPendingSyncAction;
 
   @WorkspaceJoinColumn('messageChannel')

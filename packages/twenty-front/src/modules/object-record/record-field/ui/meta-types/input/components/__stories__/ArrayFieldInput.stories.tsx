@@ -13,7 +13,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { ArrayFieldInput } from '../ArrayFieldInput';
+import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();

@@ -1,0 +1,293 @@
+---
+title: إعداد
+---
+
+# إدارة الإعدادات
+
+<Warning>
+  **هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker Compose](/l/ar/developers/self-host/capabilities/docker-compose) لتشغيل Twenty، ثم عد هنا للإعداد.
+</Warning>
+
+يوفر Twenty **وضعين للإعداد** ليلائم احتياجات النشر المختلفة:
+
+**الوصول إلى لوحة الإدارة:** يمكن للمستخدمين الذين لديهم صلاحيات المسؤول (`canAccessFullAdminPanel: true`) فقط الوصول إلى واجهة التكوين.
+
+## 1. إعداد لوحة الإدارة (افتراضي)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # افتراضي
+```
+
+**يحدث أغلب التكوين عبر واجهة المستخدم** بعد التثبيت:
+
+1. الوصول إلى نسخة Twenty الخاصة بك (عادة `http://localhost:3000`)
+2. اذهب إلى **الإعدادات / لوحة الإدارة / متغيرات التكوين**
+3. اضبط التكاملات، والبريد الإلكتروني، والتخزين، والمزيد
+4. تسري التغييرات على الفور (خلال 15 ثانية لعمليات النشر متعددة الحاويات)
+
+<Warning>
+  **نشرات متعددة الحاويات:** عند استخدام إعدادات قاعدة البيانات (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)، يقوم كل من حاويات الخادم والعامل بالقراءة من نفس قاعدة البيانات. التغييرات في لوحة الإدارة تؤثر عليهما تلقائيًا، مما يلغي الحاجة إلى تكرار متغيرات البيئة بين الحاويات (باستثناء متغيرات البنية التحتية).
+</Warning>
+
+**ما يمكنك تكوينه عبر لوحة الإدارة:**
+
+* **المصادقة** - Google/Microsoft OAuth، إعدادات كلمة المرور
+* **البريد الإلكتروني** - إعدادات SMTP، القوالب، التحقق
+* **التخزين** - تكوين S3، مسارات التخزين المحلية
+* **التكاملات** - Gmail، تقويم Google، خدمات Microsoft
+* **حدود التشغيل ومعدل التكنولوجيا** - حدود التنفيذ، API الحد من السرعة
+* **والمزيد من الأمور...**
+
+![متغيرات تكوين لوحة الإدارة](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  كل متغير موثق بوصف في لوحة الإدارة الخاصة بك في **الإعدادات → لوحة الإدارة → متغيرات التكوين**.
+  بعض إعدادات البنية التحتية مثل اتصالات قاعدة البيانات (`PG_DATABASE_URL`)، عناوين الخوادم (`SERVER_URL`)، وأسرار التطبيقات (`APP_SECRET`) يمكن ضبطها فقط عبر ملف `.env`.
+
+  [مرجع تقني كامل →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. إعداد بيئي فقط
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**جميع الإعدادات تتم إدارتها عبر ملفات `.env`:**
+
+1. قم بتعيين `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` في ملف `.env` الخاص بك
+2. أضف جميع متغيرات الإعداد إلى ملف `.env` الخاص بك
+3. أعد تشغيل الحاويات لتصبح التغييرات نافذة
+4. ستظهر لوحة الإدارة القيم الحالية لكنها لن تتمكن من تعديلها
+
+## Multi-Workspace Mode
+
+By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+
+### Single-Workspace Mode (Default)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* One workspace per Twenty instance
+* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
+* New signups are disabled after the first workspace is created
+* Simple URL structure: `https://your-domain.com`
+
+### Enabling Multi-Workspace Mode
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+
+**Key differences from single-workspace mode:**
+
+* Multiple workspaces can be created on the same instance
+* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
+* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
+* No automatic admin privileges — first user in each workspace is a regular user
+* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+
+<Warning>
+  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+</Warning>
+
+### DNS Configuration for Multi-Workspace
+
+When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+
+### Restricting Workspace Creation
+
+In multi-workspace mode, you may want to limit who can create new workspaces:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+
+## تكامل Gmail و Google Calendar
+
+### إنشاء مشروع Google Cloud
+
+1. اذهب إلى [وحدة تحكم السحابة من Google](https://console.cloud.google.com/)
+2. أنشئ مشروعًا جديدًا أو اختر أحد المشاريع الموجودة
+3. قم بتفعيل هذه الـ APIs:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### تكوين OAuth
+
+1. اذهب إلى [بيانات اعتماد](https://console.cloud.google.com/apis/credentials)
+2. قم بإنشاء معرف عميل OAuth 2.0
+3. أضف هذه الـ URIs لإعادة التوجيه:
+   * `https://{your-domain}/auth/google/redirect` (for SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### الإعداد في Twenty
+
+1. اذهب إلى **الإعدادات → لوحة الإدارة → متغيرات التكوين**
+2. ابحث بسهولة **عن قسم Google Auth**
+3. حدد هذه المتغيرات:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+</Warning>
+
+**النطاقات المطلوبة** (يتم تكوينها تلقائيًا):
+[انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### إذا كان تطبيقك في وضع الاختبار
+
+إذا كان تطبيقك في وضع الاختبار، ستحتاج إلى إضافة مستخدمين اختباريين إلى مشروعك.
+
+تحت [شاشة موافقة OAuth](https://console.cloud.google.com/apis/credentials/consent)، أضف مستخدمي الاختبار إلى قسم "مستخدمو الاختبار".
+
+## تكامل Microsoft 365
+
+<Warning>
+  يجب على المستخدمين الحصول على [ترخيص Microsoft 365](https://admin.microsoft.com/Adminportal/Home) ليتمكنوا من استخدام تقويم API ورسائل. لن يتمكنوا من مزامنة حسابهم في Twenty دون واحد منها.
+</Warning>
+
+### إنشاء مشروع في Microsoft Azure
+
+ستحتاج إلى إنشاء مشروع في [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) والحصول على بيانات الاعتماد.
+
+### تمكين APIs
+
+على وحدة تحكم Microsoft Azure، قم بتمكين الواجهات التالية في "أذونات":
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profile
+* Microsoft Graph: offline_access
+
+ملحوظة: "Mail.ReadWrite" و "Mail.Send" إلزاميان فقط إذا كنت ترغب في إرسال رسائل بريد إلكتروني باستخدام إجراءات سير العمل الخاصة بنا. يمكنك استخدام "Mail.Read" بدلاً من ذلك إذا كنت ترغب فقط في تلقي الرسائل الإلكترونية.
+
+### URIs لإعادة التوجيه المصرح بها
+
+ستحتاج إلى إضافة URIs التالية لإعادة التوجيه إلى مشروعك:
+
+* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### الإعداد في Twenty
+
+1. اذهب إلى **الإعدادات → لوحة الإدارة → متغيرات التكوين**
+2. Find the **Microsoft Auth** section
+3. حدد هذه المتغيرات:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+</Warning>
+
+### Configure scopes
+
+[انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'البريد الإلكتروني'
+* 'profile'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### إذا كان تطبيقك في وضع الاختبار
+
+إذا كان تطبيقك في وضع الاختبار، ستحتاج إلى إضافة مستخدمين اختباريين إلى مشروعك.
+
+أضف مستخدمي الاختبار إلى قسم "المستخدمون والمجموعات".
+
+## Background Jobs for Calendar & Messaging
+
+بعد إعداد تكامل Gmail، أو Google Calendar، أو Microsoft 365، تحتاج إلى بدء وظائف الخلفية التي تقوم بمزامنة البيانات.
+
+سجل الوظائف المتكررة التالية في حاوية العمل الخاصة بك:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## تكوين البريد الإلكتروني
+
+1. اذهب إلى **الإعدادات → لوحة الإدارة → متغيرات التكوين**
+2. Find the **Email** section
+3. قم بضبط إعدادات SMTP الخاصة بك:
+
+<ArticleTabs label1="جيميل" label2="أوفيس 365" label3="Smtp4dev">
+  <ArticleTab>
+    ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.google.com/accounts/answer/185833).
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_email_address
+    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    تذكر أنه إذا كنت تشغل التحقق بعاملين، ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_email_address
+    * EMAIL_SMTP_PASSWORD='office365_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** هو خادم بريد إلكتروني مزيف للتطوير والاختبار.
+
+    * قم بتشغيل صورة smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * الوصول إلى واجهة المستخدم smtp4dev هنا: [http://localhost:8090](http://localhost:8090)
+    * حدد المتغيرات التالية:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+</Warning>

@@ -1,7 +1,7 @@
 import { CalendarChannelSyncStatus } from '@/accounts/types/CalendarChannel';
 import { MessageChannelSyncStatus } from '@/accounts/types/MessageChannel';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
-import { computeSyncStatus } from '../computeSyncStatus';
+import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 
 describe('computeSyncStatus', () => {
   test('should return FAILED when both sync statuses are FAILED', () => {

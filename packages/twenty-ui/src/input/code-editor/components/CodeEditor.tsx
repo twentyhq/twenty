@@ -133,50 +133,58 @@ export const CodeEditor = ({
       <Loader />
     </StyledEditorLoader>
   ) : (
-    <StyledEditor
-      height={height}
-      variant={variant}
-      value={isLoading ? '' : value}
-      language={language}
-      loading=""
-      transparentBackground={transparentBackground}
-      onMount={(editor, monaco) => {
-        setMonaco(monaco);
-        setEditor(editor);
+    <>
+      <input
+        type="hidden"
+        data-testid="code-editor-value"
+        value={value ?? ''}
+        readOnly
+      />
+      <StyledEditor
+        height={height}
+        variant={variant}
+        value={value}
+        language={language}
+        loading=""
+        transparentBackground={transparentBackground}
+        onMount={(editor, monaco) => {
+          setMonaco(monaco);
+          setEditor(editor);
 
-        monaco.editor.defineTheme(
-          BASE_CODE_EDITOR_THEME_ID,
-          getBaseCodeEditorTheme({
-            theme,
-          }),
-        );
-        monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+          monaco.editor.defineTheme(
+            BASE_CODE_EDITOR_THEME_ID,
+            getBaseCodeEditorTheme({
+              theme,
+            }),
+          );
+          monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 
-        onMount?.(editor, monaco);
-        setModelMarkers(editor, monaco);
-      }}
-      onChange={(value) => {
-        if (isDefined(value)) {
-          onChange?.(value);
+          onMount?.(editor, monaco);
           setModelMarkers(editor, monaco);
-        }
-      }}
-      onValidate={(markers) => {
-        onValidate?.(markers);
-      }}
-      options={{
-        formatOnPaste: true,
-        formatOnType: true,
-        overviewRulerLanes: 0,
-        scrollbar: {
-          vertical: 'hidden',
-          horizontal: 'hidden',
-        },
-        minimap: {
-          enabled: false,
-        },
-        ...options,
-      }}
-    />
+        }}
+        onChange={(value) => {
+          if (isDefined(value)) {
+            onChange?.(value);
+            setModelMarkers(editor, monaco);
+          }
+        }}
+        onValidate={(markers) => {
+          onValidate?.(markers);
+        }}
+        options={{
+          formatOnPaste: true,
+          formatOnType: true,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+          ...options,
+        }}
+      />
+    </>
   );
 };

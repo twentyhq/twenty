@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { FormCountrySelectInput } from '../FormCountrySelectInput';
+import { FormCountrySelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountrySelectInput';
 
 const meta: Meta<typeof FormCountrySelectInput> = {
   title: 'UI/Data/Field/Form/Input/FormCountrySelectInput',

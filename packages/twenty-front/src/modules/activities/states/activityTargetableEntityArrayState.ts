@@ -1,4 +1,4 @@
-import { type ActivityTargetableObject } from '../types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { createState } from 'twenty-ui/utilities';
 
 export const activityTargetableEntityArrayState = createState<

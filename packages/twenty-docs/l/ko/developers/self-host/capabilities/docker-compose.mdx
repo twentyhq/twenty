@@ -1,0 +1,253 @@
+---
+title: 1-Click w/ Docker Compose
+---
+
+<Warning>
+  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/ko/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## Overview
+
+This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
+
+**Important:** Only modify settings explicitly mentioned in this guide. Altering other configurations may lead to issues.
+
+See docs [Setup Environment Variables](/l/ko/developers/self-host/capabilities/setup) for advanced configuration. All environment variables must be declared in the docker-compose.yml file at the server and / or worker level depending on the variable.
+
+## System Requirements
+
+* RAM: Ensure your environment has at least 2GB of RAM. Insufficient memory can cause processes to crash.
+* Docker & Docker Compose: Make sure both are installed and up-to-date.
+
+## Option 1: One-line script
+
+Install the latest stable version of Twenty with a single command:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+To install a specific version or branch:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Replace x.y.z with the desired version number.
+* Replace branch-name with the name of the branch you want to install.
+
+## Option 2: Manual steps
+
+Follow these steps for a manual setup.
+
+### Step 1: Set Up the Environment File
+
+1. **Create the .env File**
+
+   Copy the example environment file to a new .env file in your working directory:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Generate Secret Tokens**
+
+   Run the following command to generate a unique random string:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Important:** Keep this value secret / do not share it.
+
+3. **Update the `.env`**
+
+   Replace the placeholder value in your .env file with the generated token:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Set the Postgres Password**
+
+   Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Step 2: Obtain the Docker Compose File
+
+Download the `docker-compose.yml` file to your working directory:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Step 3: Launch the Application
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### Step 4: Access the Application
+
+If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+If you host it on a server, check that the server is running and that everything is ok with
+
+```bash
+curl http://localhost:3000
+```
+
+## Configuration
+
+### Expose Twenty to External Access
+
+By default, Twenty runs on `localhost` at port `3000`. To access it via an external domain or IP address, you need to configure the `SERVER_URL` in your `.env` file.
+
+#### Understanding `SERVER_URL`
+
+* **Protocol:** Use `http` or `https` depending on your setup.
+  * Use `http` if you haven't set up SSL.
+  * Use `https` if you have SSL configured.
+* **Domain/IP:** This is the domain name or IP address where your application is accessible.
+* **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
+
+### SSL Requirements
+
+SSL (HTTPS) is required for certain browser features to work properly. While these features might work during local development (as browsers treat localhost differently), a proper SSL setup is needed when hosting Twenty on a regular domain.
+
+For example, the clipboard API might require a secure context - some features like copy buttons throughout the application might not work without HTTPS enabled.
+
+We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+
+#### Configuring `SERVER_URL`
+
+1. **Determine Your Access URL**
+   * **Without Reverse Proxy (Direct Access):**
+
+     If you're accessing the application directly without a reverse proxy:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **With Reverse Proxy (Standard Ports):**
+
+     If you're using a reverse proxy like Nginx or Traefik and have SSL configured:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **With Reverse Proxy (Custom Ports):**
+
+     If you're using non-standard ports:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Update the `.env` File**
+
+   Open your `.env` file and update the `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Examples:**
+
+   * Direct access without SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * Access via domain with SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Restart the Application**
+
+   For changes to take effect, restart the Docker containers:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Considerations
+
+* **Reverse Proxy Configuration:**
+
+  Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+
+* **Firewall Settings:**
+
+  Open necessary ports in your firewall to allow external access.
+
+* **Consistency:**
+
+  The `SERVER_URL` must match how users access your application in their browsers.
+
+#### Persistence
+
+* **Data Volumes:**
+
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+* **Stateless Environments:**
+
+  If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
+
+## Backup and Restore
+
+Regular backups protect your CRM data from loss.
+
+### Create a Database Backup
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automate Daily Backups
+
+Add to your crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restore from Backup
+
+1. Stop the application:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restore the database:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Restart services:
+
+```bash
+docker compose up -d
+```
+
+### Backup Best Practices
+
+* **Test restores regularly** — verify backups actually work
+* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
+* **Encrypt sensitive data** — protect backups with encryption
+* **Retain multiple copies** — keep daily, weekly, and monthly backups
+
+## Troubleshooting
+
+If you encounter any problem, check [Troubleshooting](/l/ko/developers/self-host/capabilities/troubleshooting) for solutions.

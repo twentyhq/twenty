@@ -1,12 +1,18 @@
+import { usePageLayoutShouldUseWhiteBackground } from '@/page-layout/hooks/usePageLayoutShouldUseWhiteBackground';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
 
-const StyledVerticalListContainer = styled.div`
+const StyledVerticalListContainer = styled.div<{
+  shouldUseWhiteBackground: boolean;
+}>`
+  background: ${({ theme, shouldUseWhiteBackground }) =>
+    shouldUseWhiteBackground
+      ? theme.background.primary
+      : theme.background.secondary};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type PageLayoutVerticalListViewerProps = {
@@ -16,8 +22,12 @@ type PageLayoutVerticalListViewerProps = {
 export const PageLayoutVerticalListViewer = ({
   widgets,
 }: PageLayoutVerticalListViewerProps) => {
+  const { shouldUseWhiteBackground } = usePageLayoutShouldUseWhiteBackground();
+
   return (
-    <StyledVerticalListContainer>
+    <StyledVerticalListContainer
+      shouldUseWhiteBackground={shouldUseWhiteBackground}
+    >
       {widgets.map((widget) => (
         <div key={widget.id}>
           <WidgetRenderer widget={widget} />

@@ -1,11 +1,11 @@
 import { type BarLineChartConvertibleFields } from '@/command-menu/pages/page-layout/types/BarLineChartConvertibleFields';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
 export const convertPieChartConfigToBarOrLineChart = (
   configuration: PieChartConfiguration,
 ): BarLineChartConvertibleFields => {
-  if (!isPieChartConfiguration(configuration)) {
+  if (!isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
     return {};
   }
 

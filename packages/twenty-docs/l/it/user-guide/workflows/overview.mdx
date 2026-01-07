@@ -1,0 +1,80 @@
+---
+title: Flussi di Lavoro
+description: Learn how to build automations in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Flussi di Lavoro" />
+</Frame>
+
+## Perché i Workflow sono importanti
+
+Twenty è stato creato per offrire la massima flessibilità ai suoi utenti. Piuttosto che costringerti ad adattare i tuoi processi aziendali a funzionalità rigide e predefinite, i workflow ti consentono di creare automazioni che creano il CRM che meglio supporta i tuoi casi d'uso aziendali unici.
+
+I workflow sono la funzione in-app di Twenty per creare queste automazioni. Ti forniscono gli elementi costitutivi per creare esattamente ciò di cui la tua attività ha bisogno, quando ne ha bisogno.
+
+## Cosa posso fare con i workflow?
+
+Consigliamo di costruire automazioni per due scopi principali:
+
+1. **Automazioni interne per facilitare le attività quotidiane del tuo team**: Riduci il numero di inserimenti manuali e compiti ripetitivi che rallentano il tuo team.
+2. **Portare i dati dentro e fuori da Twenty**: Collega Twenty tramite chiamate API e webhooks al tuo database e ad altri strumenti.
+
+## Building Your First Workflow
+
+### Step 1: Create a New Workflow
+
+1. Go to **Workflows** accessible below the other objects
+2. Click **+ New Record**
+3. Give your workflow a name
+
+### Step 2: Add a Trigger
+
+Every workflow starts with a trigger. Choose from:
+
+* **Record events**: When a record is created, updated, or deleted
+* **Schedule**: Run at specific times (daily, weekly, etc.)
+* **Manual**: Triggered by a user action
+* **Webhook**: Triggered by a webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Step 3: Add Actions
+
+After your trigger, add one or more actions:
+
+* **Create Record**: Add new records to any object
+* **Update Record**: Modify existing record data
+* **Delete Record**: Remove records from objects
+* **Search Records**: Find records matching criteria
+* **Upsert Record**: Create or update based on matching criteria
+* **Iterator**: Loop through arrays of records
+* **Filter**: Control which records proceed
+* **Delay**: Wait before continuing (duration or scheduled date)
+* **Send Email**: Send emails via your connected account
+* **Code**: Run custom JavaScript
+* **HTTP Request**: Call external APIs
+* **Form**: Get inputs from users within Twenty UI at the time of execution
+* **AI Agent** (Coming soon): Run intelligent AI tasks
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Step 4: Test and Activate
+
+1. Use the **Test** button to run your workflow with sample data
+2. Review the results to ensure it works as expected
+3. Toggle the workflow **Active** when ready
+
+## Pratiche migliori per i flussi di lavoro
+
+* **Modifica i nomi dei passaggi**: Rinomina gli step del tuo flusso di lavoro per descrivere chiaramente cosa fa ciascuno. Ciò aiuta con la manutenzione e facilita il passaggio ai colleghi
+* **Sfrutta i dati dei passaggi precedenti**: Puoi utilizzare i campi dei record restituiti da qualsiasi passaggio precedente nel tuo flusso di lavoro
+* **Inizia in modo semplice**: Comincia con flussi di lavoro di base e aggiungi complessità nel tempo man mano che diventi più a tuo agio con il sistema
+* **Pianifica prima di costruire**: Mappa la logica del tuo flusso di lavoro prima di iniziare a costruire per evitare di rimanere bloccato a metà
+
+## Prossimi Passi
+
+* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Automations](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

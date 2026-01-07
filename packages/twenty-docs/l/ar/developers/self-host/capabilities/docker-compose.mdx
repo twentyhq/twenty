@@ -1,0 +1,252 @@
+---
+title: 1-Click w/ Docker Compose
+---
+
+<Warning>
+  الحاويات الخاصة بدوكر مخصصة للاستضافة الإنتاجية أو الاستضافة الذاتية، للتحقيق يرجى التحقق من [الإعداد المحلي](/l/ar/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## نظرة عامة
+
+يوفر هذا الدليل تعليمات خطوة بخطوة لتثبيت وتكوين تطبيق "Twenty" باستخدام Docker Compose. الهدف هو جعل العملية مباشرة ومنع المشاكل الشائعة التي يمكن أن تؤدي إلى تعطيل إعدادك.
+
+**مهم:** عدّل الإعدادات المذكورة صراحة في هذا الدليل فقط. قد يؤدي تعديل التكوينات الأخرى إلى مشاكل.
+
+راجع المستندات الخاصة بـ [إعداد متغيرات البيئة](/l/ar/developers/self-host/capabilities/setup) لإعداد متقدم. يجب إعلان جميع متغيرات البيئة في الملف docker-compose.yml على مستوى الخادم و/أو العامل بناءً على المتغير.
+
+## متطلبات النظام
+
+* رام: تأكد من أن بيئتك تحتوي على ما لا يقل عن 2GB من ذاكرة الرام. قد يؤدي عدم كفاية الذاكرة إلى تعطل العمليات.
+* دوكر ودوكر كومبوز: تأكد من تثبيت كلاهما وتحديثهما.
+
+## الخيار 1: نص سطر واحد
+
+قم بتثبيت أحدث إصدار مستقر من Twenty باستخدام أمر واحد:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+لتثبيت إصدار محدد أو فرع:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* استبدل x.y.z برقم الإصدار المطلوب.
+* استبدل branch-name بالاسم الفرعي المطلوب تثبيته.
+
+## الخيار 2: خطوات يدوية
+
+اتبع هذه الخطوات لإعداد يدوي.
+
+### الخطوة 1: إعداد ملف البيئة
+
+1. **إنشاء ملف .env**
+
+   Copy the example environment file to a new .env file in your working directory:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **إنشاء رموز سرية**
+
+   قم بتشغيل الأمر التالي لإنشاء سلسلة عشوائية فريدة:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **مهم:** احتفظ بهذه القيمة سرية ولا تشاركها.
+
+3. **تحديث الـ `.env`**
+
+   استبدل قيمة النائب في ملف .env بالقيمة الرمزية المولدة:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **تعيين كلمة مرور PostgreSQL**
+
+   قم بتحديث قيمة `PG_DATABASE_PASSWORD` في ملف .env باستخدام كلمة مرور قوية بدون أحرف خاصة.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### الخطوة 2: الحصول على ملف Docker Compose
+
+قم بتنزيل ملف `docker-compose.yml` إلى دليل العمل الخاص بك:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### الخطوة 3: إطلاق التطبيق
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### الخطوة 4: الوصول إلى التطبيق
+
+If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+If you host it on a server, check that the server is running and that everything is ok with
+
+```bash
+curl http://localhost:3000
+```
+
+## التكوين
+
+### جعل Twenty متاحاً للوصول الخارجي
+
+افتراضياً، يعمل Twenty على `localhost` على المنفذ `3000`. للوصول إليه عبر نطاق خارجي أو عنوان IP، تحتاج إلى تكوين `SERVER_URL` في ملف `.env`.
+
+#### فهم `SERVER_URL`
+
+* **البروتوكول:** استخدم `http` أو `https` حسب الإعداد الخاص بك.
+  * استخدم `http` إذا لم تقم بإعداد SSL.
+  * استخدم `https` إذا كان لديك SSL تم تكوينه.
+* **النطاق/الآي بي:** هذا هو النطاق أو عنوان IP حيث يكون تطبيقك متاحاً.
+* **المنفذ:** اشمل رقم المنفذ إذا لم تكن تستخدم المنافذ الافتراضية (`80` لـ `http`, `443` لـ `https`).
+
+### متطلبات SSL
+
+SSL (HTTPS) مطلوب لعمل ميزات معينة في المتصفح بشكل صحيح. بينما قد تعمل هذه الميزات أثناء التطوير المحلي (بما أن المتصفحات تعامل localhost بشكل مختلف)، هناك حاجة إلى إعداد SSL صحيح عند استضافة Twenty على نطاق عادي.
+
+على سبيل المثال، قد يطلب API للحافظة السياق الآمن - بعض الميزات مثل أزرار النسخ في جميع أنحاء التطبيق قد لا تعمل بدون تمكين HTTPS.
+
+نوصي بشدة بإعداد Twenty خلف وكيل عكسي مع إنهاء SSL للأمان والوظيفية المثلى.
+
+#### تكوين `SERVER_URL`
+
+1. **حدد عنوان وصولك**
+   * **بدون وكيل عكسي (الوصول المباشر):**
+
+     إذا كنت تصل إلى التطبيق مباشرة بدون وكيل عكسي:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **مع وكيل عكسي (المنافذ القياسية):**
+
+     إذا كنت تستخدم وكيل عكسي مثل Nginx أو Traefik وكان لديك SSL تم تكوينه:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **مع وكيل عكسي (منافذ مخصصة):**
+
+     إذا كنت تستخدم منافذ غير قياسية:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **تحديث ملف `.env`**
+
+   افتح ملف `.env` وقم بتحديث `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **أمثلة:**
+
+   * الوصول المباشر بدون SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * الوصول عبر النطاق باستخدام SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **إعادة تشغيل التطبيق**
+
+   لتطبيق التغييرات، أعد تشغيل حاويات Docker:
+
+   ```bash
+   docker compose down\ndocker compose up -d
+   ```
+
+#### اعتبارات
+
+* **تكوين الوكيل العكسي:**
+
+  تأكد من أن الوكيل العكسي يوجه الطلبات إلى المنفذ الداخلي الصحيح (افتراضيًا `3000`). قم بتكوين انتهاء SSL وأي ترويسات مطلوبة.
+
+* **إعدادات الجدار الناري:**
+
+  Open necessary ports in your firewall to allow external access.
+
+* **التناسق:**
+
+  يجب أن يتطابق `SERVER_URL` مع طريقة وصول المستخدمين إلى تطبيقك في متصفحاتهم.
+
+#### Persistence
+
+* **أحجام البيانات:**
+
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+* **البيئات غير المرتبطة بالحالة:**
+
+  إذا كنت تقوم بالنشر إلى بيئة غير مرتبطة بالحالة (مثل بعض خدمات السحابة)، فقم بتكوين التخزين الخارجي لحفظ البيانات.
+
+## Backup and Restore
+
+Regular backups protect your CRM data from loss.
+
+### Create a Database Backup
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automate Daily Backups
+
+Add to your crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restore from Backup
+
+1. Stop the application:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restore the database:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Restart services:
+
+```bash
+docker compose up -d
+```
+
+### Backup Best Practices
+
+* **Test restores regularly** — verify backups actually work
+* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
+* **Encrypt sensitive data** — protect backups with encryption
+* **Retain multiple copies** — keep daily, weekly, and monthly backups
+
+## استكشاف الأخطاء وإصلاحها
+
+إذا واجهت أي مشكلة، فارجع إلى [استكشاف الأخطاء وإصلاحها](/l/ar/developers/self-host/capabilities/troubleshooting) للحصول على الحلول.

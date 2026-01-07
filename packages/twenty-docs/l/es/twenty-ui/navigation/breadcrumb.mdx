@@ -1,5 +1,5 @@
 ---
-title: Migaja de pan
+title: Breadcrumb
 image: /images/user-guide/fields/field.png
 ---
 
@@ -7,38 +7,35 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-Renderiza una barra de navegación de migas de pan.
+Renders a breadcrumb navigation bar.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-```jsx
-import { BrowserRouter } from "react-router-dom";
-import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
 
-export const MyComponent = () => {
-  const breadcrumbLinks = [
-    { children: "Home", href: "/" },
-    { children: "Category", href: "/category" },
-    { children: "Subcategory", href: "/category/subcategory" },
-    { children: "Current Page" },
-  ];
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
 
-  return (
-    <BrowserRouter>
-      <Breadcrumb className links={breadcrumbLinks} />
-    </BrowserRouter>
-    )
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| "Props"     | Tipo     | Descripción                                                                                                                                                                                                                                                                              |
-| ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "className" | "cadena" | Nombre de clase opcional para estilos adicionales                                                                                                                                                                                                                                        |
-| enlaces     | array    | An array of objects, each representing a breadcrumb link. Cada objeto tiene una propiedad `children` (el contenido de texto del enlace) y una propiedad `href` opcional (la URL a la que navegar cuando se hace clic en el enlace) |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type   | Description                                                                                                                                                                                                      |
+    | --------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className | string | Optional class name for additional styling                                                                                                                                                                       |
+    | links     | array  | An array of objects, each representing a breadcrumb link. Each object has a `children` property (the text content of the link) and an optional `href` property (the URL to navigate to when the link is clicked) |
+  </Tab>
 </Tabs>

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DashboardSyncService } from 'src/engine/metadata-modules/dashboard/services/dashboard-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -36,6 +37,7 @@ export class PageLayoutTabService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardSyncService: DashboardSyncService,
   ) {}
 
   async findByPageLayoutId(
@@ -164,12 +166,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPageLayoutTabToCreate.id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const createdTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatPageLayoutTabToCreate.id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: flatPageLayoutTabToCreate.id,
+      workspaceId,
+      updatedAt: new Date(createdTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(createdTab);
   }
 
   async update(
@@ -226,12 +234,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const updatedTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(updatedTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(updatedTab);
   }
 
   async delete(
@@ -282,12 +296,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const deletedTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(deletedTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(deletedTab);
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -326,6 +346,12 @@ export class PageLayoutTabService {
         'Multiple validation errors occurred while destroying page layout tab',
       );
     }
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(),
+    });
 
     return true;
   }
@@ -378,11 +404,17 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const restoredTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(restoredTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(restoredTab);
   }
 }

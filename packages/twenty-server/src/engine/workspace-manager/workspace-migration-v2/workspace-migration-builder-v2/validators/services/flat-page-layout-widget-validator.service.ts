@@ -4,38 +4,56 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
+import {
+  FailedFlatEntityValidation,
+  FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
-  constructor() {}
+  constructor(
+    private readonly flatPageLayoutWidgetTypeValidatorService: FlatPageLayoutWidgetTypeValidatorService,
+  ) {}
 
-  public validateFlatPageLayoutWidgetUpdate({
+  public async validateFlatPageLayoutWidgetUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    additionalCacheDataMaps: { featureFlagsMap },
+    workspaceId,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
-  >): FailedFlatEntityValidation<FlatPageLayoutWidget> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutWidget> = {
-      type: 'update_page_layout_widget',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-      },
-    };
+  >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'update'>> {
+    const isDashboardV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     const existingFlatPageLayoutWidget =
-      optimisticFlatPageLayoutWidgetMaps.byId[flatEntityId];
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
+        .byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: existingFlatPageLayoutWidget?.universalIdentifier,
+      },
+      metadataName: 'pageLayoutWidget',
+      type: 'update',
+    });
 
     if (!isDefined(existingFlatPageLayoutWidget)) {
       validationResult.errors.push({
@@ -55,28 +73,65 @@ export class FlatPageLayoutWidgetValidatorService {
     };
 
     validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
       id: updatedFlatPageLayoutWidget.id,
       pageLayoutTabId: updatedFlatPageLayoutWidget.pageLayoutTabId,
     };
+
+    const gridPositionErrors = this.validateGridPosition({
+      gridPosition: updatedFlatPageLayoutWidget.gridPosition,
+      widgetTitle: updatedFlatPageLayoutWidget.title,
+    });
+
+    validationResult.errors.push(...gridPositionErrors);
+
+    const featureFlagErrors = this.validateFeatureFlags({
+      type: updatedFlatPageLayoutWidget.type,
+      configuration: updatedFlatPageLayoutWidget.configuration,
+      widgetTitle: updatedFlatPageLayoutWidget.title,
+      isDashboardV2Enabled,
+    });
+
+    validationResult.errors.push(...featureFlagErrors);
+
+    const typeSpecificityErrors =
+      this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
+        {
+          flatEntityToValidate: updatedFlatPageLayoutWidget,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          updates: flatEntityUpdates,
+          additionalCacheDataMaps: { featureFlagsMap },
+          workspaceId,
+          buildOptions,
+          remainingFlatEntityMapsToValidate:
+            optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+        },
+      );
+
+    validationResult.errors.push(...typeSpecificityErrors);
 
     return validationResult;
   }
 
   public validateFlatPageLayoutWidgetDeletion({
-    flatEntityToValidate: { id: pageLayoutWidgetIdToDelete },
+    flatEntityToValidate: {
+      id: pageLayoutWidgetIdToDelete,
+      universalIdentifier,
+    },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
-  >): FailedFlatEntityValidation<FlatPageLayoutWidget> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutWidget> = {
-      type: 'delete_page_layout_widget',
-      errors: [],
+  >): FailedFlatEntityValidation<'pageLayoutWidget', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: pageLayoutWidgetIdToDelete,
+        universalIdentifier,
       },
-    };
+      metadataName: 'pageLayoutWidget',
+      type: 'delete',
+    });
 
     const existingFlatPageLayoutWidget =
       optimisticFlatPageLayoutWidgetMaps.byId[pageLayoutWidgetIdToDelete];
@@ -94,28 +149,32 @@ export class FlatPageLayoutWidgetValidatorService {
     return validationResult;
   }
 
-  public validateFlatPageLayoutWidgetCreation({
+  public async validateFlatPageLayoutWidgetCreation({
     flatEntityToValidate: flatPageLayoutWidgetToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutTabMaps,
-      flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
-    },
+    additionalCacheDataMaps: { featureFlagsMap },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    workspaceId,
+    buildOptions,
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
-  >): FailedFlatEntityValidation<FlatPageLayoutWidget> {
-    const validationResult: FailedFlatEntityValidation<FlatPageLayoutWidget> = {
-      type: 'create_page_layout_widget',
-      errors: [],
+  >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'create'>> {
+    const isDashboardV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
+
+    const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatPageLayoutWidgetToValidate.id,
+        universalIdentifier: flatPageLayoutWidgetToValidate.universalIdentifier,
         pageLayoutTabId: flatPageLayoutWidgetToValidate.pageLayoutTabId,
       },
-    };
+      metadataName: 'pageLayoutWidget',
+      type: 'create',
+    });
 
     const existingFlatPageLayoutWidget =
-      optimisticFlatPageLayoutWidgetMaps.byId[
-        flatPageLayoutWidgetToValidate.id
-      ];
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
+        .byId[flatPageLayoutWidgetToValidate.id];
 
     if (isDefined(existingFlatPageLayoutWidget)) {
       const flatPageLayoutWidgetId = flatPageLayoutWidgetToValidate.id;
@@ -129,7 +188,8 @@ export class FlatPageLayoutWidgetValidatorService {
 
     const referencedPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatPageLayoutWidgetToValidate.pageLayoutTabId,
-      flatEntityMaps: flatPageLayoutTabMaps,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
 
     if (!isDefined(referencedPageLayoutTab)) {
@@ -140,6 +200,97 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
+    const gridPositionErrors = this.validateGridPosition({
+      gridPosition: flatPageLayoutWidgetToValidate.gridPosition,
+      widgetTitle: flatPageLayoutWidgetToValidate.title,
+    });
+
+    validationResult.errors.push(...gridPositionErrors);
+
+    const featureFlagErrors = this.validateFeatureFlags({
+      type: flatPageLayoutWidgetToValidate.type,
+      configuration: flatPageLayoutWidgetToValidate.configuration,
+      widgetTitle: flatPageLayoutWidgetToValidate.title,
+      isDashboardV2Enabled,
+    });
+
+    validationResult.errors.push(...featureFlagErrors);
+
+    const typeSpecificityErrors =
+      this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
+        {
+          flatEntityToValidate: flatPageLayoutWidgetToValidate,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          additionalCacheDataMaps: { featureFlagsMap },
+          workspaceId,
+          buildOptions,
+          remainingFlatEntityMapsToValidate,
+        },
+      );
+
+    validationResult.errors.push(...typeSpecificityErrors);
+
     return validationResult;
+  }
+
+  private validateGridPosition({
+    gridPosition,
+    widgetTitle,
+  }: {
+    gridPosition: GridPosition | undefined;
+    widgetTitle: string;
+  }): FlatEntityValidationError[] {
+    if (!isDefined(gridPosition)) {
+      return [
+        {
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          message: t`Grid position is required`,
+          userFriendlyMessage: msg`Grid position is required`,
+        },
+      ];
+    }
+
+    return validateWidgetGridPosition(gridPosition, widgetTitle);
+  }
+
+  private validateFeatureFlags({
+    type,
+    configuration,
+    widgetTitle,
+    isDashboardV2Enabled,
+  }: {
+    type: WidgetType | undefined;
+    configuration: AllPageLayoutWidgetConfiguration | null | undefined;
+    widgetTitle: string;
+    isDashboardV2Enabled: boolean;
+  }): FlatEntityValidationError[] {
+    if (!isDefined(type) || !isDefined(configuration)) {
+      return [];
+    }
+
+    if (type !== WidgetType.GRAPH) {
+      return [];
+    }
+
+    const graphConfiguration = configuration as unknown as {
+      configurationType?: GraphType;
+    };
+
+    if (
+      graphConfiguration.configurationType === GraphType.GAUGE_CHART &&
+      !isDashboardV2Enabled
+    ) {
+      const chartType = graphConfiguration.configurationType;
+
+      return [
+        {
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          message: t`Invalid configuration for widget "${widgetTitle}": Chart type ${chartType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
+          userFriendlyMessage: msg`This chart type requires the Dashboard V2 feature to be enabled`,
+        },
+      ];
+    }
+
+    return [];
   }
 }

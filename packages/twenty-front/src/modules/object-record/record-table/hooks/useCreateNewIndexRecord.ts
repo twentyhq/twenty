@@ -101,10 +101,25 @@ export const useCreateNewIndexRecord = ({
             });
           }
         } else {
-          navigate(AppPath.RecordShowPage, {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          });
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          navigate(
+            AppPath.RecordShowPage,
+            {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: recordId,
+            },
+            undefined,
+            {
+              state: {
+                isNewRecord: true,
+                objectRecordId: recordId,
+                labelIdentifierFieldName:
+                  labelIdentifierFieldMetadataItem?.name,
+              },
+            },
+          );
         }
 
         if (isDefined(recordIndexGroupFieldMetadataItem)) {

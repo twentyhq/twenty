@@ -1,7 +1,7 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { PageLayoutType } from '~/generated/graphql';
 
-import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutDraftComponentState =

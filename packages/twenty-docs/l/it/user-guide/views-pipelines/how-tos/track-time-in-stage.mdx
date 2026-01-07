@@ -1,0 +1,231 @@
+---
+title: Tieni traccia di quanto a lungo le opportunità restano in ogni fase.
+description: Monitora la velocità delle trattative tenendo traccia di quando le opportunità entrano in ogni fase.
+---
+
+<Tip>
+  Questo è un esempio di creazione di [Campi formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields) utilizzando i workflow — in particolare calcoli di date.
+</Tip>
+
+Tenere traccia di quando le opportunità entrano in ogni fase ti aiuta a identificare i colli di bottiglia e a misurare la velocità delle trattative.
+
+Questa guida ti accompagna nella configurazione di campi personalizzati e di un workflow per registrare automaticamente quando un'opportunità passa a ciascuna fase e calcolare quanti giorni ha trascorso nella fase precedente.
+
+## Passaggio 1: Crea campi personalizzati
+
+Per ogni fase servono due tipi di campi:
+
+* **Campi Data e ora**: registrano quando l'opportunità è entrata in ciascuna fase
+* **Campi Numero**: memorizzano quanti giorni l'opportunità ha trascorso in ciascuna fase
+
+### Crea i campi "Ultimo ingresso"
+
+1. Vai a **Impostazioni → Modello dati → Opportunità**
+2. Per ogni fase, fai clic su **+ Aggiungi campo** e configura:
+   * **Nome**: Ultimo ingresso in [Nome fase] (ad es., "Ultimo ingresso in Nuovo", "Ultimo ingresso in Qualificato")
+   * **Tipo**: Data e ora
+   * **Descrizione**: Timestamp dell'ingresso dell'opportunità in questa fase
+3. Clicca su **Salva**
+
+Crea questi campi:
+
+* Ultimo ingresso in Nuovo
+* Ultimo ingresso in Qualificato
+* Ultimo ingresso in Riunione
+* Ultimo ingresso in Proposta
+* Ultimo ingresso in Negoziazione
+* Ultimo ingresso in Chiuso vinto
+* Ultimo ingresso in Chiuso perso
+
+### Crea i campi "Giorni nella fase"
+
+1. Per ogni fase, fai clic su **+ Aggiungi campo** e configura:
+   * **Nome**: Giorni in [Nome fase] (ad es., "Giorni in Nuovo", "Giorni in Qualificato")
+   * **Tipo**: Numero
+   * **Descrizione**: Numero di giorni trascorsi in questa fase
+2. Clicca su **Salva**
+
+Crea questi campi:
+
+* Giorni in Nuovo
+* Giorni in Qualificato
+* Giorni in Riunione
+* Giorni in Proposta
+* Giorni in Negoziazione
+
+<Note>
+  Non servono campi "Giorni in" per Chiuso vinto e Chiuso perso, poiché sono fasi finali.
+</Note>
+
+### Opzionale: rendi i campi di sola lettura
+
+Se non vuoi che gli utenti modifichino manualmente questi campi calcolati:
+
+1. Vai a **Impostazioni → Ruoli**
+2. Seleziona il ruolo da configurare
+3. Trova l'oggetto Opportunità
+4. Imposta i campi "Ultimo ingresso" e "Giorni in" come di sola lettura
+
+## Passaggio 2: Crea il workflow
+
+Questo singolo workflow gestisce entrambe le attività:
+
+* Registra il timestamp quando si entra in una nuova fase
+* Calcola i giorni trascorsi nella fase precedente
+
+### Crea il workflow
+
+1. Vai a **Workflows**
+2. Fai clic su **+ Nuovo workflow**
+3. Assegnagli il nome "Traccia tempo per fase"
+
+### Configura il trigger
+
+1. Aggiungi un trigger **Record aggiornato**
+2. Seleziona **Opportunità** come oggetto
+3. Filtro su: il campo **Fase** viene aggiornato
+
+### Aggiungi rami per ogni fase
+
+<Note>
+  Per creare un nuovo ramo, fai clic con il tasto destro sul canvas del workflow e fai clic su **Nuova azione**. Quindi, collega questa azione al nodo precedente trascinando la freccia dal nodo precedente a questa nuova azione.
+</Note>
+
+---
+
+**Ramo 1: Fase = Nuovo (prima fase)**
+
+Poiché è la prima fase, registriamo solo il timestamp di ingresso—non c'è una fase precedente da calcolare.
+
+1. Aggiungi un nodo **Filtro**: Fase = Nuovo
+2. Aggiungi un'azione **Codice**:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Aggiungi un'azione **Aggiorna record**:
+   * Record: l'Opportunità che ha attivato il workflow
+   * Campo: Ultimo ingresso in Nuovo
+   * Valore: `now` dal nodo Codice
+
+---
+
+**Ramo 2: Fase = Qualificato**
+
+Quando si passa a Qualificato, registra l'ora di ingresso E calcola i giorni trascorsi in Nuovo.
+
+1. Aggiungi un nodo **Filtro**: Fase = Qualificato
+2. Aggiungi un'azione **Codice**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configura l'input del nodo Codice: mappa `lastEnteredPreviousStage` al campo **Ultimo ingresso in Nuovo**
+4. Aggiungi un'azione **Aggiorna record**:
+   * Record: l'Opportunità che ha attivato il workflow
+   * Campi da aggiornare:
+     * Ultimo ingresso in Qualificato = `now`
+     * Giorni in Nuovo = `daysInPreviousStage`
+
+---
+
+**Ramo 3: Fase = Riunione**
+
+Quando si passa a Riunione, registra l'ora di ingresso E calcola i giorni trascorsi in Qualificato.
+
+1. Aggiungi un nodo **Filtro**: Fase = Riunione
+2. Aggiungi un'azione **Codice**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configura l'input del nodo Codice: mappa `lastEnteredPreviousStage` al campo **Ultimo ingresso in Qualificato**
+4. Aggiungi un'azione **Aggiorna record**:
+   * Record: l'Opportunità che ha attivato il workflow
+   * Campi da aggiornare:
+     * Ultimo ingresso in Riunione = `now`
+     * Giorni in Qualificato = `daysInPreviousStage`
+
+---
+
+**Continua per le fasi rimanenti:**
+
+| Fase         | Registra                        | Calcola                |
+| ------------ | ------------------------------- | ---------------------- |
+| Proposta     | Ultimo ingresso in Proposta     | Giorni in Riunione     |
+| Negoziazione | Ultimo ingresso in Negoziazione | Giorni in Proposta     |
+| Chiuso vinto | Ultimo ingresso in Chiuso vinto | Giorni in Negoziazione |
+| Chiuso perso | Ultimo ingresso in Chiuso perso | Giorni in Negoziazione |
+
+I rami non devono ricongiungersi—ognuno viene eseguito in modo indipendente quando la relativa condizione di fase è soddisfatta.
+
+## Passaggio 3: Analizza il tempo per fase
+
+Con timestamp e conteggi dei giorni registrati, ora puoi analizzare la velocità delle trattative.
+
+### Crea una vista "Trattative lente"
+
+1. Crea una vista Tabella di Opportunità
+2. Aggiungi colonne: Nome, Fase, Giorni in [fase precedente], Importo
+3. Ordina per il campo "Giorni in" (decrescente)
+4. Filtra per Fase per concentrarti su una fase alla volta
+
+Le trattative in cima hanno trascorso più tempo nella fase precedente.
+
+### Usa le aggregazioni
+
+Nella vista Kanban della pipeline:
+
+1. Fai clic sul numero accanto al nome di una Fase
+2. Seleziona **Media**
+3. Scegli un campo "Giorni in"
+
+Questo mostra il tempo medio che le trattative trascorrono in ciascuna fase.
+
+## Sommario
+
+| Componente                  | Scopo                                                                  |
+| --------------------------- | ---------------------------------------------------------------------- |
+| **Campi "Ultimo ingresso"** | Memorizzano quando l'opportunità è entrata in ciascuna fase            |
+| **Campi "Giorni in"**       | Memorizzano quanti giorni sono stati trascorsi in ciascuna fase        |
+| **Workflow**                | Registra il timestamp E calcola i giorni in un unico passaggio         |
+| **Viste e aggregazioni**    | Analizza la velocità delle trattative e individua i colli di bottiglia |
+
+## Correlati
+
+* [Workflows](/l/it/user-guide/workflows/overview) — nozioni di base sull'automazione
+* [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields) — configurazione dei campi
+* [Viste Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni

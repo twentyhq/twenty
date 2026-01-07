@@ -1,5 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { computeMaxLabelLengthForMargin } from '../computeMaxLabelLengthForMargin';
+import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 
 describe('computeMaxLabelLengthForMargin', () => {
   it('should calculate label length based on margin size and font size', () => {

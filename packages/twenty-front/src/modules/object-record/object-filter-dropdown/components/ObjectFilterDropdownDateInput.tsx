@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -40,6 +40,7 @@ export const ObjectFilterDropdownDateInput = () => {
   const handleAbsoluteDateChange = (newPlainDate: string | null) => {
     const newFilterValue = newPlainDate ?? '';
 
+    // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
       value: newPlainDate,
       timeZone,
@@ -109,7 +110,7 @@ export const ObjectFilterDropdownDateInput = () => {
       instanceId={`object-filter-dropdown-date-input`}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
-      date={plainDateValue ?? null}
+      plainDateString={plainDateValue ?? null}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onClear={handleClear}

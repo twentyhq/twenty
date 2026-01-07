@@ -1,5 +1,5 @@
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '../getWorkflowNodeIconKey';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 
 // Mock the getActionIcon function
 jest.mock(

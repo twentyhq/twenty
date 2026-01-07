@@ -1,0 +1,85 @@
+---
+title: Workflow Versions
+description: Manage workflow versions and drafts.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## About Versions
+
+Every time you activate a workflow, a new version is created. This allows you to track changes over time and revert to previous configurations if needed.
+
+## Version Statuses
+
+| Status          | Description                            |
+| --------------- | -------------------------------------- |
+| **Draft**       | Being edited, not yet published        |
+| **Active**      | Live version responding to triggers    |
+| **Deactivated** | Previously active but manually stopped |
+| **Archived**    | Past versions kept for history         |
+
+## Working with Drafts
+
+When you edit an active workflow, your changes are saved as a **draft**. The active version continues to run while you work on updates.
+
+Once you're done editing, you can:
+
+* **Activate**: Publish the draft as the new active version (the previous version is archived)
+* **Discard**: Delete the draft and keep the current active version
+
+## Version History
+
+### Viewing Past Versions
+
+1. Open the workflow
+2. Click the **Versions** tab
+3. See all previous versions with timestamps
+
+### Restoring a Version
+
+1. Find the version you want to restore
+2. Click **Use as draft**
+3. The version is copied to a new draft
+4. Make any necessary updates
+5. Activate when ready
+
+## Best Practices
+
+### Version Management
+
+* Activate only when ready for production
+* Keep meaningful changes between versions
+* Document major changes in workflow names or descriptions
+* Test in draft mode before activating
+
+### Reverting Changes
+
+* If a new version causes issues, restore the previous version
+* Use the version history to track what changed
+* Always test restored versions before activating
+
+## Common Workflows
+
+### Quick Edit
+
+1. Make minor changes to an active workflow
+2. Test in draft mode
+3. Activate the new version
+
+### Major Revision
+
+1. Use the previous version as a starting point
+2. Make significant changes in draft
+3. Thoroughly test all scenarios
+4. Activate when confident
+
+### Rollback
+
+1. Identify the issue with the current version
+2. Find the last working version in history
+3. Click **Use as draft**
+4. Activate to restore the old behavior
+
+## Related
+
+* [Getting Started with Workflows](/l/zh/user-guide/workflows/overview)
+* [Workflow Runs](/l/zh/user-guide/workflows/capabilities/workflow-runs)

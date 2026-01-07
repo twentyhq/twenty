@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'create'> {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentCreation(args);
 
@@ -37,7 +37,8 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'create_agent',
+        type: 'create',
+        metadataName: 'agent',
         flatEntity: flatAgentToValidate,
       },
     };
@@ -45,7 +46,7 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'delete'> {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentDeletion(args);
 
@@ -61,15 +62,16 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: {
-        type: 'delete_agent',
-        flatEntityId: flatAgentToValidate.id,
+        type: 'delete',
+        metadataName: 'agent',
+        entityId: flatAgentToValidate.id,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'update'> {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentUpdate(args);
 
@@ -83,9 +85,10 @@ export class WorkspaceMigrationV2AgentActionsBuilderService extends WorkspaceEnt
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateAgentAction: UpdateAgentAction = {
-      type: 'update_agent',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'agent',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

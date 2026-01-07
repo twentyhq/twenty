@@ -3,12 +3,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/components/FieldWidgetInputContextProvider';
+import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
+import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useRecoilValue } from 'recoil';
 
 type FieldWidgetCellEditModePortalProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -23,20 +22,18 @@ export const FieldWidgetCellEditModePortal = ({
   recordId,
   instanceId,
 }: FieldWidgetCellEditModePortalProps) => {
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
-  const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
-    recordId,
-    fieldMetadataItem.id,
-    'inline-cell',
-  );
-  const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
+  const { isEditing } = useIsFieldWidgetEditing();
 
   const setIsHovered = useSetRecoilComponentState(
     fieldWidgetHoverComponentState,
   );
 
+  const { closeFieldInput } = useOpenFieldWidgetFieldInputEditMode();
+
   const handleCloseEditMode = () => {
     setIsHovered(false);
+
+    closeFieldInput();
   };
 
   if (!isEditing) {

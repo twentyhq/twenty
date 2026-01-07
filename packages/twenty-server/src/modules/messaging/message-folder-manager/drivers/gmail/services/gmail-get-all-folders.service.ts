@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { google } from 'googleapis';
 
 import {
-  MessageFolder,
+  DiscoveredMessageFolder,
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
@@ -34,7 +34,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]> {
+  ): Promise<DiscoveredMessageFolder[]> {
     try {
       const oAuth2Client =
         await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -60,7 +60,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
 
       const labels = response.data.labels || [];
 
-      const folders: MessageFolder[] = [];
+      const folders: DiscoveredMessageFolder[] = [];
 
       const labelNameToIdMap = new Map<string, string>();
 

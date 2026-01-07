@@ -1,0 +1,149 @@
+---
+title: Odesílání e-mailů z pracovních postupů
+description: Posílejte personalizované e-maily automaticky pomocí akcí pracovních postupů.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Automaticky odesílejte e-maily, když ve vašem CRM nastanou konkrétní události—přivítejte nové kontakty, navazujte na příležitosti nebo upozorněte členy týmu.
+
+## Předpoklady
+
+Než budete moci odesílat e-maily z pracovních postupů:
+
+1. Připojte e-mailový účet v **Nastavení → Účty**
+2. Ujistěte se, že má účet povolená oprávnění k odesílání
+
+## Základní e-mailový pracovní postup
+
+### Příklad: Vítací e-mail pro nové kontakty
+
+**Cíl**: Odeslat vítací e-mail, když je do CRM přidána nová osoba.
+
+**Nastavení**:
+
+1. **Vytvořit pracovní postup**: Přejděte do **Nastavení → Pracovní postupy** a klikněte na **+ Nový pracovní postup**
+
+2. **Přidat spouštěč**: Vyberte **Záznam je vytvořen** → **Lidé**
+
+3. **Přidat akci Odeslat e-mail**:
+   * Klikněte na **+** pro přidání akce
+   * Vyberte **Odeslat e-mail**
+   * Nastavte e-mail:
+
+| Pole            | Hodnota                                |
+| --------------- | -------------------------------------- |
+| **Komu**        | `{{trigger.object.email}}`             |
+| **Předmět**     | `Vítejte ve {{Your Company Name}}`     |
+| **Text zprávy** | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Otestujte a aktivujte**: Otestujte s ukázkovým záznamem, poté aktivujte
+
+## Používání proměnných v e-mailech
+
+Odkazujte na data z předchozích kroků pomocí syntaxe `{{variable}}`:
+
+```text
+Dobrý den {{trigger.object.firstName}},
+
+Děkujeme, že jste se s námi spojili!
+
+Vaše společnost, {{trigger.object.company.name}}, je nyní v našem systému.
+
+S pozdravem,
+Tým
+```
+
+### Dostupné proměnné ze spouštěčů
+
+| Typ spouštěče                    | Běžné proměnné                         |
+| -------------------------------- | -------------------------------------- |
+| **Záznam vytvořen/aktualizován** | `{{trigger.object.fieldName}}`         |
+| **Ruční**                        | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                      | `{{trigger.body.fieldName}}`           |
+
+## Pokročilé: Podmíněné e-maily
+
+### Příklad: Různé e-maily podle zdroje zájemce
+
+**Cíl**: Posílat různé vítací e-maily podle toho, odkud zájemce přišel.
+
+**Nastavení**:
+
+1. **Spouštěč**: Záznam je vytvořen (Lidé)
+
+2. **Přidat akci Filtr**:
+   * Podmínka: `{{trigger.object.source}}` se rovná `\"Website\"`
+   * Pokud ano → pokračujte k vítacímu e-mailu pro web
+
+3. **Větev pro jiné zdroje**:
+   * Vytvořte paralelní větve pro různé zdroje
+   * Každá větev má svou vlastní akci Odeslat e-mail
+
+## Odesílání e-mailů více příjemcům
+
+### Příklad: Upozornit tým při uzavření obchodu
+
+**Cíl**: Poslat e-mail obchodníkovi a jeho manažerovi, když je příležitost vyhrána.
+
+**Nastavení**:
+
+1. **Spouštěč**: Záznam je aktualizován (Příležitosti, Stádium = "Uzavřeno/Vyhráno")
+
+2. **Vyhledat záznamy**: Najděte manažera vlastníka příležitosti
+
+3. **Odeslat e-mail č. 1**: Vlastníkovi příležitosti
+   * Komu: `{{trigger.object.owner.email}}`
+   * Předmět: `Gratulujeme k uzavření {{trigger.object.name}}!`
+
+4. **Odeslat e-mail č. 2**: Manažerovi
+   * Komu: `{{searchRecords.manager.email}}`
+   * Předmět: `Vyhraný obchod: {{trigger.object.name}}`
+
+## Naplánované navazující e-maily
+
+### Příklad: Následný kontakt 3 dny po schůzce
+
+**Cíl**: Odeslat následný e-mail 3 dny poté, co je zaznamenána schůzka.
+
+**Nastavení**:
+
+1. **Spouštěč**: Záznam je vytvořen (Aktivity, Typ = "Schůzka")
+
+2. **Zpoždění**: Počkejte 3 dny
+
+3. **Odeslat e-mail**:
+   * Komu: Účastník schůzky
+   * Předmět: Navazuji na náš rozhovor
+   * Text zprávy: Odkaz na podrobnosti schůzky ze spouštěče
+
+## Osvědčené postupy
+
+### Obsah e-mailu
+
+* Udržujte předměty stručné a věcné
+* Personalizujte pomocí jména příjemce
+* Zahrňte jasnou výzvu k akci
+* Před aktivací e-maily otestujte
+
+### Doručitelnost
+
+* Neodesílejte příliš mnoho e-mailů příliš rychle
+* Používejte profesionální e-mailové podpisy
+* Vyhýbejte se slovům, která spouštějí spam
+* Zajistěte možnost odhlášení u marketingových e-mailů
+
+### Řešení potíží
+
+* Ověřte, že je e-mailový účet připojen a aktivní
+* Zkontrolujte, zda je e-mailová adresa příjemce platná
+* Projděte běhy pracovních postupů kvůli chybovým zprávám
+* Nejprve otestujte s vlastní e-mailovou adresou
+
+<Note>
+  **Již brzy**: E-mailové přílohy budou k dispozici v Q1 2026.
+</Note>
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)

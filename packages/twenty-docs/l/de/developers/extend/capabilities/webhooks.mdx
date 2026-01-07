@@ -1,0 +1,112 @@
+---
+title: Webhooks
+description: Receive real-time notifications when events occur in your CRM.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Webhooks push data to your systems in real-time when events occur in Twenty — no polling required. Use them to keep external systems in sync, trigger automations, or send alerts.
+
+## Webhook erstellen
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks → Webhooks**
+2. Klicken Sie auf **+ Webhook erstellen**
+3. Enter your webhook URL (must be publicly accessible)
+4. Klicken Sie auf **Speichern**
+
+The webhook activates immediately and starts sending notifications.
+
+<VimeoEmbed videoId="928786708" title="Creating a webhook" />
+
+### Webhooks verwalten
+
+**Edit**: Click the webhook → Update URL → **Save**
+
+**Delete**: Click the webhook → **Delete** → Confirm
+
+## Ereignisse
+
+Twenty sends webhooks for these event types:
+
+| Ereignis           | Beispiel                                                   |
+| ------------------ | ---------------------------------------------------------- |
+| **Record Created** | `person.created`, `company.created`, `note.created`        |
+| **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **Record Deleted** | `person.deleted`, `company.deleted`                        |
+
+All event types are sent to your webhook URL. Event filtering may be added in future releases.
+
+## Payload Format
+
+Each webhook sends an HTTP POST with a JSON body:
+
+```json
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+| Feld          | Beschreibung                                     |
+| ------------- | ------------------------------------------------ |
+| `ereignis`    | What happened (e.g., `person.created`)           |
+| `daten`       | The full record that was created/updated/deleted |
+| `zeitstempel` | When the event occurred (UTC)                    |
+
+<Note>
+  Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
+</Note>
+
+## Webhook-Validierung
+
+Twenty signs each webhook request for security. Validate signatures to ensure requests are authentic.
+
+### Headers
+
+| Kopfzeile                    | Beschreibung          |
+| ---------------------------- | --------------------- |
+| `X-Twenty-Webhook-Signature` | HMAC SHA256 signature |
+| `X-Twenty-Webhook-Timestamp` | Request timestamp     |
+
+### Validation Steps
+
+1. Get the timestamp from `X-Twenty-Webhook-Timestamp`
+2. Create the string: `{timestamp}:{JSON payload}`
+3. Compute HMAC SHA256 using your webhook secret
+4. Compare with `X-Twenty-Webhook-Signature`
+
+### Example (Node.js)
+
+```javascript
+const crypto = require("crypto");
+
+const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const payload = JSON.stringify(req.body);
+const secret = "your-webhook-secret";
+
+const stringToSign = `${timestamp}:${payload}`;
+const expectedSignature = crypto
+  .createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+
+const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+```
+
+## Webhooks vs Workflows
+
+| Methode                      | Richtung | Use Case                                                   |
+| ---------------------------- | -------- | ---------------------------------------------------------- |
+| **Webhooks**                 | OUT      | Automatically notify external systems of any record change |
+| **Workflow + HTTP Request**  | OUT      | Send data out with custom logic (filters, transformations) |
+| **Workflow Webhook Trigger** | IN       | Receive data into Twenty from external systems             |
+
+For receiving external data, see [Set Up a Webhook Trigger](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).

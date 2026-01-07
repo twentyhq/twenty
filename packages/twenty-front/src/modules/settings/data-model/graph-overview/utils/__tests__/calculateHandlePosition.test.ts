@@ -1,4 +1,4 @@
-import { calculateHandlePosition } from '../calculateHandlePosition';
+import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
 describe('calculatePosition', () => {
   test('should calculate source handle', () => {
     // Source node right from start of target node

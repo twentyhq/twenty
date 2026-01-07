@@ -4,7 +4,7 @@ image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="Antet" />
 </Frame>
 
 O listă de pictograme utilizate în toată aplicația noastră.
@@ -14,39 +14,35 @@ O listă de pictograme utilizate în toată aplicația noastră.
 Folosim pictograme Tabler pentru React în toată aplicația.
 
 <Tabs>
+  <Tab title="Instalare">
+    <br />
 
-<Tab title="Installation"><br/>
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
 
-```
-yarn add @tabler/icons-react
-```
+  <Tab title="Proprietăți">
+    You can import each icon as a component. Iată un exemplu:
 
-</Tab>
+    <br />
 
-<Tab title="Props">
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
 
-You can import each icon as a component. Here's an example: <br />
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconArrowLeft } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return <IconArrowLeft color="red" size={48} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Proprietăți | Tip   | Descriere                                  | Implicit     |
-| ----------- | ----- | ------------------------------------------ | ------------ |
-| dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24           |
-| culoare     | șir   | Culoarea pictogramelor                     | currentColor |
-| trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2            |
-
-</Tab>
-
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                  | Implicit     |
+    | ----------- | ----- | ------------------------------------------ | ------------ |
+    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24           |
+    | culoare     | șir   | Culoarea pictogramelor                     | currentColor |
+    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2            |
+  </Tab>
 </Tabs>
 
 ## Pictograme personalizate
@@ -58,26 +54,20 @@ Pe lângă pictogramele Tabler, aplicația utilizează și alte pictograme perso
 Afișează o pictogramă de agendă.
 
 <Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconAddressBook } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return <IconAddressBook size={24} stroke={2} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Proprietăți | Tip   | Descriere                                  | Implicit |
-| ----------- | ----- | ------------------------------------------ | -------- |
-| dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24       |
-| trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2        |
-
-</Tab>
-
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip   | Descriere                                  | Implicit |
+    | ----------- | ----- | ------------------------------------------ | -------- |
+    | dimensiune  | număr | Înălțimea și lățimea pictogramei în pixeli | 24       |
+    | trăsatura   | număr | Grosimea trăsăturii pictogramei în pixeli  | 2        |
+  </Tab>
 </Tabs>

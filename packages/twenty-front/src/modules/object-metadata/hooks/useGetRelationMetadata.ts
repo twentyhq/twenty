@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export const useGetRelationMetadata = () =>
   useRecoilCallback(

@@ -1,0 +1,91 @@
+---
+title: Objekty
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standardní objekty
+
+Standardní objekty jsou předdefinované entity ve vašem pracovním prostoru, které vám pomáhají začít. Jsou součástí sdíleného datového modelu přístupného všem uživatelům Twenty. Můžete je používat tak, jak jsou, přizpůsobit je nebo je deaktivovat.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Osoby
+
+Objekt `People` ukládá vaše kontakty. Obsahuje kontaktní údaje a historii interakcí, takže vidíte všechny zákaznické interakce na jednom místě.
+
+### Společnost
+
+The `Companies` object stores your business accounts. It includes details like industry, size and location. Společnosti jsou propojené s objekty `People` a `Opportunities`.
+
+### Příležitosti
+
+Objekt `Opportunities` ukládá údaje související s nabídkami. Sleduje průběh potenciálních prodejů, od prospectingu po uzavření, zaznamenává fáze, velikosti nabídek, související účty a očekávané datum uzavření. Můžete si prohlédnout svůj prodejní kanál v rozložení kanban.
+
+### Poznámky
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Úkoly
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## Vlastní objekty
+
+Vlastní objekty vám umožňují ukládat informace, které jsou jedinečné pro vaši organizaci a které standardní objekty nezvládnou. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+Chcete-li vytvořit nový vlastní objekt:
+
+1. Přejděte do Nastavení na postranním panelu vlevo.
+2. Pod pracovní prostorem přejděte na Datový model. Tady budete moci vidět přehled všech vašich stávajících Standardních a Vlastních objektů (jak aktivních, tak neaktivních).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klikněte na `+ Nový objekt` v horní části. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## Osvědčené postupy
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

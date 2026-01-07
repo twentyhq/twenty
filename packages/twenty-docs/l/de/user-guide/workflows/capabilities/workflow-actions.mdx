@@ -1,0 +1,311 @@
+---
+title: Workflow-Aktionen
+description: Erfahren Sie mehr über die in Twenty-Workflows verfügbaren Aktionen.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Über Aktionen
+
+Aktionen definieren, was nach dem Auslösen passiert. Sie können mehrere Aktionen verketten, um komplexe Automatisierungen zu erstellen.
+
+<Tip>
+  * Verwenden Sie die Variablenauswahl (klicken Sie auf das Symbol `(x+)`), um verfügbare Daten aus vorherigen Schritten zu durchsuchen
+  * Bewegen Sie den Mauszeiger über ein beliebiges Eingabefeld, um zu sehen, aus welchem Schritt eine Variable stammt — hilfreich, wenn dasselbe Feld (z. B. ID) in mehreren vorherigen Schritten vorhanden ist
+  * Geben Sie jeder Aktion einen aussagekräftigen Namen, um die Wartung zu erleichtern
+</Tip>
+
+## Datensatz-Aktionen
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Einen Datensatz erstellen
+
+Fügt einem ausgewählten Objekt einen neuen Datensatz hinzu.
+
+**Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus
+* Füllen Sie die erforderlichen und optionalen Felder aus
+* Verwenden Sie Daten aus vorherigen Schritten oder geben Sie Werte manuell ein, um Felder auszufüllen
+
+**Ausgabe**: Die neu erstellten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensatz aktualisieren
+
+Ändert einen bestehenden Datensatz in einem ausgewählten Objekt.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus
+* Wählen Sie den spezifischen Datensatz zum Aktualisieren aus.
+  * Sie können entweder einen festen Datensatz auswählen, indem Sie das Dropdown-Menü verwenden, das alle verfügbaren Datensätze anzeigt.
+  * Oder Sie lassen den Datensatz dynamisch auswählen, indem Sie einen in einem vorherigen Schritt gefundenen Datensatz über `(x+)` angeben. In diesem Schritt können Sie den Datensatz nicht anhand verschiedener Kriterien suchen. Wenn Sie den Datensatz noch nicht identifiziert haben, fügen Sie vor diesem Schritt `Update Record` einen Schritt `Search Record` hinzu.
+* Wählen Sie zu ändernde Felder aus und geben Sie neue Werte ein
+
+**Ausgabe**: Die aktualisierten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensatz löschen
+
+Entfernt einen Datensatz aus einem ausgewählten Objekt.
+
+**Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus
+* Wählen Sie den spezifischen Datensatz zum Löschen aus
+
+**Ausgabe**: Die gelöschten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensätze durchsuchen
+
+Findet Datensätze innerhalb eines ausgewählten Objekts mittels Filterkonditionen.
+
+**Konfiguration**:
+
+* Wählen Sie das Objekt aus, das Sie durchsuchen möchten.
+* Legen Sie Filterkriterien fest, um Ergebnisse einzugrenzen.
+* Konfigurieren Sie Sortierung und Begrenzungen.
+
+**Ausgabe**: Gibt passende Datensätze zurück, die in nachfolgenden Schritten verwendet werden können.
+
+<Note>
+  **Limit**: Search Records gibt maximal **200 Datensätze** zurück. Wenn Sie mehr verarbeiten müssen, fügen Sie spezifische Filter hinzu, um die Ergebnisse zu reduzieren, oder verwenden Sie geplante Workflows, um stapelweise zu verarbeiten.
+</Note>
+
+**Best Practice**: Verwenden Sie [Verzweigungen](/l/de/user-guide/workflows/capabilities/workflow-branches) nach dem Durchsuchen von Datensätzen, um "gefunden" vs "nicht gefunden" Szenarien zu behandeln.
+
+### Datensatz einfügen oder aktualisieren
+
+Erstellt einen neuen Datensatz oder aktualisiert einen vorhandenen anhand von Übereinstimmungskriterien. Das ist hilfreich, wenn Sie nicht sicher sind, ob ein Datensatz bereits vorhanden ist.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus
+* Beachten Sie, welche Felder für den Abgleich verwendet werden können: E-Mail für Personen, Domain für Unternehmen, ID für beliebige Objekte oder jedes Feld, das als eindeutig markiert ist. Unten müssen Sie mindestens eines davon ausfüllen.
+* Füllen Sie die Feldwerte aus. Vergessen Sie nicht, mindestens einen der eindeutigen Bezeichner auszufüllen.
+
+<Note>
+  **Der Abgleich funktioniert in der Regel noch besser, wenn Sie nur einen eindeutigen Bezeichner hinzufügen.** Beispielsweise werden im untenstehenden Screenshot Unternehmen anhand ihrer Domain abgeglichen. Die ID ist nicht unbedingt erforderlich.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Verwenden Sie Daten aus vorherigen Schritten, um Felder zu füllen
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### Iterator
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**Konfiguration**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Definieren Sie die Aktionen, die für jeden Datensatz in der Schleife ausgeführt werden sollen.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+
+### Filter
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Konfiguration**:
+
+* Select the record to filter
+* Definieren Sie Filterbedingungen und Kriterien
+* Konfigurieren Sie, welche Datensätze in nachfolgende Schritte übergehen sollen
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Typ                | Beschreibung                                                       |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Anwendungsfälle**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### E-Mail senden
+
+Sendet eine E-Mail aus Ihrem Workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**Konfiguration**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* E-Mail-Adresse des Empfängers eingeben.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* Betreffzeile festlegen.
+* Nachrichtentext verfassen. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### Formular
+
+Fordert während der Workflow-Ausführung ein Formular an, um Benutzereingaben zu sammeln. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
+</Warning>
+
+**Konfiguration**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**Ausgabe**: Formularantworten sind für nachfolgende Schritte verfügbar.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+
+## Integration Actions
+
+### Code
+
+Führt benutzerdefiniertes JavaScript in Ihrem Workflow aus.
+
+**Konfiguration**:
+
+* Greifen Sie auf Variablen aus vorherigen Schritten zu. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+
+* Schreiben Sie JavaScript-Code im Editor
+* Variablen zurückgeben, um sie in nachfolgenden Schritten zu verwenden
+* Code direkt im Schritt testen
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### HTTP-Anfrage
+
+Sendet eine Anfrage an eine externe API als Teil Ihres Workflows.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Konfiguration**:
+
+* Geben Sie die API-Endpunkt-URL ein. Using parameters from previous steps is possible.
+* Wählen Sie die HTTP-Methode aus (GET, POST, PUT, PATCH, DELETE)
+* Erforderliche Header und Werte hinzufügen
+* Beispielantwort zur Strukturvorschau bereitstellen
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Konfiguration**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/de/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/de/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

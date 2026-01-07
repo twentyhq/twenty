@@ -13,6 +13,7 @@ import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-qu
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
 export class FindOneResolverFactory
@@ -29,25 +30,30 @@ export class FindOneResolverFactory
   ): Resolver<FindOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, _context, info) => {
+    return async (_source, args, requestContext, info) => {
       try {
         const selectedFields = graphqlFields(info);
 
+        const resolverContext = createQueryRunnerContext({
+          workspaceSchemaBuilderContext: internalContext,
+          request: requestContext.req,
+        });
+
         const record = await this.commonFindOneQueryRunnerService.execute(
           { ...args, selectedFields },
-          internalContext,
+          resolverContext,
         );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.flatObjectMetadataMaps,
-            internalContext.flatFieldMetadataMaps,
-            internalContext.objectIdByNameSingular,
+            resolverContext.flatObjectMetadataMaps,
+            resolverContext.flatFieldMetadataMaps,
+            resolverContext.objectIdByNameSingular,
           );
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
-          objectName: internalContext.flatObjectMetadata.nameSingular,
+          objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,
         });

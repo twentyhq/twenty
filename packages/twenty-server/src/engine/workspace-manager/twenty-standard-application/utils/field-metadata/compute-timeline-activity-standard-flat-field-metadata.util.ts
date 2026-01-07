@@ -116,6 +116,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Creation date',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 'now',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -133,6 +134,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event name',
       icon: 'IconAbc',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -149,6 +151,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Json value for event details',
       icon: 'IconListDetails',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -165,6 +168,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Cached record name',
       icon: 'IconAbc',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -181,6 +185,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Linked Record id',
       icon: 'IconAbc',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -197,6 +202,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Linked Object Metadata Id',
       icon: 'IconAbc',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -216,6 +222,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -240,6 +247,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -264,6 +272,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -288,6 +297,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -312,6 +322,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event note',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -336,6 +347,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event task',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -360,6 +372,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -384,6 +397,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow version',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -408,6 +422,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow run',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowRun',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -432,6 +447,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event dashboard',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'dashboard',
       targetFieldName: 'timelineActivities',
       settings: {

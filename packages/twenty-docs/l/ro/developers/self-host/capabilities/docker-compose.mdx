@@ -1,0 +1,253 @@
+---
+title: 1-Click cu Docker Compose
+---
+
+<Warning>
+  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/ro/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## Prezentare generală
+
+Acest ghid oferă instrucțiuni pas cu pas pentru a instala și configura aplicația Twenty folosind Docker Compose. Scopul este de a face procesul direct și de a preveni capcanele comune care ar putea deteriora configurarea dvs.
+
+**Important:** Modificați numai setările menționate explicit în acest ghid. Modificarea altor configurații poate duce la probleme.
+
+Consultați documentația [Setup Environment Variables](/l/ro/developers/self-host/capabilities/setup) pentru configurare avansată. Toate variabilele de mediu trebuie declarate în fișierul docker-compose.yml la nivel de server și/sau de lucru, în funcție de variabilă.
+
+## Cerințe de Sistem
+
+* RAM: Asigurați-vă că mediul dvs. are cel puțin 2 GB de RAM. Memoria insuficientă poate provoca prăbușirea proceselor.
+* Docker & Docker Compose: Asigurați-vă că ambele sunt instalate și la zi.
+
+## Opțiunea 1: Script într-o singură linie
+
+Install the latest stable version of Twenty with a single command:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Pentru a instala o versiune sau ramură specifică:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Înlocuiți x.y.z cu numărul versiunii dorite.
+* Înlocuiți branch-name cu numele ramurii pe care doriți să o instalați.
+
+## Opțiunea 2: Pași manuali
+
+Urmați acești pași pentru o configurare manuală.
+
+### Pasul 1: Configurați Fișierul de Mediu
+
+1. **Creați Fișierul .env**
+
+   Copiați exemplul de fișier de mediu într-un fișier .env nou în directorul de lucru:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Generați Tokenuri Secrete**
+
+   Rulați următoarea comandă pentru a genera un șir unic aleatoriu:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Important:** Păstrați această valoare secretă / nu o împărtășiți.
+
+3. **Actualizați `.env`**
+
+   Înlocuiți valoarea substituentului în fișierul dvs. .env cu tokenul generat:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Setați Parola pentru Postgres**
+
+   Actualizați valoarea `PG_DATABASE_PASSWORD` în fișierul .env cu o parolă puternică fără caractere speciale.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Pasul 2: Obțineți Fișierul Docker Compose
+
+Descărcați fișierul `docker-compose.yml` în directorul de lucru:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Pasul 3: Lansați Aplicația
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### Pasul 4: Accesați Aplicația
+
+Dacă găzduiți twentyCRM pe propriul computer, deschideți browserul și navigați la [http://localhost:3000](http://localhost:3000).
+
+If you host it on a server, check that the server is running and that everything is ok with
+
+```bash
+curl http://localhost:3000
+```
+
+## Configurație
+
+### Expuneți Twenty pentru Acces Extern
+
+Implicit, Twenty rulează pe `localhost` la portul `3000`. Pentru a-l accesa printr-un domeniu extern sau adresă IP, trebuie să configurați `SERVER_URL` în fișierul dvs. `.env`.
+
+#### Înțelegerea `SERVER_URL`
+
+* **Protocol:** Utilizați `http` sau `https`, în funcție de configurarea dvs.
+  * Utilizați `http` dacă nu ați configurat SSL.
+  * Utilizați `https` dacă aveți SSL configurat.
+* **Domeniu/IP:** Acesta este numele domeniului sau adresa IP unde aplicația dvs. este accesibilă.
+* **Port:** Includeți numărul portului dacă nu utilizați porturile implicite (`80` pentru `http`, `443` pentru `https`).
+
+### Cerințe SSL
+
+SSL (HTTPS) este necesar pentru funcționarea corespunzătoare a anumitor funcții ale browserului. Deși aceste funcții pot funcționa în timpul dezvoltării locale (deoarece browserele tratează localhost diferit), o configurare SSL corespunzătoare este necesară când găzduiți Twenty pe un domeniu obișnuit.
+
+De exemplu, API-ul pentru clipboard ar putea necesita un context securizat - unele funcții precum butoanele de copiere din aplicație ar putea să nu funcționeze fără HTTPS activat.
+
+Recomandăm cu tărie configurarea Twenty din spatele unui proxy revers cu terminare SSL pentru securitate și funcționalitate optimă.
+
+#### Configurarea `SERVER_URL`
+
+1. **Stabiliți Adresa dvs. de Acces**
+   * **Fără Proxy Revers (Acces Direct):**
+
+     Dacă accesați aplicația direct, fără un proxy revers:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **Cu Proxy Revers (Porturi Standard):**
+
+     Dacă utilizați un proxy revers precum Nginx sau Traefik și aveți configurat SSL:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **Cu Proxy Revers (Porturi Custom):**
+
+     Dacă utilizați porturi non-standard:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Actualizați Fișierul `.env`**
+
+   Deschideți fișierul dvs. `.env` și actualizați `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Exemple:**
+
+   * Acces direct fără SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * Acces prin domeniu cu SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Reporniți Aplicația**
+
+   Pentru ca modificările să intre în vigoare, reporniți containerele Docker:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Considerații
+
+* **Configurarea Proxy-ului Invers:**
+
+  Asigurați-vă că proxy-ul invers transmite cererile către portul intern corect (`3000` în mod implicit). Configurați finalizarea SSL și toate headerele necesare.
+
+* **Setările Firewall-ului:**
+
+  Deschideți porturile necesare în firewall-ul dvs. pentru a permite accesul extern.
+
+* **Consistență:**
+
+  `SERVER_URL` trebuie să corespundă modului în care utilizatorii accesează aplicația dvs. în browserele lor.
+
+#### Persistență
+
+* **Volume de Date:**
+
+  Configurația Docker Compose folosește volume pentru a persista datele pentru baza de date și stocarea serverului.
+
+* **Mediile Fără Stare:**
+
+  Dacă se utilizează un mediu fără stare (de ex., anumite servicii de cloud), configurați stocarea externă pentru a persista datele.
+
+## Backup and Restore
+
+Regular backups protect your CRM data from loss.
+
+### Create a Database Backup
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automate Daily Backups
+
+Add to your crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restore from Backup
+
+1. Stop the application:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restore the database:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Restart services:
+
+```bash
+docker compose up -d
+```
+
+### Backup Best Practices
+
+* **Test restores regularly** — verify backups actually work
+* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
+* **Encrypt sensitive data** — protect backups with encryption
+* **Retain multiple copies** — keep daily, weekly, and monthly backups
+
+## Depanare
+
+Dacă întâmpinați vreo problemă, verificați [Depanare](/l/ro/developers/self-host/capabilities/troubleshooting) pentru soluții.

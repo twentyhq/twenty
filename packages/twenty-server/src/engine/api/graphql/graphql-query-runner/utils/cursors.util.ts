@@ -7,6 +7,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 
 export interface CursorData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,6 +21,7 @@ export const decodeCursor = <T = CursorData>(cursor: string): T => {
     throw new CommonQueryRunnerException(
       `Invalid cursor: ${cursor}`,
       CommonQueryRunnerExceptionCode.INVALID_CURSOR,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 };

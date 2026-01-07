@@ -1,0 +1,39 @@
+---
+title: Пользовательские объекты
+---
+
+Объекты - это структуры, которые позволяют хранить данные (записи, атрибуты и значения), специфичные для организации. Twenty provides both standard and custom objects.
+
+Стандартные объекты - это встроенные объекты с набором атрибутов, доступных для всех пользователей. Examples of standard objects in Twenty include Company and Person. Стандартные объекты имеют стандартные поля, которые также доступны всем пользователям Twenty, например, Company.displayName.
+
+Пользовательские объекты - это объекты, которые вы можете создать для хранения уникальной информации для вашей организации. They are not built-in; members of your workspace can create and customize custom objects to hold information that standard objects aren't suitable for.
+
+## Схема высокого уровня
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Схема высокого уровня" />
+</div>
+
+<br />
+
+## Как это работает
+
+Пользовательские объекты происходят из таблиц метаданных, определяющих форму, имя и тип объектов. Вся эта информация присутствует в базе данных схемы метаданных, состоящей из таблиц:
+
+* **DataSource**: Указывает, где находятся данные.
+* **Объект**: Описывает объект и связывается с DataSource.
+* **Поле**: Описывает поля объекта и соединяет с объектом.
+
+Чтобы добавить пользовательский объект, участник рабочего пространства сделает запрос к /metadata API. Это обновляет метаданные соответствующим образом и создает схему GraphQL на основе метаданных, храня их в кэше GQL для дальнейшего использования.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Запросите API /metadata для добавления пользовательских объектов" />
+</div>
+
+<br />
+
+Для извлечения данных процесс включает выполнение запросов через конечную точку /graphql и их передачу через Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Запросите конечную точку /graphql для получения данных" />
+</div>

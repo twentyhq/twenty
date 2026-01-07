@@ -1,6 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyORMExceptionCode {
@@ -25,29 +27,50 @@ export enum TwentyORMExceptionCode {
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
 }
 
-const twentyORMExceptionUserFriendlyMessages: Record<
-  TwentyORMExceptionCode,
-  MessageDescriptor
-> = {
-  [TwentyORMExceptionCode.METADATA_VERSION_MISMATCH]: msg`Data version mismatch. Please refresh and try again.`,
-  [TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND]: msg`Workspace schema not found.`,
-  [TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND]: msg`Roles and permissions configuration not found.`,
-  [TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND]: msg`Feature configuration not found.`,
-  [TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND]: msg`User workspace role configuration not found.`,
-  [TwentyORMExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND]: msg`API key role configuration not found.`,
-  [TwentyORMExceptionCode.MALFORMED_METADATA]: msg`Data structure is invalid.`,
-  [TwentyORMExceptionCode.WORKSPACE_NOT_FOUND]: msg`Workspace not found.`,
-  [TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND]: msg`Related record not found.`,
-  [TwentyORMExceptionCode.CONNECT_NOT_ALLOWED]: msg`This connection is not allowed.`,
-  [TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR]: msg`A record with this relationship already exists.`,
-  [TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET]: msg`Missing main alias target.`,
-  [TwentyORMExceptionCode.METHOD_NOT_ALLOWED]: msg`This operation is not allowed.`,
-  [TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND]: msg`Enum type not found.`,
-  [TwentyORMExceptionCode.QUERY_READ_TIMEOUT]: msg`Query timed out. Please try again.`,
-  [TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED]: msg`A duplicate entry was detected.`,
-  [TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE]: msg`Too many records to update at once.`,
-  [TwentyORMExceptionCode.INVALID_INPUT]: msg`Invalid input provided.`,
-  [TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED]: msg`Event data is corrupted.`,
+const getTwentyORMExceptionUserFriendlyMessage = (
+  code: TwentyORMExceptionCode,
+) => {
+  switch (code) {
+    case TwentyORMExceptionCode.METADATA_VERSION_MISMATCH:
+      return msg`Data version mismatch. Please refresh and try again.`;
+    case TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND:
+      return msg`Workspace schema not found.`;
+    case TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND:
+      return msg`Roles and permissions configuration not found.`;
+    case TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND:
+      return msg`Feature configuration not found.`;
+    case TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND:
+      return msg`User workspace role configuration not found.`;
+    case TwentyORMExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND:
+      return msg`API key role configuration not found.`;
+    case TwentyORMExceptionCode.MALFORMED_METADATA:
+      return msg`Data structure is invalid.`;
+    case TwentyORMExceptionCode.WORKSPACE_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND:
+      return msg`Related record not found.`;
+    case TwentyORMExceptionCode.CONNECT_NOT_ALLOWED:
+      return msg`This connection is not allowed.`;
+    case TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR:
+      return msg`A record with this relationship already exists.`;
+    case TwentyORMExceptionCode.MISSING_MAIN_ALIAS_TARGET:
+      return msg`Missing main alias target.`;
+    case TwentyORMExceptionCode.METHOD_NOT_ALLOWED:
+      return msg`This operation is not allowed.`;
+    case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
+      return msg`Query timed out. Please try again.`;
+    case TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED:
+      return msg`A duplicate entry was detected.`;
+    case TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
+      return msg`Too many records to update at once.`;
+    case TwentyORMExceptionCode.INVALID_INPUT:
+      return msg`Invalid input provided.`;
+    case TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:
+    case TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class TwentyORMException extends CustomException<TwentyORMExceptionCode> {
@@ -58,7 +81,7 @@ export class TwentyORMException extends CustomException<TwentyORMExceptionCode> 
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? twentyORMExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getTwentyORMExceptionUserFriendlyMessage(code),
     });
   }
 }

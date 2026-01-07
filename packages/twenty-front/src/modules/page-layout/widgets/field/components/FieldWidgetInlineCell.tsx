@@ -9,6 +9,7 @@ import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetBu
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
@@ -34,6 +35,7 @@ export const FieldWidgetInlineCell = ({
   loading,
   instanceIdPrefix,
 }: FieldWidgetInlineCellProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const {
     fieldDefinition,
     recordId,
@@ -141,11 +143,12 @@ export const FieldWidgetInlineCell = ({
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+        const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
           recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          componentType: 'inline-cell',
+          instanceId: scopeInstanceId,
+        });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
           return;
@@ -165,12 +168,15 @@ export const FieldWidgetInlineCell = ({
       recordId,
       fieldDefinition.fieldMetadataId,
       persistFieldFromFieldInputContext,
+      scopeInstanceId,
     ],
   );
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isReadOnly,
     buttonIcon: buttonIcon,
+    label: fieldDefinition.label,
+    labelWidth: fieldDefinition.labelWidth,
     editModeContent: <FieldInput />,
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,

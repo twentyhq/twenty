@@ -30,7 +30,7 @@ describe('ApiKeyService', () => {
   const mockApiKey: ApiKeyEntity = {
     id: mockApiKeyId,
     name: 'Test API Key',
-    expiresAt: new Date('2025-12-31'),
+    expiresAt: new Date('2030-12-31'),
     revokedAt: undefined,
     workspaceId: mockWorkspaceId,
     createdAt: new Date('2024-01-01'),

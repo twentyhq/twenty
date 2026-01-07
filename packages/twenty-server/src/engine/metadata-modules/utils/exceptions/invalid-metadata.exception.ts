@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -15,19 +16,31 @@ export enum InvalidMetadataExceptionCode {
   NOT_AVAILABLE = 'Name not available',
 }
 
-const invalidMetadataExceptionUserFriendlyMessages: Record<
-  InvalidMetadataExceptionCode,
-  MessageDescriptor
-> = {
-  [InvalidMetadataExceptionCode.LABEL_REQUIRED]: msg`Label is required.`,
-  [InvalidMetadataExceptionCode.INPUT_TOO_SHORT]: msg`Input is too short.`,
-  [InvalidMetadataExceptionCode.EXCEEDS_MAX_LENGTH]: msg`Input exceeds maximum length.`,
-  [InvalidMetadataExceptionCode.RESERVED_KEYWORD]: msg`This name is a reserved keyword.`,
-  [InvalidMetadataExceptionCode.NOT_CAMEL_CASE]: msg`Name must be in camelCase format.`,
-  [InvalidMetadataExceptionCode.INVALID_LABEL]: msg`Invalid label format.`,
-  [InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL]: msg`Name is not synced with label.`,
-  [InvalidMetadataExceptionCode.INVALID_STRING]: msg`Invalid string format.`,
-  [InvalidMetadataExceptionCode.NOT_AVAILABLE]: msg`This name is not available.`,
+const getInvalidMetadataExceptionUserFriendlyMessage = (
+  code: InvalidMetadataExceptionCode,
+) => {
+  switch (code) {
+    case InvalidMetadataExceptionCode.LABEL_REQUIRED:
+      return msg`Label is required.`;
+    case InvalidMetadataExceptionCode.INPUT_TOO_SHORT:
+      return msg`Input is too short.`;
+    case InvalidMetadataExceptionCode.EXCEEDS_MAX_LENGTH:
+      return msg`Input exceeds maximum length.`;
+    case InvalidMetadataExceptionCode.RESERVED_KEYWORD:
+      return msg`This name is a reserved keyword.`;
+    case InvalidMetadataExceptionCode.NOT_CAMEL_CASE:
+      return msg`Name must be in camelCase format.`;
+    case InvalidMetadataExceptionCode.INVALID_LABEL:
+      return msg`Invalid label format.`;
+    case InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL:
+      return msg`Name is not synced with label.`;
+    case InvalidMetadataExceptionCode.INVALID_STRING:
+      return msg`Invalid string format.`;
+    case InvalidMetadataExceptionCode.NOT_AVAILABLE:
+      return msg`This name is not available.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class InvalidMetadataException extends CustomException<InvalidMetadataExceptionCode> {
@@ -39,7 +52,7 @@ export class InvalidMetadataException extends CustomException<InvalidMetadataExc
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        invalidMetadataExceptionUserFriendlyMessages[code],
+        getInvalidMetadataExceptionUserFriendlyMessage(code),
     });
   }
 }

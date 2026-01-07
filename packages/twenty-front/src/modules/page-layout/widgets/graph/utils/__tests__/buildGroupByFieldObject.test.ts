@@ -1,7 +1,9 @@
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+const userTimezone = 'Europe/Paris';
 
 describe('buildGroupByFieldObject', () => {
   it('should return field with Id suffix for relation fields without subFieldName', () => {
@@ -53,11 +55,15 @@ describe('buildGroupByFieldObject', () => {
       subFieldName: 'createdAt',
       dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
       isNestedDateField: true,
+      timeZone: userTimezone,
     });
 
     expect(result).toEqual({
       company: {
-        createdAt: { granularity: ObjectRecordGroupByDateGranularity.MONTH },
+        createdAt: {
+          granularity: ObjectRecordGroupByDateGranularity.MONTH,
+          timeZone: 'Europe/Paris',
+        },
       },
     });
   });
@@ -97,11 +103,12 @@ describe('buildGroupByFieldObject', () => {
       type: FieldMetadataType.DATE,
     } as any;
 
-    const result = buildGroupByFieldObject({ field });
+    const result = buildGroupByFieldObject({ field, timeZone: 'Europe/Paris' });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.DAY,
+        timeZone: 'Europe/Paris',
       },
     });
   });
@@ -112,11 +119,12 @@ describe('buildGroupByFieldObject', () => {
       type: FieldMetadataType.DATE_TIME,
     } as any;
 
-    const result = buildGroupByFieldObject({ field });
+    const result = buildGroupByFieldObject({ field, timeZone: 'Europe/Paris' });
 
     expect(result).toEqual({
       updatedAt: {
         granularity: ObjectRecordGroupByDateGranularity.DAY,
+        timeZone: 'Europe/Paris',
       },
     });
   });
@@ -130,11 +138,13 @@ describe('buildGroupByFieldObject', () => {
     const result = buildGroupByFieldObject({
       field,
       dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+      timeZone: 'Europe/Paris',
     });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.MONTH,
+        timeZone: 'Europe/Paris',
       },
     });
   });
@@ -160,12 +170,14 @@ describe('buildGroupByFieldObject', () => {
       field,
       dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
       firstDayOfTheWeek: CalendarStartDay.MONDAY,
+      timeZone: 'Europe/Paris',
     });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.WEEK,
         weekStartDay: 'MONDAY',
+        timeZone: 'Europe/Paris',
       },
     });
   });
@@ -180,12 +192,14 @@ describe('buildGroupByFieldObject', () => {
       field,
       dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
       firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      timeZone: userTimezone,
     });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.WEEK,
         weekStartDay: 'SUNDAY',
+        timeZone: userTimezone,
       },
     });
   });
@@ -200,11 +214,13 @@ describe('buildGroupByFieldObject', () => {
       field,
       dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
       firstDayOfTheWeek: CalendarStartDay.SYSTEM,
+      timeZone: userTimezone,
     });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.WEEK,
+        timeZone: userTimezone,
       },
     });
   });
@@ -219,11 +235,13 @@ describe('buildGroupByFieldObject', () => {
       field,
       dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
       firstDayOfTheWeek: CalendarStartDay.MONDAY,
+      timeZone: userTimezone,
     });
 
     expect(result).toEqual({
       createdAt: {
         granularity: ObjectRecordGroupByDateGranularity.MONTH,
+        timeZone: userTimezone,
       },
     });
   });

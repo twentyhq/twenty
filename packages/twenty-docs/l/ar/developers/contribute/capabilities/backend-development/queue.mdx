@@ -1,0 +1,41 @@
+---
+title: Message Queue
+---
+
+تسهل القوائم العمليات غير المتزامنة. يمكن استخدامها لأداء مهام الخلفية مثل إرسال بريد ترحيبي عند التسجيل.
+سيكون لكل حالة استخدام فئة قائمة خاصة بها ممتدة من `MessageQueueServiceBase`.
+
+حاليًا، ندعم `bull-mq`[bull-mq](https://bullmq.io/) فقط كبرنامج تشغيل القائمة.
+
+## خطوات إنشاء واستخدام قائمة جديدة
+
+1. أضف اسم قائمة لقائمة جديدة تحت التعداد `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. قم بإدراج القائمة التي أنشأتها في الوحدة/الخدمة المطلوبة مع اسم القائمة كرمز تبعية.
+4. Add worker class with token based injection just like producer.
+
+### نموذج للاستخدام
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

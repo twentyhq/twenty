@@ -7,6 +7,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
+import { WidgetConfigurationType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
     updatePageLayoutWidget(widgetInEditMode.id, {
       configuration: {
         __typename: 'IframeConfiguration',
+        configurationType: WidgetConfigurationType.IFRAME,
         url: isNonEmptyString(trimmedValue) ? trimmedValue : null,
       },
     });

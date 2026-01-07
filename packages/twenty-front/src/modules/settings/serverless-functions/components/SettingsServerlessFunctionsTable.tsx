@@ -10,8 +10,8 @@ import { type ServerlessFunction } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
+export const StyledTableRow = styled(TableRow)`
+  grid-template-columns: 164px 1fr 96px 32px;
 `;
 
 const StyledTableBody = styled(TableBody)`
@@ -35,6 +35,7 @@ export const SettingsServerlessFunctionsTable = ({
     <Table>
       <StyledTableRow>
         <TableHeader>{t`Name`}</TableHeader>
+        <TableHeader></TableHeader>
         <TableHeader>{t`Runtime`}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>

@@ -1,5 +1,5 @@
 import { GraphOrderBy } from '~/generated/graphql';
-import { sortBarChartDataBySecondaryDimensionSum } from '../sortBarChartDataBySecondaryDimensionSum';
+import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
 
 describe('sortBarChartDataBySecondaryDimensionSum', () => {
   const mockData = [

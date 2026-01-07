@@ -1,0 +1,136 @@
+---
+title: Workflow Triggers
+description: Learn about the different triggers that start your workflows.
+---
+
+## About Triggers
+
+Workflows always start with a single trigger that defines when the automation should run.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+
+  * Workspace Members
+  * Calendar Events
+  * Messages (Emails)
+  * Tasks, Notes, and many other system objects
+
+  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+</Tip>
+
+## Record is Created
+
+Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+
+**Configuration**: Select the object type to monitor for new records.
+
+<Note>
+  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+</Note>
+
+## Record is Updated
+
+Starts the workflow when changes are made to an existing record.
+
+**Configuration**:
+
+* Select the object type
+* Optionally specify which fields to monitor for changes
+
+## Record is Updated or Created
+
+Starts the workflow when a record is either created or updated in a selected object.
+
+**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+
+* **API/CSV imports**: Records are created with all fields populated immediately
+* **Manual creation**: Records are created first, then fields are added in subsequent updates
+
+**Configuration**:
+
+* Select the object type to monitor
+* Optionally specify which fields to monitor for changes
+* The workflow will trigger both on initial creation and any subsequent updates
+
+## Record is Deleted
+
+Starts the workflow when a record is removed from an object.
+
+**Configuration**: Select the object type to monitor for deletions.
+
+## Manual Trigger
+
+Starts the workflow when triggered by a user action. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Availability Configuration**:
+Choose how the workflow should handle record selection:
+
+* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+
+* **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run from beginning to end as many times as there are records selected.
+
+  <Note>
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+  </Note>
+
+* **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an [Iterator action](/l/fr/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  This is more advanced, and best for people who want to optimize the number of workflow runs.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Additional Configuration**:
+
+* Select the target object (for Single and Bulk availability)
+* Choose a command icon for the workflow trigger
+* Configure navbar placement (Pinned or Not Pinned)
+
+**Access Methods**:
+
+* `Cmd+K` menu to find and launch manual workflows
+* Custom button in the top navbar (if configured)
+
+## Time-Based Trigger: On a Schedule
+
+Starts the workflow on a recurring basis you define.
+
+**Configuration**:
+
+* Select time unit (minutes, hours, days)
+* Enter a value or use custom cron expressions for advanced scheduling
+
+<Note>
+  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+</Note>
+
+## External Trigger: Webhook
+
+Starts the workflow when a GET or POST request is received from an external service.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Configuration**:
+
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
+
+## Choosing the Right Trigger
+
+| Use Case                    | Recommended Trigger          |
+| --------------------------- | ---------------------------- |
+| New leads need processing   | Record is Created            |
+| Data changes need sync      | Record is Updated            |
+| Import/manual data handling | Record is Updated or Created |
+| Cleanup after deletion      | Record is Deleted            |
+| User-initiated action       | Launch Manually              |
+| Recurring reports           | On a Schedule                |
+| External integration        | Webhook or On a Schedule     |

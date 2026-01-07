@@ -1,0 +1,149 @@
+---
+title: Invia email dai flussi di lavoro
+description: Invia automaticamente email personalizzate utilizzando le azioni dei flussi di lavoro.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Invia automaticamente email quando si verificano eventi specifici nel tuo CRM—dai il benvenuto ai nuovi contatti, effettua il follow-up delle opportunità o avvisa i membri del team.
+
+## Prerequisiti
+
+Prima di poter inviare email dai flussi di lavoro:
+
+1. Collega un account email in **Impostazioni → Account**
+2. Assicurati che l'account abbia le autorizzazioni di invio abilitate
+
+## Flusso di lavoro email di base
+
+### Esempio: Email di benvenuto per i nuovi contatti
+
+**Obiettivo**: Inviare un'email di benvenuto quando una nuova persona viene aggiunta al CRM.
+
+**Impostazione**:
+
+1. **Crea flusso di lavoro**: Vai su **Impostazioni → Flussi di lavoro** e fai clic su **+ Nuovo flusso di lavoro**
+
+2. **Aggiungi trigger**: Seleziona **Record creato** → **Persone**
+
+3. **Aggiungi l'azione Invia email**:
+   * Fai clic su **+** per aggiungere un'azione
+   * Seleziona **Invia email**
+   * Configura l'email:
+
+| Campo       | Valore                                 |
+| ----------- | -------------------------------------- |
+| **A**       | `{{trigger.object.email}}`             |
+| **Oggetto** | `Benvenuto in {{Your Company Name}}`   |
+| **Corpo**   | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Testa e attiva**: Esegui un test con un record di esempio, quindi attiva
+
+## Uso delle variabili nelle email
+
+Richiama i dati dai passaggi precedenti usando la sintassi `{{variable}}`:
+
+```text
+Ciao {{trigger.object.firstName}},
+
+Grazie per esserti messo in contatto con noi!
+
+La tua azienda, {{trigger.object.company.name}}, è ora nel nostro sistema.
+
+Cordiali saluti,
+Il Team
+```
+
+### Variabili disponibili dai trigger
+
+| Tipo di trigger              | Variabili comuni                       |
+| ---------------------------- | -------------------------------------- |
+| **Record creato/aggiornato** | `{{trigger.object.fieldName}}`         |
+| **Manuale**                  | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                  | `{{trigger.body.fieldName}}`           |
+
+## Avanzato: Email condizionali
+
+### Esempio: Email diverse in base all'origine del lead
+
+**Obiettivo**: Inviare email di benvenuto diverse in base alla provenienza del lead.
+
+**Impostazione**:
+
+1. **Trigger**: Record creato (Persone)
+
+2. **Aggiungi l'azione Filtro**:
+   * Condizione: `{{trigger.object.source}}` uguale a `"Website"`
+   * Se vero → continua con l'email di benvenuto per il sito web
+
+3. **Diramazione per altre origini**:
+   * Crea diramazioni parallele per origini diverse
+   * Ogni diramazione ha la propria azione Invia email
+
+## Inviare email a più destinatari
+
+### Esempio: Notifica al team quando un'opportunità viene chiusa
+
+**Obiettivo**: Inviare un'email al commerciale e al suo responsabile quando un'opportunità viene vinta.
+
+**Impostazione**:
+
+1. **Trigger**: Record aggiornato (Opportunità, Fase = "Chiusa vinta")
+
+2. **Cerca record**: Trova il responsabile del proprietario dell'opportunità
+
+3. **Invia email n. 1**: Al proprietario dell'opportunità
+   * A: `{{trigger.object.owner.email}}`
+   * Oggetto: `Congratulazioni per la chiusura di {{trigger.object.name}}!`
+
+4. **Invia email n. 2**: Al responsabile
+   * A: `{{searchRecords.manager.email}}`
+   * Oggetto: `Opportunità vinta: {{trigger.object.name}}`
+
+## Email di follow-up programmate
+
+### Esempio: Follow-up 3 giorni dopo la riunione
+
+**Obiettivo**: Inviare un'email di follow-up 3 giorni dopo la registrazione di una riunione.
+
+**Impostazione**:
+
+1. **Trigger**: Record creato (Attività, Tipo = "Riunione")
+
+2. **Azione di ritardo**: Attendi 3 giorni
+
+3. **Invia email**:
+   * A: Partecipante alla riunione
+   * Oggetto: Seguito alla nostra conversazione
+   * Corpo: Richiama i dettagli della riunione dal trigger
+
+## Migliori Pratiche
+
+### Contenuto dell'email
+
+* Mantieni le righe dell'oggetto concise e pertinenti
+* Personalizza con il nome del destinatario
+* Includi una chiara chiamata all'azione
+* Testa le email prima di attivare
+
+### Recapito
+
+* Non inviare troppe email troppo rapidamente
+* Usa firme email professionali
+* Evita parole che attivano i filtri antispam
+* Assicurati che le email di marketing includano opzioni di disiscrizione
+
+### Risoluzione dei problemi
+
+* Verifica che l'account email sia connesso e attivo
+* Controlla che l'indirizzo email del destinatario sia valido
+* Esamina le esecuzioni dei flussi di lavoro per eventuali messaggi di errore
+* Prova prima con il tuo indirizzo email
+
+<Note>
+  **In arrivo**: Gli allegati email saranno disponibili nel Q1 2026.
+</Note>
+
+## Correlati
+
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)

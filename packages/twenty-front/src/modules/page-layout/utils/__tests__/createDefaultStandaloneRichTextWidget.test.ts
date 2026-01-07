@@ -1,5 +1,5 @@
 import { WidgetType } from '~/generated/graphql';
-import { createDefaultStandaloneRichTextWidget } from '../createDefaultStandaloneRichTextWidget';
+import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 
 describe('createDefaultStandaloneRichTextWidget', () => {
   it('should create a standalone rich text widget with correct structure', () => {

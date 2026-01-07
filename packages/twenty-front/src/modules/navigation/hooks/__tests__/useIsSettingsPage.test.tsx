@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 
-import { useIsSettingsPage } from '../useIsSettingsPage';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 const getWrapper =
   (initialIndex: 0 | 1) =>

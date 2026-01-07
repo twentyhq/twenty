@@ -72,6 +72,55 @@ export const rule: Rule.RuleModule = {
       return {};
     }
 
+    const isInsideCodeBlock = (position: number, text: string): boolean => {
+      const codeBlockRanges = [];
+      let searchStart = 0;
+
+      while (true) {
+        const openIndex = text.indexOf('```', searchStart);
+        if (openIndex === -1) {
+          break;
+        }
+
+        const closeIndex = text.indexOf('```', openIndex + 3);
+        if (closeIndex === -1) {
+          break;
+        }
+
+        codeBlockRanges.push({
+          start: openIndex,
+          end: closeIndex + 3,
+        });
+
+        searchStart = closeIndex + 3;
+      }
+
+      for (const range of codeBlockRanges) {
+        if (position >= range.start && position < range.end) {
+          return true;
+        }
+      }
+
+      const beforeText = text.substring(0, position);
+      let inlineBacktickCount = 0;
+
+      for (let i = 0; i < beforeText.length; i++) {
+        let insideFencedBlock = false;
+        for (const range of codeBlockRanges) {
+          if (i >= range.start && i < range.end) {
+            insideFencedBlock = true;
+            break;
+          }
+        }
+
+        if (!insideFencedBlock && beforeText[i] === '`') {
+          inlineBacktickCount++;
+        }
+      }
+
+      return inlineBacktickCount % 2 !== 0;
+    };
+
     return {
       Program: (node) => {
         const text = sourceCode.getText();
@@ -88,10 +137,10 @@ export const rule: Rule.RuleModule = {
 
           foundPositions.add(startPos);
 
-          // Check if we're inside a code block (between backticks)
-          const beforeText = text.substring(0, startPos);
-          const backticksBefore = (beforeText.match(/`/g) || []).length;
-          const insideCodeBlock = backticksBefore % 2 !== 0;
+          // Skip reporting errors inside code blocks
+          if (isInsideCodeBlock(startPos, text)) {
+            continue;
+          }
 
           context.report({
             node: node as any,
@@ -103,14 +152,6 @@ export const rule: Rule.RuleModule = {
             data: {
               name: tagName,
             },
-            fix: insideCodeBlock
-              ? (fixer) => {
-                  return fixer.replaceTextRange(
-                    [startPos, endPos],
-                    `{${tagName}}`,
-                  );
-                }
-              : undefined,
           });
         }
 
@@ -136,10 +177,10 @@ export const rule: Rule.RuleModule = {
 
           const endPos = startPos + match[0].length;
 
-          // Check if we're inside a code block (between backticks)
-          const beforeText = text.substring(0, match.index);
-          const backticksBefore = (beforeText.match(/`/g) || []).length;
-          const insideCodeBlock = backticksBefore % 2 !== 0;
+          // Skip reporting errors inside code blocks (valid syntax like Promise<object>)
+          if (isInsideCodeBlock(startPos, text)) {
+            continue;
+          }
 
           context.report({
             node: node as any,
@@ -151,14 +192,6 @@ export const rule: Rule.RuleModule = {
             data: {
               name: tagName,
             },
-            fix: insideCodeBlock
-              ? (fixer) => {
-                  return fixer.replaceTextRange(
-                    [startPos, endPos],
-                    `{${tagName}}`,
-                  );
-                }
-              : undefined,
           });
         }
       },

@@ -31,6 +31,7 @@
     "editor.formatOnSave": true
   },
   "javascript.format.enable": false,
+  "javascript.preferences.importModuleSpecifier": "non-relative",
   "typescript.format.enable": false,
   "cSpell.enableFiletypes": [
     "!javascript",

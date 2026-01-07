@@ -1,0 +1,324 @@
+---
+title: En İyi Uygulamalar
+---
+
+Bu belge, ön yüz üzerinde çalışırken takip etmeniz gereken en iyi uygulamaları özetler.
+
+## Durum Yönetimi
+
+React ve Recoil, kod tabanında durumu yönetir.
+
+### Durumu depolamak için `useRecoilState` kullanın.
+
+Durumunuzu depolamak için ihtiyaç duyduğunuz kadar atom oluşturmak iyi bir uygulamadır.
+
+<Warning>
+  It's better to use extra atoms than trying to be too concise with props drilling.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Durum saklamak için `useRef` kullanmayın.
+
+Durum saklamak için `useRef` kullanmaktan kaçının.
+
+Durum saklamak istiyorsanız, `useState` veya `useRecoilState` kullanmalısınız.
+
+Bazı yeniden render edilmelerin olmasını önlemek için `useRef`'e ihtiyacınız varmış gibi hissediyorsanız, [yeniden render yönetimi](#managing-re-renders) konusuna bakın.
+
+## Yeniden render yönetimi
+
+React'ta yeniden render'ları yönetmek zor olabilir.
+
+Gereksiz yeniden render'ları önlemek için izlenecek bazı kurallar burada.
+
+Yeniden render'ları **her zaman** önleyebileceğinizi unutmayın, olayların nedenini anlayarak.
+
+### Kök seviyesinde çalışın
+
+Yeni özelliklerde yeniden render'ları önlemek, onları kök seviyesinde ortadan kaldırarak artık kolaylaştı.
+
+`PageChangeEffect` yan bileşeni, sayfa değişikliği sırasında yürütülecek tüm mantığı içeren tek bir `useEffect` barındırır.
+
+Bu şekilde, yalnızca bir yerin yeniden render tetikleyebileceğini bilirsiniz.
+
+### Kod tabanına `useEffect` eklemeden önce iki kez düşünün.
+
+Yeniden render'lar çoğunlukla gereksiz `useEffect`'lerden kaynaklanır.
+
+`useEffect`'e ihtiyacınız olup olmadığını düşünmelisiniz ya da mantığı bir olay işleyici fonksiyonuna taşıyabilirsiniz.
+
+Genellikle mantığı `handleClick` veya `handleChange` gibi fonksiyonlara taşımayı kolay bulursunuz.
+
+Bunları `onCompleted`, `onError`, vb. gibi Apollo kitaplıklarında da bulabilirsiniz.
+
+### `useEffect` veya veri çekme mantığını çıkarmak için bir yan bileşen kullanın.
+
+Kök bileşenize bir `useEffect` eklemeniz gerektiğini hissediyorsanız, bunu bir yan bileşene çıkarmayı düşünmelisiniz.
+
+Aynısını Apollo kancaları ile veri çekme mantığı için de uygulayabilirsiniz.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Recoil aile durumlarını ve recoil aile seçimcilerini kullanın.
+
+Recoil aile durumları ve seçimcileri, yeniden render'ları önlemenin harika bir yoludur.
+
+Bir öğe listesini saklamanız gerektiğinde kullanılabilirdir.
+
+### `React.memo(MyComponent)` kullanmamalısınız.
+
+`React.memo()` kullanmaktan kaçının çünkü bu yeniden render'ın nedenini çözmez, bunun yerine yeniden render zincirini kırar, bu da beklenmeyen davranışlara yol açabilir ve kodun yeniden faktör edilmesini çok zor hale getirebilir.
+
+### `useCallback` veya `useMemo` kullanımını sınırlayın.
+
+Genellikle gerekli değildir ve performans kazanımı farkedilemeyecek kadar az olduğu için kodun okunmasını ve bakımını zorlaştırır.
+
+## Console.log'lar
+
+`console.log` ifadeleri geliştirirken değerlidir, değişken değerleri ve kod akışı hakkında gerçek zamanlı yanıtlar sağlar. Ancak, üretim kodunda bırakmak çeşitli sorunlara yol açabilir:
+
+1. **Performans**: Aşırı loglama, özellikle istemci tarafı uygulamalarda çalışma zamanı performansını etkileyebilir.
+
+2. **Güvenlik**: Hassas verileri loglama, tarayıcı konsolunu inceleyen herkes için kritik bilgilerin açığa çıkmasına neden olabilir.
+
+3. **Temizlik**: Konsolu loglarla doldurmak, geliştiricilerin veya araçların görmesi gereken önemli uyarıları veya hataları gizleyebilir.
+
+4. **Profesyonellik**: Konsolu kontrol eden son kullanıcılar veya müşteriler, birçok log ifadesi gördüğünde kodun kalitesini ve detaycılığını sorgulayabilir.
+
+Kodunuzu üretime taşımadan önce tüm `console.log`ları kaldırdığınızdan emin olun.
+
+## İsimlendirme
+
+### Değişken Adlandırma
+
+Değişken adları değişkenin amacını veya işlevini doğru bir şekilde tanımlamalıdır.
+
+#### Genel adlar sorunu
+
+Programlamada genel adlar ideal değildir çünkü kesinlik eksikliği nedeniyle belirsizlik ve kod okunabilirliğinin azalmasına neden olabilir. Bu tür adlar, değişkenin veya fonksiyonun amacını iletmede başarısız olur, geliştiricilerin kodun amacını daha derin bir araştırma yapmadan anlamalarını zorlaştırır. Bu, artan hata ayıklama süresi, hatalara eğilimli olma ve bakım ve işbirliği zorluklarına yol açabilir. Öte yandan, açıklayıcı adlandırma, kodu kendi kendini açıklayıcı hale getirir ve gezilebilirliği artırarak kod kalitesini ve geliştirici verimliliğini artırır.
+
+```tsx
+// ❌ Kötü, amacı veya içeriği net bir şekilde ifade etmeyen genel bir ad kullanıyor
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ İyi, açıklayıcı bir ad kullanıyor
+const [email, setEmail] = useState('');
+```
+
+#### Değişken adlarında kaçınılması gereken bazı kelimeler
+
+* kukla
+
+### Olay işleyicileri
+
+Olay işleyici adları `handle` ile başlamalı, bileşen props'larında olayları adlandırmak için `on` bir ön ek olarak kullanılmaktadır.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Opsiyonel Props
+
+Opsiyonel bir prop için varsayılan değeri geçmekten kaçının.
+
+**ÖRNEK**
+
+Aşağıda tanımlanan `EmailField` bileşeni alın:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Kullanım**
+
+```tsx
+// ❌ Kötü, varsayılan değerle aynı değeri geçmek hiçbir değer katmıyor
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ İyi, varsayılan değeri kabul eder
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Bileşenleri props olarak geçirme
+
+Mümkün olduğunca, bileşenleri kendi içinde istemsiz geçen bileşenler olarak gönderin, böylece çocuklar hangi props'ları geçmeleri gerektiğine kendileri karar verebilirler.
+
+Bunun en yaygın örneği simge bileşenleridir:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+React'in bir bileşeni bileşen olarak anlaması için PascalCase kullanmalısınız, böylece daha sonra `<MyIcon>` ile örnekleyebilirsiniz.
+
+## Prop Taşıma: Minimumda Tutun
+
+React bağlamında prop taşıma, durum değişkenlerini ve ayarlayıcılarını, aracı bileşenler kullanmasalar bile birçok bileşen katmanı aracılığıyla aktarma uygulamasına atıfta bulunur. Bazen gerekli olmakla birlikte, aşırı prop taşıma şu durumlara yol açabilir:
+
+1. **Azalan Okunabilirlik**: Bir prop'un nereden kaynaklandığını veya nerede kullanıldığını izlemek, derin bir şekilde iç içe geçmiş bir bileşen yapısında karışık hale gelebilir.
+
+2. **Maintenance Challenges**: Changes in one component's prop structure might require adjustments in several components, even if they don't directly use the prop.
+
+3. **Azalan Bileşen Yeniden Kullanılabilirliği**: Çok fazla props'u yalnızca aşağıya aktarma amacıyla alan bir bileşen, daha az genel amaçlı hale gelir ve farklı bağlamlarda yeniden kullanılması zorlaşır.
+
+Aşırı prop taşıma kullanıyorsanız, [durum yönetimi en iyi uygulamalarına](#state-management) bakın.
+
+## İçe Aktarımlar
+
+İçe aktarırken, tüm veya göreli yolları belirtmek yerine belirlenen takma adları tercih edin.
+
+**The Aliases**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Kullanım**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ İyi, belirlenen takma adları kullanır
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Şema Doğrulama
+
+[Zod](https://github.com/colinhacks/zod), tiplenmemiş nesneler için bir şema doğrulayıcıdır:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breaking Changes
+
+Testler henüz kapsamlı bir şekilde entegre edilmediği için, ilerlemeden önce yapılan değişikliklerin başka yerlerde bozulmalara neden olmadığından emin olmak için her zaman kapsamlı manuel testler yapın.

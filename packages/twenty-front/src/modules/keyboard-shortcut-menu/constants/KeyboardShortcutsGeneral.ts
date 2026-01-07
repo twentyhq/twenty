@@ -1,4 +1,7 @@
-import { type Shortcut, ShortcutType } from '../types/Shortcut';
+import {
+  type Shortcut,
+  ShortcutType,
+} from '@/keyboard-shortcut-menu/types/Shortcut';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const KEYBOARD_SHORTCUTS_GENERAL: Shortcut[] = [

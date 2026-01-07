@@ -1,10 +1,10 @@
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -13,7 +13,6 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -40,9 +39,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
     isMicrosoftCalendarEnabledState,
   );
 
-  const isImapSmtpCaldavFeatureFlagEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
-  );
+  const isImapSmtpCaldavEnabled = useRecoilValue(isImapSmtpCaldavEnabledState);
 
   return (
     <StyledCardsContainer>
@@ -62,7 +59,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
         />
       )}
 
-      {isImapSmtpCaldavFeatureFlagEnabled && (
+      {isImapSmtpCaldavEnabled && (
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
         >

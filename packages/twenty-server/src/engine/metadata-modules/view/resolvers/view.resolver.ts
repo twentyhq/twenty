@@ -153,7 +153,7 @@ export class ViewResolver {
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
-      createdByUserWorkspaceId: userWorkspaceId ?? '',
+      createdByUserWorkspaceId: userWorkspaceId,
     });
   }
 

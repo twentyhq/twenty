@@ -8,7 +8,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class CreateCronTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create_cron_trigger',
+  'create',
+  'cronTrigger',
 ) {
   constructor() {
     super();
@@ -18,7 +19,7 @@ export class CreateCronTriggerActionHandlerService extends WorkspaceMigrationRun
     context: WorkspaceMigrationActionRunnerArgs<CreateCronTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { cronTrigger } = action;
+    const { flatEntity: cronTrigger } = action;
 
     const cronTriggerRepository =
       queryRunner.manager.getRepository<CronTriggerEntity>(CronTriggerEntity);

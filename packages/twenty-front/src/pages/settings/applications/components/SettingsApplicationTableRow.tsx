@@ -13,11 +13,11 @@ export type SettingsApplicationTableRowProps = {
 };
 
 export const StyledApplicationTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 120px 36px;
+  grid-template-columns: 164px minmax(0, 1fr) 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme }) => theme.font.color.secondary};
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
   overflow: hidden;

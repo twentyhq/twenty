@@ -1,0 +1,176 @@
+---
+title: Import Data via API
+description: When and how to use Twenty's APIs for large-scale data imports.
+---
+
+## Overview
+
+Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+
+## When to Use API Import
+
+| Scenario                           | Recommended Method            |
+| ---------------------------------- | ----------------------------- |
+| Under 10,000 records               | CSV Import                    |
+| 10,000 - 50,000 records            | CSV Import (split into files) |
+| **50,000+ records**                | **API Import**                |
+| One-time migration                 | Either (based on volume)      |
+| **Recurring imports**              | **API Import**                |
+| **Real-time sync**                 | **API Import**                |
+| **Integration with other systems** | **API Import**                |
+
+<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+
+## API Rate Limits
+
+Twenty enforces rate limits to ensure system stability:
+
+| Limit                      | Value                 |
+| -------------------------- | --------------------- |
+| **Requests per minute**    | 100                   |
+| **Records per batch call** | 60                    |
+| **Maximum throughput**     | ~6,000 records/minute |
+
+<Warning>
+  **Plan your import around these limits.**
+
+  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
+</Warning>
+
+## Getting Started
+
+### Step 1: Get Your API Key
+
+1. Go to **Settings → Developers**
+2. Click **+ Create API key**
+3. Give your key a descriptive name
+4. Copy the API key immediately (it won't be shown again)
+5. Store it securely
+
+<Warning>
+  **Keep your API key secret.**
+
+  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+</Warning>
+
+### Step 2: Choose Your API
+
+Twenty supports two API types:
+
+| API         | Best For                                                    | Documentation                                    |
+| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
+| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/fr/developers/extend/capabilities/apis) |
+| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/fr/developers/extend/capabilities/apis) |
+
+Both APIs support:
+
+* Creating, reading, updating, and deleting records
+* **Batch operations** — create or update up to 60 records per call
+
+**For imports, use batch operations** to maximize throughput within rate limits.
+
+### Step 3: Plan Your Import Order
+
+Just like CSV imports, **order matters** for relations:
+
+1. **Companies** first (no dependencies)
+2. **People** second (can link to Companies)
+3. **Opportunities** third (can link to Companies and People)
+4. **Tasks/Notes** (can link to any of the above)
+5. **Custom objects** (following their dependencies)
+
+## Best Practices
+
+### Batch Your Requests
+
+* Don't send records one at a time
+* Group up to **60 records per API call**
+* This maximizes throughput within rate limits
+
+### Handle Rate Limits
+
+* Implement delays between requests (600ms minimum for sustained imports)
+* Use exponential backoff when you hit limits
+* Monitor for 429 (Too Many Requests) responses
+
+### Validate Data First
+
+* Clean and validate your data before importing
+* Check required fields are populated
+* Verify formats match Twenty's requirements (see [Field Mapping](/l/fr/user-guide/data-migration/capabilities/field-mapping))
+
+### Log Everything
+
+* Log every record imported (including IDs)
+* Log errors with full context
+* This helps debug issues and verify completion
+
+### Test First
+
+* Test with a small batch (10-20 records)
+* Verify data appears correctly in Twenty
+* Then run the full import
+
+### Upsert to Avoid Duplicates
+
+The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+
+## Finding Object and Field Names
+
+To see available objects and fields:
+
+1. Go to **Settings → API and Webhooks**
+2. Browse the **Metadata API**
+3. View all standard and custom objects with their fields
+
+The documentation shows all standard and custom objects, their fields, and the expected data types.
+
+## Professional Services
+
+For complex API migrations, our partners can help:
+
+| Service                 | What's Included                    |
+| ----------------------- | ---------------------------------- |
+| **Data Model Design**   | design your optimal data structure |
+| **Migration Scripts**   | write and run the import scripts   |
+| **Data Transformation** | handle complex mapping and cleanup |
+| **Validation & QA**     | verify the migration is complete   |
+
+**Best for:**
+
+* Migrations of 100,000+ records
+* Complex data transformations
+* Tight timelines
+* Teams without developer resources
+
+Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/fr/user-guide/getting-started/capabilities/implementation-services).
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="What's the difference between GraphQL and REST?">
+    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  </Accordion>
+
+  <Accordion title="Can I update existing records via API?">
+    Yes! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  </Accordion>
+
+  <Accordion title="How do I handle duplicates?">
+    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  </Accordion>
+
+  <Accordion title="Can I delete records via API?">
+    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  </Accordion>
+
+  <Accordion title="Is there a Python or Node.js SDK?">
+    Not currently, but both APIs work with any HTTP client in any language.
+  </Accordion>
+</AccordionGroup>
+
+## API Documentation
+
+For full implementation details, code examples, and schema reference:
+
+* [API Documentation](/l/fr/developers/extend/capabilities/apis)

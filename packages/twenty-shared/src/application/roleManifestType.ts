@@ -56,7 +56,6 @@ export type RoleManifest = SyncableEntityOptions & {
   canBeAssignedToUsers?: boolean;
   canBeAssignedToAgents?: boolean;
   canBeAssignedToApiKeys?: boolean;
-  canBeAssignedToApplications?: boolean;
   objectPermissions?: ObjectPermission[];
   fieldPermissions?: FieldPermission[];
   permissionFlags?: PermissionFlagType[];

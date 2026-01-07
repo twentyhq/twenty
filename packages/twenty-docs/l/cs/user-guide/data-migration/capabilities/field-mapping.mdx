@@ -1,0 +1,198 @@
+---
+title: Mapování polí
+description: Jak funguje mapování polí při importu dat.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Jak funguje mapování polí
+
+Když nahrajete soubor, Twenty analyzuje vaše sloupce a pokusí se je spárovat s existujícími poli.
+
+### Automatické mapování
+
+Twenty se snaží spárovat sloupce na základě:
+
+* Názvů záhlaví sloupců (přesné nebo podobné shody)
+* Detekce typů dat (datumů, čísel, e‑mailů)
+* Běžné vzory polí
+
+<Note>**Rychlý tip:** Exportujte několik řádků z objektu, který chcete importovat. Exportovaný soubor bude mít přesně takové názvy sloupců, jaké Twenty očekává, což při importu usnadní automatické mapování.</Note>
+
+### Možnosti ručního mapování
+
+U každého sloupce můžete:
+
+* **Namapovat na pole**: Vyberte odpovídající pole Twenty z rozbalovací nabídky
+* **Nemapovat**: Sloupec úplně přeskočte (data nebudou importována)
+
+<Note>**Pole musí existovat před importem.** Import vytváří záznamy, nikoli pole. Vytvořte vlastní pole v **Nastavení → Datový model** před importem.</Note>
+
+## Kompatibilita typů polí
+
+Všechny typy polí dostupné v Datovém modelu jsou pro import podporovány.
+
+Můžete také importovat hodnoty `id` a přiřadit konkrétní ID novým záznamům nebo aktualizovat stávající.
+
+<img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
+
+## Požadavky na formát dat
+
+<Note>**Některá pole mají speciální syntaxi.** Před přípravou importu doporučujeme stáhnout ukázkový soubor, abyste viděli očekávanou syntaxi pro každý typ pole.</Note>
+
+### Adresová pole
+
+Adresa je vnořené pole s více sloupci. Některé lze ponechat prázdné.
+
+* **Adresa / Adresa 1**: První řádek adresy (ulice)
+* **Adresa / Adresa 2**: Druhý řádek adresy (ulice)
+* **Adresa / Město**: Název města
+* **Adresa / Stát**: Stát nebo provincie
+* **Adresa / Země**: Název země
+* **Adresa / PSČ**: Poštovní směrovací číslo
+
+### Pole typu Array
+
+Použijte následující formát:
+
+```
+[\"value1\",\"value2\"]
+```
+
+### Booleovská pole
+
+Použijte `TRUE` nebo `FALSE` (velkými písmeny) – ne `true` ani `false`
+
+### Měnová pole
+
+Měna je vnořené pole se dvěma sloupci, které je nutné **vyplnit obě**:
+
+* **Částka / Částka**: Číselná hodnota (např. `1234.56`)
+* **Částka / Měna**: Kód měny (např. `USD`, `EUR`)
+
+### Datumová pole
+
+Podporované formáty:
+
+* `YYYY-MM-DD` (doporučeno)
+* `MM/DD/YYYY`
+* `DD/MM/YYYY`
+* Formát ISO 8601
+
+### Doménová pole
+
+* Doporučujeme používat formát `https://domain.com`, abyste předešli vytváření duplicit, protože tento formát se používá u Společností vytvořených synchronizací poštovní schránky a kalendáře
+* Lze vyplnit `Domain Label` a `Domain URL`: osvědčený postup je zadat do popisku `domain.com` a do URL `https://domain.com`
+* Domény musí být v objektu Společnosti jedinečné
+* **Domény musí být jedinečné v rámci importovaného souboru**
+
+### E‑mailová pole
+
+* Musí mít platný formát e‑mailu
+* E‑maily musí být v objektu Osoby jedinečné
+* **E‑maily musí být jedinečné v rámci importovaného souboru**
+* Pro další e‑maily: použijte **E‑maily / Primární e‑mail** pro hlavní e‑mail a **E‑maily / Další e‑maily** v tomto formátu:
+
+```
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+```
+
+### Pole ID
+
+Zadání `id` při importu je volitelné. Pokud není uvedeno, Twenty jej automaticky vygeneruje.
+
+Příklady použití mapování sloupce `id`:
+
+* **Nastavit konkrétní ID**: Zvolte UUID pro nově vytvářené záznamy
+* **Aktualizovat existující záznamy**: Spárujte je s existujícími záznamy, abyste je aktualizovali místo vytváření duplicit. V takovém případě doporučujeme nemapovat další jedinečná pole: mapování pouze jednoho jedinečného pole zajistí hladší import.
+
+<Note>Pokud zadáte `id`, musí být ve formátu UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+### Pole JSON
+
+Použijte platný formát JSON:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### Pole odkazů
+
+Podobně jako u doménových polí:
+
+* Vyplňte oba sloupce s popiskem a adresou URL: **Odkazy / URL odkazu** a **Odkazy / Popisek odkazu**
+* Použijte úplný formát URL: `https://example.com`
+* Pro sekundární odkazy použijte sloupec **Odkazy / Sekundární odkazy** v tomto formátu:
+
+```
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+```
+
+### Pole s vícenásobným výběrem
+
+Použijte **názvy API** (nikoli zobrazované popisky) v následujícím formátu:
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+Viz [zde](#finding-api-names-for-select-fields), kde najdete názvy API.
+
+<Note>Nové možnosti výběru se importem automaticky nevytvoří. Před importem je musíte přidat v **Nastavení → Datový model**.</Note>
+
+<Warning>
+  **Import přepisuje, nepřidává.**
+
+  Pokud má záznam již vybrány `VALUE2` a `VALUE3` a vy importujete `[\"VALUE1\"]`, bude mít po importu pouze `VALUE1`. Předchozí výběry se nahrazují, neslučují.
+</Warning>
+
+### Číselná pole
+
+* Pouze čísla
+* Desetinná místa se oddělují tečkou: `1234.56`
+* Bez oddělovačů tisíců
+
+### Telefonní pole
+
+Telefon je vnořené pole s více sloupci, které je **nutné vyplnit**
+
+* **Telefony / Primární telefonní číslo**: Telefonní číslo (např. `4159095555`)
+* **Telefony / Kód země primárního telefonu**: Kód země (např. `US`)
+* **Telefony / Mezinárodní předvolba primárního telefonu**: Volací kód (např. `+1`)
+
+### Hodnoticí pole
+
+Použijte název API ve formátu: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+
+### Relační pole
+
+Podívejte se prosím na náš samostatný článek: [Import relací mezi objekty](/l/cs/user-guide/data-migration/capabilities/import-relations)
+
+### Výběrová Pole
+
+Použijte **název API** možnosti (nikoli zobrazovaný popisek):
+
+```
+VALUE1
+```
+
+Viz [zde](#finding-api-names-for-select-fields), kde najdete názvy API.
+<Note>Nové možnosti výběru nebudou importem vytvořeny automaticky. Před importem je musíte přidat v **Nastavení → Datový model**.</Note>
+
+### Textová pole
+
+* Není potřeba žádné speciální formátování
+* Úvodní a koncové mezery jsou odstraněny
+
+## Hledání názvů API
+
+U polí typu Select, Multi-Select a Array s předdefinovanými možnostmi musíte použít **názvy API**, nikoli zobrazené štítky.
+
+### Jak najít názvy API
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt a pole
+3. Povolte **Pokročilý režim** (přepínač je vpravo dole na stránce nastavení)
+4. Zobrazte název API pro každou možnost
+
+<VimeoEmbed videoId="1144910809" title="Ukázka videa" />

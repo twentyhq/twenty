@@ -1,0 +1,109 @@
+---
+title: Ordnerarchitektur
+info: Ein detaillierter Einblick in unsere Ordnerarchitektur
+---
+
+In diesem Leitfaden erkunden Sie die Details der Projektverzeichnisstruktur und wie sie zur Organisation und Wartbarkeit von Twenty beiträgt.
+
+Indem Sie diesem Ordnerarchitekturkonzept folgen, können Sie Dateien, die sich auf spezifische Funktionen beziehen, leichter finden und sicherstellen, dass die Anwendung skalierbar und wartbar ist.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Seiten
+
+Enthält die Top-Level-Komponenten, die durch die Anwendungsrouten definiert werden. They import more low-level components from the modules folder (more details below).
+
+## Module
+
+Jedes Modul repräsentiert eine Funktion oder eine Gruppe von Funktionen und umfasst deren spezifische Komponenten, Zustände und Betriebslogik.
+Sie sollten alle der untenstehenden Struktur folgen. Sie können Module innerhalb von Modulen (als Submodule bezeichnet) verschachteln, und die gleichen Regeln gelten.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Kontexte
+
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
+
+Weitere Details finden Sie unter [React Context](https://react.dev/reference/react#context-hooks).
+
+### GraphQL
+
+Enthält Fragmente, Abfragen und Mutationen.
+
+Weitere Details finden Sie unter [GraphQL](https://graphql.org/learn/).
+
+* Fragmente
+
+Ein Fragment ist ein wiederverwendbares Stück einer Abfrage, das an verschiedenen Stellen verwendet werden kann. By using fragments, it's easier to avoid duplicating code.
+
+Weitere Details finden Sie unter [GraphQL Fragmente](https://graphql.org/learn/queries/#fragments).
+
+* Abfragen
+
+Weitere Details finden Sie unter [GraphQL Abfragen](https://graphql.org/learn/queries/).
+
+* Mutationen
+
+Weitere Details finden Sie unter [GraphQL Mutationen](https://graphql.org/learn/queries/#mutations).
+
+### Hooks
+
+Weitere Details finden Sie unter [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks).
+
+### Zustände
+
+Contains the state management logic. [RecoilJS](https://recoiljs.org) übernimmt dies.
+
+* Selektoren: Weitere Einzelheiten finden Sie unter [RecoilJS Selektoren](https://recoiljs.org/docs/basic-tutorial/selectors).
+
+Die integrierte Zustandsverwaltung von React verwaltet weiterhin den Zustand innerhalb einer Komponente.
+
+### Utils
+
+Sollte nur wiederverwendbare reine Funktionen enthalten. Andernfalls erstellen Sie benutzerdefinierte Hooks im `hooks`-Ordner.
+
+## UI
+
+Enthält alle wiederverwendbaren UI-Komponenten, die in der Anwendung verwendet werden.
+
+Dieser Ordner kann Unterordner wie `data`, `display`, `feedback` und `input` für bestimmte Komponententypen enthalten. Jede Komponente sollte in sich geschlossen und wiederverwendbar sein, sodass Sie sie in verschiedenen Teilen der Anwendung verwenden können.
+
+Indem Sie die UI-Komponenten von den anderen Komponenten im `modules`-Ordner trennen, ist es einfacher, ein konsistentes Design beizubehalten und Änderungen an der UI vorzunehmen, ohne andere Bereiche (Geschäftslogik) der Codebasis zu beeinflussen.
+
+## Schnittstelle und Abhängigkeiten
+
+Sie können Code anderer Module aus jedem Modul importieren, mit Ausnahme des `ui`-Ordners. This will keep its code easy to test.
+
+### Intern
+
+Jeder Teil (Hooks, Zustände, ...) eines Moduls kann einen `internal`-Ordner haben, der Teile enthält, die nur innerhalb des Moduls verwendet werden.

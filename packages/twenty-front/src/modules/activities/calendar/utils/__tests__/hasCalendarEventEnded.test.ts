@@ -1,6 +1,6 @@
 import { addDays, addHours, subDays, subHours } from 'date-fns';
 
-import { hasCalendarEventEnded } from '../hasCalendarEventEnded';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 
 describe('hasCalendarEventEnded', () => {
   describe('Event with end date', () => {

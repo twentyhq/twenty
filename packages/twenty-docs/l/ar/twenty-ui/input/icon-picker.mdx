@@ -4,53 +4,49 @@ image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+  <img src="/images/user-guide/github/github-header.png" alt="رأس الصفحة" />
 </Frame>
 
 منتقى الأيقونات المعتمد على القائمة المنسدلة الذي يتيح للمستخدمين اختيار أيقونة من قائمة.
 
 <Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
 
-```jsx
-import { RecoilRoot } from "recoil";
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
 
-export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
-
-  return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| المحددات                | النوع       | الوصف                                                                                                                        |
-| ----------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| معطل                    | قيمة منطقية | يقوم بتعطيل منتقى الأيقونات إذا تم تعيينه إلى `true`                                                                         |
-| عند التغيير             | وظيفة       | الدالة الارتجاعية التي تُفعل عندما يختار المستخدم أيقونة. يستقبل كائنًا يحتوي على الخصائص `iconKey` و `Icon` |
-| مفتاح الأيقونة المختارة | string      | مفتاح الأيقونة المختارة في البداية                                                                                           |
-| النقر بالخارج           | وظيفة       | الدالة الارتجاعية التي تُفعل عندما ينقر المستخدم خارج القائمة المنسدلة                                                       |
-| عند الإغلاق             | function    | الدالة الارتجاعية التي تُفعل عند إغلاق القائمة المنسدلة                                                                      |
-| عند الفتح               | function    | الدالة الارتجاعية التي تُفعل عند فتح القائمة المنسدلة                                                                        |
-| التنوع                  | string      | The visual style variant of the clickable icon. تشمل الخيارات: `رئيسي`, `ثانوي`, و `ثالثي`   |
-
-</Tab>
+  <Tab title="المحددات">
+    | المحددات                | النوع       | الوصف                                                                                                        |
+    | ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
+    | معطل                    | قيمة منطقية | يقوم بتعطيل منتقى الأيقونات إذا تم تعيينه إلى `true`                                                         |
+    | عند التغيير             | دالة        | الدالة الارتجاعية التي تُفعل عندما يختار المستخدم أيقونة. يستقبل كائنًا يحتوي على الخصائص `iconKey` و `Icon` |
+    | مفتاح الأيقونة المختارة | نص          | مفتاح الأيقونة المختارة في البداية                                                                           |
+    | النقر بالخارج           | دالة        | الدالة الارتجاعية التي تُفعل عندما ينقر المستخدم خارج القائمة المنسدلة                                       |
+    | عند الإغلاق             | دالة        | الدالة الارتجاعية التي تُفعل عند إغلاق القائمة المنسدلة                                                      |
+    | عند الفتح               | دالة        | الدالة الارتجاعية التي تُفعل عند فتح القائمة المنسدلة                                                        |
+    | التنوع                  | نص          | The visual style variant of the clickable icon. تشمل الخيارات: `رئيسي`, `ثانوي`, و `ثالثي`                   |
+  </Tab>
 </Tabs>

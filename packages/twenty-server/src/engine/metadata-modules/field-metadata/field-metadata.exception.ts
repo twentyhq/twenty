@@ -1,6 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   appendCommonExceptionCode,
   CustomException,
@@ -27,23 +29,39 @@ export const FieldMetadataExceptionCode = appendCommonExceptionCode({
 export type FieldMetadataExceptionCode =
   (typeof FieldMetadataExceptionCode)[keyof typeof FieldMetadataExceptionCode];
 
-const fieldMetadataExceptionUserFriendlyMessages: Record<
-  keyof typeof FieldMetadataExceptionCode,
-  MessageDescriptor
-> = {
-  FIELD_METADATA_NOT_FOUND: msg`Field not found.`,
-  INVALID_FIELD_INPUT: msg`Invalid field input.`,
-  FIELD_MUTATION_NOT_ALLOWED: msg`This field cannot be modified.`,
-  FIELD_ALREADY_EXISTS: msg`A field with this name already exists.`,
-  OBJECT_METADATA_NOT_FOUND: msg`Object not found.`,
-  FIELD_METADATA_RELATION_NOT_ENABLED: msg`Relation is not enabled for this field.`,
-  FIELD_METADATA_RELATION_MALFORMED: msg`Relation configuration is invalid.`,
-  LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND: msg`Label identifier field not found.`,
-  UNCOVERED_FIELD_METADATA_TYPE_VALIDATION: msg`Field type validation error.`,
-  RESERVED_KEYWORD: msg`This name is a reserved keyword.`,
-  NOT_AVAILABLE: msg`This field name is not available.`,
-  NAME_NOT_SYNCED_WITH_LABEL: msg`Field name is not synced with label.`,
-  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+const getFieldMetadataExceptionUserFriendlyMessage = (
+  code: keyof typeof FieldMetadataExceptionCode,
+) => {
+  switch (code) {
+    case FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND:
+      return msg`Field not found.`;
+    case FieldMetadataExceptionCode.INVALID_FIELD_INPUT:
+      return msg`Invalid field input.`;
+    case FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED:
+      return msg`This field cannot be modified.`;
+    case FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS:
+      return msg`A field with this name already exists.`;
+    case FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
+      return msg`Object not found.`;
+    case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
+      return msg`Relation is not enabled for this field.`;
+    case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:
+      return msg`Relation configuration is invalid.`;
+    case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
+      return msg`Label identifier field not found.`;
+    case FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION:
+      return msg`Field type validation error.`;
+    case FieldMetadataExceptionCode.RESERVED_KEYWORD:
+      return msg`This name is a reserved keyword.`;
+    case FieldMetadataExceptionCode.NOT_AVAILABLE:
+      return msg`This field name is not available.`;
+    case FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL:
+      return msg`Field name is not synced with label.`;
+    case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:
+      return STANDARD_ERROR_MESSAGE;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class FieldMetadataException extends CustomException<
@@ -56,7 +74,8 @@ export class FieldMetadataException extends CustomException<
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? fieldMetadataExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ??
+        getFieldMetadataExceptionUserFriendlyMessage(code),
     });
   }
 }

@@ -106,7 +106,7 @@ export class AppCommand {
       });
 
     appCommand
-      .command('generate [outputPath]')
+      .command('generate [appPath]')
       .description('Generate Twenty client')
       .action(async (appPath?: string) => {
         await this.generateCommand.execute(formatPath(appPath));

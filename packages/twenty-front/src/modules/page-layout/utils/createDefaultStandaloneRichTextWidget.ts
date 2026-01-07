@@ -2,6 +2,7 @@ import {
   type GridPosition,
   type PageLayoutWidget,
   type RichTextV2Body,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated/graphql';
 
@@ -19,6 +20,7 @@ export const createDefaultStandaloneRichTextWidget = (
     title: 'Untitled Rich Text',
     type: WidgetType.STANDALONE_RICH_TEXT,
     configuration: {
+      configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
     gridPosition,

@@ -4,7 +4,6 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
@@ -89,6 +88,8 @@ export class GlobalWorkspaceOrmManager {
       rolesPermissions: permissionsPerRoleId,
       ORMEntityMetadatas: entityMetadatas,
       userWorkspaceRoleMap,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -97,6 +98,8 @@ export class GlobalWorkspaceOrmManager {
       'rolesPermissions',
       'ORMEntityMetadatas',
       'userWorkspaceRoleMap',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -107,20 +110,13 @@ export class GlobalWorkspaceOrmManager {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       permissionsPerRoleId,
       entityMetadatas,
       userWorkspaceRoleMap,
     };
-  }
-
-  private async isReadOnReplicaEnabled(workspaceId: string): Promise<boolean> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return !!featureFlagsMap[FeatureFlagKey.IS_READ_ON_REPLICA_ENABLED];
   }
 }

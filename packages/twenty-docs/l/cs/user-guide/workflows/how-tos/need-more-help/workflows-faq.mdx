@@ -1,0 +1,254 @@
+---
+title: Často kladené otázky k pracovním postupům.
+description: Často kladené otázky k pracovním postupům v Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Proč nemohu aktivovat pracovní postup?">
+    Pravděpodobně jde o problém s oprávněními. K vytváření a aktivaci potřebujete přístup k pracovním postupům.
+
+    **Řešení**: Kontaktujte správce pracovního prostoru, aby vám v **Settings → Roles** udělil přístup k pracovním postupům.
+
+    Pokud v postranním panelu vůbec nevidíte sekci Pracovní postupy, potvrzuje to, že jde o problém s oprávněními.
+  </Accordion>
+
+  <Accordion title="Proč nevidím tlačítko ručního pracovního postupu v horní navigační liště?">
+    Ruční pracovní postupy se v navigační liště zobrazují jen při správné konfiguraci:
+
+    1. Pracovní postup musí být **aktivní** (ne v režimu konceptu)
+    2. Umístění v navigační liště musí být nastaveno na **Pinned**
+    3. Pro spouštěče Single/Bulk musíte být na správné stránce objektu
+
+    **Jak ověřit**: Otevřete pracovní postup → klikněte na spouštěč → ověřte, že "Navbar placement" je nastaveno na "Pinned".
+
+    K ručním pracovním postupům se vždy dostanete přes **Cmd + K** (nebo **Ctrl + K**) bez ohledu na nastavení navigační lišty.
+  </Accordion>
+
+  <Accordion title="Jaký je rozdíl mezi ručními spouštěči Single, Global a Bulk?">
+    | Typ | Požadované záznamy | Běhy průběhu práce |
+    | --- | ------------------ | ------------------ |
+
+    \| **Global** | Žádné | Jednou, bez vstupu záznamu |
+    \| **Single** | Jeden nebo více vybraných | Jednou na každý vybraný záznam |
+    \| **Bulk** | Jeden nebo více vybraných | Jednou, se všemi záznamy jako pole |
+
+    * **Global**: Použijte, když pracovní postup nepotřebuje kontext žádného záznamu (např. vygenerování reportu)
+    * **Single**: Použijte, když chcete zpracovat každý vybraný záznam samostatně (např. poslat jednotlivé e-maily)
+    * **Bulk**: Použijte, když potřebujete zpracovávat záznamy společně nebo optimalizovat využití kreditů (vyžaduje akci Iterator)
+
+    Podrobnosti viz [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers).
+  </Accordion>
+
+  <Accordion title="Nevidím uzel If/Else. Co mám dělat?">
+    Explicitní uzel If/Else zatím není dostupný, ale je na naší roadmapě.
+
+    **Aktuální řešení**: Vytvořte z kroku více větví, každou začněte akcí **Filter**:
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Pouze větev, ve které podmínka filtru projde, provede své následné akce.
+
+    Viz [Jak používat větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) pro podrobný návod.
+  </Accordion>
+
+  <Accordion title="Běží větve pracovního postupu paralelně?">
+    **Ano**, větve ve výchozím nastavení běží paralelně.
+
+    Pokud chcete spustit pouze jednu větev:
+
+    * Na začátek každé větve přidejte akci **Filter**
+    * Nastavte opačné podmínky (např. Větev A: status = "Open", Větev B: status ≠ "Open")
+
+    Větve, které nesplní podmínku filtru, se zastaví, ostatní pokračují.
+  </Accordion>
+
+  <Accordion title="Mohu větve znovu sloučit dohromady?">
+    **Ano**. Po dokončení paralelních větví můžete přidat krok, na který se obě větve napojí.
+
+    V editoru pracovního postupu:
+
+    1. Dokončete akce ve větvích
+    2. Přidejte nový krok za větve
+    3. Přetáhněte spojení z konce každé větve do tohoto nového kroku
+
+    Sloučený krok se provede po dokončení všech připojených větví.
+  </Accordion>
+
+  <Accordion title="Jaký je limit výsledků akce Search Records?">
+    **Search Records vrací maximálně 200 záznamů.**
+
+    Pokud potřebujete zpracovat více:
+
+    * Přidejte konkrétnější filtry pro zmenšení výsledků
+    * Použijte plánované pracovní postupy ke zpracování po dávkách
+    * Zvažte použití API pro hromadné operace
+
+    Pro většinu pracovních postupů je 200 záznamů dostačující. Pokud na tento limit narážíte pravidelně, zvažte přepracování své automatizace.
+  </Accordion>
+
+  <Accordion title="Mohu přidávat adresáty do kopie (CC) v e-mailech z pracovních postupů?">
+    **Zatím ne.** Pole CC a BCC pro akci Send Email jsou na naší roadmapě.
+
+    **Aktuální řešení**: Přidejte více akcí Send Email pro odeslání dalším příjemcům nebo použijte HTTP Request k odeslání přes externí e-mailovou službu, která podporuje CC.
+  </Accordion>
+
+  <Accordion title="Jak použiji výstupy z předchozích kroků?">
+    Každá akce vytváří výstupní data, která lze použít v následujících krocích.
+
+    **Jak odkazovat na data z předchozích kroků**:
+
+    * Při konfiguraci pole použijte výběr proměnné
+    * Nebo napište přímo `{{stepName.fieldName}}`
+
+    **Příklady**:
+
+    * Data spouštěče: `{{trigger.object.email}}`
+    * Výsledky hledání: `{{searchRecords[0].name}}`
+    * Výstup kódu: `{{code.calculatedValue}}`
+
+    Najetím myší na libovolné pole v konfiguraci akce uvidíte dostupné proměnné z předchozích kroků.
+  </Accordion>
+
+  <Accordion title="Proč můj Iterator selhává?">
+    **Iterator vyžaduje vstup typu pole (array).** Časté problémy:
+
+    1. **Vstup není pole (array)**: Ujistěte se, že předáváte výsledky z akce Search Records nebo jiné akce, která vrací pole
+    2. **Pole je prázdné**: Před Iterator přidejte filtr pro kontrolu `{{searchRecords.length}} > 0`
+    3. **Zvolená špatná proměnná**: Ujistěte se, že vybíráte samotné pole, ne jeden záznam
+
+    **Správné nastavení**:
+
+    1. Search Records (vrací pole)
+    2. Filtr: length > 0
+    3. Iterator: vyberte `{{searchRecords}}`
+    4. Akce uvnitř iteratoru používají `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Jaký je maximální čas spuštění pro akce Code?">
+    Akce Code (serverless funkce) mají **výchozí časový limit 5 minut** (300 sekund).
+
+    Maximální nastavitelný časový limit je **15 minut** (900 sekund).
+
+    Pokud váš kód tento limit překročí, akce selže s chybou vypršení časového limitu.
+
+    **Tipy, jak se vyhnout vypršení časových limitů**:
+
+    * Rozdělte velké operace na menší části pomocí Iteratoru
+    * Vyhněte se náročným výpočtům; pro intenzivní zpracování použijte externí služby přes HTTP Request
+    * Optimalizujte svůj kód pro zkrácení doby běhu
+    * Pokud potřebujete delší zpracování, zvažte použití plánovaných pracovních postupů, které zpracovávají data po dávkách
+  </Accordion>
+
+  <Accordion title="Jak číst spuštění pracovních postupů?">
+    Spuštění pracovních postupů zobrazují historii provádění a pomáhají s laděním problémů.
+
+    **Přístup ke spuštěním**:
+
+    * V editoru pracovního postupu → panel **Runs** vpravo
+    * Nebo přejděte v postranním panelu do **Workflow Runs**
+
+    **Porozumění spuštění**:
+
+    * **Stav**: Running, Completed, Failed, Waiting
+    * **Kroky**: Zobrazte, které kroky se provedly, a jejich výstup
+    * **Chyby**: Klikněte na neúspěšné kroky a zobrazíte chybové zprávy
+    * **Data**: Zobrazte vstupní/výstupní data v jednotlivých krocích
+
+    Podrobnosti viz [Spuštění pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-runs).
+  </Accordion>
+
+  <Accordion title="Proč nevidím svá spuštění pracovních postupů?">
+    Spuštění pracovních postupů mohou selhávat okamžitě kvůli limitům rychlosti.
+
+    **Pevný limit: 5 000 spuštění za hodinu na pracovní prostor.**
+
+    Pokud tento limit překročíte, pracovní postupy jsou okamžitě označeny jako neúspěšné a v seznamu spuštění se nezobrazí podle očekávání.
+
+    **Běžné scénáře, které tento limit překročí**:
+
+    * Výběr více než 5 000 záznamů pomocí ručního spouštěče Single
+    * Současné spuštění více pracovních postupů napříč vaším pracovním prostorem
+    * Časté automatické spouštěče (např. Record Updated na vytíženém objektu)
+
+    **Řešení**:
+
+    * Použijte spouštěče **Bulk** místo Single pro zpracování mnoha záznamů v jednom spuštění
+    * Rozložte velké dávkové operace v čase
+    * Používejte filtry ke snížení frekvence spouštění
+    * Náročné pracovní postupy plánujte mimo špičku
+  </Accordion>
+
+  <Accordion title="Jaké jsou limity rychlosti pro pracovní postupy?">
+    Twenty má dva limity rychlosti pro zajištění stability systému:
+
+    | Limit | Hodnota | Chování |
+    | ----- | ------- | ------- |
+
+    \| **Soft limit** | 100 spuštění/minuta | Spuštění se zařadí do fronty se stavem "Not Started" a jsou zpracovávána postupně |
+    \| **Hard limit** | 5 000 spuštění/hodina | Spuštění okamžitě selžou |
+
+    **Soft limit (100/min)**: Vaše pracovní postupy neselžou—pouze čekají ve frontě a jsou postupně zpracovávány. Můžete spustit více než 100 záznamů; provádění bude pomalejší.
+
+    **Hard limit (5 000/hod)**: Týká se celého vašeho pracovního prostoru. Pokud všechny vaše pracovní postupy dohromady překročí 5 000 spuštění za hodinu, další spuštění okamžitě selžou.
+
+    **Tipy, jak zůstat v rámci limitů**:
+
+    * Pro velké dávky použijte spouštěče Bulk s Iterator místo spouštěčů Single
+    * Kombinujte související automatizace do menšího počtu pracovních postupů
+    * Používejte plánované pracovní postupy k rozložení zátěže v čase
+  </Accordion>
+
+  <Accordion title="Mohu znovu spustit neúspěšné spuštění pracovního postupu?">
+    **Ne, v tuto chvíli není k dispozici automatická funkce opakování.**
+
+    Pokud spuštění pracovního postupu selže, je potřeba:
+
+    1. Zkontrolujte chybu v **Settings → Workflows → [Your Workflow] → Runs**
+    2. Opravte problém (data, konfigurace nebo externí služba)
+    3. Ručně znovu spusťte pracovní postup u dotčených záznamů
+
+    **Tipy, jak snížit počet selhání**:
+
+    * Přidejte uzly **Filter** pro ověření dat před akcemi
+    * Použijte **Search Records** ke kontrole, zda existují související záznamy
+    * Před hromadnými operacemi důkladně otestujte s několika záznamy
+
+    Funkce automatického opakování je v našem plánu pro budoucí vydání.
+  </Accordion>
+
+  <Accordion title="Mám před importy CSV deaktivovat pracovní postupy?">
+    **Ano, pokud se vaše pracovní postupy spouštějí vytvořením nebo aktualizací záznamu.**
+
+    Při importu dat pomocí CSV může každý vytvořený nebo aktualizovaný záznam spustit pracovní postupy. Velký import (tisíce záznamů) může:
+
+    * Dosáhnout limitu 5 000 spuštění/hodinu
+    * Spotřebovat značné množství kreditů pracovních postupů
+    * Odeslat neočekávané e-maily nebo oznámení
+    * Vytvořit duplicitní úkoly nebo záznamy
+
+    **Před hromadným importem**:
+
+    1. Přejděte na **Nastavení → Pracovní postupy**
+    2. Identifikujte pracovní postupy spouštěné objektem, který importujete
+    3. **Deaktivujte** je dočasně
+    4. Spusťte import CSV
+    5. **Znovu aktivujte** pracovní postupy po dokončení
+
+    **Alternativa**: Pokud potřebujete, aby se pracovní postupy spouštěly na importovaných datech, importujte v menších dávkách, abyste zůstali v rámci limitů.
+  </Accordion>
+
+  <Accordion title="Jak vyčistit rozvržení pracovního postupu?">
+    Pokud vaše plátno pracovního postupu vypadá nepořádně a uzly jsou rozházené, můžete jej automaticky uspořádat:
+
+    1. Klikněte pravým tlačítkem kamkoli na plátno pracovního postupu
+    2. Klikněte na **Tidy up workflow**
+
+    Tím se všechny uzly automaticky přeuspořádají do čistého, uspořádaného rozvržení.
+  </Accordion>
+</AccordionGroup>

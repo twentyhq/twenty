@@ -32,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Build twenty-emails
         run: npx nx build twenty-emails
       - name: Run email tests
@@ -40,17 +40,17 @@ jobs:
           # Start the email server in the background
           npx nx run twenty-emails:start &
           SERVER_PID=$!
-          
+
           # Wait for server to start
           sleep 20
-          
+
           # Check if server is running
           if ! curl -s http://localhost:4001/preview/test.email > /dev/null; then
             echo "Email server failed to start"
             kill $SERVER_PID
             exit 1
           fi
-          
+
           # Kill the server
           kill $SERVER_PID
   ci-emails-status-check:
@@ -61,4 +61,4 @@ jobs:
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
-        run: exit 1 
+        run: exit 1

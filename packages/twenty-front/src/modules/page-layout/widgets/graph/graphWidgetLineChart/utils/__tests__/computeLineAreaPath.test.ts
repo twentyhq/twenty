@@ -27,7 +27,7 @@ jest.mock('d3-shape', () => {
   };
 });
 
-import { computeLineAreaPath } from '../computeLineAreaPath';
+import { computeLineAreaPath } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineAreaPath';
 
 const buildComputedSeries = (
   points: { x: number; y: number }[],

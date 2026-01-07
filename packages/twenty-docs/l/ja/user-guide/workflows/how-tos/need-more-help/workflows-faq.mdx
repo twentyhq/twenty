@@ -1,0 +1,254 @@
+---
+title: Workflows FAQ
+description: Frequently asked questions about workflows in Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Why can't I activate a workflow?">
+    This is likely a permissions issue. You need access to workflows to create and activate them.
+
+    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+
+    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+  </Accordion>
+
+  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
+    Manual workflows only appear in the navbar if properly configured:
+
+    1. The workflow must be **activated** (not in draft mode)
+    2. The navbar placement must be set to **Pinned**
+    3. For Single/Bulk triggers, you must be on the correct object page
+
+    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+
+    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+  </Accordion>
+
+  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
+    | Type | Records Required | Workflow Runs |
+    | ---- | ---------------- | ------------- |
+
+    \| **Global** | None | Once, no record input |
+    \| **Single** | One or more selected | Once per selected record |
+    \| **Bulk** | One or more selected | Once, with all records as array |
+
+    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
+    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
+    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+
+    See [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers) for details.
+  </Accordion>
+
+  <Accordion title="I don't see an If/Else node. What should I do?">
+    An explicit If/Else node is not yet available but is on our roadmap.
+
+    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Only the branch where the filter condition passes will execute its subsequent actions.
+
+    See [How to Use Branches](/l/ja/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+  </Accordion>
+
+  <Accordion title="Are workflow branches running in parallel?">
+    **Yes**, branches run in parallel by default.
+
+    If you want only one branch to execute:
+
+    * Add a **Filter** action at the start of each branch
+    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+
+    Branches that fail their filter condition stop executing, while others continue.
+  </Accordion>
+
+  <Accordion title="Can I merge branches back together?">
+    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+
+    In the workflow editor:
+
+    1. Complete your branched actions
+    2. Add a new step after the branches
+    3. Drag connections from the end of each branch to this new step
+
+    The merged step will execute after all connected branches complete.
+  </Accordion>
+
+  <Accordion title="What's the limit on Search Records results?">
+    **Search Records returns a maximum of 200 records.**
+
+    If you need to process more:
+
+    * Add more specific filters to reduce results
+    * Use scheduled workflows to process in batches
+    * Consider using the API for bulk operations
+
+    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+  </Accordion>
+
+  <Accordion title="Can I CC people on workflow emails?">
+    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+
+    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+  </Accordion>
+
+  <Accordion title="How do I use outputs from previous steps?">
+    Every action produces output data that can be used in subsequent steps.
+
+    **To reference previous step data**:
+
+    * Use the variable picker when configuring a field
+    * Or type `{{stepName.fieldName}}` directly
+
+    **Examples**:
+
+    * Trigger data: `{{trigger.object.email}}`
+    * Search results: `{{searchRecords[0].name}}`
+    * Code output: `{{code.calculatedValue}}`
+
+    Hover over any field in the action configuration to see available variables from previous steps.
+  </Accordion>
+
+  <Accordion title="Why does my Iterator fail?">
+    **Iterator requires an array input.** Common issues:
+
+    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
+    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
+    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+
+    **Correct setup**:
+
+    1. Search Records (returns array)
+    2. Filter: length > 0
+    3. Iterator: select `{{searchRecords}}`
+    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="What's the maximum execution time for Code actions?">
+    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+
+    The maximum configurable timeout is **15 minutes** (900 seconds).
+
+    If your code exceeds this limit, the action will fail with a timeout error.
+
+    **Tips to avoid timeouts**:
+
+    * Break large operations into smaller chunks using Iterator
+    * Avoid heavy computations; use external services via HTTP Request for intensive processing
+    * Optimize your code to reduce execution time
+    * If you need longer processing, consider using scheduled workflows that process data in batches
+  </Accordion>
+
+  <Accordion title="How do I read workflow runs?">
+    Workflow runs show the execution history and help you debug issues.
+
+    **Access runs**:
+
+    * In workflow editor → **Runs** panel on the right
+    * Or go to **Workflow Runs** in the sidebar
+
+    **Understanding a run**:
+
+    * **Status**: Running, Completed, Failed, Waiting
+    * **Steps**: See which steps executed and their output
+    * **Errors**: Click failed steps to see error messages
+    * **Data**: View input/output data at each step
+
+    See [Workflow Runs](/l/ja/user-guide/workflows/capabilities/workflow-runs) for details.
+  </Accordion>
+
+  <Accordion title="Why don't I see my workflow runs?">
+    Workflow runs might be failing immediately due to rate limits.
+
+    **Hard limit: 5,000 runs per hour per workspace.**
+
+    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+
+    **Common scenarios that hit this limit**:
+
+    * Selecting more than 5,000 records with a Single manual trigger
+    * Multiple workflows running simultaneously across your workspace
+    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+
+    **Solutions**:
+
+    * Use **Bulk** triggers instead of Single to process many records in one run
+    * Space out large batch operations
+    * Use filters to reduce trigger frequency
+    * Schedule heavy workflows during off-peak hours
+  </Accordion>
+
+  <Accordion title="What are the workflow rate limits?">
+    Twenty has two rate limits to ensure system stability:
+
+    | Limit | Value | Behavior |
+    | ----- | ----- | -------- |
+
+    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
+    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+
+    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+
+    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+
+    **Tips to stay within limits**:
+
+    * Use Bulk triggers with Iterator instead of Single triggers for large batches
+    * Combine related automations into fewer workflows
+    * Use scheduled workflows to spread load over time
+  </Accordion>
+
+  <Accordion title="Can I retry a failed workflow run?">
+    **No, there is no automatic retry functionality at the moment.**
+
+    If a workflow run fails, you'll need to:
+
+    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
+    2. Fix the issue (data, configuration, or external service)
+    3. Manually trigger the workflow again on the affected record(s)
+
+    **Tips to reduce failures**:
+
+    * Add **Filter** nodes to validate data before actions
+    * Use **Search Records** to check if related records exist
+    * Test thoroughly with a few records before bulk operations
+
+    Automatic retry functionality is on our roadmap for a future release.
+  </Accordion>
+
+  <Accordion title="Should I deactivate workflows before CSV imports?">
+    **Yes, if your workflows are triggered by record creation or updates.**
+
+    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+
+    * Hit the 5,000 runs/hour limit
+    * Consume significant workflow credits
+    * Send unexpected emails or notifications
+    * Create duplicate tasks or records
+
+    **Before a mass import**:
+
+    1. Go to **Settings → Workflows**
+    2. Identify workflows triggered by the object you're importing
+    3. **Deactivate** them temporarily
+    4. Run your CSV import
+    5. **Reactivate** the workflows when done
+
+    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+  </Accordion>
+
+  <Accordion title="How do I clean up my workflow layout?">
+    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+
+    1. Right-click anywhere on the workflow canvas
+    2. Click **Tidy up workflow**
+
+    This will automatically rearrange all nodes into a clean, organized layout.
+  </Accordion>
+</AccordionGroup>

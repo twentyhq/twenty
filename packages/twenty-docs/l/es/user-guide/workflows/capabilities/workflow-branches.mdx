@@ -1,0 +1,66 @@
+---
+title: Workflow Branches
+description: Create parallel paths and conditional logic in your workflows.
+---
+
+Branches allow you to split your workflow into multiple paths that can run simultaneously or conditionally based on your data.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## How Branches Work
+
+When you create multiple connections from a single node, each path becomes a branch. By default, **all branches execute in parallel**—they don't wait for each other.
+
+## Creating Branches
+
+### Add a New Branch
+
+1. **Right-click on the main canvas** of the workflow (not on an existing node)
+2. Click **Add node**
+3. Choose the node type for your new branch
+4. Drag an arrow from the bottom of the previous step to the top of this new action
+5. Repeat to add more branches from the same node
+
+<Note>
+  Each branch is independent. Adding a branch doesn't affect other existing paths from that node.
+</Note>
+
+### Visual Layout
+
+Branches appear as parallel paths in the workflow editor. You can drag nodes to rearrange the visual layout without affecting execution.
+
+## Conditional Branches
+
+Since all branches run by default, use **Filter** nodes to control which paths actually execute:
+
+| Branch | Filter Condition      | Action                     |
+| ------ | --------------------- | -------------------------- |
+| A      | Stage = "Won"         | Send congratulations email |
+| B      | Stage = "Lost"        | Create follow-up task      |
+| C      | Stage = "Negotiation" | Notify manager             |
+
+1. Create branches from your trigger or action
+2. Add a **Filter** node as the first step of each branch
+3. Configure each filter with mutually exclusive conditions
+4. Add your actions after each filter
+
+Only the branch(es) where the filter condition is met will continue executing.
+
+## Merging Branches
+
+**Branches don't automatically merge.** Each branch runs independently until it ends. You have full flexibility in how you handle this:
+
+* **Option 1: Keep branches separate**
+  Each branch handles its own follow-up actions independently. This is the simplest approach when branches don't need to converge.
+
+* **Option 2: Merge branches manually**
+  When creating your workflow, you can manually connect multiple branches to the same downstream action. Simply drag arrows from the end of each branch to a common node.
+
+<Note>
+  While you can use a [Delay](/l/es/user-guide/workflows/capabilities/workflow-actions#delay) node to pause execution, it's not currently configurable to wait "until another branch ends."
+</Note>
+
+## Related
+
+* [How to Use Branches in Workflows](/l/es/user-guide/workflows/capabilities/use-branches-in-workflows) - Step-by-step guide
+* [Workflow Actions](/l/es/user-guide/workflows/capabilities/workflow-actions) - Available actions including Filter

@@ -7,71 +7,60 @@ image: /images/user-guide/emails/emails_header.png
   <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
 </Frame>
 
-Indica progresso ou contagem regressiva e se move da direita para a esquerda.
+Indicates progress or countdown and moves from right to left.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { ProgressBar } from "twenty-ui/feedback";
-
-export const MyComponent = () => {
-  return (
-    <ProgressBar
-      duration={6000}
-      delay={0}
-      easing="easeInOut"
-      barHeight={10}
-      barColor="#4bb543"
-      autoStart={true}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props             | Tipo                                     | Descrição                                                                                        | Padrão       |
-| ----------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------ |
-| duração           | número                                   | A duração total da animação da barra de progresso em milissegundos                               | 3            |
-| atraso            | número                                   | O atraso no início da animação da barra de progresso em milissegundos                            | 0            |
-| amortecimento     | Nome opcional para estilização adicional | Função de amortecimento para a animação da barra de progresso                                    | easeInOut    |
-| altura da barra   | número                                   | A altura da barra em pixels                                                                      | 24           |
-| cor da barra      | Nome opcional para estilização adicional | A cor da barra                                                                                   | gray80       |
-| início automático | booleano                                 | Se `true`, a animação da barra de progresso começa automaticamente quando o componente é montado | `verdadeiro` |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type    | Description                                                                          | Default   |
+    | --------- | ------- | ------------------------------------------------------------------------------------ | --------- |
+    | duration  | number  | The total duration of the progress bar animation in milliseconds                     | 3         |
+    | delay     | number  | The delay in starting the progress bar animation in milliseconds                     | 0         |
+    | easing    | string  | Easing function for the progress bar animation                                       | easeInOut |
+    | barHeight | number  | The height of the bar in pixels                                                      | 24        |
+    | barColor  | string  | The color of the bar                                                                 | gray80    |
+    | autoStart | boolean | If `true`, the progress bar animation starts automatically when the component mounts | `true`    |
+  </Tab>
 </Tabs>
 
-## Barra de Progresso Circular
+## Circular Progress Bar
 
-Indica o progresso de uma tarefa, frequentemente usada em telas de carregamento ou em áreas onde você deseja comunicar processos em andamento ao usuário.
+Indicates the progress of a task, often used in loading screens or areas where you want to communicate ongoing processes to the user.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
-
-export const MyComponent = () => {
-  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props            | Tipo                                     | Descrição                                | Padrão       |
-| ---------------- | ---------------------------------------- | ---------------------------------------- | ------------ |
-| tamanho          | número                                   | O tamanho da barra de progresso circular | 50           |
-| largura da barra | número                                   | A largura da linha da barra de progresso | 5            |
-| cor da barra     | Nome opcional para estilização adicional | A cor da barra de progresso              | currentColor |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props    | Type   | Description                           | Default      |
+    | -------- | ------ | ------------------------------------- | ------------ |
+    | size     | number | The size of the circular progress bar | 50           |
+    | barWidth | number | The width of the progress bar line    | 5            |
+    | barColor | string | The color of the progress bar         | currentColor |
+  </Tab>
 </Tabs>

@@ -21,7 +21,7 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'created'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'create'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleCreation(args);
 
@@ -37,15 +37,16 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'create_role',
-        role: flatRoleToValidate,
+        type: 'create',
+        metadataName: 'role',
+        flatEntity: flatRoleToValidate,
       },
     };
   }
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'deleted'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'delete'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleDeletion(args);
 
@@ -61,15 +62,16 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: {
-        type: 'delete_role',
-        roleId: flatRoleToValidate.id,
+        type: 'delete',
+        metadataName: 'role',
+        entityId: flatRoleToValidate.id,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'updated'> {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'update'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleUpdate(args);
 
@@ -83,8 +85,9 @@ export class WorkspaceMigrationV2RoleActionsBuilderService extends WorkspaceEnti
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRoleAction: UpdateRoleAction = {
-      type: 'update_role',
-      roleId: flatEntityId,
+      type: 'update',
+      metadataName: 'role',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

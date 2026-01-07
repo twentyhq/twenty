@@ -1,0 +1,178 @@
+---
+title: Comenzi rapide
+---
+
+## Introducere
+
+Atunci când aveți nevoie să ascultați o comandă rapidă, în mod normal ați folosi evenimentul `onKeyDown`.
+
+În `twenty-front` totuși, s-ar putea să aveți conflicte între aceleași comenzi rapide folosite în componente diferite, montate simultan.
+
+De exemplu, dacă aveți o pagină care ascultă tasta Enter, și un modal care ascultă aceeași tastă, cu o componentă Select în interiorul acelui modal care ascultă și ea tasta Enter, s-ar putea să apară un conflict când toate sunt montate simultan.
+
+## Hook-ul `useScopedHotkeys`
+
+Pentru a gestiona această problemă, avem un hook personalizat care face posibilă ascultarea comenzilor rapide fără niciun conflict.
+
+Îl așezați într-o componentă și va asculta comenzile rapide doar când componenta este montată ȘI când **domeniul comenzii rapide** specificat este activ.
+
+## How to listen for hotkeys in practice?
+
+Sunt două etape implicate în configurarea ascultării comenzilor rapide:
+
+1. Setați [domeniul comenzii rapide](#what-is-a-hotkey-scope-) care va asculta comenzi rapide
+2. Folosiți `useScopedHotkeys` pentru a asculta comenzile rapide
+
+Setarea domeniilor comenzilor rapide este necesară chiar și în paginile simple, deoarece alte elemente ale UI, cum ar fi meniul din stânga sau meniul de comandă, s-ar putea să asculte și ele comenzi rapide.
+
+## Cazuri de utilizare pentru comenzi rapide
+
+În general, veți avea două cazuri de utilizare care necesită comenzi rapide:
+
+1. Într-o pagină sau componentă montată într-o pagină
+2. Într-o componentă de tip modal care preia focusul datorită unei acțiuni a utilizatorului
+
+Al doilea caz de utilizare poate apărea recursiv: un dropdown într-un modal, de exemplu.
+
+### Ascultarea comenzilor rapide într-o pagină
+
+Exemplu:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Ascultarea comenzilor rapide într-o componentă de tip modal
+
+În acest exemplu vom folosi o componentă modal care ascultă tasta Escape pentru a-i spune părintelui să o închidă.
+
+Aici interacțiunea utilizatorului modifică domeniul.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Apoi în componenta modal:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+Este important să folosiți acest tipar când nu sunteți sigur că doar utilizând un useEffect la montare/demontare va fi suficient pentru a evita conflictele.
+
+Aceste conflicte pot fi greu de depanat și s-ar putea să apară mai des decât credeți cu useEffects.
+
+## Ce este un domeniu al comenzilor rapide?
+
+Un domeniu al comenzilor rapide este un șir de caractere care reprezintă un context în care comenzile rapide sunt active. Este în general codificat sub forma unui enum.
+
+Când schimbați domeniul comenzii rapide, comenzile rapide care ascultă acest domeniu vor fi activate, iar cele care ascultă alte domenii vor fi dezactivate.
+
+Puteți seta doar un singur domeniu la un moment dat.
+
+Ca exemplu, domeniile comenzilor rapide pentru fiecare pagină sunt definite în enumul `PageHotkeyScope`:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Intern, domeniul selectat în prezent este stocat într-o stare Recoil care este partajată în toată aplicația:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Însă această stare Recoil nu ar trebui să fie gestionată manual! Vom vedea cum să o folosim în secțiunea următoare.
+
+## Cum funcționează intern?
+
+Am făcut un wrapper subțire peste [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) care îl face mai performant și evită re-rendările inutile.
+
+De asemenea, creăm o stare Recoil pentru a gestiona starea domeniului comenzilor rapide și să fie disponibilă oriunde în aplicație.

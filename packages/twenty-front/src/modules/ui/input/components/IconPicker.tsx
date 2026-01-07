@@ -25,8 +25,8 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
-import { IconPickerScrollEffect } from '../hooks/IconPickerScrollEffect';
-import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
+import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 
 export type IconPickerProps = {
   disabled?: boolean;

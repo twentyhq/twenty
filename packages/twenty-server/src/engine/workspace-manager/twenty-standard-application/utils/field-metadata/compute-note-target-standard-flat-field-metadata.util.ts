@@ -119,6 +119,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget note',
       icon: 'IconNotes',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'note',
       targetFieldName: 'noteTargets',
       settings: {
@@ -143,6 +144,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'noteTargets',
       settings: {
@@ -167,6 +169,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'noteTargets',
       settings: {
@@ -191,6 +194,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'noteTargets',
       settings: {
