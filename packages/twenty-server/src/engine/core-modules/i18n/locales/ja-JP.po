@@ -77,7 +77,7 @@ msgstr "この名前のフィールドはすでに存在します。"
 #. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
-msgstr "お気に入りフォルダ"
+msgstr "お気に入りフォルダー"
 
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
@@ -97,7 +97,7 @@ msgstr "多対一のリレーションフィールドには必ず結合カラム
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr "メッセージングチャネル（メール、チャットなど）を通じて送受信されるメッセージ"
+msgstr "メッセージングチャンネル（メール、チャットなど）を通じて送受信されるメッセージ"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -542,7 +542,7 @@ msgstr "割り当てられたタスク"
 #. js-lingui-id: kZ7PLo
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
 msgid "Assigned to Me"
-msgstr "私に担当されている"
+msgstr "自分に割り当て"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -582,7 +582,7 @@ msgstr "添付ファイルのダッシュボード"
 #. js-lingui-id: u3pBxa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment file category"
-msgstr "添付ファイルのカテゴリ"
+msgstr "添付ファイルのカテゴリー"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1126,7 +1126,7 @@ msgstr "{objectMetadataNameSingular} に対して {connectFieldName} での接�
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
-msgstr "接続アカウント"
+msgstr "連携済みアカウント"
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -1137,12 +1137,12 @@ msgstr "連携済みアカウントが見つかりません。"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Connected accounts"
-msgstr "接続アカウント"
+msgstr "連携済みアカウント"
 
 #. js-lingui-id: AMDUqA
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
-msgstr "接続アカウント"
+msgstr "連携済みアカウント"
 
 #. js-lingui-id: bA6O5B
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1827,17 +1827,17 @@ msgstr "お気に入りのダッシュボード"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite Folder"
-msgstr "お気に入りフォルダ"
+msgstr "お気に入りフォルダー"
 
 #. js-lingui-id: WDVfUH
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite folder position"
-msgstr "お気に入りフォルダ表示順"
+msgstr "お気に入りフォルダー表示順"
 
 #. js-lingui-id: SStz54
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite Folders"
-msgstr "お気に入りフォルダ"
+msgstr "お気に入りフォルダー"
 
 #. js-lingui-id: dz/fFp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1904,7 +1904,7 @@ msgstr "お気に入り"
 #. js-lingui-id: 0CzeFL
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
-msgstr "このフォルダのお気に入り"
+msgstr "このフォルダーのお気に入り"
 
 #. js-lingui-id: zQponA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2126,27 +2126,27 @@ msgstr "フィールド値が必要です"
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr "ビュー フィールドを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィールドを作成するには FieldMetadataId が必要です。"
 
 #. js-lingui-id: NTyTR5
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr "ビュー フィルター グループを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィルターグループを作成するには FieldMetadataId が必要です。"
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr "ビュー フィルターを作成するには FieldMetadataId が必要です。"
+msgstr "ビューフィルターを作成するには FieldMetadataId が必要です。"
 
 #. js-lingui-id: DU4jcg
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr "ビュー グループを作成するには FieldMetadataId が必要です。"
+msgstr "ビューグループを作成するには FieldMetadataId が必要です。"
 
 #. js-lingui-id: snEXuU
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr "ビュー ソートを作成するには FieldMetadataId が必要です。"
+msgstr "ビューソートを作成するには FieldMetadataId が必要です。"
 
 #. js-lingui-id: i+AQUz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -2163,7 +2163,7 @@ msgstr "ファイルが見つかりません。"
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
-msgstr "メッセージチャネル用フォルダー"
+msgstr "メッセージチャンネル用フォルダー"
 
 #. js-lingui-id: cqQyPB
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2439,7 +2439,7 @@ msgstr "無効な複合型です。"
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid connected account ID."
-msgstr "無効な連携アカウントIDです。"
+msgstr "無効な連携済みアカウントIDです。"
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2981,7 +2981,7 @@ msgstr "Twentyでチームに参加"
 #. js-lingui-id: WNfJ8M
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "JSON object containing custom connection parameters"
-msgstr "カスタム接続パラメータを含む JSON オブジェクト"
+msgstr "カスタム接続パラメータを含むJSONオブジェクト"
 
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3213,29 +3213,29 @@ msgstr "メッセージ"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel"
-msgstr "メッセージチャネル"
+msgstr "メッセージチャンネル"
 
 #. js-lingui-id: DzU4a3
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
-msgstr "メッセージチャネルアソシエーション"
+msgstr "メッセージチャンネルアソシエーション"
 
 #. js-lingui-id: wd/R++
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Id"
-msgstr "メッセージチャネルID"
+msgstr "メッセージチャンネルID"
 
 #. js-lingui-id: disipM
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Association"
-msgstr "メッセージチャネルメッセージアソシエーション"
+msgstr "メッセージチャンネルメッセージアソシエーション"
 
 #. js-lingui-id: ijQY3P
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Associations"
-msgstr "メッセージチャネルメッセージアソシエーション"
+msgstr "メッセージチャンネルメッセージアソシエーション"
 
 #. js-lingui-id: LOU3x5
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -3248,7 +3248,7 @@ msgstr "メッセージチャンネルが見つかりません"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Message Channels"
-msgstr "メッセージチャネル"
+msgstr "メッセージチャンネル"
 
 #. js-lingui-id: /4uGJc
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3263,20 +3263,20 @@ msgstr "メッセージ外部ID"
 #. js-lingui-id: CStLnc
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
-msgstr "メッセージフォルダ"
+msgstr "メッセージフォルダー"
 
 #. js-lingui-id: XCJIdB
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message folder import policy"
-msgstr "メッセージフォルダのインポートポリシー"
+msgstr "メッセージフォルダーのインポートポリシー"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
-msgstr "メッセージフォルダ"
+msgstr "メッセージフォルダー"
 
 #. js-lingui-id: 6icznk
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3292,7 +3292,7 @@ msgstr "メッセージヘッダーからのメッセージID"
 #. js-lingui-id: yaC1Aq
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message id from the messaging provider"
-msgstr "メッセージングプロバイダからのメッセージID"
+msgstr "メッセージングプロバイダーからのメッセージID"
 
 #. js-lingui-id: IUmVwu
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -3314,7 +3314,7 @@ msgstr "メッセージ参加者"
 #. js-lingui-id: IC5A8V
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Synced with a Message Channel"
-msgstr "メッセージチャネルと同期済みのメッセージ"
+msgstr "メッセージチャンネルと同期済みのメッセージ"
 
 #. js-lingui-id: de2nM/
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
@@ -3372,7 +3372,7 @@ msgstr "メタデータのバージョンが見つかりません。"
 #. js-lingui-id: WFVrzW
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Microsoft API authentication is disabled."
-msgstr "Microsoft API 認証は無効化されています。"
+msgstr "Microsoft API認証は無効になっています。"
 
 #. js-lingui-id: cuMeE3
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
@@ -3515,7 +3515,7 @@ msgstr "名前は camelCase 形式でなければなりません。"
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
-msgstr "お気に入りフォルダの名前"
+msgstr "お気に入りフォルダーの名前"
 
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4103,7 +4103,7 @@ msgstr "ID {flatPageLayoutWidgetId} のページレイアウトウィジェッ�
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
-msgstr "親フォルダID"
+msgstr "親フォルダーID"
 
 #. js-lingui-id: Xsgh7b
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -4489,19 +4489,19 @@ msgstr "役割"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to agents"
-msgstr "ロール「{roleLabel}」はエージェントに割り当てることができません"
+msgstr "ロール「{roleLabel}」はエージェントに割り当てられません"
 
 #. js-lingui-id: u1Fm8i
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
-msgstr "ロール「{roleLabel}」はAPIキーに割り当てることができません"
+msgstr "ロール「{roleLabel}」はAPIキーに割り当てられません"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
-msgstr "ロール「{roleLabel}」はユーザーに割り当てることができません"
+msgstr "ロール「{roleLabel}」はユーザーに割り当てられません"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -5351,12 +5351,12 @@ msgstr "このAPIキーは取り消され、もう使用できません。"
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
-msgstr "この API キーは失効しています。"
+msgstr "この APIキーは失効しています。"
 
 #. js-lingui-id: OLL1W0
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has expired."
-msgstr "この API キーは有効期限が切れています。"
+msgstr "この APIキーは有効期限が切れています。"
 
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -5366,7 +5366,7 @@ msgstr "このAPIキーは期限切れです。新しいものを作成してく
 #. js-lingui-id: 9J2vmW
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
-msgstr "この API キーにはロールが割り当てられていません。"
+msgstr "この APIキーにはロールが割り当てられていません。"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -5932,17 +5932,17 @@ msgstr "ビューはすでに存在します。"
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field already exists"
-msgstr "ビュー フィールドはすでに存在します"
+msgstr "ビューフィールドはすでに存在します"
 
 #. js-lingui-id: Xm6R6B
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "View field already exists."
-msgstr "ビュー フィールドは既に存在します。"
+msgstr "ビューフィールドは既に存在します。"
 
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata already exists"
-msgstr "ビュー フィールド メタデータはすでに存在します"
+msgstr "ビューフィールドメタデータはすでに存在します"
 
 #. js-lingui-id: Yvf7WL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6059,7 +6059,7 @@ msgstr "同じIDを持つフィルターはすでに存在します"
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata already exists"
-msgstr "ビュー グループ メタデータはすでに存在します"
+msgstr "ビューグループメタデータはすでに存在します"
 
 #. js-lingui-id: lbyQO4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -6071,25 +6071,25 @@ msgstr "ID {flatViewGroupId}のビューグループメタデータはすでに�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
 msgid "View group to delete not found"
-msgstr "削除するビュー グループが見つかりません"
+msgstr "削除するビューグループが見つかりません"
 
 #. js-lingui-id: 34hWb7
 #: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
 msgid "View group to destroy not found"
-msgstr "破棄するビュー グループが見つかりません"
+msgstr "破棄するビューグループが見つかりません"
 
 #. js-lingui-id: UP/TXo
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
 msgid "View group to update not found"
-msgstr "更新するビュー グループが見つかりません"
+msgstr "更新するビューグループが見つかりません"
 
 #. js-lingui-id: P0grPG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to update parent view not found"
-msgstr "親ビューを更新するビュー グループが見つかりません"
+msgstr "親ビューを更新するビューグループが見つかりません"
 
 #. js-lingui-id: M7KWZV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -6097,7 +6097,7 @@ msgstr "親ビューを更新するビュー グループが見つかりませ�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View kanban aggregate field metadata not found"
-msgstr "カンバンプランの集計フィールドメタデータが見つかりません"
+msgstr "ビューカンバンの集計フィールドメタデータが見つかりません"
 
 #. js-lingui-id: F4A9mL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -6149,27 +6149,27 @@ msgstr "ビューID"
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr "ビュー フィールドを作成するには ViewId が必要です。"
+msgstr "ビューフィールドを作成するには ViewId が必要です。"
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr "ビュー フィルター グループを作成するには ViewId が必要です。"
+msgstr "ビューフィルターグループを作成するには ViewId が必要です。"
 
 #. js-lingui-id: pCCxli
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr "ビュー フィルターを作成するには ViewId が必要です。"
+msgstr "ビューフィルターを作成するには ViewId が必要です。"
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr "ビュー グループを作成するには ViewId が必要です。"
+msgstr "ビューグループを作成するには ViewId が必要です。"
 
 #. js-lingui-id: uGUFcy
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr "ビュー ソートを作成するには ViewId が必要です。"
+msgstr "ビューソートを作成するには ViewId が必要です。"
 
 #. js-lingui-id: 2q/Q7x
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -6508,27 +6508,27 @@ msgstr "ワークスペーススキーマが見つかりません。"
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr "ビュー フィールドを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィールドを作成するには WorkspaceId が必要です。"
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr "ビュー フィルター グループを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィルターグループを作成するには WorkspaceId が必要です。"
 
 #. js-lingui-id: jQMXtD
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr "ビュー フィルターを作成するには WorkspaceId が必要です。"
+msgstr "ビューフィルターを作成するには WorkspaceId が必要です。"
 
 #. js-lingui-id: NAoJAX
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr "ビュー グループを作成するには WorkspaceId が必要です。"
+msgstr "ビューグループを作成するには WorkspaceId が必要です。"
 
 #. js-lingui-id: hU1QaN
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr "ビュー ソートを作成するには WorkspaceId が必要です。"
+msgstr "ビューソートを作成するには WorkspaceId が必要です。"
 
 #. js-lingui-id: jtb/lI
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
