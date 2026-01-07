@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -49,6 +50,8 @@ export const RecordBoardColumnNewRecordButton = () => {
     objectMetadataItem: objectMetadataItem,
   });
 
+  const { closeCommandMenu } = useCommandMenu();
+
   if (!hasObjectUpdatePermissions) {
     return null;
   }
@@ -59,8 +62,9 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   return (
     <StyledNewButton
-      onClick={() => {
-        createNewIndexRecord({
+      onClick={async() => {
+        closeCommandMenu();
+        await createNewIndexRecord({
           position: 'last',
           [selectFieldMetadataItem.name]: columnDefinition.value,
         });

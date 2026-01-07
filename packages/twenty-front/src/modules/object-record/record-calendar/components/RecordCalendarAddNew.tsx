@@ -73,9 +73,9 @@ export const RecordCalendarAddNew = ({
 
   return (
     <StyledButton
-      onClick={() => {
+      onClick={async () => {
         closeCommandMenu();
-        createNewIndexRecord({
+        await createNewIndexRecord({
           [calendarFieldMetadataItem.name]: cardDate
             .toZonedDateTime(userTimezone)
             .toInstant()
