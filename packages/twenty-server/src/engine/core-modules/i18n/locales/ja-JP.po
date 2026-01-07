@@ -300,7 +300,7 @@ msgstr "住所"
 #. js-lingui-id: JiOJxf
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
-msgstr "住所 (非推奨) "
+msgstr "住所(非推奨)"
 
 #. js-lingui-id: Knl3c9
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -727,7 +727,7 @@ msgstr "メールの受信・送信時に自動的に連絡先レコードを作
 #. js-lingui-id: lXxdId
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Automatically create records for people you participated with in an event."
-msgstr "イベントに参加した人のレコードを自動的に作成"
+msgstr "イベントに参加した連絡先のレコードを自動的に作成"
 
 #. js-lingui-id: kfcRb0
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1178,7 +1178,7 @@ msgstr "連絡先の役職"
 #. js-lingui-id: QrCvRQ
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Linkedin account"
-msgstr "連絡先のLinkedinアカウント"
+msgstr "連絡先のLinkedInアカウント"
 
 #. js-lingui-id: 6xPSVt
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1209,7 +1209,7 @@ msgstr "コンテンツは空にできません"
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
-msgstr "相反するフィールドアクセス権が関係フィールド ({fieldName}) に検出されました。"
+msgstr "相反するフィールドアクセス権が関係フィールド({fieldName})に検出されました。"
 
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -1390,7 +1390,7 @@ msgstr "データベースイベントトリガーが見つかりません。"
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger with same id already exists"
-msgstr "同じIDを持つデータベースイベントトリガーは既に存在します"
+msgstr "同じIDを持つデータベースイベントトリガーはすでに存在します"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1735,7 +1735,7 @@ msgstr "実行者"
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
-msgstr "{connectFieldName}のすべての操作で、同じ制約フィールドを一貫して使用することが期待されます。"
+msgstr "{connectFieldName}のすべての操作で、同じ制約フィールドを一貫して使用する必要があります。"
 
 #. js-lingui-id: 5KfWxA
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1974,7 +1974,7 @@ msgstr "2月"
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
-msgstr "フィールドは既に存在します"
+msgstr "フィールドはすでに存在します"
 
 #. js-lingui-id: ugu505
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -3731,7 +3731,7 @@ msgstr "OAuthアクセスが拒否されました。"
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
-msgstr "オブジェクトは既に存在します"
+msgstr "オブジェクトはすでに存在します"
 
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -3812,7 +3812,7 @@ msgstr "更新するオブジェクトが見つかりません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr "オブジェクトは同じIDで既に存在します"
+msgstr "オブジェクトは同じIDですでに存在します"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -4220,7 +4220,7 @@ msgstr "メールアカウントを設定するために接続詳細を提供し
 #. js-lingui-id: 0ldKS0
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
-msgstr "有効な接続タイプ (IMAP、SMTP、またはCalDAV) を選択し、もう一度お試しください。"
+msgstr "有効な接続タイプ(IMAP、SMTP、またはCalDAV)を選択し、もう一度お試しください。"
 
 #. js-lingui-id: sa9Q+R
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -4295,7 +4295,7 @@ msgstr "プロパティ「{property}」はロールに必要です"
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
-msgstr "提供されたコードと推論されたコーリングコードが矛盾しています"
+msgstr "指定されたコーリングコードと推論されたコーリングコードが矛盾しています"
 
 #. js-lingui-id: Vq/afT
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -4418,7 +4418,7 @@ msgstr "関連"
 #. js-lingui-id: PWdFkY
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
-msgstr "リモートオブジェクトはまだ準備が整っていません"
+msgstr "リモートオブジェクトはまだ本番環境に対応していません"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
@@ -4804,7 +4804,7 @@ msgstr "提供された情報の一部が無効です。入力を確認しても
 #. js-lingui-id: 01Sxb6
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
-msgstr "選択した権限の一部が無効です。 有効な権限設定を試してください。"
+msgstr "選択した権限の一部が無効です。有効な権限設定で再度お試しください。"
 
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
@@ -5202,7 +5202,7 @@ msgstr "デフォルトのロールは削除できません。"
 #. js-lingui-id: 6BBrjb
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
-msgstr "このワークスペースのデフォルトロールが見つかりませんでした。サポートに連絡してアシスタンスをお求めください。"
+msgstr "このワークスペースのデフォルトロールが見つかりませんでした。サポートにお問い合わせください。"
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -5222,7 +5222,7 @@ msgstr "フィールド「{field}」は更新できません。ワークスペ�
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
-msgstr "権限を設定しようとしているフィールドが見つかりません。それは削除された可能性があります。"
+msgstr "権限を設定しようとしているフィールドが見つかりません。削除された可能性があります。"
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -5238,7 +5238,7 @@ msgstr "ワークフローの最初のバージョンは削除できません"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
-msgstr "権限を設定しようとしているオブジェクトが見つかりません。それは削除された可能性があります。"
+msgstr "権限を設定しようとしているオブジェクトが見つかりません。削除された可能性があります。"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -5259,7 +5259,7 @@ msgstr "リクエストが複雑すぎて処理できません。要求するル
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
 #: src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr "探しているロールが見つかりませんでした。それは削除されたか、アクセスできない可能性があります。"
+msgstr "探しているロールが見つかりませんでした。削除されたか、アクセスできない可能性があります。"
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
@@ -5267,7 +5267,7 @@ msgstr "探しているロールが見つかりませんでした。それは削
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
-msgstr "修正しようとしているロールが見つかりませんでした。それは削除されたか、アクセスできない可能性があります。"
+msgstr "修正しようとしているロールが見つかりませんでした。削除されたか、アクセスできない可能性があります。"
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -5735,7 +5735,7 @@ msgstr "不明な権限が必要です。"
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Unsupported composite column type."
-msgstr "複合列の型はサポートされていません。"
+msgstr "サポートされていない複合カラムタイプです。"
 
 #. js-lingui-id: 1r7kLp
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -5750,7 +5750,7 @@ msgstr "サポートされていないcronスケジュールタイプ"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr "サポートされていないフィールドメタデータタイプ{fieldType}"
+msgstr "サポートされていないフィールドメタデータタイプ「{fieldType}」"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5785,7 +5785,7 @@ msgstr "更新されたフィールド名がラベルと同期していません
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User already exists"
-msgstr "ユーザーは既に存在します"
+msgstr "ユーザーはすでに存在します"
 
 #. js-lingui-id: 9QHVZ2
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5876,28 +5876,28 @@ msgstr "ユーザーワークスペースのロール設定が見つかりませ
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
-msgstr "ユーザーの好ましい日付フォーマット"
+msgstr "ユーザーの希望する日付形式"
 
 #. js-lingui-id: PLfanm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred number format"
-msgstr "ユーザーの好みの数値形式"
+msgstr "ユーザーの希望する数値形式"
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr "ユーザーの好みの週の開始曜日"
+msgstr "ユーザーの希望する週の開始曜日"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
-msgstr "ユーザーの好ましい時間フォーマット"
+msgstr "ユーザーの希望する時間形式"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr "値はUPPER_CASEであり、snake_caseに従っている必要があります「{sanitizedValue}」"
+msgstr "値はUPPER_CASEかつsnake_caseの形式である必要があります「{sanitizedValue}」"
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -5937,7 +5937,7 @@ msgstr "ビューフィールドはすでに存在します"
 #. js-lingui-id: Xm6R6B
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "View field already exists."
-msgstr "ビューフィールドは既に存在します。"
+msgstr "ビューフィールドはすでに存在します。"
 
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -5995,7 +5995,7 @@ msgstr "親ビューオブジェクトを更新するためのビュー項目が
 #. js-lingui-id: 89Wiy+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldmetadataId and viewId already exists"
-msgstr "同じフィールドメタデータIDとビューIDを持つフィールドビューが既に存在します"
+msgstr "同じフィールドメタデータIDとビューIDを持つフィールドビューがすでに存在します"
 
 #. js-lingui-id: ENVlLK
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
@@ -6025,7 +6025,7 @@ msgstr "ビューフィルターグループが見つかりません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group with this id already exists"
-msgstr "このIDのビューフィルターグループは既に存在します"
+msgstr "このIDのビューフィルターグループはすでに存在します"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -6138,7 +6138,7 @@ msgstr "更新するビューが見つかりません"
 #. js-lingui-id: ZgRtC4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View with same id is already exists"
-msgstr "同じIDでビューが既に存在します"
+msgstr "同じIDでビューがすでに存在します"
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -6222,7 +6222,7 @@ msgstr "水曜日"
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Twentyへようこそ: メールを確認してください"
+msgstr "Twentyへようこそ - メールアドレスを確認してください"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -6544,7 +6544,7 @@ msgstr "ワークスペースメンバー"
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Wrong password"
-msgstr "間違ったパスワード"
+msgstr "パスワードが間違っています"
 
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -6586,12 +6586,12 @@ msgstr "最後の管理者から管理者ロールは削除できません。最
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
-msgstr "システムオブジェクトにはフィールドアクセス権を設定できません。それらはプラットフォームによって管理されています。"
+msgstr "システムオブジェクトはプラットフォームによって管理されているため、フィールドアクセス権を設定できません。"
 
 #. js-lingui-id: SI6USg
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot set permissions on system objects as they are managed by the platform."
-msgstr "システムオブジェクトにはアクセス権を設定できません。それらはプラットフォームによって管理されています。"
+msgstr "システムオブジェクトはプラットフォームによって管理されているため、アクセス権を設定できません。"
 
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -6644,7 +6644,7 @@ msgstr "プロフィール画像をアップロードする権限がありませ
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
-msgstr "ワークスペースレベルのビュ​​ーを作成する権限がありません。"
+msgstr "ワークスペースレベルのビューを作成する権限がありません。"
 
 #. js-lingui-id: QmL9y9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
