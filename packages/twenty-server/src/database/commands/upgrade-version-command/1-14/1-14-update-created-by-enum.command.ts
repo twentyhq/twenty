@@ -14,7 +14,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-v2/utils/compute-postgres-enum-name.util';
 
 @Command({
   name: 'upgrade:1-14:udpate-created-by-enum',

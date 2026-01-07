@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-v2/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaIndexManagerService {
   async createIndex({

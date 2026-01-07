@@ -8,7 +8,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-v2/utils/remove-sql-injection.util';
 
 type SerializeDefaultValueV2Args = {
   defaultValue?: FieldMetadataDefaultSerializableValue;
