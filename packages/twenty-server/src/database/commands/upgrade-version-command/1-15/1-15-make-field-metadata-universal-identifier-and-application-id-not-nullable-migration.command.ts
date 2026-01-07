@@ -33,7 +33,7 @@ export class MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigr
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     if (this.hasRunOnce) {
-      this.logger.log(
+      this.logger.warn(
         'Skipping has already been run once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand',
       );
 

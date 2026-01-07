@@ -182,10 +182,6 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const totalUpdates =
       customFieldMetadataEntities.length + standardFieldMetadataEntities.length;
 
-    this.logger.log(
-      `Successfully validated ${totalUpdates}/${allFieldMetadataEntities.length} field metadata update(s) for workspace ${workspaceId} (${customFieldMetadataEntities.length} custom, ${standardFieldMetadataEntities.length} standard)`,
-    );
-
     if (warnings.length > 0) {
       this.logger.warn(
         `Found ${warnings.length} warning(s) while processing field metadata for workspace ${workspaceId}. These fields will become custom.`,
@@ -213,6 +209,10 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
         `Aborting migration for workspace ${workspaceId} due to ${exceptions.length} exception(s). See logs above for details.`,
       );
     }
+
+    this.logger.log(
+      `Successfully validated ${totalUpdates}/${allFieldMetadataEntities.length} field metadata update(s) for workspace ${workspaceId} (${customFieldMetadataEntities.length} custom, ${standardFieldMetadataEntities.length} standard)`,
+    );
 
     if (!options.dryRun) {
       const customUpdates = customFieldMetadataEntities.map(
