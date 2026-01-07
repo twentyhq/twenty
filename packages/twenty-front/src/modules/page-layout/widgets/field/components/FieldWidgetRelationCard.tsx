@@ -28,6 +28,7 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;

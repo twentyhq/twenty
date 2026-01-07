@@ -31,6 +31,7 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   width: 100%;
 `;
 
