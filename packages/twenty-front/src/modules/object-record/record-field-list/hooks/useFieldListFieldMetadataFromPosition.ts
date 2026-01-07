@@ -21,15 +21,14 @@ export const useFieldListFieldMetadataFromPosition = ({
 
   const {
     inlineFieldMetadataItems,
-    inlineRelationFieldMetadataItems,
+    legacyActivityTargetFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
   });
 
-  // Order must match the rendering order in RecordFieldList
   const fieldMetadataItems = [
-    ...inlineRelationFieldMetadataItems,
+    ...legacyActivityTargetFieldMetadataItems,
     ...inlineFieldMetadataItems,
     ...boxedRelationFieldMetadataItems,
   ];

@@ -1,5 +1,4 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldRelationFromManyValue,
@@ -43,22 +42,14 @@ export const useOpenJunctionRelationFieldInput = () => {
           .getLoadable(objectMetadataItemsState)
           .getValue();
 
-        // Get the actual field metadata item with saved settings from the database
-        const { fieldMetadataItem } = getFieldMetadataItemById({
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          objectMetadataItems,
-        });
-
-        // Get source object metadata (the object that has this field)
         const sourceObjectMetadataId = objectMetadataItems.find(
           (item) =>
             item.nameSingular ===
             fieldDefinition.metadata.objectMetadataNameSingular,
         )?.id;
 
-        // Get junction config using shared utility
         const junctionConfig = getJunctionConfig({
-          settings: fieldMetadataItem?.settings,
+          settings: fieldDefinition.metadata.settings,
           relationObjectMetadataId:
             fieldDefinition.metadata.relationObjectMetadataId,
           sourceObjectMetadataId,

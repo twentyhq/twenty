@@ -7,7 +7,7 @@ import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import groupBy from 'lodash.groupby';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;
@@ -36,7 +36,7 @@ export const useFieldListFieldMetadataItems = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const isJunctionRelationsEnabled = useIsFeatureEnabled(
-    'IS_JUNCTION_RELATIONS_ENABLED' as FeatureFlagKey,
+    FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
   );
 
   const availableFieldMetadataItems = objectMetadataItem.readableFields
@@ -89,8 +89,7 @@ export const useFieldListFieldMetadataItems = ({
 
   return {
     inlineFieldMetadataItems: allInlineFieldMetadataItems,
-    // Activity targets need special rendering with ActivityTargetsInlineCell
-    inlineRelationFieldMetadataItems: activityTargetFields,
+    legacyActivityTargetFieldMetadataItems: activityTargetFields,
     boxedRelationFieldMetadataItems: boxedRelationFields,
   };
 };

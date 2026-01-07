@@ -6,7 +6,6 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
 import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
@@ -77,17 +76,9 @@ export const useOpenFieldInputEditMode = () => {
             (flag) => (flag.key as string) === 'IS_JUNCTION_RELATIONS_ENABLED',
           )?.value ?? false;
 
-        // Get the actual field metadata item with saved settings from the database
-        const { fieldMetadataItem } = getFieldMetadataItemById({
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          objectMetadataItems,
-        });
-
-        // Check for metadata-driven junction relation (many-to-many through junction)
-        // Only use junction behavior if feature flag is enabled
         const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
         const fieldHasJunctionConfig = hasJunctionConfig(
-          fieldMetadataItem?.settings,
+          fieldDefinition.metadata.settings,
         );
 
         if (

@@ -6,15 +6,29 @@ import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
+type JunctionFieldMetadataItem = Pick<
+  FieldMetadataItem,
+  'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
+>;
+
+type JunctionObjectMetadataItem = Pick<
+  ObjectMetadataItem,
+  | 'id'
+  | 'fields'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
+  | 'nameSingular'
+  | 'namePlural'
+>;
+
 type GenerateJunctionRelationGqlFieldsArgs = {
-  fieldMetadataItem: FieldMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
+  fieldMetadataItem: JunctionFieldMetadataItem;
+  objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
-// Build GraphQL fields for a regular RELATION target field
 const buildRegularTargetFieldGqlFields = (
-  targetField: FieldMetadataItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  targetField: JunctionFieldMetadataItem,
+  objectMetadataItems: JunctionObjectMetadataItem[],
 ): RecordGqlFields => {
   const targetObjectMetadata = objectMetadataItems.find(
     (item) => item.id === targetField.relation?.targetObjectMetadata.id,
@@ -29,11 +43,9 @@ const buildRegularTargetFieldGqlFields = (
   };
 };
 
-// Build GraphQL fields for a MORPH_RELATION target field
-// Generates fields for each morph relation entry (e.g., caretakerPerson, caretakerCompany)
 const buildMorphTargetFieldGqlFields = (
-  targetField: FieldMetadataItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  targetField: JunctionFieldMetadataItem,
+  objectMetadataItems: JunctionObjectMetadataItem[],
 ): RecordGqlFields => {
   const morphRelations = targetField.morphRelations;
 
@@ -65,10 +77,9 @@ const buildMorphTargetFieldGqlFields = (
   return result;
 };
 
-// Build GraphQL fields for a target field (works for both RELATION and MORPH_RELATION)
 const buildTargetFieldGqlFields = (
-  targetField: FieldMetadataItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  targetField: JunctionFieldMetadataItem,
+  objectMetadataItems: JunctionObjectMetadataItem[],
 ): RecordGqlFields => {
   if (targetField.type === FieldMetadataType.MORPH_RELATION) {
     return buildMorphTargetFieldGqlFields(targetField, objectMetadataItems);

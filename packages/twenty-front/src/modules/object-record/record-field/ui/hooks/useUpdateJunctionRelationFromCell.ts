@@ -107,9 +107,9 @@ export const useUpdateJunctionRelationFromCell = ({
             }
           }
         } else {
-          sourceJoinColumnName = (
-            sourceFieldOnJunction.settings as FieldRelationMetadataSettings
-          )?.joinColumnName;
+          sourceJoinColumnName =
+            (sourceFieldOnJunction.settings as FieldRelationMetadataSettings)
+              ?.joinColumnName ?? undefined;
         }
 
         const fieldName = fieldDefinition.metadata.fieldName;

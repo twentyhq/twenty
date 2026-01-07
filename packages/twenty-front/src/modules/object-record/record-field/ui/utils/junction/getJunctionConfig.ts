@@ -1,9 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
-import { hasJunctionTargetMorphId } from './hasJunctionTargetMorphId';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
+import { hasJunctionTargetMorphId } from './hasJunctionTargetMorphId';
 
 export type JunctionConfig = {
   junctionObjectMetadata: ObjectMetadataItem;

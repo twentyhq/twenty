@@ -81,8 +81,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
                 targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
               });
 
-        (createRecordPayload as Record<string, unknown>)[`${gqlField}Id`] =
-          recordId;
+        createRecordPayload[`${gqlField}Id`] = recordId;
       }
 
       await createOneRecord(createRecordPayload);

@@ -23,7 +23,6 @@ type CategorizedRelationFields = {
   boxedRelationFields: FieldMetadataItem[];
 };
 
-// Check if field is a hardcoded activity target relation (noteTargets/taskTargets)
 const isActivityTargetRelation = (
   fieldMetadataItem: FieldMetadataItem,
   objectNameSingular: string,
@@ -33,7 +32,6 @@ const isActivityTargetRelation = (
   (objectNameSingular === CoreObjectNameSingular.Task &&
     fieldMetadataItem.name === 'taskTargets');
 
-// Check if user has read permission for the relation's target object(s)
 const canReadRelationTarget = (
   fieldMetadataItem: FieldMetadataItem,
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId,

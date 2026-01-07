@@ -5,7 +5,6 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -43,24 +42,20 @@ export const RelationFromManyFieldDisplay = () => {
   const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
-  // Get the actual field metadata item with saved settings
-  const { fieldMetadataItem } = getFieldMetadataItemById({
-    fieldMetadataId: fieldDefinition.fieldMetadataId,
-    objectMetadataItems,
-  });
-  const isJunctionRelation = hasJunctionConfig(fieldMetadataItem?.settings);
+  const isJunctionRelation = hasJunctionConfig(
+    fieldDefinition.metadata.settings,
+  );
 
-  // Get junction config for display
   const junctionConfig = useMemo(
     () =>
       getJunctionConfig({
-        settings: fieldMetadataItem?.settings,
+        settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId:
           fieldDefinition.metadata.relationObjectMetadataId,
         objectMetadataItems,
       }),
     [
-      fieldMetadataItem?.settings,
+      fieldDefinition.metadata.settings,
       fieldDefinition.metadata.relationObjectMetadataId,
       objectMetadataItems,
     ],
@@ -159,7 +154,7 @@ export const RelationFromManyFieldDisplay = () => {
       <ExpandableList isChipCountDisplayed={isFocused}>
         {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
           <RecordChip
-            key={record.id as string}
+            key={record.id}
             objectNameSingular={objectMetadata.nameSingular}
             record={record}
             forceDisableClick={disableChipClick}

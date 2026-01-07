@@ -15,7 +15,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldRelationFormCardProps = {
@@ -35,7 +35,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
   >();
   const isMobile = useIsMobile();
   const isJunctionRelationsEnabled = useIsFeatureEnabled(
-    'IS_JUNCTION_RELATIONS_ENABLED' as FeatureFlagKey,
+    FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
