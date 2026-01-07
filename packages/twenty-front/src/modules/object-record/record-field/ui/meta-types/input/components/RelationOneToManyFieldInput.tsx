@@ -254,9 +254,9 @@ export const RelationOneToManyFieldInput = () => {
               sourceJoinColumnName = `${computedFieldName}Id`;
             }
           } else {
-            sourceJoinColumnName = (
-              sourceField.settings as FieldRelationMetadataSettings
-            )?.joinColumnName ?? undefined;
+            sourceJoinColumnName =
+              (sourceField.settings as FieldRelationMetadataSettings)
+                ?.joinColumnName ?? undefined;
           }
 
           const targetJoinColumnName = (
@@ -325,6 +325,7 @@ export const RelationOneToManyFieldInput = () => {
       junctionTargetObjectMetadata,
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
+      objectMetadataItem,
       recordId,
       relationObjectMetadataItem,
     ],
