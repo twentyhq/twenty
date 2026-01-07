@@ -45,7 +45,7 @@ export class WhatsappController {
   // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint#get-requests
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
-  @Get('/whatsapp_verification')
+  @Get('')
   public async whatsappVerification(
     @Query('hub.mode') mode: string,
     @Query('hub.challenge') challenge: string,
@@ -62,8 +62,7 @@ export class WhatsappController {
     });
 
     if (whatsapp !== null) {
-      // TODO: check the response (where challenge should be send? in body as is or in json, maybe in header?)
-      res.status(HttpStatus.OK).send({ challenge: challenge });
+      res.status(HttpStatus.OK).send(challenge);
     } else {
       res.status(HttpStatus.BAD_REQUEST).send();
       this.logger.error(
@@ -75,13 +74,12 @@ export class WhatsappController {
   // TODO: add custom logic guard checking if request is from legitimate IP address (or maybe better to implement mTLS?)
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
-  @Post('/message')
+  @Post('') // unless integration is done by BSP, all webhooks are sent to the same destination
   public async getMessages(
     @Req() req: Request,
     @Body() body: WhatsAppWebhookMessage,
     @Res() res: Response,
   ) {
-    res.status(HttpStatus.OK).send();
     const appSecret = await this.whatsappRetrieveSecret.retrieveAppSecret(
       body.entry[0].id,
     );
@@ -94,9 +92,10 @@ export class WhatsappController {
         appSecret,
       )
     ) {
-      throw new Error(); // TODO: fix
+      res.status(HttpStatus.BAD_REQUEST).send();
+      throw new Error('Invalid WhatsApp webhook message');
     }
-
+    res.status(HttpStatus.OK).send();
     await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(
       WhatsappParseWebhookMessageJob.name,
       {
@@ -108,13 +107,12 @@ export class WhatsappController {
 
   // eslint-disable-next-line @nx/workspace-rest-api-methods-should-be-guarded
   @RequireFeatureFlag(FeatureFlagKey.IS_WHATSAPP_INTEGRATION_ENABLED)
-  @Post('/history')
+  @Post('/history') // unused, in case integration is done by BSP
   public async getHistory(
     @Req() req: Request,
     @Body() body: WhatsappWebhookHistory,
     @Res() res: Response,
   ) {
-    res.status(HttpStatus.OK).send();
     const appSecret = await this.whatsappRetrieveSecret.retrieveAppSecret(
       body.entry[0].id,
     );
@@ -127,8 +125,10 @@ export class WhatsappController {
         appSecret,
       )
     ) {
-      throw new Error(); // TODO: fix
+      res.status(HttpStatus.BAD_REQUEST).send();
+      throw new Error('Invalid WhatsApp webhook message');
     }
+    res.status(HttpStatus.OK).send();
     await this.messageQueueService.add<WhatsappParseWebhookMessageJobData>(
       WhatsappParseWebhookMessageJob.name,
       {

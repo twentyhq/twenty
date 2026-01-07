@@ -68,7 +68,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
       },
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
-      message: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.message },
     },
     indexes: {
       taskIdIndex: {
@@ -91,9 +90,6 @@ export const STANDARD_OBJECTS = {
       },
       workflowIdIndex: {
         universalIdentifier: '14d0f5a9-6c81-4e3b-5f2a-8d9e0c1b2f36',
-      },
-      messageIdIndex: {
-        universalIdentifier: '43f930c2-28c1-4c04-a0a5-b56a71e8e5ca',
       },
     },
   },
@@ -990,9 +986,6 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociations: {
         universalIdentifier:
           MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
-      },
-      attachments: {
-        universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.messageAttachments,
       },
     },
     indexes: {

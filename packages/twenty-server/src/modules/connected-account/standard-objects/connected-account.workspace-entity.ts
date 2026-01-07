@@ -172,7 +172,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsFieldUIReadOnly()
-  @WorkspaceIsNullable()
   messageChannels: Relation<MessageChannelWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -185,6 +184,5 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsFieldUIReadOnly()
-  @WorkspaceIsNullable()
   calendarChannels: Relation<CalendarChannelWorkspaceEntity[]>;
 }

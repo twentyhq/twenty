@@ -6,9 +6,9 @@ export const getAttachmentData = (message: gmailV1.Schema$Message) => {
       ?.filter((part) => part.filename && part.body?.attachmentId)
       .map((part) => ({
         filename: part.filename ?? '',
-        id: part.body?.attachmentId ?? '',
+        attachmentId: part.body?.attachmentId ?? '',
+        data: part.body?.data ?? '',
         mimeType: part.mimeType ?? '',
-        size: part.body?.size ?? 0,
       })) ?? []
   );
 };

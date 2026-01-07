@@ -133,7 +133,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate,
+          contactsToCreate, // this is a comment
           source: FieldActorSource.EMAIL, // TODO: change to what? SMS? WhatsApp?
         },
       );

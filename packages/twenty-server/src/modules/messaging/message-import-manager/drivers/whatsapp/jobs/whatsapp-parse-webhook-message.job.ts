@@ -30,7 +30,7 @@ export type WhatsappParseWebhookMessageJobData = {
 
 @Processor({
   queueName: MessageQueue.messagingQueue,
-  scope: Scope.REQUEST, // I guess?
+  scope: Scope.REQUEST,
 })
 export class WhatsappParseWebhookMessageJob {
   constructor(
@@ -85,7 +85,7 @@ export class WhatsappParseWebhookMessageJob {
       });
 
       if (workspaceIdByWABAId === null) {
-        throw new Error(); // TODO: check
+        throw new Error('WhatsApp connected account not found');
       }
       workspaceId = workspaceIdByWABAId.workspace.id;
 
@@ -101,55 +101,54 @@ export class WhatsappParseWebhookMessageJob {
         }
       }
     }
-    if (convertedMessages.length == 0) {
-      throw new Error(); // TODO: check
-    }
-    const authContext = buildSystemAuthContext(workspaceId);
+    if (convertedMessages.length > 0) {
+      const authContext = buildSystemAuthContext(workspaceId);
 
-    const { connectedAccount, messageChannel } =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const connectedAccountRepository =
-            await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-              workspaceId,
-              'connectedAccount',
-            );
+      const { connectedAccount, messageChannel } =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          authContext,
+          async () => {
+            const connectedAccountRepository =
+              await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+                workspaceId,
+                'connectedAccount',
+              );
 
-          const messageChannelRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-              workspaceId,
-              'messageChannel',
-            );
+            const messageChannelRepository =
+              await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+                workspaceId,
+                'messageChannel',
+              );
 
-          const connectedAccount = await connectedAccountRepository.findOne({
-            where: { handle: whatsappBusinessAccountId },
-          });
+            const connectedAccount = await connectedAccountRepository.findOne({
+              where: { handle: whatsappBusinessAccountId },
+            });
 
-          if (!connectedAccount) {
-            throw new Error(); // TODO: check
-          }
+            if (!connectedAccount) {
+              throw new Error('WhatsApp connected account not found');
+            }
 
-          const messageChannel = await messageChannelRepository.findOne({
-            where: { connectedAccountId: connectedAccount.id },
-          });
+            const messageChannel = await messageChannelRepository.findOne({
+              where: { connectedAccountId: connectedAccount.id },
+            });
 
-          if (!messageChannel) {
-            throw new Error(); // TODO: check
-          }
+            if (!messageChannel) {
+              throw new Error('WhatsApp connected message channel not found');
+            }
 
-          return { connectedAccount, messageChannel };
+            return { connectedAccount, messageChannel };
+          },
+        );
+
+      await this.messageQueueService.add<MessagingSaveNonEmailMessagesJobData>(
+        MessagingSaveNonEmailMessagesJob.name,
+        {
+          connectedAccount,
+          messageChannel,
+          messagesToSave: convertedMessages,
+          workspaceId,
         },
       );
-
-    await this.messageQueueService.add<MessagingSaveNonEmailMessagesJobData>(
-      MessagingSaveNonEmailMessagesJob.name,
-      {
-        connectedAccount,
-        messageChannel,
-        messagesToSave: convertedMessages,
-        workspaceId,
-      },
-    );
+    }
   }
 }

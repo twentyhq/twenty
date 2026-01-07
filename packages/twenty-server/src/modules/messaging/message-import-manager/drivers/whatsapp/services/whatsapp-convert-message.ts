@@ -16,7 +16,7 @@ import { MessageDirection } from 'src/modules/messaging/common/enums/message-dir
 import { WhatsappFormatGroupParticipantsToMessageParticipantsService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-format-group-participants-to-message-participants.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WhatsappFindMessageService } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/services/whatsapp-find-message.service';
-import { WhatsappFile } from 'src/modules/messaging/message-attachment-manager/types/whatsapp-file.type';
+import { WhatsappFile } from 'src/modules/messaging/message-import-manager/drivers/whatsapp/types/whatsapp-file.type';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -60,7 +60,9 @@ export class WhatsappConvertMessage {
           whatsappRecord === null ||
           !whatsappRecord.customData?.whatsappBusinessName
         ) {
-          throw new Error(); // TODO: check
+          throw new Error(
+            'Missing WhatsApp business name assigned to phone number',
+          );
         }
         const messageReceiver: MessageParticipant = {
           role: MessageParticipantRole.TO,
@@ -216,7 +218,7 @@ export class WhatsappConvertMessage {
       text: text,
       attachments: attachments,
       externalId: externalId,
-      messageThreadExternalId: message.group_id || '', // TODO: find a way to create arbitrary external message thread id
+      messageThreadExternalId: message.group_id || message.from, // TODO: find a way to create arbitrary external message thread id
       direction: MessageDirection.INCOMING,
       participants: participants,
     };
