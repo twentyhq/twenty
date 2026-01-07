@@ -34,11 +34,10 @@ image: /images/user-guide/emails/emails_header.png
 
 Per altri fornitori di email e calendario:
 
-1. Vai a **Impostazioni → Rilasci → Lab** per abilitare la funzionalità
-2. Torna a **Impostazioni → Account**
-3. Configura le impostazioni SMTP per l'email
-4. Configura le impostazioni CalDAV per il calendario
-5. Testa la connessione
+1. Vai a **Impostazioni → Account**
+2. Configura le impostazioni SMTP per l'email
+3. Configura le impostazioni CalDAV per il calendario
+4. Testa la connessione
 
 ### Caselle Multiple
 
@@ -69,13 +68,12 @@ Scegli diversi livelli di visibilità per le tue email:
 
 <Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
 
-### Controlla quali email vengono sincronizzati con la Selezione Cartelle Messaggi (Funzionalità del Lab)
+### Control which emails get synced with Message Folder Selection
 
 Controlla quali cartelle email sincronizzano con Twenty:
 
-1. Vai a **Impostazioni → Rilasci → Lab** e abilita **Cartella Messaggi**
-2. Torna a **Impostazioni → Account** e seleziona il tuo account email collegato
-3. Scegli quali cartelle sincronizzare:
+1. Go to **Settings → Accounts** and select your connected email account
+2. Scegli quali cartelle sincronizzare:
    * **Posta in Arrivo**: Email in entrata principali
    * **Inviati**: Email in uscita che hai inviato
    * **Cartelle Personalizzate**: Qualsiasi cartella specifica che vuoi includere
@@ -123,7 +121,7 @@ Scegli cosa sarà visibile ad altri utenti nel tuo spazio di lavoro:
 **Aggiornamenti ogni 5 minuti**: Sia i dati delle email che del calendario vengono sincronizzati automaticamente ogni 5 minuti dopo l'importazione iniziale.
 
 <Note>
-  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting), so a mailbox with 10,000 emails takes about 25 minutes. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
 </Note>
 
 ## Prossimi Passi
