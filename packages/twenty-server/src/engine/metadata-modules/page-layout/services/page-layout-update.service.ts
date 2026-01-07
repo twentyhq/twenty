@@ -146,13 +146,6 @@ export class PageLayoutUpdateService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-      },
-    );
-
     const {
       flatPageLayoutMaps: recomputedFlatPageLayoutMaps,
       flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
@@ -172,6 +165,14 @@ export class PageLayoutUpdateService {
       flatEntityId: id,
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(flatLayout.updatedAt),
+      },
+    );
 
     return fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
       reconstructFlatPageLayoutWithTabsAndWidgets({

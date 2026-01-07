@@ -256,13 +256,6 @@ export class PageLayoutService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-      },
-    );
-
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -271,12 +264,20 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
+    const updatedLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(updatedLayout.updatedAt),
+      },
     );
+
+    return fromFlatPageLayoutToPageLayoutDto(updatedLayout);
   }
 
   async delete(
@@ -319,13 +320,6 @@ export class PageLayoutService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-      },
-    );
-
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -334,12 +328,20 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
+    const deletedLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(deletedLayout.updatedAt),
+      },
     );
+
+    return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
   }
 
   async destroy(
@@ -464,13 +466,6 @@ export class PageLayoutService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
-      {
-        pageLayoutId: id,
-        workspaceId,
-      },
-    );
-
     const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -479,11 +474,19 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
+    const restoredLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(restoredLayout.updatedAt),
+      },
     );
+
+    return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
   }
 }

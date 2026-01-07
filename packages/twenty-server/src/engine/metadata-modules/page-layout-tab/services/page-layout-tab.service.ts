@@ -158,11 +158,6 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: flatPageLayoutTabToCreate.id,
-      workspaceId,
-    });
-
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -171,12 +166,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPageLayoutTabToCreate.id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const createdTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatPageLayoutTabToCreate.id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: flatPageLayoutTabToCreate.id,
+      workspaceId,
+      updatedAt: new Date(createdTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(createdTab);
   }
 
   async update(
@@ -225,11 +226,6 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: id,
-      workspaceId,
-    });
-
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -238,12 +234,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const updatedTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(updatedTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(updatedTab);
   }
 
   async delete(
@@ -286,11 +288,6 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: id,
-      workspaceId,
-    });
-
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -299,12 +296,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const deletedTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(deletedTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(deletedTab);
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -347,6 +350,7 @@ export class PageLayoutTabService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
       tabId: id,
       workspaceId,
+      updatedAt: new Date(),
     });
 
     return true;
@@ -392,11 +396,6 @@ export class PageLayoutTabService {
       );
     }
 
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: id,
-      workspaceId,
-    });
-
     const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -405,11 +404,17 @@ export class PageLayoutTabService {
         },
       );
 
-    return fromFlatPageLayoutTabToPageLayoutTabDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-      }),
-    );
+    const restoredTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
+      tabId: id,
+      workspaceId,
+      updatedAt: new Date(restoredTab.updatedAt),
+    });
+
+    return fromFlatPageLayoutTabToPageLayoutTabDto(restoredTab);
   }
 }

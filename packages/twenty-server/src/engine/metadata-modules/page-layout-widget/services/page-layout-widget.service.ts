@@ -229,19 +229,20 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while creating page layout widget',
     });
 
+    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
+
+    const createdWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatPageLayoutWidgetToCreate.id,
+      flatEntityMaps: recomputedMaps,
+    });
+
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: flatPageLayoutWidgetToCreate.id,
       workspaceId,
+      updatedAt: new Date(createdWidget.updatedAt),
     });
 
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPageLayoutWidgetToCreate.id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(createdWidget);
   }
 
   private validateCreateInput(input: CreatePageLayoutWidgetInput): void {
@@ -339,19 +340,20 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while updating page layout widget',
     });
 
+    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
+
+    const updatedWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
+      updatedAt: new Date(updatedWidget.updatedAt),
     });
 
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(updatedWidget);
   }
 
   private getExistingWidgetOrThrow(
@@ -414,19 +416,20 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while deleting page layout widget',
     });
 
+    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
+
+    const deletedWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
+      updatedAt: new Date(deletedWidget.updatedAt),
     });
 
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(deletedWidget);
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -453,6 +456,7 @@ export class PageLayoutWidgetService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
+      updatedAt: new Date(),
     });
 
     return true;
@@ -479,18 +483,19 @@ export class PageLayoutWidgetService {
         'Multiple validation errors occurred while restoring page layout widget',
     });
 
+    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
+
+    const restoredWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
+      updatedAt: new Date(restoredWidget.updatedAt),
     });
 
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(restoredWidget);
   }
 }

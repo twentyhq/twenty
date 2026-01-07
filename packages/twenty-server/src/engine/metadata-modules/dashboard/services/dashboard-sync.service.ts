@@ -18,9 +18,11 @@ export class DashboardSyncService {
   async updateLinkedDashboardsUpdatedAtByPageLayoutId({
     pageLayoutId,
     workspaceId,
+    updatedAt,
   }: {
     pageLayoutId: string;
     workspaceId: string;
+    updatedAt: Date;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -35,10 +37,7 @@ export class DashboardSyncService {
               { shouldBypassPermissionChecks: true },
             );
 
-          await dashboardRepository.update(
-            { pageLayoutId },
-            { updatedAt: new Date() },
-          );
+          await dashboardRepository.update({ pageLayoutId }, { updatedAt });
         },
       );
     } catch (error) {
@@ -51,9 +50,11 @@ export class DashboardSyncService {
   async updateLinkedDashboardsUpdatedAtByTabId({
     tabId,
     workspaceId,
+    updatedAt,
   }: {
     tabId: string;
     workspaceId: string;
+    updatedAt: Date;
   }): Promise<void> {
     const { flatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -72,15 +73,18 @@ export class DashboardSyncService {
     await this.updateLinkedDashboardsUpdatedAtByPageLayoutId({
       pageLayoutId: tab.pageLayoutId,
       workspaceId,
+      updatedAt,
     });
   }
 
   async updateLinkedDashboardsUpdatedAtByWidgetId({
     widgetId,
     workspaceId,
+    updatedAt,
   }: {
     widgetId: string;
     workspaceId: string;
+    updatedAt: Date;
   }): Promise<void> {
     const { flatPageLayoutWidgetMaps, flatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -105,6 +109,7 @@ export class DashboardSyncService {
     await this.updateLinkedDashboardsUpdatedAtByPageLayoutId({
       pageLayoutId: tab.pageLayoutId,
       workspaceId,
+      updatedAt,
     });
   }
 }
