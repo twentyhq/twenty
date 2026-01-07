@@ -236,9 +236,6 @@ describe('WorkspaceEntityManager', () => {
 
     mockDataSource = {
       featureFlagMap: {
-        IS_AIRTABLE_INTEGRATION_ENABLED: false,
-        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
-        IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
