@@ -1076,7 +1076,7 @@ msgstr "会社"
 #. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
-msgstr "会社のレコード位置"
+msgstr "会社表示順"
 
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1337,7 +1337,7 @@ msgstr "ダッシュボードページレイアウト"
 #. js-lingui-id: FrOkwR
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard record Position"
-msgstr "ダッシュボードのレコード位置"
+msgstr "ダッシュボード表示順"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -1832,7 +1832,7 @@ msgstr "お気に入りフォルダ"
 #. js-lingui-id: WDVfUH
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite folder position"
-msgstr "お気に入りフォルダの位置"
+msgstr "お気に入りフォルダ表示順"
 
 #. js-lingui-id: SStz54
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1857,7 +1857,7 @@ msgstr "お気に入りの連絡先"
 #. js-lingui-id: oVA9vM
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite position"
-msgstr "お気に入りの位置"
+msgstr "お気に入り表示順"
 
 #. js-lingui-id: OaQVQH
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2823,7 +2823,7 @@ msgstr "電話番号の値が無効です。"
 #. js-lingui-id: GLmyCK
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
 msgid "Invalid value for position: \"{inspectedValue}\""
-msgstr "位置の値が無効です:「{inspectedValue}」"
+msgstr "表示順の値が無効です:「{inspectedValue}」"
 
 #. js-lingui-id: Sf+6YJ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
@@ -3075,7 +3075,7 @@ msgstr "ラベル識別子ビュー項目は削除できません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field has to be in the lowest position"
-msgstr "ラベル識別子ビュー項目は最下位の位置である必要があります"
+msgstr "ラベル識別子ビュー項目は最下位の表示順である必要があります"
 
 #. js-lingui-id: PqTWJf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
@@ -3637,7 +3637,7 @@ msgstr "メモの本文"
 #. js-lingui-id: Yp057F
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note record position"
-msgstr "メモのレコード位置"
+msgstr "メモ表示順"
 
 #. js-lingui-id: spaO7l
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
@@ -3889,7 +3889,7 @@ msgstr "商談の確度"
 #. js-lingui-id: Q1dzBp
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity record position"
-msgstr "商談のレコード位置"
+msgstr "商談表示順"
 
 #. js-lingui-id: 5ugYS3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4184,7 +4184,7 @@ msgstr "連絡先"
 #. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
-msgstr "連絡先のレコード位置"
+msgstr "連絡先表示順"
 
 #. js-lingui-id: zmwvG2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -4264,7 +4264,7 @@ msgstr "担当者"
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
-msgstr "位置"
+msgstr "表示順"
 
 #. js-lingui-id: TTHIbk
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -5022,7 +5022,7 @@ msgstr "タスクの期日"
 #. js-lingui-id: fUw1j+
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task record position"
-msgstr "タスクのレコード位置"
+msgstr "タスク表示順"
 
 #. js-lingui-id: I6+0ph
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -5953,7 +5953,7 @@ msgstr "ID {flatViewFieldId}のビューフィールドメタデータはすで�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field position cannot be lower than label identifier view field position"
-msgstr "ビュー項目の位置はラベル識別子ビュー項目の位置より低くできません"
+msgstr "ビュー項目の表示順はラベル識別子ビュー項目の表示順より低くできません"
 
 #. js-lingui-id: WZzm3R
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -6260,7 +6260,7 @@ msgstr "ワークフローが見つかりません。"
 #. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
-msgstr "ワークフローのレコード位置"
+msgstr "ワークフロー表示順"
 
 #. js-lingui-id: ysb9m+
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
@@ -6303,7 +6303,7 @@ msgstr "ワークフロー実行が見つかりません。"
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run position"
-msgstr "ワークフロー実行の位置"
+msgstr "ワークフロー実行表示順"
 
 #. js-lingui-id: zaN7tH
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6372,7 +6372,7 @@ msgstr "実行に関連するワークフローバージョン"
 #. js-lingui-id: 9l+pJT
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow version position"
-msgstr "ワークフローバージョンの位置"
+msgstr "ワークフローバージョン表示順"
 
 #. js-lingui-id: OCyhkn
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -6467,7 +6467,7 @@ msgstr "ワークスペースメンバーが見つかりません。"
 #. js-lingui-id: NiUpuN
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
-msgstr "ワークスペースメンバーの位置"
+msgstr "ワークスペースメンバー表示順"
 
 #. js-lingui-id: YCAEr+
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
