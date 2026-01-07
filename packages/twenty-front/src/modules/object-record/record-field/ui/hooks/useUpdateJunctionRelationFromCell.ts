@@ -1,7 +1,5 @@
-import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -13,14 +11,12 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import {
   type FieldRelationFromManyValue,
   type FieldRelationMetadata,
-  type FieldRelationMetadataSettings,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  findJunctionRecordByTargetId,
-  findTargetFieldInfo,
-  getJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction';
+import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/junction/findJunctionRecordByTargetId';
+import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -39,13 +35,11 @@ export const useUpdateJunctionRelationFromCell = ({
 }: UseUpdateJunctionRelationFromCellArgs) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Get source object metadata (the object that has this field)
   const sourceObjectMetadata = objectMetadataItems.find(
     (item) =>
       item.nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
   );
 
-  // Get junction config using shared utility
   const junctionConfig = getJunctionConfig({
     settings: fieldMetadataItem.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
@@ -54,10 +48,6 @@ export const useUpdateJunctionRelationFromCell = ({
   });
 
   const junctionObjectMetadata = junctionConfig?.junctionObjectMetadata;
-  const targetFields = useMemo(
-    () => junctionConfig?.targetFields ?? [],
-    [junctionConfig?.targetFields],
-  );
   const sourceFieldOnJunction = junctionConfig?.sourceField;
 
   // Use relation object name as fallback to prevent hook errors (hooks can't be conditional)
@@ -79,44 +69,29 @@ export const useUpdateJunctionRelationFromCell = ({
   const updateJunctionRelationFromCell = useRecoilCallback(
     ({ snapshot, set }) =>
       async ({ morphItem }: { morphItem: RecordPickerPickableMorphItem }) => {
+        const targetFields = junctionConfig?.targetFields;
+
         if (
           !isDefined(junctionObjectMetadata) ||
           !isDefined(sourceFieldOnJunction) ||
+          !isDefined(targetFields) ||
           targetFields.length === 0
         ) {
           return;
         }
 
-        // Compute source join column name - handles both RELATION and MORPH_RELATION
-        let sourceJoinColumnName: string | undefined;
-        if (sourceFieldOnJunction.type === FieldMetadataType.MORPH_RELATION) {
-          // For morph relations, compute the field name based on source object
-          if (isDefined(sourceObjectMetadata)) {
-            const morphRelation = sourceFieldOnJunction.morphRelations?.find(
-              (mr) => mr.targetObjectMetadata.id === sourceObjectMetadata.id,
-            );
-            if (isDefined(morphRelation)) {
-              const computedFieldName = computeMorphRelationFieldName({
-                fieldName: morphRelation.sourceFieldMetadata.name,
-                relationType: morphRelation.type,
-                targetObjectMetadataNameSingular:
-                  sourceObjectMetadata.nameSingular,
-                targetObjectMetadataNamePlural: sourceObjectMetadata.namePlural,
-              });
-              sourceJoinColumnName = `${computedFieldName}Id`;
-            }
-          }
-        } else {
-          sourceJoinColumnName =
-            (sourceFieldOnJunction.settings as FieldRelationMetadataSettings)
-              ?.joinColumnName ?? undefined;
+        if (!isDefined(sourceObjectMetadata)) {
+          return;
         }
+
+        const sourceJoinColumnName = getSourceJoinColumnName({
+          sourceField: sourceFieldOnJunction,
+          sourceObjectMetadata,
+        });
 
         const fieldName = fieldDefinition.metadata.fieldName;
         const junctionObjectName = junctionObjectMetadata.nameSingular;
 
-        // Find the target field info based on the picked object's metadata ID
-        // Handles both RELATION fields and MORPH_RELATION fields
         const targetFieldInfo = findTargetFieldInfo(
           targetFields,
           morphItem.objectMetadataId,
@@ -128,9 +103,8 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         const targetFieldName = targetFieldInfo.fieldName;
-        const targetJoinColumnName = targetFieldInfo.settings?.joinColumnName;
+        const targetJoinColumnName = targetFieldInfo.joinColumnName;
 
-        // Both join column names must be defined for junction operations
         if (
           !isDefined(sourceJoinColumnName) ||
           !isDefined(targetJoinColumnName)
@@ -138,7 +112,6 @@ export const useUpdateJunctionRelationFromCell = ({
           return;
         }
 
-        // Read current junction records from the store (always fresh)
         const currentJunctionRecords =
           snapshot
             .getLoadable<
@@ -238,19 +211,20 @@ export const useUpdateJunctionRelationFromCell = ({
       createJunctionRecord,
       deleteJunctionRecord,
       fieldDefinition.metadata.fieldName,
+      junctionConfig,
       junctionObjectMetadata,
       objectMetadataItems,
       recordId,
       sourceFieldOnJunction,
       sourceObjectMetadata,
-      targetFields,
     ],
   );
 
   const isJunctionConfigValid =
     isDefined(junctionConfig) &&
     isDefined(sourceFieldOnJunction) &&
-    targetFields.length > 0;
+    isDefined(junctionConfig.targetFields) &&
+    junctionConfig.targetFields.length > 0;
 
   return {
     updateJunctionRelationFromCell,

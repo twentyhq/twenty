@@ -8,8 +8,6 @@ type BuildRecordLabelPayloadArgs = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-// Builds the initial payload for creating a record based on label identifier type
-// Handles FULL_NAME fields by parsing "firstName lastName" from search input
 export const buildRecordLabelPayload = ({
   id,
   searchInput,

@@ -1,3 +1,4 @@
+import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,12 +20,7 @@ export const findJunctionRecordByTargetId = ({
 
     const targetObject = junctionRecord[targetFieldName];
 
-    if (
-      isDefined(targetObject) &&
-      typeof targetObject === 'object' &&
-      'id' in targetObject &&
-      (targetObject as { id: string }).id === targetRecordId
-    ) {
+    if (isObjectWithId(targetObject) && targetObject.id === targetRecordId) {
       return junctionRecord;
     }
   }

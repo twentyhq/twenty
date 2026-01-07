@@ -19,6 +19,9 @@ export const hasJunctionTargetMorphId = (
   if (!isDefined(settings) || typeof settings !== 'object') {
     return false;
   }
-  const value = (settings as Record<string, unknown>).junctionTargetMorphId;
-  return typeof value === 'string' && value.length > 0;
+  return (
+    'junctionTargetMorphId' in settings &&
+    typeof settings.junctionTargetMorphId === 'string' &&
+    settings.junctionTargetMorphId.length > 0
+  );
 };

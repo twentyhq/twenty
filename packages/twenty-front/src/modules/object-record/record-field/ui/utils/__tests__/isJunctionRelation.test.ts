@@ -1,9 +1,7 @@
-import {
-  hasJunctionConfig,
-  hasJunctionTargetFieldId,
-  hasJunctionTargetMorphId,
-  isJunctionRelationField,
-} from '@/object-record/record-field/ui/utils/junction';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
+import { hasJunctionTargetMorphId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetMorphId';
+import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('isJunctionRelation', () => {

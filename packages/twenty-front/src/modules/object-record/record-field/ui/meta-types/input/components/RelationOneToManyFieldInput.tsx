@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -8,9 +8,10 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
@@ -20,14 +21,11 @@ import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-fie
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import {
-  type FieldRelationMetadata,
-  type FieldRelationMetadataSettings,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  getJunctionConfig,
-  hasJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction';
+import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -36,12 +34,7 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  computeMorphRelationFieldName,
-  CustomError,
-  isDefined,
-} from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
@@ -80,11 +73,10 @@ export const RelationOneToManyFieldInput = () => {
     onSubmit?.({ skipPersist: true });
   };
 
-  const isRelationFromActivityTargets =
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Note) ||
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Task);
+  const isRelationFromActivityTargets = isActivityTargetField(
+    fieldName,
+    objectMetadataNameSingular,
+  );
 
   const isJunctionRelation = hasJunctionConfig(fieldMetadataItem.settings);
 
@@ -103,28 +95,18 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const junctionConfig = useMemo(() => {
-    if (!isJunctionRelation || !isJunctionConfigValid) {
-      return null;
-    }
-    return getJunctionConfig({
-      settings: fieldMetadataItem.settings,
-      relationObjectMetadataId:
-        relationFieldDefinition.metadata.relationObjectMetadataId,
-      sourceObjectMetadataId: objectMetadataItem.id,
-      objectMetadataItems,
-    });
-  }, [
-    isJunctionRelation,
-    isJunctionConfigValid,
-    fieldMetadataItem.settings,
-    relationFieldDefinition.metadata.relationObjectMetadataId,
-    objectMetadataItem.id,
-    objectMetadataItems,
-  ]);
+  const junctionConfig =
+    isJunctionRelation && isJunctionConfigValid
+      ? getJunctionConfig({
+          settings: fieldMetadataItem.settings,
+          relationObjectMetadataId:
+            relationFieldDefinition.metadata.relationObjectMetadataId,
+          sourceObjectMetadataId: objectMetadataItem.id,
+          objectMetadataItems,
+        })
+      : null;
 
-  // For non-morph junctions, get the target object from the first target field
-  const junctionTargetObjectMetadata = useMemo(() => {
+  const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {
       return undefined;
     }
@@ -132,7 +114,7 @@ export const RelationOneToManyFieldInput = () => {
     return objectMetadataItems.find(
       (item) => item.id === firstTargetField?.relation?.targetObjectMetadata.id,
     );
-  }, [junctionConfig, objectMetadataItems]);
+  })();
 
   const isMorphJunction = junctionConfig?.isMorphRelation ?? false;
 
@@ -163,7 +145,6 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  // For junction "Add New": create target + junction records
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
       junctionTargetObjectMetadata?.nameSingular ??
@@ -219,7 +200,6 @@ export const RelationOneToManyFieldInput = () => {
           });
         };
 
-        // Junction relation: create target object + junction record
         if (
           isJunctionRelation &&
           isDefined(junctionConfig) &&
@@ -233,35 +213,12 @@ export const RelationOneToManyFieldInput = () => {
             return;
           }
 
-          // Get source join column name - handle morph source fields
-          let sourceJoinColumnName: string | undefined;
-          if (
-            sourceField.type === FieldMetadataType.MORPH_RELATION &&
-            isDefined(objectMetadataItem)
-          ) {
-            // For morph source fields, compute the join column from the source object
-            const morphRelation = sourceField.morphRelations?.find(
-              (mr) => mr.targetObjectMetadata.id === objectMetadataItem.id,
-            );
-            if (isDefined(morphRelation)) {
-              const computedFieldName = computeMorphRelationFieldName({
-                fieldName: morphRelation.sourceFieldMetadata.name,
-                relationType: morphRelation.type,
-                targetObjectMetadataNameSingular:
-                  objectMetadataItem.nameSingular,
-                targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
-              });
-              sourceJoinColumnName = `${computedFieldName}Id`;
-            }
-          } else {
-            sourceJoinColumnName =
-              (sourceField.settings as FieldRelationMetadataSettings)
-                ?.joinColumnName ?? undefined;
-          }
+          const sourceJoinColumnName = getSourceJoinColumnName({
+            sourceField,
+            sourceObjectMetadata: objectMetadataItem,
+          });
 
-          const targetJoinColumnName = (
-            targetField.settings as FieldRelationMetadataSettings
-          )?.joinColumnName;
+          const targetJoinColumnName = getJoinColumnName(targetField.settings);
 
           if (!sourceJoinColumnName || !targetJoinColumnName) {
             return;
@@ -303,7 +260,6 @@ export const RelationOneToManyFieldInput = () => {
           return;
         }
 
-        // Normal relation: create record and open right drawer
         const newRecordId =
           await createNewRecordAndOpenRightDrawer?.(searchInput);
 

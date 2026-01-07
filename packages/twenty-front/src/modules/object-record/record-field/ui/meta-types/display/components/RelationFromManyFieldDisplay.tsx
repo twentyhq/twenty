@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
@@ -6,14 +6,13 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
-import {
-  extractTargetRecordsFromJunction,
-  getJunctionConfig,
-  hasJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction';
+import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';
@@ -50,22 +49,12 @@ export const RelationFromManyFieldDisplay = () => {
     (item) => item.nameSingular === objectMetadataNameSingular,
   )?.id;
 
-  const junctionConfig = useMemo(
-    () =>
-      getJunctionConfig({
-        settings: fieldDefinition.metadata.settings,
-        relationObjectMetadataId:
-          fieldDefinition.metadata.relationObjectMetadataId,
-        sourceObjectMetadataId,
-        objectMetadataItems,
-      }),
-    [
-      fieldDefinition.metadata.settings,
-      fieldDefinition.metadata.relationObjectMetadataId,
-      sourceObjectMetadataId,
-      objectMetadataItems,
-    ],
-  );
+  const junctionConfig = getJunctionConfig({
+    settings: fieldDefinition.metadata.settings,
+    relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    sourceObjectMetadataId,
+    objectMetadataItems,
+  });
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     '',
@@ -84,11 +73,10 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
-  const isRelationFromActivityTargets =
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Note) ||
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular === CoreObjectNameSingular.Task);
+  const isRelationFromActivityTargets = isActivityTargetField(
+    fieldName,
+    objectMetadataNameSingular ?? '',
+  );
 
   const isRelationFromManyActivities =
     (fieldName === 'noteTargets' &&

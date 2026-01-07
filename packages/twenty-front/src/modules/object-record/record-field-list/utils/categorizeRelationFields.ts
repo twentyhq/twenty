@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction';
+import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,14 +23,19 @@ type CategorizedRelationFields = {
   boxedRelationFields: FieldMetadataItem[];
 };
 
-const isActivityTargetRelation = (
-  fieldMetadataItem: FieldMetadataItem,
+export const isActivityTargetField = (
+  fieldName: string,
   objectNameSingular: string,
 ): boolean =>
   (objectNameSingular === CoreObjectNameSingular.Note &&
-    fieldMetadataItem.name === 'noteTargets') ||
+    fieldName === 'noteTargets') ||
   (objectNameSingular === CoreObjectNameSingular.Task &&
-    fieldMetadataItem.name === 'taskTargets');
+    fieldName === 'taskTargets');
+
+const isActivityTargetRelation = (
+  fieldMetadataItem: FieldMetadataItem,
+  objectNameSingular: string,
+): boolean => isActivityTargetField(fieldMetadataItem.name, objectNameSingular);
 
 const canReadRelationTarget = (
   fieldMetadataItem: FieldMetadataItem,

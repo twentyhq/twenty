@@ -4,7 +4,7 @@ import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fie
 import {
   getJunctionConfig,
   type JunctionObjectMetadataItem,
-} from '@/object-record/record-field/ui/utils/junction';
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 

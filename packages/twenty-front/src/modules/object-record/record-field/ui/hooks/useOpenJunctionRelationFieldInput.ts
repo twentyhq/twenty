@@ -5,11 +5,9 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  extractTargetRecordsFromJunction,
-  getJunctionConfig,
-  getSearchableObjectMetadataItems,
-} from '@/object-record/record-field/ui/utils/junction';
+import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getSearchableObjectMetadataItems } from '@/object-record/record-field/ui/utils/junction/getSearchableObjectMetadataItems';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -72,7 +70,6 @@ export const useOpenJunctionRelationFieldInput = () => {
           prefix,
         });
 
-        // Get junction records from the field value
         const junctionRecords = snapshot
           .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
             recordStoreFamilySelector({
@@ -82,15 +79,12 @@ export const useOpenJunctionRelationFieldInput = () => {
           )
           .getValue();
 
-        // Extract currently selected target objects from junction records
         const selectedTargetRecords = extractTargetRecordsFromJunction({
           junctionRecords,
           targetFields,
           objectMetadataItems,
         });
 
-        // Determine searchable object types based on target fields
-        // Handles both RELATION (via field.relation) and MORPH_RELATION (via field.morphRelations)
         const searchableObjectMetadataItems = getSearchableObjectMetadataItems(
           targetFields,
           objectMetadataItems,

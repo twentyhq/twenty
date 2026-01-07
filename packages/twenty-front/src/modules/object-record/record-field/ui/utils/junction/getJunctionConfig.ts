@@ -43,8 +43,6 @@ export const getJunctionConfig = ({
     return null;
   }
 
-  // Find the source field on junction (points back to the source object)
-  // Checks both RELATION and MORPH_RELATION fields
   const findSourceField = (
     excludeFieldId?: string,
   ): FieldMetadataItem | undefined => {
@@ -52,7 +50,6 @@ export const getJunctionConfig = ({
       return undefined;
     }
 
-    // First check regular RELATION fields
     const relationField = junctionObjectMetadata.fields.find(
       (field) =>
         field.type === FieldMetadataType.RELATION &&
@@ -64,7 +61,6 @@ export const getJunctionConfig = ({
       return relationField;
     }
 
-    // Then check MORPH_RELATION fields that have a morphRelation targeting the source
     return junctionObjectMetadata.fields.find(
       (field) =>
         field.type === FieldMetadataType.MORPH_RELATION &&
@@ -79,7 +75,6 @@ export const getJunctionConfig = ({
   let targetFields: FieldMetadataItem[] = [];
   let isMorphRelation = false;
 
-  // Handle morph-based junction config (junctionTargetMorphId)
   if (hasJunctionTargetMorphId(settings) === true) {
     targetFields = junctionObjectMetadata.fields.filter(
       (field) => field.morphId === settings.junctionTargetMorphId,
@@ -98,7 +93,6 @@ export const getJunctionConfig = ({
     };
   }
 
-  // Handle single field ID junction config (junctionTargetFieldId)
   if (hasJunctionTargetFieldId(settings) === true) {
     const targetField = junctionObjectMetadata.fields.find(
       (field) => field.id === settings.junctionTargetFieldId,
@@ -110,7 +104,6 @@ export const getJunctionConfig = ({
 
     isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
 
-    // For regular relations, validate the relation exists
     if (!isMorphRelation && !isDefined(targetField.relation)) {
       return null;
     }

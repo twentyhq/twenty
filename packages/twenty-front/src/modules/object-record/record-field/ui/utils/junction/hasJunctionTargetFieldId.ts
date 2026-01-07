@@ -19,6 +19,9 @@ export const hasJunctionTargetFieldId = (
   if (!isDefined(settings) || typeof settings !== 'object') {
     return false;
   }
-  const value = (settings as Record<string, unknown>).junctionTargetFieldId;
-  return typeof value === 'string' && value.length > 0;
+  return (
+    'junctionTargetFieldId' in settings &&
+    typeof settings.junctionTargetFieldId === 'string' &&
+    settings.junctionTargetFieldId.length > 0
+  );
 };
