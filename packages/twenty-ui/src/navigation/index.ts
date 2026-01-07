@@ -41,10 +41,8 @@ export {
   MenuItemSelect,
 } from './menu/menu-item/components/MenuItemSelect';
 export { MenuItemSelectAvatar } from './menu/menu-item/components/MenuItemSelectAvatar';
-export {
-  colorLabels,
-  MenuItemSelectColor,
-} from './menu/menu-item/components/MenuItemSelectColor';
+export type { ColorLabels } from './menu/menu-item/components/MenuItemSelectColor';
+export { MenuItemSelectColor } from './menu/menu-item/components/MenuItemSelectColor';
 export { MenuItemSelectTag } from './menu/menu-item/components/MenuItemSelectTag';
 export type { MenuItemSuggestionProps } from './menu/menu-item/components/MenuItemSuggestion';
 export { MenuItemSuggestion } from './menu/menu-item/components/MenuItemSuggestion';

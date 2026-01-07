@@ -74,11 +74,6 @@ export class ViewFilterService {
       );
     }
 
-    this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: ['flatViewFilterMaps'],
-    });
-
     const { flatViewFilterMaps: recomputedExistingFlatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

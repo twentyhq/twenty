@@ -9,8 +9,6 @@ export type Attachment = {
   fileCategory: AttachmentFileCategory;
   companyId: string;
   personId: string;
-  // Deprecated: Use createdBy instead
-  authorId?: string;
   createdBy?: {
     source: string;
     workspaceMemberId: string | null;

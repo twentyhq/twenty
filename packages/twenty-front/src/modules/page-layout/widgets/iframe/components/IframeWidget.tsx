@@ -84,7 +84,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     return (
       <StyledContainer $isEditMode={isPageLayoutInEditMode}>
         <StyledErrorContainer>
-          <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />
+          <PageLayoutWidgetNoDataDisplay />
         </StyledErrorContainer>
       </StyledContainer>
     );

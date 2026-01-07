@@ -22,7 +22,7 @@ export const CalendarEventParticipantsResponseStatus = ({
     }
   });
 
-  const responseStatusOrder: ('Yes' | 'Maybe' | 'No')[] = [
+  const responseStatusOrder: Array<'Yes' | 'Maybe' | 'No'> = [
     'Yes',
     'Maybe',
     'No',

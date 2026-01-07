@@ -23,6 +23,7 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 - A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
 
 ## Quick start
+
 ```bash
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app

@@ -1,0 +1,198 @@
+---
+title: Oprávnění
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Systém oprávnění v Twenty vám umožňuje řídit přístup ke třem hlavním oblastem:
+
+* **Objekty a pole**: Řiďte, kdo může prohlížet, upravovat nebo mazat záznamy a jednotlivá pole.
+* **Nastavení**: Spravujte přístup ke konfiguraci pracovního prostoru a administrativním funkcím.
+* **Akce**: Řiďte obecné akce v pracovním prostoru, jako je import dat nebo odesílání e-mailů.
+
+## Vytvořit roli
+
+Chcete-li vytvořit novou roli:
+
+1. Přejděte na **Nastavení → Role**
+2. V sekci **Všechny role** klikněte na **+ Vytvořit roli**
+3. Zadejte název role
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Click **Save** to finish
+
+## Smazat roli
+
+Chcete-li smazat roli:
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete odebrat
+3. Otevřete záložku **Nastavení** a klikněte na **Smazat roli**
+4. Klikněte na **Potvrdit** v modálním okně
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Všechny role kromě role **Administrátor** mohou být smazány. Musí být vždycky alespoň jeden člen přiřazen k roli **Administrátor**.
+</Note>
+
+## Přiřadit role členům
+
+### Zobrazit aktuální přiřazení
+
+* Přejděte na **Nastavení → Role**
+* Zjistěte všechny role a kolik členů je ke každé přiřazeno
+* Zobrazit, kteří členové mají jaké role
+
+### Přiřadit roli členu
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. Klikněte na **+ Přiřadit členu**
+5. Vyberte člena pracovního prostoru ze seznamu
+6. Potvrďte přiřazení
+
+### Nastavit výchozí roli
+
+1. Přejděte na **Nastavení → Role**
+2. V sekci **Možnosti** najděte **Výchozí roli**
+3. Vyberte, kterou roli by noví členové měli automaticky obdržet
+4. Noví členové pracovního prostoru budou při příchodu k této roli přiřazeni.
+
+<Note>
+  You can only assign roles to existing workspace members. Chcete-li pozvat nové členy, použijte [Správa členů](/l/cs/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Přizpůsobit oprávnění
+
+Oprávnění určují, ke kterým záznamům objektů, nastavením a akcím v rámci vašeho pracovního prostoru má každá role přístup nebo co může upravit.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                              | Popis                                  |
+| --------------------------------------- | -------------------------------------- |
+| **Zobrazit záznamy na všech objektech** | View records in lists and detail pages |
+| **Upravit záznamy na všech objektech**  | Modify existing records                |
+| **Smazat záznamy na všech objektech**   | Soft-delete records (can be restored)  |
+| **Zničit záznamy na všech objektech**   | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | Popis                      |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### Správa přepsání oprávnění
+
+To override inherited permissions:
+
+1. Klikněte na **X** pro odstranění zděděného pravidla
+2. Select the specific permissions you want
+3. Klikněte na oranžovou ikonu **Zpět** (kruhová šipka), abyste vrátili změny
+
+Až budete hotovi, klikněte na **Dokončit**, pak **Uložit** poté, co budete přesměrováni na stránku role.
+
+### Oprávnění nastavení pracovního prostoru
+
+Řídí přístup k nastavení pracovního prostoru dvěma způsoby:
+
+* Přepněte **Plný přístup k nastavením**, abyste udělili plný přístup
+* Nebo povolte specifická oprávnění (např. generování API klíčů, preference pracovního prostoru, přiřazování rolí, konfigurace datového modelu, bezpečnostní nastavení a správa pracovních postupů)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### Oprávnění k akcím pracovního prostoru
+
+Řídí přístup k obecným akcím v pracovním prostoru:
+
+* Přepněte **Plný přístup k aplikaci**, abyste udělili plná oprávnění
+* Nebo povolte jednotlivé akce jako **Odeslat e-mail**, **Importovat CSV** a **Exportovat CSV**
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Potvrďte přiřazení
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Potvrďte přiřazení
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

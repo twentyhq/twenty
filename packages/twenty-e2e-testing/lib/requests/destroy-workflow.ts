@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { getAuthToken } from '../utils/getAuthToken';
+import { type Page } from '@playwright/test';
+import { getAccessAuthToken } from '../utils/getAccessAuthToken';
 import { backendGraphQLUrl } from './backend';
 
 export const destroyWorkflow = async ({
@@ -9,7 +9,7 @@ export const destroyWorkflow = async ({
   page: Page;
   workflowId: string;
 }) => {
-  const { authToken } = await getAuthToken(page);
+  const { authToken } = await getAccessAuthToken(page);
 
   return page.request.post(backendGraphQLUrl, {
     headers: {

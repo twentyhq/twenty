@@ -150,12 +150,14 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
 
 export const convertExceptionToGraphql = (exception: Error) => {
   const error = new BaseGraphQLError(
-    exception.name,
+    'Internal Server Error',
     ErrorCode.INTERNAL_SERVER_ERROR,
   );
 
-  error.stack = exception.stack;
-  error.extensions['response'] = exception.message;
+  if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
+    error.stack = exception.stack;
+    error.extensions['response'] = exception.message;
+  }
 
   return error;
 };

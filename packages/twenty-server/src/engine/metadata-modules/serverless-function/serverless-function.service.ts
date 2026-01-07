@@ -1,30 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
 
 import deepEqual from 'deep-equal';
+import {
+  DEFAULT_API_KEY_NAME,
+  DEFAULT_API_URL_NAME,
+} from 'twenty-shared/application';
+import { Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { Sources } from 'twenty-shared/types';
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_API_KEY_NAME,
-} from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/serverless-function/constants/default-tool-input-schema.constant';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -32,14 +34,12 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
-import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
@@ -55,10 +55,8 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly auditService: AuditService,
-    private readonly accessTokenService: AccessTokenService,
     private readonly applicationTokenService: ApplicationTokenService,
-    @Inject('PUB_SUB')
-    private readonly pubSub: RedisPubSub,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
@@ -166,15 +164,19 @@ export class ServerlessFunctionService {
       console.log(resultServerlessFunction.logs);
     }
 
-    await this.pubSub.publish(SERVERLESS_FUNCTION_LOGS_TRIGGER, {
-      serverlessFunctionLogs: {
-        logs: resultServerlessFunction.logs,
-        id: functionToExecute.id,
-        name: functionToExecute.name,
-        universalIdentifier: functionToExecute.universalIdentifier,
-        applicationId: functionToExecute.applicationId,
-        applicationUniversalIdentifier:
-          functionToExecute.application?.universalIdentifier,
+    await this.subscriptionService.publish({
+      channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
+      workspaceId,
+      payload: {
+        serverlessFunctionLogs: {
+          logs: resultServerlessFunction.logs,
+          id: functionToExecute.id,
+          name: functionToExecute.name,
+          universalIdentifier: functionToExecute.universalIdentifier,
+          applicationId: functionToExecute.applicationId,
+          applicationUniversalIdentifier:
+            functionToExecute.application?.universalIdentifier,
+        },
       },
     });
 
@@ -333,6 +335,8 @@ export class ServerlessFunctionService {
         name: serverlessFunctionInput.update.name,
         description: serverlessFunctionInput.update.description,
         timeoutSeconds: serverlessFunctionInput.update.timeoutSeconds,
+        toolInputSchema: serverlessFunctionInput.update.toolInputSchema,
+        isTool: serverlessFunctionInput.update.isTool,
       },
     );
 
@@ -404,8 +408,14 @@ export class ServerlessFunctionService {
       serverlessFunctionLayerId: serverlessFunctionToCreateLayerId,
     };
 
+    // If no toolInputSchema is provided, use the default schema
+    // (because the default template will be used for the code)
+    const toolInputSchema = isDefined(serverlessFunctionInput.toolInputSchema)
+      ? serverlessFunctionInput.toolInputSchema
+      : DEFAULT_TOOL_INPUT_SCHEMA;
+
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
-      { ...createServerlessFunctionInput, workspaceId },
+      { ...createServerlessFunctionInput, workspaceId, toolInputSchema },
     );
 
     const createdServerlessFunction =

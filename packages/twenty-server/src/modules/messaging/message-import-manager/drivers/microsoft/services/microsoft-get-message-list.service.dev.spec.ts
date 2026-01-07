@@ -8,7 +8,10 @@ import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-accou
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
@@ -79,6 +82,8 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           isSynced: false,
           isSentFolder: false,
           externalId: null,
+          parentFolderId: null,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     });
@@ -108,6 +113,8 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             isSynced: false,
             isSentFolder: false,
             externalId: null,
+            parentFolderId: null,
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
       }),
@@ -127,6 +134,8 @@ xdescribe('Microsoft dev tests : get message list service', () => {
           isSynced: false,
           isSentFolder: false,
           externalId: null,
+          parentFolderId: null,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     });
@@ -150,6 +159,8 @@ xdescribe('Microsoft dev tests : get message list service', () => {
             isSynced: false,
             isSentFolder: false,
             externalId: null,
+            parentFolderId: null,
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         ],
       }),
@@ -168,6 +179,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   inboxFolder.name = MessageFolderName.INBOX;
   inboxFolder.syncCursor = 'inbox-sync-cursor';
   inboxFolder.messageChannelId = 'message-channel-1';
+  inboxFolder.parentFolderId = null;
 
   const sentFolder = new MessageFolderWorkspaceEntity();
 
@@ -175,6 +187,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   sentFolder.name = MessageFolderName.SENT_ITEMS;
   sentFolder.syncCursor = 'sent-sync-cursor';
   sentFolder.messageChannelId = 'message-channel-1';
+  sentFolder.parentFolderId = null;
 
   const otherFolder = new MessageFolderWorkspaceEntity();
 
@@ -182,6 +195,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   otherFolder.name = 'other';
   otherFolder.syncCursor = 'other-sync-cursor';
   otherFolder.messageChannelId = 'message-channel-2';
+  otherFolder.parentFolderId = null;
 
   const messageChannelNoFolders = new MessageChannelWorkspaceEntity();
 

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -15,19 +16,31 @@ export enum RecordCrudExceptionCode {
   QUERY_FAILED = 'QUERY_FAILED',
 }
 
-const recordCrudExceptionUserFriendlyMessages: Record<
-  RecordCrudExceptionCode,
-  MessageDescriptor
-> = {
-  [RecordCrudExceptionCode.INVALID_REQUEST]: msg`Invalid request.`,
-  [RecordCrudExceptionCode.WORKSPACE_ID_NOT_FOUND]: msg`Workspace not found.`,
-  [RecordCrudExceptionCode.OBJECT_NOT_FOUND]: msg`Object not found.`,
-  [RecordCrudExceptionCode.RECORD_NOT_FOUND]: msg`Record not found.`,
-  [RecordCrudExceptionCode.RECORD_CREATION_FAILED]: msg`Failed to create record.`,
-  [RecordCrudExceptionCode.RECORD_UPDATE_FAILED]: msg`Failed to update record.`,
-  [RecordCrudExceptionCode.RECORD_DELETION_FAILED]: msg`Failed to delete record.`,
-  [RecordCrudExceptionCode.RECORD_UPSERT_FAILED]: msg`Failed to upsert record.`,
-  [RecordCrudExceptionCode.QUERY_FAILED]: msg`Query failed.`,
+const getRecordCrudExceptionUserFriendlyMessage = (
+  code: RecordCrudExceptionCode,
+) => {
+  switch (code) {
+    case RecordCrudExceptionCode.INVALID_REQUEST:
+      return msg`Invalid request.`;
+    case RecordCrudExceptionCode.WORKSPACE_ID_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case RecordCrudExceptionCode.OBJECT_NOT_FOUND:
+      return msg`Object not found.`;
+    case RecordCrudExceptionCode.RECORD_NOT_FOUND:
+      return msg`Record not found.`;
+    case RecordCrudExceptionCode.RECORD_CREATION_FAILED:
+      return msg`Failed to create record.`;
+    case RecordCrudExceptionCode.RECORD_UPDATE_FAILED:
+      return msg`Failed to update record.`;
+    case RecordCrudExceptionCode.RECORD_DELETION_FAILED:
+      return msg`Failed to delete record.`;
+    case RecordCrudExceptionCode.RECORD_UPSERT_FAILED:
+      return msg`Failed to upsert record.`;
+    case RecordCrudExceptionCode.QUERY_FAILED:
+      return msg`Query failed.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class RecordCrudException extends CustomException<RecordCrudExceptionCode> {
@@ -38,7 +51,7 @@ export class RecordCrudException extends CustomException<RecordCrudExceptionCode
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? recordCrudExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getRecordCrudExceptionUserFriendlyMessage(code),
     });
   }
 }

@@ -374,4 +374,16 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.POSITION]: [
+    {
+      input: {
+        position: 'not-a-position',
+      },
+    },
+    {
+      input: {
+        position: NaN,
+      },
+    },
+  ],
 };

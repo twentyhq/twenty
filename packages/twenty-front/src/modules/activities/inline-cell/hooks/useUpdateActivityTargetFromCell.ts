@@ -1,6 +1,7 @@
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { getActivityTargetFieldNameForObject } from '@/activities/utils/getActivityTargetFieldNameForObject';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -65,16 +66,29 @@ export const useUpdateActivityTargetFromCell = ({
             ? 'task'
             : 'note';
 
-        const pickedObjectMetadataItem = snapshot
+        const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
-          .getValue()
-          .find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === morphItem.objectMetadataId,
-          );
+          .getValue();
+
+        const pickedObjectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === morphItem.objectMetadataId,
+        );
 
         if (!isDefined(pickedObjectMetadataItem)) {
           throw new Error('Could not find object metadata item');
+        }
+
+        const targetFieldName = getActivityTargetFieldNameForObject({
+          activityObjectNameSingular,
+          targetObjectMetadataId: morphItem.objectMetadataId,
+          objectMetadataItems,
+        });
+
+        if (!isDefined(targetFieldName)) {
+          throw new Error(
+            `Could not find field on activity target for object ${pickedObjectMetadataItem.nameSingular}`,
+          );
         }
 
         let activityTargetsAfterUpdate: (TaskTarget | NoteTarget)[] = [];
@@ -132,7 +146,7 @@ export const useUpdateActivityTargetFromCell = ({
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                   },
-                  [pickedObjectMetadataItem.nameSingular]: targetRecord,
+                  [targetFieldName]: targetRecord,
                 }
               : {
                   id: v4(),
@@ -146,7 +160,7 @@ export const useUpdateActivityTargetFromCell = ({
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                   },
-                  [pickedObjectMetadataItem.nameSingular]: targetRecord,
+                  [targetFieldName]: targetRecord,
                 };
 
           activityTargetsAfterUpdate = [
@@ -159,8 +173,8 @@ export const useUpdateActivityTargetFromCell = ({
           await createOneActivityTarget({
             ...activityTarget,
             [targetObjectName]: undefined,
-            [pickedObjectMetadataItem.nameSingular]: undefined,
-            [`${pickedObjectMetadataItem.nameSingular}Id`]: morphItem.recordId,
+            [targetFieldName]: undefined,
+            [`${targetFieldName}Id`]: morphItem.recordId,
           } as Partial<NoteTarget | TaskTarget>);
         }
 

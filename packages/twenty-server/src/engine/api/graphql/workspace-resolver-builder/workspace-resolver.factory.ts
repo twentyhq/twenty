@@ -12,11 +12,6 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -59,7 +54,6 @@ export class WorkspaceResolverFactory {
   ) {}
 
   async create(
-    authContext: AuthContext,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     objectIdByNameSingular: Record<string, string>,
@@ -90,15 +84,6 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
-    const workspaceId = authContext.workspace?.id;
-
-    if (!workspaceId) {
-      throw new AuthException(
-        'Unauthenticated',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
     for (const flatObjectMetadata of Object.values(
       flatObjectMetadataMaps.byId,
     ).filter(isDefined)) {
@@ -125,7 +110,6 @@ export class WorkspaceResolverFactory {
         ) {
           // @ts-expect-error legacy noImplicitAny
           resolvers.Query[resolverName] = resolverFactory.create({
-            authContext,
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -157,7 +141,6 @@ export class WorkspaceResolverFactory {
         ) {
           // @ts-expect-error legacy noImplicitAny
           resolvers.Mutation[resolverName] = resolverFactory.create({
-            authContext,
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,

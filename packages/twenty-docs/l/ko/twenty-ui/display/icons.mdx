@@ -1,5 +1,5 @@
 ---
-title: 아이콘들
+title: Icons
 image: /images/user-guide/objects/objects.png
 ---
 
@@ -7,77 +7,67 @@ image: /images/user-guide/objects/objects.png
   <img src="/images/user-guide/objects/objects.png" alt="Header" />
 </Frame>
 
-앱 전반에 걸쳐 사용되는 아이콘 목록입니다.
+A list of icons used throughout our app.
 
-## 타블러 아이콘
+## Tabler Icons
 
-앱 전반에 걸쳐 React에 타블러 아이콘을 사용합니다.
+We use Tabler icons for React throughout the app.
 
 <Tabs>
+  <Tab title="Installation">
+    <br />
 
-<Tab title="Installation"><br/>
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
 
-```
-yarn add @tabler/icons-react
-```
+  <Tab title="Props">
+    You can import each icon as a component. Here's an example:
 
-</Tab>
+    <br />
 
-<Tab title="Props">
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
 
-각 아이콘을 컴포넌트로 가져올 수 있습니다. Here's an example: <br />
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconArrowLeft } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return <IconArrowLeft color="red" size={48} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 프로퍼티 | 유형  | 설명                 | 기본값          |
-| ---- | --- | ------------------ | ------------ |
-| 크기   | 숫자  | 픽셀 단위의 아이콘 높이와 너비  | 24           |
-| 색상   | 문자열 | 아이콘의 색상            | currentColor |
-| 스트로크 | 숫자  | 픽셀 단위의 아이콘 스트로크 너비 | 2            |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props  | Type   | Description                                | Default      |
+    | ------ | ------ | ------------------------------------------ | ------------ |
+    | size   | number | The height and width of the icon in pixels | 24           |
+    | color  | string | The color of the icons                     | currentColor |
+    | stroke | number | The stroke width of the icon in pixels     | 2            |
+  </Tab>
 </Tabs>
 
-## 커스텀 아이콘
+## Custom Icons
 
-타블러 아이콘 외에도 앱에는 일부 커스텀 아이콘이 사용됩니다.
+In addition to Tabler icons, the app also uses some custom icons.
 
-### 아이콘 주소록
+### Icon Address Book
 
-주소록 아이콘을 표시합니다.
+Displays an address book icon.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconAddressBook } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return <IconAddressBook size={24} stroke={2} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 프로퍼티 | 유형 | 설명                 | 기본값 |
-| ---- | -- | ------------------ | --- |
-| 크기   | 숫자 | 픽셀 단위의 아이콘 높이와 너비  | 24  |
-| 스트로크 | 숫자 | 픽셀 단위의 아이콘 스트로크 너비 | 2   |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props  | Type   | Description                                | Default |
+    | ------ | ------ | ------------------------------------------ | ------- |
+    | size   | number | The height and width of the icon in pixels | 24      |
+    | stroke | number | The stroke width of the icon in pixels     | 2       |
+  </Tab>
 </Tabs>

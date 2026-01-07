@@ -1,6 +1,4 @@
-import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -63,9 +61,6 @@ export const SignInAppNavigationDrawerMock = ({
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}
       />
-      <NavigationDrawerFixedContent>
-        <SupportDropdown />
-      </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
 };

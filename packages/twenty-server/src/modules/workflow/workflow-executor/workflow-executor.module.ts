@@ -11,6 +11,7 @@ import { DelayActionModule } from 'src/modules/workflow/workflow-executor/workfl
 import { EmptyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty-action.module';
 import { FilterActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter-action.module';
 import { FormActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form-action.module';
+import { IfElseActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else-action.module';
 import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator-action.module';
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
@@ -27,6 +28,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FormActionModule,
     BillingModule,
     FilterActionModule,
+    IfElseActionModule,
     IteratorActionModule,
     AiAgentActionModule,
     EmptyActionModule,

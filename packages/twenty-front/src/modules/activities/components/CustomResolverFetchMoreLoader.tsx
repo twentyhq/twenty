@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 
 type CustomResolverFetchMoreLoaderProps = {
@@ -34,7 +35,7 @@ export const CustomResolverFetchMoreLoader = ({
 
   return (
     <StyledContainer ref={tbodyRef}>
-      {loading && <StyledText>Loading more...</StyledText>}
+      {loading && <StyledText>{t`Loading more...`}</StyledText>}
     </StyledContainer>
   );
 };

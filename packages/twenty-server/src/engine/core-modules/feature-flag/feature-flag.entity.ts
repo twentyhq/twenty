@@ -5,21 +5,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType('FeatureFlag')
 @Unique('IDX_FEATURE_FLAG_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'])
-export class FeatureFlagEntity {
+export class FeatureFlagEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,15 +25,6 @@ export class FeatureFlagEntity {
   @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
   key: FeatureFlagKey;
-
-  @Field(() => UUIDScalarType)
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.featureFlags, {
-    onDelete: 'CASCADE',
-  })
-  workspace: Relation<WorkspaceEntity>;
 
   @Field()
   @Column({ nullable: false })

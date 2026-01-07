@@ -7,20 +7,17 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'webhook', schema: 'core' })
 @ObjectType('Webhook')
-export class WebhookEntity {
+export class WebhookEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -41,10 +38,6 @@ export class WebhookEntity {
   @Column()
   secret: string;
 
-  @Field(() => UUIDScalarType)
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
@@ -56,11 +49,4 @@ export class WebhookEntity {
   @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
-
-  @Field(() => WorkspaceEntity)
-  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.webhooks, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 }

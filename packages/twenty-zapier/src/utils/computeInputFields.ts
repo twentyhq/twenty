@@ -1,5 +1,9 @@
-import { InputField, Node, NodeField } from '../utils/data.types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from '../types/FieldMetadataType';
+import {
+  type InputField,
+  type Node,
+  type NodeField,
+} from '../utils/data.types';
 
 const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
   return fieldMetadataType === FieldMetadataType.ARRAY;
@@ -206,7 +210,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
 };
 
 const isFieldRequired = (nodeField: NodeField): boolean => {
-  return !nodeField.isNullable && !nodeField.defaultValue;
+  return !nodeField.isNullable && nodeField.defaultValue === null;
 };
 
 export const computeInputFields = (
@@ -244,7 +248,6 @@ export const computeInputFields = (
       case FieldMetadataType.BOOLEAN:
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.POSITION:
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.RATING: {
         const nodeFieldType = getTypeFromFieldMetadataType(nodeField.type);

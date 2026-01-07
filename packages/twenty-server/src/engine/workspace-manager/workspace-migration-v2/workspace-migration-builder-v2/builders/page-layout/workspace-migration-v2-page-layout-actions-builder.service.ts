@@ -19,11 +19,13 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     super(ALL_METADATA_NAME.pageLayout);
   }
 
-  protected validateFlatEntityCreation(
+  protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayout,
-    'created'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayout,
+      'create'
+    >
   > {
     const validationResult =
       this.flatPageLayoutValidatorService.validateFlatPageLayoutCreation(args);
@@ -40,7 +42,8 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout',
+        type: 'create',
+        metadataName: 'pageLayout',
         flatEntity: flatPageLayoutToValidate,
       },
     };
@@ -50,7 +53,7 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayout,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatPageLayoutValidatorService.validateFlatPageLayoutDeletion(args);
@@ -67,17 +70,20 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout',
-        flatEntityId: flatPageLayoutToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayout',
+        entityId: flatPageLayoutToValidate.id,
       },
     };
   }
 
-  protected validateFlatEntityUpdate(
+  protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayout,
-    'updated'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayout,
+      'update'
+    >
   > {
     const validationResult =
       this.flatPageLayoutValidatorService.validateFlatPageLayoutUpdate(args);
@@ -92,9 +98,10 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutAction: UpdatePageLayoutAction = {
-      type: 'update_page_layout',
-      flatEntityId,
-      flatEntityUpdates,
+      type: 'update',
+      metadataName: 'pageLayout',
+      entityId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {

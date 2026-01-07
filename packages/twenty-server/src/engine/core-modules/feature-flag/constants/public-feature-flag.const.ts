@@ -13,21 +13,19 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
-    metadata: {
-      label: 'IMAP, SMTP, CalDAV',
-      description:
-        'Easily add email accounts from any provider that supports IMAP, send emails with SMTP (and soon, sync calendars with CalDAV)',
-      imagePath:
-        'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
     metadata: {
       label: 'Dashboards',
       description: 'Enable dashboards',
       imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+    metadata: {
+      label: 'If/Else Workflow Node',
+      description: 'Enable if/else conditional branching in workflows',
+      imagePath: 'https://twenty.com/images/lab/is-if-else-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

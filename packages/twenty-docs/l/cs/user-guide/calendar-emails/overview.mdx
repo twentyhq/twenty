@@ -1,0 +1,132 @@
+---
+title: Calendar & Emails
+description: Connect your email and calendar accounts to Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+</Frame>
+
+## Možnosti Připojení
+
+### Účet Google (Gmail & Google Kalendář)
+
+1. Přejděte na **Nastavení → Účty**
+2. Klikněte na **Přidat účet**
+3. Select **Continue with Google**
+4. Autorizujte Twenty pro přístup k vašemu Gmailu a Google Kalendáři
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
+
+### Účet Microsoft (Outlook & Microsoft Kalendář)
+
+1. Přejděte na **Nastavení → Účty**
+2. Klikněte na **Přidat účet**
+3. Select **Continue with Microsoft**
+4. Autorizujte Twenty pro přístup k vašemu Outlooku a Microsoft Kalendáři
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
+
+### Nastavení SMTP/CalDAV (Další Poskytovatelé)
+
+Pro další poskytovatele emailu a kalendáře:
+
+1. Přejděte na **Nastavení → Vydání → Laboratoř** pro povolení funkce
+2. Vraťte se na **Nastavení → Účty**
+3. Nakonfigurujte nastavení SMTP pro email
+4. Nakonfigurujte nastavení CalDAV pro kalendář
+5. Otestujte připojení
+
+### Více Poštovních Schránek
+
+* **Neomezené Účty**: Připojte více emailových účtů na uživatele
+* **Správa Účtů**: Přepínejte mezi různými poštovními schránkami
+* **Nastavení Synchronizace**: Konfigurujte různé nastavení pro každou schránku
+
+<Warning>
+  Pouze skutečné schránky mohou být připojeny (např. podpora@domena.com s vlastní schránkou). Emailové aliasy, které přeposílají do jiné schránky, nemohou být připojeny do Twenty.
+</Warning>
+
+## Konfigurace Emailu
+
+### Viditelnost Zpráv
+
+Vyberte různé úrovně viditelnosti pro vaše emaily:
+
+* **Pouze Metadata**: Sdílejte pouze základní informace (odesílatel, příjemce, datum, čas)
+* **Předmět a Metadata**: Sdílejte řádek předmětu spolu s metadaty
+* **Veškerý Obsah Emailu**: Sdílejte celý obsah emailu včetně příloh
+
+### Automatické Vytváření Kontaktů
+
+* **Deaktivováno**: Žádné automatické vytváření kontaktů
+* **Pro zprávy odeslané a přijaté**: Vytvářejte kontakty pro všechny externí emailové interakce
+* **Pouze pro odeslané zprávy**: Vytvářejte kontakty pouze pro emaily, které posíláte
+* **Poznámka**: Interní emaily (stejná doména) nejsou synchronizovány kvůli zachování soukromí
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Řízení, které emaily se synchronizují s Výběrem Složek Zpráv (Laboratorní Funkce)
+
+Ovládejte, které emailové složky se synchronizují s Twenty:
+
+1. Přejděte na **Nastavení → Vydání → Laboratoř** a povolte **Složku Zpráv**
+2. Vraťte se na **Nastavení → Účty** a vyberte svůj propojený emailový účet
+3. Vyberte, které složky chcete synchronizovat:
+   * **Doručená Pošta**: Hlavní příchozí emaily
+   * **Odeslané**: Odchozí emaily, které jste odeslali
+   * **Vlastní Složky**: Jakékoli specifické složky, které chcete zahrnout
+   * **Vyloučení Složek**: Přeskočte složky jako Spam, Koš nebo osobní složky
+
+Toto vám dává přesnou kontrolu nad tím, které emaily se objeví ve vašem CRM bez synchronizace všeho.
+
+**Co se Synchronizuje:**
+
+* **Externí Emaily**: Všechny emaily s externími kontakty z vybraných složek
+* **Interní Emaily**: Není synchronizováno (emaily ve stejné doméně zůstávají soukromé)
+* **Přílohy**: Přichází v H1 2026
+
+**Poznámka**: Neposkytujeme CC emailovou adresu pro selektivní synchronizaci. Místo toho použijte výše uvedenou funkci Složka Zpráv pro dosažení stejné úrovně kontroly nad tím, které emaily se synchronizují s Twenty.
+
+## Konfigurace Kalendáře
+
+### Viditelnost Událostí
+
+Vyberte, co bude viditelné pro ostatní uživatele ve vašem pracovním prostoru:
+
+* **Vše**: Veškeré podrobnosti události budou sdíleny s vaším týmem
+* **Metadata**: Sdílet se bude pouze datum a účastníci s vaším týmem
+
+### Automatické Vytváření Kontaktů pro Schůzky
+
+* **Ano**: Automaticky vytvářejte kontakty pro účastníky schůzek, kteří nejsou ve vašem CRM
+* **Ne**: Spojujte schůzky jen s již existujícími kontakty
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Řízení, které události se synchronizují
+
+* **Import Schůzek**: Automaticky importujte události kalendáře
+* **Propojování Kontaktů**: Spojujte schůzky s Lidmi a Záznamy Společností
+
+**Co se Synchronizuje:**
+
+* **Schůzky**: Události kalendáře s externími účastníky
+* **Propojování Kontaktů**: Události automaticky propojené s CRM záznamy
+* **Události Týmu**: Sdílená viditelnost kalendáře
+
+## Frekvence Synchronizace
+
+**Aktualizace každých 5 minut**: Data emailu a kalendáře se automaticky synchronizují každých 5 minut po úvodním importu.
+
+<Note>
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+</Note>
+
+## Další kroky
+
+* [Mailbox capabilities](/l/cs/user-guide/calendar-emails/capabilities/mailbox)
+* [Troubleshoot missing emails](/l/cs/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

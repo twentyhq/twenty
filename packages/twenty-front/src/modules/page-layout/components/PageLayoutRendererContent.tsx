@@ -21,6 +21,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -68,7 +69,7 @@ export const PageLayoutRendererContent = () => {
 
   const handleAddTab = isPageLayoutInEditMode
     ? () => {
-        const newTabId = createPageLayoutTab('Untitled');
+        const newTabId = createPageLayoutTab(t`Untitled`);
         setTabSettingsOpenTabId(newTabId);
         navigatePageLayoutCommandMenu({
           commandMenuPage: CommandMenuPages.PageLayoutTabSettings,

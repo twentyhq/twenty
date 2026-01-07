@@ -10,17 +10,9 @@ import { ColorSample, type ColorSampleVariant } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-type MenuItemSelectColorProps = {
-  selected: boolean;
-  className?: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  focused?: boolean;
-  color: ThemeColor;
-  variant?: ColorSampleVariant;
-};
+export type ColorLabels = Record<ThemeColor, string>;
 
-export const colorLabels: Record<ThemeColor, string> = {
+const DEFAULT_COLOR_LABELS: ColorLabels = {
   gray: 'Gray',
   tomato: 'Tomato',
   red: 'Red',
@@ -48,6 +40,17 @@ export const colorLabels: Record<ThemeColor, string> = {
   yellow: 'Yellow',
 };
 
+type MenuItemSelectColorProps = {
+  selected: boolean;
+  className?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  focused?: boolean;
+  color: ThemeColor;
+  variant?: ColorSampleVariant;
+  colorLabels?: ColorLabels;
+};
+
 export const MenuItemSelectColor = ({
   color,
   selected,
@@ -56,6 +59,7 @@ export const MenuItemSelectColor = ({
   disabled,
   focused,
   variant = 'default',
+  colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
   const theme = useTheme();
 

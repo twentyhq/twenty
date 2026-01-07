@@ -24,6 +24,7 @@ export type MultipleAvatarChipProps = {
   forceEmptyText?: boolean;
   variant?: ChipVariant;
   rightComponent?: React.ReactNode;
+  emptyLabel?: string;
 };
 
 export const MultipleAvatarChip = ({
@@ -35,6 +36,7 @@ export const MultipleAvatarChip = ({
   rightComponent,
   variant = ChipVariant.Static,
   forceEmptyText = false,
+  emptyLabel,
 }: MultipleAvatarChipProps) => {
   return (
     <StyledChipContainer onClick={onClick} data-testid={testId}>
@@ -53,6 +55,7 @@ export const MultipleAvatarChip = ({
         rightComponent={rightComponent}
         clickable={isDefined(onClick)}
         maxWidth={maxWidth}
+        emptyLabel={emptyLabel}
       />
     </StyledChipContainer>
   );

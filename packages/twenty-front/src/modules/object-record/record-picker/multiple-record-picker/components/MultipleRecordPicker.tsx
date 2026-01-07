@@ -18,6 +18,7 @@ import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 
 type MultipleRecordPickerProps = {
@@ -118,7 +119,7 @@ export const MultipleRecordPicker = ({
         <CreateNewButton
           onClick={handleCreateNewButtonClick}
           LeftIcon={IconPlus}
-          text="Add New"
+          text={t`Add New`}
         />
       </DropdownMenuItemsContainer>
     ) : null;

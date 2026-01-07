@@ -1,0 +1,374 @@
+---
+title: Yükseltme rehberi
+---
+
+## Genel kılavuzlar
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+Docker Compose kullandıysanız, aşağıdaki adımları izleyin:
+
+1. Yirmi'nin çalıştığı sunucuda bir terminalde, Twenty'yi kapatın: `docker compose down`
+
+2. Sürümü yükseltmek için .env dosyanızdaki `TAG` değerini değiştirin. ( `v0.53` gibi `major.minor` sürümler tüketmenizi öneririz )
+
+3. Twenty'yi `docker compose up -d` ile tekrar çevrimiçi hale getirin.
+
+If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+
+**Her bir yükseltme sonrasında bozulmamış bir yedeğiniz olduğundan emin olun.**
+
+## Version-specific upgrade steps
+
+## v1.0
+
+Merhaba Twenty v1.0! 🎉
+
+## v0.60
+
+### Performans İyileştirmeleri
+
+Tüm meta veri API etkileşimleri, özellikle nesne meta verisi manipülasyonu ve çalışma alanı oluşturma işlemleri için daha iyi performans sağlanacak şekilde optimize edilmiştir.
+
+We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+
+Yükseltme sonrasında herhangi bir çalıştırma sorunu yaşarsanız, önbelleğinizi temizlemeniz gerekebilir, böylece en son değişikliklerle senkronize olmuş olur. twenty-server konteynerınızda bu komutu çalıştırın:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Twenty örneğinizi v0.55 görüntüsünü kullanacak şekilde yükseltin
+
+Artık hiçbir komut çalıştırmanız gerekmeyecek, yeni görüntü gerekli tüm migrasyonları otomatik olarak yapacaktır.
+
+### `User does not have permission` error
+
+Yükseltme sonrası çoğu istekte yetkilendirme hatalarıyla karşılaşırsanız, en son izinleri yeniden hesaplamak için önbelleğinizi temizlemeniz gerekebilir.
+
+`twenty-server` konteynerinizde şu komutu çalıştırın:
+
+```bash
+yarn command:prod cache:flush
+```
+
+Bu sorun, bu Twenty sürümüne özgüdür ve gelecekteki yükseltmeler için gerekli olmamalıdır.
+
+### v0.54
+
+`0.53` sürümünden itibaren, manuel işlem gerekmiyor.
+
+#### Meta veri şeması kullanımının kaldırılması
+
+Veri alımını basitleştirmek için `metadata` şemasını `core` şemasına birleştirdik.
+`yükseltme` komutu içindeki `migrate` komut adımını birleştirdik. Sunucu/işçi konteynerlarınızın herhangi birinde `migrate` komutunu elle çalıştırmanızı önermiyoruz.
+
+### v0.53'ten itibaren
+
+`0.53` sürümünden itibaren, yükseltme `DockerFile` içinde programatik olarak yapılmaktadır, bu nedenle artık hiçbir komutu manuel olarak çalıştırmanız gerekmemektedir.
+
+Make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. `0.43.3` to `0.44.0` is allowed, but `0.43.1` to `0.45.0` isn't), else could lead to workspace version desynchronization that could result in runtime error and missing functionality.
+
+Bir çalışma alanının doğru şekilde taşınıp taşımadığını kontrol etmek için veritabanındaki `core.workspace` tablosundaki sürümünü inceleyebilirsiniz.
+
+Her zaman, mevcut Twenty örneğinizin `major.minor` sürüm aralığında olması gerekir, örnek sürümünüzü yönetici panelinde (veritabanında `canAccessFullAdminPanel` özelliği true olarak ayarlandığında `settings/admin-panel` altında bulunabilir) veya `twenty-server` konteynerinizde `echo $APP_VERSION` çalıştırarak görüntüleyebilirsiniz.
+
+Senkronsuz bir çalışma alanı sürümünü düzeltmek için, ilgili yükseltme kılavuzunu izleyerek, istenen sürüme ulaşana kadar sıralı şekilde yükseltmeniz gerekecektir.
+
+#### `auditLog` kaldırılması
+
+AuditLog standart nesnesini kaldırdık, bu da bu geçişten sonra yedekleme boyutunuzun önemli ölçüde azalabileceği anlamına gelir.
+
+### v0.51'den v0.52'ye
+
+Twenty sürümünüzü v0.52 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
+
+Maalesef, `0.52.0` ve `0.52.6` tamamen dockerHub'dan kaldırıldı.
+Veritabanında çalışma alanı sürümünüzü manuel olarak `0.51.0` olarak güncelleyip, yukarıdaki yükseltme kılavuzunu takip ederek Twenty sürümü `0.52.11` ile yükseltmeniz gerekecek.
+
+### v0.50'den v0.51'e
+
+Twenty sürümünüzü v0.51 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0'dan v0.50.0'a
+
+Twenty sürümünüzü v0.50.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Docker-compose.yml mutasyonu
+
+Bu sürüm, `worker` hizmetine `server-local-data` hacmine erişim vermek için bir `docker-compose.yml` mutasyonu içerir.
+Yerel `docker-compose.yml` dosyanızı [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml) ile güncelleyin
+
+### v0.43.0'dan v0.44.0'a
+
+Twenty sürümünüzü v0.44.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0'dan v0.43.0'a
+
+Twenty sürümünüzü v0.43.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+Bu sürümde ayrıca docker-compose.yml içinde postgres:16 görüntüsüne geçiş yaptık.
+
+#### (Seçenek 1) Veri tabanı geçişi
+
+Mevcut postgres-spilo görüntüsünü korumak uygundur, ancak sürümü docker-compose.yml dosyanızda 0.43.0 olarak dondurmanız gerekecektir.
+
+#### (Seçenek 2) Veri tabanı geçişi
+
+Veri tabanınızı yeni postgres:16 görüntüsüne geçirmek istiyorsanız, lütfen bu adımları izleyin:
+
+1. Eski postgres-spilo konteynerinden veritabanınızı dökün
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Yedekleme dosyanızın boş olmadığından emin olun.
+
+2. docker-compose.yml dosyanızı postgres:16 görüntüsü ile kullanacak şekilde yükseltin [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) dosyasında belirtildiği gibi güncelleyin.
+
+3. Veri tabanını yeni postgres:16 konteynerine geri yükleyin
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0'dan v0.42.0'ye
+
+Twenty sürümünüzü v0.42.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Çevre Değişkenleri**
+
+* Kaldırıldı: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+* Eklendi: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0'dan v0.41.0'e
+
+Twenty sürümünüzü v0.41.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**Çevre Değişkenleri**
+
+* Kaldırıldı: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0'dan v0.40.0'a
+
+Twenty sürümünüzü v0.40.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**Çevre Değişkenleri**
+
+* Eklendi: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0'dan v0.35.0'a
+
+Twenty sürümünüzü v0.35.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+`yarn database:migrate:prod` komutu, veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.35` tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+**Çevre Değişkenleri**
+
+* `ENABLE_DB_MIGRATIONS` ile `DISABLE_DB_MIGRATIONS`'ı değiştirdik (varsayılan değer artık `false`, muhtemelen bir şey ayarlamanız gerekmez)
+
+### v0.33.0'dan v0.34.0'a
+
+Twenty örneğinizi v0.34.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.34`, tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+**Çevre Değişkenleri**
+
+* Kaldırıldı: `FRONT_BASE_URL`
+* Eklendi: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+Ön yüz URL'sini ele alma şeklimizi güncelledik.
+Artık `FRONT_DOMAIN`, `FRONT_PROTOCOL` ve `FRONT_PORT` değişkenlerini kullanarak ön yüz URL'sini ayarlayabilirsiniz.
+FRONT_DOMAIN ayarlanmazsa, ön yüz URL'si `SERVER_URL`'ye geri dönecektir.
+
+### v0.32.0'dan v0.33.0'a
+
+Twenty örneğinizi v0.33.0 görüntüsünü kullanacak şekilde yükseltin
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+`yarn command:prod cache:flush` komutu Redis önbelleğini temizler.
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.33` tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+Bu sürümden itibaren, DB için twenty-postgres görüntüsü kullanımdan kalktı ve yerine twenty-postgres-spilo kullanılıyor.
+Twenty-postgres görüntüsünü kullanmaya devam etmek istiyorsanız, docker-compose.yml dosyasında `twentycrm/twenty-postgres:${TAG}`i `twentycrm/twenty-postgres` ile değiştirin.
+
+### v0.31.0'dan v0.32.0'ya
+
+Twenty örneğinizi v0.32.0 görüntüsünü kullanacak şekilde yükseltin
+
+**Şema ve veri migrasyonu**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.32` tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+**Çevre Değişkenleri**
+
+Redis bağlantısını ele alma şeklimizi güncelledik.
+
+* Kaldırıldı: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+* Eklendi: `REDIS_URL`
+
+Çevre dosyanızı ayrı ayrı Redis bağlantı parametreleri yerine yeni `REDIS_URL` değişkenini kullanacak şekilde güncelleyin.
+
+JWT tokenlarını ele alma şeklimizi de basitleştirdik.
+
+* Kaldırıldı: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+* Eklendi: `APP_SECRET`
+
+`.env` dosyanızı, ayrı ayrı güvenlik bilgileri yerine yeni `APP_SECRET` değişkenini kullanacak şekilde güncelleyin (önceden kullandığınız aynı güvenlik bilgilerini kullanabilir veya yeni bir rastgele dizgi üretebilirsiniz)
+
+**Bağlı Hesap**
+
+Google hesaplarınızı senkronize etmek için bir bağlı hesap kullanıyorsanız, Google Yönetici konsolunuzda [People API](https://developers.google.com/people) etkinleştirilmelidir.
+
+### v0.30.0'dan v0.31.0'e
+
+Twenty örneğinizi v0.31.0 görüntüsünü kullanacak şekilde yükseltin
+
+**Şema ve veri migrasyonu**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.31` tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+### v0.24.0'dan v0.30.0'a
+
+Twenty sürümünüzü v0.30.0 görüntüsünü kullanacak şekilde yükseltin
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) dosyamızı bu durumu yansıtacak şekilde güncelledik.
+Yapılandırmanızı güncellediğinizden ve ortam değişkenlerinizi uygun şekilde güncellediğinizden emin olun:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Şema ve veri migrasyonu**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve meta veri şemaları) migrasyonları uygulayacaktır. `yarn command:prod upgrade-0.30` tüm çalışma alanlarının veri migrasyonunu sağlar.
+
+### v0.23.0'dan v0.24.0'a
+
+Twenty sürümünüzü v0.24.0 görüntüsünü kullanacak şekilde yükseltin
+
+Aşağıdaki komutları çalıştırın:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına (çıkış ve metadata şemaları) migrasyonları uygular. `yarn command:prod upgrade-0.24`, tüm çalışma alanlarının veri göçünü ele alır.
+
+### v0.22.0'dan v0.23.0'a
+
+Twenty sürümünüzü v0.23.0 görüntüsünü kullanacak şekilde yükseltin
+
+Aşağıdaki komutları çalıştırın:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına göçleri uygular.
+`yarn command:prod upgrade-0.23` veri göçünü yönetir, etkinlikleri görev/nota aktarımı da dahil.
+
+### v0.21.0'dan v0.22.0'a
+
+Twenty sürümünüzü v0.22.0 görüntüsünü kullanacak şekilde yükseltin
+
+Aşağıdaki komutları çalıştırın:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+`yarn database:migrate:prod` komutu veritabanı yapısına göçleri uygular.
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.

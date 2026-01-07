@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -16,6 +17,7 @@ export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
   propsObjectRecordId: string,
 ) => {
+  const { t } = useLingui();
   const {
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
@@ -220,9 +222,10 @@ export const useRecordShowPagePagination = (
 
   const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
 
+  const currentRank = rankInView + 1;
   const viewNameWithCount = rankFoundInView
-    ? `${rankInView + 1} of ${totalCount} in ${objectLabelPlural}`
-    : `${objectLabelPlural} (${totalCount})`;
+    ? t`${currentRank} of ${totalCount} in ${objectLabelPlural}`
+    : t`${objectLabelPlural} (${totalCount})`;
 
   return {
     viewName: viewNameWithCount,

@@ -17,7 +17,7 @@ export const computeStandardCalendarEventViewFields = (
         fieldName: 'title',
         position: 0,
         isVisible: true,
-        size: 150,
+        size: 180,
       },
     }),
     allCalendarEventsStartsAt: createStandardViewFieldFlatMetadata({

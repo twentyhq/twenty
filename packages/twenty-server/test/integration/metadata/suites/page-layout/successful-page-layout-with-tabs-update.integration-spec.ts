@@ -11,20 +11,22 @@ import {
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 
 const MOCK_PIE_CHART_CONFIGURATION = {
-  graphType: GraphType.PIE,
+  configurationType: WidgetConfigurationType.PIE_CHART,
   aggregateFieldMetadataId: '20202020-77d3-42ff-adc6-cffdad2792c7',
   aggregateOperation: AggregateOperations.COUNT,
   groupByFieldMetadataId: '20202020-a9fd-4071-9082-db4870ed2430',
-};
+} as const satisfies AllPageLayoutWidgetConfiguration;
 
 const MOCK_IFRAME_CONFIGURATION = {
+  configurationType: WidgetConfigurationType.IFRAME,
   url: 'https://example.com',
-};
+} as const satisfies AllPageLayoutWidgetConfiguration;
 
 type TestContext = {
   layoutName: string;
@@ -49,9 +51,7 @@ type TestContext = {
         rowSpan: number;
         columnSpan: number;
       };
-      configuration:
-        | typeof MOCK_PIE_CHART_CONFIGURATION
-        | typeof MOCK_IFRAME_CONFIGURATION;
+      configuration: AllPageLayoutWidgetConfiguration;
     }>;
   }>;
 };

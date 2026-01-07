@@ -110,28 +110,24 @@ export const ChartSettingItem = ({
 
     return (
       <SelectableListItem key={item.id} itemId={item.id}>
-        <CommandMenuItem
+        <CommandMenuItemNumberInput
           id={item.id}
           label={t(item.label)}
           Icon={item.Icon}
-          RightComponent={
-            <CommandMenuItemNumberInput
-              value={stringValue}
-              onChange={handleInputChange}
-              onValidate={(value) =>
-                !isDefined(value) ||
-                isMinMaxRangeValid(
-                  item.id as
-                    | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
-                    | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
-                  value,
-                  configuration,
-                )
-              }
-              placeholder={
-                item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
-              }
-            />
+          value={stringValue}
+          onChange={handleInputChange}
+          onValidate={(value) =>
+            !isDefined(value) ||
+            isMinMaxRangeValid(
+              item.id as
+                | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
+                | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+              value,
+              configuration,
+            )
+          }
+          placeholder={
+            item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
           }
         />
       </SelectableListItem>
@@ -144,18 +140,14 @@ export const ChartSettingItem = ({
 
     return (
       <SelectableListItem key={item.id} itemId={item.id}>
-        <CommandMenuItem
+        <CommandMenuItemTextInput
           id={item.id}
           label={t(item.label)}
           Icon={item.Icon}
-          RightComponent={
-            <CommandMenuItemTextInput
-              value={stringValue}
-              onChange={handleTextInputChange}
-              placeholder={
-                item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
-              }
-            />
+          value={stringValue}
+          onChange={handleTextInputChange}
+          placeholder={
+            item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
           }
         />
       </SelectableListItem>

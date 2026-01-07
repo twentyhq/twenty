@@ -33,7 +33,7 @@ export const SettingsServerlessFunctionNewForm = ({
       <StyledInputsContainer>
         <SettingsTextInput
           instanceId={nameTextInputId}
-          placeholder="Name"
+          placeholder={t`Name`}
           fullWidth
           autoFocusOnMount
           value={formValues.name}
@@ -42,7 +42,7 @@ export const SettingsServerlessFunctionNewForm = ({
         />
         <TextArea
           textAreaId={descriptionTextAreaId}
-          placeholder="Description"
+          placeholder={t`Description`}
           minRows={4}
           value={formValues.description}
           onChange={onChange('description')}

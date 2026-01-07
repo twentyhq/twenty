@@ -6,6 +6,7 @@ import {
 import { TEST_HTTP_REQUEST } from '@/workflow/workflow-steps/workflow-actions/http-request-action/graphql/mutations/testHttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useMutation } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -127,7 +128,7 @@ export const useTestHttpRequest = (actionId: string) => {
       const duration = Date.now() - startTime;
 
       const rawErrorMessage =
-        error instanceof Error ? error.message : 'HTTP request failed';
+        error instanceof Error ? error.message : t`HTTP request failed`;
 
       const jsonParsedErrorMessage = parseJson(rawErrorMessage);
 

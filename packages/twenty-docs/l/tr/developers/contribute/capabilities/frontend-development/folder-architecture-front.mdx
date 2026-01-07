@@ -1,0 +1,109 @@
+---
+title: Klasör Mimarisi
+info: Klasör mimarimize detaylı bir bakış
+---
+
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+
+Bu klasör mimarisi kuralını izleyerek, belirli özelliklerle ilgili dosyaları bulmak kolaylaşır ve uygulamanın ölçeklenebilir ve bakımı yapılabilir olması sağlanır.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Sayfalar
+
+Uygulama rotaları tarafından tanımlanan üst düzey bileşenleri içerir. They import more low-level components from the modules folder (more details below).
+
+## Modüller
+
+Her modül, kendine özgü bileşenlerini, durumlarını ve iş mantığını içeren bir özellik ya da özellik grubu temsil eder.
+Hepsi aşağıdaki yapıyı takip etmelidir. Modüllerin içine modüller (alt modüller) yerleştirebilirsiniz ve aynı kurallar uygulanır.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Bağlamlar
+
+Bağlam, verileri her seviyede prop'ları elle aktarmak zorunda kalmadan bileşen ağacından aşağıya iletmenin bir yoludur.
+
+Daha fazla bilgi için [React Context](https://react.dev/reference/react#context-hooks) sayfasına bakın.
+
+### GraphQL
+
+Parçalar, sorgular ve mutasyonları içerir.
+
+Daha fazla bilgi için [GraphQL](https://graphql.org/learn/) sayfasına bakın.
+
+* Parçalar
+
+Bir parça, farklı yerlerde kullanabileceğiniz, bir sorgunun yeniden kullanılabilir bir parçasıdır. Parçaları kullanarak, kodun kopyalanmasını önlemek daha kolaydır.
+
+Daha fazla bilgi için [GraphQL Parçaları](https://graphql.org/learn/queries/#fragments) sayfasına bakın.
+
+* Sorgular
+
+Daha fazla bilgi için [GraphQL Sorgular](https://graphql.org/learn/queries/) sayfasına bakın.
+
+* Mutasyonlar
+
+Daha fazla bilgi için [GraphQL Mutasyonlar](https://graphql.org/learn/queries/#mutations) sayfasına bakın.
+
+### Kancalar
+
+Daha fazla bilgi için [Kancalar](https://react.dev/learn/reusing-logic-with-custom-hooks) sayfasına bakın.
+
+### Durumlar
+
+Durum yönetim mantığını içerir. [RecoilJS](https://recoiljs.org) bunu ele almaktadır.
+
+* Seçiciler: Daha fazla bilgi için [RecoilJS Seçiciler](https://recoiljs.org/docs/basic-tutorial/selectors) sayfasına bakın.
+
+React'ın yerleşik durum yönetimi, bir bileşen içinde hala durumu ele alır.
+
+### Yardımcılar
+
+Sadece yeniden kullanılabilir saf fonksiyonları içermelidir. Aksi takdirde, `hooks` klasöründe özel kancalar oluşturun.
+
+## Kullanıcı Arayüzü
+
+Uygulamada kullanılan tüm tekrar kullanılabilir UI bileşenlerini içerir.
+
+Bu klasör, belirli bileşen türleri için `data`, `display`, `feedback` ve `input` gibi alt klasörler içerebilir. Her bir bileşen, kendi içinde bağımsız ve yeniden kullanılabilir olmalı, böylece uygulamanın farklı kısımlarında kullanılabilir.
+
+UI bileşenlerini `modules` klasöründeki diğer bileşenlerden ayırarak, tutarlı bir tasarımı korumak ve kullanıcı arayüzünde değişiklikleri kod tabanının diğer bölümlerini (iş mantığı) etkilemeden yapmak daha kolaydır.
+
+## Arayüz ve bağımlılıklar
+
+Diğer modüllerin kodunu, `ui` klasörü hariç, herhangi bir modülden içe aktarabilirsiniz. Bu, kodunun test edilmesini kolaylaştıracaktır.
+
+### Dahili
+
+Bir modülün her bir parçası (kancalar, durumlar, ...) yalnızca modül içinde kullanılan kısımları içeren bir `internal` klasöre sahip olabilir.

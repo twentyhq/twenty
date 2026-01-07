@@ -92,7 +92,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           />
         }
       >
-        Select matching field
+        {t`Select matching field`}
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         value={searchFilter}

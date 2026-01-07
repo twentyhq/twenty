@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
@@ -32,7 +33,7 @@ export const FormCountrySelectInput = ({
     );
     return [
       {
-        label: 'No country',
+        label: t`No country`,
         value: '',
         Icon: IconCircleOff,
       },

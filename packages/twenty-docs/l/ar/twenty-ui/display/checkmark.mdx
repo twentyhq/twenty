@@ -4,30 +4,25 @@ image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="رأس الصفحة" />
 </Frame>
 
 يمثل إجراءً ناجحًا أو مكتملًا.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="استخدام">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
 
-```jsx
-import { Checkmark } from 'twenty-ui/display';
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <Checkmark />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-يمتد `React.ComponentPropsWithoutRef<'div'>` و يقبل جميع خصائص عنصر `div` العادي.
-
-</Tab>
-
+  <Tab title="المحددات">
+    يمتد `React.ComponentPropsWithoutRef<'div'>` و يقبل جميع خصائص عنصر `div` العادي.
+  </Tab>
 </Tabs>
 
 ## علامة صحيح متحركة
@@ -35,35 +30,29 @@ export const MyComponent = () => {
 يمثل رمز علامة صحيح مع ميزة الإضافة للحركة.
 
 <Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { AnimatedCheckmark } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return (
-    <AnimatedCheckmark
-      isAnimating={true}
-      color="green"
-      duration={0.5}
-      size={30}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| المحددات    | النوع       | الوصف                                 | الإعداد الافتراضي         |
-| ----------- | ----------- | ------------------------------------- | ------------------------- |
-| isAnimating | قيمة منطقية | يتحكم فيما إذا كانت علامة صحيح متحركة | خاطئ                      |
-| اللون       | string      | Color of the checkmark                |                           |
-| المدة       | رقم         | مدة الحركة بالثواني                   | 0.5 ثانية |
-| الحجم       | رقم         | The size of the checkmark             | 28 بكسل                   |
-
-</Tab>
-
+  <Tab title="الخصائص">
+    | الخصائص     | النوع       | الوصف                                 | الإعداد الافتراضي |
+    | ----------- | ----------- | ------------------------------------- | ----------------- |
+    | isAnimating | قيمة منطقية | يتحكم فيما إذا كانت علامة صحيح متحركة | خاطئ              |
+    | اللون       | string      | Color of the checkmark                |                   |
+    | المدة       | رقم         | مدة الحركة بالثواني                   | 0.5 ثانية         |
+    | الحجم       | رقم         | The size of the checkmark             | 28 بكسل           |
+  </Tab>
 </Tabs>

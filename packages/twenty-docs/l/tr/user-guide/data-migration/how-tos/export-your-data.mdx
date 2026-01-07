@@ -1,0 +1,209 @@
+---
+title: Verilerinizi Dışa Aktarın
+description: Twenty'den veri dışa aktarmaya yönelik eksiksiz, adım adım kılavuz.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Genel Bakış
+
+Yedekleme, raporlama veya geçiş için çalışma alanı verilerinizi CSV'ye dışa aktarın.
+
+**Kullanım alanları:**
+
+* **Düzenli yedeklemeler** — verilerinizin kopyalarını saklayın
+* **Harici raporlama** — verileri Excel, Google Sheets veya BI araçlarında analiz edin
+* **Geçiş** — verileri başka bir sisteme taşıyın
+* **Toplu güncellemeler** — kayıtları güncellemek için dışa aktarın, düzenleyin ve yeniden içe aktarın
+
+## Bilmeniz Gerekenler
+
+### Dışa Aktarma Sınırları
+
+* Dışa aktarma başına **en fazla 20.000 kayıt**
+* Yalnızca **görünür sütunlar** dışa aktarılır
+* Yalnızca **filtrelenmiş kayıtlar** dışa aktarılır (mevcut görünümünüze göre)
+
+<Note>Daha büyük dışa aktarmalar için (20.000+ kayıt), toplu halde dışa aktarmak üzere filtreleri kullanın veya [API](/l/tr/developers/extend/capabilities/apis)'yi kullanın.</Note>
+
+### İzinler
+
+Verileri dışa aktarmak için **"Export CSV"** iznine ihtiyacınız var. Bu seçeneğiniz yoksa çalışma alanı yöneticinizle iletişime geçin.
+
+## Adım 1: Nesneye gidin
+
+Dışa aktarmak istediğiniz nesneye gidin:
+
+* **People** — kişiler için
+* **Companies** — kuruluşlar için
+* **Opportunities** — anlaşmalar için
+* **Özel nesneler** — oluşturduğunuz herhangi bir nesne
+
+## Adım 2: Görünümünüzü yapılandırın
+
+**Önemli:** Dışa aktarma, yalnızca mevcut görünümünüzde görünenleri içerir.
+
+### Sütun Ekle/Kaldır
+
+1. **Options → Fields**'a tıklayın (veya sütunların sonundaki **+** simgesine)
+2. Dışa aktarmak istediğiniz alanları işaretleyin
+3. Gerek duymadığınız alanların işaretini kaldırın
+
+### Kayıtları Filtrele (İsteğe bağlı)
+
+Yalnızca verilerin bir alt kümesine ihtiyacınız varsa:
+
+1. **Filter**'a tıklayın
+2. Filtre koşulları ekleyin (ör. "Created date > January 1, 2024")
+3. Yalnızca eşleşen kayıtlar dışa aktarılır
+
+### Kayıtları Sırala (İsteğe bağlı)
+
+1. Sıralamak için bir sütun başlığına tıklayın
+2. Dışa aktarma, sıralama düzeninizi takip eder
+
+<Note>**Dışa aktarma için özel bir görünüm oluşturun.** Her seferinde yeniden yapılandırmamak için özellikle dışa aktarmaya göre yapılandırılmış bir görünümü kaydedin.</Note>
+
+## Adım 3: Verileri dışa aktarın
+
+1. Tablonun sağ üst köşesindeki **⋮** simgesine tıklayın
+2. **Export view**'i seçin
+3. CSV dosyasının nereye kaydedileceğini seçin
+4. İndirmenin tamamlanmasını bekleyin
+
+## Neler Dışa Aktarılır
+
+| Dahil                               | Dahil Değil                      |
+| ----------------------------------- | -------------------------------- |
+| Tüm görünür sütunlar                | Gizli sütunlar                   |
+| Mevcut filtrelerle eşleşen kayıtlar | Filtreyle hariç tutulan kayıtlar |
+| Özel alan değerleri                 | Görünümde olmayan alanlar        |
+| Kayıt ID'leri                       | Dosya ekleri                     |
+| İlişki ID'leri                      | Görseller                        |
+
+### İlişki Alanları
+
+İlişki ID'leri yalnızca bir ilişkinin **"çok" tarafında** dışa aktarılır:
+
+* **People dışa aktarması**, `companyId` sütununu içerir (People → Company ilişkisi)
+* **Companies dışa aktarması**, `peopleIds` içermez (Companies ilişkide "tek" taraftır)
+
+Bu, Company bağlantısını koruyarak yeniden içe aktarmak için People dışa aktarmasını kullanabileceğiniz anlamına gelir; ancak ilişkileri yeniden oluşturmak için Companies'ten sonra People'ı yeniden içe aktarmanız gerekir.
+
+## Belirli Amaçlar İçin Dışa Aktarma
+
+### Yedeklemeler İçin
+
+1. **Tüm alanların** görünür olduğu bir görünüm oluşturun
+2. Tüm kayıtları dahil etmek için tüm filtreleri kaldırın
+3. Her nesne türünü ayrı ayrı dışa aktarın
+4. Dışa aktarmaları güvenli bir konumda saklayın
+5. Tekrarlayan bir hatırlatıcı ayarlayın (haftalık/aylık)
+
+### Harici Raporlama İçin
+
+1. Analiz için yalnızca ihtiyaç duyduğunuz alanları dahil edin
+2. İlgili verilere odaklanmak için filtreler uygulayın
+3. Analiz edeceğiniz alana göre sıralamayı düşünün
+
+### Toplu Güncellemeler İçin
+
+1. Güncellemek istediğiniz kayıtları dışa aktarın
+2. Benzersiz tanımlayıcıyı dahil edin (`email`, `domain` veya `id`)
+3. Dışa aktarılan dosyayı düzenleyin
+4. Kayıtları güncellemek için yeniden içe aktarın
+   Bkz: [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Geçiş İçin
+
+Başka bir sisteme geçiş yapmak için dışa aktarıyorsanız:
+
+1. **Her nesneyi ayrı ayrı dışa aktarın** — People, Companies, Opportunities, vb.
+2. **ID alanlarını dahil edin** — bunlar ilişkilerin korunmasına yardımcı olur
+3. **Alan eşlemelerini belgeleyin** — Twenty alanlarının hedef sisteminize nasıl eşlendiğini not edin
+
+## Büyük Veri Kümelerini Yönetme (20.000+ Kayıt)
+
+Dışa aktarma sınırı 20.000 kayıttır. Daha büyük veri kümeleri için:
+
+### Seçenek 1: Partiler halinde dışa aktarma
+
+1. Bir filtre ekleyin (ör. "Created date" aralıkları)
+2. İlk partiyi dışa aktarın
+3. Filtreyi değiştirin
+4. Sonraki partiyi dışa aktarın
+5. Dosyaları hesap tablonuzda birleştirin
+
+**Partiler için örnek filtreler:**
+
+* Tarih aralığına göre (Ocak, Şubat, Mart...)
+* Sahibine göre (Ekip üyesi A, Ekip üyesi B...)
+* Duruma göre (Aktif, Pasif...)
+
+### Seçenek 2: API'yi kullanın
+
+API'nin kayıt sınırı yoktur:
+
+1. API anahtarınızı **Settings → Developers** bölümünden alın
+2. Kayıtları sorgulamak için GraphQL API'sini kullanın
+3. Sonuçları uygulamanızda işleyin
+
+Bkz: [API Belgeleri](/l/tr/developers/extend/capabilities/apis)
+
+## İpuçları ve En İyi Uygulamalar
+
+### Dışa Aktarma Görünümleri Oluşturun
+
+Özellikle dışa aktarma için yapılandırılmış görünümleri kaydedin:
+
+1. Sütunları ve filtreleri yapılandırın
+2. **View options** → **Save as new view** seçeneğine tıklayın
+3. Adını "Export - [Purpose]" olarak verin
+
+### Dışa Aktarmalarınızı Güvenceye Alın
+
+Dışa aktarılan dosyalar hassas veriler içerebilir:
+
+* Güvenli konumlarda depolayın
+* Artık gerekmediğinde eski dışa aktarmaları silin
+* Dışa aktarma dosyalarını paylaşırken dikkatli olun
+
+### Dışa Aktarmadan Önce Kontrol Edin
+
+<Check>Doğru sütunlar görünür</Check>
+<Check>Filtreler doğru ayarlanmış (veya tam dışa aktarma için kaldırılmış)</Check>
+<Check>Dışa aktarma iznine sahipsiniz</Check>
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="Dışa aktarmamda bazı sütunlar neden eksik?">
+    Yalnızca görünür sütunlar dışa aktarılır. Dışa aktarmadan önce ihtiyaç duyduğunuz sütunları **Options → Fields** üzerinden ekleyin.
+  </Accordion>
+
+  <Accordion title="Dışa aktarmamda neden tüm kayıtlar yok?">
+    Filtrelerinizi kontrol edin. Dışa aktarma, yalnızca mevcut görünüm filtrelerinizle eşleşen kayıtları içerir. Tüm kayıtları dışa aktarmak için filtreleri kaldırın.
+  </Accordion>
+
+  <Accordion title="20.000'den fazla kayıt dışa aktarabilir miyim?">
+    Tek bir dışa aktarmada mümkün değil. Partiler halinde dışa aktarmak için filtreleri kullanın veya daha büyük veri kümeleri için API'yi kullanın.
+  </Accordion>
+
+  <Accordion title="Dışa aktarma dosyasının biçimi nedir?">
+    CSV (Virgülle Ayrılmış Değerler). Excel, Google Sheets veya herhangi bir hesap tablosu uygulamasında açılır.
+  </Accordion>
+
+  <Accordion title="İlişki ID'leri dahil mi?">
+    Evet, ancak yalnızca ilişkilerin "çok" tarafında. Örneğin, bir People dışa aktarması `companyId` içerir, ancak bir Companies dışa aktarması people ID'lerini içermez.
+  </Accordion>
+
+  <Accordion title="Dışa aktarmaları otomatikleştirebilir miyim?">
+    Doğrudan UI üzerinden değil. Otomatik dışa aktarma iş akışları oluşturmak için API'yi kullanın.
+  </Accordion>
+</AccordionGroup>
+
+## Sonraki Adımlar
+
+* [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import) — dışa aktarmanızı düzenleyin ve yeniden içe aktarın
+* [API ile Veri Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) — büyük veri kümeleri için
+* [API Belgeleri](/l/tr/developers/extend/capabilities/apis) — özel dışa aktarma iş akışları oluşturun

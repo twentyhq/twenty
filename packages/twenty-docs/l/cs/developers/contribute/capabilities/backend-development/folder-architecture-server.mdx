@@ -1,0 +1,125 @@
+---
+title: Architektura složek
+info: Podrobný pohled do struktury složek našeho serveru
+---
+
+Struktura adresářů backendu je následující:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+Definuje oprávnění a zahrnuje zpracovníky pro každou entitu.
+
+## Dekorátory
+
+Definuje vlastní dekorátory v NestJS pro přídavnou funkčnost.
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Filtry
+
+Zahrnuje filtry výjimek k zpracování výjimek, které mohou nastat v koncových bodech GraphQL.
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details.
+
+## Health
+
+Zahrnuje veřejně dostupné REST API (healthz), které vrací JSON k potvrzení, zda databáze funguje, jak se očekává.
+
+## Metadata
+
+Definuje vlastní objekty a poskytuje GraphQL API (graphql/metadata).
+
+## Pracovní prostor
+
+Generates and serves custom GraphQL schema based on the metadata.
+
+### Struktura adresáře pracovního prostoru
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+Kořen adresáře pracovního prostoru zahrnuje `workspace.factory.ts`, soubor obsahující funkci `createGraphQLSchema`. Tato funkce generuje specifická schémata pracovních prostorů pomocí metadat pro přizpůsobení schématu individuálním pracovním prostorům. Oddělením konstrukce schématu a resolveru používáme funkci `makeExecutableSchema`, která kombinuje tyto různé prvky.
+
+Tato strategie neslouží pouze k organizaci, ale pomáhá i v optimalizaci, jako je ukládání vytvořených typových definic do mezipaměti pro zvýšení výkonu a škálovatelnosti.
+
+### Workspace Schema builder
+
+Generuje schéma GraphQL a zahrnuje:
+
+#### Továrny:
+
+Specializované konstruktory pro generování konstrukcí souvisejících s GraphQL.
+
+* type.factory překládá metadata pole do typů GraphQL pomocí `TypeMapperService`.
+* type-definition.factory vytváří vstupní nebo výstupní grafové objekty odvozené z `objectMetadata`.
+
+#### GraphQL typy
+
+Zahrnuje výčty, vstupy, objekty a skaláry a slouží jako stavební bloky pro konstrukci schématu.
+
+#### Rozhraní a objektové definice
+
+Obsahuje plány pro GraphQL entity a zahrnuje jak předdefinované, tak vlastní typy jako `MONEY` nebo `URL`.
+
+#### Služby
+
+Obsahuje službu, která spojuje FieldMetadataType s odpovídajícími GraphQL skalárami nebo modifikátory dotazů.
+
+#### Úložiště
+
+Zahrnuje třídu `TypeDefinitionsStorage`, která obsahuje opakovaně použitelné definice typů, zabraňující duplikaci typů GraphQL.
+
+### Workspace Resolver Builder
+
+Vytváří funkce pro řešení dotazů a mutací v GraphQL schématu.
+
+Každá továrna v tomto adresáři je zodpovědná za produkci specifického typu resolveru, jako je továrna `FindManyResolverFactory`, navržená pro adaptabilní aplikaci na různé tabulky.
+
+### Runner dotazů pracovního prostoru
+
+Spouští vygenerované dotazy na databázi a analyzuje výsledek.

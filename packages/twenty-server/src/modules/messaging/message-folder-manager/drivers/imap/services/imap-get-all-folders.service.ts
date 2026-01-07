@@ -4,7 +4,7 @@ import { ImapFlow, type ListResponse } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  MessageFolder,
+  DiscoveredMessageFolder,
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
@@ -34,7 +34,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]> {
+  ): Promise<DiscoveredMessageFolder[]> {
     try {
       const client = await this.imapClientProvider.getClient(connectedAccount);
 
@@ -66,8 +66,8 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]> {
-    const folders: MessageFolder[] = [];
+  ): Promise<DiscoveredMessageFolder[]> {
+    const folders: DiscoveredMessageFolder[] = [];
     const pathToExternalIdMap = new Map<string, string>();
     const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
@@ -135,7 +135,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
   private isValidMailbox(
     mailbox: ListResponse,
-    existingFolders: MessageFolder[],
+    existingFolders: DiscoveredMessageFolder[],
   ): boolean {
     if (mailbox.flags?.has('\\Noselect')) {
       return false;

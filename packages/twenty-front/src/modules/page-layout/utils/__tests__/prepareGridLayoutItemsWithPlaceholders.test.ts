@@ -1,11 +1,11 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import {
   AggregateOperations,
-  GraphType,
+  WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
-import { prepareGridLayoutItemsWithPlaceholders } from '../prepareGridLayoutItemsWithPlaceholders';
+import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
@@ -22,7 +22,7 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
     },
     configuration: {
       __typename: 'AggregateChartConfiguration',
-      graphType: GraphType.AGGREGATE,
+      configurationType: WidgetConfigurationType.AGGREGATE_CHART,
       aggregateOperation: AggregateOperations.COUNT,
       aggregateFieldMetadataId: 'field-id',
       displayDataLabel: false,

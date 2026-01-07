@@ -1,0 +1,293 @@
+---
+title: Configurare
+---
+
+# Configuration Management
+
+<Warning>
+  **Prima instalare?** Urmați [ghidul de instalare Docker Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
+</Warning>
+
+Twenty oferă **două moduri de configurare** pentru a se potrivi nevoilor diferite de implementare:
+
+**Acces la panoul de administrare:** Doar utilizatorii cu privilegii de administrator (`canAccessFullAdminPanel: true`) pot accesa interfața de configurare.
+
+## 1. Configurare Panou Admin (Implicită)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
+```
+
+**Majoritatea configurărilor se fac prin UI** după instalare:
+
+1. Accesați instanța dumneavoastră Twenty (de obicei `http://localhost:3000`)
+2. Mergeți la **Setări / Panou Admin / Variabile de Configurare**
+3. Configurați integrările, e-mailul, stocarea și multe altele
+4. Schimbările intră în vigoare imediat (în termen de 15 secunde pentru implementări cu mai multe containere)
+
+<Warning>
+  **Implementări Multi-Container:** Când utilizați configurarea bazei de date (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), atât serverul cât și containerele worker citesc din aceeași bază de date. Modificările din panoul de administrare afectează ambele automat, eliminând necesitatea duplicării variabilelor de mediu între containere (cu excepția variabilelor de infrastructură).
+</Warning>
+
+**Ce puteți configura prin panoul de administrare:**
+
+* **Autentificare** - OAuth Google/Microsoft, setări parole
+* **E-mail** - setări SMTP, șabloane, verificare
+* **Stocare** - configurație S3, căi stocare locală
+* **Integrări** - Gmail, Google Calendar, servicii Microsoft
+* **Workflow & Rate Limiting** - Execution limits, API throttling
+* **Și multe altele...**
+
+![Variabile de Configurare Panou Admin](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrare la **Setări → Panou Admin → Variabile de Configurare**.
+  Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`), și secretele aplicației (`APP_SECRET`) pot fi configurate doar prin fișierul `.env`.
+
+  [Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. Configurare Doar Mediu
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Toate configurațiile gestionate prin fișiere `.env`:**
+
+1. Setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` în fișierul dvs. `.env`
+2. Adăugați toate variabilele de configurare în fișierul dvs. `.env`
+3. Reporniți containerele pentru ca schimbările să aibă efect
+4. Panoul de administrare va afișa valorile curente, dar nu le poate modifica
+
+## Multi-Workspace Mode
+
+By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+
+### Single-Workspace Mode (Default)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* One workspace per Twenty instance
+* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
+* New signups are disabled after the first workspace is created
+* Simple URL structure: `https://your-domain.com`
+
+### Enabling Multi-Workspace Mode
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+
+**Key differences from single-workspace mode:**
+
+* Multiple workspaces can be created on the same instance
+* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
+* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
+* No automatic admin privileges — first user in each workspace is a regular user
+* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+
+<Warning>
+  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+</Warning>
+
+### DNS Configuration for Multi-Workspace
+
+When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+
+### Restricting Workspace Creation
+
+In multi-workspace mode, you may want to limit who can create new workspaces:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+
+## Integrare Gmail & Google Calendar
+
+### Creați Proiect Google Cloud
+
+1. Mergeți la [Google Cloud Console](https://console.cloud.google.com/)
+2. Creați un proiect nou sau selectați unul existent
+3. Activați aceste API-uri:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Configurați OAuth
+
+1. Mergeți la [Credentials](https://console.cloud.google.com/apis/credentials)
+2. Creați Client ID OAuth 2.0
+3. Adăugați aceste URI-uri de redirecționare:
+   * `https://{your-domain}/auth/google/redirect` (for SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Configurați în Twenty
+
+1. Mergeți la **Setări → Panou Admin → Variabile de Configurare**
+2. Găsiți secțiunea **Autentificare Google**
+3. Setați aceste variabile:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+</Warning>
+
+**Domenii necesare** (configurate automat):
+[Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### Dacă aplicația dvs. este în modul de test
+
+Dacă aplicația dvs. este în modul de test, va trebui să adăugați utilizatori de test în proiectul dvs.
+
+În [ecranul de consimțământ OAuth](https://console.cloud.google.com/apis/credentials/consent), adăugați utilizatorii dvs. de test în secțiunea "Utilizatori de test".
+
+## Integrare Microsoft 365
+
+<Warning>
+  Utilizatorii trebuie să aibă un [Licență Microsoft 365](https://admin.microsoft.com/Adminportal/Home) pentru a putea utiliza API-ul Calendar și Mesagerie. Nu vor putea sincroniza contul lor pe Twenty fără una.
+</Warning>
+
+### Creați un proiect în Microsoft Azure
+
+Va trebui să creați un proiect în [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) și să obțineți acreditările.
+
+### Activați API-urile
+
+În Microsoft Azure Console activați următoarele API-uri în "Permisiuni":
+
+* Graph Microsoft: Mail.ReadWrite
+* Graph Microsoft: Mail.Send
+* Graph Microsoft: Calendars.Read
+* Graph Microsoft: User.Read
+* Graph Microsoft: openid
+* Graph Microsoft: email
+* Graph Microsoft: profile
+* Graph Microsoft: offline_access
+
+Notă: "Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să trimiteți e-mailuri utilizând acțiunile noastre de flux de lucru. Puteți utiliza "Mail.Read" dacă doriți doar să primiți e-mailuri.
+
+### URIs de redirecționare autorizate
+
+Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs.:
+
+* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Configurați în Twenty
+
+1. Mergeți la **Setări → Panou Admin → Variabile de Configurare**
+2. Găsiți secțiunea **Autentificare Microsoft**
+3. Setați aceste variabile:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+</Warning>
+
+### Configure scopes
+
+[Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'email'
+* 'profil'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### Dacă aplicația dvs. este în modul de test
+
+Dacă aplicația dvs. este în modul de test, va trebui să adăugați utilizatori de test în proiectul dvs.
+
+Adăugați utilizatorii de test în secțiunea "Utilizatori și grupuri".
+
+## Background Jobs for Calendar & Messaging
+
+După configurarea integrărilor Gmail, Google Calendar, sau Microsoft 365, trebuie să porniți joburile de fundal care sincronizează datele.
+
+Înregistrați următoarele joburi recurente în containerul dvs. worker:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## Configurare Email
+
+1. Mergeți la **Setări → Panou Admin → Variabile de Configurare**
+2. Găsiți secțiunea **Email**
+3. Configurați setările dvs. SMTP:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    Va trebui să provisionați o [Parolă de Aplicație](https://support.google.com/accounts/answer/185833).
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_email_address
+    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_email_address
+    * EMAIL_SMTP_PASSWORD='office365_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+
+    * Rulați imaginea smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * Accesați interfața smtp4dev aici: [http://localhost:8090](http://localhost:8090)
+    * Setați următoarele variabile:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+</Warning>

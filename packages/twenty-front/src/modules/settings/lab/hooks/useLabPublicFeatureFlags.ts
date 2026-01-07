@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,7 +44,7 @@ export const useLabPublicFeatureFlags = () => {
     value: boolean,
   ) => {
     if (!isDefined(currentWorkspace)) {
-      setError('No workspace selected');
+      setError(t`No workspace selected`);
       return false;
     }
 

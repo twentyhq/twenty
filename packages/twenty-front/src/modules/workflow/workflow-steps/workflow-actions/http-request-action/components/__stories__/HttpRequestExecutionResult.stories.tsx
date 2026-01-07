@@ -236,8 +236,8 @@ export const NetworkError: Story = {
     expect(await canvas.findByText('Request Failed')).toBeVisible();
     expect(await canvas.findByText('An error occurred')).toBeVisible();
 
-    const codeEditor = await canvas.findByRole('textbox');
-    expect(codeEditor).toHaveValue(
+    const codeEditorValue = await canvas.findByTestId('code-editor-value');
+    expect(codeEditorValue).toHaveValue(
       'Network connection failed: timeout after 30 seconds',
     );
   },

@@ -12,7 +12,6 @@ export const functionRole: RoleConfig = {
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  canBeAssignedToApplications: true,
   objectPermissions: [
     {
       objectNameSingular: 'postCard',

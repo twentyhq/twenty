@@ -77,6 +77,7 @@ const buildVariableResult = (
   targetSchema: RecordFieldNodeValue,
   targetFieldName: string,
   isFullRecord: boolean,
+  stepNameLabel?: string,
 ): VariableSearchResult => {
   const targetField = getFieldFromSchema(targetFieldName, targetSchema);
   // Determine the variable label based on whether we want the full record or a specific field
@@ -97,7 +98,10 @@ const buildVariableResult = (
 
   // Build the full path: stepName > field1 > field2 > targetField
   const fullPathSegments = [stepName, ...pathLabels, variableLabel];
-  const variablePathLabel = fullPathSegments.join(' > ');
+  const basePath = fullPathSegments.join(' > ');
+  const variablePathLabel = stepNameLabel
+    ? `${basePath} (${stepNameLabel})`
+    : basePath;
 
   return {
     variableLabel,
@@ -117,12 +121,14 @@ export const searchRecordOutputSchema = ({
   path,
   selectedField,
   isFullRecord,
+  stepNameLabel,
 }: {
   stepName: string;
   recordOutputSchema: RecordOutputSchemaV2;
   path: string[];
   selectedField: string;
   isFullRecord: boolean;
+  stepNameLabel?: string;
 }): VariableSearchResult => {
   const navigationResult = navigateToTargetField(recordOutputSchema, path);
 
@@ -140,6 +146,7 @@ export const searchRecordOutputSchema = ({
     navigationResult.schema,
     selectedField,
     isFullRecord,
+    stepNameLabel,
   );
 };
 

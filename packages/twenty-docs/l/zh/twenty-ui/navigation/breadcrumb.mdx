@@ -1,5 +1,5 @@
 ---
-title: 面包屑
+title: Breadcrumb
 image: /images/user-guide/fields/field.png
 ---
 
@@ -7,38 +7,35 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-呈现一个面包屑导航栏。
+Renders a breadcrumb navigation bar.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-```jsx
-import { BrowserRouter } from "react-router-dom";
-import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
 
-export const MyComponent = () => {
-  const breadcrumbLinks = [
-    { children: "Home", href: "/" },
-    { children: "Category", href: "/category" },
-    { children: "Subcategory", href: "/category/subcategory" },
-    { children: "Current Page" },
-  ];
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
 
-  return (
-    <BrowserRouter>
-      <Breadcrumb className links={breadcrumbLinks} />
-    </BrowserRouter>
-    )
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 属性 | 类型  | 描述                                                                               |
-| -- | --- | -------------------------------------------------------------------------------- |
-| 类名 | 字符串 | 用于额外样式的可选类名                                                                      |
-| 链接 | 数组  | 对象数组，每个代表一个面包屑链接。 每个对象都有一个 `children` 属性（链接的文本内容）和一个可选的 `href` 属性（点击链接时导航到的URL）。 |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type   | Description                                                                                                                                                                                                      |
+    | --------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className | string | Optional class name for additional styling                                                                                                                                                                       |
+    | links     | array  | An array of objects, each representing a breadcrumb link. Each object has a `children` property (the text content of the link) and an optional `href` property (the URL to navigate to when the link is clicked) |
+  </Tab>
 </Tabs>

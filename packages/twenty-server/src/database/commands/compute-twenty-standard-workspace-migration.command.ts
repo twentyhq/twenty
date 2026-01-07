@@ -6,6 +6,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { AdditionalCacheDataMaps } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
@@ -86,6 +87,9 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatRoleMaps,
             },
+          },
+          additionalCacheDataMaps: {
+            featureFlagsMap: {} as AdditionalCacheDataMaps['featureFlagsMap'],
           },
           workspaceId,
         })

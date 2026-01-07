@@ -30,9 +30,9 @@ export const SettingsAvailableStandardObjectsSection = ({
     <Table>
       <StyledAvailableStandardObjectTableRow>
         <TableHeader></TableHeader>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Description</TableHeader>
-        <TableHeader align="right">Fields</TableHeader>
+        <TableHeader>{t`Name`}</TableHeader>
+        <TableHeader>{t`Description`}</TableHeader>
+        <TableHeader align="right">{t`Fields`}</TableHeader>
       </StyledAvailableStandardObjectTableRow>
       <TableBody>
         {objectItems.map((objectItem) => (

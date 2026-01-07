@@ -3,7 +3,7 @@ import { type ApolloCache } from '@apollo/client';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 
-import { triggerUpdateGroupByQueriesOptimisticEffect } from '../triggerUpdateGroupByQueriesOptimisticEffect';
+import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 
 describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

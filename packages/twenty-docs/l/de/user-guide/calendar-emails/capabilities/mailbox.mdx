@@ -1,0 +1,85 @@
+---
+title: Mailbox
+description: Understanding email integration features in Twenty.
+---
+
+**Hinweis**: Um Ihre E-Mail-Konten zu verbinden und die Synchronisierungseinstellungen zu konfigurieren, besuchen Sie [E-Mail- & Kalendereinrichtung](/l/de/user-guide/calendar-emails/overview).
+
+## Wie die E-Mail-Integration funktioniert
+
+Twenty verknüpft E-Mails automatisch aus Ihren verknüpften Postfächern mit den relevanten CRM-Datensätzen, um den gesamten Kommunikationsverlauf an einem Ort zu halten.
+
+### Objects Where Emails Can Be Found
+
+E-Mail-Konversationen erscheinen in drei Hauptobjekten:
+
+* **Personen**: Alle E-Mails mit einem bestimmten Kontakt anzeigen
+* **Unternehmen**: Alle E-Mails zu einem Unternehmen und seinen Mitarbeitern anzeigen
+* **Chancen**: E-Mail-Threads anzeigen, die mit dem Unternehmen verbunden sind, das zu dieser Gelegenheit gehört. E-Mail-Threads von einzelnen Personen innerhalb der Gelegenheit werden noch nicht angezeigt.
+
+### E-Mail-Threads anzeigen
+
+1. **Zu einem Datensatz gehen**: Gehen Sie zu einem beliebigen Personen-, Firmen- oder Chancen-Datensatz
+2. **Wählen Sie den Tab "E-Mails"**: Klicken Sie auf den Reiter "E-Mails", um die synchronisierten E-Mails anzuzeigen
+3. **Öffnen Sie einen E-Mail-Thread**: Klicken Sie auf eine beliebige E-Mail, um die vollständige Konversation zu öffnen und zu lesen
+4. **Durchsuchen Sie den Verlauf**: Blättern Sie durch den vollständigen E-Mail-Verlauf mit diesem Kontakt
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Was Sie sehen werden
+
+### E-Mail-Thread-Ansicht
+
+Wenn Sie einen E-Mail-Thread öffnen, können Sie:
+
+* **Vollständige Gespräche lesen**: Den kompletten E-Mail-Austausch ansehen
+* **Teilnehmer anzeigen**: Alle Personen im E-Mail-Thread sehen
+* **Zeitstempel prüfen**: Genau wissen, wann jede E-Mail gesendet wurde
+* **Zugang zum Kontext**: Den gesamten Kommunikationsverlauf verstehen
+
+### E-Mail-Sichtbarkeit
+
+Je nach den Einstellungen Ihres Postfachs können Sie sehen:
+
+* **Vollständiger Inhalt**: Vollständiger E-Mail-Text und Details
+* **Betreff + Metadaten**: Betreffzeile, Absender, Empfänger und Zeitstempel
+* **Nur Metadaten**: Grundlegende Informationen ohne E-Mail-Inhalt
+
+## E-Mail-Synchronisierungsverhalten
+
+### Was synchronisiert wird
+
+* **Externe E-Mails**: Alle E-Mails mit Kontakten außerhalb Ihrer Organisation
+* **Automatische Verknüpfung**: E-Mails werden mit bestehenden Personen- und Firmendatensätzen verbunden
+* **Mehrfache Adressen**: E-Mails von jeder Adresse werden mit dem gleichen Kontaktdatensatz verbunden
+* **Aktualisierungen**: Neue E-Mails erscheinen innerhalb von 5 Minuten
+
+### Was nicht synchronisiert wird
+
+* **Interne E-Mails**: E-Mails zwischen Kollegen (gleiche Domain) bleiben privat
+* **Gruppen-E-Mails**: Verteilerlisten und Gruppen-E-Mails sind ausgeschlossen
+* **Ausgeschlossene Ordner**: Ordner, die Sie nicht synchronisieren möchten (konfiguriert unter Einstellungen → Konten → E-Mail)
+
+### Selektive Ordnersynchronisierung (Lab-Funktion)
+
+Bestimmen Sie, welche E-Mail-Ordner mit Twenty synchronisiert werden:
+
+1. Aktivieren Sie "Nachrichtenordner" unter Einstellungen → Releases → Lab
+2. Konfigurieren Sie Ordner unter Einstellungen → Konten → E-Mail
+3. Wählen Sie spezifische Ordner zum Einschließen oder Ausschließen (Posteingang, Gesendet, Archiv, benutzerdefinierte Ordner)
+
+## Fehlerbehebung bei der E-Mail-Synchronisierung
+
+### Häufige Synchronisierungsprobleme
+
+* **Synchronisierungsverzögerungen**: E-Mails erscheinen innerhalb von 5 Minuten, aber der erste Import dauert länger
+* **Fehlende E-Mails**: Prüfen Sie, ob:
+  * Ordner in den Einstellungen für Nachrichtenordner ausgeschlossen sind
+  * Die automatische Erstellung von Kontakten deaktiviert ist (E-Mails benötigen vorhandene Twenty-Datensätze)
+  * E-Mails von Kollegen (gleiche Domain) oder Gruppenlisten stammen
+  * Die Mailbox die erste Synchronisierung noch abschließt
+
+### E-Mail-Beschränkungen
+
+* **Systemordner**: Einige E-Mail-Ordner sind möglicherweise nicht zur Synchronisierung verfügbar
+* **Aliase**: Nur echte Postfächer können verbunden werden (nicht E-Mail-Aliase)

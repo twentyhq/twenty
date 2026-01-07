@@ -3,6 +3,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { isObject } from '@sniptt/guards';
 
@@ -59,7 +60,7 @@ export const WorkflowEditActionServerlessFunctionFields = ({
           <FormTextFieldInput
             key={pathKey}
             label={inputKey}
-            placeholder="Enter value"
+            placeholder={t`Enter value`}
             defaultValue={inputValue ? `${inputValue}` : ''}
             readonly={readonly}
             onChange={(value) => onInputChange?.(value, currentPath)}

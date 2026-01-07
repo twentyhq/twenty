@@ -86,7 +86,7 @@ export const WorkflowEditActionFormFieldSettings = ({
       </StyledSettingsHeader>
       <StyledSettingsContent>
         <FormFieldInputContainer>
-          <InputLabel>Type</InputLabel>
+          <InputLabel>{t`Type`}</InputLabel>
           <FormSelectFieldInput
             options={FORM_SELECT_FIELD_TYPE_OPTIONS}
             onChange={(newType: string | null) => {

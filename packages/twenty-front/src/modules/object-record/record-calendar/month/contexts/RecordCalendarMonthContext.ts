@@ -1,12 +1,13 @@
+import { type Temporal } from 'temporal-polyfill';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 type RecordCalendarMonthContextValue = {
-  firstDayOfMonth: Date;
-  lastDayOfMonth: Date;
-  firstDayOfFirstWeek: Date;
-  lastDayOfLastWeek: Date;
+  firstDayOfMonth: Temporal.PlainDate;
+  lastDayOfMonth: Temporal.PlainDate;
+  firstDayOfFirstWeek: Temporal.PlainDate;
+  lastDayOfLastWeek: Temporal.PlainDate;
   weekDayLabels: string[];
-  weekFirstDays: Date[];
+  weekFirstDays: Temporal.PlainDate[];
   weekStartsOnDayIndex: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 };
 

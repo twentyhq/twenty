@@ -1,0 +1,85 @@
+---
+title: Mailbox
+description: Understanding email integration features in Twenty.
+---
+
+**Note**: To connect your email accounts and configure sync settings, visit [Email & Calendar Setup](/l/tr/user-guide/calendar-emails/overview).
+
+## E-posta Entegrasyonu Nasıl Çalışır
+
+Twenty, bağlı posta kutularınızdaki e-postaları ilgili CRM kayıtlarına otomatik olarak bağlar, tüm iletişim geçmişini tek bir yerde tutar.
+
+### Objects Where Emails Can Be Found
+
+E-posta görüşmeleri üç ana objede görünür:
+
+* **Kişiler**: Belirli bir kişi ile karşılıklı tüm e-postaları görüntüleyin
+* **Şirketler**: Bir şirket ve çalışanlarıyla ilgili tüm e-postaları görün
+* **Fırsatlar**: Bu fırsatla bağlantılı şirkete ait e-posta dizilerine erişin. Bireylerin fırsat üzerindeki e-posta dizileri henüz gösterilmemektedir.
+
+### E-posta Dizilerini Görüntüleme
+
+1. **Bir Kayıt Gezinin**: Herhangi bir Kişi, Şirket veya Fırsat kaydına gidin
+2. **E-postalar Sekmesini Seçin**: Senkronize edilmiş e-postaları görüntülemek için `E-postalar` sekmesine tıklayın
+3. **Bir E-posta Dizisi Açın**: Herhangi bir e-postaya tıklayarak tam görüşmeyi açın ve okuyun
+4. **Geçmişte Gezin**: O kişiyle yaptığınız tüm e-posta geçmişini kaydırarak inceleyin
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Görecekleriniz
+
+### E-posta Dizisi Görünümü
+
+Bir e-posta dizisini açtığınızda şunları yapabilirsiniz:
+
+* **Tüm Görüşmeleri Okuyun**: Tam e-posta alışverişini görün
+* **Katılımcıları Görüntüleyin**: E-posta dizisinde yer alan tüm kişileri görün
+* **Zaman Damgalarını Kontrol Edin**: Her e-postanın tam olarak ne zaman gönderildiğini bilin
+* **Access Context**: Understand the full communication history
+
+### E-posta Görünürlüğü
+
+Posta kutunuzun ayarlarına bağlı olarak, şunları görebilirsiniz:
+
+* **Tam İçerik**: Tam e-posta metni ve detayları
+* **Konu + Meta Veriler**: Konu satırı, gönderen, alıcı ve zaman damgası
+* **Yalnızca Meta Veriler**: E-posta içeriği olmadan temel bilgiler
+
+## E-posta Senkronizasyon Davranışı
+
+### Ne Senkronize Edilir
+
+* **Dış E-postalar**: Kuruluşunuz dışındaki kişilerle yapılan tüm e-postalar
+* **Otomatik Bağlantı**: E-postalar mevcut Kişi ve Şirket kayıtlarına bağlanır
+* **Birden Çok Adres**: Herhangi bir adresten gelen e-postalar aynı kişi kaydına bağlanır
+* **Güncellemeler**: Yeni e-postalar 5 dakika içinde görünür
+
+### Ne Senkronize Edilmez
+
+* **Dahili E-postalar**: Meslektaşlar arasında (aynı alan adı) yapılmış e-postalar gizli kalır
+* **Grup E-postaları**: Dağıtım listeleri ve grup e-postaları hariç tutulur
+* **Dışlanan Klasörler**: Eşitlememeyi seçtiğiniz klasörler (Ayarlar → Hesaplar → E-posta altında yapılandırılır)
+
+### Seçimli Klasör Senkronizasyonu (Lab Özelliği)
+
+Hangi e-posta klasörlerinin Twenty ile senkronize edileceğini kontrol edin:
+
+1. Ayarlarda `Mesaj Klasörü` etkinleştirin → Yayınlar → Lab
+2. Ayarlar → Hesaplar → E-posta altında klasörleri yapılandırın
+3. Belirli klasörleri dahil et veya hariç tut (Gelen Kutusu, Gönderilenler, Arşiv, özel klasörler)
+
+## E-posta Senkronizasyonunu Sorun Giderme
+
+### Yaygın Senkronizasyon Sorunları
+
+* **Senkronizasyon Gecikmeleri**: E-postalar 5 dakika içinde görünür, ancak ilk ithalatlar daha uzun sürebilir
+* **Eksik Mailler**: Şu durumları kontrol edin:
+  * Klasörler Mesaj Klasörü ayarlarında hariç tutulmuş
+  * Otomatik kişi oluşturma devre dışı (e-postaların zaten var olan Twenty kayıtlarına ihtiyacı var)
+  * E-posta iş arkadaşlarından (aynı alan adı) veya grup listelerinden gelmektedir
+  * Posta kutusu hala ilk senkronizasyonu tamamlıyor
+
+### E-posta Kısıtlamaları
+
+* **Sistem Klasörleri**: Bazı e-posta klasörleri senkronizasyon için mevcut olmayabilir
+* **Takma Adlar**: Sadece gerçek posta kutuları bağlanabilir (e-posta takma adları değil)

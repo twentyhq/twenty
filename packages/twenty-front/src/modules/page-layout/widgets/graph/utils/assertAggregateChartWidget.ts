@@ -1,3 +1,4 @@
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { type AggregateChartConfiguration } from '~/generated/graphql';
@@ -16,7 +17,12 @@ export const assertAggregateChartWidgetOrThrow: AssertAggregateChartWidgetOrThro
       new Error('Widget objectMetadataId is required'),
     );
 
-    if (widget.configuration?.__typename !== 'AggregateChartConfiguration') {
+    if (
+      !isWidgetConfigurationOfType(
+        widget.configuration,
+        'AggregateChartConfiguration',
+      )
+    ) {
       throw new Error(
         `Expected AggregateChartConfiguration but got ${widget.configuration?.__typename}`,
       );

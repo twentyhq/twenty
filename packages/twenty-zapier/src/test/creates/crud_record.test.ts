@@ -1,4 +1,9 @@
-import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
+import {
+  type Bundle,
+  createAppTester,
+  tools,
+  type ZObject,
+} from 'zapier-platform-core';
 
 import { crudRecordKey } from '../../creates/crud_record';
 import App from '../../index';
@@ -16,16 +21,18 @@ describe('creates.create_company', () => {
       name: 'Company Name',
       address: { addressCity: 'Paris' },
       linkedinLink: {
-        primaryLinkUrl: '/linkedin_url',
+        primaryLinkUrl: 'http://test.com/linkedin_url',
         primaryLinkLabel: 'Test linkedinUrl',
         secondaryLinks: [
-          '{ url: "/linkedin_url2", label: "Test linkedinUrl2" }',
+          '{ url: "http://test.com/linkedin_url2", label: "Test linkedinUrl2" }',
         ],
       },
       xLink: {
-        primaryLinkUrl: '/x_url',
+        primaryLinkUrl: 'http://test.com/x_url',
         primaryLinkLabel: 'Test xUrl',
-        secondaryLinks: ['{ url: "/x_url2", label: "Test xUrl2" }'],
+        secondaryLinks: [
+          '{ url: "http://test.com/x_url2", label: "Test xUrl2" }',
+        ],
       },
       annualRecurringRevenue: {
         amountMicros: 100000000000,

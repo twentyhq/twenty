@@ -9,6 +9,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
+import { dropdownYPositionComponentState } from '@/ui/layout/dropdown/states/internal/dropdownYPositionComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
@@ -117,6 +118,11 @@ export const Dropdown = ({
     dropdownId,
   );
 
+  const setDropdownYPosition = useSetRecoilComponentState(
+    dropdownYPositionComponentState,
+    dropdownId,
+  );
+
   const isMobile = useIsMobile();
   const bottomAutoresizePadding = isMobile
     ? (middlewareBoundaryPadding.bottomMobile ??
@@ -143,7 +149,7 @@ export const Dropdown = ({
         ...boundaryOptions,
       }),
       size({
-        apply: ({ availableHeight, availableWidth }) => {
+        apply: ({ availableHeight, availableWidth, y: floatingY }) => {
           flushSync(() => {
             const maxHeightToApply =
               availableHeight < DROPDOWN_RESIZE_MIN_HEIGHT
@@ -157,6 +163,7 @@ export const Dropdown = ({
 
             setDropdownMaxHeight(maxHeightToApply);
             setDropdownMaxWidth(maxWidthToApply);
+            setDropdownYPosition(floatingY);
           });
         },
         ...boundaryOptions,

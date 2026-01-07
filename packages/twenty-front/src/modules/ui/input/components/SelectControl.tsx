@@ -84,6 +84,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
+      title={selectedOption.fullLabel}
     >
       {isDefined(selectedOption?.Icon) ? (
         <selectedOption.Icon

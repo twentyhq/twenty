@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type WhereExpressionBuilder } from 'typeorm';
@@ -73,6 +74,7 @@ export class GraphqlQueryFilterFieldParser {
       throw new GraphqlQueryRunnerException(
         `Invalid filter value for field ${key}. Expected non-empty array`,
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`Invalid filter value: "${value}"` },
       );
     }
     const { sql, params } = computeWhereConditionParts({
@@ -133,6 +135,7 @@ export class GraphqlQueryFilterFieldParser {
         throw new GraphqlQueryRunnerException(
           `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
           GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: msg`Invalid filter value: "${value}"` },
         );
       }
 

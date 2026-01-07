@@ -1,0 +1,46 @@
+---
+title: Feature Flags
+---
+
+Feature flags are used to hide experimental features. Pentru Twenty, acestea sunt setate la nivel de spațiu de lucru și nu la nivel de utilizator.
+
+## Adding a new feature flag
+
+In `FeatureFlagKey.ts` add the feature flag:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Also add it to the enum in `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+To apply a feature flag on a **backend** feature use:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+To apply a feature flag on a **frontend** feature use:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Configure feature flags for the deployment
+
+Change the corresponding record in the Table `core.featureFlag`:
+
+| id        | cheie                    | IdSpațiuDeLucru | valoare    |
+| --------- | ------------------------ | --------------- | ---------- |
+| Aleatoriu | `IS_FEATURENAME_ENABLED` | IdSpațiuDeLucru | `adevărat` |

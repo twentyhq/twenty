@@ -34,7 +34,10 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: [
+    [process.env.CI ? 'github' : 'list'],
+    ['./reporters/log-summary-reporter.ts'],
+  ],
   projects: [
     {
       name: 'setup',

@@ -6,7 +6,7 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/display';
@@ -99,6 +99,7 @@ export const DocumentViewer = ({
   documentName,
   documentUrl,
 }: DocumentViewerProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const [csvPreview, setCsvPreview] = useState<string | undefined>(undefined);
 
@@ -141,7 +142,7 @@ export const DocumentViewer = ({
           </StyledMessage>
           <Button
             Icon={IconDownload}
-            title="Download File"
+            title={t`Download File`}
             onClick={() => downloadFile(documentUrl, documentName)}
             variant="secondary"
           />

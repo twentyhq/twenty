@@ -12,12 +12,10 @@ describe('attachmentsResolver (e2e)', () => {
               node {
                 name
                 fullPath
-                type
                 id
                 createdAt
                 updatedAt
                 deletedAt
-                authorId
                 taskId
                 noteId
                 personId
@@ -54,7 +52,6 @@ describe('attachmentsResolver (e2e)', () => {
 
           expect(attachments).toHaveProperty('name');
           expect(attachments).toHaveProperty('fullPath');
-          expect(attachments).toHaveProperty('type');
           expect(attachments).toHaveProperty('id');
           expect(attachments).toHaveProperty('createdAt');
           expect(attachments).toHaveProperty('updatedAt');

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -41,7 +42,7 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text="No results" />
+          <MenuItem text={t`No results`} />
         ) : (
           <>
             {selectedCurrency && (

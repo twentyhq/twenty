@@ -18,9 +18,13 @@ export const codeInterpreterModuleFactory = async (
       const nodeEnv = twentyConfigService.get('NODE_ENV');
 
       if (nodeEnv === NodeEnvironment.PRODUCTION) {
-        throw new Error(
-          'LOCAL code interpreter driver is not allowed in production. Use E2B driver instead by setting CODE_INTERPRETER_TYPE=E2B and providing E2B_API_KEY.',
-        );
+        return {
+          type: CodeInterpreterDriverType.DISABLED,
+          options: {
+            reason:
+              'LOCAL code interpreter driver is not allowed in production. Use E2B driver instead by setting CODE_INTERPRETER_TYPE=E2B and providing E2B_API_KEY.',
+          },
+        };
       }
 
       return {
@@ -42,6 +46,15 @@ export const codeInterpreterModuleFactory = async (
         options: {
           apiKey,
           timeoutMs,
+        },
+      };
+    }
+    case CodeInterpreterDriverType.DISABLED: {
+      return {
+        type: CodeInterpreterDriverType.DISABLED,
+        options: {
+          reason:
+            'Code interpreter is disabled. Set CODE_INTERPRETER_TYPE to LOCAL (development only) or E2B to enable it.',
         },
       };
     }

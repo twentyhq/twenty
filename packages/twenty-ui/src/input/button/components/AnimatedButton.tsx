@@ -16,6 +16,7 @@ import {
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
     animatedSvg: React.ReactNode;
+    soonLabel?: string;
   };
 
 const StyledButton = styled.button<
@@ -408,6 +409,7 @@ export const AnimatedButton = ({
   transition,
   dataClickOutsideId,
   dataGloballyPreventClickOutside,
+  soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -454,7 +456,7 @@ export const AnimatedButton = ({
           </StyledShortcutLabel>
         </>
       )}
-      {soon && <StyledSoonPill label="Soon" />}
+      {soon && <StyledSoonPill label={soonLabel} />}
     </StyledButton>
   );
 };

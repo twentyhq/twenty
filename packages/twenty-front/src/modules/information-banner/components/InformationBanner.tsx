@@ -2,6 +2,7 @@ import { InformationBannerComponentInstanceContext } from '@/information-banner/
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import {
   Banner,
   type BannerVariant,
@@ -83,7 +84,7 @@ export const InformationBanner = ({
               size="small"
               variant="tertiary"
               onClick={onClose}
-              ariaLabel="Close banner"
+              ariaLabel={t`Close banner`}
             />
           )}
         </Banner>

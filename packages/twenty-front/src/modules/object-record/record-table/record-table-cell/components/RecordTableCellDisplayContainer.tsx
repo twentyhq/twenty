@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
 import { type Ref } from 'react';
@@ -52,7 +53,7 @@ export const RecordTableCellDisplayContainer = ({
   >
     {placeholderForEmptyCell ? (
       <StyledEmptyPlaceholderField>
-        {'Set ' + placeholderForEmptyCell}
+        {t`Set ${placeholderForEmptyCell}`}
       </StyledEmptyPlaceholderField>
     ) : (
       <StyledInnerContainer>{children}</StyledInnerContainer>

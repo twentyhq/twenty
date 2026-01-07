@@ -17,6 +17,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -149,8 +150,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       <ActionButton
         action={{
           Icon: IconPlus,
-          label: 'Add rule',
-          shortLabel: 'Add rule',
+          label: t`Add rule`,
+          shortLabel: t`Add rule`,
           key: 'add-rule',
         }}
         onClick={handleAddFilter}
@@ -165,8 +166,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
         <ActionButton
           action={{
             Icon: IconPlus,
-            label: 'Add filter rule',
-            shortLabel: 'Add filter rule',
+            label: t`Add filter rule`,
+            shortLabel: t`Add filter rule`,
             key: 'add-filter-rule',
           }}
         />
@@ -176,13 +177,13 @@ export const AdvancedFilterAddFilterRuleSelect = ({
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconPlus}
-              text="Add rule"
+              text={t`Add rule`}
               onClick={handleAddFilter}
             />
             {isFilterRuleGroupOptionVisible && (
               <MenuItem
                 LeftIcon={IconLibraryPlus}
-                text="Add rule group"
+                text={t`Add rule group`}
                 onClick={handleAddFilterGroup}
               />
             )}

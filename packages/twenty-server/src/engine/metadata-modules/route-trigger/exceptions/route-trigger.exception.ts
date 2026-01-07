@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -14,18 +15,29 @@ export enum RouteTriggerExceptionCode {
   SERVERLESS_FUNCTION_EXECUTION_ERROR = 'SERVERLESS_FUNCTION_EXECUTION_ERROR',
 }
 
-const routeTriggerExceptionUserFriendlyMessages: Record<
-  RouteTriggerExceptionCode,
-  MessageDescriptor
-> = {
-  [RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND]: msg`Workspace not found.`,
-  [RouteTriggerExceptionCode.ROUTE_NOT_FOUND]: msg`Route not found.`,
-  [RouteTriggerExceptionCode.TRIGGER_NOT_FOUND]: msg`Trigger not found.`,
-  [RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND]: msg`Serverless function not found.`,
-  [RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST]: msg`Route already exists.`,
-  [RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST]: msg`Route path already exists.`,
-  [RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION]: msg`You do not have permission to perform this action.`,
-  [RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR]: msg`Serverless function execution failed.`,
+const getRouteTriggerExceptionUserFriendlyMessage = (
+  code: RouteTriggerExceptionCode,
+) => {
+  switch (code) {
+    case RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case RouteTriggerExceptionCode.ROUTE_NOT_FOUND:
+      return msg`Route not found.`;
+    case RouteTriggerExceptionCode.TRIGGER_NOT_FOUND:
+      return msg`Trigger not found.`;
+    case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      return msg`Serverless function not found.`;
+    case RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST:
+      return msg`Route already exists.`;
+    case RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST:
+      return msg`Route path already exists.`;
+    case RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION:
+      return msg`You do not have permission to perform this action.`;
+    case RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR:
+      return msg`Serverless function execution failed.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class RouteTriggerException extends CustomException<RouteTriggerExceptionCode> {
@@ -36,7 +48,8 @@ export class RouteTriggerException extends CustomException<RouteTriggerException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? routeTriggerExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ??
+        getRouteTriggerExceptionUserFriendlyMessage(code),
     });
   }
 }

@@ -85,7 +85,8 @@ export const useWorkflowAiAgentPermissionActions = ({
       workflowAiAgentActionAgent.label ??
       workflowAiAgentActionAgent.name ??
       t`Agent`;
-    const roleName = `${agentDisplayName} role (${workflowAiAgentActionAgent.id.substring(0, 8)})`;
+    const agentIdPrefix = workflowAiAgentActionAgent.id.substring(0, 8);
+    const roleName = t`${agentDisplayName} role (${agentIdPrefix})`;
     const generatedRoleId = v4();
 
     await createRole({
@@ -115,7 +116,13 @@ export const useWorkflowAiAgentPermissionActions = ({
       },
     });
 
-    await refetchAgentAndRoles();
+    const { refetchedAgent } = await refetchAgentAndRoles();
+
+    // Update Recoil state with the refetched agent to ensure roleId is available
+    // Apollo's onCompleted is not called on refetch, so we need to update manually
+    if (isDefined(refetchedAgent)) {
+      setWorkflowAiAgentActionAgent(refetchedAgent);
+    }
 
     return generatedRoleId;
   };
@@ -293,7 +300,6 @@ export const useWorkflowAiAgentPermissionActions = ({
       return;
     }
 
-    const hadRoleBefore = isDefined(roleId);
     const ensuredRoleId = await ensureRoleId();
 
     if (!ensuredRoleId || permissionFlagKeys.includes(permissionFlagKey)) {
@@ -309,14 +315,7 @@ export const useWorkflowAiAgentPermissionActions = ({
       },
     });
 
-    const { refetchedAgent } = await refetchAgentAndRoles();
-    if (
-      !hadRoleBefore &&
-      isDefined(refetchedAgent) &&
-      isDefined(setWorkflowAiAgentActionAgent)
-    ) {
-      setWorkflowAiAgentActionAgent(refetchedAgent);
-    }
+    await refetchAgentAndRoles();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };

@@ -1,0 +1,76 @@
+---
+title: Error Handling & Validation
+description: Review and fix import errors directly in the UI before confirming.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Pre-Import Validation
+
+After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+
+## Jak to funguje
+
+1. **Upload** your CSV file
+2. **Map** your columns to Twenty fields
+3. **Review** the potential errors highlighted in yellow
+4. **Fix errors** directly in the UI
+5. **Confirm** the import
+
+<VimeoEmbed videoId="1145273857" title="Video demonstration" />
+
+## Error Display
+
+Rows with issues are highlighted in **yellow**. You can:
+
+* **Edit the cell directly** to fix the error
+* **Remove the row** to skip it entirely
+
+This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+
+## Common Error Types
+
+### Duplicate Values
+
+**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+
+**Fix**:
+
+* Edit the duplicate value in the import UI
+* Remove one of the duplicate rows
+
+See [Uniqueness Constraints](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+
+### Invalid Format
+
+**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+
+**Fix**: Edit the cell to use the correct format.
+
+See [Field Mapping](/l/cs/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+
+### Missing Required Fields
+
+**Cause**: A required field is empty.
+
+**Fix**: Enter a value in the required field or remove the row.
+
+### Relation Not Found
+
+**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+
+**Fix**:
+
+* Import the parent records first
+* Or correct the reference value
+
+See [Import Relations](/l/cs/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+
+## Tips for Fewer Errors
+
+1. **Download the template** to see expected format prior to importing your file
+2. **Clean your data** in the spreadsheet first
+3. **Import files in correct order** to import relations (Companies → People → Opportunities)
+4. **Test with small batches** before full import
+5. **Check for duplicates** before uploading
+6. **Limit the size of your file to 10,000 records** per file

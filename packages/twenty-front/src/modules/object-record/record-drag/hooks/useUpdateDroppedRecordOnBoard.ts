@@ -139,13 +139,15 @@ export const useUpdateDroppedRecordOnBoard = () => {
           newTargetRecordGroupWithIds.map((record) => record.id),
         );
 
-        upsertRecordsInStore([
-          {
-            ...initialRecord,
-            [selectFieldMetadataItem.name]: targetRecordGroupValue,
-            position: newPosition,
-          },
-        ]);
+        upsertRecordsInStore({
+          partialRecords: [
+            {
+              ...initialRecord,
+              [selectFieldMetadataItem.name]: targetRecordGroupValue,
+              position: newPosition,
+            },
+          ],
+        });
 
         updateOneRecord({
           idToUpdate: initialRecord.id,

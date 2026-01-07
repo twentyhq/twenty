@@ -139,7 +139,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
             continue;
           }
 
-          upsertRecordsInStore(records);
+          upsertRecordsInStore({ partialRecords: records });
 
           setRecordIdsForColumn(recordGroupDefinition.id, records);
 

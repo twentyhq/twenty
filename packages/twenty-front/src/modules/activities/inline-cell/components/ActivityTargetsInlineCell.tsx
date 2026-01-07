@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
@@ -5,6 +6,7 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
 import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
@@ -53,67 +55,71 @@ export const ActivityTargetsInlineCell = ({
   });
 
   return (
-    <RecordFieldComponentInstanceContext.Provider
-      value={{
-        instanceId: componentInstanceId,
-      }}
+    <RecordFieldsScopeContextProvider
+      value={{ scopeInstanceId: componentInstanceId }}
     >
-      <FieldFocusContextProvider>
-        <FieldContextProvider
-          objectNameSingular={activityObjectNameSingular}
-          objectRecordId={activityRecordId}
-          fieldMetadataName={fieldDefinition.metadata.fieldName}
-          fieldPosition={3}
-          overridenIsFieldEmpty={activityTargetObjectRecords.length === 0}
-          onMouseEnter={onMouseEnter}
-          anchorId={anchorId}
-        >
-          <RecordInlineCellContext.Provider
-            value={{
-              buttonIcon: IconPencil,
-              IconLabel: showLabel ? IconArrowUpRight : undefined,
-              showLabel: showLabel,
-              readonly: isReadOnly,
-              labelWidth: fieldDefinition?.labelWidth,
-              editModeContent: (
-                <MultipleRecordPicker
-                  focusId={componentInstanceId}
-                  componentInstanceId={componentInstanceId}
-                  onClickOutside={() => {
-                    closeInlineCell();
-                  }}
-                  onChange={(morphItem) => {
-                    updateActivityTargetFromCell({
-                      recordPickerInstanceId: componentInstanceId,
-                      morphItem,
-                      activityTargetWithTargetRecords:
-                        activityTargetObjectRecords,
-                    });
-                  }}
-                  onSubmit={() => {
-                    closeInlineCell();
-                  }}
-                />
-              ),
-              label: 'Relations',
-              displayModeContent: (
-                <ActivityTargetChips
-                  activityTargetObjectRecords={activityTargetObjectRecords}
-                  maxWidth={maxWidth}
-                />
-              ),
-              onOpenEditMode: () => {
-                openActivityTargetCellEditMode({
-                  recordPickerInstanceId: componentInstanceId,
-                  activityTargetObjectRecords,
-                });
-              },
-            }}
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: componentInstanceId,
+        }}
+      >
+        <FieldFocusContextProvider>
+          <FieldContextProvider
+            objectNameSingular={activityObjectNameSingular}
+            objectRecordId={activityRecordId}
+            fieldMetadataName={fieldDefinition.metadata.fieldName}
+            fieldPosition={3}
+            overridenIsFieldEmpty={activityTargetObjectRecords.length === 0}
+            onMouseEnter={onMouseEnter}
+            anchorId={anchorId}
           >
-            <RecordInlineCellContainer />
-          </RecordInlineCellContext.Provider>
-        </FieldContextProvider>
-      </FieldFocusContextProvider>
-    </RecordFieldComponentInstanceContext.Provider>
+            <RecordInlineCellContext.Provider
+              value={{
+                buttonIcon: IconPencil,
+                IconLabel: showLabel ? IconArrowUpRight : undefined,
+                showLabel: showLabel,
+                readonly: isReadOnly,
+                labelWidth: fieldDefinition?.labelWidth,
+                editModeContent: (
+                  <MultipleRecordPicker
+                    focusId={componentInstanceId}
+                    componentInstanceId={componentInstanceId}
+                    onClickOutside={() => {
+                      closeInlineCell();
+                    }}
+                    onChange={(morphItem) => {
+                      updateActivityTargetFromCell({
+                        recordPickerInstanceId: componentInstanceId,
+                        morphItem,
+                        activityTargetWithTargetRecords:
+                          activityTargetObjectRecords,
+                      });
+                    }}
+                    onSubmit={() => {
+                      closeInlineCell();
+                    }}
+                  />
+                ),
+                label: t`Relations`,
+                displayModeContent: (
+                  <ActivityTargetChips
+                    activityTargetObjectRecords={activityTargetObjectRecords}
+                    maxWidth={maxWidth}
+                  />
+                ),
+                onOpenEditMode: () => {
+                  openActivityTargetCellEditMode({
+                    recordPickerInstanceId: componentInstanceId,
+                    activityTargetObjectRecords,
+                  });
+                },
+              }}
+            >
+              <RecordInlineCellContainer />
+            </RecordInlineCellContext.Provider>
+          </FieldContextProvider>
+        </FieldFocusContextProvider>
+      </RecordFieldComponentInstanceContext.Provider>
+    </RecordFieldsScopeContextProvider>
   );
 };

@@ -1,0 +1,209 @@
+---
+title: Exportați-vă datele
+description: Ghid complet, pas cu pas, pentru exportul datelor din Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Prezentare generală
+
+Exportați datele spațiului de lucru în CSV pentru copii de siguranță, raportare sau migrare.
+
+**Cazuri de utilizare:**
+
+* **Copii de siguranță regulate** — păstrați copii ale datelor dvs.
+* **Raportare externă** — analizați datele în Excel, Google Sheets sau instrumente BI
+* **Migrare** — mutați datele într-un alt sistem
+* **Actualizări în masă** — exportați, editați și reimportați pentru a actualiza înregistrările
+
+## Ce trebuie să știți
+
+### Limite de export
+
+* **Maxim 20.000 de înregistrări** pentru fiecare export
+* Sunt exportate doar **coloanele vizibile**
+* Sunt exportate doar **înregistrările filtrate** (pe baza vizualizării curente)
+
+<Note>Pentru exporturi mai mari (20.000+ înregistrări), utilizați filtre pentru a exporta în loturi sau folosiți [API](/l/ro/developers/extend/capabilities/apis).</Note>
+
+### Permisiuni
+
+Aveți nevoie de permisiunea **"Export CSV"** pentru a exporta date. Contactați administratorul spațiului de lucru dacă nu aveți această opțiune.
+
+## Pasul 1: Navigați la obiect
+
+Accesați obiectul pe care doriți să-l exportați:
+
+* **Persoane** — pentru contacte
+* **Companii** — pentru organizații
+* **Oportunități** — pentru tranzacții
+* **Obiecte personalizate** — orice obiect pe care l-ați creat
+
+## Pasul 2: Configurați vizualizarea
+
+**Important:** Exportul include doar ceea ce este vizibil în vizualizarea curentă.
+
+### Adăugați/Eliminați coloane
+
+1. Faceți clic pe **Opțiuni → Câmpuri** (sau pe **+** la capătul coloanelor)
+2. Bifați câmpurile pe care doriți să le exportați
+3. Debifați câmpurile de care nu aveți nevoie
+
+### Filtrați înregistrările (opțional)
+
+Dacă aveți nevoie doar de un subset de date:
+
+1. Faceți clic pe **Filtru**
+2. Adăugați condiții de filtrare (de ex., "Created date > 1 ianuarie 2024")
+3. Vor fi exportate doar înregistrările care se potrivesc
+
+### Sortați înregistrările (opțional)
+
+1. Faceți clic pe antetul unei coloane pentru a sorta
+2. Exportul va respecta ordinea de sortare
+
+<Note>**Creați o vizualizare dedicată pentru export.** Salvați o vizualizare configurată specific pentru exporturi, astfel încât să nu fie nevoie să reconfigurați de fiecare dată.</Note>
+
+## Pasul 3: Exportați datele
+
+1. Faceți clic pe pictograma **⋮** din dreapta sus a tabelului
+2. Selectați **Exportați vizualizarea**
+3. Alegeți unde să salvați fișierul CSV
+4. Așteptați finalizarea descărcării
+
+## Ce se exportă
+
+| Incluse                                          | Neincluse                           |
+| ------------------------------------------------ | ----------------------------------- |
+| Toate coloanele vizibile                         | Coloane ascunse                     |
+| Înregistrări care se potrivesc filtrelor curente | Înregistrări excluse de filtre      |
+| Valori ale câmpurilor personalizate              | Câmpuri care nu sunt în vizualizare |
+| ID-uri ale înregistrărilor                       | Atașamente de fișiere               |
+| ID-uri de relație                                | Imagini                             |
+
+### Câmpuri de relație
+
+ID-urile relațiilor sunt exportate doar pe **partea "many"** a unei relații:
+
+* **Exportul de Persoane** include o coloană `companyId` (relația Persoane → Companie)
+* **Exportul de Companii** NU include `peopleIds` (Companii este partea "one")
+
+Asta înseamnă că puteți folosi exportul de Persoane pentru a reimporta și menține legătura cu Compania, dar va trebui să reimportați Persoanele după Companii pentru a recrea relațiile.
+
+## Export pentru scopuri specifice
+
+### Pentru copii de siguranță
+
+1. Creați o vizualizare cu **toate câmpurile** vizibile
+2. Eliminați toate filtrele pentru a include toate înregistrările
+3. Exportați fiecare tip de obiect separat
+4. Stocați exporturile într-o locație sigură
+5. Setați un memento recurent (săptămânal/lunar)
+
+### Pentru raportare externă
+
+1. Includeți doar câmpurile necesare pentru analiză
+2. Aplicați filtre pentru a vă concentra pe datele relevante
+3. Luați în considerare sortarea după câmpul pe care îl veți analiza
+
+### Pentru actualizări în masă
+
+1. Exportați înregistrările pe care doriți să le actualizați
+2. Includeți identificatorul unic (`email`, `domain` sau `id`)
+3. Editați fișierul exportat
+4. Reimportați pentru a actualiza înregistrările
+   Consultați: [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Pentru migrare
+
+Dacă exportați pentru a migra către un alt sistem:
+
+1. **Exportați fiecare obiect separat** — Persoane, Companii, Oportunități etc.
+2. **Includeți câmpurile de ID** — acestea ajută la menținerea relațiilor
+3. **Documentați mapările câmpurilor** — notați cum câmpurile Twenty corespund sistemului țintă
+
+## Gestionarea seturilor de date mari (20.000+ înregistrări)
+
+Limita de export este de 20.000 de înregistrări. Pentru seturi de date mai mari:
+
+### Opțiunea 1: Export în loturi
+
+1. Adăugați un filtru (de ex., intervale "Created date")
+2. Exportați primul lot
+3. Modificați filtrul
+4. Exportați următorul lot
+5. Combinați fișierele în foaia de calcul
+
+**Exemple de filtre pentru lotizare:**
+
+* După interval de date (ianuarie, februarie, martie...)
+* După proprietar (Membru al echipei A, Membru al echipei B...)
+* După statut (Activ, Inactiv...)
+
+### Opțiunea 2: Utilizați API-ul
+
+API-ul nu are limită de înregistrări:
+
+1. Obțineți cheia API din **Setări → Dezvoltatori**
+2. Utilizați API-ul GraphQL pentru a interoga înregistrări
+3. Procesați rezultatele în aplicația dvs.
+
+Consultați: [Documentație API](/l/ro/developers/extend/capabilities/apis)
+
+## Sfaturi și bune practici
+
+### Creați vizualizări pentru export
+
+Salvați vizualizări configurate special pentru export:
+
+1. Configurați coloanele și filtrele
+2. Faceți clic pe **Opțiuni pentru vizualizare** → **Salvați ca vizualizare nouă**
+3. Denumiți-o "Export - [Scop]"
+
+### Securizați-vă exporturile
+
+Fișierele exportate pot conține date sensibile:
+
+* Stocați în locații sigure
+* Ștergeți exporturile vechi când nu mai sunt necesare
+* Aveți grijă când partajați fișierele de export
+
+### Verificați înainte de export
+
+<Check>Coloanele corecte sunt vizibile</Check>
+<Check>Filtrele sunt setate corect (sau eliminate pentru export complet)</Check>
+<Check>Aveți permisiunea de export</Check>
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="De ce lipsesc unele coloane din exportul meu?">
+    Sunt exportate doar coloanele vizibile. Adăugați coloanele de care aveți nevoie prin **Opțiuni → Câmpuri** înainte de export.
+  </Accordion>
+
+  <Accordion title="De ce nu conține exportul meu toate înregistrările?">
+    Verificați filtrele. Exportul include doar înregistrările care se potrivesc filtrelor vizualizării curente. Eliminați filtrele pentru a exporta toate înregistrările.
+  </Accordion>
+
+  <Accordion title="Pot exporta mai mult de 20.000 de înregistrări?">
+    Nu într-un singur export. Folosiți filtre pentru a exporta în loturi sau utilizați API-ul pentru seturi de date mai mari.
+  </Accordion>
+
+  <Accordion title="În ce format este fișierul de export?">
+    CSV (valori separate prin virgulă). Se deschide în Excel, Google Sheets sau orice aplicație de foi de calcul.
+  </Accordion>
+
+  <Accordion title="Sunt incluse ID-urile de relație?">
+    Da, dar numai pe partea "many" a relațiilor. De exemplu, un export de Persoane include `companyId`, dar un export de Companii nu include ID-urile persoanelor.
+  </Accordion>
+
+  <Accordion title="Pot automatiza exporturile?">
+    Nu direct prin interfața de utilizator. Utilizați API-ul pentru a construi fluxuri de lucru de export automatizate.
+  </Accordion>
+</AccordionGroup>
+
+## Pașii următori
+
+* [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) — editați și reimportați exportul
+* [Cum să importați date prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api) — pentru seturi de date mari
+* [Documentație API](/l/ro/developers/extend/capabilities/apis) — creați fluxuri de lucru de export personalizate

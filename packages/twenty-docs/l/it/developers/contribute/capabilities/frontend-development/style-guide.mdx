@@ -1,0 +1,290 @@
+---
+title: Guida di stile
+---
+
+Questo documento include le regole da seguire quando si scrive codice.
+
+L'obiettivo qui è avere una base di codice coerente, facile da leggere e da mantenere.
+
+Per questo, è meglio essere un po' più dettagliati che troppo concisi.
+
+Tieni sempre a mente che le persone leggono il codice più spesso di quanto non lo scrivano, soprattutto in un progetto open source, dove chiunque può contribuire.
+
+Ci sono molte regole che non sono definite qui, ma che vengono controllate automaticamente dai linters.
+
+## React
+
+### Usa componenti funzionali
+
+Usa sempre componenti funzionali TSX.
+
+Non utilizzare l'`import` di default con `const`, perché è più difficile da leggere e importare con il completamento del codice.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Props
+
+Crea il tipo di proprietà e chiamalo `(ComponentName)Props` se non c'è bisogno di esportarle.
+
+Usa la destrutturazione delle props.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Evita di usare `React.FC` o `React.FunctionComponent` per definire i tipi di proprietà
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### Nessuna espansione singola delle variabili delle props negli elementi JSX
+
+Evita di usare l'espansione singola delle variabili delle props negli elementi JSX, come `{...props}`. Questa pratica spesso porta a un codice meno leggibile e più difficile da mantenere perché non è chiaro quali props stia ricevendo il componente.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Ragionamento:
+
+* A colpo d'occhio, è più chiaro quali props il codice passa, rendendo più semplice comprenderlo e mantenerlo.
+* Aiuta a prevenire un accoppiamento stretto tra i componenti attraverso le loro props.
+* Gli strumenti di linting rendono più facile identificare le props mal scritte o non utilizzate quando si elencano esplicitamente.
+
+## JavaScript
+
+### Usa l'operatore di coalescenza dei valori null `??`
+
+```tsx
+// ❌ Male, può restituire 'default' anche se il valore è 0 o ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Bene, restituirà 'default' solo se il valore è null o undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Usa il collegamento delle opzioni `?.`
+
+```tsx
+// ❌ Bad
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Usa `type` invece di `interface`
+
+Usa sempre `type` invece di `interface`, perché quasi sempre si sovrappongono, e `type` è più flessibile.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Usa letterali di stringa invece di enum
+
+[I letterali di stringa](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) sono la modalità preferita per gestire valori simili agli enum in TypeScript. Sono più facili da estendere con Pick e Omit e offrono una migliore esperienza per lo sviluppatore, in particolare con il completamento del codice.
+
+Puoi vedere perché TypeScript consiglia di evitare gli enum [qui](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Bene, utilizza un letterale di stringa
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL e librerie interne
+
+Dovresti usare gli enum che il codegen GraphQL genera.
+
+È anche meglio usare un enum quando si utilizza una libreria interna, così la libreria interna non deve esporre un tipo di letterale di stringa che non è correlato all'API interna.
+
+Esempio:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Stile
+
+### Usa StyledComponents
+
+Stile i componenti con [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Male
+<div className="my-class">Ciao Mondo</div>
+```
+
+```tsx
+// ✅ Bene
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Prefissi i componenti stilizzati con "Styled" per differenziarli dai componenti "reali".
+
+```tsx
+// ❌ Male
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Bene
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Tematizzazione
+
+Utilizzare il tema per la maggior parte della stilizzazione dei componenti è l'approccio preferito.
+
+#### Unità di misura
+
+Evita di usare `px` o valori `rem` direttamente nei componenti stilizzati. I valori necessari sono generalmente già definiti nel tema, quindi è consigliato sfruttare il tema per questi scopi.
+
+#### Colori
+
+Evita di introdurre nuovi colori; usa invece la palette esistente nel tema. Nel caso in cui la palette non sia adeguata, procedi lasciando un commento affinché il team possa risolvere.
+
+```tsx
+// ❌ Male, specifica direttamente i valori di stile senza utilizzare il tema
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Bene, sfrutta il tema
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Applicare importazioni senza tipo
+
+Evita le importazioni di tipo. Per far rispettare questo standard, una regola di ESLint controlla e segnala qualsiasi violazione delle importazioni di tipo. Questo aiuta a mantenere la coerenza e la leggibilità del codice TypeScript.
+
+```tsx
+// ❌ Male
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Male
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Bene
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Perché evitare importazioni di tipo
+
+* **Coerenza**: Evitando le importazioni di tipo e usando un unico approccio sia per le importazioni di tipo che di valore, il codice rimane coerente nel suo stile di importazione dei moduli.
+
+* **Leggibilità**: Le importazioni senza tipo migliorano la leggibilità del codice rendendo chiaro quando si stanno importando valori o tipi. Questo riduce l'ambiguità e rende più semplice comprendere lo scopo dei simboli importati.
+
+* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+
+### Regola ESLint
+
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+
+Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript stesso scoraggia questa pratica, come menzionato nelle [note di rilascio di TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Nella maggior parte delle situazioni, non si dovrebbe aver bisogno di usare importazioni di solo tipo.
+
+Per assicurarti che il tuo codice sia conforme a questa regola, assicurati di eseguire ESLint come parte del tuo flusso di lavoro di sviluppo.

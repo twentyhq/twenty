@@ -1,12 +1,18 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
+import type { Bundle, ZObject } from 'zapier-platform-core';
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import { listRecordIdsKey } from '../triggers/list_record_ids';
 import { computeInputFields } from '../utils/computeInputFields';
-import { InputData } from '../utils/data.types';
+import { type InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb, { requestSchema } from '../utils/requestDb';
 import { DatabaseEventAction } from '../utils/triggers/triggers.utils';
-import { capitalize } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+
+const capitalize = (stringToCapitalize: string) => {
+  if (!isNonEmptyString(stringToCapitalize)) return '';
+
+  return stringToCapitalize[0].toUpperCase() + stringToCapitalize.slice(1);
+};
 
 export const recordInputFields = async (
   z: ZObject,

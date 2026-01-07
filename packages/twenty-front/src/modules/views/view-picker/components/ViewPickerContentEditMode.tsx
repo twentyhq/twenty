@@ -21,6 +21,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/display';
 
 export const ViewPickerContentEditMode = () => {
@@ -75,7 +76,7 @@ export const ViewPickerContentEditMode = () => {
           />
         }
       >
-        Edit view
+        {t`Edit view`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <ViewPickerIconAndNameContainer>

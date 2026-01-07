@@ -1,6 +1,6 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import { type Layouts } from 'react-grid-layout';
-import { filterPendingPlaceholderFromLayouts } from '../filterPendingPlaceholderFromLayouts';
+import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
 
 describe('filterPendingPlaceholderFromLayouts', () => {
   it('should remove pending placeholder from both desktop and mobile layouts', () => {

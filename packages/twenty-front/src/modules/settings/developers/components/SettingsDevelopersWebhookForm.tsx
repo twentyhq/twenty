@@ -52,7 +52,7 @@ export const SettingsDevelopersWebhookForm = ({
 
   const getTitle = () => {
     if (isCreationMode) {
-      return 'New Webhook';
+      return t`New Webhook`;
     }
 
     const targetUrl = formConfig.watch('targetUrl');

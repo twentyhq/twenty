@@ -25,4 +25,5 @@ export type StepOutputSchemaV2 = {
   type: WorkflowTriggerType | WorkflowActionType;
   icon?: string;
   outputSchema: OutputSchemaV2;
+  objectName?: string;
 };

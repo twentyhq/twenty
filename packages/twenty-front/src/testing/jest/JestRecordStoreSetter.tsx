@@ -13,7 +13,7 @@ export const JestRecordStoreSetter = ({
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    upsertRecordsInStore(records);
+    upsertRecordsInStore({ partialRecords: records });
   });
 
   return <>{children}</>;

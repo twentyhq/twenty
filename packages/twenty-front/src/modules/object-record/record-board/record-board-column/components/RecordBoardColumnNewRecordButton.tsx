@@ -6,6 +6,7 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -66,7 +67,7 @@ export const RecordBoardColumnNewRecordButton = () => {
       }}
     >
       <IconPlus size={theme.icon.size.md} />
-      New
+      {t`New`}
     </StyledNewButton>
   );
 };

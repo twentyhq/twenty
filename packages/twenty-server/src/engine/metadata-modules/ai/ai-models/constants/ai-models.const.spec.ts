@@ -89,7 +89,7 @@ describe('AiModelRegistryService', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
     expect(() => SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
-      'No AI models are available. Please configure at least one provider.',
+      'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
     );
   });
 

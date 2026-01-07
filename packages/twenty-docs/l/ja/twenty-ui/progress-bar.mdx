@@ -1,5 +1,5 @@
 ---
-title: フィードバック
+title: Feedback
 image: /images/user-guide/emails/emails_header.png
 ---
 
@@ -7,71 +7,60 @@ image: /images/user-guide/emails/emails_header.png
   <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
 </Frame>
 
-進捗やカウントダウンを示し、右から左に動きます。
+Indicates progress or countdown and moves from right to left.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { ProgressBar } from "twenty-ui/feedback";
-
-export const MyComponent = () => {
-  return (
-    <ProgressBar
-      duration={6000}
-      delay={0}
-      easing="easeInOut"
-      barHeight={10}
-      barColor="#4bb543"
-      autoStart={true}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| プロパティ  | タイプ    | 説明                                                     | デフォルト     |
-| ------ | ------ | ------------------------------------------------------ | --------- |
-| 継続時間   | 数      | プログレスバーアニメーションの総デュレーション（ミリ秒）                           | 3         |
-| delay  | 数      | プログレスバーアニメーションの開始遅延時間（ミリ秒）                             | 0         |
-| easing | string | プログレスバーアニメーションのイージング関数                                 | easeInOut |
-| バーの高さ  | 数      | バーの高さ（ピクセル）                                            | 24        |
-| バーの色   | string | バーの色                                                   | グレー80     |
-| 自動開始   | ブール型   | `true`の場合、コンポーネントがマウントされたときにプログレスバーアニメーションが自動的に開始されます。 | `真`       |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type    | Description                                                                          | Default   |
+    | --------- | ------- | ------------------------------------------------------------------------------------ | --------- |
+    | duration  | number  | The total duration of the progress bar animation in milliseconds                     | 3         |
+    | delay     | number  | The delay in starting the progress bar animation in milliseconds                     | 0         |
+    | easing    | string  | Easing function for the progress bar animation                                       | easeInOut |
+    | barHeight | number  | The height of the bar in pixels                                                      | 24        |
+    | barColor  | string  | The color of the bar                                                                 | gray80    |
+    | autoStart | boolean | If `true`, the progress bar animation starts automatically when the component mounts | `true`    |
+  </Tab>
 </Tabs>
 
-## 円形プログレスバー
+## Circular Progress Bar
 
-タスクの進捗を示し、ユーザーに進行中のプロセスを伝達したい場合に、ロード画面などでよく使用されます。
+Indicates the progress of a task, often used in loading screens or areas where you want to communicate ongoing processes to the user.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
-
-export const MyComponent = () => {
-  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| プロパティ | タイプ    | 説明            | デフォルト        |
-| ----- | ------ | ------------- | ------------ |
-| サイズ   | 数      | 円形プログレスバーのサイズ | 50           |
-| バーの幅  | 数      | プログレスバーのラインの幅 | 5            |
-| バーの色  | string | プログレスバーの色     | currentColor |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props    | Type   | Description                           | Default      |
+    | -------- | ------ | ------------------------------------- | ------------ |
+    | size     | number | The size of the circular progress bar | 50           |
+    | barWidth | number | The width of the progress bar line    | 5            |
+    | barColor | string | The color of the progress bar         | currentColor |
+  </Tab>
 </Tabs>

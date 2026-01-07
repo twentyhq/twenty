@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   MessageParticipantRole,
   RelationOnDeleteAction,
@@ -20,7 +21,10 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'messageParticipant'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'messageParticipant', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'messageParticipant'>,
   FlatFieldMetadata
 > => ({
@@ -55,7 +59,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -74,7 +78,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -92,7 +96,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -109,6 +113,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Role',
       icon: 'IconAt',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: `'${MessageParticipantRole.FROM}'`,
       options: [
         {
@@ -152,6 +157,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -168,6 +174,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Display Name',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -185,6 +192,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Message',
       icon: 'IconMessage',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'message',
       targetFieldName: 'messageParticipants',
       settings: {
@@ -209,6 +217,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'messageParticipants',
       settings: {
@@ -233,6 +242,7 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'messageParticipants',
       settings: {

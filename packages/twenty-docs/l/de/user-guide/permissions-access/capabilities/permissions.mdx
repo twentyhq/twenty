@@ -1,0 +1,198 @@
+---
+title: Berechtigungen
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Das Berechtigungssystem von Twenty ermöglicht es Ihnen, den Zugriff auf drei Hauptbereiche zu steuern:
+
+* **Objekte und Felder**: Kontrollieren Sie, wer Datensätze und einzelne Felder anzeigen, bearbeiten oder löschen kann.
+* **Einstellungen**: Verwalten Sie den Zugriff auf die Konfiguration des Arbeitsbereichs und administrative Funktionen.
+* **Aktionen**: Steuern Sie allgemeine Arbeitsbereichsaktionen wie das Importieren von Daten oder das Versenden von E-Mails.
+
+## Erstellen Sie eine Rolle
+
+Um eine neue Rolle zu erstellen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Unter **Alle Rollen** klicken Sie auf **+ Rolle erstellen**
+3. Geben Sie einen Rollennamen ein
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Klicken Sie auf **Speichern**, um den Vorgang abzuschließen
+
+## Löschen Sie eine Rolle
+
+Um eine Rolle zu löschen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie entfernen möchten
+3. Öffnen Sie den Tab **Einstellungen** und klicken Sie auf **Rolle löschen**
+4. Klicken Sie im Modal auf **Bestätigen**
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Alle außer der **Admin**-Rolle können gelöscht werden. Es muss immer mindestens ein Mitglied der **Admin**-Rolle zugewiesen sein.
+</Note>
+
+## Rollen an Mitglieder zuweisen
+
+### Aktuelle Zuweisungen anzeigen
+
+* Gehen Sie zu **Einstellungen → Rollen**
+* Sehen Sie alle Rollen und wie viele Mitglieder jeweils zugewiesen sind
+* Anzeigen, welche Mitglieder welche Rollen haben
+
+### Weisen Sie einem Mitglied eine Rolle zu
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Klicken Sie auf **+ Mitglied zuweisen**
+5. Wählen Sie das Mitglied des Arbeitsbereichs aus der Liste aus
+6. Bestätigen Sie die Zuweisung
+
+### Standardrolle festlegen
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Suchen Sie im Abschnitt **Optionen** nach **Standardrolle**
+3. Wählen Sie aus, welche Rolle neue Mitglieder automatisch erhalten sollen
+4. Neue Arbeitsbereichsmitglieder werden beim Beitritt dieser Rolle zugewiesen
+
+<Note>
+  You can only assign roles to existing workspace members. Um neue Mitglieder einzuladen, verwenden Sie die [Mitgliederverwaltung](/l/de/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Berechtigungen anpassen
+
+Berechtigungen bestimmen, auf was jede Rolle innerhalb Ihres Arbeitsbereichs zugreifen oder was sie ändern kann, einschließlich Arbeitsbereich-Objekte, Datensätze, Einstellungen und Aktionen.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                                   | Beschreibung                           |
+| -------------------------------------------- | -------------------------------------- |
+| **Datensätze auf allen Objekten anzeigen**   | View records in lists and detail pages |
+| **Datensätze auf allen Objekten bearbeiten** | Modify existing records                |
+| **Datensätze auf allen Objekten löschen**    | Soft-delete records (can be restored)  |
+| **Datensätze auf allen Objekten zerstören**  | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | Beschreibung               |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### Verwaltung von Berechtigungsüberschreibungen
+
+To override inherited permissions:
+
+1. Klicken Sie auf **X**, um die vererbte Regel zu entfernen
+2. Select the specific permissions you want
+3. Klicken Sie auf das orange **Rückgängig**-Symbol (kreisförmiger Pfeil), um Änderungen rückgängig zu machen
+
+Wenn Sie fertig sind, klicken Sie auf **Beenden**, und dann auf **Speichern**, sobald Sie zur Rollenseite weitergeleitet werden.
+
+### Workspace Settings Permissions
+
+Steuern Sie den Zugriff auf die Einstellungen des Arbeitsbereichs auf zwei Arten:
+
+* Schalten Sie **Einstellungen Alles Zugriff** ein, um vollen Zugriff zu gewähren
+* Oder aktivieren Sie bestimmte Berechtigungen (z.B. API-Schlüsselgenerierung, Arbeitsbereich-Präferenzen, Rollenzuweisung, Datenmodellkonfiguration, Sicherheitseinstellungen und Workflow-Management)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### Arbeitsbereichs-Aktionsberechtigungen
+
+Steuern Sie den Zugriff auf allgemeine Arbeitsbereichsaktionen:
+
+* Schalten Sie **Anwendung Alles Zugriff** ein, um volle Berechtigungen zu gewähren
+* Oder aktivieren Sie individuelle Aktionen wie **E-Mail senden**, **CSV importieren** und **CSV exportieren**
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Bestätigen Sie die Zuweisung
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Bestätigen Sie die Zuweisung
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

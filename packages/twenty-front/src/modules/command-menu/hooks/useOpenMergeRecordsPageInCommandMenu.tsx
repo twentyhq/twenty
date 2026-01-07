@@ -57,7 +57,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
           objectRecordIds,
         });
         const { records } = await findManyRecordsLazy();
-        upsertRecordsInStore(records ?? []);
+        upsertRecordsInStore({ partialRecords: records ?? [] });
 
         navigateCommandMenu({
           page: CommandMenuPages.MergeRecords,

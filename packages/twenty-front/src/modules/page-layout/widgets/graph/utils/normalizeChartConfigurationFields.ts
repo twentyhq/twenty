@@ -1,3 +1,4 @@
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import {
   type BarChartConfiguration,
   type GraphOrderBy,
@@ -19,10 +20,11 @@ export const normalizeChartConfigurationFields = (
     | LineChartConfiguration
     | PieChartConfiguration,
 ): NormalizedChartConfigurationFields => {
-  if (
-    configuration.__typename === 'BarChartConfiguration' ||
-    configuration.__typename === 'LineChartConfiguration'
-  ) {
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+
+  if (isBarOrLineChart) {
     return {
       groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
       groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
@@ -31,7 +33,7 @@ export const normalizeChartConfigurationFields = (
     };
   }
 
-  if (configuration.__typename === 'PieChartConfiguration') {
+  if (isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')) {
     return {
       groupByFieldMetadataId: configuration.groupByFieldMetadataId,
       groupBySubFieldName: configuration.groupBySubFieldName,

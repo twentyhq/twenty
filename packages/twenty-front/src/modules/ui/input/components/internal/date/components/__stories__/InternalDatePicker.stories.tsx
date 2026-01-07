@@ -1,9 +1,9 @@
 import { useArgs } from '@storybook/preview-api';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { Temporal } from 'temporal-polyfill';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { DateTimePicker } from '../DateTimePicker';
+import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 
 const meta: Meta<typeof DateTimePicker> = {
   title: 'UI/Input/Internal/InternalDatePicker',
@@ -18,12 +18,16 @@ const meta: Meta<typeof DateTimePicker> = {
     return (
       <DateTimePicker
         instanceId="story-date-time-picker"
-        date={isDefined(date) ? new Date(date) : new Date()}
+        date={date}
         onChange={(newDate) => updateArgs({ date: newDate })}
       />
     );
   },
-  args: { date: new Date('January 1, 2023 02:00:00') },
+  args: {
+    date: Temporal.Instant.from('2023-01-01T02:00:00Z').toZonedDateTimeISO(
+      'UTC',
+    ),
+  },
 };
 
 export default meta;

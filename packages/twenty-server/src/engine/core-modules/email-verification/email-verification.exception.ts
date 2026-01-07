@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -14,18 +15,27 @@ export enum EmailVerificationExceptionCode {
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 
-const emailVerificationExceptionUserFriendlyMessages: Record<
-  EmailVerificationExceptionCode,
-  MessageDescriptor
-> = {
-  [EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED]: msg`Email verification is not required.`,
-  [EmailVerificationExceptionCode.INVALID_TOKEN]: msg`Invalid verification token.`,
-  [EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE]: msg`Invalid token type.`,
-  [EmailVerificationExceptionCode.TOKEN_EXPIRED]: msg`Verification token has expired.`,
-  [EmailVerificationExceptionCode.EMAIL_MISSING]: msg`Email is required.`,
-  [EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED]: msg`Email is already verified.`,
-  [EmailVerificationExceptionCode.INVALID_EMAIL]: msg`Invalid email address.`,
-  [EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED]: msg`Too many requests. Please try again later.`,
+const getEmailVerificationExceptionUserFriendlyMessage = (
+  code: EmailVerificationExceptionCode,
+) => {
+  switch (code) {
+    case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
+      return msg`Email verification is not required.`;
+    case EmailVerificationExceptionCode.INVALID_TOKEN:
+    case EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE:
+    case EmailVerificationExceptionCode.TOKEN_EXPIRED:
+      return msg`There is an issue with your token. Please try again.`;
+    case EmailVerificationExceptionCode.EMAIL_MISSING:
+      return msg`Email is required.`;
+    case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
+      return msg`Email is already verified.`;
+    case EmailVerificationExceptionCode.INVALID_EMAIL:
+      return msg`Invalid email address.`;
+    case EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED:
+      return msg`Too many requests. Please try again later.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class EmailVerificationException extends CustomException<EmailVerificationExceptionCode> {
@@ -37,7 +47,7 @@ export class EmailVerificationException extends CustomException<EmailVerificatio
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        emailVerificationExceptionUserFriendlyMessages[code],
+        getEmailVerificationExceptionUserFriendlyMessage(code),
     });
   }
 }

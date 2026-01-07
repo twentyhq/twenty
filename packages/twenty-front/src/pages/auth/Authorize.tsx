@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -101,6 +101,8 @@ export const Authorize = () => {
     }
   };
 
+  const appName = app?.name;
+
   return (
     <StyledContainer>
       <StyledCardWrapper>
@@ -119,7 +121,9 @@ export const Authorize = () => {
           />
           <img src={app?.logo} alt="app-icon" height={40} width={40} />
         </StyledAppsContainer>
-        <StyledText>{app?.name} wants to access your account</StyledText>
+        <StyledText>
+          <Trans>{appName} wants to access your account</Trans>
+        </StyledText>
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
             <MainButton title={t`Cancel`} variant="secondary" fullWidth />

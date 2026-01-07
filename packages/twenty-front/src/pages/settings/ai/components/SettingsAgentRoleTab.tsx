@@ -18,7 +18,7 @@ import {
   useCreateOneRoleMutation,
   useGetRolesQuery,
 } from '~/generated-metadata/graphql';
-import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
+import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledWarningText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -84,7 +84,7 @@ export const SettingsAgentRoleTab = ({
     setIsCreatingRole(true);
     try {
       const roleId = v4();
-      const roleName = `${agentLabel} Agent Role`;
+      const roleName = t`${agentLabel} Agent Role`;
 
       const { data } = await createRole({
         variables: {

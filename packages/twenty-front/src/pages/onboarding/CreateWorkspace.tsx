@@ -218,7 +218,7 @@ export const CreateWorkspace = () => {
                   <TextInput
                     autoFocus
                     value={value}
-                    placeholder="Apple"
+                    placeholder={t`Apple`}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={error?.message}

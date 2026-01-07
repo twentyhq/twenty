@@ -1,0 +1,209 @@
+---
+title: Export Your Data
+description: Complete step-by-step guide to exporting data from Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Overview
+
+Export your workspace data to CSV for backups, reporting, or migration.
+
+**Use cases:**
+
+* **Regular backups** — keep copies of your data
+* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
+* **Migration** — move data to another system
+* **Bulk updates** — export, edit, and re-import to update records
+
+## What You Need to Know
+
+### Export Limits
+
+* **Maximum 20,000 records** per export
+* Only **visible columns** are exported
+* Only **filtered records** are exported (based on your current view)
+
+<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/pt/developers/extend/capabilities/apis).</Note>
+
+### Permissions
+
+You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+
+## Step 1: Navigate to the Object
+
+Go to the object you want to export:
+
+* **People** — for contacts
+* **Companies** — for organizations
+* **Opportunities** — for deals
+* **Custom objects** — any object you've created
+
+## Step 2: Configure Your View
+
+**Important:** The export includes only what's visible in your current view.
+
+### Add/Remove Columns
+
+1. Click **Options → Fields** (or the **+** at the end of columns)
+2. Check the fields you want to export
+3. Uncheck fields you don't need
+
+### Filter Records (Optional)
+
+If you only need a subset of data:
+
+1. Click **Filter**
+2. Add filter conditions (e.g., "Created date > January 1, 2024")
+3. Only matching records will be exported
+
+### Sort Records (Optional)
+
+1. Click a column header to sort
+2. The export will follow your sort order
+
+<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+
+## Step 3: Export the Data
+
+1. Click the **⋮** icon on the top right of the table
+2. Select **Export view**
+3. Choose where to save the CSV file
+4. Wait for the download to complete
+
+## What Gets Exported
+
+| Included                         | Not Included           |
+| -------------------------------- | ---------------------- |
+| All visible columns              | Hidden columns         |
+| Records matching current filters | Filtered-out records   |
+| Custom field values              | Fields not in the view |
+| Record IDs                       | File attachments       |
+| Relation IDs                     | Images                 |
+
+### Relation Fields
+
+Relation IDs are only exported on the **"many" side** of a relationship:
+
+* **People export** includes a `companyId` column (People → Company relation)
+* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+
+This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+
+## Exporting for Specific Purposes
+
+### For Backups
+
+1. Create a view with **all fields** visible
+2. Remove all filters to include all records
+3. Export each object type separately
+4. Store exports in a secure location
+5. Set a recurring reminder (weekly/monthly)
+
+### For External Reporting
+
+1. Include only the fields you need for analysis
+2. Apply filters to focus on relevant data
+3. Consider sorting by the field you'll analyze
+
+### For Bulk Updates
+
+1. Export the records you want to update
+2. Include the unique identifier (`email`, `domain`, or `id`)
+3. Edit the exported file
+4. Re-import to update records
+   See: [How to Update Existing Records](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### For Migration
+
+If you're exporting to migrate to another system:
+
+1. **Export each object separately** — People, Companies, Opportunities, etc.
+2. **Include ID fields** — these help maintain relationships
+3. **Document field mappings** — note how Twenty fields map to your target system
+
+## Handling Large Datasets (20,000+ Records)
+
+The export limit is 20,000 records. For larger datasets:
+
+### Option 1: Export in Batches
+
+1. Add a filter (e.g., "Created date" ranges)
+2. Export the first batch
+3. Change the filter
+4. Export the next batch
+5. Combine files in your spreadsheet
+
+**Example filters for batching:**
+
+* By date range (January, February, March...)
+* By owner (Team member A, Team member B...)
+* By status (Active, Inactive...)
+
+### Option 2: Use the API
+
+The API has no record limit:
+
+1. Get your API key from **Settings → Developers**
+2. Use the GraphQL API to query records
+3. Process results in your application
+
+See: [API Documentation](/l/pt/developers/extend/capabilities/apis)
+
+## Tips and Best Practices
+
+### Create Export Views
+
+Save views configured specifically for exports:
+
+1. Configure columns and filters
+2. Click **View options** → **Save as new view**
+3. Name it "Export - [Purpose]"
+
+### Secure Your Exports
+
+Exported files may contain sensitive data:
+
+* Store in secure locations
+* Delete old exports when no longer needed
+* Be careful sharing export files
+
+### Check Before Exporting
+
+<Check>Correct columns are visible</Check>
+<Check>Filters are set correctly (or removed for full export)</Check>
+<Check>You have Export permission</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why are some columns missing from my export?">
+    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  </Accordion>
+
+  <Accordion title="Why doesn't my export have all records?">
+    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  </Accordion>
+
+  <Accordion title="Can I export more than 20,000 records?">
+    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  </Accordion>
+
+  <Accordion title="What format is the export file?">
+    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  </Accordion>
+
+  <Accordion title="Are relation IDs included?">
+    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  </Accordion>
+
+  <Accordion title="Can I automate exports?">
+    Not directly through the UI. Use the API to build automated export workflows.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+* [How to Update Existing Records](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
+* [How to Import Data via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
+* [API Documentation](/l/pt/developers/extend/capabilities/apis) — build custom export workflows

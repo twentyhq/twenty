@@ -1,69 +1,58 @@
 ---
-title: チェックマーク
-image: '""'
+title: Checkmark
+image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
   <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
 </Frame>
 
-成功したまたは完了したアクションを示します。
+Represents a successful or completed action.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
 
-```jsx
-import { Checkmark } from 'twenty-ui/display';
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <Checkmark />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-`div` 要素の全てのプロパティを受け取る他、`React.ComponentPropsWithoutRef<'div'>`を拡張します。
-
-</Tab>
-
+  <Tab title="Props">
+    Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+  </Tab>
 </Tabs>
 
-## アニメーション付きチェックマーク
+## Animated Checkmark
 
-アニメーション機能を追加したチェックマークアイコンを示します。
+Represents a checkmark icon with the added feature of animation.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { AnimatedCheckmark } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return (
-    <AnimatedCheckmark
-      isAnimating={true}
-      color="green"
-      duration={0.5}
-      size={30}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| プロパティ      | タイプ    | 説明                    | デフォルト                |
-| ---------- | ------ | --------------------- | -------------------- |
-| アニメーションの有無 | ブール型   | チェックマークのアニメーションを制御します | 偽                    |
-| カラー        | string | チェックマークの色             |                      |
-| 継続時間       | 数      | アニメーションの持続時間（秒）       | 0.5秒 |
-| サイズ        | 数      | チェックマークのサイズ           | 28ピクセル               |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props       | Type    | Description                                 | Default     |
+    | ----------- | ------- | ------------------------------------------- | ----------- |
+    | isAnimating | boolean | Controls whether the checkmark is animating | false       |
+    | color       | string  | Color of the checkmark                      |             |
+    | duration    | number  | The duration of the animation in seconds    | 0.5 seconds |
+    | size        | number  | The size of the checkmark                   | 28 pixels   |
+  </Tab>
 </Tabs>

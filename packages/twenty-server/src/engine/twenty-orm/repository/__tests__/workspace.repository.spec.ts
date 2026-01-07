@@ -118,8 +118,19 @@ describe('WorkspaceRepository', () => {
         idByUniversalIdentifier: {},
         universalIdentifiersByApplicationId: {},
       },
+      flatRowLevelPermissionPredicateMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatRowLevelPermissionPredicateGroupMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
       objectIdByNameSingular: {},
-      featureFlagsMap: {},
+      featureFlagsMap: {} as FeatureFlagMap,
+      userWorkspaceRoleMap: {},
       eventEmitterService: {} as unknown,
     } as unknown as WorkspaceInternalContext;
 

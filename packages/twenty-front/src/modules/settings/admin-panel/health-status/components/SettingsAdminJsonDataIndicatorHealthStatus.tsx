@@ -38,12 +38,14 @@ export const SettingsAdminJsonDataIndicatorHealthStatus = () => {
 
   const isAnyNode = () => true;
 
+  const serviceLabel = indicatorHealth.label;
+
   return (
     <Section>
       {isDown && (
         <StyledErrorMessage>
           {indicatorHealth.errorMessage ||
-            `${indicatorHealth.label} service is unreachable`}
+            t`${serviceLabel} service is unreachable`}
         </StyledErrorMessage>
       )}
       {parsedDetails && (

@@ -1,0 +1,109 @@
+---
+title: Folder Architecture
+info: A detailed look into our folder architecture
+---
+
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Pages
+
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+
+## Modules
+
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Contexts
+
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
+
+See [React Context](https://react.dev/reference/react#context-hooks) for more details.
+
+### GraphQL
+
+Includes fragments, queries, and mutations.
+
+See [GraphQL](https://graphql.org/learn/) for more details.
+
+* Fragments
+
+A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
+
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+
+* Queries
+
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+
+* Mutations
+
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+
+### Hooks
+
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
+
+### States
+
+Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
+
+* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
+
+React's built-in state management still handles state within a component.
+
+### Utils
+
+Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
+
+## UI
+
+Contains all the reusable UI components used in the application.
+
+This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
+
+By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
+
+## Interface and dependencies
+
+You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
+
+### Internal
+
+Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.

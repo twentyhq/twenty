@@ -109,7 +109,7 @@ export const VariableChip = ({
       {onRemove ? (
         <StyledDelete
           onClick={onRemove}
-          aria-label="Remove variable"
+          aria-label={t`Remove variable`}
           danger={isVariableNotFound}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

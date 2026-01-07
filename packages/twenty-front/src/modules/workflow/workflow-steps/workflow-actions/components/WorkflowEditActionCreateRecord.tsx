@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -201,11 +202,11 @@ export const WorkflowEditActionCreateRecord = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-create-record-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           disabled={isFormDisabled}
           value={formData.objectName}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: CreateRecordFormData = {

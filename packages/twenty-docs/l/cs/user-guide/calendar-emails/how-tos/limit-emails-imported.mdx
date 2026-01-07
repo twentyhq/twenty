@@ -1,0 +1,52 @@
+---
+title: Omezte import emailů
+description: Ovládejte, které emaily se importují do Twenty.
+---
+
+## Přehled
+
+Ve výchozím nastavení Twenty synchronizuje všechny externí emaily z vaší připojené poštovní schránky. Můžete omezit, co se importuje, pomocí **výběru složek** a **nastavení viditelnosti**.
+
+## Metoda 1: Výběr složek (doporučeno)
+
+Ovládejte, které emailové složky se synchronizují s Twenty:
+
+1. Přejděte do **Nastavení → Vydání → Lab**
+2. Povolte **Složku zpráv**
+3. Vraťte se na **Nastavení → Účty**
+4. Vyberte svůj připojený emailový účet
+5. Vyberte, které složky chcete synchronizovat:
+
+| Složka             | Popis                                   |
+| ------------------ | --------------------------------------- |
+| **Doručená pošta** | Hlavní příchozí emaily                  |
+| **Odeslaná pošta** | Odchozí emaily, které jste odeslali     |
+| **Archiv**         | Archivované zprávy                      |
+| **Vlastní složky** | Jakékoli konkrétní složky, které chcete |
+
+6. Vylučte složky, které nechcete synchronizovat (Spam, Koš, osobní složky)
+
+<Note>Toto vám dává přesnou kontrolu nad tím, které emaily se objeví ve vašem CRM bez synchronizace všeho.</Note>
+
+## Metoda 2: Nastavení automatického vytváření kontaktů
+
+Ovládejte, kdy se z emailů vytvářejí kontakty:
+
+1. Přejděte na **Nastavení → Účty**
+2. Vyberte svou připojenou poštovní schránku
+3. Vyberte možnost:
+   * **Deaktivováno**: Kontakty se nevytvářejí, ale emaily se stále synchronizují s existujícími kontakty
+   * **Odeslané a přijaté**: Vytvářejte kontakty ze všech externích emailů
+   * **Pouze odeslané**: Vytvářejte kontakty pouze z emailů, které odesíláte
+
+## Co je vždy vyloučeno
+
+Tyto emaily se nikdy nesynchronizují bez ohledu na nastavení:
+
+* **Interní emaily**: Zprávy mezi kolegy (stejná doména)
+* **Skupinové emaily**: Distribuční seznamy a skupinové zprávy
+* **Spam/Koš**: Systémové složky jsou obvykle vyloučeny
+
+## Důležité upozornění
+
+<Note>Neposkytujeme CC emailovou adresu pro selektivní synchronizaci. Použijte výše uvedenou funkci výběru složek, abyste dosáhli stejné úrovně kontroly.</Note>

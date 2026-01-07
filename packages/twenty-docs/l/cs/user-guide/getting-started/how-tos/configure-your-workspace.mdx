@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Každý podnik funguje jinak. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. To vám dává okamžitou hodnotu a pomáhá vašemu týmu vidět Twenty v akci s reálnými daty. You can do so under Settings → Accounts.</Note>
+
+## 1. Přizpůsobte si svůj datový model
+
+Twenty nabízí flexibilitu, kterou potřebujete pro tvarování datového modelu, který nejlépe podpoří vaši každodenní práci.
+Vytvořte objekty a pole jakéhokoliv typu, včetně vztahů mezi různými objekty. Můžete to udělat v Nastavení → Datový model.
+Zde je několik tipů:
+
+* **Nejste omezeni počtem vlastních polí ani vlastních objektů**. Přidání vlastních objektů a polí nepovede k upgradu vašeho plánu.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. Doporučujeme je používat co nejvíce, přidávat pole pro kategorizaci svých záznamů, pokud je potřeba. Zde je příklad:
+  * Je lepší používat objekt Lidé pro své potenciální zákazníky a partnery, vytvořit pole na objektu Lidé s názvem `Typ osoby`, místo vytvoření vlastního objektu Partner. Protože byste nemohli přistupovat k e-mailům vyměněným s touto osobou z partnerových záznamů.
+  * Vytvořte různé pohledy pod Lidé, jeden pro zobrazení partnerů a jeden pro zobrazení potenciálních zákazníků.
+* Dva lidé nemohou mít stejnou e-mailovou adresu. Dvě společnosti nemohou mít stejnou doménu.
+* Můžete deaktivovat standardní pole a objekty, které nechcete používat.
+* You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
+
+Přečtěte si [tento článek](/l/cs/user-guide/data-model/overview), kde se dozvíte, jak navrhnout svůj datový model.
+
+## 2. Přeneste svá data
+
+Přinesení vašich stávajících dat do Twenty dává vašemu týmu od začátku kontext.
+
+### Připojte svou e-mailovou schránku
+
+Pokud jste tak neučinili při vytváření svého pracovního prostoru, připojte svůj **Google nebo Microsoft účet** v Nastavení → Účty. To umožňuje Twenty:
+
+* Importovat vaše zprávy a schůzky
+* Automaticky vytvářet kontakty na základě interakcí (volitelně)
+* Udržujte historii komunikace viditelnou pro váš tým
+
+**Používáte jiného poskytovatele?**
+Můžete přidat jinou poštovní schránku přes SMTP nebo jiný kalendář přes CalDAV. Budete muset aktivovat tuto funkci v Nastavení → Verze → Laboratoře, a poté se vrátit na kartu Nastavení → Účty.
+
+### Importujte data pomocí csv
+
+Použijte příkazovou nabídku (`Cmd + K` nebo `Ctrl + K`), abyste importovali Lidi, Společnosti, Příležitosti nebo jakékoliv vlastní objekty pomocí CSV.
+
+**Klíčové pokyny**:
+
+* Stáhněte si vzorový soubor pro porozumění očekávanému formátu
+* Omezte každý soubor na 10 000 záznamů
+* Odstraňte duplicitní e-maily pro Lidi nebo duplicitní domény pro Společnosti
+* Před importem zkontrolujte a opravte chyby (označené žlutě)
+
+Přečtěte si [tento článek](/l/cs/user-guide/data-migration/overview), kde se dozvíte více o importu dat.
+
+## 3. Vytvořte svůj první pohled
+
+Vytváření různých pohledů je klíčové pro to, aby se data stala využitelnými pro váš tým.
+Zde je postup:
+
+* **Add or hide columns**
+  Manage the fields visible in a given view clicking on Options → Fields (from the top right). You can show/hide fields from there.
+
+* **Přeuspořádejte pole**
+  Přeuspořádejte pole v daném pohledu kliknutím na Možnosti → Pole (vpravo nahoře). Přetáhněte pole pro přeuspořádání.
+
+* **Filtrujte svůj pohled**
+  Zužte zobrazené záznamy pomocí Filtrů vpravo nahoře.
+
+* **Třídit záznamy**
+  Změňte pořadí zobrazených záznamů pomocí funkce Třídit vpravo nahoře nebo přímo kliknutím na název sloupce.
+
+* **Vyberte rozvržení**
+  Můžete přepnout na **Kanban rozložení** nebo seskupení seznamu podle, pokud má objekt `Stage` nebo podobné pole typu výběru.
+
+* **Uložte svůj pohled jako Oblíbené**
+  To lze provést pomocí rozbalovací nabídky, která zobrazuje různé pohledy.
+
+## Co dál?
+
+Začněte vytvářet automatizace pomocí [workflow](/l/cs/user-guide/workflows/overview).

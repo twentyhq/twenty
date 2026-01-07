@@ -21,12 +21,12 @@ import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
   JSON_RESPONSE_PLACEHOLDER,
-} from '../constants/HttpRequest';
-import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
-import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
-import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
-import { useTestHttpRequest } from '../hooks/useTestHttpRequest';
-import { WorkflowHttpRequestTabId } from '../types/WorkflowHttpRequestTabId';
+} from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/WorkflowHttpRequestTabListComponentId';
+import { useHttpRequestForm } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestForm';
+import { useHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestOutputSchema';
+import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
+import { WorkflowHttpRequestTabId } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/WorkflowHttpRequestTabId';
 import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
@@ -119,10 +119,10 @@ export const WorkflowEditActionHttpRequest = ({
   const tabs = [
     {
       id: WorkflowHttpRequestTabId.CONFIGURATION,
-      title: 'Configuration',
+      title: t`Configuration`,
       Icon: IconSettings,
     },
-    { id: WorkflowHttpRequestTabId.TEST, title: 'Test', Icon: IconPlayerPlay },
+    { id: WorkflowHttpRequestTabId.TEST, title: t`Test`, Icon: IconPlayerPlay },
   ];
 
   useEffect(() => () => saveAction.flush(), [saveAction]);
@@ -138,15 +138,15 @@ export const WorkflowEditActionHttpRequest = ({
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
           <StyledConfigurationTabContent>
             <FormTextFieldInput
-              label="URL"
-              placeholder="https://api.example.com/endpoint"
+              label={t`URL`}
+              placeholder={t`https://api.example.com/endpoint`}
               readonly={actionOptions.readonly}
               defaultValue={formData.url}
               onChange={(value) => handleFieldChange('url', value)}
               VariablePicker={WorkflowVariablePicker}
             />
             <Select
-              label="HTTP Method"
+              label={t`HTTP Method`}
               dropdownId="http-method"
               options={[...HTTP_METHODS]}
               value={formData.method}
@@ -158,12 +158,12 @@ export const WorkflowEditActionHttpRequest = ({
 
             <KeyValuePairInput
               key={getBodyTypeFromHeaders(formData.headers) || 'none'}
-              label="Headers Input"
+              label={t`Headers Input`}
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
               readonly={actionOptions.readonly}
-              keyPlaceholder="Header name"
-              valuePlaceholder="Header value"
+              keyPlaceholder={t`Header name`}
+              valuePlaceholder={t`Header value`}
             />
 
             {isMethodWithBody(formData.method) && (
@@ -178,7 +178,7 @@ export const WorkflowEditActionHttpRequest = ({
             )}
 
             <StyledFullHeightFormRawJsonFieldInput
-              label="Expected Response Body"
+              label={t`Expected Response Body`}
               placeholder={JSON_RESPONSE_PLACEHOLDER}
               defaultValue={outputSchema}
               onChange={handleOutputSchemaChange}

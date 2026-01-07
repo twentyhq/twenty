@@ -3,6 +3,7 @@ import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { type FileUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
@@ -23,7 +24,7 @@ export const AgentChatFilePreview = ({
     useFileCategoryColors();
 
   const fileName =
-    file instanceof File ? file.name : (file.filename ?? 'Unknown file');
+    file instanceof File ? file.name : (file.filename ?? t`Unknown file`);
 
   const fileUrl = file instanceof File ? undefined : file.url;
 
@@ -54,6 +55,7 @@ export const AgentChatFilePreview = ({
     return (
       <LinkChip
         label={fileName}
+        emptyLabel={t`Untitled`}
         variant={ChipVariant.Static}
         to={fileUrl}
         target="_blank"
@@ -66,6 +68,7 @@ export const AgentChatFilePreview = ({
   return (
     <Chip
       label={fileName}
+      emptyLabel={t`Untitled`}
       variant={ChipVariant.Static}
       clickable={false}
       leftComponent={leftComponent}

@@ -115,7 +115,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
         label={t`First Name`}
         value={firstName}
         onChange={setFirstName}
-        placeholder="Tim"
+        placeholder={t`Tim`}
         fullWidth
         disabled={!canEditFirstName}
       />
@@ -124,7 +124,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
         label={t`Last Name`}
         value={lastName}
         onChange={setLastName}
-        placeholder="Cook"
+        placeholder={t`Cook`}
         fullWidth
         disabled={!canEditLastName}
       />

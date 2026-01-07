@@ -1,0 +1,198 @@
+---
+title: İzinler
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Twenty'nin izin sistemi, üç ana alana erişimi kontrol etmenizi sağlar:
+
+* **Objeler ve Alanlar**: Kimin kayıtları ve bireysel alanları görüntüleyebileceğini, düzenleyebileceğini veya silebileceğini kontrol edin
+* **Ayarlar**: Çalışma alanı yapılandırmasına ve yönetici işlevlerine erişimi yönetin
+* **Aksiyonlar**: Veri ithalatı veya e-posta gönderimi gibi genel çalışma alanı aksiyonlarını kontrol edin
+
+## Rol Oluştur
+
+Yeni bir rol oluşturmak için:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. **Tüm Roller** altında, **+ Rol Oluştur** seçeneğine tıklayın
+3. Bir rol adı girin
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Bitirmek için **Kaydet**'e tıklayın
+
+## Delete a Role
+
+Bir rolü silmek için:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Kaldırmak istediğiniz role tıklayın
+3. **Ayarlar** sekmesini açın, ardından **Rolü Sil** seçeneğine tıklayın
+4. Modalde **Onayla**'ya tıklayın
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. **Yönetici** rolü hariç tüm roller silinebilir. Her zaman **Yönetici** rolüne atanmış en az bir üye olmalıdır.
+</Note>
+
+## Üyelere Rol Atama
+
+### Mevcut Atamaları Görüntüle
+
+* **Ayarlar → Roller** bölümüne gidin
+* Tüm rolleri ve her birine kaç üye atandığını görün
+* Hangi üyelerin hangi rollere sahip olduğunu görün
+
+### Bir Üyeye Rol Atama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. **+ Üyeye Atama**'ya tıklayın
+5. Listeden çalışma alanı üyesini seçin
+6. Atamayı onaylayın
+
+### Varsayılan Rol Ayarlama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. **Seçenekler** bölümünde, **Varsayılan Rol**'ü bulun
+3. Yeni üyelerin otomatik olarak alacağı rolü seçin
+4. Yeni çalışma alanı üyeleri katıldığında bu role atanacaklardır
+
+<Note>
+  You can only assign roles to existing workspace members. Yeni üyeleri davet etmek için, [Üye Yönetimi](/l/tr/user-guide/settings/capabilities/member-management) kullanın.
+</Note>
+
+## İzinleri Özelleştirin
+
+İzinler, her rolün çalışma alanınızda hangi alanlara erişip neleri değiştirebileceğini belirler, bu çalışma alanı obje kayıtları, ayarlar ve aksiyonlar dahil.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                               | Açıklama                               |
+| ---------------------------------------- | -------------------------------------- |
+| **Tüm Nesnelerdeki Kayıtları Görüntüle** | View records in lists and detail pages |
+| **Tüm Nesnelerdeki Kayıtları Düzenle**   | Modify existing records                |
+| **Tüm Nesnelerde Kayıtları Silin**       | Soft-delete records (can be restored)  |
+| **Tüm Nesnelerde Kayıtları Yok Edin**    | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | Açıklama                   |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### İzin Geçersiz Kılmalarını Yönetme
+
+To override inherited permissions:
+
+1. Miras alınan kuralı kaldırmak için **X**'e tıklayın
+2. Select the specific permissions you want
+3. Değişiklikleri geri almak için turuncu **Geri Al** simgesine (daire ok) tıklayın
+
+Tamamlandığında, **Bitir**'e tıklayın, ardından rol sayfasına yönlendirildiğinizde **Kaydet**'e tıklayın.
+
+### Çalışma Alanı Ayarları İzinleri
+
+Çalışma alanı ayarlarına iki şekilde erişimi kontrol edin:
+
+* Tam erişim vermek için **Ayarlar Tüm Erişim**'i değiştirin
+* Veya spesifik izinleri etkinleştirin (örneğin, API anahtarı oluşturma, çalışma alanı tercihleri, rol atama, veri modeli yapılandırma, güvenlik ayarları ve iş akışı yönetimi)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### Çalışma Alanı Aksiyon İzinleri
+
+Genel çalışma alanı aksiyonlarına erişimi kontrol edin:
+
+* Tam izin vermek için **Uygulama Tüm Erişim**'i değiştirin
+* Veya **E-posta Gönder**, **CSV İthal Et**, **CSV İhraç Et** gibi bireysel aksiyonları etkinleştirin
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Atamayı onaylayın
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Atamayı onaylayın
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

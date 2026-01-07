@@ -119,7 +119,7 @@ export const PlaygroundSetupForm = () => {
           <SettingsTextInput
             instanceId="playground-api-key"
             label={t`API Key`}
-            placeholder="Enter your API key"
+            placeholder={t`Enter your API key`}
             value={value}
             onChange={(newValue) => {
               onChange(newValue);

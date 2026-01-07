@@ -8,6 +8,9 @@
     "strict": true,
     "types": ["vite/client"],
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "files": [],
   "include": ["vite.config.ts"],

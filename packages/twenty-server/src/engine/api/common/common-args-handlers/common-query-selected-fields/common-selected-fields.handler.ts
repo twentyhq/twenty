@@ -7,6 +7,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getAllSelectableFields } from 'src/engine/api/rest/core/rest-to-common-args-handlers/utils/get-all-selectable-fields.util';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
@@ -106,6 +107,7 @@ export class CommonSelectedFieldsHandler {
         throw new CommonQueryRunnerException(
           `Object metadata relation target not found for relation creation payload`,
           CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
       const relationFieldSelectFields = getAllSelectableFields({

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
 import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
@@ -18,7 +19,7 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
 }: WorkflowAiAgentPermissionsObjectsListProps) => {
   return (
     <div>
-      <StyledLabel>Objects</StyledLabel>
+      <StyledLabel>{t`Objects`}</StyledLabel>
       <StyledList>
         {objects.map((objectMetadata) => (
           <WorkflowAiAgentPermissionsObjectRow

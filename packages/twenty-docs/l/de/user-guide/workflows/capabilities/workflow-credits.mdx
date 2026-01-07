@@ -1,0 +1,76 @@
+---
+title: Workflow-Guthaben
+description: Understand workflow credit consumption and management.
+---
+
+Workflow-Guthaben treiben Ihre Automatisierungen in Twenty an. Das Verständnis ihrer Funktionsweise hilft Ihnen, die Kosten zu optimieren und Ihr Automatisierungsbudget effektiv zu verwalten.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## Wie der Verbrauch von Guthaben funktioniert
+
+Credits are consumed when workflows execute, not when you create them. Jede Workflow-Aktion verbraucht Credits basierend auf ihrer Komplexität:
+
+### Guthabenverbrauch nach Aktionstyp
+
+* **Einfache interne Vorgänge**: Sehr niedriger Guthabenverbrauch
+  * Datensätze durchsuchen
+  * Create Record
+  * Datensatz aktualisieren
+  * Datensatz löschen
+  * Formularaktionen
+
+* **Komplexe Vorgänge**: Höherer Guthabenverbrauch
+  * Code-Aktionen (JavaScript-Ausführung)
+  * HTTP-Anfragen an externe Dienste
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### Echtzeitabzug
+
+Guthaben werden in Echtzeit abgezogen, sobald Workflows ausgeführt werden. Das bedeutet:
+
+* Draft workflows don't consume credits
+* Nur aktive, laufende Workflows nutzen Ihre Guthabenzuteilung
+* Fehlgeschlagene Workflows verbrauchen dennoch Guthaben für abgeschlossene Schritte
+
+## Guthabenverwaltung
+
+### Guthabenverbrauch prüfen
+
+1. Gehen Sie zu **Einstellungen → Abrechnung**
+2. Sehen Sie sich Ihren aktuellen Guthabenverbrauch und verbleibenden Saldo an
+3. Beobachten Sie Nutzungsmuster, um Ihre Workflows zu optimieren
+
+### Zusätzliche Guthaben kaufen
+
+Wenn Sie mehr Guthaben über Ihre Plan-Zuteilung hinaus benötigen:
+
+1. Gehen Sie zu **Einstellungen → Abrechnung**
+2. Klicken Sie auf die Option, um zusätzliche Guthaben zu kaufen. Pakete unterschiedlicher Größen sind verfügbar.
+3. Guthaben werden Ihrem aktuellen Saldo hinzugefügt
+
+## Beste Praktiken
+
+* **Stapelverarbeitung**: Verwenden Sie Massenoperationen und Iterator-Aktionen effizient
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* Optimieren Sie Code-Aktionen für Effizienz
+* Batch operations to reduce individual action calls

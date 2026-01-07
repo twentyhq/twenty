@@ -8,7 +8,7 @@ export const getMetadataEmptyWorkspaceMigrationActionRecord = <
   _metadataName: T,
 ) =>
   ({
-    created: [],
-    deleted: [],
-    updated: [],
+    create: [],
+    delete: [],
+    update: [],
   }) as MetadataWorkspaceMigrationActionsRecord<T>;

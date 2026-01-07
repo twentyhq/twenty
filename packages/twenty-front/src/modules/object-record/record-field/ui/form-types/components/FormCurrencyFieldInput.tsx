@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -56,7 +57,7 @@ export const FormCurrencyFieldInput = ({
   const currencies = useMemo(() => {
     return [
       {
-        label: 'No currency',
+        label: t`No currency`,
         value: '',
         Icon: IconCircleOff,
       },
@@ -85,7 +86,7 @@ export const FormCurrencyFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormSelectFieldInput
-          label="Currency Code"
+          label={t`Currency Code`}
           defaultValue={defaultValue?.currencyCode ?? ''}
           onChange={handleCurrencyCodeChange}
           options={currencies}
@@ -93,11 +94,11 @@ export const FormCurrencyFieldInput = ({
           readonly={readonly}
         />
         <FormNumberFieldInput
-          label="Amount"
+          label={t`Amount`}
           defaultValue={formatMicrosToDisplayAmount(defaultValue?.amountMicros)}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          placeholder="Set 3.21 for $3.21"
+          placeholder={t`Set 3.21 for $3.21`}
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>

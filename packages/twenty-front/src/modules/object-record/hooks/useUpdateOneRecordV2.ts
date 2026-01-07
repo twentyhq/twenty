@@ -175,7 +175,7 @@ export const useUpdateOneRecordV2 = () => {
           const recordToUpsert = getRecordFromRecordNode({
             recordNode: record,
           });
-          upsertRecordsInStore([recordToUpsert]);
+          upsertRecordsInStore({ partialRecords: [recordToUpsert] });
 
           triggerUpdateRecordOptimisticEffect({
             cache,

@@ -42,7 +42,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
         position: 'last',
       });
 
-      upsertRecordsInStore([createdRecord]);
+      upsertRecordsInStore({ partialRecords: [createdRecord] });
 
       if (isDefined(totalNumberOfRecordsToVirtualize)) {
         loadRecordsToVirtualRows({

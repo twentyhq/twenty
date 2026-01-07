@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataRelationSettings,
@@ -33,6 +34,7 @@ import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-pro
 import { validateMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util';
 import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util';
 import { validateNumericFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-numeric-field-or-throw.util';
+import { validateOverriddenPositionFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util';
 import { validatePhonesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util';
 import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
@@ -43,8 +45,8 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -58,10 +60,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 
 @Injectable()
 export class DataArgProcessor {
-  constructor(
-    private readonly recordPositionService: RecordPositionService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly recordPositionService: RecordPositionService) {}
 
   async process({
     partialRecordInputs,
@@ -90,9 +89,21 @@ export class DataArgProcessor {
         flatObjectMetadata,
       );
 
+    const overriddenPositionRecords =
+      await this.recordPositionService.overridePositionOnRecords({
+        partialRecordInputs: partialRecordInputs,
+        workspaceId: workspace.id,
+        objectMetadata: {
+          isCustom: flatObjectMetadata.isCustom,
+          nameSingular: flatObjectMetadata.nameSingular,
+          fieldIdByName,
+        },
+        shouldBackfillPositionIfUndefined,
+      });
+
     const processedRecords: Partial<ObjectRecord>[] = [];
 
-    for (const record of partialRecordInputs) {
+    for (const record of overriddenPositionRecords) {
       const processedRecord: Partial<ObjectRecord> = {};
 
       for (const [key, value] of Object.entries(record)) {
@@ -103,6 +114,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -112,6 +124,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field metadata not found for field ${key}`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -123,6 +136,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field ${key} is not nullable and has no default value.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`A required field is missing.` },
           );
         }
 
@@ -139,19 +153,7 @@ export class DataArgProcessor {
       processedRecords.push(processedRecord);
     }
 
-    const overriddenPositionRecords =
-      await this.recordPositionService.overridePositionOnRecords({
-        partialRecordInputs: processedRecords,
-        workspaceId: workspace.id,
-        objectMetadata: {
-          isCustom: flatObjectMetadata.isCustom,
-          nameSingular: flatObjectMetadata.nameSingular,
-          fieldIdByName,
-        },
-        shouldBackfillPositionIfUndefined,
-      });
-
-    return overriddenPositionRecords;
+    return processedRecords;
   }
 
   private async processField(
@@ -161,7 +163,7 @@ export class DataArgProcessor {
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
-        return value;
+        return validateOverriddenPositionFieldOrThrow(value, key);
       case FieldMetadataType.NUMERIC: {
         const validatedValue = validateNumericFieldOrThrow(value, key);
 
@@ -224,6 +226,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `One-to-many relation ${key} field does not support write operations.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -279,6 +282,7 @@ export class DataArgProcessor {
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       default:
         assertUnreachable(

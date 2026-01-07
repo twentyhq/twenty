@@ -90,7 +90,7 @@ export const RecordFieldList = ({
         instanceId,
       }}
     >
-      <PropertyBox>
+      <PropertyBox dataTestId="record-fields-list-container">
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
         ) : (

@@ -1,0 +1,41 @@
+---
+title: Очередь сообщений
+---
+
+Очереди позволяют выполнять асинхронные операции. Их можно использовать для выполнения фоновых задач, таких как отправка приветственного письма при регистрации.
+Каждый случай использования будет иметь собственный класс очереди, расширенный из `MessageQueueServiceBase`.
+
+В настоящее время мы поддерживаем только `bull-mq`[bull-mq](https://bullmq.io/) в качестве драйвера очереди.
+
+## Шаги для создания и использования новой очереди
+
+1. Добавьте имя очереди для вашей новой очереди в перечисление `MESSAGE_QUEUES`.
+2. Предоставьте фабричную реализацию очереди с именем очереди в качестве токена зависимости.
+3. Инжектируйте созданную вами очередь в необходимый модуль/сервис с именем очереди в качестве токена зависимости.
+4. Add worker class with token based injection just like producer.
+
+### Пример использования
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

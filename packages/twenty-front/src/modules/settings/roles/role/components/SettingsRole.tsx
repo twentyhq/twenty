@@ -133,11 +133,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       title={<SettingsRoleLabelContainer roleId={roleId} />}
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: 'Roles',
+          children: t`Roles`,
           href: getSettingsPath(SettingsPath.Roles),
         },
         {

@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { isSelectOptionDefaultValue } from '../isSelectOptionDefaultValue';
+import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 
 describe('isSelectOptionDefaultValue', () => {
   describe('SELECT field', () => {

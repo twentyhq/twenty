@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"numberField":"string"} 1`] = `"Float cannot represent non numeric value: "string""`;
+
+exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"numberField":[]} 1`] = `"Float cannot represent non numeric value: []"`;
+
+exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"numberField":{}} 1`] = `"Float cannot represent non numeric value: {}"`;
+
+exports[`Create input validation - NUMBER Gql create input - failure NUMBER - should fail with : {"numberField":true} 1`] = `"Float cannot represent non numeric value: true"`;
+
+exports[`Create input validation - NUMBER Rest create input - failure NUMBER - should fail with : {"numberField":"string"} 1`] = `"["Invalid number value 'string' for field \\"numberField\\""]"`;
+
+exports[`Create input validation - NUMBER Rest create input - failure NUMBER - should fail with : {"numberField":[]} 1`] = `"["Invalid number value [] for field \\"numberField\\""]"`;
+
+exports[`Create input validation - NUMBER Rest create input - failure NUMBER - should fail with : {"numberField":{}} 1`] = `"["Invalid number value {} for field \\"numberField\\""]"`;
+
+exports[`Create input validation - NUMBER Rest create input - failure NUMBER - should fail with : {"numberField":true} 1`] = `"["Invalid number value true for field \\"numberField\\""]"`;

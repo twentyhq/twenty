@@ -1,0 +1,101 @@
+---
+title: Comenzi Backend
+---
+
+## Comenzi utile
+
+Aceste comenzi ar trebui să fie executate din dosarul packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Configurare de la prima utilizare
+
+```
+npx nx database:reset twenty-server # configurează baza de date cu seed-uri de dezvoltare
+```
+
+### Pornirea serverului
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # adaugă --fix pentru a remedia erorile de lint
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit          # rulează teste unitare
+npx nx run twenty-server:test:integration   # rulează teste de integrare
+```
+
+Notă: poți rula `npx nx run twenty-server:test:integration:with-db-reset` în cazul în care trebuie să resetezi baza de date înainte de a rula testele de integrare.
+
+### Resetarea bazei de date
+
+Dacă vrei să resetezi și să configurezi baza de date, poți rula comanda următoare:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrații
+
+#### Pentru obiectele din schematizările de Bază/Metadate (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Pentru obiectele din Workspace
+
+Nu există fișiere de migrație, migrația este generată automat pentru fiecare spațiu de lucru,
+este stocată în baza de date și aplicată cu această comandă
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  Acest lucru va elimina baza de date și va relansa migrațiile și seed-urile.
+
+  Asigură-te că faci un backup pentru orice date pe care dorești să le păstrezi înainte de a rula această comandă.
+</Warning>
+
+## Tehnologii Utilizate
+
+Twenty folosește în principal NestJS pentru backend.
+
+Prisma a fost primul ORM pe care l-am folosit. Dar pentru a permite utilizatorilor să creeze câmpuri și obiecte personalizate, un nivel inferior a făcut mai mult sens, deoarece trebuie să avem un control detaliat. Proiectul folosește acum TypeORM.
+
+Here's what the tech stack now looks like.
+
+**Core**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Bază de date**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Integrări terțe**
+
+* [Sentry](https://sentry.io/welcome/) pentru urmărirea erorilor
+
+**Testare**
+
+* [Jest](https://jestjs.io/)
+
+**Instrumente**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Dezvoltare**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

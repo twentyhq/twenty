@@ -6,14 +6,16 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
-import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
-import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
+import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
+import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -63,6 +65,7 @@ export class PageLayoutUpdateService {
 
     const existingPageLayout = flatPageLayoutMaps.byId[id];
 
+    // TODO move in validator
     if (
       !isDefined(existingPageLayout) ||
       isDefined(existingPageLayout.deletedAt)
@@ -75,6 +78,7 @@ export class PageLayoutUpdateService {
         PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
       );
     }
+    ///
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -201,7 +205,7 @@ export class PageLayoutUpdateService {
     >({
       existingObjects: existingTabs,
       receivedObjects: tabs,
-      propertiesToCompare: ['title', 'position'],
+      propertiesToCompare: FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
     });
 
     const now = new Date();
@@ -228,10 +232,13 @@ export class PageLayoutUpdateService {
 
     const tabsToUpdate: FlatPageLayoutTab[] = entitiesToUpdate.map(
       (tabInput) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabInput.id];
+        const existingTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: tabInput.id,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         return {
-          ...existingTab!,
+          ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
           updatedAt: now.toISOString(),
@@ -241,10 +248,13 @@ export class PageLayoutUpdateService {
 
     const tabsToRestoreAndUpdate: FlatPageLayoutTab[] =
       entitiesToRestoreAndUpdate.map((tabInput) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabInput.id];
+        const existingTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: tabInput.id,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         return {
-          ...existingTab!,
+          ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
           deletedAt: null,
@@ -349,14 +359,7 @@ export class PageLayoutUpdateService {
     >({
       existingObjects: existingWidgets,
       receivedObjects: widgets,
-      propertiesToCompare: [
-        'pageLayoutTabId',
-        'objectMetadataId',
-        'title',
-        'type',
-        'gridPosition',
-        'configuration',
-      ],
+      propertiesToCompare: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
     });
 
     const now = new Date();
@@ -385,10 +388,13 @@ export class PageLayoutUpdateService {
 
     const widgetsToUpdate: FlatPageLayoutWidget[] = entitiesToUpdate.map(
       (widgetInput) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetInput.id];
+        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: widgetInput.id,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         return {
-          ...existingWidget!,
+          ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
           title: widgetInput.title,
           type: widgetInput.type,
@@ -402,10 +408,13 @@ export class PageLayoutUpdateService {
 
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
       entitiesToRestoreAndUpdate.map((widgetInput) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetInput.id];
+        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: widgetInput.id,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         return {
-          ...existingWidget!,
+          ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
           title: widgetInput.title,
           type: widgetInput.type,

@@ -1,0 +1,293 @@
+---
+title: Migrating from Other CRMs
+description: Step-by-step guide to migrate your data from any CRM to Twenty.
+---
+
+## Overview
+
+This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+
+<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+
+## Step 1: Audit Your Current Data
+
+Migration is an opportunity for a fresh start. Don't bring over clutter.
+
+**What to keep:**
+
+* Active contacts and companies
+* Open opportunities and deals
+* Important notes and activities
+* Custom fields you actually use
+
+**What to leave behind:**
+
+* Outdated contacts (no activity in 2+ years)
+* Duplicate records
+* Test data
+* Unused custom fields
+
+## Step 2: Map Your Data Model
+
+Create a mapping document between your current CRM and Twenty:
+
+| Your CRM               | Twenty               |
+| ---------------------- | -------------------- |
+| Account / Organization | **Company**          |
+| Contact / Person       | **People**           |
+| Deal / Opportunity     | **Opportunity**      |
+| Activity               | **Task** or **Note** |
+| Custom Object          | **Custom Object**    |
+
+**For each field, document:**
+
+* The source field name
+* The target Twenty field
+* Any format transformations needed (dates, phone numbers, etc.)
+
+<Note>Keep this mapping document handy during import—you'll reference it when mapping columns.</Note>
+
+## Step 3: Set Up Your Twenty Workspace
+
+Before importing data, prepare your Twenty workspace:
+
+### Create Custom Objects and Fields
+
+1. Go to **Settings → Data Model**
+2. Create any custom objects you need
+3. Add custom fields to standard and custom objects
+4. Configure field settings (unique, required, select options, etc.)
+
+<Warning>
+  **Fields must exist before import.**
+
+  The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
+</Warning>
+
+### Invite Your Team
+
+<Warning>
+  **Invite users BEFORE importing data.**
+
+  If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
+</Warning>
+
+1. Go to **Settings → Members**
+2. Invite all team members
+3. **Wait for everyone to accept** their invitation
+4. Verify all users appear in your Members list
+
+## Step 4: Export from Your Current CRM
+
+Export your data from your current CRM:
+
+1. Look for an **Export** function (usually under Settings, Data Management, or Admin)
+2. Export to **CSV format** when possible
+3. Export each object type separately (Companies, Contacts, Deals, etc.)
+4. Include all fields you want to migrate
+
+**Export these objects (in this order for reference):**
+
+1. Companies / Accounts / Organizations
+2. Contacts / People
+3. Deals / Opportunities
+4. Notes and Activities
+5. Custom objects
+
+## Step 5: Clean and Format Your Data
+
+Open each exported CSV in a spreadsheet application and prepare it for Twenty.
+
+### Remove Duplicates
+
+1. Sort by the unique field (email for People, domain for Companies)
+2. Remove or merge duplicate rows
+3. Verify no duplicates exist in Twenty already
+
+### Format Fields Correctly
+
+| Field Type        | Required Format                                   |
+| ----------------- | ------------------------------------------------- |
+| **Domain**        | `https://domain.com`                              |
+| **Email**         | `name@domain.com` (must be unique)                |
+| **Date**          | `YYYY-MM-DD`                                      |
+| **Phone**         | Three columns: Number, Country Code, Calling Code |
+| **Boolean**       | `TRUE` or `FALSE` (uppercase)                     |
+| **Select fields** | Use API names, not display labels                 |
+
+<Warning>
+  **Domain format is critical.**
+
+  Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
+</Warning>
+
+See [How to Prepare Your CSV Files](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
+
+### Add Relation Columns
+
+To link records (e.g., People to Companies), add a column with the parent's unique identifier.
+
+**Example: People CSV with Company link**
+
+```csv
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+See [How to Import Relations](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions on linking records.
+
+### Update User References
+
+If your data includes user assignments (Owner, Assignee):
+
+1. Add a column with the **user's email** (not just their ID from the old system)
+2. Use the same email addresses that users used to join your Twenty workspace
+
+See [How to Prepare Your CSV Files](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting guide.
+
+## Step 6: Import to Twenty
+
+<Warning>
+  **Import Order Matters!**
+
+  Always import in this order:
+
+  1. **Companies** first (no dependencies)
+  2. **People** second (link to Companies)
+  3. **Opportunities** third (link to Companies/People)
+  4. **Notes and Tasks** (link to records)
+  5. **Custom objects** following their dependencies
+
+  The parent record must exist before you can reference it.
+</Warning>
+
+### Import Each Object
+
+For each CSV file, in order:
+
+1. Navigate to the object in Twenty
+2. Click **⋮ → Import records**
+3. Upload the CSV file
+4. Map columns to fields:
+   * Map user email columns to the appropriate relation fields
+   * Map relation columns (like `companyDomain`) to relation fields
+5. Review and fix any errors in the UI
+6. Confirm the import
+7. Verify a few records before proceeding to the next file
+
+**Detailed guides:**
+
+* [How to Import Companies](/l/zh/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [How to Import Contacts](/l/zh/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [How to Import Relations](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+
+## Step 7: Large Migrations (50,000+ Records)
+
+For large migrations:
+
+| Volume                  | Recommended Approach          |
+| ----------------------- | ----------------------------- |
+| Under 10,000 records    | Single CSV import             |
+| 10,000 - 50,000 records | Split into multiple CSV files |
+| 50,000+ records         | Use the API                   |
+
+**For API imports:**
+
+* Faster and more reliable for large datasets
+* Supports batch operations (up to 60 records per call)
+* See [How to Import Data via API](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)
+
+## Step 8: Post-Migration Setup
+
+After importing data, complete your workspace configuration:
+
+### Recreate Views
+
+* Set up saved views with filters, sorts, and column configurations
+* Create any kanban or calendar views you need
+
+### Recreate Workflows
+
+* Rebuild your automations in **Settings → Workflows**
+* Start with the most critical workflows
+* Test each one before relying on it
+
+### Configure Roles and Permissions
+
+* Set up roles in **Settings → Roles**
+* Assign users to appropriate roles
+
+### Connect Email and Calendar
+
+* Each user connects their own account in **Settings → Accounts**
+* Twenty will start syncing emails to contact records
+* See [Email & Calendar](/l/zh/user-guide/calendar-emails/overview)
+
+### Train Your Team
+
+* Walk through the new interface together
+* Document any team-specific processes
+
+## Common Issues and Solutions
+
+| Issue                   | Cause                       | Solution                                                                             |
+| ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| **Duplicate errors**    | Email/domain already exists | Remove duplicates from file, or include unique identifier to update existing records |
+| **Relation not found**  | Parent record doesn't exist | Import parent objects first (Companies before People)                                |
+| **Missing fields**      | Custom field doesn't exist  | Create field in Settings → Data Model before importing                               |
+| **Select field errors** | Using display labels        | Use API names (enable Advanced mode in Settings to find them)                        |
+| **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing                                 |
+
+See [How to Fix Import Errors](/l/zh/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
+
+## Post-Migration Checklist
+
+### Data Integrity
+
+<Check>All records imported (compare counts with source system)</Check>
+<Check>Relations working correctly (People linked to Companies)</Check>
+<Check>User assignments mapped correctly (Owner, Assignee)</Check>
+<Check>Custom fields populated</Check>
+<Check>No unexpected duplicates</Check>
+
+### Configuration
+
+<Check>Views recreated</Check>
+<Check>Workflows recreated and tested</Check>
+<Check>Roles and permissions configured</Check>
+<Check>Email/calendar sync connected</Check>
+
+### Team Readiness
+
+<Check>Team trained on new system</Check>
+<Check>Old CRM access plan decided (keep for reference? When to disable?)</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Can I migrate workflows automatically?">
+    Not currently. Workflows must be recreated manually in Twenty.
+  </Accordion>
+
+  <Accordion title="What about file attachments?">
+    File attachments are not included in CSV exports. You'll need to re-upload them manually, migrate via API, or contact our team for assistance.
+  </Accordion>
+
+  <Accordion title="Can I keep both systems running during migration?">
+    Yes, we recommend keeping your old CRM running until you've verified the migration is complete. Just be careful not to create new data in both places.
+  </Accordion>
+
+  <Accordion title="How long does migration typically take?">
+    Depends on data volume and complexity. Small migrations (under 10,000 records) can be done in a few hours. Large migrations may take several days including data cleanup and testing.
+  </Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+For complex migrations or large datasets:
+
+* **Guided setup:** Book a 4-hour onboarding pack
+* **Full migration service:** Our partners can handle the entire migration
+
+Contact [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/zh/user-guide/getting-started/capabilities/implementation-services).

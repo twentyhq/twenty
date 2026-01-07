@@ -1,8 +1,6 @@
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { ON_DB_EVENT } from '@/subscription/graphql/subscriptions/onDbEvent';
-import { createClient } from 'graphql-sse';
-import { useEffect, useMemo } from 'react';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useSseClient } from '@/subscription/hooks/useSseClient.util';
+import { useEffect } from 'react';
 import {
   type Subscription,
   type SubscriptionOnDbEventArgs,
@@ -22,18 +20,7 @@ export const useOnDbEvent = ({
   input,
   skip = false,
 }: OnDbEventArgs) => {
-  const tokenPair = getTokenPair();
-
-  const sseClient = useMemo(() => {
-    const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
-
-    return createClient({
-      url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      headers: {
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-    });
-  }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
+  const { sseClient } = useSseClient();
 
   useEffect(() => {
     if (skip === true) {

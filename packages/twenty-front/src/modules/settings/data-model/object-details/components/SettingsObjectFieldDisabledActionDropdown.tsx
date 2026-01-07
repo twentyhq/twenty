@@ -59,7 +59,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       dropdownId={dropdownId}
       clickableComponent={
         <LightIconButton
-          aria-label="Inactive Field Options"
+          aria-label={t`Inactive Field Options`}
           Icon={IconDotsVertical}
           accent="tertiary"
         />

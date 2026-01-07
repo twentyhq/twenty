@@ -3,6 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { t } from '@lingui/core/macro';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -39,7 +40,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
       dropdownId={dropdownId}
       clickableComponent={
         <LightIconButton
-          aria-label="Inactive Object Options"
+          aria-label={t`Inactive Object Options`}
           Icon={IconDotsVertical}
           accent="tertiary"
         />
@@ -48,13 +49,13 @@ export const SettingsObjectInactiveMenuDropDown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <MenuItem
-              text="Activate"
+              text={t`Activate`}
               LeftIcon={IconArchiveOff}
               onClick={handleActivate}
             />
             {isCustomObject && (
               <MenuItem
-                text="Delete"
+                text={t`Delete`}
                 LeftIcon={IconTrash}
                 accent="danger"
                 onClick={handleDelete}

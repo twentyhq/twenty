@@ -1,0 +1,85 @@
+---
+title: Mailbox
+description: Understanding email integration features in Twenty.
+---
+
+**Notă**: Pentru a conecta conturile de e-mail și a configura setările de sincronizare, vizitați <a href="/l/ro/user-guide/calendar-emails/overview">Configurare e-mail și calendar</a>.
+
+## Cum funcționează integrarea e-mailului
+
+Twenty leagă automat e-mailurile din căsuțele poștale conectate la înregistrările CRM relevante, păstrând toate istoricul comunicațiilor într-un singur loc.
+
+### Objects Where Emails Can Be Found
+
+Conversațiile prin e-mail apar în trei obiecte principale:
+
+* **Persoane**: Vizualizați toate e-mailurile schimbate cu un contact specific
+* **Companii**: Vizualizați toate e-mailurile legate de o companie și de angajații săi
+* **Oportunități**: Accesați conversațiile prin e-mail legate de compania asociată acestei oportunități. Firurile de e-mail de la persoanele individuale din oportunitate nu sunt afișate încă.
+
+### Vizualizarea conversațiilor prin e-mail
+
+1. Navigați la o înregistrare: Accesați înregistrarea oricărei persoane, companii sau oportunități
+2. **Selectați fila E-mailuri**: Faceți clic pe fila `E-mailuri` pentru a vizualiza e-mailurile sincronizate
+3. **Deschideți un fir de e-mail**: Faceți clic pe orice e-mail pentru a deschide și a citi întreaga conversație
+4. **Răsfoiți istoricul**: Derulați prin întregul istoric al e-mailurilor cu acel contact
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Ce veți vedea
+
+### Vizualizarea firului de e-mail
+
+Când deschideți un fir de e-mail, puteți:
+
+* **Citiți conversații complete**: Vizualizați întregul schimb de e-mailuri
+* **Vizualizați participanții**: Vedeți toate persoanele implicate în firul de e-mail
+* **Verificați marcajele de timp**: Aflați exact când a fost trimis fiecare e-mail
+* **Accesați contextul**: Înțelegeți întregul istoric al comunicațiilor
+
+### Vizibilitatea e-mailurilor
+
+În funcție de setările căsuței poștale, este posibil să vedeți:
+
+* **Conținut complet**: Textul complet al e-mailului și detaliile
+* **Subiect + Metadate**: Linia subiectului, expeditor, destinatar și marcaj de timp
+* **Doar Metadate**: Informații de bază fără conținutul e-mailului
+
+## Comportamentul sincronizării e-mailului
+
+### Ce se sincronizează
+
+* **E-mailuri externe**: Toate e-mailurile cu contacte din afara organizației
+* **Conectare automată**: E-mailuri care se leagă la înregistrări existente de persoane și companii
+* **Adrese multiple**: E-mailurile de la orice adresă se corelează la aceeași înregistrare de contact
+* **Actualizări**: Noile e-mailuri apar în termen de 5 minute
+
+### Ce nu se sincronizează
+
+* **E-mailuri interne**: E-mailurile între colegi (același domeniu) rămân private
+* **E-mailuri de grup**: Liste de distribuție și e-mailuri de grup sunt excluse
+* **Foldere excluse**: Folderele pe care ați ales să nu le sincronizați (configurate sub Setări → Conturi → E-mail)
+
+### Sincronizare selectivă de foldere (Caracteristică de laborator)
+
+Controlați care foldere de e-mail se sincronizează cu Twenty:
+
+1. Activați `Folder Mesaje` în Setări → Lansări → Laborator
+2. Configurați folderele sub Setări → Conturi → E-mail
+3. Alegeți foldere specifice de inclus sau exclus (Inbox, Trimise, Arhivă, foldere personalizate)
+
+## Depanarea sincronizării e-mailurilor
+
+### Probleme comune de sincronizare
+
+* **Întârzieri la sincronizare**: E-mailurile apar în cel mult 5 minute, dar importurile inițiale durează mai mult
+* **E-mailuri lipsă**: Verificați dacă:
+  * Folderele sunt excluse în setările Folder Mesaje
+  * Crearea automată a contactelor este dezactivată (e-mailurile necesită existența înregistrărilor Twenty)
+  * E-mailul este de la colegi (același domeniu) sau liste de grup
+  * Căsuța poștală finalizează încă sincronizarea inițială
+
+### Limitări ale e-mailului
+
+* **Foldere de sistem**: Unele foldere de e-mail s-ar putea să nu fie disponibile pentru sincronizare
+* **Aka**: Numai căsuțele reale de e-mail pot fi conectate (nu aliasurile de e-mail)

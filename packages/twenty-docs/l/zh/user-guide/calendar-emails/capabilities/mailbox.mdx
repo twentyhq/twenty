@@ -1,0 +1,85 @@
+---
+title: Mailbox
+description: Understanding email integration features in Twenty.
+---
+
+**Note**: To connect your email accounts and configure sync settings, visit [Email & Calendar Setup](/l/zh/user-guide/calendar-emails/overview).
+
+## How Email Integration Works
+
+Twenty automatically links emails from your connected mailboxes to the relevant CRM records, keeping all communication history in one place.
+
+### Objects Where Emails Can Be Found
+
+Email conversations appear in three main objects:
+
+* **People**: View all emails exchanged with a specific contact
+* **Companies**: See all emails related to a company and its employees
+* **Opportunities**: Access email threads related to the company linked to this opportunity. Email threads from individual people on the opportunity are not shown yet.
+
+### Viewing Email Threads
+
+1. **Navigate to a Record**: Go to any Person, Company, or Opportunity record
+2. **Select the Emails Tab**: Click on the `Emails` tab to view synced emails
+3. **Open an Email Thread**: Click on any email to open and read the full conversation
+4. **Browse History**: Scroll through the complete email history with that contact
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## What You'll See
+
+### Email Thread View
+
+When you open an email thread, you can:
+
+* **Read Full Conversations**: See the complete email exchange
+* **View Participants**: See all people involved in the email thread
+* **Check Timestamps**: Know exactly when each email was sent
+* **Access Context**: Understand the full communication history
+
+### Email Visibility
+
+Depending on your mailbox settings, you might see:
+
+* **Full Content**: Complete email text and details
+* **Subject + Metadata**: Subject line, sender, recipient, and timestamp
+* **Metadata Only**: Basic information without email content
+
+## Email Sync Behavior
+
+### What Gets Synced
+
+* **External Emails**: All emails with contacts outside your organization
+* **Automatic Linking**: Emails connect to existing People and Company records
+* **Multiple Addresses**: Emails from any address link to the same contact record
+* **Updates**: New emails appear within 5 minutes
+
+### What Doesn't Get Synced
+
+* **Internal Emails**: Emails between colleagues (same domain) remain private
+* **Group Emails**: Distribution lists and group emails are excluded
+* **Excluded Folders**: Folders you've chosen not to sync (configured under Settings → Accounts → Email)
+
+### Selective Folder Sync (Lab Feature)
+
+Control which email folders sync with Twenty:
+
+1. Enable `Message Folder` in Settings → Releases → Lab
+2. Configure folders under Settings → Accounts → Email
+3. Choose specific folders to include or exclude (Inbox, Sent, Archive, custom folders)
+
+## Troubleshooting Email Sync
+
+### Common Sync Issues
+
+* **Sync Delays**: Emails appear within 5 minutes, but initial imports take longer
+* **Missing Emails**: Check if:
+  * Folders are excluded in Message Folder settings
+  * Contact auto-creation is disabled (emails need existing Twenty records)
+  * Email is from colleagues (same domain) or group lists
+  * Mailbox is still completing initial sync
+
+### Email Limitations
+
+* **System Folders**: Some email folders may not be available for sync
+* **Aliases**: Only true mailboxes can be connected (not email aliases)

@@ -1,7 +1,4 @@
 import { AuthModal } from '@/auth/components/AuthModal';
-import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -15,13 +12,12 @@ import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/compone
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -67,7 +63,6 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   return (
     <>
@@ -87,7 +82,7 @@ export const DefaultLayout = () => {
                 isSettingsPage && !isMobile && !useShowFullScreen
                   ? (windowsWidth -
                       (OBJECT_SETTINGS_WIDTH +
-                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                        NAVIGATION_DRAWER_CONSTRAINTS.default +
                         76)) /
                     2
                   : 0,
@@ -124,15 +119,6 @@ export const DefaultLayout = () => {
             )}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}
-          {isMobile && (
-            <AnimatePresence>
-              {isCommandMenuOpened && (
-                <CommandMenuOpenContainer>
-                  <CommandMenuRouter />
-                </CommandMenuOpenContainer>
-              )}
-            </AnimatePresence>
-          )}
         </AppErrorBoundary>
       </StyledLayout>
     </>

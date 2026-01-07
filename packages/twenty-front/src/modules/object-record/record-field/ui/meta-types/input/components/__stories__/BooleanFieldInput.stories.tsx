@@ -7,11 +7,12 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { BooleanFieldInput } from '../BooleanFieldInput';
+import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -84,6 +85,7 @@ const BooleanFieldInputWithContext = ({
 const meta: Meta = {
   title: 'UI/Data/Field/Input/BooleanFieldInput',
   component: BooleanFieldInputWithContext,
+  decorators: [I18nFrontDecorator],
   args: {
     value: true,
     recordId: 'id-1',

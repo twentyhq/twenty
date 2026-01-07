@@ -1,0 +1,52 @@
+---
+title: İçe Aktarılan E-postaları Sınırla
+description: Hangi e-postaların Twenty'ye içe aktarılacağını kontrol edin.
+---
+
+## Genel Bakış
+
+Varsayılan olarak, Twenty bağlı posta kutunuzdan tüm harici e-postaları senkronize eder. **Klasör seçimi** ve **görünürlük ayarlarını** kullanarak içe aktarılanları sınırlayabilirsiniz.
+
+## Yöntem 1: Klasör Seçimi (Önerilen)
+
+Hangi e-posta klasörlerinin Twenty ile senkronize edileceğini kontrol edin:
+
+1. **Ayarlar → Sürümler → Lab** bölümüne gidin
+2. **Mesaj Klasörü**nü etkinleştirin
+3. **Ayarlar → Hesaplar**'a geri dönün.
+4. Bağlı e-posta hesabınızı seçin
+5. Hangi klasörlerin senkronize edileceğini seçin:
+
+| Klasör             | Açıklama                      |
+| ------------------ | ----------------------------- |
+| **Gelen Kutusu**   | Ana gelen e-postalar          |
+| **Gönderilenler**  | Gönderdiğiniz e-postalar      |
+| **Arşiv**          | Arşivlenen mesajlar           |
+| **Özel Klasörler** | İstediğiniz belirli klasörler |
+
+6. Senkronize edilmesini istemediğiniz klasörleri hariç tutun (Spam, Çöp Kutusu, kişisel klasörler)
+
+<Note>Bu, her şeyi senkronize etmeden CRM'inizde hangi e-postaların görüneceği üzerinde hassas kontrol sağlar.</Note>
+
+## Yöntem 2: Kişi Otomatik Oluşturma Ayarları
+
+Kişilerin e-postalardan ne zaman oluşturulacağını kontrol edin:
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. Bağlı posta kutunuzu seçin
+3. Bir seçenek seçin:
+   * **Devre Dışı**: Kişi oluşturulmaz, ancak e-postalar mevcut kişilerle yine de senkronize edilir
+   * **Gönderilen ve Alınan**: Tüm harici e-postalardan kişiler oluşturun
+   * **Yalnızca Gönderilen**: Yalnızca gönderdiğiniz e-postalardan kişiler oluşturun
+
+## Her Zaman Hariç Tutulanlar
+
+Ayarlar ne olursa olsun bu e-postalar asla senkronize edilmez:
+
+* **Dahili e-postalar**: Meslektaşlar arasındaki mesajlar (aynı alan adı)
+* **Grup e-postaları**: Dağıtım listeleri ve grup mesajları
+* **Spam/Çöp Kutusu**: Sistem klasörleri genellikle hariç tutulur
+
+## Önemli Not
+
+<Note>Seçici senkronizasyon için bir CC e-posta adresi sağlamıyoruz. Aynı düzeyde kontrol sağlamak için yukarıdaki klasör seçimi özelliğini kullanın.</Note>

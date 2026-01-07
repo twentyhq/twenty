@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
@@ -54,6 +55,7 @@ export const EventRowMainObjectUpdated = ({
   mainObjectMetadataItem,
   createdAt,
 }: EventRowMainObjectUpdatedProps) => {
+  const { t } = useLingui();
   const diff: Record<string, { before: any; after: any }> =
     event.properties?.diff;
 
@@ -70,12 +72,15 @@ export const EventRowMainObjectUpdated = ({
     throw new Error('Cannot render update description without changes');
   }
 
+  const fieldCount = diffEntries.length;
+  const recordLabel = labelIdentifierValue;
+
   return (
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
         <StyledRow>
           <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-          updated
+          {t`updated`}
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
@@ -87,9 +92,7 @@ export const EventRowMainObjectUpdated = ({
           )}
           {diffEntries.length > 1 && (
             <>
-              <span>
-                {diffEntries.length} fields on {labelIdentifierValue}
-              </span>
+              <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
               <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
             </>
           )}

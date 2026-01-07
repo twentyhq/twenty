@@ -5,6 +5,7 @@ import { AUTO_SET_HEADER_KEYS } from '@/workflow/workflow-steps/workflow-actions
 import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isReadOnlyHeaderKey';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
@@ -50,8 +51,8 @@ export const KeyValuePairInput = ({
   label,
   onChange,
   readonly,
-  keyPlaceholder = 'Key',
-  valuePlaceholder = 'Value',
+  keyPlaceholder = t`Key`,
+  valuePlaceholder = t`Value`,
   defaultValue,
 }: KeyValuePairInputProps) => {
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
@@ -72,7 +73,7 @@ export const KeyValuePairInput = ({
     const trimmedKey = pair.key.trim();
 
     if (!pair.isAutoSet && isAutoSetHeaderKey(trimmedKey)) {
-      return 'This key should be set through body input';
+      return t`This key should be set through body input`;
     }
 
     return undefined;

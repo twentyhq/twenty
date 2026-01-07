@@ -6,6 +6,7 @@ interface AuthContextWithDefinedWorkspaceProperties {
   workspace: NonNullable<AuthContext['workspace']>;
   workspaceMetadataVersion?: string;
   workspaceMemberId: AuthContext['workspaceMemberId'];
+  workspaceMember: AuthContext['workspaceMember'];
   userWorkspaceId: AuthContext['userWorkspaceId'];
   apiKey: AuthContext['apiKey'];
 }

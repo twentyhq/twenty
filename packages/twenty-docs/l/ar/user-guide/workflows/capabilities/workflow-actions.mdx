@@ -1,0 +1,311 @@
+---
+title: إجراءات سير العمل
+description: تعرّف على الإجراءات المتاحة في عمليات سير العمل في Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## حول الإجراءات
+
+تحدد الإجراءات ما يحدث بعد تنفيذ الزناد. يمكنك تسلسل عدة إجراءات معًا لبناء عمليات أتمتة معقدة.
+
+<Tip>
+  * استخدم منتقي المتغيرات (انقر أيقونة `(x+)`) لاستعراض البيانات المتاحة من الخطوات السابقة
+  * مرّر المؤشر فوق أي حقل إدخال لمعرفة الخطوة التي يأتي منها المتغير — وهو أمر مفيد عندما يوجد الحقل نفسه (مثلًا، ID) في عدة خطوات سابقة
+  * امنح كل إجراء اسمًا وصفيًا لتسهيل الصيانة
+</Tip>
+
+## إجراءات السجل
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### إنشاء سجل جديد
+
+يضيف سجل جديد إلى كائن محدد.
+
+**الإعداد**:
+
+* اختر الكائن المستهدف
+* املأ الحقول الضرورية والاختيارية
+* استخدم البيانات من الخطوات السابقة أو أدخِل القيم يدويًا لملء الحقول
+
+**المخرجات**: بيانات السجل المنشأ حديثاً متاحة للاستخدام في الخطوات التالية.
+
+### تحديث السجل
+
+يقوم بتعديل سجل موجود في كائن محدد.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**الإعداد**:
+
+* اختر الكائن المستهدف
+* اختر السجل المحدد لتحديثه.
+  * يمكنك إما اختيار سجل ثابت، باستخدام القائمة المنسدلة التي تعرض جميع السجلات المتاحة.
+  * أو يمكنك اختيار السجل ديناميكيًا بتحديد سجل تم العثور عليه في خطوة سابقة، باستخدام `(x+)`. لا يمكنك البحث عن السجل بناءً على معايير مختلفة في هذه المرحلة. إذا لم تكن قد حدّدت السجل بعد، فأضِف خطوة `Search Record` قبل خطوة `Update Record`.
+* اختر الحقول لتعديل القيم وأدخل القيم الجديدة
+
+**المخرجات**: بيانات السجل المحدثة متاحة للاستخدام في الخطوات التالية.
+
+### حذف السجل
+
+يزيل سجلاً من كائن محدد.
+
+**التكوين**:
+
+* اختر الكائن المستهدف
+* اختر السجل المحدد لحذفه
+
+**المخرجات**: تظل بيانات السجل المحذوف متاحة للاستخدام في الخطوات التالية.
+
+### البحث في السجلات
+
+يجد السجلات داخل كائن معين باستخدام شروط التصفية.
+
+**التكوين**:
+
+* اختر الكائن للبحث
+* حدد معايير التصفية لتضييق النتائج
+* قم بتكوين الفرز والقيود
+
+**المخرجات**: تعيد السجلات المطابقة التي يمكن استخدامها في الخطوات اللاحقة.
+
+<Note>
+  **الحد**: تعيد Search Records بحد أقصى **200 سجل**. إذا كنت بحاجة إلى معالجة المزيد، فأضِف عوامل تصفية محددة لتقليل النتائج أو استخدم عمليات سير عمل مجدولة للمعالجة على دفعات.
+</Note>
+
+**أفضل الممارسات**: استخدم [الفروع](/l/ar/user-guide/workflows/capabilities/workflow-branches) بعد Search Records للتعامل مع سيناريوهات "تم العثور" مقابل "لم يتم العثور".
+
+### إدراج أو تحديث سجل
+
+ينشئ سجلًا جديدًا أو يحدّث سجلًا موجودًا استنادًا إلى معايير المطابقة. يكون هذا مفيدًا عندما لا تكون متأكدًا مما إذا كان السجل موجودًا بالفعل.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**التكوين**:
+
+* اختر الكائن المستهدف
+* لاحظ الحقول التي يمكن استخدامها للمطابقة: email لـ People، وdomain لـ Companies، وID لأي كائن، أو أي حقل مُعلَّم كـ Unique. ستحتاج إلى تعبئة واحد على الأقل من هذه الحقول أدناه.
+* املأ قيم الحقول. لا تنسَ تعبئة معرّف فريد واحد على الأقل.
+
+<Note>
+  **تعمل المطابقة عادةً بشكل أفضل عند إضافة معرّف فريد واحد فقط.** على سبيل المثال، ستطابق لقطة الشاشة أدناه الشركات استنادًا إلى domain الخاص بها. لا تكون قيمة ID مطلوبة بالضرورة.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* استخدم البيانات من الخطوات السابقة لملء الحقول
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### مكرر
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**التكوين**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* حدد الإجراءات لتنفيذها على كل سجل في الحلقة.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+
+### تصفية
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**التكوين**:
+
+* Select the record to filter
+* حدد شروط ومعايير التصفية
+* قم بتكوين السجلات التي يجب أن تمر إلى الخطوات اللاحقة
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| النوع              | الوصف                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**حالات الاستخدام**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### إرسال البريد الإلكتروني
+
+يرسل بريدًا إلكترونيًا من سير العمل الخاص بك. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**التكوين**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* ادخل عنوان البريد الإلكتروني المستلم.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* اضبط سطر الموضوع.
+* قم بإنشاء نص الرسالة. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### نموذج
+
+يعرض نموذجاً أثناء تنفيذ سير العمل لجمع مدخلات المستخدم. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. بالنسبة لمهام سير العمل مع محركات أخرى (سجل تم إنشاؤه، تم تحديثه، إلخ)، يمكن الوصول إلى النماذج فقط من خلال واجهة تشغيل سير العمل، وهو ليس التجربة المتوقعة. سيتم إصدار مركز الإشعارات في عام 2026 لدعم النماذج في مهام سير العمل المؤتمتة بشكل صحيح.
+</Warning>
+
+**التكوين**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**المخرجات**: استجابات النموذج متاحة للاستخدام في الخطوات اللاحقة.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+
+## Integration Actions
+
+### كود
+
+يشغل جافا سكريبت مخصص ضمن سير العمل الخاص بك.
+
+**التكوين**:
+
+* الوصول إلى المتغيرات من الخطوات السابقة. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+
+* اكتب شيفرة جافا سكريبت في المحرر
+* إرجاع المتغيرات للاستخدام في الخطوات اللاحقة
+* اختبر الكود مباشرة في الخطوة
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### طلب HTTP
+
+يرسل طلبًا إلى واجهة برمجية خارجية كجزء من سير العمل الخاص بك.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**التكوين**:
+
+* ادخل عنوان رابط واجهة برمجية. Using parameters from previous steps is possible.
+* اختر طريقة HTTP (GET, POST, PUT, PATCH, DELETE)
+* أضف الرؤوس والقيم المطلوبة
+* قدّم مثالًا للمخرجات لمعاينة البنية
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**التكوين**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ar/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ar/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

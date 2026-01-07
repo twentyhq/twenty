@@ -16,18 +16,6 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'attachment'>,
   FlatIndexMetadata
 > => ({
-  authorIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'authorIdIndex',
-      relatedFieldNames: ['author'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   taskIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

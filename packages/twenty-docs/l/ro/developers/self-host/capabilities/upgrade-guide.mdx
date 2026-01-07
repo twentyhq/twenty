@@ -1,0 +1,381 @@
+---
+title: Ghid de actualizare
+---
+
+## General guidelines
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+Dacă ați utilizat Docker Compose, urmați acești pași:
+
+1. Într-un terminal, pe găzduitorul unde rulează Twenty, opriți Twenty: `docker compose down`.
+
+2. Actualizați versiunea modificând valoarea `TAG` din fișierul .env în apropierea docker-compose-ului. ( We recommend consuming `major.minor` version such as `v0.53` )
+
+3. Repuneți Twenty în funcțiune cu comanda `docker compose up -d`.
+
+Dacă doriți să actualizați instanța dvs. cu câteva versiuni, de exemplu de la v0.33.0 la v0.35.0, trebuie să actualizați instanța dvs. secvențial, în acest exemplu de la v0.33.0 la v0.34.0, apoi de la v0.34.0 la v0.35.0.
+
+**Asigurați-vă că după fiecare actualizare de versiune aveți un backup necorupt.**
+
+## Pași de actualizare specifici versiunii
+
+## v1.0
+
+Salut Twenty v1.0! 🎉
+
+## v0.60
+
+### Îmbunătățiri de performanță
+
+Toate interacțiunile cu API-ul de metadata au fost optimizate pentru o performanță mai bună, în special pentru manipularea metadata-ului obiectelor și operațiile de creare a spațiilor de lucru.
+
+Am refăcut strategia de caching pentru a prioritiza accesările din cache în detrimentul interogărilor către baza de date, îmbunătățind semnificativ performanța operațiunilor API-ului de metadata.
+
+Dacă întâmpinați probleme de runtime după actualizare, s-ar putea să fie nevoie să goliți cache-ul pentru a vă asigura că este sincronizat cu ultimele schimbări. Rulați această comandă în containerul dvs. twenty-server:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.55
+
+Nu este necesar să mai rulați nici o comandă, noua imagine se va ocupa automat de rularea tuturor migrațiilor necesare.
+
+### Eroare `Utilizatorul nu are permisiune`
+
+Dacă întâmpinați erori de autorizare la majoritatea cererilor după actualizare, s-ar putea să fie nevoie să goliți cache-ul pentru a recalcula permisiunile actualizate.
+
+În containerul dvs. `twenty-server`, rulați:
+
+```bash
+yarn command:prod cache:flush
+```
+
+Această problemă este specifică versiunii Twenty și nu ar trebui să fie necesară pentru actualizările viitoare.
+
+### v0.54
+
+Începând cu versiunea `0.53`, nu sunt necesare acțiuni manuale.
+
+#### Depășirea schemelor de metadata
+
+Am combinat schema `metadata` cu cea `core` pentru a simplifica extragerea datelor din `TypeORM`.
+Am îmbinat pasul de comandă `migrate` în cadrul comenzii `upgrade`. Nu recomandăm rularea manuală a comenzii `migrate` în oricare dintre containerele dvs. server/worker.
+
+### Începând cu v0.53
+
+Începând cu `0.53`, actualizarea se face programatic în cadrul `DockerFile`, ceea ce înseamnă că de acum nu ar trebui să mai fie necesar să rulați manual nici o comandă.
+
+Asigurați-vă că vă actualizați instanța secvențial, fără a sări peste nicio versiune majoră (de exemplu, `0.43.3` to `0.44.0` este permis, dar `0.43.1` to `0.45.0` nu este), altfel ar putea duce la desincronizare a versiunii spațiului de lucru, care ar putea rezulta în erori de runtime și funcționalități lipsă.
+
+Pentru a verifica dacă un spațiu de lucru a fost migrat corect, puteți verifica versiunea acestuia în baza de date în tabelul `core.workspace`.
+
+Ar trebui să fie mereu în intervalul versiunii Twenty curente `major.minor`, puteți vizualiza versiunea instanței dvs. în panoul de administrare (la `/settings/admin-panel`, accesibil dacă utilizatorul dvs. are proprietatea `canAccessFullAdminPanel` setată la adevărat în baza de date) sau executând `echo $APP_VERSION` în containerul dvs. `twenty-server`.
+
+Pentru a remedia o desincronizare a versiunii spațiului de lucru, va trebui să actualizați din versiunea corespunzătoare Twenty urmând ghidul de actualizare relevant secvențial și așa mai departe până când ajungeți la versiunea dorită.
+
+#### Eliminarea `auditLog`
+
+Am eliminat obiectul standard auditLog, ceea ce înseamnă că dimensiunea backup-ului dvs. ar putea fi redusă semnificativ după această migrație.
+
+### v0.51 la v0.52
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.52
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Am un spațiu de lucru blocat în versiunea între `0.52.0` și `0.52.6`.
+
+Din păcate, `0.52.0` și `0.52.6` au fost complet eliminate din dockerHub.
+Va trebui să actualizați manual versiunea spațiului de lucru la `0.51.0` în baza de date și să actualizați utilizând versiunea twenty `0.52.11` urmând ghidul de actualizare de mai sus.
+
+### v0.50 la v0.51
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.51
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0 la v0.50.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.50.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Mutarea docker-compose.yml
+
+Această versiune include o mutație `docker-compose.yml` pentru a oferi serviciului `worker` acces la volumul `server-local-data`.
+Vă rugăm să actualizați docker-compose.yml-ul dvs. local cu [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+
+### v0.43.0 la v0.44.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.44.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 la v0.43.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.43.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+În această versiune, am trecut și la imaginea postgres:16 în docker-compose.yml.
+
+#### (Opțiunea 1) Migrarea bazei de date
+
+Păstrarea imaginii existente postgres-spilo este adecvată, însă va trebui să congelați versiunea în docker-compose.yml la 0.43.0.
+
+#### (Opțiunea 2) Migrarea bazei de date
+
+Dacă doriți să migrați baza de date la noua imagine postgres:16, urmați acești pași:
+
+1. Copieți baza de date din vechiul container postgres-spilo
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Asigurați-vă că fișierul de backup nu este gol.
+
+2. Actualizați docker-compose.yml-ul pentru a utiliza imaginea postgres:16 din fișierul [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml).
+
+3. Restaurați baza de date în noul container postgres:16
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 la v0.42.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.42.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Variabile de mediu**
+
+* Eliminat: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+* Adăugat: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0 la v0.41.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.41.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**Variabile de mediu**
+
+* Eliminat: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0 la v0.40.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.40.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**Variabile de mediu**
+
+* Adăugat: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0 la v0.35.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.35.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele de core și metadata)
+Comanda `yarn command:prod upgrade-0.35` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+**Variabile de mediu**
+
+* Am înlocuit `ENABLE_DB_MIGRATIONS` cu `DISABLE_DB_MIGRATIONS` (valoarea standard este acum `false`, probabil nu va trebui să setați nimic)
+
+### v0.33.0 la v0.34.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.34.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.34` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+**Variabile de mediu**
+
+* Eliminat: `FRONT_BASE_URL`
+* Adăugat: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+Am actualizat modul în care gestionăm URL-ul frontend.
+Acum puteți seta URL-ul frontend utilizând variabilele `FRONT_DOMAIN`, `FRONT_PROTOCOL` și `FRONT_PORT`.
+Dacă FRONT_DOMAIN nu este setat, URL-ul frontend va reveni la `SERVER_URL`.
+
+### v0.32.0 la v0.33.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.33.0
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+Comanda `yarn command:prod cache:flush` va goli cache-ul Redis.
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.33` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+Începând cu această versiune, imaginea twenty-postgres pentru DB a devenit depășită și se utilizează twenty-postgres-spilo.
+Dacă doriți să păstrați utilizarea imaginii twenty-postgres, înlocuiți pur și simplu `twentycrm/twenty-postgres:${TAG}` cu `twentycrm/twenty-postgres` în docker-compose.yml.
+
+### v0.31.0 la v0.32.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.32.0
+
+**Migrarea schemelor și datelor**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.32` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+**Variabile de mediu**
+
+Am actualizat modul în care gestionăm conexiunea Redis.
+
+* Eliminat: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+* Adăugat: `REDIS_URL`
+
+Actualizați fișierul `.env` pentru a utiliza noua variabilă `REDIS_URL` în locul parametrilor individuali de conexiune Redis.
+
+Am simplificat, de asemenea, modul în care gestionăm jetoanele JWT.
+
+* Eliminat: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+* Adăugat: `APP_SECRET`
+
+Actualizați fișierul `.env` pentru a utiliza noua variabilă `APP_SECRET` în locul secretelor individuale ale tokenurilor (puteți folosi același secret ca și înainte sau generați unul nou aleator).
+
+**Cont conectat**
+
+Dacă utilizați un cont conectat pentru a sincroniza emailurile și calendarele Google, va trebui să activați [People API](https://developers.google.com/people) în consola dvs. Google Admin.
+
+### v0.30.0 la v0.31.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.31.0
+
+**Migrarea schemelor și datelor**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.31` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+### v0.24.0 la v0.30.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.30.0
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. Am actualizat [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) pentru a reflecta acest lucru.
+Asigurați-vă că vă actualizați configurația și actualizați variabilele de mediu corespunzător:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Migrarea schemelor și datelor**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.30` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+### v0.23.0 la v0.24.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.24.0
+
+Rulați următoarele comenzi:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe structura bazei de date (schemele core și metadata)
+Comanda `yarn command:prod upgrade-0.24` se ocupă de migrația datelor pentru toate spațiile de lucru.
+
+### v0.22.0 la v0.23.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.23.0
+
+Rulați următoarele comenzi:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe baza de date.
+Comanda `yarn command:prod upgrade-0.23` se ocupă de migrația datelor, inclusiv transferul activităților către sarcini/note.
+
+### v0.21.0 la v0.22.0
+
+Actualizați instanța Twenty pentru a utiliza imaginea v0.22.0
+
+Rulați următoarele comenzi:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+Comanda `yarn database:migrate:prod` va aplica migrațiile pe baza de date.
+Comanda `yarn command:prod workspace:sync-metadata -f` va sincroniza definiția obiectelor standard cu tabelele de metadate și va aplica migrațiile necesare în spațiile de lucru existente.
+Comanda `yarn command:prod upgrade-0.22` va aplica transformări specifice de date pentru a se adapta la noile opțiuni defaultRequestInstrumentationOptions ale obiectului.

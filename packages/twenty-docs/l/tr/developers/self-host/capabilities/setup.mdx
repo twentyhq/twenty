@@ -1,0 +1,293 @@
+---
+title: Kurulum
+---
+
+# Konfigürasyon Yönetimi
+
+<Warning>
+  **First time installing?** Follow the [Docker Compose installation guide](/l/tr/developers/self-host/capabilities/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty offers **two configuration modes** to suit different deployment needs:
+
+**Yönetici paneli erişimi:** Yalnızca yönetici ayrıcalıklarına sahip kullanıcılar (`canAccessFullAdminPanel: true`) konfigürasyon arayüzüne erişebilir.
+
+## 1. Yönetici Paneli Konfigürasyonu (Varsayılan)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
+```
+
+**Çoğu konfigürasyon, kurulumdan sonra arayüz üzerinden gerçekleştirilir**:
+
+1. Twenty örneğinize erişin (genellikle `http://localhost:3000`)
+2. **Ayarlar / Yönetici Paneli / Konfigürasyon Değişkenleri** yoluna gidin
+3. Configure integrations, email, storage, and more
+4. Changes take effect immediately (within 15 seconds for multi-container deployments)
+
+<Warning>
+  **Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+</Warning>
+
+**Yönetici paneli aracılığıyla yapılandırabileceğiniz:**
+
+* **Kimlik Doğrulama** - Google/Microsoft OAuth, şifre ayarları
+* **E-posta** - SMTP ayarları, şablonlar, doğrulama
+* **Storage** - S3 configuration, local storage paths
+* **Entegrasyonlar** - Gmail, Google Calendar, Microsoft hizmetleri
+* **İş Akışı ve Hız Limiti** - Yürütme sınırları, API daraltma
+* **Ve daha fazlası...**
+
+![Yönetici Paneli Konfigürasyon Değişkenleri](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** altında açıklamalarla belgelenir.
+  Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve uygulama gizli anahtarları (`APP_SECRET`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
+
+  [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. Environment-Only Configuration
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Tüm konfigürasyon `.env` dosyaları aracılığıyla yönetilir:**
+
+1. Set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` in your `.env` file
+2. Tüm konfigürasyon değişkenlerini `.env` dosyanıza ekleyin
+3. Değişikliklerin etkin olması için kapları yeniden başlatın
+4. Admin panel will show current values but cannot modify them
+
+## Multi-Workspace Mode
+
+By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+
+### Single-Workspace Mode (Default)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* One workspace per Twenty instance
+* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
+* New signups are disabled after the first workspace is created
+* Simple URL structure: `https://your-domain.com`
+
+### Enabling Multi-Workspace Mode
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+
+**Key differences from single-workspace mode:**
+
+* Multiple workspaces can be created on the same instance
+* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
+* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
+* No automatic admin privileges — first user in each workspace is a regular user
+* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+
+<Warning>
+  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+</Warning>
+
+### DNS Configuration for Multi-Workspace
+
+When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+
+### Restricting Workspace Creation
+
+In multi-workspace mode, you may want to limit who can create new workspaces:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+
+## Gmail ve Google Takvim Entegrasyonu
+
+### Google Cloud Projesi Oluştur
+
+1. [Google Cloud Konsolu](https://console.cloud.google.com/) adresine gidin
+2. Yeni bir proje oluşturun veya mevcut bir projeyi seçin
+3. Bu API'leri etkinleştirin:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [Kişiler API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### OAuth'u Yapılandır
+
+1. [Kimlik Bilgileri](https://console.cloud.google.com/apis/credentials) sayfasına gidin
+2. OAuth 2.0 İstemci Kimliği Oluştur
+3. Bu yönlendirme URI'lerini ekleyin:
+   * `https://{your-domain}/auth/google/redirect` (for SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Twenty'de Yapılandır
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **Google Auth** bölümünü bulun
+3. Bu değişkenleri ayarlayın:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>
+
+**Gerekli kapsamlar** (otomatik yapılandırılmış):
+[İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### Uygulamanız test modunda ise
+
+Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekecek.
+
+[OAuth onay ekranı](https://console.cloud.google.com/apis/credentials/consent) altında "Test kullanıcılar" bölümüne test kullanıcılarınızı ekleyin.
+
+## Microsoft 365 Entegrasyonu
+
+<Warning>
+  Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
+</Warning>
+
+### Microsoft Azure'da bir proje oluştur
+
+[Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) platformunda bir proje oluşturmanız ve kimlik bilgilerini almanız gerekecek.
+
+### API'leri etkinleştir
+
+Microsoft Azure Konsolunda "İzinler" altında aşağıdaki API'leri etkinleştirin:
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profil
+* Microsoft Graph: offline_access
+
+Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak e-posta göndermek istiyorsanız gereklidir. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+
+### Yetkili yönlendirme URI'leri
+
+Projenize aşağıdaki yönlendirme URI'lerini eklemeniz gerekir:
+
+* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Twenty'de Yapılandır
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **Microsoft Auth** bölümünü bulun
+3. Bu değişkenleri ayarlayın:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>
+
+### Kapsamları yapılandır
+
+[İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'e-posta'
+* 'profil'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### Uygulamanız test modunda ise
+
+Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekecek.
+
+Test kullanıcılarınızı "Kullanıcılar ve gruplar" bölümüne ekleyin.
+
+## Takvim ve Mesajlaşma için Arka Plan İşleri
+
+Gmail, Google Takvim veya Microsoft 365 entegrasyonlarını yapılandırdıktan sonra, verileri senkronize edecek arka plan işlerini başlatmanız gerekir.
+
+İşçi kabınızdaki aşağıdaki tekrarlanan işleri kaydedin:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## E-posta Yapılandırması
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **E-posta** bölümünü bulun
+3. SMTP ayarlarınızı yapılandırın:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_e-posta_adresi
+    * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
+  </ArticleTab>
+
+  <ArticleTab>
+    2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_e-posta_adresi
+    * EMAIL_SMTP_PASSWORD='office365_parola'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
+
+    * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
+    * Aşağıdaki değişkenleri ayarlayın:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>

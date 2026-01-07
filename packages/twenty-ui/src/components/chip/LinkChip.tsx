@@ -42,6 +42,7 @@ export const LinkChip = ({
   onClick,
   triggerEvent,
   target,
+  emptyLabel,
 }: LinkChipProps) => {
   const { onClick: onClickHandler, onMouseDown: onMouseDownHandler } =
     useMouseDownNavigation({
@@ -73,6 +74,7 @@ export const LinkChip = ({
         accent={accent}
         className={className}
         maxWidth={maxWidth}
+        emptyLabel={emptyLabel}
       />
     </StyledLink>
   );

@@ -69,15 +69,17 @@ export const SettingsServerlessFunctionCodeEditor = ({
       const environmentVariables = {};
 
       if (isDefined(environmentVariables)) {
+        const envTypeDefinitions = Object.keys(environmentVariables)
+          // eslint-disable-next-line lingui/no-unlocalized-strings
+          .map((key) => `${key}: string;`)
+          .join('\n');
         const environmentDefinition = `
           declare namespace NodeJS {
             interface ProcessEnv {
-              ${Object.keys(environmentVariables)
-                .map((key) => `${key}: string;`)
-                .join('\n')}
+              ${envTypeDefinitions}
             }
           }
-  
+
           declare const process: {
             env: NodeJS.ProcessEnv;
           };

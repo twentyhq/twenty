@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarChip, ChipVariant, LinkChip } from 'twenty-ui/components';
 
@@ -29,6 +30,7 @@ export const RecordLink = ({
   return (
     <LinkChip
       label={displayName}
+      emptyLabel={t`Untitled`}
       to={linkToShowPage}
       variant={ChipVariant.Highlighted}
       leftComponent={

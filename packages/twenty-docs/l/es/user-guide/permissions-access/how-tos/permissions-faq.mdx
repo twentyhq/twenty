@@ -1,0 +1,126 @@
+---
+title: Permissions FAQ
+description: Frequently asked questions about roles and permissions.
+---
+
+## Roles
+
+<AccordionGroup>
+  <Accordion title="What roles come with Twenty by default?">
+    Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+  </Accordion>
+
+  <Accordion title="Can I delete the Admin role?">
+    No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  </Accordion>
+
+  <Accordion title="What happens when I delete a role?">
+    Any workspace member assigned to that role will be automatically reassigned to the default role.
+  </Accordion>
+
+  <Accordion title="How do I set a default role for new members?">
+    Go to **Settings → Roles**, find the **Default Role** option, and select which role new members should automatically receive when they join.
+  </Accordion>
+
+  <Accordion title="Can I assign multiple roles to one user?">
+    No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+  </Accordion>
+</AccordionGroup>
+
+## Permissions
+
+<AccordionGroup>
+  <Accordion title="What's the difference between object and field permissions?">
+    * **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
+    * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+
+    Field permissions allow more granular control over sensitive data.
+  </Accordion>
+
+  <Accordion title="How do permission overrides work?">
+    Permissions cascade from global to specific:
+
+    1. **All Objects** sets the baseline for all objects
+    2. **Object-Level Permissions** can override the global setting for specific objects
+    3. **Field-Level Permissions** can override the object setting for specific fields
+
+    More specific settings always take precedence.
+  </Accordion>
+
+  <Accordion title="What do the different permission levels mean?">
+    For objects:
+
+    * **See Records**: View records in lists and detail pages
+    * **Edit Records**: Modify existing records
+    * **Delete Records**: Soft-delete records (can be restored)
+    * **Destroy Records**: Permanently delete records
+
+    For fields:
+
+    * **See Field**: View the field value
+    * **Edit Field**: Modify the field value
+    * **No Access**: Field is completely hidden
+  </Accordion>
+
+  <Accordion title="Can I restrict access to specific records (row-level permissions)?">
+    Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  </Accordion>
+
+  <Accordion title="How do I make a field read-only for certain users?">
+    1. Go to **Settings → Roles**
+    2. Select the role
+    3. Navigate to the object containing the field
+    4. Set the field permission to **See Field** (without Edit Field)
+  </Accordion>
+</AccordionGroup>
+
+## Settings & Actions
+
+<AccordionGroup>
+  <Accordion title="What settings permissions are available?">
+    You can control access to:
+
+    * API key generation
+    * Workspace preferences
+    * Role assignment
+    * Data model configuration
+    * Security settings
+    * Workflow management
+
+    Use **Settings All Access** to grant full access, or enable specific permissions.
+  </Accordion>
+
+  <Accordion title="What action permissions are available?">
+    You can control:
+
+    * **Send Email**: Ability to send emails from Twenty
+    * **Import CSV**: Ability to import data via CSV
+    * **Export CSV**: Ability to export data to CSV
+
+    Use **Application All Access** to grant all actions, or enable specific ones.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="Is SSO available on all plans?">
+    No, SSO is a Premium feature available on the **Organization** plan only.
+  </Accordion>
+
+  <Accordion title="Which identity providers are supported?">
+    Twenty supports:
+
+    * **SAML 2.0** (works with most enterprise identity providers)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (formerly Azure AD)
+  </Accordion>
+
+  <Accordion title="What is Just-in-Time (JIT) provisioning?">
+    With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  </Accordion>
+
+  <Accordion title="Can I require SSO for all users?">
+    Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+  </Accordion>
+</AccordionGroup>

@@ -86,9 +86,9 @@ export const SettingsIntegrationComponent = ({
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
-        <StyledSoonPill label="Soon" />
+        <StyledSoonPill label={t`Soon`} />
       ) : integration.type === 'Active' ? (
-        <Status color="green" text="Active" />
+        <Status color="green" text={t`Active`} />
       ) : integration.type === 'Add' ? (
         <Button
           to={integration.link}

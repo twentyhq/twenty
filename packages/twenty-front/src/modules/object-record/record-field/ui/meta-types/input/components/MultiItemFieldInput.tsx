@@ -5,19 +5,18 @@ import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
-import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilValue } from 'recoil';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -73,20 +72,23 @@ export const MultiItemFieldInput = <T,>({
     RecordFieldComponentInstanceContext,
   );
 
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
+  const currentFocusedItem = useRecoilValue(currentFocusedItemSelector);
 
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
       if (
-        (isDefined(activeDropdownFocusId) &&
-          activeDropdownFocusId.startsWith(
-            MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX,
-          )) ||
-        activeDropdownFocusId === PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID
+        currentFocusedItem?.componentInstance.componentType !==
+        FocusComponentType.OPENED_FIELD_INPUT
       ) {
         return;
       }
+      const { isValid } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid && isInputDisplayed) {
+        return;
+      }
+
       handleSubmitChanges();
       onClickOutside(items, event);
     },
@@ -172,21 +174,34 @@ export const MultiItemFieldInput = <T,>({
     setIsInputDisplayed(true);
   };
 
-  const handleAutoEnter = () => {
-    const sanitizedInput = inputValue.trim();
+  const handleEnter = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
 
-    const newItem = formatInput
-      ? formatInput(sanitizedInput)
-      : (sanitizedInput as unknown as T);
-
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onEnter(updatedItems);
+    handleSubmitChanges();
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      onEnter(updatedItems);
+    }
+    setIsInputDisplayed(false);
+    setIsAddingNewItem(false);
+    setInputValue('');
   };
 
   const handleSubmitChanges = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    onChange(updatedItems);
+  };
+
+  const validateInputAndComputeUpdatedItems = (): {
+    isValid: boolean;
+    updatedItems: T[];
+  } => {
     const sanitizedInput = inputValue.trim();
 
     const newItem = formatInput
@@ -194,17 +209,22 @@ export const MultiItemFieldInput = <T,>({
       : (sanitizedInput as unknown as T);
 
     if (sanitizedInput === '' && isAddingNewItem) {
-      return;
+      return { isValid: true, updatedItems: items };
     }
 
     if (sanitizedInput === '' && shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-      onEnter([newItem]);
-      return;
+      return {
+        isValid: true,
+        updatedItems: [],
+      };
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
-      return;
+      return {
+        isValid: true,
+        updatedItems: toSpliced(items, itemToEditIndex, 1),
+      };
     }
 
     if (validateInput !== undefined) {
@@ -212,17 +232,16 @@ export const MultiItemFieldInput = <T,>({
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
-        return;
+        return { isValid: false, updatedItems: items };
       }
     }
 
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onChange(updatedItems);
-    setIsAddingNewItem(false);
-    setIsInputDisplayed(false);
+    return {
+      isValid: true,
+      updatedItems: isAddingNewItem
+        ? [...items, newItem]
+        : toSpliced(items, itemToEditIndex, 1, newItem),
+    };
   };
 
   const handleSetPrimaryItem = (index: number) => {
@@ -285,23 +304,13 @@ export const MultiItemFieldInput = <T,>({
               ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
               : handleInputChange('');
           }}
-          onEnter={() => {
-            handleSubmitChanges();
-            if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-              handleAutoEnter();
-            }
-          }}
+          onEnter={handleEnter}
           hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton
                 Icon={isAddingNewItem ? IconPlus : IconCheck}
-                onClick={() => {
-                  handleSubmitChanges();
-                  if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-                    handleAutoEnter();
-                  }
-                }}
+                onClick={handleEnter}
               />
             ) : null
           }

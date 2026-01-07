@@ -1,5 +1,5 @@
 ---
-title: 单选按钮
+title: Radio
 image: /images/user-guide/create-workspace/workspace-cover.png
 ---
 
@@ -7,98 +7,91 @@ image: /images/user-guide/create-workspace/workspace-cover.png
   <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
 </Frame>
 
-当用户只能从一系列选项中选择一个时使用。
+Used when users may only choose one option from a series of options.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
 
-```jsx
-import { Radio } from "twenty-ui/display";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
 
-  const handleRadioChange = (event) => {
-    console.log("Radio button changed:", event.target.checked);
-  };
-
-  const handleCheckedChange = (checked) => {
-    console.log("Checked state changed:", checked);
-  };
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
 
 
-  return (
-    <Radio
-      checked={true}
-      value="Option 1"
-      onChange={handleRadioChange}
-      onCheckedChange={handleCheckedChange}
-      size="large"
-      disabled={false}
-      labelPosition="right"
-    />
-  );
-};
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
 
-```
+    ```
+  </Tab>
 
-</Tab>
-<Tab title="Props">
-
-| 属性              | 类型             | 描述                              |
-| --------------- | -------------- | ------------------------------- |
-| 样式              | `React.CSS` 属性 | 组件的附加行内样式                       |
-| 类名              | 字符串            | 用于额外样式的可选 CSS 类                 |
-| 选中              | 布尔值            | 指示单选按钮是否被选中                     |
-| 值               | 字符串            | 与单选按钮相关联的标签或文本                  |
-| onChange        | function       | 选择的单选按钮改变时调用的函数                 |
-| onCheckedChange | function       | 当单选按钮的 `checked` 状态改变时调用的函数     |
-| 大小              | 字符串            | 单选按钮的尺寸。 选项包括：`大` 和 `小`         |
-| disabled        | 布尔值            | 如果为 `true`，则单选按钮将被禁用且不可点击       |
-| 标签位置            | 字符串            | 标签文字相对于单选按钮的位置。 有两个选项：`左` 和 `右` |
-
-</Tab>
+  <Tab title="Props">
+    | Props           | Type                   | Description                                                                                      |
+    | --------------- | ---------------------- | ------------------------------------------------------------------------------------------------ |
+    | style           | `React.CSS` properties | Additional inline styles for the component                                                       |
+    | className       | string                 | Optional CSS class for additional styling                                                        |
+    | checked         | boolean                | Indicates whether the radio button is checked                                                    |
+    | value           | string                 | The label or text associated with the radio button                                               |
+    | onChange        | function               | The function called when the selected radio button is changed                                    |
+    | onCheckedChange | function               | The function called when the `checked` state of the radio button changes                         |
+    | size            | string                 | The size of the radio button. Options include: `large` and `small`                               |
+    | disabled        | boolean                | If `true`, the radio button is disabled and not clickable                                        |
+    | labelPosition   | string                 | The position of the label text relative to the radio button. Has two options: `left` and `right` |
+  </Tab>
 </Tabs>
 
-## 单选按钮组
+## Radio Group
 
-将相关的单选按钮组合在一起。
+Groups together related radio buttons.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
 
-```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      const [selectedValue, setSelectedValue] = useState("Option 1");
 
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
 
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-  
-  return (
-    <RadioGroup value={selectedValue} onChange={handleChange}>
-      <Radio value="Option 1" />
-      <Radio value="Option 2" />
-      <Radio value="Option 3" />
-    </RadioGroup>
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| 属性            | 类型                | 描述                               |
-| ------------- | ----------------- | -------------------------------- |
-| 值             | 字符串               | 当前选中单选按钮的值                       |
-| onChange      | function          | 当单选按钮改变时触发的回调函数                  |
-| onValueChange | function          | 当组中选定的值发生变化时触发的回调函数。             |
-| 子元素           | `React.ReactNode` | 允许您将 React 组件（如单选按钮）作为子项传递给单选按钮组 |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props         | Type              | Description                                                                        |
+    | ------------- | ----------------- | ---------------------------------------------------------------------------------- |
+    | value         | string            | The value of the currently selected radio button                                   |
+    | onChange      | function          | The callback function triggered when the radio button is changed                   |
+    | onValueChange | function          | The callback function triggered when the selected value in the group changes.      |
+    | children      | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+  </Tab>
 </Tabs>

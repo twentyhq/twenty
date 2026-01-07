@@ -1,0 +1,100 @@
+---
+title: Příkazy backendu
+---
+
+## Užitečné příkazy
+
+Tyto příkazy by měly být vykonávány z adresáře packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### První nastavení
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Spuštění serveru
+
+```
+npx nx run twenty-server:start
+```
+
+### Linter
+
+```
+npx nx run twenty-server:lint # přidejte --fix pro opravu chyb ve formátování
+```
+
+### Testovat
+
+```
+npx nx run twenty-server:test:unit          # spuštění jednotkových testů
+npx nx run twenty-server:test:integration   # spuštění integračních testů
+```
+
+Poznámka: můžete spustit `npx nx run twenty-server:test:integration:with-db-reset`, pokud potřebujete před spuštěním integračních testů obnovit databázi.
+
+### Obnovení databáze
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrace
+
+#### Pro objekty ve schématech Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Pro objekty Pracovní plochy
+
+Nejsou žádné soubory migrací, migrace jsou generovány automaticky pro každou pracovní plochu, uloženy v databázi a aplikovány tímto příkazem
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  This will drop the database and re-run the migrations and seed.
+
+  Make sure to back up any data you want to keep before running this command.
+</Warning>
+
+## Technologický stack
+
+Twenty primárně používá NestJS pro backend.
+
+Prisma byl první ORM, který jsme použili. Ale aby uživatelé mohli vytvářet vlastní pole a vlastní objekty, dává větší smysl používat nižší úroveň, abychom mohli mít jemnou kontrolu. Projekt nyní používá TypeORM.
+
+Takto nyní vypadá technologický stack.
+
+**Jádro**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Databáze**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Integrace třetích stran**
+
+* [Sentry](https://sentry.io/welcome/) pro sledování chyb
+
+**Testování**
+
+* [Jest](https://jestjs.io/)
+
+**Nástroje**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Vývoj**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

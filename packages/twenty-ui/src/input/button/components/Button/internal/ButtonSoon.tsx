@@ -5,4 +5,10 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-export const ButtonSoon = () => <StyledSoonPill label="Soon" />;
+type ButtonSoonProps = {
+  label?: string;
+};
+
+export const ButtonSoon = ({ label = 'Soon' }: ButtonSoonProps) => (
+  <StyledSoonPill label={label} />
+);

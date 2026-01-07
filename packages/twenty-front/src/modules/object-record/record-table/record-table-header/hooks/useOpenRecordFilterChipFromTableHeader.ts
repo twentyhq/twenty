@@ -4,6 +4,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -46,8 +47,9 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     if (isDefined(existingNonAdvancedRecordFilter)) {
       setEditableFilterChipDropdownStates(existingNonAdvancedRecordFilter);
       openDropdown({
-        dropdownComponentInstanceIdFromProps:
-          existingNonAdvancedRecordFilter.id,
+        dropdownComponentInstanceIdFromProps: getEditableChipDropdownId({
+          recordFilterId: existingNonAdvancedRecordFilter.id,
+        }),
       });
       return;
     }
@@ -59,7 +61,11 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     upsertRecordFilter(newRecordFilter);
 
     setEditableFilterChipDropdownStates(newRecordFilter);
-    openDropdown({ dropdownComponentInstanceIdFromProps: newRecordFilter.id });
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: getEditableChipDropdownId({
+        recordFilterId: newRecordFilter.id,
+      }),
+    });
   };
 
   return { openRecordFilterChipFromTableHeader };

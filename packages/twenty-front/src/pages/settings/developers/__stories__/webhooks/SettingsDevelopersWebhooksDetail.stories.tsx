@@ -1,17 +1,18 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { SettingsDevelopersWebhookDetail } from '../../webhooks/components/SettingsDevelopersWebhookDetail';
+import { SettingsDevelopersWebhookDetail } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhookDetail',
   component: SettingsDevelopersWebhookDetail,
-  decorators: [PageDecorator],
+  decorators: [I18nFrontDecorator, PageDecorator],
   args: {
     routePath: '/settings/webhooks/:webhookId',
     routeParams: { ':webhookId': '1234' },

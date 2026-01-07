@@ -25,6 +25,7 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { isDefined } from 'twenty-shared/utils';
@@ -155,6 +156,7 @@ export const SignInUpGlobalScopeForm = () => {
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
+  const { isCaptchaReady } = useCaptcha();
 
   const [showErrors, setShowErrors] = useState(false);
 
@@ -284,7 +286,9 @@ export const SignInUpGlobalScopeForm = () => {
               )}
               <MainButton
                 disabled={
-                  isRequestingCaptchaToken || form.formState.isSubmitting
+                  isRequestingCaptchaToken ||
+                  form.formState.isSubmitting ||
+                  (signInUpStep !== SignInUpStep.Password && !isCaptchaReady)
                 }
                 title={
                   signInUpStep === SignInUpStep.Password

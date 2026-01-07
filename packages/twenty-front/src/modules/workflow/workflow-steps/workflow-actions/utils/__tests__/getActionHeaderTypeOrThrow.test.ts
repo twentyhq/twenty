@@ -1,4 +1,4 @@
-import { getActionHeaderTypeOrThrow } from '../getActionHeaderTypeOrThrow';
+import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 
 describe('getActionHeaderTypeOrThrow', () => {
   it('should return "Core" for CODE action type', () => {

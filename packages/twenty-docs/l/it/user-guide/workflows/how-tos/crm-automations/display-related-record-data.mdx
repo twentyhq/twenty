@@ -1,0 +1,170 @@
+---
+title: Display Related Record Data
+description: Show data from related records (e.g., Company info on Opportunities) using workflows.
+---
+
+Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
+
+## Casi d'Uso Comuni
+
+| Fonte       | Destination | Fields to Copy                  |
+| ----------- | ----------- | ------------------------------- |
+| Azienda     | Opportunità | Industry, Company Size, ARR     |
+| Persona     | Opportunità | Email, Phone, Title             |
+| Opportunità | Azienda     | Last Deal Amount, Last Won Date |
+
+## Basic Field Copy
+
+### Example: Copy Contact Email to Opportunity
+
+**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+
+### Prerequisite
+
+Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+
+* Contact Email (type: Email)
+* Contact Phone (type: Phone)
+
+### Setup
+
+1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
+
+2. **Filter**: Check that Point of Contact is not empty
+
+3. **Search Records**: Find the linked person
+   * Object: People
+   * Filter: ID equals `{{trigger.object.pointOfContact.id}}`
+
+4. **Update Record**:
+   * Object: Opportunities
+   * Record: `{{trigger.object.id}}`
+   * Contact Email: `{{searchRecords[0].email}}`
+   * Contact Phone: `{{searchRecords[0].phone}}`
+
+## Copy Multiple Fields
+
+### Example: Sync Company Info to All Related Opportunities
+
+**Goal**: When company details change, update all related opportunities.
+
+### Setup
+
+1. **Trigger**: Record is Updated (Companies)
+   * Fields: Industry, Company Size, Annual Revenue
+
+2. **Search Records**: Find all opportunities for this company
+   * Object: Opportunities
+   * Filter: Company ID equals `{{trigger.object.id}}`
+
+3. **Iterator**: Loop through each opportunity
+
+4. **Update Record** (inside iterator):
+   * Object: Opportunities
+   * Record: `{{iterator.currentItem.id}}`
+   * Company Industry: `{{trigger.object.industry}}`
+   * Company Size: `{{trigger.object.companySize}}`
+   * Company ARR: `{{trigger.object.annualRevenue}}`
+
+## Copy on Record Creation
+
+### Example: Pre-fill Opportunity with Company Data
+
+**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
+
+### Prerequisite
+
+Create the destination fields in **Settings → Data Model → Opportunities**:
+
+* Company Industry (type: Text)
+* Company Size (type: Number)
+
+### Setup
+
+1. **Trigger**: Record is Created (Opportunities)
+   * Filter: Company is not empty
+
+2. **Search Records**: Get the linked company's details
+   * Object: Companies
+   * Filter: ID equals `{{trigger.object.company.id}}`
+
+3. **Update Record**:
+   * Object: Opportunities
+   * Record: `{{trigger.object.id}}`
+   * Company Industry: `{{searchRecords[0].industry}}`
+   * Company Size: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/l/it/developers/extend/capabilities/apis) instead.
+</Note>
+
+## Bidirectional Sync
+
+### Example: Keep Primary Contact in Sync
+
+**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
+
+### Workflow 1: Company → Person
+
+1. **Trigger**: Record is Updated (Companies, Primary Contact field)
+2. **Update Record**: Set person's "Is Primary Contact" to true
+3. **Search Records**: Find previous primary contact
+4. **Update Record**: Set previous contact's "Is Primary Contact" to false
+
+### Workflow 2: Person → Company
+
+1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
+2. **Update Record**: Set company's Primary Contact to this person
+
+<Note>
+  Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+</Note>
+
+## Using Code for Complex Mapping
+
+### Example: Transform Data During Copy
+
+**Goal**: Copy and format phone number from person to opportunity.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Migliori Pratiche
+
+### Avoid Loops
+
+* Don't create workflows that trigger each other endlessly
+* Use specific field conditions
+* Add checks to see if value actually changed
+
+### Handle Missing Data
+
+* Always check if source record exists before copying
+* Provide default values for optional fields
+* Use filters to skip when source field is empty
+
+### Performance
+
+* Batch updates when copying to many records
+* Use scheduled workflows for bulk sync operations
+* Consider using Iterator for multiple record updates
+
+## Related
+
+* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)

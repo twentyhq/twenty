@@ -1,18 +1,10 @@
 import { z } from 'zod';
 
 export const SoftDeleteToolInputSchema = z.object({
-  loadingMessage: z
+  id: z
     .string()
-    .optional()
-    .describe(
-      'A clear, human-readable description of the action being performed. Explain what operation you are executing and with what parameters in natural language.',
-    ),
-  input: z.object({
-    id: z
-      .string()
-      .uuid()
-      .describe('The unique UUID of the record to soft delete'),
-  }),
+    .uuid()
+    .describe('The unique UUID of the record to soft delete'),
 });
 
 export type SoftDeleteToolInput = z.infer<typeof SoftDeleteToolInputSchema>;

@@ -1,0 +1,80 @@
+---
+title: سير العمل
+description: Learn how to build automations in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="سير العمل" />
+</Frame>
+
+## أهمية تدفقات العمل
+
+تم تصميم Twenty لتوفير أقصى قدر من المرونة للمستخدمين. بدلاً من إجبارك على تكييف عمليات عملك مع ميزات ثابتة ومعدة مسبقًا، تتيح تدفقات العمل لك بناء الأتمتة التي تُنشئ نظام إدارة علاقات العملاء (CRM) الأنسب لحالات الاستخدام الفريدة الخاصة بك.
+
+تدفقات العمل هي ميزة داخل تطبيق Twenty لبناء هذه الأتمتة. توفر لك لبنات البناء لإنشاء ما تحتاجه عملك تمامًا، عند الحاجة إليه.
+
+## ماذا يمكنني أن أفعل مع تدفقات العمل؟
+
+نوصي ببناء الأتمتة لغرضين رئيسيين:
+
+1. **الأتمتة الداخلية لتسهيل العمل اليومي لفريقك**: قلل من كمية الإدخالات اليدوية والمهام المتكررة التي تبطئ فريقك.
+2. **إدخال البيانات في Twenty وخارجها**: اربط Twenty من خلال النداءات البرمجية (API) وإشعارات الويب (webhooks) بقاعدة البيانات الخاصة بك والأدوات الأخرى.
+
+## Building Your First Workflow
+
+### Step 1: Create a New Workflow
+
+1. Go to **Workflows** accessible below the other objects
+2. Click **+ New Record**
+3. Give your workflow a name
+
+### Step 2: Add a Trigger
+
+Every workflow starts with a trigger. Choose from:
+
+* **Record events**: When a record is created, updated, or deleted
+* **Schedule**: Run at specific times (daily, weekly, etc.)
+* **Manual**: Triggered by a user action
+* **Webhook**: Triggered by a webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Step 3: Add Actions
+
+After your trigger, add one or more actions:
+
+* **Create Record**: Add new records to any object
+* **Update Record**: Modify existing record data
+* **Delete Record**: Remove records from objects
+* **Search Records**: Find records matching criteria
+* **Upsert Record**: Create or update based on matching criteria
+* **Iterator**: Loop through arrays of records
+* **Filter**: Control which records proceed
+* **Delay**: Wait before continuing (duration or scheduled date)
+* **Send Email**: Send emails via your connected account
+* **Code**: Run custom JavaScript
+* **HTTP Request**: Call external APIs
+* **Form**: Get inputs from users within Twenty UI at the time of execution
+* **AI Agent** (Coming soon): Run intelligent AI tasks
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Step 4: Test and Activate
+
+1. Use the **Test** button to run your workflow with sample data
+2. Review the results to ensure it works as expected
+3. Toggle the workflow **Active** when ready
+
+## أفضل الممارسات في سير العمل
+
+* **تحرير أسماء الخطوات**: أعد تسمية خطوات سير العمل بشكل واضح لبيان ما يقوم به كل منها. يساعد هذا في الصيانة ويجعل تسليمها إلى زملاء العمل سهلاً
+* **استخدم بيانات الخطوة السابقة**: يمكنك استخدام الحقول من السجلات التي تمت إعادتها بواسطة أي خطوة سابقة في سير العمل
+* **ابدأ ببساطة**: ابدأ بسير عمل بسيط وأضف التعقيد بمرور الوقت بينما تصبح أكثر راحة مع النظام
+* **خطط قبل البناء**: قم برسم منطق سير العمل الخاص بك قبل البدء في البناء لتجنب التوقف في منتصف الطريق
+
+## الخطوات التالية
+
+* [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Automations](/l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

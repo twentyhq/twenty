@@ -21,7 +21,8 @@ const isNameAvailable = async (
 ) => {
   const numberOfTablesWithSameName = +(
     await coreDataSource.query(
-      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', '${workspaceSchemaName}')`,
+      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE $1 AND table_schema IN ('core', $2)`,
+      [tableName, workspaceSchemaName],
     )
   )[0].count;
 

@@ -1,0 +1,171 @@
+---
+title: Nastavení spouštěče webhooku
+description: Přijímejte data z externích služeb pro spouštění pracovních postupů.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Spouštěče webhooků umožňují externím službám spustit vaše pracovní postupy zasláním dat na jedinečnou adresu URL. Použijte je k propojení formulářů, aplikací třetích stran a vlastních integrací.
+
+## Kdy použít webhooky
+
+| Případ použití             | Příklad                                      |
+| -------------------------- | -------------------------------------------- |
+| **Webové formuláře**       | Odeslání kontaktního formuláře vytváří leady |
+| **Aplikace třetích stran** | Platba ve Stripe → vytvořit záznam zákazníka |
+| **Vlastní integrace**      | Vaše aplikace → automatizace v Twenty        |
+| **Nástroje bez kódu**      | Připojení Zapier, Make, n8n                  |
+
+## Nastavení krok za krokem
+
+### Krok 1: Vytvořte pracovní postup
+
+1. Přejděte na **Nastavení → Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte jej (např. "Odeslání webového formuláře")
+
+### Krok 2: Nakonfigurujte spouštěč webhooku
+
+1. Klikněte na blok spouštěče
+2. Vyberte **Webhook**
+3. Obdržíte jedinečnou adresu URL webhooku, například:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Zkopírujte tuto adresu URL — budete ji potřebovat pro svou externí službu
+
+### Krok 3: Definujte očekávanou datovou strukturu
+
+Pro požadavky **POST** definujte očekávanou strukturu těla:
+
+1. Klikněte na **Definovat očekávané tělo**
+2. Zadejte ukázkový JSON, který odpovídá tomu, co vaše služba pošle:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Klikněte na **Uložit** — tím se vytvoří proměnné, které můžete použít v dalších krocích
+
+### Krok 4: Přidejte akce
+
+Nyní přidejte akce, které využívají data z webhooku:
+
+**Příklad: Vytvořit záznam osoby**
+
+1. Přidejte akci **Vytvořit záznam**
+2. Vyberte objekt **People**
+3. Namapujte pole:
+
+| Pole       | Hodnota                                                        |
+| ---------- | -------------------------------------------------------------- |
+| Jméno      | `{{trigger.body.firstName}}`                                   |
+| Příjmení   | `{{trigger.body.lastName}}`                                    |
+| Email      | `{{trigger.body.email}}`                                       |
+| Společnost | Vyhledejte nebo vytvořte na základě `{{trigger.body.company}}` |
+
+### Krok 5: Otestujte webhook
+
+Před aktivací otestujte svůj webhook:
+
+**Pomocí cURL**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Pomocí Postmanu nebo podobného nástroje**:
+
+1. Vytvořte požadavek POST na adresu URL vašeho webhooku
+2. Nastavte hlavičku Content-Type na `application/json`
+3. Přidejte své testovací tělo JSON
+4. Odešlete a zkontrolujte spuštění pracovního postupu
+
+### Krok 6: Aktivujte
+
+Po otestování klikněte na **Aktivovat**, aby byl pracovní postup aktivní.
+
+## Zpracování různých datových struktur
+
+### Vnořená data
+
+Pokud váš webhook posílá vnořená data:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Odkazujte pomocí: `{{trigger.body.contact.email}}`
+
+### Pole
+
+Pokud data obsahují pole:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+Jak pole zpracujete, závisí na vašem případě použití:
+
+**Neznámý počet položek → Použijte Iterator**
+
+Pokud potřebujete zpracovat každou položku v poli (např. pro každou vytvořit záznam), přidejte akci **Code** pro rozparsování pole a poté použijte **Iterator**:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Poté použijte Iterator k procházení: `{{code.items}}`
+
+**Známá/konkrétní pole → Extrahujte do pojmenovaných polí**
+
+Pokud pole obsahuje konkrétní položky, ke kterým chcete přistupovat jednotlivě (např. odpovědi formuláře, kde pozice 0 je vždy "křestní jméno", pozice 1 je vždy "příjmení"), přidejte akci **Code** k jejich extrakci:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Nyní můžete v následujících krocích vybírat `product.name` a `product.qty` jednotlivě.
+
+<Tip>
+  Další podrobnosti o práci s poli viz [Zpracování polí v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)

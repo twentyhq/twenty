@@ -7,6 +7,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import camelCase from 'lodash.camelcase';
 import { useIcons } from 'twenty-ui/display';
@@ -46,10 +47,10 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
       <FormFieldInputContainer>
         <Select
           dropdownId="workflow-form-field-settings-record-picker-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           value={field.settings?.objectName}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             onChange({
@@ -57,7 +58,7 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
               placeholder: `Select a ${
                 activeNonSystemObjectMetadataItems.find(
                   (item) => item.nameSingular === updatedObjectName,
-                )?.labelSingular || 'record'
+                )?.labelSingular || t`record`
               }`,
               settings: {
                 ...field.settings,
@@ -71,7 +72,7 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
         />
       </FormFieldInputContainer>
       <FormFieldInputContainer>
-        <InputLabel>Label</InputLabel>
+        <InputLabel>{t`Label`}</InputLabel>
         <FormTextFieldInput
           onChange={(newLabel: string) => {
             onChange({

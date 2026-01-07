@@ -16,6 +16,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isAuditLogged?: boolean;
   isUIReadOnly?: boolean;
   shortcut?: string | null;
+  duplicateCriteria?: string[][] | null;
   labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
 };
 
@@ -42,6 +43,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged = true,
     isUIReadOnly = false,
     shortcut = null,
+    duplicateCriteria = null,
     labelIdentifierFieldMetadataName,
   },
   workspaceId,
@@ -50,7 +52,7 @@ export const createStandardObjectFlatMetadata = <
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
   universalIdentifier,
-  standardId: null,
+  standardId: universalIdentifier,
   applicationId: twentyStandardApplicationId,
   workspaceId,
   nameSingular,
@@ -68,7 +70,7 @@ export const createStandardObjectFlatMetadata = <
   isUIReadOnly,
   isLabelSyncedWithName: false,
   standardOverrides: null,
-  duplicateCriteria: null,
+  duplicateCriteria,
   shortcut,
   labelIdentifierFieldMetadataId:
     standardObjectMetadataRelatedEntityIds[nameSingular].fields[

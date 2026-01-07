@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -12,16 +13,25 @@ export enum ConfigVariableExceptionCode {
   INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
 
-const configVariableExceptionUserFriendlyMessages: Record<
-  ConfigVariableExceptionCode,
-  MessageDescriptor
-> = {
-  [ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED]: msg`Database configuration is disabled.`,
-  [ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE]: msg`This variable can only be set via environment.`,
-  [ConfigVariableExceptionCode.VARIABLE_NOT_FOUND]: msg`Configuration variable not found.`,
-  [ConfigVariableExceptionCode.VALIDATION_FAILED]: msg`Configuration validation failed.`,
-  [ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE]: msg`Unsupported configuration type.`,
-  [ConfigVariableExceptionCode.INTERNAL_ERROR]: msg`An unexpected configuration error occurred.`,
+const getConfigVariableExceptionUserFriendlyMessage = (
+  code: ConfigVariableExceptionCode,
+) => {
+  switch (code) {
+    case ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED:
+      return msg`Database configuration is disabled.`;
+    case ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE:
+      return msg`This variable can only be set via environment.`;
+    case ConfigVariableExceptionCode.VARIABLE_NOT_FOUND:
+      return msg`Configuration variable not found.`;
+    case ConfigVariableExceptionCode.VALIDATION_FAILED:
+      return msg`Configuration validation failed.`;
+    case ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE:
+      return msg`Unsupported configuration type.`;
+    case ConfigVariableExceptionCode.INTERNAL_ERROR:
+      return msg`An unexpected configuration error occurred.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ConfigVariableException extends CustomException<ConfigVariableExceptionCode> {
@@ -33,7 +43,7 @@ export class ConfigVariableException extends CustomException<ConfigVariableExcep
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        configVariableExceptionUserFriendlyMessages[code],
+        getConfigVariableExceptionUserFriendlyMessage(code),
     });
   }
 }

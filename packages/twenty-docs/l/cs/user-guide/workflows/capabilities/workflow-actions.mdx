@@ -1,0 +1,311 @@
+---
+title: Akce pracovních postupů
+description: Zjistěte, jaké akce jsou k dispozici v pracovních postupech Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## O akcích
+
+Akce definují, co se stane po spuštění. Můžete řetězit více akcí dohromady a vytvářet tak složité automatizace.
+
+<Tip>
+  * Použijte nástroj pro výběr proměnných (klikněte na ikonu `(x+)`) k procházení dostupných dat z předchozích kroků
+  * Najetím myší na libovolné vstupní pole zjistíte, ze kterého kroku proměnná pochází — užitečné, když stejné pole (např. ID) existuje ve více předchozích krocích
+  * Každé akci dejte výstižný název pro snazší údržbu
+</Tip>
+
+## Akce se záznamy
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Vytvořit záznam
+
+Přidává nový záznam do vybraného objektu.
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyplňte povinná a volitelná pole
+* Použijte data z předchozích kroků nebo hodnoty zadané ručně k vyplnění polí
+
+**Výstup**: Data nově vytvořeného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Aktualizovat záznam
+
+Mění existující záznam ve vybraném objektu.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyberte specifický záznam pro aktualizaci.
+  * Můžete buď vybrat pevně daný záznam pomocí rozevírací nabídky zobrazující všechny dostupné záznamy.
+  * Nebo můžete nechat záznam vybrat dynamicky tím, že určíte záznam nalezený v předchozím kroku pomocí `(x+)`. V této fázi nemůžete vyhledávat záznam podle různých kritérií. Pokud jste zatím neurčili záznam, přidejte krok `Search Record` před tento krok `Update Record`.
+* Vyberte pole k úpravě a zadejte nové hodnoty
+
+**Výstup**: Data aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Smazat záznam
+
+Odstraní záznam z vybraného objektu.
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyberte specifický záznam pro smazání
+
+**Výstup**: Data smazaného záznamu zůstávají k dispozici pro použití v následujících krocích.
+
+### Hledání záznamů
+
+Najde záznamy ve vybraném objektu pomocí filtračních podmínek.
+
+**Konfigurace**:
+
+* Vyberte objekt pro hledání
+* Nastavte kritéria filtru k zúžení výsledků
+* Nakonfigurujte řazení a limity
+
+**Výstup**: Vrací odpovídající záznamy, které lze použít v následujících krocích.
+
+<Note>
+  **Omezení**: Search Records vrací maximálně **200 záznamů**. Pokud potřebujete zpracovat více, přidejte konkrétní filtry k omezení výsledků nebo použijte naplánované pracovní postupy ke zpracování v dávkách.
+</Note>
+
+**Doporučená praxe**: Použijte [větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) po kroku Search Records pro zpracování scénářů "nalezeno" vs "nenalezeno".
+
+### Vložit nebo aktualizovat záznam
+
+Vytvoří nový záznam nebo aktualizuje existující na základě kritérií shody. Hodí se, když si nejste jisti, zda záznam již existuje.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Všimněte si, která pole lze použít pro shodu: e-mail u osob, doména u společností, ID u libovolného objektu nebo jakékoli pole označené jako jedinečné. Níže budete muset vyplnit alespoň jedno z nich.
+* Vyplňte hodnoty polí. Nezapomeňte vyplnit alespoň jeden z jedinečných identifikátorů.
+
+<Note>
+  **Shoda obvykle funguje ještě lépe, když přidáte pouze jeden jedinečný identifikátor.** Například snímek obrazovky níže bude párovat společnosti podle jejich domény. ID není nutně potřeba.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Použijte data z předchozích kroků k vyplnění polí
+
+**How it works**:
+
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
+
+### Iterátor
+
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+
+**Konfigurace**:
+
+* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* Definujte akce, které budou provedeny na každém záznamu v cyklu.
+
+<Note>
+  - You can add several actions within an iterator.
+  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
+
+* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+
+### Filtr
+
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Konfigurace**:
+
+* Select the record to filter
+* Definujte filtrační podmínky a kritéria
+* Nakonfigurujte, které záznamy by měly projít do následujících kroků
+
+<Note>
+  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+</Note>
+
+### Delay
+
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Typ                | Popis                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time                                |
+
+**Configuration for Duration**:
+
+* Set days, hours, minutes, and/or seconds
+* Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+
+* Select a date and time
+* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Případy použití**:
+
+* Wait 24 hours before sending a follow-up email
+* Pause until an opportunity's close date
+* Schedule actions for business hours
+
+<Note>
+  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+
+* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+* **1 credit consumed** when the Delay node executes, regardless of duration
+* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+
+## Communication Actions
+
+### Odeslat e-mail
+
+Odesílá e-mail z vašeho pracovního postupu. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
+
+**Prerequisites**: Add an email account in Settings → Accounts
+
+**Konfigurace**:
+
+* Select the sender email account
+
+<Note>
+  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
+
+For all the following steps, you can reference variables from previous steps for personalization.
+
+* Zadejte e-mailovou adresu příjemce.
+
+<Note>
+  Only one recipient is possible at the moment.
+</Note>
+
+* Nastavte předmět.
+* Sestavte tělo zprávy. You can format links, create numbered list, bullet point lists, add attachments.
+
+<Note>
+  Adding HTML signatures is not possible at the moment.
+</Note>
+
+### Formulář
+
+Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+
+<Warning>
+  **Forms are designed for manual triggers only**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+</Warning>
+
+**Konfigurace**:
+
+* Configure the fields that users will be asked to fill. For each field, choose
+  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  * a label
+  * a default value under `Placeholder` (optional)
+* Edit the form title
+
+**Výstup**: Odpovědi z formuláře jsou k dispozici pro použití v následujících krocích.
+
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
+* Trigger your manual workflow from the command menu `Cmd K`
+* Fill the form that is displayed in the side panel and click `Submit`.
+
+<Note>
+  The fields cannot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+
+## Integration Actions
+
+### Kód
+
+Runs custom JavaScript within your workflow.
+
+**Konfigurace**:
+
+* Přístup k proměnným z předchozích kroků. You can edit the variables names dynamically.
+
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+
+* Zapište JavaScriptový kód v editoru
+* Vrátit proměnné pro použití v následujících krocích
+* Testovat kód přímo ve kroku
+
+<Note>
+  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+<Tip>
+  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
+
+<Tip>
+  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
+
+### HTTP požadavek
+
+Sends a request to an external API as part of your workflow.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Zadejte URL endpointu API. Using parameters from previous steps is possible.
+* Vyberte metodu HTTP (GET, POST, PUT, PATCH, DELETE)
+* Přidejte potřebné hlavičky a hodnoty
+* Poskytněte ukázku odpovědi pro zobrazení struktury
+
+## AI Actions
+
+### AI Agent - Coming Soon
+
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Konfigurace**:
+
+* **Agent**: Select an existing AI agent or use the default agent
+* **Prompt**: Write the instruction for the AI agent
+* Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+
+* Analyze and summarize data
+* Classify or categorize records
+* Generate text content
+* Make decisions based on data
+* Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/cs/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/cs/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>

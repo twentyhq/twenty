@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
@@ -27,7 +28,7 @@ export const CountrySelect = ({
       }),
     );
     countryList.unshift({
-      label: 'No country',
+      label: t`No country`,
       value: '',
       Icon: IconCircleOff,
     });

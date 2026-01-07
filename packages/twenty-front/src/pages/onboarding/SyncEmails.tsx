@@ -106,9 +106,9 @@ export const SyncEmails = () => {
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <Title noMarginTop>Emails and Calendar</Title>
+      <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
-        Sync your Emails and Calendar with Twenty. Choose your privacy settings.
+        {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard
@@ -145,7 +145,7 @@ export const SyncEmails = () => {
       </StyledProviderContainer>
       <StyledActionLinkContainer>
         <ClickToActionLink onClick={continueWithoutSync}>
-          Continue without sync
+          {t`Continue without sync`}
         </ClickToActionLink>
       </StyledActionLinkContainer>
     </Modal.Content>

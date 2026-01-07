@@ -1,0 +1,170 @@
+---
+title: Risoluzione dei problemi del flusso di lavoro
+description: Common workflow issues and how to resolve them.
+---
+
+## Problemi comuni e soluzioni
+
+### Flusso di lavoro non attivato
+
+**Symptoms**: Your workflow doesn't run when you expect it to.
+
+**Possible Causes**:
+
+1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
+2. **Trigger conditions not met**: Verify the trigger matches your expected event
+3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
+4. **Permissions**: Check you have permission to run workflows
+
+**Soluzioni**:
+
+* Verify workflow status in the workflow list
+* Test with the specific action you expect to trigger it
+* Review trigger configuration
+* Contact your admin about permissions
+
+### Workflow Triggers Too Early (Empty Fields)
+
+**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+
+**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+
+**When "Record is created" works well**:
+
+* Records created via API calls (fields are populated in a single request)
+* Records created via import
+* Automated record creation from other workflows
+
+**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+
+* The workflow triggers after the user has finished filling in and saving the fields
+* You get the complete data rather than empty values
+
+<Tip>
+  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+</Tip>
+
+### Actions Failing
+
+**Symptoms**: Workflow runs but some actions fail.
+
+**Possible Causes**:
+
+1. **Missing data**: Required fields are empty
+2. **Invalid references**: Variables from previous steps don't exist
+3. **API errors**: External services returning errors
+4. **Permission issues**: Action requires permissions you don't have
+
+**Soluzioni**:
+
+* Check the workflow run details for error messages
+* Verify all required fields have values
+* Test API connections independently
+* Review role permissions
+
+### HTTP Request Errors
+
+**Symptoms**: HTTP Request actions fail or return unexpected results.
+
+**Common Error Codes**:
+
+* **400**: Bad request - check your request body format
+* **401**: Unauthorized - verify API key
+* **403**: Forbidden - check API permissions
+* **404**: Not found - verify endpoint URL
+* **429**: Too many requests - implement rate limiting
+* **500**: Server error - external service issue
+
+**Soluzioni**:
+
+* Verify API endpoint URL
+* Check authentication headers
+* Test the API call outside of Twenty first
+* Add error handling in Code actions
+
+### Code Action Errors
+
+**Symptoms**: JavaScript code fails to execute.
+
+**Common Issues**:
+
+1. **Syntax errors**: Typos or invalid JavaScript
+2. **Undefined variables**: Referencing variables that don't exist
+3. **Type errors**: Operations on wrong data types
+4. **Timeouts**: Code taking too long to execute
+
+**Soluzioni**:
+
+* Use the built-in code editor validation
+* Test code logic in a JavaScript console first
+* Add console.log statements for debugging
+* Simplify complex operations
+
+### Email Not Sending
+
+**Symptoms**: Send Email action doesn't deliver emails.
+
+**Possible Causes**:
+
+1. **No email account connected**: Check Settings → Accounts
+2. **Invalid email address**: Recipient email is malformed
+3. **Sending limits**: Email provider rate limits reached
+4. **Spam filters**: Emails being blocked
+
+**Soluzioni**:
+
+* Verify email account connection
+* Validate recipient email addresses
+* Check email provider limits
+* Review email content for spam triggers
+
+## Debugging Workflows
+
+### Using Workflow Runs
+
+1. Go to the workflow editor
+2. Open the **Runs** panel
+3. Find the failed run
+4. Click to see step-by-step details
+5. Review error messages and output data
+
+### Testing Individual Steps
+
+1. For Code actions, use the **Test** button
+2. For HTTP requests, test the endpoint separately
+3. Create test records to trigger workflows
+4. Use manual triggers for controlled testing
+
+### Common Debugging Patterns
+
+**Add logging**:
+Use Code actions to log intermediate values for debugging.
+
+**Isolate steps**:
+Test each step independently to identify failures.
+
+**Check data flow**:
+Verify that each step receives the expected input data.
+
+## Best Practices to Avoid Issues
+
+### Before Activation
+
+* Test thoroughly in draft mode
+* Validate all API connections
+* Review trigger conditions carefully
+* Document expected behavior
+
+### During Development
+
+* Use descriptive step names
+* Add comments in Code actions
+* Test with realistic data
+* Plan for edge cases
+
+### After Activation
+
+* Monitor initial runs closely
+* Set up alerts for failures
+* Review run history regularly
+* Keep workflows simple when possible

@@ -5,6 +5,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import camelCase from 'lodash.camelcase';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -32,7 +33,7 @@ export const WorkflowFormFieldSettingsSelect = ({
 }: WorkflowFormFieldSettingsSelectProps) => {
   const selectTypeOptions = [
     {
-      label: 'Existing Field',
+      label: t`Existing Field`,
       value: 'EXISTING_FIELD',
     },
   ];
@@ -65,7 +66,7 @@ export const WorkflowFormFieldSettingsSelect = ({
     <StyledFormFieldSettingsSelect>
       <StyledRowContainer>
         <FormFieldInputContainer>
-          <InputLabel>Label</InputLabel>
+          <InputLabel>{t`Label`}</InputLabel>
           <FormTextFieldInput
             onChange={(newLabel: string) => {
               onChange({
@@ -81,7 +82,7 @@ export const WorkflowFormFieldSettingsSelect = ({
           />
         </FormFieldInputContainer>
         <FormFieldInputContainer>
-          <InputLabel>Select Type</InputLabel>
+          <InputLabel>{t`Select Type`}</InputLabel>
           <FormSelectFieldInput
             onChange={(newSelectType: string | null) => {
               if (newSelectType === null) {
@@ -102,7 +103,7 @@ export const WorkflowFormFieldSettingsSelect = ({
         </FormFieldInputContainer>
       </StyledRowContainer>
       <FormFieldInputContainer>
-        <InputLabel>Field</InputLabel>
+        <InputLabel>{t`Field`}</InputLabel>
         <FormSelectFieldInput
           onChange={(newSelectFieldId: string | null) => {
             if (newSelectFieldId === null) {

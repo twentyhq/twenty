@@ -1,0 +1,89 @@
+---
+title: Veri Geçişi
+description: CSV dosyaları veya API aracılığıyla CRM verilerinizi içe ve dışa aktarın.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Veri Geçişi" />
+</Frame>
+
+## İçe Aktarma Yöntemleri
+
+Twenty, veri içe aktarmak için iki ana yöntemi destekler:
+
+| Yöntem                  | En Uygun                                 | Hacim Sınırı              |
+| ----------------------- | ---------------------------------------- | ------------------------- |
+| **CSV İçe Aktarma**     | Standart geçişler, düzenli güncellemeler | Dosya başına 10.000 kayıt |
+| **API ile İçe Aktarma** | Büyük ölçekli geçişler, otomasyon        | Sınırsız                  |
+
+<Note>Çok büyük veri kümeleri (yüz binlerce kayıt) için API'yi kullanın. Gerekirse bu betiklerin çalıştırılmasına [uygulama ortaklarımız](/l/tr/user-guide/getting-started/capabilities/implementation-services) yardımcı olabilir.</Note>
+
+## CSV İçe Aktarmanın Temelleri
+
+CSV, XLSX veya XLS dosyaları kullanarak herhangi bir nesnenin verilerini içe aktarabilirsiniz. Her dosya **yalnızca bir tür nesne** içermelidir (ör. yalnızca Kişiler kayıtları).
+
+<Note>**Alanlar içe aktarmadan önce mevcut olmalıdır.** Bir CSV dosyası yüklemek kayıtlar oluşturur, ancak alanları oluşturmaz. Gerekiyorsa özel alanları önce **Ayarlar → Veri Modeli** altında oluşturun.</Note>
+
+### Adımlar
+
+1. Veri içe aktarmak istediğiniz nesneye gidin
+2. Sağ üstteki **⋮** simgesine tıklayın (bu Komut Menüsü'dür) ve **Kayıtları İçe Aktar**'a tıklayın
+3. Verinizin beklenen biçimde olduğundan emin olmak için şablon dosyasını indirin
+4. Biçimlendirilmiş CSV dosyanızı yükleyin
+5. Sütunlarınızı Twenty alanlarına eşleştirin
+6. Hataları (sarıyla vurgulanan) gözden geçirin ve kullanıcı arayüzünde doğrudan düzenleyerek düzeltin
+7. İçe aktarmayı onaylayın
+
+### Nesneler arasındaki ilişkileri içe aktarma
+
+CSV içe aktarma işlevini kullanarak nesneler arasındaki ilişkileri içe aktarabilirsiniz. İlgili nesneye, bu nesnedeki benzersiz bir alanı kullanarak referans vermeniz gerekir: `id`, People ve Çalışma Alanı Üyeleri için `email`, şirketler için `domain`, diğer nesneler için veri modelinde benzersiz olarak ayarlanmış herhangi bir başka alan.
+
+<Note>**Silinen kayıtlar benzersizlik hesabına dahildir.** Geçici olarak silinen kayıtlar (Komut Menüsü → Silinen kayıtları gör altında görünür) benzersizlik kontrollerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt geri yüklenir.</Note>
+
+<Warning>
+  **İçe Aktarma Sırası Önemlidir!**
+
+  İlişkili nesneleri içe aktarırken dosyaları şu sırayla yükleyin:
+
+  1. **Şirketler** önce (ilişkilerin "bir" tarafı)
+  2. **Kişiler** ikinci (companyId aracılığıyla şirketlere bağlı)
+  3. **Fırsatlar** üçüncü (şirketlere/kişilere bağlı)
+  4. **İlişkileri olan özel nesneler** en son
+
+  Neden? Bire-çok ilişkinin "bir" tarafı, ona referans verebilmeden önce mevcut olmalıdır. Örneğin, o şirketin kimliğine sahip bir Kişi içe aktarmadan önce Şirket kaydının mevcut olması gerekir.
+</Warning>
+
+Nasıl ilerleyeceğinize ilişkin adım adım yönergeler için lütfen [bu makaleye](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bakın.
+
+## Verileri Dışa Aktar
+
+Yedekleme, raporlama veya geçiş için çalışma alanı verilerinizi dışa aktarın.
+
+### Adımlar
+
+1. Dışa aktarmak istediğiniz nesneye gidin
+2. Görünümü ihtiyaç duyduğunuz sütunlarla yapılandırın
+3. **⋮** → **Görünümü Dışa Aktar**'a tıklayın
+4. CSV dosyasını kaydedin
+
+<Note>**Yalnızca görünür sütunlar dışa aktarılır.** CSV dosyası yalnızca mevcut görünümünüzde gösterilen sütunları içerir. Hangi verilerin dahil edileceğini kontrol etmek için dışa aktarmadan önce sütunları ekleyin veya gizleyin.</Note>
+
+<Note>**Dışa aktarma sınırları**: Her dışa aktarma için en fazla 20.000 kayıt.</Note>
+
+## İzinler
+
+Veri içe ve dışa aktarma belirli izinler gerektirir:
+
+* **İçe Aktarma**: "Import CSV" iznini gerektirir
+* **Dışa Aktarma**: "Export CSV" iznini gerektirir
+
+Bu izinlere sahip değilseniz çalışma alanı yöneticinizle iletişime geçin.
+
+## Sonraki Adımlar
+
+* [CSV dosyalarınızı hazırlayın](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Nesneler arasındaki ilişkileri içe aktarın](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Büyük veri kümeleri için API üzerinden içe aktarın](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)

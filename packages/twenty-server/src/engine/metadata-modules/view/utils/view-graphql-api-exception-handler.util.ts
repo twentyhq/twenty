@@ -103,6 +103,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFilterGroupExceptionCode.MAX_DEPTH_EXCEEDED:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       default: {
         return assertUnreachable(error.code);
       }

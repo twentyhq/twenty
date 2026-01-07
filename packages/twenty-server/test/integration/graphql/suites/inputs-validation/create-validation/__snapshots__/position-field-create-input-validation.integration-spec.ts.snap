@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - POSITION Gql create input - failure POSITION - should fail with : {"position":"not-a-position"} 1`] = `"Invalid position value: 'not-a-position'. Position must be 'first', 'last', or a number"`;
+
+exports[`Create input validation - POSITION Gql create input - failure POSITION - should fail with : {"position":null} 1`] = `"Invalid position value null for field "position""`;
+
+exports[`Create input validation - POSITION Rest create input - failure POSITION - should fail with : {"position":"not-a-position"} 1`] = `"["Invalid position value 'not-a-position' for field \\"position\\""]"`;
+
+exports[`Create input validation - POSITION Rest create input - failure POSITION - should fail with : {"position":null} 1`] = `"["Invalid position value null for field \\"position\\""]"`;

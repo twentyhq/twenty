@@ -6,6 +6,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { t } from '@lingui/core/macro';
 
 type FormAddressFieldInputProps = {
   label?: string;
@@ -43,47 +44,47 @@ export const FormAddressFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
-          label="Address 1"
+          label={t`Address 1`}
           defaultValue={defaultValue?.addressStreet1 ?? ''}
           onChange={handleChange('addressStreet1')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="Street address"
+          placeholder={t`Street address`}
         />
         <FormTextFieldInput
-          label="Address 2"
+          label={t`Address 2`}
           defaultValue={defaultValue?.addressStreet2 ?? ''}
           onChange={handleChange('addressStreet2')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="Street address 2"
+          placeholder={t`Street address 2`}
         />
         <FormTextFieldInput
-          label="City"
+          label={t`City`}
           defaultValue={defaultValue?.addressCity ?? ''}
           onChange={handleChange('addressCity')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="City"
+          placeholder={t`City`}
         />
         <FormTextFieldInput
-          label="State"
+          label={t`State`}
           defaultValue={defaultValue?.addressState ?? ''}
           onChange={handleChange('addressState')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="State"
+          placeholder={t`State`}
         />
         <FormTextFieldInput
-          label="Post Code"
+          label={t`Post Code`}
           defaultValue={defaultValue?.addressPostcode ?? ''}
           onChange={handleChange('addressPostcode')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="Post Code"
+          placeholder={t`Post Code`}
         />
         <FormCountrySelectInput
-          label="Country"
+          label={t`Country`}
           selectedCountryName={defaultValue?.addressCountry ?? ''}
           onChange={handleChange('addressCountry')}
           readonly={readonly}

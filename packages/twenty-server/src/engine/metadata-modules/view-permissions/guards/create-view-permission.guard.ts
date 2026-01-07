@@ -34,6 +34,7 @@ export class CreateViewPermissionGuard implements CanActivate {
       visibility,
       request.userWorkspaceId,
       request.workspace.id,
+      request.apiKey?.id,
     );
   }
 }

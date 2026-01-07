@@ -1,0 +1,85 @@
+---
+title: Workflow-Versionen
+description: Workflow-Versionen und -Entwürfe verwalten.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Über Versionen
+
+Jedes Mal, wenn Sie einen Workflow aktivieren, wird eine neue Version erstellt. So können Sie Änderungen im Laufe der Zeit nachverfolgen und bei Bedarf zu früheren Konfigurationen zurückkehren.
+
+## Versionsstatus
+
+| Status          | Beschreibung                                      |
+| --------------- | ------------------------------------------------- |
+| **Entwurf**     | Wird bearbeitet, noch nicht veröffentlicht        |
+| **Aktiv**       | Live-Version, die auf Trigger reagiert            |
+| **Deaktiviert** | Zuvor aktiv, aber manuell gestoppt                |
+| **Archiviert**  | Vergangene Versionen für die Historie beibehalten |
+
+## Mit Entwürfen arbeiten
+
+Wenn Sie einen aktiven Workflow bearbeiten, werden Ihre Änderungen als **Entwurf** gespeichert. Die aktive Version läuft weiter, während Sie an Aktualisierungen arbeiten.
+
+Wenn Sie mit der Bearbeitung fertig sind, können Sie:
+
+* **Aktivieren**: Den Entwurf als neue aktive Version veröffentlichen (die vorherige Version wird archiviert)
+* **Verwerfen**: Den Entwurf löschen und die aktuelle aktive Version beibehalten
+
+## Versionsverlauf
+
+### Frühere Versionen anzeigen
+
+1. Öffnen Sie den Workflow
+2. Klicken Sie auf die Registerkarte **Versionen**
+3. Alle früheren Versionen mit Zeitstempeln anzeigen
+
+### Eine Version wiederherstellen
+
+1. Suchen Sie die Version, die Sie wiederherstellen möchten
+2. Klicken Sie auf **Als Entwurf verwenden**
+3. Die Version wird in einen neuen Entwurf kopiert
+4. Nehmen Sie alle erforderlichen Aktualisierungen vor
+5. Aktivieren Sie, wenn alles bereit ist
+
+## Beste Praktiken
+
+### Versionsverwaltung
+
+* Aktivieren Sie nur, wenn alles für den Produktivbetrieb bereit ist
+* Achten Sie auf aussagekräftige Änderungen zwischen Versionen
+* Dokumentieren Sie größere Änderungen in Workflow-Namen oder -Beschreibungen
+* Testen Sie im Entwurfsmodus, bevor Sie aktivieren
+
+### Änderungen rückgängig machen
+
+* Wenn eine neue Version Probleme verursacht, stellen Sie die vorherige Version wieder her
+* Verwenden Sie den Versionsverlauf, um nachzuvollziehen, was sich geändert hat
+* Testen Sie wiederhergestellte Versionen immer, bevor Sie sie aktivieren
+
+## Häufige Workflows
+
+### Schnellbearbeitung
+
+1. Kleine Änderungen an einem aktiven Workflow vornehmen
+2. Im Entwurfsmodus testen
+3. Die neue Version aktivieren
+
+### Umfassende Überarbeitung
+
+1. Verwenden Sie die vorherige Version als Ausgangspunkt
+2. Nehmen Sie umfangreiche Änderungen im Entwurf vor
+3. Testen Sie alle Szenarien gründlich
+4. Aktivieren Sie, wenn Sie sicher sind
+
+### Rollback
+
+1. Identifizieren Sie das Problem mit der aktuellen Version
+2. Suchen Sie im Verlauf die letzte funktionierende Version
+3. Klicken Sie auf **Als Entwurf verwenden**
+4. Aktivieren Sie, um das alte Verhalten wiederherzustellen
+
+## Verwandte Themen
+
+* [Erste Schritte mit Workflows](/l/de/user-guide/workflows/overview)
+* [Workflow-Ausführungen](/l/de/user-guide/workflows/capabilities/workflow-runs)

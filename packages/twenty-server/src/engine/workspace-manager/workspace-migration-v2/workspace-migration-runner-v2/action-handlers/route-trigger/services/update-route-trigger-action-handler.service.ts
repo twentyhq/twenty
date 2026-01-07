@@ -9,7 +9,8 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdateRouteTriggerActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_route_trigger',
+  'update',
+  'routeTrigger',
 ) {
   constructor() {
     super();
@@ -19,13 +20,13 @@ export class UpdateRouteTriggerActionHandlerService extends WorkspaceMigrationRu
     context: WorkspaceMigrationActionRunnerArgs<UpdateRouteTriggerAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { routeTriggerId } = action;
+    const { entityId } = action;
 
     const routeTriggerRepository =
       queryRunner.manager.getRepository<RouteTriggerEntity>(RouteTriggerEntity);
 
     await routeTriggerRepository.update(
-      routeTriggerId,
+      entityId,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }

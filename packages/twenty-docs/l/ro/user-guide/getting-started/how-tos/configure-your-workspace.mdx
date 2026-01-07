@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Fiecare afacere funcționează diferit. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. Acest lucru îți oferă valoare imediată și ajută echipa ta să vadă Twenty în acțiune cu date reale. You can do so under Settings → Accounts.</Note>
+
+## 1. Personalizează modelul tău de date
+
+Twenty oferă flexibilitatea de care ai nevoie pentru a modela modelul de date care va susține cel mai bine activitățile tale zilnice.
+Creează obiecte și câmpuri de orice tip, inclusiv relații între diferite obiecte. Poți face asta în setări → Model de Date.
+Iată câteva sfaturi:
+
+* **Nu ești limitat în numărul de câmpuri personalizate sau de obiecte personalizate**. Adăugarea de obiecte și câmpuri personalizate nu va duce la actualizarea planului tău.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. Recomandăm folosirea acestora cât mai mult posibil, adăugând câmpuri pentru a-ți clasifica înregistrările dacă este necesar. Iată un exemplu:
+  * Este cel mai bine să folosești obiectul Persoane pentru perspective și parteneri, creând un câmp pe obiectul Persoane numit `Tip Persoană`, în loc să creezi un obiect partener personalizat. Pentru că nu vei putea accesa e-mailurile schimbate cu această persoană din înregistrările partenerului.
+  * Creează diferite vizualizări sub Persoane, una pentru a afișa partenerii și alta pentru a afișa perspective.
+* Două Persoane nu pot avea aceeași adresă de e-mail. Două Companii nu pot avea același domeniu.
+* Poți dezactiva câmpurile și obiectele standard pe care nu vrei să le folosești.
+* Poți ascunde câmpurile din vizualizări: nu te teme să creezi câmpuri, nu va trebui să le afișezi pe toate.
+
+Citește [acest articol](/l/ro/user-guide/data-model/overview) pentru a afla cum să îți proiectezi modelul de date.
+
+## 2. Importă datele tale
+
+Importarea datelor existente în Twenty oferă echipei tale context de la început.
+
+### Conectează-ți căsuța de e-mail
+
+Dacă nu ai făcut asta atunci când ai creat spațiul de lucru, conectează-ți **contul Google sau Microsoft** în setări → Conturi. Acest lucru permite Twenty să:
+
+* Importe mesajele și întâlnirile tale
+* Automat să creeze contacte pe baza interacțiunilor (opțional)
+* Keep communication history visible for your team
+
+**Folosești un alt furnizor?**
+Poți adăuga o altă căsuță de e-mail prin SMTP sau un alt calendar prin CalDAV. Va trebui să activezi funcția în setări → Lansări → Lab, și apoi să revii la tabul setări → Conturi.
+
+### Importă date via csv
+
+Folosește meniul Comandă (`Cmd + K` sau `Ctrl + K`) pentru a importa Persoane, Companii, Oportunități sau orice obiect personalizat prin CSV.
+
+**Linii directoare cheie**:
+
+* Descarcă fișierul sample pentru a înțelege formatul așteptat
+* Limitează fiecare fișier la 10k de înregistrări
+* Elimină e-mailurile duplicate pentru Persoane sau domeniile duplicate pentru Companii
+* Revizuiește și corectează erorile (evidențiate cu galben) înainte de importare
+
+Citește [acest articol](/l/ro/user-guide/data-migration/overview) pentru a afla mai multe despre importul de date.
+
+## 3. Creează prima ta vizualizare
+
+Crearea diferitelor vizualizări este esențială pentru a face datele acționabile pentru echipa ta.
+Iată cum să procedezi:
+
+* **Adaugă sau ascunde coloane**
+  Gestionează câmpurile vizibile într-o anumită vizualizare făcând clic pe Opțiuni → Câmpuri (din dreapta sus). Poți arăta/ascunde câmpurile de acolo.
+
+* **Rearanjează câmpurile**
+  Rearanjează câmpurile dintr-o vizualizare dând clic pe Opțiuni → Câmpuri (din dreapta sus). Trage și fixează câmpurile pentru a le rearanja.
+
+* **Filtrează vizualizarea**
+  Redu numărul de înregistrări afișate folosind filtrele din dreapta sus.
+
+* **Sortează înregistrările**
+  Rearanjează înregistrările afișate folosind funcția de sortare din dreapta sus, sau dând clic direct pe numele coloanei.
+
+* **Alege layout-ul**
+  Poți comuta la un layout **Kanban** sau la un layout de tip listă **Group By**, atâta timp cât obiectul are un câmp de selectare `Stadiu` sau similar.
+
+* **Salvează vizualizarea ca Favorite**
+  Acest lucru poate fi realizat folosind meniul derulant care arată diferitele vizualizări.
+
+## Ce urmează?
+
+Începe să creezi automatizări folosind [fluxuri de lucru](/l/ro/user-guide/workflows/overview).

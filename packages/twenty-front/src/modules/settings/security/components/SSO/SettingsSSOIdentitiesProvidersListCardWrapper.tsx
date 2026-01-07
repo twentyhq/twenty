@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { t } from '@lingui/core/macro';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SSO/SettingsSSOIdentityProviderRowRightContainer';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
@@ -26,7 +27,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
         <SettingsSSOIdentityProviderRowRightContainer SSOIdp={SSOIdp} />
       )}
       hasFooter
-      footerButtonLabel="Add SSO Identity Provider"
+      footerButtonLabel={t`Add SSO Identity Provider`}
       onFooterButtonClick={() => navigate(SettingsPath.NewSSOIdentityProvider)}
     />
   );

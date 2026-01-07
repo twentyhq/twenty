@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -14,18 +15,29 @@ export enum WorkspaceExceptionCode {
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
 }
 
-const workspaceExceptionUserFriendlyMessages: Record<
-  WorkspaceExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND]: msg`Subdomain not found.`,
-  [WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN]: msg`This subdomain is already taken.`,
-  [WorkspaceExceptionCode.SUBDOMAIN_NOT_VALID]: msg`Invalid subdomain.`,
-  [WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN]: msg`This domain is already taken.`,
-  [WorkspaceExceptionCode.WORKSPACE_NOT_FOUND]: msg`Workspace not found.`,
-  [WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED]: msg`Custom domains are disabled for this workspace.`,
-  [WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED]: msg`This feature is not enabled.`,
-  [WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND]: msg`Custom domain not found.`,
+const getWorkspaceExceptionUserFriendlyMessage = (
+  code: WorkspaceExceptionCode,
+) => {
+  switch (code) {
+    case WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND:
+      return msg`Subdomain not found.`;
+    case WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN:
+      return msg`This subdomain is already taken.`;
+    case WorkspaceExceptionCode.SUBDOMAIN_NOT_VALID:
+      return msg`Invalid subdomain.`;
+    case WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN:
+      return msg`This domain is already taken.`;
+    case WorkspaceExceptionCode.WORKSPACE_NOT_FOUND:
+      return msg`Workspace not found.`;
+    case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
+      return msg`Custom domains are disabled for this workspace.`;
+    case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
+      return msg`This feature is not enabled.`;
+    case WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND:
+      return msg`Custom domain not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkspaceException extends CustomException<WorkspaceExceptionCode> {
@@ -36,7 +48,7 @@ export class WorkspaceException extends CustomException<WorkspaceExceptionCode> 
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? workspaceExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getWorkspaceExceptionUserFriendlyMessage(code),
     });
   }
 }

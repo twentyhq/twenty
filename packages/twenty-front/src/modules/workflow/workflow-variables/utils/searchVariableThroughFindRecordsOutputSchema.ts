@@ -45,11 +45,13 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
   searchRecordOutputSchema,
   rawVariableName,
   isFullRecord = false,
+  stepNameLabel,
 }: {
   stepName: string;
   searchRecordOutputSchema: FindRecordsOutputSchema;
   rawVariableName: string;
   isFullRecord?: boolean;
+  stepNameLabel?: string;
 }): VariableSearchResult => {
   if (!isDefined(searchRecordOutputSchema)) {
     return {
@@ -84,23 +86,33 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
       selectedField: fieldName,
       path: pathSegments,
       isFullRecord,
+      stepNameLabel,
     });
   }
 
   if (searchResultKey === 'totalCount') {
+    const label =
+      searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count';
+    const basePath = `${stepName} > ${label}`;
     return {
-      variableLabel:
-        searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count',
-      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count'}`,
+      variableLabel: label,
+      variablePathLabel: stepNameLabel
+        ? `${basePath} (${stepNameLabel})`
+        : basePath,
       variableType: FieldMetadataType.NUMBER,
     };
   }
 
   if (searchResultKey === 'all') {
+    const label =
+      searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records';
+    const basePath = `${stepName} > ${label}`;
     return {
       variableLabel:
         searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records',
-      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records'}`,
+      variablePathLabel: stepNameLabel
+        ? `${basePath} (${stepNameLabel})`
+        : basePath,
       variableType: FieldMetadataType.ARRAY,
     };
   }

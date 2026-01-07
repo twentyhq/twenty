@@ -2,6 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -19,6 +20,7 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
   onDelete,
   closeDropdown,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
+  const { t } = useLingui();
   const handleRename = () => {
     closeDropdown();
     onRename();
@@ -44,13 +46,13 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
               LeftIcon={IconPencil}
               onClick={handleRename}
               accent="default"
-              text="Rename"
+              text={t`Rename`}
             />
             <MenuItem
               LeftIcon={IconTrash}
               onClick={handleDelete}
               accent="danger"
-              text="Delete"
+              text={t`Delete`}
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

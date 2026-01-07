@@ -1,14 +1,17 @@
+import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
-import { type ServerlessFunction } from '~/generated/graphql';
 import { type Sources } from 'twenty-shared/types';
-import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type FindOneServerlessFunctionSourceCodeQuery,
+  type GetOneServerlessFunctionQuery,
+} from '~/generated-metadata/graphql';
+import { type ServerlessFunction } from '~/generated/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -47,6 +50,17 @@ export const useServerlessFunctionUpdateFormState = ({
   const { serverlessFunction, loading: serverlessFunctionLoading } =
     useGetOneServerlessFunction({
       id: serverlessFunctionId,
+      onCompleted: (data: GetOneServerlessFunctionQuery) => {
+        const fn = data?.findOneServerlessFunction;
+
+        if (isDefined(fn)) {
+          setFormValues((prevState) => ({
+            ...prevState,
+            name: fn.name || '',
+            description: fn.description || '',
+          }));
+        }
+      },
     });
 
   const { loading: serverlessFunctionSourceCodeLoading } =
@@ -56,15 +70,9 @@ export const useServerlessFunctionUpdateFormState = ({
       onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
         const code = data?.getServerlessFunctionSourceCode;
 
-        const newState = {
-          code: code || undefined,
-          name: serverlessFunction?.name || '',
-          description: serverlessFunction?.description || '',
-        };
-
         setFormValues((prevState) => ({
           ...prevState,
-          ...newState,
+          code: code || prevState.code,
         }));
 
         if (serverlessFunctionTestData.shouldInitInput) {

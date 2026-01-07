@@ -1,0 +1,292 @@
+---
+title: Настройка
+---
+
+# Управление конфигурацией
+
+<Warning>
+  **Устанавливаете впервые?** Следуйте [руководству по установке Docker Compose](/l/ru/developers/self-host/capabilities/docker-compose), чтобы запустить Twenty, затем вернитесь сюда для настройки.
+</Warning>
+
+Twenty предлагает **два режима конфигурации**, чтобы соответствовать разным потребностям развертывания:
+
+**Доступ к панели администратора:** Только пользователи с правами администратора (`canAccessFullAdminPanel: true`) могут получить доступ к интерфейсу конфигурации.
+
+## 1. Конфигурация панели администратора (по умолчанию)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # по умолчанию
+```
+
+**Большая часть конфигурации происходит через UI** после установки:
+
+1. Получите доступ к вашему экземпляру Twenty (обычно `http://localhost:3000`)
+2. Перейдите в **Настройки / Панель администратора / Переменные конфигурации**
+3. Настройте интеграции, почту, хранилище и многое другое
+4. Изменения вступают в силу немедленно (в течение 15 секунд для многоконтейнерных развертываний)
+
+<Warning>
+  **Многоконтейнерное развертывание:** при использовании конфигурации базы данных (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) серверные и рабочие контейнеры читают из одной базы данных. Изменения в панели администратора влияют на оба контейнера автоматически, исключая необходимость дублирования переменных среды между контейнерами (за исключением инфраструктурных переменных).
+</Warning>
+
+**Что вы можете настроить через панель администратора:**
+
+* **Аутентификация** - Google/Microsoft OAuth, настройки паролей
+* **Электронная почта** - настройки SMTP, шаблоны, верификация
+* **Хранилище** - конфигурация S3, пути локального хранения
+* **Интеграции** - Gmail, Google Calendar, сервисы Microsoft
+* **Рабочий процесс и Ограничения скорости** - лимиты выполнения, ограничение API
+* **И многое другое...**
+
+![Переменные конфигурации панели администратора](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  Каждая переменная документирована с описаниями в вашей панели администратора в **Настройки → Панель администратора → Переменные конфигурации**.
+  Некоторые инфраструктурные настройки, такие как соединения с базой данных (`PG_DATABASE_URL`), URL сервера (`SERVER_URL`) и секреты приложения (`APP_SECRET`), могут быть настроены только через файл `.env`.
+
+  [Полная техническая ссылка →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. Конфигурация только для среды
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Вся конфигурация управляется через файлы `.env`:**
+
+1. Установите `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` в своем `.env` файле
+2. Добавьте все переменные конфигурации в ваш файл `.env`
+3. Перезапустите контейнеры, чтобы изменения вступили в силу
+4. Панель администратора будет показывать текущие значения, но не сможет их изменить
+
+## Multi-Workspace Mode
+
+By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+
+### Single-Workspace Mode (Default)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* One workspace per Twenty instance
+* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
+* New signups are disabled after the first workspace is created
+* Simple URL structure: `https://your-domain.com`
+
+### Enabling Multi-Workspace Mode
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+
+**Key differences from single-workspace mode:**
+
+* Multiple workspaces can be created on the same instance
+* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
+* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
+* No automatic admin privileges — first user in each workspace is a regular user
+* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+
+<Warning>
+  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+</Warning>
+
+### DNS Configuration for Multi-Workspace
+
+When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+
+### Restricting Workspace Creation
+
+In multi-workspace mode, you may want to limit who can create new workspaces:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+
+## Интеграция Gmail и Google Calendar
+
+### Создайте проект в Google Cloud
+
+1. Перейдите в [Google Cloud Console](https://console.cloud.google.com/)
+2. Создайте новый проект или выберите существующий
+3. Включите следующие API:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Настройте OAuth
+
+1. Перейдите к [Учётные данные](https://console.cloud.google.com/apis/credentials)
+2. Создайте OAuth 2.0 Client ID
+3. Добавьте эти URI перенаправления:
+   * `https://{your-domain}/auth/google/redirect` (for SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Настройка в Twenty
+
+1. Перейдите в **Настройки → Панель администратора → Переменные конфигурации**
+2. Найдите раздел **Google Auth**.
+3. Установите эти переменные:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
+</Warning>
+
+соответствующий исходный код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### Если ваше приложение находится в тестовом режиме
+
+Если ваше приложение находится в тестовом режиме, вам потребуется добавить тестовых пользователей в ваш проект.
+
+На [экране согласия OAuth](https://console.cloud.google.com/apis/credentials/consent) добавьте тестовых пользователей в раздел "Тестовые пользователи".
+
+## Интеграция Microsoft 365
+
+<Warning>
+  Пользователи должны иметь [лицензию Microsoft 365](https://admin.microsoft.com/Adminportal/Home), чтобы иметь возможность использовать API Календаря и Сообщений. Они не смогут синхронизировать свою учетную запись в Twenty без нее.
+</Warning>
+
+### Создайте проект в Microsoft Azure
+
+Вам потребуется создать проект в [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) и получить учетные данные.
+
+### Включите API
+
+На консоли Microsoft Azure включите следующие API в "Разрешениях":
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profile
+* Microsoft Graph: offline_access
+
+Примечание: «Mail.ReadWrite» и «Mail.Send» обязательны только если вы хотите отправлять письма с использованием наших действий рабочего процесса. Вы можете использовать «Mail.Read», если хотите получать только письма.
+
+### Авторизованные URI перенаправления
+
+Вам нужно добавить следующие URI перенаправления в ваш проект:
+
+* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Настройка в Twenty
+
+1. Перейдите в **Настройки → Панель администратора → Переменные конфигурации**
+2. Найдите раздел **Microsoft Auth**.
+3. Установите эти переменные:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
+</Warning>
+
+### Configure scopes
+
+соответствующий исходный код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'электронная почта'
+* 'профиль'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### Если ваше приложение находится в тестовом режиме
+
+Если ваше приложение находится в тестовом режиме, вам потребуется добавить тестовых пользователей в ваш проект.
+
+Добавьте тестовых пользователей в раздел "Пользователи и группы".
+
+## Фоновые задания для Календаря и Сообщений
+
+После настройки интеграций Gmail, Google Calendar или Microsoft 365, вам необходимо запустить фоновые задания, синхронизирующие данные.
+
+Зарегистрируйте следующие повторяющиеся задания в вашем контейнере рабочего:
+
+```bash
+# из вашего контейнера рабочего
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## Конфигурация электронной почты
+
+1. Перейдите в **Настройки → Панель администратора → Переменные конфигурации**
+2. Найдите раздел **Электронной почты**.
+3. Настройте параметры вашего SMTP:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    Вам потребуется предоставить [Пароль Приложения](https://support.google.com/accounts/answer/185833).
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_email_address
+    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    Помните, что если у вас включена двухфакторная аутентификация, вам потребуется предоставить [пароль приложения](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_email_address
+    * EMAIL_SMTP_PASSWORD='office365_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** - это поддельный SMTP почтовый сервер для разработки и тестирования.
+
+    * Запустите образ smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * Получите доступ к интерфейсу smtp4dev здесь: [http://localhost:8090](http://localhost:8090)
+    * Установите следующие переменные:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
+</Warning>

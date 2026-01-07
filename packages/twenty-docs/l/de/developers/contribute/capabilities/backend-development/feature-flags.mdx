@@ -1,0 +1,46 @@
+---
+title: Feature Flags
+---
+
+Feature flags are used to hide experimental features. Für Twenty werden sie auf der Arbeitsbereichsebene und nicht auf Benutzerebene festgelegt.
+
+## Adding a new feature flag
+
+In `FeatureFlagKey.ts` add the feature flag:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Fügen Sie es auch dem Enum in `feature-flag.entity.ts` hinzu:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Um ein Funktions-Flag auf einem **Backend**-Feature anzuwenden, verwenden Sie:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Um ein Funktions-Flag auf einem **Frontend**-Feature anzuwenden, verwenden Sie:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Konfigurieren Sie Funktions-Flags für die Bereitstellung
+
+Ändern Sie den entsprechenden Eintrag in der Tabelle `core.featureFlag`:
+
+| iD       | schlüssel                | workspaceId        | wert   |
+| -------- | ------------------------ | ------------------ | ------ |
+| Zufällig | `IS_FEATURENAME_ENABLED` | Arbeitsbereichs-ID | `wahr` |

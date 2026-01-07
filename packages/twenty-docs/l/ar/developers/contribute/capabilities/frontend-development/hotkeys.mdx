@@ -1,0 +1,178 @@
+---
+title: مفاتيح الاختصار
+---
+
+## مقدمة
+
+عندما تحتاج إلى الاستماع إلى مفتاح اختصار، فإنه عادةً ما تستخدم مستمع الحدث `onKeyDown`.
+
+في `twenty-front`، قد تواجه تعارضات بين نفس مفاتيح الاختصار المستخدمة في مكونات مختلفة، مركبة في الوقت نفسه.
+
+على سبيل المثال، إذا كان لديك صفحة تستمع لمفتاح Enter ومودال يستمع لمفتاح Enter، ولكن به مكون Select يستمع لمفتاح Enter، فقد تواجه تعارضًا عند تركيب الجميع في الوقت نفسه.
+
+## الخطاف `useScopedHotkeys`
+
+لمعالجة هذه المشكلة، لدينا خطاف مخصص يمكن من الاستماع لمفاتيح الاختصار دون أي تعارض.
+
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+
+## How to listen for hotkeys in practice?
+
+هناك خطوتان متضمنتان في إعداد الاستماع لمفاتيح الاختصار:
+
+1. تعيين [نطاق المفتاح](#what-is-a-hotkey-scope-) الذي سيستمع لمفاتيح الاختصار
+2. استخدام الخطاف `useScopedHotkeys` للاستماع لمفاتيح الاختصار
+
+إعداد نطاقات مفاتيح الاختصار ضروري حتى في الصفحات البسيطة، لأن عناصر أخرى في واجهة المستخدم مثل القائمة اليسرى أو قائمة الأوامر قد تستمع أيضًا لمفاتيح الاختصار.
+
+## حالات الاستخدام لمفاتيح الاختصار
+
+بشكل عام، سيكون لديك حالتا استخدام تتطلبان مفاتيح الاختصار:
+
+1. في صفحة أو مكون مركب في صفحة
+2. في مكون من نوع مودال يتخذ التركيز بسبب إجراء من المستخدم
+
+يمكن حدوث الحالة الثانية بشكل متكرر: على سبيل المثال، في قائمة منسدلة في مودال.
+
+### الاستماع لمفاتيح الاختصار في صفحة
+
+مثال:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### الاستماع لمفاتيح الاختصار في مكون من نوع مودال
+
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+
+Here the user interaction is changing the scope.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+ثم في مكون المودال:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## ما هو نطاق المفتاح؟
+
+نطاق المفتاح هو سلسلة تمثل السياق الذي تكون فيه مفاتيح الاختصار نشطة. عادة ما تكون مشفرة كنوع مفصل.
+
+عندما تقوم بتغيير نطاق المفتاح، سيتم تمكين مفاتيح الاختصار المستمعة لهذا النطاق وتعطيل المفاتيح المستمعة لنطاقات أخرى.
+
+يمكنك تعيين نطاق واحد فقط في كل مرة.
+
+على سبيل المثال، يتم تعريف نطاقات مفاتيح الاختصار لكل صفحة في نوع "PageHotkeyScope" المفصل:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+داخليًا، يتم تخزين النطاق المحدد حاليًا في حالة Recoil مشتركة عبر التطبيق:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+لكن لا يجب التعامل مع هذه الحالة Recoil يدويًا! سنرى كيف يمكن استخدامها في القسم التالي.
+
+## كيف يعمل داخليًا؟
+
+قمنا بإنشاء غلاف رقيق فوق [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) والذي يجعله أكثر كفاءة ويتجنب عمليات إعادة التقديم غير الضرورية.
+
+ونقوم أيضًا بإنشاء حالة Recoil للتعامل مع حالة نطاق المفتاح وجعلها متاحة في جميع أنحاء التطبيق.

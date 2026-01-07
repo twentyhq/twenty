@@ -6,11 +6,11 @@ import {
   TIPTAP_MARKS_RENDER_ORDER,
   TIPTAP_MARK_TYPES,
 } from 'twenty-shared/utils';
-import { bold } from '../marks/bold';
-import { italic } from '../marks/italic';
-import { link } from '../marks/link';
-import { strike } from '../marks/strike';
-import { underline } from '../marks/underline';
+import { bold } from '@/utils/email-renderer/marks/bold';
+import { italic } from '@/utils/email-renderer/marks/italic';
+import { link } from '@/utils/email-renderer/marks/link';
+import { strike } from '@/utils/email-renderer/marks/strike';
+import { underline } from '@/utils/email-renderer/marks/underline';
 
 const MARK_RENDERERS = {
   [TIPTAP_MARK_TYPES.BOLD]: bold,

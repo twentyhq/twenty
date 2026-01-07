@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -118,11 +119,11 @@ export const WorkflowEditActionDeleteRecord = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-record-delete-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           disabled={isFormDisabled}
           value={formData.objectNameSingular}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(objectNameSingular) => {
             const newFormData: DeleteRecordFormData = {
@@ -143,7 +144,7 @@ export const WorkflowEditActionDeleteRecord = ({
 
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker
-            label="Record"
+            label={t`Record`}
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }

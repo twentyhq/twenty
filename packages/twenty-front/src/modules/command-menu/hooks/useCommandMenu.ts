@@ -9,11 +9,11 @@ import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuCl
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
-import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -32,7 +32,6 @@ export const useCommandMenu = () => {
         if (isCommandMenuOpened) {
           set(isCommandMenuOpenedState, false);
           set(isCommandMenuClosingState, true);
-          set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
           removeFocusItemFromFocusStackById({
             focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
@@ -50,7 +49,7 @@ export const useCommandMenu = () => {
     closeAnyOpenDropdown();
     navigateCommandMenu({
       page: CommandMenuPages.Root,
-      pageTitle: 'Command Menu',
+      pageTitle: t`Command Menu`,
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });

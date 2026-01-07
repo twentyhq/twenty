@@ -8,6 +8,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -53,6 +54,7 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
       },
     ],
   })
+  @WorkspaceIsFieldUIReadOnly()
   type: AutomatedTriggerType;
 
   @WorkspaceField({
@@ -61,6 +63,7 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
     label: msg`Settings`,
     description: msg`The workflow automated trigger settings`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   settings: AutomatedTriggerSettings;
 
   @WorkspaceRelation({
@@ -73,6 +76,7 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'automatedTriggers',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflow')

@@ -7,6 +7,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
@@ -43,7 +44,7 @@ export const WorkflowVariablesDropdownSteps = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text="Select Step" />
+        <OverflowingTextWithTooltip text={t`Select Step`} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
@@ -68,7 +69,7 @@ export const WorkflowVariablesDropdownSteps = ({
           <MenuItem
             key="no-steps"
             onClick={() => {}}
-            text="No variables available"
+            text={t`No variables available`}
             LeftIcon={undefined}
             hasSubMenu={false}
           />

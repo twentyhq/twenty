@@ -34,7 +34,7 @@ export const computeStandardOpportunityViews = (
         position: 2,
         icon: 'IconLayoutKanban',
         mainGroupByFieldName: 'stage',
-        kanbanAggregateOperation: AggregateOperations.MIN,
+        kanbanAggregateOperation: AggregateOperations.SUM,
         kanbanAggregateOperationFieldName: 'amount',
       },
     }),

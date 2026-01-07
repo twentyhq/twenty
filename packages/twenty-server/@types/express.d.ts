@@ -19,6 +19,7 @@ declare module 'express-serve-static-core' {
     workspaceId?: string;
     workspaceMetadataVersion?: number;
     workspaceMemberId?: string;
+    workspaceMember?: WorkspaceMemberWorkspaceEntity;
     userWorkspaceId?: string;
     authProvider?: AuthProviderEnum | null;
     impersonationContext?: AuthContext['impersonationContext'];

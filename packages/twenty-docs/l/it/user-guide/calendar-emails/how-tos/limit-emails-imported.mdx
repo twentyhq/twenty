@@ -1,0 +1,52 @@
+---
+title: Limit Emails Imported
+description: Controlla quali email vengono importate in Twenty.
+---
+
+## Panoramica
+
+Per impostazione predefinita, Twenty sincronizza tutte le email esterne dalla tua casella di posta collegata. Puoi limitare ciò che viene importato utilizzando la **selezione delle cartelle** e le **impostazioni di visibilità**.
+
+## Metodo 1: Selezione delle cartelle (consigliato)
+
+Controlla quali cartelle email sincronizzano con Twenty:
+
+1. Vai su **Impostazioni → Versioni → Lab**
+2. Abilita **Cartella dei messaggi**
+3. Torna a **Impostazioni → Account**
+4. Seleziona il tuo account email collegato
+5. Scegli quali cartelle sincronizzare:
+
+| Cartella                    | Descrizione                               |
+| --------------------------- | ----------------------------------------- |
+| **Posta in arrivo**         | Email in arrivo principali                |
+| **Posta inviata**           | Email in uscita che hai inviato           |
+| **Archivio**                | Messaggi archiviati                       |
+| **Cartelle personalizzate** | Qualsiasi cartella specifica che desideri |
+
+6. Escludi le cartelle che non vuoi sincronizzare (Spam, Cestino, cartelle personali)
+
+<Note>Questo ti offre un controllo preciso su quali email compaiono nel tuo CRM senza sincronizzare tutto.</Note>
+
+## Metodo 2: Impostazioni per la creazione automatica dei contatti
+
+Controlla quando i contatti vengono creati dalle email:
+
+1. Vai su **Impostazioni → Account**
+2. Seleziona la tua casella di posta collegata
+3. Scegli un'opzione:
+   * **Disattivato**: Non vengono creati contatti, ma le email si sincronizzano comunque con i contatti esistenti
+   * **Inviati e ricevuti**: Crea contatti da tutte le email esterne
+   * **Solo inviati**: Crea contatti solo dalle email che invii
+
+## Cosa viene sempre escluso
+
+Queste email non vengono mai sincronizzate, indipendentemente dalle impostazioni:
+
+* **Email interne**: Messaggi tra colleghi (stesso dominio)
+* **Email di gruppo**: Liste di distribuzione e messaggi di gruppo
+* **Spam/Cestino**: Le cartelle di sistema sono generalmente escluse
+
+## Nota importante
+
+<Note>Non forniamo un indirizzo email in CC per la sincronizzazione selettiva. Usa la funzione di selezione delle cartelle sopra per ottenere lo stesso livello di controllo.</Note>

@@ -17,7 +17,7 @@ import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMessageContainer = styled.div`
@@ -77,18 +77,21 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     title: messageChannel.handle,
   }));
 
+  const handleTabChange = useCallback(
+    (tabId: string) => {
+      const selectedMessageChannel = messageChannels.find(
+        (channel) => channel.id === tabId,
+      );
+      if (isDefined(selectedMessageChannel)) {
+        setSelectedMessageChannel(selectedMessageChannel);
+      }
+    },
+    [messageChannels, setSelectedMessageChannel],
+  );
+
   if (!messageChannels.length) {
     return <SettingsNewAccountSection />;
   }
-
-  const handleTabChange = (tabId: string) => {
-    const selectedMessageChannel = messageChannels.find(
-      (channel) => channel.id === tabId,
-    );
-    if (isDefined(selectedMessageChannel)) {
-      setSelectedMessageChannel(selectedMessageChannel);
-    }
-  };
 
   return (
     <>

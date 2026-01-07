@@ -1,0 +1,123 @@
+---
+title: Calendar & Emails
+description: Connect your email and calendar accounts to Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+</Frame>
+
+## Connection Options
+
+### Google Account (Gmail & Google Calendar)
+1. Go to **Settings → Accounts**
+2. Click **Add account**
+3. Select **Continue with Google**
+4. Authorize Twenty to access your Gmail and Google Calendar
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
+
+### Microsoft Account (Outlook & Microsoft Calendar)
+1. Go to **Settings → Accounts**
+2. Click **Add account**
+3. Select **Continue with Microsoft**
+4. Authorize Twenty to access your Outlook and Microsoft Calendar
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
+
+### SMTP/CalDAV Setup (Other Providers)
+For other email and calendar providers:
+1. Go to **Settings → Releases → Lab** to enable the feature
+2. Return to **Settings → Accounts**
+3. Configure SMTP settings for email
+4. Configure CalDAV settings for calendar
+5. Test the connection
+
+### Multiple Mailboxes
+- **Unlimited Accounts**: Connect multiple email accounts per user
+- **Account Management**: Switch between different mailboxes
+- **Sync Settings**: Configure different settings per mailbox
+
+
+<Warning>
+Only true mailboxes can be connected (e.g., support@domain.com with its own inbox). Email aliases that forward to another mailbox cannot be connected to Twenty.
+</Warning>
+
+
+## Email Configuration
+
+### Message Visibility
+Choose different levels of visibility for your emails:
+
+- **Metadata Only**: Share only basic information (sender, recipient, date, time)
+- **Subject and Metadata**: Share subject line along with metadata
+- **All Email Content**: Share entire email content including attachments
+
+### Contact Auto-Creation
+- **Deactivated**: No automatic contact creation
+- **For messages sent & received**: Create contacts for all external email interactions
+- **For messages sent only**: Create contacts only for emails you send
+- **Note**: Internal emails (same domain) are never synced to maintain privacy
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Control which emails get sync with Message Folder Selection (Lab Feature)
+Control which email folders sync with Twenty:
+1. Go to **Settings → Releases → Lab** and enable **Message Folder**
+2. Return to **Settings → Accounts** and select your connected email account
+3. Choose which folders to sync:
+   - **Inbox**: Primary incoming emails
+   - **Sent**: Outgoing emails you've sent
+   - **Custom Folders**: Any specific folders you want to include
+   - **Exclude Folders**: Skip folders like Spam, Trash, or personal folders
+
+This gives you precise control over which emails appear in your CRM without syncing everything.
+
+**What Gets Synced:**
+- **External Emails**: All emails with external contacts from selected folders
+- **Internal Emails**: Not synced (same domain emails remain private)
+- **Attachments**: Coming in H1 2026
+
+**Note**: We don't provide a CC email address for selective syncing. Instead, use the Message Folder feature above to achieve the same level of control over which emails sync with Twenty.
+
+
+## Calendar Configuration
+
+### Event Visibility
+Choose what will be visible to other users in your workspace:
+- **Everything**: The whole event details will be shared with your team
+- **Metadata**: Only date & participants will be shared with your team
+
+
+### Contact Auto-Creation for Meetings
+- **Yes**: Automatically create contacts for meeting participants not in your CRM
+- **No**: Only link meetings to existing contacts
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Control which events get sync
+- **Meeting Import**: Automatically import calendar events
+- **Contact Linking**: Link meetings to People and Company records
+
+**What Gets Synced:**
+- **Meetings**: Calendar events with external participants
+- **Contact Linking**: Events automatically linked to CRM records
+- **Team Events**: Shared calendar visibility
+
+
+
+## Sync Frequency
+
+**Updates every 5 minutes**: Both email and calendar data sync automatically every 5 minutes after the initial import.
+
+<Note>
+**Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+</Note>
+
+## Next Steps
+
+- [Mailbox capabilities](/user-guide/calendar-emails/capabilities/mailbox)
+- [Troubleshoot missing emails](/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

@@ -3,7 +3,7 @@ import React from 'react';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 const mockDeleteWorkflowVersionStep = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -96,7 +97,7 @@ export const FormSelectFieldInput = ({
   );
 
   const defaultEmptyOption = {
-    label: `No ${label ?? 'value'}`,
+    label: label ? t`No ${label}` : t`No value`,
     value: '',
     icon: IconCircleOff,
   };

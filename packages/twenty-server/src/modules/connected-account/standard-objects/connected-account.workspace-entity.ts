@@ -13,6 +13,7 @@ import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-cal
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -42,6 +43,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The account handle (email, username, phone number, etc.)`,
     icon: 'IconMail',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   handle: string | null;
 
@@ -53,6 +55,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettings',
     defaultValue: `'${ConnectedAccountProvider.GOOGLE}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
   @WorkspaceField({
@@ -62,6 +65,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider access token`,
     icon: 'IconKey',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   accessToken: string | null;
 
@@ -72,6 +76,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider refresh token`,
     icon: 'IconKey',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   refreshToken: string | null;
 
@@ -82,6 +87,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last credentials refreshed at`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   lastCredentialsRefreshedAt: Date | null;
 
@@ -92,6 +98,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync history ID`,
     icon: 'IconHistory',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   lastSyncHistoryId: string | null;
 
@@ -102,6 +109,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Auth failed at`,
     icon: 'IconX',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   authFailedAt: Date | null;
 
@@ -112,6 +120,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle Aliases`,
     icon: 'IconMail',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   handleAliases: string | null;
 
@@ -122,6 +131,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Scopes`,
     icon: 'IconSettings',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   scopes: string[] | null;
 
@@ -132,6 +142,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`JSON object containing custom connection parameters`,
     icon: 'IconSettings',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   connectionParameters: ImapSmtpCaldavParams | null;
 
@@ -145,6 +156,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'connectedAccounts',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceJoinColumn('accountOwner')
@@ -159,6 +171,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   messageChannels: Relation<MessageChannelWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -170,5 +183,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   calendarChannels: Relation<CalendarChannelWorkspaceEntity[]>;
 }

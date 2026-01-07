@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -11,6 +12,8 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
   now,
@@ -19,7 +22,10 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'workflowVersion'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'workflowVersion', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'workflowVersion'>,
   FlatFieldMetadata
 > => ({
@@ -54,7 +60,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -73,7 +79,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -91,7 +97,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -108,6 +114,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'The workflow version name',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -124,6 +131,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Json object to provide trigger',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -140,6 +148,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Json object to provide steps',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -156,6 +165,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'The workflow version status',
       icon: 'IconStatusChange',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'DRAFT'",
       options: [
         { value: 'DRAFT', label: 'Draft', position: 0, color: 'yellow' },
@@ -185,6 +195,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -203,6 +214,13 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -220,6 +238,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'WorkflowVersion workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'versions',
       settings: {
@@ -244,6 +263,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Workflow runs linked to the version.',
       icon: 'IconRun',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowRun',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -267,6 +287,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -290,6 +311,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetWorkflowVersion',
       settings: {

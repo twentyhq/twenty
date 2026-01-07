@@ -29,6 +29,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   PageLayoutType,
+  WidgetConfigurationType,
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
 
@@ -118,6 +119,7 @@ export const StandaloneRichTextWidget = ({
   const handlePersistBody = useDebouncedCallback((blocknote: string) => {
     updatePageLayoutWidget(widget.id, {
       configuration: {
+        configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
         body: {
           blocknote,
           markdown: null,

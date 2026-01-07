@@ -17,6 +17,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -44,6 +45,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
@@ -94,6 +96,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -242,8 +245,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
+    const isV2SyncEnabled = this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_V2_ENABLED',
+    );
+
     await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
+      [
+        ...DEFAULT_FEATURE_FLAGS,
+        ...(isV2SyncEnabled
+          ? [FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED]
+          : []),
+      ],
       workspace.id,
     );
 
@@ -266,14 +278,14 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
   }
 
+  /**
+   * @deprecated Should be removed once AddWorkspaceForeignKeysMigrationCommand has been run successfully in production
+   * As we will be able to rely on foreignKey delete cascading
+   */
   async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: workspace.id,
     });
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-    }
 
     await this.workspaceManagerService.delete(workspace.id);
 
@@ -313,11 +325,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (softDelete) {
-      if (this.billingService.isBillingEnabled()) {
-        await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-      }
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
+    }
 
+    if (softDelete) {
       await this.workspaceRepository.softDelete({ id });
 
       this.logger.log(`workspace ${id} soft deleted`);
@@ -326,6 +338,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
 
     await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
+
+    await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
 
     await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
       FileWorkspaceFolderDeletionJob.name,

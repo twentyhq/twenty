@@ -135,7 +135,7 @@ export const CommandMenuMessageThreadPage = () => {
     <StyledWrapper>
       <StyledContainer>
         {threadLoading ? (
-          <EmailLoader loadingText="Loading thread" />
+          <EmailLoader loadingText={t`Loading thread`} />
         ) : (
           <>
             <EmailThreadHeader

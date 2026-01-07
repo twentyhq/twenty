@@ -67,7 +67,7 @@ export const SettingsEmailingDomains = () => {
           </>
         )}
         hasFooter
-        footerButtonLabel="Add Emailing Domain"
+        footerButtonLabel={t`Add Emailing Domain`}
         onFooterButtonClick={() =>
           navigate(getSettingsPath(SettingsPath.NewEmailingDomain))
         }

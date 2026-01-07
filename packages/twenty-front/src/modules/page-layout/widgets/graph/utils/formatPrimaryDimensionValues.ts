@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { type FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type ObjectRecordGroupByDateGranularity } from '~/generated/graphql';
 
 type FormatPrimaryDimensionValuesParameters = {
@@ -9,6 +10,8 @@ type FormatPrimaryDimensionValuesParameters = {
   primaryAxisGroupByField: FieldMetadataItem;
   primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisGroupBySubFieldName?: string;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 export type FormattedDimensionValue = {
@@ -21,6 +24,8 @@ export const formatPrimaryDimensionValues = ({
   primaryAxisGroupByField,
   primaryAxisDateGranularity,
   primaryAxisGroupBySubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: FormatPrimaryDimensionValuesParameters): FormattedDimensionValue[] => {
   return groupByRawResults.reduce<FormattedDimensionValue[]>(
     (accumulator, rawResult) => {
@@ -34,6 +39,8 @@ export const formatPrimaryDimensionValues = ({
         fieldMetadata: primaryAxisGroupByField,
         dateGranularity: primaryAxisDateGranularity,
         subFieldName: primaryAxisGroupBySubFieldName,
+        userTimezone,
+        firstDayOfTheWeek,
       });
 
       return [

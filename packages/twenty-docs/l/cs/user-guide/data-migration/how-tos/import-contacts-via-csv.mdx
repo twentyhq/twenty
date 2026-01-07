@@ -1,0 +1,242 @@
+---
+title: Importujte kontakty pomocí CSV
+description: Kompletní podrobný návod krok za krokem k importu osob/kontaktů do Twenty.
+---
+
+## Přehled
+
+Tento průvodce vás provede importem vašich kontaktů (People) do Twenty. **Nejprve importujte Společnosti**, pokud chcete propojovat osoby se Společnostmi.
+
+## Než začnete
+
+### Kontrolní seznam předpokladů
+
+<Check>
+  Váš soubor je ve formátu CSV, XLSX nebo XLS
+</Check>
+
+<Check>
+  Soubor obsahuje méně než 10 000 záznamů
+</Check>
+
+<Check>
+  Žádné duplicitní e-mailové adresy ve vašem souboru
+</Check>
+
+<Check>
+  **Společnosti importovány jako první** (pokud propojujete osoby se Společnostmi)
+</Check>
+
+<Check>
+  Všechna vlastní pole existují v **Settings → Data Model**
+</Check>
+
+<Warning>
+  **Importujte Společnosti před osobami**
+
+  Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti. Společnost musí existovat dříve, než na ni můžete odkazovat.
+</Warning>
+
+## Krok 1: Připravte si data kontaktů
+
+### Povinná a doporučená pole
+
+| Pole                | Povinné?   | Formát            | Poznámky                          |
+| ------------------- | ---------- | ----------------- | --------------------------------- |
+| **Email**           | Doporučeno | `name@domain.com` | Musí být jedinečné                |
+| **Jméno**           | Doporučeno | Text              |                                   |
+| **Příjmení**        | Doporučeno | Text              |                                   |
+| **Společnost**      | Volitelné  | Doména nebo ID    | Odkazuje na existující Společnost |
+| **Telefon**         | Volitelné  | Více sloupců      | Viz níže                          |
+| **Pracovní pozice** | Volitelné  | Text              |                                   |
+| **Vlastní pole**    | Volitelné  | Různé             | Musí existovat v Data Model       |
+
+### Formát e-mailu
+
+* Musí mít platný formát e-mailu: `name@domain.com`
+* **Musí být jedinečná** — žádné duplicity ve vašem souboru ani v Twenty
+* Pro další e-mailové adresy použijte sloupec **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Formát telefonu
+
+Telefon je **vnořené pole**, které vyžaduje více sloupců:
+
+| Sloupec                                 | Příklad      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Propojení se Společnostmi
+
+Přidejte sloupec s jedinečným identifikátorem Společnosti:
+
+| Název sloupce   | Formát     | Příklad                                |
+| --------------- | ---------- | -------------------------------------- |
+| `companyDomain` | Formát URL | `https://acme.com`                     |
+| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Note>
+  **Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá způsobu, jakým jsou Společnosti uloženy v Twenty.
+</Note>
+
+### Ukázková struktura CSV
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
+John,Smith,john@acme.com,CEO,https://acme.com,4159095555,US
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
+```
+
+<Note>
+  **Tip pro profíky:** Během importu klikněte na **Download sample file** nebo vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců, které Twenty očekává.
+</Note>
+
+## Krok 2: Přejděte na funkci importu
+
+**Možnost 1: Z pohledu People**
+
+1. Přejděte na **People** v levém postranním panelu
+2. Klikněte na ikonu **⋮** vpravo nahoře
+3. Vyberte **Import records**
+
+**Možnost 2: Pomocí příkazové nabídky**
+
+1. Stiskněte `Cmd + K` (Mac) nebo `Ctrl + K` (Windows)
+2. Napište "import"
+3. Vyberte **Import records**
+4. Zvolte **People**
+
+## Krok 3: Nahrajte svůj soubor
+
+1. Klikněte na **Select file**
+2. Vyberte svůj soubor CSV, XLSX nebo XLS
+3. Počkejte, až Twenty analyzuje váš soubor
+
+## Krok 4: Namapujte své sloupce
+
+Twenty se automaticky pokusí přiřadit vaše sloupce k polím. Zkontrolujte a upravte:
+
+1. **Zkontrolujte automatická mapování** — ověřte, že jsou správná
+2. **Opravte nesprávná mapování** — klikněte na rozbalovací nabídku a vyberte správné pole
+3. **Přeskočte sloupce** — vyberte **Do not map** u sloupců, které nechcete importovat
+
+### Důležitá pravidla mapování
+
+| Typ sloupce             | Mapovat na                     | Poznámky                             |
+| ----------------------- | ------------------------------ | ------------------------------------ |
+| Reference na Společnost | Relační pole **Společnost**    | Použijte doménu NEBO ID, ne obojí    |
+| Email                   | **Email**                      | Primární e-mailová adresa            |
+| Další e-mailové adresy  | **Emails / Additional Emails** | Formát pole                          |
+| Telefon                 | Samostatné sloupce             | Číslo, kód země, telefonní předvolba |
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+### Mapování relace Společnost
+
+Při mapování sloupce společnosti:
+
+1. Najděte svůj referenční sloupec společnosti (např. `companyDomain`)
+2. Namapujte jej na relační pole **Společnost**
+3. Twenty propojí každou osobu s odpovídající Společností
+
+<Warning>
+  **Pro relace mapujte pouze JEDEN jedinečný identifikátor.**
+
+  Nemapujte současně `companyId` a `companyDomain`. Vyberte jednu možnost — ideálně doménu, protože je lidsky čitelná.
+</Warning>
+
+## Krok 5: Mapujte hodnoty polí typu Select
+
+Pokud máte pole typu Select nebo Multi-Select (např. Zdroj leadu):
+
+1. Twenty zobrazí vaše hodnoty vedle stávajících možností
+2. Spárujte každou hodnotu ve svém souboru s možností v Twenty
+3. Nebo podle potřeby vytvořte nové možnosti
+
+<Note>
+  Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste viděli názvy API.
+</Note>
+
+## Krok 6: Zkontrolujte a opravte chyby
+
+Před dokončením importu Twenty ověří vaše data:
+
+1. Klikněte na **Další kroky**
+2. Řádky s chybami jsou zvýrazněny **žlutě**
+3. **Opravte chyby přímo** — klikněte na buňku a upravte hodnotu
+4. **Odstraňte problematické řádky** — klikněte na X a řádek přeskočte
+
+### Běžné chyby při importu kontaktů
+
+| Chyba                       | Příčina                                     | Řešení                                                 |
+| --------------------------- | ------------------------------------------- | ------------------------------------------------------ |
+| **Duplicitní e-mail**       | E-mail již existuje v Twenty nebo v souboru | Odstraňte duplikát nebo aktualizujte existující záznam |
+| **Neplatný formát e-mailu** | Nesprávný formát e-mailu                    | Upravte na `name@domain.com`                           |
+| **Vztah nebyl nalezen**     | Společnost neexistuje                       | Nejprve importujte společnosti nebo opravte odkaz      |
+| **Chybí povinné pole**      | Povinné pole je prázdné                     | Doplňte hodnotu nebo řádek odstraňte                   |
+
+## Krok 7: Dokončete import
+
+1. Zkontrolujte souhrn importu
+2. Klikněte na **Potvrdit** pro import
+3. Počkejte na dokončení importu
+4. Ověřte to kontrolou několika záznamů a jejich vazeb na společnost
+
+## Po importu kontaktů
+
+Vaše kontakty jsou nyní v Twenty! Další kroky:
+
+1. **Ověřte vazby na Společnosti** — otevřete několik záznamů Osob a potvrďte, že jsou propojené se správnou Společností
+2. **Importujte Příležitosti** — v případě potřeby je propojte s Osobami a Společnostmi
+3. **Nastavte synchronizaci e-mailů** — připojte svou poštovní schránku, abyste viděli historii e-mailů u záznamů kontaktů
+
+## Aktualizace stávajících kontaktů
+
+Chcete-li aktualizovat kontakty místo vytváření nových:
+
+1. Zahrňte do svého souboru sloupec `email` nebo `id`
+2. Twenty páruje záznamy podle tohoto jedinečného identifikátoru
+3. Existující kontakty se aktualizují; nové se vytvoří
+
+Podrobnosti viz [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-migration/how-tos/update-existing-records-via-import).
+
+## Časté dotazy
+
+<AccordionGroup>
+  <Accordion title="Proč nemohou mít dvě Osoby stejný e-mail?">
+    E-mail je v Twenty jedinečný identifikátor. Tím se předchází duplicitním kontaktům a zajišťuje se, že synchronizace e-mailů správně propojí e-maily se správnou osobou.
+  </Accordion>
+
+  <Accordion title="Co když mám osoby bez e-mailu?">
+    E-mail můžete nechat prázdný. Doporučujeme však e-maily přidat, kdykoli je to možné, pro lepší kvalitu dat a funkčnost synchronizace e-mailů.
+  </Accordion>
+
+  <Accordion title="Jak během importu propojit Osoby se Společnostmi?">
+    Přidejte sloupec s doménou Společnosti (např. `https://acme.com`) nebo s ID. Při mapování propojte tento sloupec s relačním polem Společnost.
+  </Accordion>
+
+  <Accordion title="Co když Společnost ještě neexistuje?">
+    Importujte Společnosti před osobami. Společnost musí existovat dříve, než na ni můžete odkazovat.
+  </Accordion>
+
+  <Accordion title="Mohu importovat ID ze svého předchozího CRM?">
+    Ano! V datovém modelu vytvořte vlastní pole označené jako "unique" pro uložení externího ID. Poznámka: název pole `id` je vyhrazen pro interní ID Twenty.
+  </Accordion>
+
+  <Accordion title="Jak opravím chyby 'relation not found'?">
+    Společnost, na kterou odkazujete, neexistuje. Buď nejprve importujte Společnost, nebo ověřte, že doména/ID přesně odpovídá existující Společnosti.
+  </Accordion>
+</AccordionGroup>
+
+## Řešení potíží
+
+Máte potíže? Podívejte se na:
+
+* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)

@@ -2,7 +2,7 @@ import {
   type WorkflowIteratorAction,
   type WorkflowStep,
 } from '@/workflow/types/Workflow';
-import { isLastStepOfLoop } from '../isLastStepOfLoop';
+import { isLastStepOfLoop } from '@/workflow/workflow-diagram/utils/isLastStepOfLoop';
 
 describe('isLastStepOfLoop', () => {
   const makeIterator = (

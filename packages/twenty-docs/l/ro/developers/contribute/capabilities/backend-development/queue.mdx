@@ -1,0 +1,41 @@
+---
+title: Coada de mesaje
+---
+
+Cozile facilitează desfășurarea operațiunilor asincrone. Acestea pot fi folosite pentru a efectua sarcini de fundal precum trimiterea unui e-mail de bun venit la înregistrare.
+Fiecare caz de utilizare va avea propria clasă de coadă extinsă din `MessageQueueServiceBase`.
+
+În prezent, acceptăm doar `bull-mq`[bull-mq](https://bullmq.io/) ca driver de coadă.
+
+## Pași pentru a crea și utiliza o coadă nouă
+
+1. Adăugați un nume pentru noua coadă sub enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+4. Adăugați o clasă lucrător cu injectare bazată pe simbol, la fel ca producătorul.
+
+### Exemplu de utilizare
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

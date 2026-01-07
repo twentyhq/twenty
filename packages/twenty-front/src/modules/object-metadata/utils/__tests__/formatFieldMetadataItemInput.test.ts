@@ -1,7 +1,7 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { formatFieldMetadataItemInput } from '../formatFieldMetadataItemInput';
+import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 
 describe('formatFieldMetadataItemInput', () => {
   it('should format the field metadata item input correctly', () => {

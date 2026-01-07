@@ -55,6 +55,7 @@ export const SelectSheetStep = ({
   onBack,
   currentStepState,
 }: SelectSheetStepProps) => {
+  const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
 
   const [value, setValue] = useState(sheetNames[0]);
@@ -70,7 +71,8 @@ export const SelectSheetStep = ({
           maxRecords,
         )
       ) {
-        onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+        const maxRecordsString = maxRecords.toString();
+        onError(t`Too many records. Up to ${maxRecordsString} allowed`);
         return;
       }
       try {
@@ -93,6 +95,7 @@ export const SelectSheetStep = ({
       setPreviousStepState,
       setCurrentStepState,
       uploadStepHook,
+      t,
     ],
   );
 
@@ -104,8 +107,6 @@ export const SelectSheetStep = ({
     },
     [handleContinue],
   );
-
-  const { t } = useLingui();
 
   return (
     <>

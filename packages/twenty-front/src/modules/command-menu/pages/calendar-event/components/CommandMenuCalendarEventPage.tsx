@@ -20,7 +20,7 @@ export const CommandMenuCalendarEventPage = () => {
     recordGqlFields: FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.fields,
     // TODO: this is not executed on sub-sequent runs, make sure that it is intended
     onCompleted: (record) => {
-      upsertRecordsInStore([record]);
+      upsertRecordsInStore({ partialRecords: [record] });
     },
   });
 

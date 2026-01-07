@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import React, { useMemo } from 'react';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -131,7 +132,7 @@ const parseAdditionalPhones = (additionalPhones?: any) => {
     try {
       return JSON.parse(additionalPhones);
     } catch (error) {
-      logError(`Error parsing additional phones' : ` + error);
+      logError(t`Error parsing additional phones: ${error}`);
     }
   }
 

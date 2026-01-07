@@ -49,12 +49,10 @@ test('Sign up with invite link via email', async ({
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();
+    await expect(page.getByText('Account Deletion')).toBeVisible();
     await confirmationModal.typePlaceholderToInput();
+    await confirmationModal.clickConfirmButton();
 
-    await Promise.all([
-      page.waitForURL('/welcome'),
-
-      confirmationModal.clickConfirmButton(),
-    ]);
+    await page.waitForURL('**/welcome');
   });
 });

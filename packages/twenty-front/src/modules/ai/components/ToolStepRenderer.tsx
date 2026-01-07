@@ -142,7 +142,6 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
-  // Special handling for code_interpreter tool
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
     const codeOutput = output as {
@@ -190,7 +189,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   const displayMessage = hasError
-    ? 'Tool execution failed'
+    ? t`Tool execution failed`
     : output &&
         typeof output === 'object' &&
         'message' in output &&
@@ -240,13 +239,13 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     isActive={activeTab === 'output'}
                     onClick={() => setActiveTab('output')}
                   >
-                    Output
+                    {t`Output`}
                   </StyledTab>
                   <StyledTab
                     isActive={activeTab === 'input'}
                     onClick={() => setActiveTab('input')}
                   >
-                    Input
+                    {t`Input`}
                   </StyledTab>
                 </StyledTabContainer>
 

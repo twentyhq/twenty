@@ -1,0 +1,226 @@
+---
+title: Sorun Giderme
+---
+
+## Sorun Giderme
+
+Geliştirme ortamını kurarken, sürüm yükseltirken veya kendi sunucunuzda barındırırken herhangi bir sorunla karşılaşırsanız, işte yaygın sorunlar için bazı çözümler.
+
+### Kendi Kendine Barındırma
+
+#### First install results in `password authentication failed for user "postgres"`
+
+🚨 **ÖNEMLİ: Bu çözüm SADECE yeni kurulumlar için GEÇERLİDİR** 🚨
+Mevcut bir Twenty örneğiniz varsa ve üretim verileri varsa, bu adımları **TAKİP ETMEYİN**, çünkü bu veritabanınızı kalıcı olarak silecektir!
+
+Twenty'yi ilk kez kurarken, varsayılan veritabanı parolasını değiştirmek isteyebilirsiniz.
+İlk kurulum sırasında belirlediğiniz parola, veritabanı hacminde kalıcı olarak depolanır. Daha sonra bu parolayı yapılandırmanızda, eski hacmi kaldırmadan değiştirmeye çalışırsanız, kimlik doğrulama hataları alırsınız çünkü veritabanı hala orijinal parolayı kullanmaktadır.
+
+⚠️ WARNING: Following steps will PERMANENTLY DELETE all database data! ⚠️
+Bu yalnızca önemli veri içermeyen yeni kurulumlar için geçerlidir.
+
+`PG_DATABASE_PASSWORD` güncellemek için:
+
+```sh
+# .env içinde PG_DATABASE_PASSWORD'i güncelleyin
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR satır sonları bulundu [Windows]
+
+Bu Windows'un satır sonu karakterleri ve git yapılandırmasından kaynaklanmaktadır. Deneyin:
+
+```
+git config --global core.autocrlf false
+```
+
+Ardından depoyu silin ve tekrar klonlayın.
+
+#### Eksik meta veri şeması
+
+Twenty kurulumu sırasında, postgres veritabanınızı doğru şemalar, uzantılar ve kullanıcılarla hazırlamanız gerekir.
+Bu hazırlığı başarıyla tamamlarsanız, veritabanınızda `varsayılan` ve `meta veri` şemalarına sahip olmalısınız.
+Eğer yoksa, bilgisayarınızda birden fazla postgres örneği çalışmadığından emin olun.
+
+#### Modül 'twenty-emails' veya buna karşılık gelen tür açıklamaları bulunamıyor.
+
+`twenty-emails` paketini veritabanını `npx nx run twenty-emails:build` ile başlatmadan önce derlemeniz gerekiyor.
+
+#### Eksik twenty-x paketi
+
+Kök dizinde yarn çalıştırdığınızdan ve ardından `npx nx server:dev twenty-server` çalıştırdığınızdan emin olun. Bu hala çalışmıyorsa eksik paketi manuel olarak derlemeyi deneyin.
+
+#### Kaydettiğinde lint çalışmıyor
+
+Bu, kurulu eslint uzantısıyla kutudan çıktığı anda çalışmalıdır. Bu işe yaramazsa, vscode ayarınıza (geliştirme konteyner kapsamında) bunu eklemeyi deneyin:
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### `npx nx start` veya `npx nx start twenty-front` çalıştırırken, bellek hatası verildi
+
+`packages/twenty-front/.env` içinde `VITE_DISABLE_TYPESCRIPT_CHECKER=true` ve `VITE_DISABLE_ESLINT_CHECKER=true`'i açarak arka plan kontrollerini devre dışı bırakın, böylece gerekli RAM miktarını azaltın.
+
+**If it does not work:**
+Run only the services you need, instead of `npx nx start`. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
+
+**If it does not work:**
+If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+Geçici çözüm, aşağıdaki komutu terminalde çalıştırmak veya otomatik olarak kurulum yapmak için .bashrc profilinize eklemektir:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+\--max-old-space-size=8192 bayrağı, Node.js yığını için 8GB'lık üst sınır ayarlar; kullanım uygulama talebiyle ölçeklenir.
+Referans: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**If it does not work:**
+Investigate which processes are taking you most of your machine RAM. Twenty'de bazı VScode uzantılarının çok fazla RAM aldığını fark ettik, bu yüzden onları geçici olarak devre dışı bırakıyoruz.
+
+**If it does not work:**
+Restart your machine helps to clean up ghost processes.
+
+#### `npx nx start` çalıştırırken günlüklerde garip [0] ve [1] var
+
+Bu, `npx nx start` komutunun kaputun altında daha fazla komut çalıştırması nedeniyle bekleniyor.
+
+#### E-postalar gönderilmiyor
+
+Most of the time, it's because the `worker` is not running in the background. Çalıştırmayı deneyin
+
+```
+npx nx worker twenty-server
+```
+
+#### Microsoft 365 hesabıma bağlanamıyorum
+
+Çoğu zaman yöneticiniz hesabınıza Microsoft 365 Lisansı sağlamadığından kaynaklanır. Denetleyin [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Bir `AADSTS50020` hata kodu alırsanız, muhtemelen kişisel bir Microsoft hesabı kullanıyorsunuzdur. Bu henüz desteklenmiyor. Daha fazla bilgi [burada](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### `yarn` çalıştırırken konsolda uyarılar beliriyor
+
+Uyarılar, `package.json`'da açıkça belirtilmeyen ek bağımlılıkları çekildiğini bildiriyor, bu yüzden kritik bir hata çıkmadığı sürece her şey beklendiği gibi çalışmalıdır.
+
+#### Kullanıcı giriş sayfasına eriştiğinde, günlüklerde çalışma alanına erişmeye çalışan yetkisiz kullanıcı hatası beliriyor
+
+Bu, kullanıcı giriş yapmadığında yetkisiz olduğundan ve kimliği doğrulanmadığından beklenen bir durumdur.
+
+#### Çalışanınızın çalışıp çalışmadığını nasıl kontrol edersiniz?
+
+* [webhook-test.com](https://webhook-test.com/) adresine gidin ve **Benzersiz Webhook URL'nizi** kopyalayın.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook testi" />
+</div>
+
+* Twenty uygulamanızı açın, `/settings` sayfasına gidin ve ekranın sol alt köşesinde bulunan **Gelişmiş** seçeneğini etkinleştirin.
+* Yeni bir webhook oluşturun.
+* **Benzersiz Webhook URL'nizi** Twenty'deki **Endpoint URL** alanına yapıştırın. **Filtreleri** `Şirketler` ve `Oluşturuldu` olarak ayarlayın.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook ayarları" />
+</div>
+
+* `/objects/companies` sayfasına gidin ve yeni bir şirket kaydı oluşturun.
+* [webhook-test.com](https://webhook-test.com/) adresine geri dönün ve yeni bir **POST isteği** alınıp alınmadığını kontrol edin.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test sonucu" />
+</div>
+
+* Bir **POST isteği** alıyorsanız, çalışanınız başarıyla çalışıyor demektir. Aksi halde, çalışanınızı sorun giderme yapmanız gerekir.
+
+#### Ön uç başlatılamıyor ve TS5042 hatası döndürüyor: Seçenek 'project' komut satırında kaynak dosyalarla birleştirilemez
+
+Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Yönetim paneline erişilemiyor
+
+Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırarak yönetim paneline erişim sağlayın.
+
+### 1-click Docker compose
+
+#### Giriş Yapılamıyor
+
+Kurulumdan sonra giriş yapamıyorsanız:
+
+1. Aşağıdaki komutları çalıştırın:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset --configuration=no-seed
+   ```
+2. Docker konteynerlerini yeniden başlatın:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Note the database:reset command will completely erase your database and recreate it from scratch.
+
+#### Ters Proxy'nin Arkasında Bağlantı Sorunları
+
+Eğer Twenty'yi ters proxy'nin arkasında çalıştırıyorsanız ve bağlantı sorunları yaşıyorsanız:
+
+1. **SERVER_URL'yi doğrulayın:**
+
+   `.env` dosyanızdaki `SERVER_URL`'nin dış erişim URL'nizle eşleştiğinden, SSL etkinse `https`'i de içerdiğinden emin olun.
+
+2. **Ters Proxy Ayarlarını Kontrol Edin:**
+
+   * Ters proxy'nizin Twenty sunucusuna talepleri düzgün bir şekilde yönlendirdiğinden emin olun.
+   * `X-Forwarded-For` ve `X-Forwarded-Proto` gibi başlıkların doğru şekilde ayarlandığından emin olun.
+
+3. **Servisleri Yeniden Başlatın:**
+
+   Değişiklik yaptıktan sonra hem ters proxy'yi hem de Twenty konteynerlerini yeniden başlatın.
+
+#### Resim yüklerken hata - izin reddedildi
+
+Veri klasörünün sahipliğini ana bilgisayarda root'tan başka bir kullanıcıya ve gruba geçirmek bu sorunu çözer.
+
+## Yardım Almak
+
+Bu kılavuzda ele alınmayan sorunlarla karşılaşırsanız:
+
+* Günlükleri Kontrol Edin:
+
+  Hata mesajları için konteyner günlüklerine bakın:
+
+  ```bash
+  docker compose logs
+  ```
+
+* Topluluk Desteği:
+
+  [Twenty topluluğuna](https://github.com/twentyhq/twenty/issues) veya [destek kanallarına](https://discord.gg/cx5n4Jzs57) yardım için ulaşın.

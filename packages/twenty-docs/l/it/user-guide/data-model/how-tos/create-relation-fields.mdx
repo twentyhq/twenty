@@ -1,0 +1,60 @@
+---
+title: Creazione di Campi di Relazione
+description: Guida passo passo per collegare gli oggetti con campi di relazione.
+---
+
+I campi di relazione collegano record di oggetti diversi — ad esempio, collegando Persone ad Aziende.
+
+<Note>
+  **I nomi delle relazioni non possono essere modificati dopo la creazione** (influiscono sull'API). Pianifica con attenzione i nomi.
+</Note>
+
+## Prima di Iniziare
+
+Decidi:
+
+* Quali oggetti stai collegando? (ad es., Persone → Aziende)
+* Qual è il lato "uno"? (ad es., Azienda)
+* Qual è il lato "molti"? (ad es., Persone — molte persone lavorano per una sola azienda)
+* Quale nome dovrebbe avere il campo su ciascun lato?
+
+Consulta [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-fields) per la spiegazione dei tipi di relazione.
+
+## Passaggi
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto in cui vuoi la relazione (in genere il lato "molti")
+3. Fai clic su **+ Aggiungi campo**
+4. Seleziona **Relazione** come tipo di campo
+5. Scegli l'**oggetto di destinazione**
+6. Seleziona **Uno-a-molti** o **Molti-a-uno**
+7. Inserisci i nomi dei campi per **entrambi i lati** della relazione
+8. Clicca su **Salva**
+
+## Esempio: Persone → Aziende
+
+* Vai a **Impostazioni → Modello dati → Persone**
+* Aggiungi un campo di relazione
+* Destinazione: **Aziende**
+* Tipo: **Molti-a-uno**
+* Campo su Persone: **Azienda**
+* Campo su Aziende: **Dipendenti**
+
+Ora ogni Persona può essere collegata a un'Azienda e ogni Azienda mostra le proprie Persone.
+
+## Eliminare una relazione
+
+1. Vai a **Impostazioni → Modello dati**
+2. Trova il campo di relazione
+3. Fai clic su **⋮ → Disattiva**
+
+I collegamenti vengono conservati ma nascosti. Riattiva per ripristinare.
+
+<Note>
+  **Eliminare una relazione non elimina i record.** Viene rimosso solo il collegamento tra di essi.
+</Note>
+
+## Correlati
+
+* [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-fields) — tipi e limitazioni
+* [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importazione massiva di record collegati

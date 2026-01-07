@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TabMoreButton } from '../TabMoreButton';
+import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 
 const meta: Meta<typeof TabMoreButton> = {
   title: 'UI/Layout/TabList/TabMoreButton',

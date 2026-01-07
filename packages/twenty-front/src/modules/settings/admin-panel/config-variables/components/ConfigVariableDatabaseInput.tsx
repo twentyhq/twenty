@@ -5,11 +5,12 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { ConfigVariableType } from '~/generated/graphql';
-import { type ConfigVariableOptions } from '../types/ConfigVariableOptions';
+import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {
   label: string;
@@ -109,7 +110,7 @@ export const ConfigVariableDatabaseInput = ({
                     label:
                       Array.isArray(value) && value.length > 0
                         ? value.join(', ')
-                        : 'Select options',
+                        : t`Select options`,
                   }}
                   isDisabled={disabled}
                   hasRightElement={false}
@@ -152,7 +153,7 @@ export const ConfigVariableDatabaseInput = ({
                 }
               }}
               disabled={disabled}
-              placeholder={placeholder || 'Enter JSON array'}
+              placeholder={placeholder || t`Enter JSON array`}
             />
           )}
         </>
@@ -184,7 +185,7 @@ export const ConfigVariableDatabaseInput = ({
           }
           onChange={(text) => onChange(text)}
           disabled={disabled}
-          placeholder={placeholder || 'Enter value'}
+          placeholder={placeholder || t`Enter value`}
           fullWidth
         />
       );

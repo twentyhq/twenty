@@ -81,7 +81,7 @@ export const SettingsServerlessFunctionTestTab = ({
         />
         {serverlessFunctionTestData.output.logs.length > 0 && (
           <StyledCodeEditorContainer>
-            <InputLabel>Logs</InputLabel>
+            <InputLabel>{t`Logs`}</InputLabel>
             <TextArea
               textAreaId={testLogsTextAreaId}
               value={isTesting ? '' : serverlessFunctionTestData.output.logs}

@@ -4,6 +4,7 @@ import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-r
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { t } from '@lingui/core/macro';
 import { IconArrowDown } from 'twenty-ui/display';
 
 export const RecordTableRecordGroupSectionLoadMore = () => {
@@ -30,7 +31,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
   return (
     <RecordTableActionRow
       LeftIcon={IconArrowDown}
-      text="Load more"
+      text={t`Load more`}
       onClick={handleLoadMore}
     />
   );

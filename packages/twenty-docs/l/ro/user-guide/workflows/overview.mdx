@@ -1,0 +1,80 @@
+---
+title: Fluxuri de lucru
+description: Learn how to build automations in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Fluxuri de lucru" />
+</Frame>
+
+## De ce Contează Fluxurile de Lucru
+
+Twenty a fost construit pentru a oferi utilizatorilor săi flexibilitate maximă. În loc să vă forțeze să adaptați procesele de afaceri la funcții rigide și predefinite, fluxurile de lucru vă permit să creați automatizări care să susțină cel mai bine cazurile de utilizare unice ale afacerii dvs.
+
+Fluxurile de lucru sunt funcția in-app a Twenty pentru crearea acestor automatizări. Ele vă oferă blocurile de construcție pentru a crea exact ceea ce are nevoie afacerea dvs., când are nevoie.
+
+## Ce pot face cu fluxurile de lucru?
+
+Recomandăm construirea automatizărilor pentru două scopuri principale:
+
+1. **Automatizări interne pentru a facilita activitatea zilnică a echipei dvs.**: Reduceți numărul de intrări manuale și sarcini repetitive care încetinesc echipa dvs.
+2. **Aduceți date în și în afara Twenty**: Conectați Twenty prin apeluri API și webhooks la baza dvs. de date și alte instrumente.
+
+## Building Your First Workflow
+
+### Step 1: Create a New Workflow
+
+1. Go to **Workflows** accessible below the other objects
+2. Click **+ New Record**
+3. Give your workflow a name
+
+### Step 2: Add a Trigger
+
+Every workflow starts with a trigger. Choose from:
+
+* **Record events**: When a record is created, updated, or deleted
+* **Schedule**: Run at specific times (daily, weekly, etc.)
+* **Manual**: Triggered by a user action
+* **Webhook**: Triggered by a webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Step 3: Add Actions
+
+After your trigger, add one or more actions:
+
+* **Create Record**: Add new records to any object
+* **Update Record**: Modify existing record data
+* **Delete Record**: Remove records from objects
+* **Search Records**: Find records matching criteria
+* **Upsert Record**: Create or update based on matching criteria
+* **Iterator**: Loop through arrays of records
+* **Filter**: Control which records proceed
+* **Delay**: Wait before continuing (duration or scheduled date)
+* **Send Email**: Send emails via your connected account
+* **Code**: Run custom JavaScript
+* **HTTP Request**: Call external APIs
+* **Form**: Get inputs from users within Twenty UI at the time of execution
+* **AI Agent** (Coming soon): Run intelligent AI tasks
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Step 4: Test and Activate
+
+1. Use the **Test** button to run your workflow with sample data
+2. Review the results to ensure it works as expected
+3. Toggle the workflow **Active** when ready
+
+## Cele mai bune practici ale fluxurilor de lucru
+
+* **Editați numele pașilor**: Redenumiți pașii fluxului dvs. de lucru pentru a descrie clar ce face fiecare. Acest lucru ajută la întreținere și facilitează transmiterea către colegi
+* **Folosiți datele pașilor anteriori**: Puteți utiliza câmpuri din înregistrările returnate de orice pas anterior din fluxul dvs. de lucru
+* **Începeți simplu**: Începeți cu fluxuri de lucru de bază și adăugați complexitate în timp, pe măsură ce deveniți mai familiar cu sistemul
+* **Planificați înainte de a construi**: Configurați logica fluxului de lucru înainte de a începe construcția pentru a evita blocarea la jumătatea procesului
+
+## Pașii următori
+
+* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Automations](/l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

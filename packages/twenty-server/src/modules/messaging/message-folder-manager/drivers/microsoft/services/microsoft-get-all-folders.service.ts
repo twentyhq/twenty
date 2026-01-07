@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  MessageFolder,
+  DiscoveredMessageFolder,
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
@@ -44,7 +44,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]> {
+  ): Promise<DiscoveredMessageFolder[]> {
     try {
       const microsoftClient =
         await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
@@ -67,7 +67,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
 
       const folders = (response.value as MicrosoftGraphFolder[]) || [];
       const rootFolderId = this.getRootFolderId(folders);
-      const folderInfos: MessageFolder[] = [];
+      const folderInfos: DiscoveredMessageFolder[] = [];
 
       for (const folder of folders) {
         if (!folder.displayName) {

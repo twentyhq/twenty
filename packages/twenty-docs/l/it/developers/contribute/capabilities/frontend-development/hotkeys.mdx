@@ -1,0 +1,178 @@
+---
+title: Tasti di scelta rapida
+---
+
+## Introduzione
+
+Quando hai bisogno di ascoltare un tasto di scelta rapida, normalmente useresti l'evento `onKeyDown`.
+
+In `twenty-front`, tuttavia, potresti avere conflitti tra gli stessi tasti di scelta rapida che sono utilizzati in componenti diversi, montati nello stesso momento.
+
+Ad esempio, se hai una pagina che ascolta il tasto Invio, e una modale che ascolta lo stesso tasto, con un componente Select all'interno della modale che ascolta il tasto Invio, potresti avere un conflitto quando tutti sono montati contemporaneamente.
+
+## L'hook `useScopedHotkeys`
+
+Per gestire questo problema, abbiamo un hook personalizzato che rende possibile ascoltare i tasti di scelta rapida senza alcun conflitto.
+
+Lo posizioni in un componente, e ascolterà i tasti solo quando il componente è montato E quando l'**ambito del tasto di scelta rapida** specificato è attivo.
+
+## Come ascoltare i tasti di scelta rapida nella pratica?
+
+Sono coinvolti due passaggi nell'impostazione dell'ascolto dei tasti di scelta rapida:
+
+1. Imposta l'[ambito del tasto di scelta rapida](#what-is-a-hotkey-scope-) che ascolterà i tasti di scelta rapida
+2. Usa l'hook `useScopedHotkeys` per ascoltare i tasti di scelta rapida
+
+Configurare gli ambiti dei tasti di scelta rapida è necessario anche in pagine semplici, perché altri elementi dell'interfaccia utente come il menu a sinistra o il menu dei comandi potrebbero anch'essi ascoltare i tasti di scelta rapida.
+
+## Casi d'uso per i tasti di scelta rapida
+
+In generale, avrai due casi d'uso che richiedono tasti di scelta rapida:
+
+1. In una pagina o un componente montato in una pagina
+2. In un componente di tipo modale che prende il focus a causa di un'azione dell'utente
+
+Il secondo caso d'uso può verificarsi in modo ricorsivo: ad esempio, un menu a tendina in una modale.
+
+### Ascoltare i tasti di scelta rapida in una pagina
+
+Esempio:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Ascoltare i tasti di scelta rapida in un componente di tipo modale
+
+Per questo esempio utilizzeremo un componente modale che ascolta il tasto Esc per segnalare al suo genitore di chiuderlo.
+
+Qui l'interazione dell'utente sta cambiando l'ambito.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Poi nel componente modale:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+È importante utilizzare questo schema quando non sei sicuro che l'utilizzo di useEffect con mount/unmount sarà sufficiente per evitare conflitti.
+
+Quei conflitti possono essere difficili da debug, e potrebbe accadere più spesso che no con useEffects.
+
+## Che cos'è un ambito del tasto di scelta rapida?
+
+Un ambito del tasto di scelta rapida è una stringa che rappresenta un contesto in cui i tasti di scelta rapida sono attivi. È generalmente codificato come un enum.
+
+Quando cambi l'ambito del tasto di scelta rapida, i tasti di scelta rapida che ascoltano questo ambito saranno abilitati e i tasti che ascoltano altri ambiti saranno disabilitati.
+
+Puoi impostare solo un ambito alla volta.
+
+Ad esempio, gli ambiti dei tasti di scelta rapida per ogni pagina sono definiti nell'enum `PageHotkeyScope`:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internamente, l'ambito selezionato attualmente viene memorizzato in uno stato Recoil condiviso in tutta l'applicazione:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Ma questo stato Recoil non dovrebbe mai essere gestito manualmente! Vedremo come usarlo nella sezione successiva.
+
+## Come funziona internamente?
+
+Abbiamo creato un sottile wrapper su [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) che lo rende più performante ed evita rendering non necessari.
+
+Abbiamo anche creato uno stato Recoil per gestire lo stato dell'ambito del tasto di scelta rapida e renderlo disponibile ovunque nell'applicazione.

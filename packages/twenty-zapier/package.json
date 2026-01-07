@@ -1,6 +1,6 @@
 {
   "name": "twenty-zapier",
-  "version": "2.0.2",
+  "version": "2.1.1",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "engines": {
