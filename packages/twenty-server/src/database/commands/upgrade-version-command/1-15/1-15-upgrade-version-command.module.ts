@@ -43,7 +43,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
     IdentifyFieldMetadataCommand,
-    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
     MigratePageLayoutWidgetConfigurationCommand,
@@ -51,7 +51,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
     IdentifyFieldMetadataCommand,
-    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
 export class V1_15_UpgradeVersionCommandModule {}
