@@ -96,150 +96,150 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 * استخدم البيانات من الخطوات السابقة لملء الحقول
 
-**How it works**:
+**كيف يعمل**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. يبحث عن سجل يطابق معاييرك
+2. إذا تم العثور عليه → يحدّث السجل الموجود
+3. إذا لم يُعثر عليه → ينشئ سجلًا جديدًا
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**المخرجات**: بيانات السجل التي تم إنشاؤها أو تحديثها متاحة للاستخدام في الخطوات التالية.
 
-## Flow Actions
+## إجراءات التدفق
 
 ### مكرر
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+**يتكرر عبر مصفوفة من السجلات** المُعادة من خطوة سابقة، مما يتيح لك تنفيذ إجراءات على كل سجل بشكل فردي.
 
 **التكوين**:
 
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+* اختر مصفوفة السجلات من خطوة سابقة (مثل نتائج البحث عن السجلات، أو من مشغل يدوي مع إتاحة التنفيذ بالجملة، أو من عقدة كود)
 * حدد الإجراءات لتنفيذها على كل سجل في الحلقة.
 
 <Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+  - يمكنك إضافة عدة إجراءات داخل المُكرِّر.
+  - عند استخدام تفرعات داخل المُكرِّر، تأكد من أن تتصل الخطوة الأخيرة من كل تفرع بالمُكرِّر لإغلاق الحلقة.
 </Note>
 
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+* الوصول إلى حقول `Current Item`: لاستخدام حقول السجل الجاري معالجته، انقر على خطوة **المُكرِّر**، ثم اختر **العنصر الحالي**. ستُعرَض قائمة الحقول المتاحة من ذلك السجل ويمكن اختيارها لاستخدامها في الإجراءات اللاحقة.
 
-<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+<VimeoEmbed videoId="1146577247" title="عرض توضيحي بالفيديو" />
 
 ### تصفية
 
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
+يقوم بتصفية السجلات بناءً على الشروط المحددة، مما يسمح فقط للسجلات التي تلبي المعايير بالمرور.
 
 **التكوين**:
 
-* Select the record to filter
+* اختر السجل لتصفيته
 * حدد شروط ومعايير التصفية
 * قم بتكوين السجلات التي يجب أن تمر إلى الخطوات اللاحقة
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  1. **المخرجات**: عُقد التصفية لا تُرجِع بيانات — فهي تعمل كبوابات. إذا تم استيفاء الشروط، يتابع سير العمل. وإلا سيتوقف سير العمل عند ذلك الفرع.
+  2. يمكن استخدام العامل `IS` مع الحقول الرقمية. يعمل كأنه `EQUAL`.
 </Note>
 
-### Delay
+### التأخير
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+يُوقف تنفيذ سير العمل لمدة محددة أو حتى تاريخ/وقت معين.
 
-**Delay Types**:
+**أنواع التأخير**:
 
-| النوع              | الوصف                                                              |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
+| النوع            | الوصف                                                 |
+| ---------------- | ----------------------------------------------------- |
+| **المدة**        | الانتظار لمدة زمنية محددة (أيام، ساعات، دقائق، ثوانٍ) |
+| **تاريخ مُجدول** | الانتظار حتى تاريخ ووقت محددين                        |
 
-**Configuration for Duration**:
+**إعدادات المدة**:
 
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
+* تعيين الأيام والساعات والدقائق و/أو الثواني
+* دمج وحدات متعددة (مثل يومين و4 ساعات)
 
-**Configuration for Scheduled Date**:
+**إعدادات التاريخ المُجدول**:
 
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+* اختر تاريخًا ووقتًا
+* يمكن الإشارة إلى حقل تاريخ من خطوة سابقة (مثل المتابعة بعد 3 أيام من اجتماع)
 
 **حالات الاستخدام**:
 
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
+* انتظر 24 ساعة قبل إرسال بريد متابعة إلكتروني
+* إيقاف مؤقت حتى تاريخ إغلاق الفرصة
+* جدولة الإجراءات ضمن ساعات العمل
 
 <Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+  لا يمكن أن يكون التاريخ المُجدول في الماضي. إذا استُخدم حقل تاريخ من خطوة سابقة وكان التاريخ قد مضى بالفعل، فسيفشل سير العمل.
 </Note>
 
-**Limits & Credits**:
+**الحدود والرصيد**:
 
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+* **لا يوجد حد أقصى للمدة** — يمكنك تعيين تأخيرات بالدقائق أو الأيام أو الأسابيع أو أكثر
+* **يُستهلَك رصيد واحد** عند تنفيذ عقدة التأخير، بغض النظر عن المدة
+* **لا يُستهلك أي رصيد** أثناء الانتظار — تأخير 5 دقائق يكلف مثل تأخير 5 أيام
 
-## Communication Actions
+## إجراءات الاتصال
 
 ### إرسال البريد الإلكتروني
 
-يرسل بريدًا إلكترونيًا من سير العمل الخاص بك. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+يرسل بريدًا إلكترونيًا من سير العمل الخاص بك. هذا رائع لرسائل البريد الجماعية المعتمدة على قوالب. ستبدو رسائل البريد الإلكتروني مثل تلك التي ترسلها من صندوق بريدك.
+غير مناسب للرسائل الإخبارية (التي تتطلب تنسيقًا أغنى) أو سلاسل الرسائل الإلكترونية المؤتمتة.
 
-**Prerequisites**: Add an email account in Settings → Accounts
+**المتطلبات الأساسية**: أضف حساب بريد إلكتروني في الإعدادات → الحسابات
 
 **التكوين**:
 
-* Select the sender email account
+* اختر حساب البريد الإلكتروني المُرسل
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  يمكنك إرسال رسائل البريد الإلكتروني فقط من صناديق بريد متزامنة مع حساب Twenty الخاص بك. إرسال الرسائل من صناديق بريد أعضاء الفريق الآخرين (مثل بريد مالك الحساب) ضمن الخطة المستقبلية.
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+في جميع الخطوات التالية، يمكنك الرجوع إلى متغيرات من الخطوات السابقة لأغراض التخصيص.
 
 * ادخل عنوان البريد الإلكتروني المستلم.
 
 <Note>
-  Only one recipient is possible at the moment.
+  حاليًا يمكن اختيار مستلم واحد فقط.
 </Note>
 
 * اضبط سطر الموضوع.
-* قم بإنشاء نص الرسالة. You can format links, create numbered list, bullet point lists, add attachments.
+* قم بإنشاء نص الرسالة. يمكنك تنسيق الروابط، وإنشاء قوائم مرقمة، وقوائم نقطية، وإضافة مرفقات.
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  إضافة توقيعات HTML غير ممكنة في الوقت الحالي.
 </Note>
 
 ### نموذج
 
-يعرض نموذجاً أثناء تنفيذ سير العمل لجمع مدخلات المستخدم. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+يعرض نموذجاً أثناء تنفيذ سير العمل لجمع مدخلات المستخدم. يمكن بعد ذلك استخدام الردود في الخطوات اللاحقة لإنشاء سجلات أو إرسال رسائل بريد إلكتروني أو تنفيذ أي إجراء آخر بناءً على المُدخل.
 
 <Warning>
-  **Forms are designed for manual triggers only**. بالنسبة لمهام سير العمل مع محركات أخرى (سجل تم إنشاؤه، تم تحديثه، إلخ)، يمكن الوصول إلى النماذج فقط من خلال واجهة تشغيل سير العمل، وهو ليس التجربة المتوقعة. سيتم إصدار مركز الإشعارات في عام 2026 لدعم النماذج في مهام سير العمل المؤتمتة بشكل صحيح.
+  **تم تصميم النماذج للمشغلات اليدوية فقط**. بالنسبة لمهام سير العمل مع محركات أخرى (سجل تم إنشاؤه، تم تحديثه، إلخ)، يمكن الوصول إلى النماذج فقط من خلال واجهة تشغيل سير العمل، وهو ليس التجربة المتوقعة. سيتم إصدار مركز الإشعارات في عام 2026 لدعم النماذج في مهام سير العمل المؤتمتة بشكل صحيح.
 </Warning>
 
 **التكوين**:
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* قم بتهيئة الحقول التي سيُطلب من المستخدمين تعبئتها. لكل حقل، اختر
+  * نوعًا من بين: نص، رقم، تاريخ، سجل مُعطى، حقل اختيار. حقول الاختيار من جميع الكائنات متاحة.
+  * تسمية
+  * قيمة افتراضية ضمن `Placeholder` (اختياري)
+* حرّر عنوان النموذج
 
 **المخرجات**: استجابات النموذج متاحة للاستخدام في الخطوات اللاحقة.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**مثال**: يتوفر سير العمل "Quick Lead" افتراضيًا في جميع مساحات العمل، وهو متاح في أي مكان ضمن قائمة الأوامر `Cmd + K`.
 
-**How to fill the form**:
+**كيفية تعبئة النموذج**:
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* شغّل سير العمل اليدوي من قائمة الأوامر `Cmd K`
+* املأ النموذج المعروض في اللوحة الجانبية ثم انقر `Submit`.
 
 <Note>
-  The fields cannot be made mandatory.
+  لا يمكن جعل الحقول إلزامية.
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+<VimeoEmbed videoId="1147277989" title="عرض توضيحي بالفيديو" />
 
-## Integration Actions
+## إجراءات التكامل
 
 ### كود
 
@@ -247,24 +247,24 @@ For all the following steps, you can reference variables from previous steps for
 
 **التكوين**:
 
-* الوصول إلى المتغيرات من الخطوات السابقة. You can edit the variables names dynamically.
+* الوصول إلى المتغيرات من الخطوات السابقة. يمكنك تعديل أسماء المتغيرات ديناميكيًا.
 
-<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+<VimeoEmbed videoId="1147281795" title="عرض توضيحي بالفيديو" />
 
 * اكتب شيفرة جافا سكريبت في المحرر
 * إرجاع المتغيرات للاستخدام في الخطوات اللاحقة
 * اختبر الكود مباشرة في الخطوة
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  إذا كنت بحاجة إلى استخدام مفاتيح API خارجية في كودك، فيجب إدخالها مباشرةً في جسم الدالة. لا يمكنك تكوين مفاتيح API في مكان آخر والإشارة إليها في الدالة عديمة الخادم.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **هل تعمل مع المصفوفات؟** قد تأتي المصفوفات من أنظمة خارجية أو من خطوات سابقة على هيئة سلاسل نصية. راجع [كيفية التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) للحل.
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  انقر على أيقونة المربع في أعلى يمين محرر الكود لعرضه بملء الشاشة — فهذا مفيد لأن عرض المحرر الافتراضي محدود.
 </Tip>
 
 ### طلب HTTP
@@ -275,37 +275,37 @@ For all the following steps, you can reference variables from previous steps for
 
 **التكوين**:
 
-* ادخل عنوان رابط واجهة برمجية. Using parameters from previous steps is possible.
+* ادخل عنوان رابط واجهة برمجية. يمكن استخدام معاملات من خطوات سابقة.
 * اختر طريقة HTTP (GET, POST, PUT, PATCH, DELETE)
 * أضف الرؤوس والقيم المطلوبة
 * قدّم مثالًا للمخرجات لمعاينة البنية
 
-## AI Actions
+## إجراءات الذكاء الاصطناعي
 
-### AI Agent - Coming Soon
+### وكيل ذكاء اصطناعي - قريبًا
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+يشغّل وكيل ذكاء اصطناعي داخل سير العمل لديك لتنفيذ مهام ذكية.
 
 **التكوين**:
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **الوكيل**: اختر وكيلاً للذكاء الاصطناعي موجودًا أو استخدم الوكيل الافتراضي
+* **المطالبة**: اكتب التعليمات لوكيل الذكاء الاصطناعي
+* ارجع إلى متغيرات من خطوات سابقة داخل المطالبة
 
-**What AI Agents can do**:
+**ما الذي يمكن لوكلاء الذكاء الاصطناعي فعله**:
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* تحليل البيانات وتلخيصها
+* تصنيف السجلات أو توزيعها ضمن فئات
+* إنشاء محتوى نصي
+* اتخاذ قرارات بناءً على البيانات
+* التفاعل مع بيانات نظام إدارة علاقات العملاء لديك باستخدام الأدوات
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**المخرجات**: رد وكيل الذكاء الاصطناعي متاح للاستخدام في الخطوات التالية. إذا كان للوكيل مخطط مخرجات مُهيكل، فسيتبع الرد ذلك التنسيق.
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ar/user-guide/workflows/capabilities/workflow-credits) for details.
+  تستهلك إجراءات وكيل الذكاء الاصطناعي أرصدة سير العمل بناءً على نموذج الذكاء الاصطناعي المستخدم. راجع [أرصدة سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-credits) للحصول على التفاصيل.
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ar/user-guide/permissions-access/capabilities/permissions) for details.
+  يحترم وكلاء الذكاء الاصطناعي الأذونات المستندة إلى الأدوار. يمكنك تعيين أدوار محددة للوكلاء ضمن **الإعدادات → الأدوار** للتحكم في البيانات التي يمكنهم الوصول إليها. راجع [الأذونات](/l/ar/user-guide/permissions-access/capabilities/permissions) للحصول على التفاصيل.
 </Note>
