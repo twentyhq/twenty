@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -26,12 +25,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-`;
 
 type FieldWidgetRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
@@ -112,19 +105,17 @@ export const FieldWidgetRelationCard = ({
   if (records.length === 0) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
-        <StyledContainer>
-          <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-          >
-            <AnimatedPlaceholder type="noRecord" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                {t`No related records`}
-              </AnimatedPlaceholderEmptyTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-          </AnimatedPlaceholderEmptyContainer>
-        </StyledContainer>
+        <AnimatedPlaceholderEmptyContainer
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+        >
+          <AnimatedPlaceholder type="noRecord" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderEmptyTitle>
+              {t`No related records`}
+            </AnimatedPlaceholderEmptyTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderEmptyContainer>
       </RightDrawerProvider>
     );
   }
@@ -142,27 +133,25 @@ export const FieldWidgetRelationCard = ({
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-            <StyledContainer>
-              {records.map((record) => (
-                <Fragment key={record.id}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={record.id}
-                    relationObjectMetadataNameSingular={
-                      relationObjectNameSingular
-                    }
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === record.id}
-                    onClick={handleItemClick}
-                    relationRecord={record}
-                    relationObjectMetadataNameSingular={
-                      relationObjectNameSingular
-                    }
-                    relationFieldMetadataId={fieldMetadataId}
-                  />
-                </Fragment>
-              ))}
-            </StyledContainer>
+            {records.map((record) => (
+              <Fragment key={record.id}>
+                <RecordDetailRelationRecordsListItemEffect
+                  relationRecordId={record.id}
+                  relationObjectMetadataNameSingular={
+                    relationObjectNameSingular
+                  }
+                />
+                <RecordDetailRelationRecordsListItem
+                  isExpanded={expandedItem === record.id}
+                  onClick={handleItemClick}
+                  relationRecord={record}
+                  relationObjectMetadataNameSingular={
+                    relationObjectNameSingular
+                  }
+                  relationFieldMetadataId={fieldMetadataId}
+                />
+              </Fragment>
+            ))}
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>

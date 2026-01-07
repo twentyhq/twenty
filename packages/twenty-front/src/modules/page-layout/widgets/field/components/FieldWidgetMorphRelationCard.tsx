@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -28,12 +27,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-`;
 
 type FieldWidgetMorphRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
@@ -115,19 +108,17 @@ export const FieldWidgetMorphRelationCard = ({
   if (validRecords.length === 0) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
-        <StyledContainer>
-          <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-          >
-            <AnimatedPlaceholder type="noRecord" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                {t`No related records`}
-              </AnimatedPlaceholderEmptyTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-          </AnimatedPlaceholderEmptyContainer>
-        </StyledContainer>
+        <AnimatedPlaceholderEmptyContainer
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+        >
+          <AnimatedPlaceholder type="noRecord" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderEmptyTitle>
+              {t`No related records`}
+            </AnimatedPlaceholderEmptyTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderEmptyContainer>
       </RightDrawerProvider>
     );
   }
@@ -145,29 +136,23 @@ export const FieldWidgetMorphRelationCard = ({
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-            <StyledContainer>
-              <RecordDetailRecordsListContainer>
-                {validRecords.map((item) => (
-                  <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
-                    <RecordDetailRelationRecordsListItemEffect
-                      relationRecordId={item.value.id}
-                      relationObjectMetadataNameSingular={
-                        item.objectNameSingular
-                      }
-                    />
-                    <RecordDetailRelationRecordsListItem
-                      isExpanded={expandedItem === item.value.id}
-                      onClick={handleItemClick}
-                      relationRecord={item.value}
-                      relationObjectMetadataNameSingular={
-                        item.objectNameSingular
-                      }
-                      relationFieldMetadataId={item.fieldMetadataId}
-                    />
-                  </Fragment>
-                ))}
-              </RecordDetailRecordsListContainer>
-            </StyledContainer>
+            <RecordDetailRecordsListContainer>
+              {validRecords.map((item) => (
+                <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
+                  <RecordDetailRelationRecordsListItemEffect
+                    relationRecordId={item.value.id}
+                    relationObjectMetadataNameSingular={item.objectNameSingular}
+                  />
+                  <RecordDetailRelationRecordsListItem
+                    isExpanded={expandedItem === item.value.id}
+                    onClick={handleItemClick}
+                    relationRecord={item.value}
+                    relationObjectMetadataNameSingular={item.objectNameSingular}
+                    relationFieldMetadataId={item.fieldMetadataId}
+                  />
+                </Fragment>
+              ))}
+            </RecordDetailRecordsListContainer>
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>
