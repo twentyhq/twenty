@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -115,18 +115,37 @@ export class WorkspaceManagerService {
           },
         );
 
-      this.coreDataSource.transaction(async (entityManager: EntityManager) => {
-        await prefillCompanies(entityManager, schemaName);
+      const queryRunner = this.coreDataSource.createQueryRunner();
+      await queryRunner.connect();
+      try {
+        await queryRunner.startTransaction();
 
-        await prefillPeople(entityManager, schemaName);
+        await prefillCompanies(queryRunner.manager, schemaName);
+
+        await prefillPeople(queryRunner.manager, schemaName);
 
         await prefillWorkflows(
-          entityManager,
+          queryRunner.manager,
           schemaName,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
-      });
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        if (queryRunner.isTransactionActive) {
+          try {
+            await queryRunner.rollbackTransaction();
+          } catch (rollbackError) {
+            this.logger.error(
+              `Failed to rollback prefill transaction: ${rollbackError.message}`,
+            );
+          }
+        }
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
     } else {
       await this.workspaceSyncMetadataService.synchronize({
         workspaceId,
