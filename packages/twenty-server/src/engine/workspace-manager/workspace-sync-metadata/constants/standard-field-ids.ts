@@ -442,6 +442,12 @@ export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
   workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
 } as const;
 
+export const WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS = {
+  workflowVersion: '20202020-3319-4234-a34c-9a1b2c3d4e5f',
+  workflow: '20202020-3319-4234-a34c-0b1c2d3e4f5a',
+  settings: '20202020-3319-4234-a34c-1c2d3e4f5a6b',
+} as const;
+
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
   lastPublishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
@@ -451,6 +457,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
+  manualTriggers: '20202020-3319-4234-a34c-4b5c6d7e8f9a',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   attachments: '20202020-4a8c-4e2d-9b1c-7e5f3a2b4c6d',
@@ -486,6 +493,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   position: '20202020-791d-4950-ab28-0e704767ae1c',
   runs: '20202020-1d08-46df-901a-85045f18099a',
   steps: '20202020-5988-4a64-b94a-1f9b7b989039',
+  manualTriggers: '20202020-3319-4234-a34c-3a4b5c6d7e8f',
   favorites: '20202020-b8e0-4e57-928d-b51671cc71f2',
   timelineActivities: '20202020-fcb0-4695-b17e-3b43a421c633',
   searchVector: '20202020-3f17-44ef-b8c1-b282ae8469b2',
@@ -584,5 +592,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
+  workflowAutomatedTrigger: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS,
+  workflowManualTrigger: WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
 } as const;

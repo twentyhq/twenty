@@ -25,6 +25,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkflowManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-manual-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -186,6 +187,19 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   runs: Relation<WorkflowRunWorkspaceEntity>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.manualTriggers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Manual Triggers`,
+    description: msg`Workflow manual triggers linked to the version.`,
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowManualTriggerWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsSystem()
+  manualTriggers: Relation<WorkflowManualTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,

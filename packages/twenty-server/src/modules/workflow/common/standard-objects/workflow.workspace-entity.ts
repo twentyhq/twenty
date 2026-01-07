@@ -30,6 +30,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { WorkflowManualTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-manual-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
@@ -174,6 +175,18 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsFieldUIReadOnly()
   automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.manualTriggers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Manual Triggers`,
+    description: msg`Workflow manual triggers linked to the workflow.`,
+    inverseSideTarget: () => WorkflowManualTriggerWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsFieldUIReadOnly()
+  manualTriggers: Relation<WorkflowManualTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
