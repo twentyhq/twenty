@@ -194,7 +194,7 @@ export const SettingsObjectRelationItemTableRow = ({
           item={{
             isCustom: fieldMetadataItem.isCustom ?? undefined,
             isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
+            applicationId: fieldMetadataItem.applicationId,
           }}
         />
       </TableCell>

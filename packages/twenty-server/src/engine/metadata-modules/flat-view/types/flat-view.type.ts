@@ -2,6 +2,6 @@ import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/typ
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 export type FlatView = FlatEntityFrom<
-  // TODO remove once viewSorts and viewFilterGroups have been migrated to v2
-  Omit<ViewEntity, 'viewSorts' | 'viewFilterGroups'>
+  // TODO remove once viewSorts has been migrated to v2
+  Omit<ViewEntity, 'viewSorts'>
 >;

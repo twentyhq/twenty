@@ -19,6 +19,8 @@ export const createQueryRunnerContext = ({
     userWorkspace,
     authProvider,
     impersonationContext,
+    workspaceMember,
+    application,
   } = request;
 
   return {
@@ -32,6 +34,8 @@ export const createQueryRunnerContext = ({
       userWorkspace,
       authProvider,
       impersonationContext,
+      workspaceMember,
+      application,
     },
   };
 };

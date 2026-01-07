@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -50,6 +51,16 @@ class UpdateServerlessFunctionInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   handlerPath?: string;
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  toolInputSchema?: object;
+
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  isTool?: boolean;
 }
 
 @InputType()

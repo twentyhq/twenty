@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { UpdatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -15,43 +9,14 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class UpdatePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'update_page_layout_tab',
+  'update',
+  'pageLayoutTab',
 ) {
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdatePageLayoutTabAction>): Partial<AllFlatEntityMaps> {
-    const { flatPageLayoutTabMaps } = allFlatEntityMaps;
-    const { flatEntityId, flatEntityUpdates } = action;
-
-    const existingPageLayoutTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId,
-      flatEntityMaps: flatPageLayoutTabMaps,
-    });
-
-    const updatedPageLayoutTab = {
-      ...existingPageLayoutTab,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
-    };
-
-    const updatedFlatPageLayoutTabMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: updatedPageLayoutTab,
-        flatEntityMaps: flatPageLayoutTabMaps,
-      });
-
-    return {
-      flatPageLayoutTabMaps: updatedFlatPageLayoutTabMaps,
-    };
-  }
-
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdatePageLayoutTabAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntityId, flatEntityUpdates } = action;
+    const { entityId, updates } = action;
 
     const pageLayoutTabRepository =
       queryRunner.manager.getRepository<PageLayoutTabEntity>(
@@ -59,9 +24,9 @@ export class UpdatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
       );
 
     await pageLayoutTabRepository.update(
-      { id: flatEntityId, workspaceId },
+      { id: entityId, workspaceId },
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        updates,
       }),
     );
   }

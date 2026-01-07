@@ -11,7 +11,8 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 
 @Injectable()
 export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_serverless_function',
+  'delete',
+  'serverlessFunction',
 ) {
   constructor(private readonly fileStorageService: FileStorageService) {
     super();
@@ -21,7 +22,7 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
     context: WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { serverlessFunctionId } = action;
+    const { entityId } = action;
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -29,13 +30,13 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
       );
 
     await serverlessFunctionRepository.delete({
-      id: serverlessFunctionId,
+      id: entityId,
       workspaceId,
     });
 
     const existingServerlessFunction =
       findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: serverlessFunctionId,
+        flatEntityId: entityId,
         flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
       });
 
@@ -59,11 +60,11 @@ export class DeleteServerlessFunctionActionHandlerService extends WorkspaceMigra
     context: WorkspaceMigrationActionRunnerArgs<DeleteServerlessFunctionAction>,
   ): Promise<void> {
     const { action } = context;
-    const { serverlessFunctionId } = action;
+    const { entityId } = action;
 
     const existingServerlessFunction =
       findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: serverlessFunctionId,
+        flatEntityId: entityId,
         flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
       });
 

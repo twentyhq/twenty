@@ -2,13 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
-
-type AggregateOrchestratorActionsReportCreateObjectAndCreateFieldActionsArgs = {
-  orchestratorActionsReport: OrchestratorActionsReport;
-};
 
 type AggregatedActions = {
   createdFieldActionByObjectMetadataId: Record<string, CreateFieldAction>;
@@ -18,13 +15,13 @@ type AggregatedActions = {
 export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions =
   ({
     orchestratorActionsReport,
-  }: AggregateOrchestratorActionsReportCreateObjectAndCreateFieldActionsArgs): OrchestratorActionsReport => {
+  }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
     const initialCreatedObjectActionByObjectMetadataId = (
-      orchestratorActionsReport.objectMetadata.created as CreateObjectAction[]
+      orchestratorActionsReport.objectMetadata.create as CreateObjectAction[]
     ).reduce(
       (acc, createObjectAction) => ({
         ...acc,
-        [createObjectAction.flatObjectMetadata.id]: createObjectAction,
+        [createObjectAction.flatEntity.id]: createObjectAction,
       }),
       {} as Record<string, CreateObjectAction>,
     );
@@ -38,7 +35,7 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       createdFieldActionByObjectMetadataId,
       createdObjectActionByObjectMetadataId,
     } = (
-      orchestratorActionsReport.fieldMetadata.created as CreateFieldAction[]
+      orchestratorActionsReport.fieldMetadata.create as CreateFieldAction[]
     ).reduce<AggregatedActions>(
       (
         {
@@ -182,11 +179,11 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       ...orchestratorActionsReport,
       fieldMetadata: {
         ...orchestratorActionsReport.fieldMetadata,
-        created: Object.values(createdFieldActionByObjectMetadataId),
+        create: Object.values(createdFieldActionByObjectMetadataId),
       },
       objectMetadata: {
         ...orchestratorActionsReport.objectMetadata,
-        created: Object.values(createdObjectActionByObjectMetadataId),
+        create: Object.values(createdObjectActionByObjectMetadataId),
       },
     };
   };

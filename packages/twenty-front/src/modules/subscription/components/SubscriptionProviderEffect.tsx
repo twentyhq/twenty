@@ -5,6 +5,7 @@ import { print } from 'graphql';
 import { useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { type SubscriptionMatches } from '~/generated/graphql';
 
 export const SubscriptionProviderEffect = () => {
   const subscriptionRegistry = useRecoilValue(subscriptionRegistryState);
@@ -31,21 +32,23 @@ export const SubscriptionProviderEffect = () => {
       {
         next: (value) => {
           const data = value.data as {
-            onSubscriptionMatch: { subscriptions: { id: string }[] };
+            onSubscriptionMatch: SubscriptionMatches;
           } | null;
 
-          if (!data?.onSubscriptionMatch?.subscriptions) {
+          if (!data?.onSubscriptionMatch?.matches) {
             return;
           }
 
-          for (const subscription of data.onSubscriptionMatch.subscriptions) {
-            const entry = subscriptionRegistry.get(subscription.id);
+          for (const match of data.onSubscriptionMatch.matches) {
+            for (const subscriptionId of match.subscriptionIds) {
+              const entry = subscriptionRegistry.get(subscriptionId);
 
-            if (!isDefined(entry)) {
-              continue;
+              if (!isDefined(entry)) {
+                continue;
+              }
+
+              entry.onRefetch();
             }
-
-            entry.onRefetch();
           }
         },
         error: (error) => {

@@ -10,4 +10,5 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'view',
   'role',
   'agent',
+  'skill',
 ] as const satisfies AllMetadataName[];

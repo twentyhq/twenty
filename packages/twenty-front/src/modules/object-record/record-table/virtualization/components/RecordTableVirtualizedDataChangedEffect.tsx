@@ -69,9 +69,9 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
         }
 
         if (lastObjectOperation.data.type === 'update-one') {
-          const updatedFieldNames =
-            Object.keys(lastObjectOperation?.data.result.updateInput ?? {}) ??
-            [];
+          const updateInput = lastObjectOperation.data.result.updateInput;
+
+          const updatedFieldNames = Object.keys(updateInput ?? {}) ?? [];
 
           const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
             (fieldMetadataItemToFilter) =>

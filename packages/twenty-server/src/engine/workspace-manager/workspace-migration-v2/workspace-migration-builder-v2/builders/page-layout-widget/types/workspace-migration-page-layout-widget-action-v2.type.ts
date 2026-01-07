@@ -1,18 +1,12 @@
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-create-workspace-migration-action.type';
+import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-delete-workspace-migration-action.type';
+import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/base-update-workspace-migration-action.type';
 
-export type CreatePageLayoutWidgetAction = {
-  type: 'create_page_layout_widget';
-  pageLayoutWidget: FlatPageLayoutWidget;
-};
+export type CreatePageLayoutWidgetAction =
+  BaseCreateWorkspaceMigrationAction<'pageLayoutWidget'>;
 
-export type UpdatePageLayoutWidgetAction = {
-  type: 'update_page_layout_widget';
-  pageLayoutWidgetId: string;
-  updates: FlatEntityPropertiesUpdates<'pageLayoutWidget'>;
-};
+export type UpdatePageLayoutWidgetAction =
+  BaseUpdateWorkspaceMigrationAction<'pageLayoutWidget'>;
 
-export type DeletePageLayoutWidgetAction = {
-  type: 'delete_page_layout_widget';
-  pageLayoutWidgetId: string;
-};
+export type DeletePageLayoutWidgetAction =
+  BaseDeleteWorkspaceMigrationAction<'pageLayoutWidget'>;
