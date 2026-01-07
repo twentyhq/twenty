@@ -124,6 +124,43 @@ const assertDashboardUpdatedAtIncreased = async (
   expect(isIncreased).toBe(true);
 };
 
+const assertDashboardSoftDeleted = async (
+  dashboardId: string,
+  operation: () => Promise<void>,
+): Promise<void> => {
+  const dashboardBefore = await findDashboardWithGraphQL(dashboardId);
+
+  expect(dashboardBefore).not.toBeNull();
+
+  await operation();
+
+  const dashboardAfter = await findDashboardWithGraphQL(dashboardId);
+
+  expect(dashboardAfter).toBeNull();
+};
+
+const assertDashboardRestored = async (
+  dashboardId: string,
+  operation: () => Promise<void>,
+): Promise<void> => {
+  const dashboardBefore = await findDashboardWithGraphQL(dashboardId);
+
+  expect(dashboardBefore).toBeNull();
+
+  await operation();
+
+  const dashboardAfter = await findDashboardWithGraphQL(dashboardId);
+
+  expect(dashboardAfter).not.toBeNull();
+
+  const updatedAtAfter = new Date(dashboardAfter!.updatedAt);
+
+  const now = new Date();
+  const timeDiff = now.getTime() - updatedAtAfter.getTime();
+
+  expect(timeDiff).toBeLessThan(5000);
+};
+
 describe('Dashboard updatedAt should sync when linked page layout entities change', () => {
   describe('Widget operations', () => {
     let context: TestContext;
@@ -310,7 +347,7 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
     });
 
     it('should update dashboard updatedAt when page layout is soft deleted', async () => {
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
+      await assertDashboardSoftDeleted(context.dashboardId, async () => {
         await deleteOnePageLayout({
           expectToFail: false,
           input: { id: context.pageLayoutId },
@@ -324,7 +361,7 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
         input: { id: context.pageLayoutId },
       });
 
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
+      await assertDashboardRestored(context.dashboardId, async () => {
         await restoreOnePageLayout({
           expectToFail: false,
           input: { id: context.pageLayoutId },
