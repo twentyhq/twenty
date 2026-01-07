@@ -22,11 +22,9 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
-import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
-import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { prefillCreatedWorkspaceRecords } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-created-workspace-records.util';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -115,38 +113,13 @@ export class WorkspaceManagerService {
           },
         );
 
-      const queryRunner = this.coreDataSource.createQueryRunner();
-
-      await queryRunner.connect();
-      try {
-        await queryRunner.startTransaction();
-
-        await prefillCompanies(queryRunner.manager, schemaName);
-
-        await prefillPeople(queryRunner.manager, schemaName);
-
-        await prefillWorkflows(
-          queryRunner.manager,
-          schemaName,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
-
-        await queryRunner.commitTransaction();
-      } catch (error) {
-        if (queryRunner.isTransactionActive) {
-          try {
-            await queryRunner.rollbackTransaction();
-          } catch (rollbackError) {
-            this.logger.error(
-              `Failed to rollback prefill transaction: ${rollbackError.message}`,
-            );
-          }
-        }
-        throw error;
-      } finally {
-        await queryRunner.release();
-      }
+      await prefillCreatedWorkspaceRecords({
+        globalWorkspaceOrmManager: this.globalWorkspaceOrmManager,
+        workspaceId,
+        schemaName,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
     } else {
       await this.workspaceSyncMetadataService.synchronize({
         workspaceId,
