@@ -727,7 +727,7 @@ msgstr "メールの受信・送信時に自動的に連絡先レコードを作
 #. js-lingui-id: lXxdId
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Automatically create records for people you participated with in an event."
-msgstr "イベントに参加した連絡先のレコードを自動的に作成"
+msgstr "イベントでやり取りした相手の連絡先を自動的に作成"
 
 #. js-lingui-id: kfcRb0
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1209,7 +1209,7 @@ msgstr "コンテンツは空にできません"
 #. js-lingui-id: gdbojg
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
-msgstr "相反するフィールドアクセス権が関係フィールド({fieldName})に検出されました。"
+msgstr "相反するフィールドアクセス権が関係フィールド（{fieldName}）で検出されました。"
 
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -3812,7 +3812,7 @@ msgstr "更新するオブジェクトが見つかりません"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr "オブジェクトは同じIDですでに存在します"
+msgstr "同じIDのオブジェクトはすでに存在します"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -5876,22 +5876,22 @@ msgstr "ユーザーワークスペースのロール設定が見つかりませ
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
-msgstr "ユーザーの希望する日付形式"
+msgstr "ユーザーの優先する日付形式"
 
 #. js-lingui-id: PLfanm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred number format"
-msgstr "ユーザーの希望する数値形式"
+msgstr "ユーザーの優先する数値形式"
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr "ユーザーの希望する週の開始曜日"
+msgstr "ユーザーの優先する週の開始曜日"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
-msgstr "ユーザーの希望する時間形式"
+msgstr "ユーザーの優先する時間形式"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -6222,7 +6222,7 @@ msgstr "水曜日"
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Twentyへようこそ - メールアドレスを確認してください"
+msgstr "Twentyへようこそ：メールアドレスを確認してください"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -6544,7 +6544,7 @@ msgstr "ワークスペースメンバー"
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Wrong password"
-msgstr "パスワードが間違っています"
+msgstr "パスワードが正しくありません"
 
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
