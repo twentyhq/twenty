@@ -75,7 +75,7 @@ export const RelationOneToManyFieldInput = () => {
 
   const isRelationFromActivityTargets = isActivityTargetField(
     fieldName,
-    objectMetadataNameSingular,
+    objectMetadataNameSingular ?? '',
   );
 
   const isJunctionRelation = hasJunctionConfig(fieldMetadataItem.settings);
