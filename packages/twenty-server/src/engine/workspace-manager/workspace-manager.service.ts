@@ -12,7 +12,10 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -21,10 +24,13 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
+import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
+import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
-import { prefillCreatedWorkspaceRecords } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-created-workspace-records.util';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -113,8 +119,7 @@ export class WorkspaceManagerService {
           },
         );
 
-      await prefillCreatedWorkspaceRecords({
-        globalWorkspaceOrmManager: this.globalWorkspaceOrmManager,
+      await this.prefillCreatedWorkspaceRecords({
         workspaceId,
         schemaName,
         flatObjectMetadataMaps,
@@ -163,6 +168,62 @@ export class WorkspaceManagerService {
       userId,
       workspaceCustomFlatApplication,
     });
+  }
+
+  private async prefillCreatedWorkspaceRecords({
+    workspaceId,
+    schemaName,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceDataSource =
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+        const queryRunner = workspaceDataSource.createQueryRunner();
+
+        await queryRunner.connect();
+
+        try {
+          await queryRunner.startTransaction();
+
+          await prefillCompanies(queryRunner.manager, schemaName);
+
+          await prefillPeople(queryRunner.manager, schemaName);
+
+          await prefillWorkflows(
+            queryRunner.manager,
+            schemaName,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
+
+          await queryRunner.commitTransaction();
+        } catch (error) {
+          if (queryRunner.isTransactionActive) {
+            try {
+              await queryRunner.rollbackTransaction();
+            } catch (rollbackError) {
+              this.logger.error(
+                `Failed to rollback prefill transaction: ${rollbackError.message}`,
+              );
+            }
+          }
+          throw error;
+        } finally {
+          await queryRunner.release();
+        }
+      },
+    );
   }
 
   private async prefillWorkspaceWithStandardObjectsRecords({
