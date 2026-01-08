@@ -134,8 +134,8 @@ export const CommandMenuPageLayoutInfo = () => {
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
-          shouldOpen={shouldFocusTitleInput}
-          onOpen={handleTitleInputOpen}
+          shouldFocus={shouldFocusTitleInput}
+          onFocus={handleTitleInputOpen}
         />
       }
       label={headerType}
