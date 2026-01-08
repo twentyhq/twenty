@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveWorkspaceMigration1767812158000
+export class RemoveWorkspaceMigration1767876112877
   implements MigrationInterface
 {
-  name = 'RemoveWorkspaceMigration1767812158000';
+  name = 'RemoveWorkspaceMigration1767876112877';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "core"."workspaceMigration"`);
