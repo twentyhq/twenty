@@ -14,8 +14,8 @@ import { createOneRouteTrigger } from 'test/integration/metadata/suites/serverle
 import { createOneServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/create-one-serverless-function.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { isDefined } from 'twenty-shared/utils';
 import { HTTPMethod } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -281,8 +281,6 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'remoteServer',
-      'remoteTable',
       'databaseEventTrigger',
       'view',
       'viewField',
