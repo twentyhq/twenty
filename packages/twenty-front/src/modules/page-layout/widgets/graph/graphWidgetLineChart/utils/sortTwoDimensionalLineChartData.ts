@@ -5,6 +5,7 @@ import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
@@ -17,7 +18,7 @@ type SortTwoDimensionalLineChartDataConfiguration = {
   secondaryAxisFormattedToRawLookup?: Map<string, RawDimensionValue>;
   secondaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
   secondaryAxisFieldType?: FieldMetadataType;
-  secondaryAxisSubFieldName?: string;
+  secondaryAxisSubFieldName?: CompositeFieldSubFieldName;
 };
 
 type SortTwoDimensionalLineChartDataResult = {

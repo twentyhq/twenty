@@ -3,6 +3,7 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { compareDimensionValues } from '@/page-layout/widgets/graph/utils/compareDimensionValues';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { GraphOrderBy } from '~/generated/graphql';
@@ -15,7 +16,7 @@ type SortSecondaryAxisDataParams<T> = {
   selectFieldOptions?: FieldMetadataItemOption[] | null;
   getFormattedValue: (item: T) => string;
   fieldType?: FieldMetadataType;
-  subFieldName?: string;
+  subFieldName?: CompositeFieldSubFieldName;
 };
 
 export const sortSecondaryAxisData = <T>({

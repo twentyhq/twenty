@@ -6,6 +6,7 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
 import { type BarDatum } from '@nivo/bar';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
@@ -20,7 +21,7 @@ type SortTwoDimensionalBarChartDataConfiguration = {
   secondaryAxisFormattedToRawLookup?: Map<string, RawDimensionValue>;
   secondaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
   secondaryAxisFieldType?: FieldMetadataType;
-  secondaryAxisSubFieldName?: string;
+  secondaryAxisSubFieldName?: CompositeFieldSubFieldName;
 };
 
 type SortTwoDimensionalBarChartDataResult = {
