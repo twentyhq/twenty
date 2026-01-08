@@ -2,31 +2,28 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
-type SortTwoDimensionalChartPrimaryAxisDataParams<T> = {
+type SortChartDataParams<T> = {
   data: T[];
-  orderBy?:
-    | GraphOrderBy.FIELD_ASC
-    | GraphOrderBy.FIELD_DESC
-    | GraphOrderBy.FIELD_POSITION_ASC
-    | GraphOrderBy.FIELD_POSITION_DESC
-    | GraphOrderBy.MANUAL;
+  orderBy?: GraphOrderBy | null;
   manualSortOrder?: string[] | null;
   formattedToRawLookup: Map<string, RawDimensionValue>;
-  getFormattedValue: (item: T) => string;
+  getFieldValue: (item: T) => string;
+  getNumericValue: (item: T) => number;
   selectFieldOptions?: FieldMetadataItemOption[] | null;
 };
 
-export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually = <T>({
+export const sortChartDataIfNeeded = <T>({
   data,
   orderBy,
   manualSortOrder,
   formattedToRawLookup,
-  getFormattedValue,
+  getFieldValue,
+  getNumericValue,
   selectFieldOptions,
-}: SortTwoDimensionalChartPrimaryAxisDataParams<T>): T[] => {
+}: SortChartDataParams<T>): T[] => {
   if (!isDefined(orderBy)) {
     return data;
   }
@@ -41,36 +38,45 @@ export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually = <T>({
         items: data,
         manualSortOrder,
         getRawValue: (item) => {
-          const formattedValue = getFormattedValue(item);
-          const rawValue = formattedToRawLookup.get(formattedValue);
+          const formatted = getFieldValue(item);
+          const raw = formattedToRawLookup.get(formatted);
 
-          return isDefined(rawValue) ? String(rawValue) : formattedValue;
+          return isDefined(raw) ? String(raw) : formatted;
         },
       });
     }
-
+    case GraphOrderBy.VALUE_ASC:
+      return data.toSorted((a, b) => getNumericValue(a) - getNumericValue(b));
+    case GraphOrderBy.VALUE_DESC:
+      return data.toSorted((a, b) => getNumericValue(b) - getNumericValue(a));
     case GraphOrderBy.FIELD_ASC:
     case GraphOrderBy.FIELD_DESC:
       return data;
-
     case GraphOrderBy.FIELD_POSITION_ASC:
-    case GraphOrderBy.FIELD_POSITION_DESC: {
       if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
-        throw new Error(
-          'Select field options are required for field position sorting',
-        );
+        throw new Error('Select field options are required');
       }
 
-      return sortBySelectOptionPosition({
+      return sortBySelectOptionPosition<T>({
         items: data,
         options: selectFieldOptions,
         formattedToRawLookup,
-        getFormattedValue,
-        direction: orderBy === GraphOrderBy.FIELD_POSITION_ASC ? 'ASC' : 'DESC',
+        getFormattedValue: getFieldValue,
+        direction: 'ASC',
       });
-    }
+    case GraphOrderBy.FIELD_POSITION_DESC:
+      if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
+        throw new Error('Select field options are required');
+      }
 
+      return sortBySelectOptionPosition<T>({
+        items: data,
+        options: selectFieldOptions,
+        formattedToRawLookup,
+        getFormattedValue: getFieldValue,
+        direction: 'DESC',
+      });
     default:
-      assertUnreachable(orderBy);
+      return data;
   }
 };

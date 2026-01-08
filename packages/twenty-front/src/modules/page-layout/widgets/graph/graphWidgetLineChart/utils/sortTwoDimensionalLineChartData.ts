@@ -4,7 +4,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortLineChartDataBySecondaryDimensionSum';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
-import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
+import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
@@ -53,7 +53,7 @@ export const sortTwoDimensionalLineChartData = ({
     } else {
       sortedSeries = series.map((seriesItem) => {
         const sortedDataPoints =
-          sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
+          sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
             data: seriesItem.data,
             orderBy: primaryAxisOrderBy,
             manualSortOrder: primaryAxisManualSortOrder,
