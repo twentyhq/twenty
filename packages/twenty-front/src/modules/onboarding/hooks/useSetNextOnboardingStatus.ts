@@ -25,7 +25,7 @@ const getNextOnboardingStatus = (
     if (currentWorkspace?.workspaceMembersCount === 1) {
       return OnboardingStatus.SYNC_EMAIL;
     }
-    return OnboardingStatus.INVITE_TEAM;
+    return OnboardingStatus.COMPLETED;
   }
   if (
     currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
