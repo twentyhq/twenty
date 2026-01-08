@@ -1,73 +1,73 @@
 ---
 title: Migrazione da Soluzioni Self-Hosted a Cloud
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+description: Guida passo-passo per migrare la tua istanza Twenty self-hosted verso Twenty Cloud.
 ---
 
 ## Panoramica
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+Questa guida ti accompagna nella migrazione dei tuoi dati da un'istanza Twenty self-hosted a Twenty Cloud. Il processo prevede la configurazione dello spazio di lavoro cloud, l'esportazione dei dati e la loro reimportazione.
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Le viste, i flussi di lavoro e i ruoli devono essere ricreati manualmente dopo la migrazione. Pianifica il tempo per questo lavoro di configurazione.</Note>
 
-## Step 1: Create Your Cloud Workspace
+## Passaggio 1: Crea il tuo spazio di lavoro cloud
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. Vai su [app.twenty.com](https://app.twenty.com) e crea un nuovo spazio di lavoro
+2. Completa la procedura guidata iniziale
+3. Annota l'URL del tuo nuovo spazio di lavoro
 
-## Step 2: Recreate Your Data Model
+## Passaggio 2: Ricrea il tuo modello dati
 
-Before importing data, recreate your custom objects and fields:
+Prima di importare i dati, ricrea i tuoi oggetti e campi personalizzati:
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. Vai a **Impostazioni → Modello dati** nella tua istanza cloud
+2. Crea oggetti personalizzati che corrispondano alla tua configurazione self-hosted
+3. Aggiungi campi personalizzati agli oggetti standard e personalizzati
+4. Configura le impostazioni dei campi (univoche, obbligatorie, ecc.)
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>Fai degli screenshot del tuo modello dati self-hosted come riferimento oppure tieni entrambe le istanze aperte affiancate.</Note>
 
-## Step 3: Invite All Users
+## Passaggio 3: Invita tutti gli utenti
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **Critico: invita gli utenti PRIMA di importare i dati.**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  Gli utenti devono accettare i loro inviti prima di importare qualsiasi record che faccia riferimento a loro (come i campi Account Owner). Se gli utenti non esistono ancora, tali relazioni non possono essere mappate.
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. Vai a **Impostazioni → Membri** nella tua istanza cloud
+2. Invita tutti i membri del team che avevano account sull'istanza self-hosted
+3. **Attendi che tutti accettino** il loro invito
+4. Verifica che tutti gli utenti compaiano nell'elenco Membri
 
-## Step 4: Export Data from Self-Hosted
+## Passaggio 4: Esporta i dati dall'istanza self-hosted
 
-Export each object from your self-hosted instance:
+Esporta ogni oggetto dalla tua istanza self-hosted:
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. Vai a ciascun oggetto (Aziende, Persone, Opportunità, ecc.)
+2. Configura la vista per mostrare **tutte le colonne** che vuoi migrare
+3. Fai clic su **⋮ → Esporta vista**
+4. Salva ogni file CSV con un nome chiaro (ad es., `companies-export.csv`)
 
-**Export in this order** (for reference when importing):
+**Esporta in questo ordine** (come riferimento durante l'importazione):
 
 1. Aziende
 2. Persone
 3. Opportunità
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+4. Oggetti personalizzati (seguendo le loro dipendenze)
+5. Attività, Note
 
-## Step 5: Update Workspace Member References
+## Passaggio 5: Aggiorna i riferimenti ai membri dello spazio di lavoro
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+I CSV esportati contengono gli ID utente della tua istanza self-hosted. Questi ID non corrisponderanno alla tua istanza cloud, quindi devi sostituirli con le email.
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**Per ogni file CSV con riferimenti utente (Owner, Assignee, ecc.):**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. Apri il CSV in un'applicazione per fogli di calcolo
+2. Aggiungi una nuova colonna accanto a ciascuna colonna di ID utente (ad es., `accountOwnerEmail` accanto a `accountOwnerId`)
+3. Compila l'**indirizzo email** di ciascun utente
+4. Puoi eliminare la vecchia colonna ID oppure lasciarla (verrà ignorata durante l'importazione)
 
-**Example:**
+**Esempio:**
 
 Prima:
 
@@ -83,89 +83,89 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>Usa gli stessi indirizzi email che gli utenti hanno usato per accettare l'invito allo spazio di lavoro cloud.</Note>
 
-## Step 6: Plan Your Import Order
+## Passaggio 6: Pianifica l'ordine di importazione
 
-Import files in the correct order to maintain relationships:
+Importa i file nel giusto ordine per mantenere le relazioni:
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. **Aziende** per prime (nessuna dipendenza)
+2. **Persone** dopo (collegate alle Aziende)
+3. **Opportunità** al terzo posto (collegate ad Aziende e Persone)
+4. **Oggetti personalizzati** (seguendo le loro dipendenze)
+5. **Attività e Note** per ultime (collegate ad altri record)
 
-See [How to Import Relations](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+Consulta [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per i dettagli su come mantenere le relazioni.
 
-## Step 7: Import to Cloud
+## Passaggio 7: Importa nel cloud
 
-For each CSV file, in order:
+Per ogni file CSV, in ordine:
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Vai all'oggetto nella tua istanza cloud
+2. Fai clic su **⋮ → Importa record**
+3. Carica il file CSV
+4. Mappa le colonne ai campi:
+   * Mappa le colonne delle email degli utenti ai campi relazione appropriati
+   * Mappa le altre colonne come al solito
+5. Controlla e correggi eventuali errori
+6. Conferma l'importazione
+7. Verifica alcuni record prima di passare al file successivo
 
-## Step 8: Recreate Configuration
+## Passaggio 8: Ricrea la configurazione
 
-After importing data, manually recreate:
+Dopo aver importato i dati, ricrea manualmente:
 
 ### Viste
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* Ricrea le viste salvate con filtri, ordinamenti e configurazioni delle colonne
+* Configura eventuali viste kanban o calendario
 
 ### Flussi di Lavoro
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* Ricrea le automazioni in **Impostazioni → Flussi di lavoro**
+* Testa ogni flusso di lavoro prima di farci affidamento
 
-### Roles and Permissions
+### Ruoli e permessi
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Configura i ruoli in **Impostazioni → Ruoli**
+* Assegna gli utenti ai ruoli appropriati
 
 ### Integrazioni
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* Riconnetti la sincronizzazione di email e calendario per ogni utente
+* Riconfigura eventuali integrazioni API con nuove chiavi API
 
 ## Lista di Verifica Post-Migrazione
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>Tutti i dati importati correttamente</Check>
+<Check>Relazioni tra oggetti funzionanti correttamente</Check>
+<Check>Assegnazioni utente (Owner, Assignee) mappate correttamente</Check>
+<Check>Viste ricreate</Check>
+<Check>Flussi di lavoro ricreati e testati</Check>
+<Check>Ruoli e permessi configurati</Check>
+<Check>Sincronizzazione email/calendario riconnessa</Check>
+<Check>Integrazioni API aggiornate con nuove chiavi</Check>
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="Posso migrare i flussi di lavoro automaticamente?">
+    Al momento no. I flussi di lavoro devono essere ricreati manualmente nella tua istanza cloud.
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="Che cosa succede agli allegati e alle immagini?">
+    Gli allegati non sono inclusi nelle esportazioni CSV. Dovrai ricaricare manualmente gli allegati, migrarli tramite API oppure contattare il nostro team per assistenza con migrazioni di grandi dimensioni.
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Posso mantenere entrambe le istanze operative durante la migrazione?">
+    Sì, consigliamo di mantenere attiva la tua istanza self-hosted finché non avrai verificato che la migrazione al cloud sia completa. Fai solo attenzione a non creare nuovi dati in entrambi gli ambienti.
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="Cosa succede se un utente non ha ancora accettato l'invito?">
+    I record che fanno riferimento a quell'utente non verranno importati oppure la relazione risulterà vuota. Assicurati che tutti gli utenti accettino gli inviti prima di importare i dati.
   </Accordion>
 </AccordionGroup>
 
 ## Hai Bisogno di Aiuto?
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/it/user-guide/getting-started/capabilities/implementation-services).
+Per migrazioni complesse o set di dati di grandi dimensioni, contattaci all'indirizzo [contact@twenty.com](mailto:contact@twenty.com) oppure scopri i nostri [Servizi di Implementazione](/l/it/user-guide/getting-started/capabilities/implementation-services).
