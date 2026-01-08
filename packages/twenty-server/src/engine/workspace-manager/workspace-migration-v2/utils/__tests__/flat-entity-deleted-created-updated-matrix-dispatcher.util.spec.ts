@@ -1,6 +1,6 @@
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 

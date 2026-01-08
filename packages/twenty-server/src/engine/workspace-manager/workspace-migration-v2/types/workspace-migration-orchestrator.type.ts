@@ -3,8 +3,8 @@ import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
-    type MetadataWorkspaceMigrationActionsRecord,
-    type WorkspaceMigrationActionType,
+  type MetadataWorkspaceMigrationActionsRecord,
+  type WorkspaceMigrationActionType,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';

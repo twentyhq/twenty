@@ -7,8 +7,8 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type DeleteIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/index/types/workspace-migration-index-action-v2';
 import {
-    deleteIndexMetadata,
-    dropIndexFromWorkspaceSchema,
+  deleteIndexMetadata,
+  dropIndexFromWorkspaceSchema,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 

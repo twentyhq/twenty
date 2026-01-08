@@ -12,8 +12,8 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-v2/utils/compute-postgres-enum-name.util';
 import {
-    WorkspaceMigrationRunnerException,
-    WorkspaceMigrationRunnerExceptionCode,
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export interface CreateEnumOperationSpec {

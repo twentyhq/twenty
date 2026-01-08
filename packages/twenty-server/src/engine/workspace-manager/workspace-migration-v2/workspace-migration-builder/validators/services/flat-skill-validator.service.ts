@@ -15,9 +15,9 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { validateSkillNameUniqueness } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util';
 import {
-    validateSkillContentIsDefined,
-    validateSkillLabelIsDefined,
-    validateSkillRequiredProperties,
+  validateSkillContentIsDefined,
+  validateSkillLabelIsDefined,
+  validateSkillRequiredProperties,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/validators/utils/validate-skill-required-properties.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 

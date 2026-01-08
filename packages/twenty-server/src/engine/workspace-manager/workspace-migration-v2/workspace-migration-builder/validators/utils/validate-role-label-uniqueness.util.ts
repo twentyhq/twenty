@@ -2,8 +2,8 @@ import { msg } from '@lingui/core/macro';
 
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import {
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 

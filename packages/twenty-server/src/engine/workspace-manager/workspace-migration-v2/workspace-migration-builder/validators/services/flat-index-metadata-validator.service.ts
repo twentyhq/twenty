@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
-    FieldMetadataType,
-    compositeTypeDefinitions,
+  FieldMetadataType,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
