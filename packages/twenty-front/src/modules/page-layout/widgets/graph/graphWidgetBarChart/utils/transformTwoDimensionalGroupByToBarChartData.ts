@@ -83,8 +83,10 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
       secondaryAxisSelectFieldOptions: groupByFieldY.options,
       secondaryAxisFieldType: groupByFieldY.type,
-      secondaryAxisSubFieldName: (configuration.secondaryAxisGroupBySubFieldName ??
-        undefined) as CompositeFieldSubFieldName | undefined,
+      secondaryAxisSubFieldName:
+        (configuration.secondaryAxisGroupBySubFieldName ?? undefined) as
+          | CompositeFieldSubFieldName
+          | undefined,
     });
 
   const { limitedData, limitedKeys, limitedSeries, hasTooManyGroups } =

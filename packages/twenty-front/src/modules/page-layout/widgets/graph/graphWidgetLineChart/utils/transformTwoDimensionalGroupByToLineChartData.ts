@@ -72,8 +72,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
     secondaryAxisSelectFieldOptions: groupByFieldY.options,
     secondaryAxisFieldType: groupByFieldY.type,
-    secondaryAxisSubFieldName: (configuration.secondaryAxisGroupBySubFieldName ??
-      undefined) as CompositeFieldSubFieldName | undefined,
+    secondaryAxisSubFieldName:
+      (configuration.secondaryAxisGroupBySubFieldName ?? undefined) as
+        | CompositeFieldSubFieldName
+        | undefined,
   });
 
   const { limitedSeries, hasTooManyGroups } = limitTwoDimensionalLineChartData({
