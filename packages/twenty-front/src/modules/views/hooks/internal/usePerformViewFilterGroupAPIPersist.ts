@@ -9,7 +9,7 @@ import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilterGroup } from '~/generated/graphql';
 
-export const usePersistViewFilterGroupRecords = () => {
+export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
 
   const createCoreViewFilterGroupRecord = useCallback(
@@ -39,7 +39,7 @@ export const usePersistViewFilterGroupRecords = () => {
     [apolloClient],
   );
 
-  const createViewFilterGroups = useCallback(
+  const performViewFilterGroupAPICreate = useCallback(
     async (
       viewFilterGroupsToCreate: ViewFilterGroup[],
       view: Pick<GraphQLView, 'id'>,
@@ -80,7 +80,7 @@ export const usePersistViewFilterGroupRecords = () => {
     [createCoreViewFilterGroupRecord],
   );
 
-  const updateViewFilterGroups = useCallback(
+  const performViewFilterGroupAPIUpdate = useCallback(
     (viewFilterGroupsToUpdate: ViewFilterGroup[]) => {
       if (!viewFilterGroupsToUpdate.length) return;
       return Promise.all(
@@ -104,7 +104,7 @@ export const usePersistViewFilterGroupRecords = () => {
     [apolloClient],
   );
 
-  const deleteViewFilterGroups = useCallback(
+  const performViewFilterGroupAPIDelete = useCallback(
     (viewFilterGroupIdsToDelete: string[]) => {
       if (!viewFilterGroupIdsToDelete.length) return;
       return Promise.all(
@@ -122,8 +122,8 @@ export const usePersistViewFilterGroupRecords = () => {
   );
 
   return {
-    createViewFilterGroups,
-    updateViewFilterGroups,
-    deleteViewFilterGroups,
+    performViewFilterGroupAPICreate,
+    performViewFilterGroupAPIUpdate,
+    performViewFilterGroupAPIDelete,
   };
 };
