@@ -20,9 +20,11 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
+import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
+import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -52,7 +54,6 @@ export class WorkspaceManagerService {
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly featureFlagService: FeatureFlagService,
@@ -103,6 +104,11 @@ export class WorkspaceManagerService {
           workspaceId,
         },
       );
+
+      await this.prefillCreatedWorkspaceRecords({
+        workspaceId,
+        schemaName,
+      });
     } else {
       await this.workspaceSyncMetadataService.synchronize({
         workspaceId,
@@ -146,6 +152,56 @@ export class WorkspaceManagerService {
       userId,
       workspaceCustomFlatApplication,
     });
+  }
+
+  private async prefillCreatedWorkspaceRecords({
+    workspaceId,
+    schemaName,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await queryRunner.startTransaction();
+
+      await prefillCompanies(queryRunner.manager, schemaName);
+
+      await prefillPeople(queryRunner.manager, schemaName);
+
+      await prefillWorkflows(
+        queryRunner.manager,
+        schemaName,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (rollbackError) {
+          this.logger.error(
+            `Failed to rollback prefill transaction: ${rollbackError.message}`,
+          );
+        }
+      }
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async prefillWorkspaceWithStandardObjectsRecords({

@@ -110,10 +110,6 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.POSTGRES_PROXY;
 };
 
-export type RemoteServerTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.REMOTE_SERVER;
-};
-
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -123,5 +119,4 @@ export type JwtPayload =
   | TransientTokenJwtPayload
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
-  | PostgresProxyTokenJwtPayload
-  | RemoteServerTokenJwtPayload;
+  | PostgresProxyTokenJwtPayload;

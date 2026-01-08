@@ -7,11 +7,11 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
-import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
-import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
-import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
+import { usePersistView } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { usePersistViewField } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
+import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
+import { usePersistViewSortRecords } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';

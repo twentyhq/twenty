@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: Beziehungen zwischen Objekten per CSV importieren
+description: Vollständige Schritt-für-Schritt-Anleitung zum Verknüpfen von Datensätzen während des CSV-Imports.
 ---
 
 ## Übersicht
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+Diese Anleitung führt Sie durch den Import von Beziehungen zwischen Objekten – zum Beispiel das Verknüpfen von Personen mit Unternehmen oder von Opportunities mit Personen.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**Was kann importiert werden:** Nur Eins-zu-Viele-Beziehungen, die auf einen einzelnen Objekttyp verweisen. Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen, die sowohl mit Personen als auch mit Unternehmen verknüpft sind), werden beim Import noch nicht unterstützt.</Note>
 
-## Understanding Relations
+## Beziehungen verstehen
 
-### What is a "One-to-Many" Relation?
+### Was ist eine "Eins-zu-Viele"-Beziehung?
 
-In a one-to-many relation:
+In einer Eins-zu-Viele-Beziehung:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **Ein** Unternehmen hat **viele** Personen (Mitarbeitende)
+* **Ein** Unternehmen hat **viele** Opportunities
+* **Eine** Person hat **viele** Aufgaben
 
-The "one" side is the **parent**. The "many" side is the **child**.
+Die "Eins"-Seite ist die **übergeordnete**. Die "Viele"-Seite ist die **untergeordnete**.
 
-### Common Relations in Twenty
+### Häufige Beziehungen in Twenty
 
-| Beziehung                 | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Unternehmen         | Personen            |
-| Companies → Opportunities | Unternehmen         | Opportunities       |
-| People → Tasks            | Person              | Aufgaben            |
-| People → Notes            | Person              | Notizen             |
+| Beziehung                   | "Eins"-Seite (übergeordnet) | "Viele"-Seite (untergeordnet) |
+| --------------------------- | --------------------------- | ----------------------------- |
+| Unternehmen → Personen      | Unternehmen                 | Personen                      |
+| Unternehmen → Opportunities | Unternehmen                 | Opportunities                 |
+| Personen → Aufgaben         | Person                      | Aufgaben                      |
+| Personen → Notizen          | Person                      | Notizen                       |
 
-## Step 1: Identify the "One" and "Many" Sides
+## Schritt 1: Identifizieren Sie die "Eins"- und "Viele"-Seiten
 
-Before importing, determine which object is the parent and which is the child.
+Bestimmen Sie vor dem Import, welches Objekt übergeordnet und welches untergeordnet ist.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**Fragen Sie sich:** "Hat EIN [Objekt A] VIELE [Objekt B]?"
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* Ein Unternehmen → Viele Personen ✓ (Unternehmen ist übergeordnet)
+* Eine Person → Viele Unternehmen ✗ (Das ist falsch – eine Person gehört zu einem Unternehmen)
 
-## Step 2: Import the Parent Records First
+## Schritt 2: Importieren Sie zuerst die übergeordneten Datensätze
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+Das übergeordnete Objekt ("Eins"-Seite) muss in Twenty existieren, bevor Sie darauf verweisen können.
 
-**Import order:**
+**Importreihenfolge:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpfen)
+3. **Opportunities** an dritter Stelle (mit Unternehmen und/oder Personen verknüpfen)
+4. **Aufgaben/Notizen** (mit einem der oben genannten verknüpfen)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **Wenn der übergeordnete Datensatz nicht existiert, schlägt der Import fehl.**
 
-  Always verify that Companies are imported before importing People with company references.
+  Stellen Sie stets sicher, dass Unternehmen importiert sind, bevor Sie Personen mit Unternehmensreferenzen importieren.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## Schritt 3: Notieren Sie den eindeutigen Bezeichner des übergeordneten Objekts
 
-You need to reference the parent record using a **unique identifier**. Available options:
+Sie müssen auf den übergeordneten Datensatz mit einem eindeutigen Bezeichner verweisen. Verfügbare Optionen:
 
-| Parent Object                  | Available Unique Identifiers                                    |
-| ------------------------------ | --------------------------------------------------------------- |
-| **Companies**                  | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**                     | `id` (UUID), `email`, or any custom unique field                |
-| **Arbeitsbereichsmitglieder**  | `id` (UUID), `email` (not name)                                 |
-| **Benutzerdefinierte Objekte** | `id` (UUID), or any field marked as unique                      |
+| Übergeordnetes Objekt          | Verfügbare eindeutige Bezeichner                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| **Unternehmen**                | `id` (UUID), `domain` (empfohlen) oder ein beliebiges benutzerdefiniertes eindeutiges Feld |
+| **Personen**                   | `id` (UUID), `email` oder ein beliebiges benutzerdefiniertes eindeutiges Feld              |
+| **Arbeitsbereichsmitglieder**  | `id` (UUID), `email` (nicht Name)                                                          |
+| **Benutzerdefinierte Objekte** | `id` (UUID) oder ein beliebiges als eindeutig markiertes Feld                              |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**Empfehlung:** Verwenden Sie `domain` für Unternehmen und `email` für Personen. Diese sind menschenlesbar und in Ihrer Tabelle leicht zu überprüfen.</Note>
 
-### Finding the Identifier
+### Den Bezeichner finden
 
-If you need the `id`:
+Wenn Sie die `id` benötigen:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. Exportieren Sie die übergeordneten Datensätze aus Twenty
+2. Der Export enthält die Spalte `id`
+3. Verwenden Sie diese IDs in Ihrer Datei mit untergeordneten Datensätzen
 
-## Step 4: Verify the Relation Field Exists
+## Schritt 4: Überprüfen Sie, ob das Beziehungsfeld existiert
 
-Before importing, ensure the relation field exists between your objects.
+Stellen Sie vor dem Import sicher, dass das Beziehungsfeld zwischen Ihren Objekten existiert.
 
-**To check or create:**
+**So prüfen oder erstellen Sie es:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr untergeordnetes Objekt aus (z. B. Personen)
+3. Suchen Sie nach einem Beziehungsfeld, das auf das übergeordnete Objekt zeigt (z. B. Unternehmen)
+4. Wenn es nicht existiert, erstellen Sie es:
+   * Klicken Sie auf **+ Feld hinzufügen**
+   * Wählen Sie den Typ **Relation**
+   * Wählen Sie das übergeordnete Objekt
 
-## Step 5: Prepare Your CSV File
+## Schritt 5: Bereiten Sie Ihre CSV-Datei vor
 
-Add a column to your child CSV that references the parent using its unique identifier.
+Fügen Sie Ihrer untergeordneten CSV eine Spalte hinzu, die mit dem eindeutigen Bezeichner auf das übergeordnete Objekt verweist.
 
-### Example: People Linking to Companies
+### Beispiel: Personen, die mit Unternehmen verknüpft werden
 
-**Your People CSV:**
+**Ihre Personen-CSV:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+Die Spalte `companyDomain` verweist auf die Domain des Unternehmens.
 
-### Format Requirements
+### Formatvorgaben
 
-| Kennung | Format         | Beispiel                               |
-| ------- | -------------- | -------------------------------------- |
-| Domäne  | URL format     | `https://acme.com`                     |
-| E-Mail  | Standard email | `john@acme.com`                        |
-| ID      | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Kennung | Format          | Beispiel                               |
+| ------- | --------------- | -------------------------------------- |
+| Domäne  | URL-Format      | `https://acme.com`                     |
+| E-Mail  | Standard-E-Mail | `john@acme.com`                        |
+| ID      | UUID            | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **Das Domain-Format ist wichtig!**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der Art, wie Twenty Unternehmensdomains speichert, und verhindert Zuordnungsfehler.
 </Warning>
 
-### Important Rules
+### Wichtige Regeln
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **Exakte Übereinstimmung erforderlich** — der Wert muss exakt dem übergeordneten Datensatz entsprechen
+2. **Nur EINEN eindeutigen Bezeichner zuordnen** — geben Sie nicht sowohl `companyId` als auch `companyDomain` an
+3. **Groß-/Kleinschreibung beachten** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## Schritt 6: Beziehung hochladen und zuordnen
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. Navigieren Sie zum untergeordneten Objekt (z. B. Personen)
+2. Klicken Sie auf **⋮** → **Datensätze importieren**
+3. Laden Sie Ihre CSV-Datei hoch
+4. Im Schritt zur Feldzuordnung:
+   * Suchen Sie Ihre Beziehungsspalte (z. B. `companyDomain`)
+   * Ordnen Sie sie dem **Company**-Beziehungsfeld zu
+5. Schließen Sie die übrige Zuordnung ab
+6. Prüfen Sie Fehler und bestätigen Sie
 
-Twenty will automatically link each child record to the matching parent.
+Twenty verknüpft automatisch jeden untergeordneten Datensatz mit dem passenden übergeordneten Datensatz.
 
-## Step 7: Verify the Import
+## Schritt 7: Überprüfen Sie den Import
 
-After importing:
+Nach dem Import:
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. Öffnen Sie einige untergeordnete Datensätze (z. B. Personen)
+2. Überprüfen Sie, ob das Beziehungsfeld das richtige übergeordnete Objekt anzeigt (z. B. Unternehmen)
+3. Öffnen Sie einen übergeordneten Datensatz und prüfen Sie den Bereich mit den zugehörigen Datensätzen
 
-## Common Mistakes to Avoid
+## Häufige Fehler, die Sie vermeiden sollten
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| Fehler                                     | Problem                                                   | Lösung                                                                           |
+| ------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Falsche Importreihenfolge**              | Personen vor Unternehmen importieren                      | Importieren Sie immer zuerst übergeordnete, dann untergeordnete Datensätze       |
+| **Falsches Domain-Format**                 | Verwendung von `acme.com` statt `https://acme.com`        | Verwenden Sie das vollständige URL-Format mit `https://`                         |
+| **Mehrere eindeutige Felder**              | Zuordnung sowohl von `companyId` als auch `companyDomain` | Ordnen Sie nur EINEN eindeutigen Bezeichner zu                                   |
+| **Beziehungsfeld fehlt**                   | Das Beziehungsfeld existiert nicht im Datenmodell         | Erstellen Sie es vor dem Import unter **Einstellungen → Datenmodell**            |
+| **Nicht vorhandene Datensätze**            | Der übergeordnete Datensatz existiert in Twenty nicht     | Importieren Sie zunächst übergeordnete Datensätze oder prüfen Sie auf Tippfehler |
+| **Unterschiedliche Groß-/Kleinschreibung** | `Acme.com` in der Datei, aber `acme.com` in Twenty        | Achten Sie auf exakt übereinstimmende Groß-/Kleinschreibung                      |
 
-## Linking to Workspace Members
+## Verknüpfen mit Teammitgliedern
 
-When linking to Workspace Members (your team):
+Beim Verknüpfen mit Teammitgliedern (Ihrem Team):
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* Verwenden Sie ihre **E-Mail-Adresse**, nicht ihren Namen
+* Beispiel: `owner@yourcompany.com`, nicht "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -176,53 +176,53 @@ Review proposal,jane@yourcompany.com
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="Was ist, wenn mein übergeordneter Datensatz keine Domain oder E-Mail hat?">
+    Sie haben zwei Optionen:
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Verwenden Sie die Twenty-`id` (exportieren Sie übergeordnete Datensätze, um ihre IDs zu erhalten)
+    2. Erstellen Sie ein benutzerdefiniertes eindeutiges Feld in Ihrem Datenmodell, um eine externe ID aus Ihrem vorherigen System zu speichern
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Ja! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="Kann ich Beziehungen bei bestehenden Datensätzen aktualisieren?">
+    Ja! Geben Sie den eindeutigen Bezeichner des untergeordneten Datensatzes (z. B. `email` für Personen) und den neuen Beziehungswert an. Beim Import wird die Beziehung aktualisiert.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="Kann ich Viele-zu-Viele-Beziehungen importieren?">
+    Viele-zu-Viele-Beziehungen werden beim Import noch nicht unterstützt. Dies ist für H1 2026 geplant.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="Kann ich mit mehreren Objekttypen verknüpfen (z. B. Notizen mit Personen UND Unternehmen)?">
+    Beziehungen, die auf mehrere Objekttypen zeigen, werden für Import/Export noch nicht unterstützt. Dies steht auf unserer Roadmap.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. Sie können entweder:
+  <Accordion title="Was passiert, wenn ein übergeordneter Datensatz nicht existiert?">
+    Der Import zeigt für diese Zeile einen Fehler an. Sie können entweder:
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * Importieren Sie zuerst den übergeordneten Datensatz und importieren Sie dann erneut
+    * Korrigieren Sie den Referenzwert
+    * Entfernen Sie die Zeile aus dem Import
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="Warum wird meine Beziehung nicht korrekt verknüpft?">
+    Häufige Ursachen:
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * Falsches Format (verwenden Sie für Domains `https://domain.com`)
+    * Abweichende Groß-/Kleinschreibung (prüfen Sie die exakte Schreibweise)
+    * Übergeordneter Datensatz existiert nicht (zuerst übergeordnete Datensätze importieren)
+    * Zuordnung mehrerer Bezeichner (verwenden Sie nur einen)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **Denken Sie daran: soft gelöschte Datensätze zählen für die Eindeutigkeit.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  Wenn Sie "not found"-Fehler erhalten, der Datensatz aber zu existieren scheint, prüfen Sie im Befehlsmenü → Gelöschte Datensätze anzeigen. Der übergeordnete Datensatz wurde möglicherweise soft gelöscht.
 </Warning>
 
 ## Fehlerbehebung
 
-Having issues? Check:
+Gibt es Probleme? Prüfen Sie:
 
-* [How to Fix Import Errors](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/de/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [Funktionen zum Import von Beziehungen](/l/de/user-guide/data-migration/capabilities/import-relations)
+* [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)

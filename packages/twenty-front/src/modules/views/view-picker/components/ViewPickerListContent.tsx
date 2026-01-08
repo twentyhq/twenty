@@ -11,7 +11,7 @@ import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/Dropdo
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useUpdateView } from '@/views/hooks/internal/useUpdateView';
+import { useUpdateView } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';

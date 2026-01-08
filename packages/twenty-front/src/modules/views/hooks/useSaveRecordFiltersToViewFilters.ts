@@ -1,7 +1,7 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
+import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';

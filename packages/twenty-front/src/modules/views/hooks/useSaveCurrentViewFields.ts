@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
+import { usePersistViewField } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewField } from '@/views/types/ViewField';
@@ -81,11 +81,13 @@ export const useSaveCurrentViewFields = () => {
                     position: existingField.position,
                     size: existingField.size,
                     isVisible: existingField.isVisible,
+                    aggregateOperation: existingField.aggregateOperation,
                   },
                   {
                     position: createViewFieldInput.position,
                     size: createViewFieldInput.size,
                     isVisible: createViewFieldInput.isVisible,
+                    aggregateOperation: createViewFieldInput.aggregateOperation,
                   },
                 )
               ) {
@@ -101,7 +103,7 @@ export const useSaveCurrentViewFields = () => {
                   ...viewFieldsToUpdate,
                   {
                     input: {
-                      id: createViewFieldInput.id,
+                      id: existingField.id,
                       update: {
                         aggregateOperation:
                           createViewFieldInput.aggregateOperation,

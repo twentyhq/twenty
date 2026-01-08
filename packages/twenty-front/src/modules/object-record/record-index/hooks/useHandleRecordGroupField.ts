@@ -4,7 +4,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useUpdateView } from '@/views/hooks/internal/useUpdateView';
+import { useUpdateView } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';

@@ -1,7 +1,7 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
+import { usePersistViewSortRecords } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
