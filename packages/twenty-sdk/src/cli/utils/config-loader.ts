@@ -13,8 +13,48 @@ const createConfigLoader = () => {
 };
 
 /**
+ * Find the first valid config export from a module.
+ * Priority:
+ * 1. default export
+ * 2. first named export that is a plain object (not a function, class, or primitive)
+ */
+const findConfigExport = <T>(
+  mod: Record<string, unknown>,
+  validator?: (value: unknown) => boolean,
+): T | undefined => {
+  // Priority 1: default export
+  if (mod.default !== undefined) {
+    if (!validator || validator(mod.default)) {
+      return mod.default as T;
+    }
+  }
+
+  // Priority 2: first named export that passes validation (or is a plain object)
+  for (const [key, value] of Object.entries(mod)) {
+    if (key === 'default') continue;
+    if (value === undefined || value === null) continue;
+
+    // Skip functions, classes, and primitives - we want config objects
+    if (typeof value !== 'object') continue;
+
+    // Skip arrays
+    if (Array.isArray(value)) continue;
+
+    if (!validator || validator(value)) {
+      return value as T;
+    }
+  }
+
+  return undefined;
+};
+
+/**
  * Load a TypeScript config file using jiti runtime evaluation.
  * This allows importing constants and other modules in config files.
+ *
+ * Supports multiple export patterns:
+ * - `export default { ... }`
+ * - `export const anyName = { ... }` (any named export that is a plain object)
  *
  * @example
  * ```typescript
@@ -25,22 +65,17 @@ export const loadConfig = async <T>(filepath: string): Promise<T> => {
   const jiti = createConfigLoader();
 
   try {
-    const mod = (await jiti.import(filepath)) as {
-      default?: T;
-      config?: T;
-      [key: string]: unknown;
-    };
+    const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
-    // Support both `export default` and `export const config`
-    const config = mod.default ?? mod.config;
+    const config = findConfigExport<T>(mod);
 
     if (!config) {
       throw new Error(
-        `Config file ${filepath} must export a default value or a "config" named export`,
+        `Config file ${filepath} must export a config object (default export or any named object export)`,
       );
     }
 
-    return config as T;
+    return config;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(
@@ -133,19 +168,21 @@ export const loadFunctionModule = async (
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
-    const config = (mod.default ?? mod.config) as
-      | { handler: Function }
-      | undefined;
+    // Find config with a handler property
+    const hasHandler = (value: unknown): boolean => {
+      return (
+        typeof value === 'object' &&
+        value !== null &&
+        'handler' in value &&
+        typeof (value as { handler: unknown }).handler === 'function'
+      );
+    };
+
+    const config = findConfigExport<{ handler: Function }>(mod, hasHandler);
 
     if (!config) {
       throw new Error(
-        `Function file ${filepath} must export a "config" object`,
-      );
-    }
-
-    if (typeof config.handler !== 'function') {
-      throw new Error(
-        `Function config in ${filepath} must have a "handler" property referencing a function`,
+        `Function file ${filepath} must export a config object with a "handler" property`,
       );
     }
 
