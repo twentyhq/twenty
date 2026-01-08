@@ -8,7 +8,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
@@ -106,7 +106,7 @@ export const transformGroupByDataToPieChartData = ({
       rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
     }));
 
-  const sortedDataWithRawValues = sortChartData({
+  const sortedDataWithRawValues = sortChartDataIfNeeded({
     data: unsortedDataWithRawValues,
     orderBy: configuration.orderBy ?? undefined,
     manualSortOrder: configuration.manualSortOrder ?? undefined,

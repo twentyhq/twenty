@@ -1,15 +1,27 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import { GraphOrderBy } from '~/generated/graphql';
 
-describe('sortChartData', () => {
+describe('sortChartDataIfNeeded', () => {
   type TestDataPoint = { label: string; value: number };
 
   const testData: TestDataPoint[] = [
     { label: 'Beta', value: 30 },
     { label: 'Alpha', value: 10 },
     { label: 'Gamma', value: 20 },
+  ];
+
+  const fieldAscTestData: TestDataPoint[] = [
+    { label: 'Alpha', value: 10 },
+    { label: 'Beta', value: 30 },
+    { label: 'Gamma', value: 20 },
+  ];
+
+  const fieldDescTestData: TestDataPoint[] = [
+    { label: 'Gamma', value: 20 },
+    { label: 'Beta', value: 30 },
+    { label: 'Alpha', value: 10 },
   ];
 
   const formattedToRawLookup = new Map<string, RawDimensionValue>([
@@ -23,7 +35,7 @@ describe('sortChartData', () => {
 
   describe('null or undefined orderBy', () => {
     it('should return data unchanged when orderBy is null', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: null,
         formattedToRawLookup,
@@ -35,7 +47,7 @@ describe('sortChartData', () => {
     });
 
     it('should return data unchanged when orderBy is undefined', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: undefined,
         formattedToRawLookup,
@@ -48,9 +60,9 @@ describe('sortChartData', () => {
   });
 
   describe('FIELD_ASC sorting', () => {
-    it('should sort by field value ascending', () => {
-      const result = sortChartData({
-        data: testData,
+    it('should return data unchanged by field value ascending, since it is already sorted by the backend', () => {
+      const result = sortChartDataIfNeeded({
+        data: fieldAscTestData,
         orderBy: GraphOrderBy.FIELD_ASC,
         formattedToRawLookup,
         getFieldValue,
@@ -66,9 +78,9 @@ describe('sortChartData', () => {
   });
 
   describe('FIELD_DESC sorting', () => {
-    it('should sort by field value descending', () => {
-      const result = sortChartData({
-        data: testData,
+    it('should return data unchanged by field value descending, since it is already sorted by the backend', () => {
+      const result = sortChartDataIfNeeded({
+        data: fieldDescTestData,
         orderBy: GraphOrderBy.FIELD_DESC,
         formattedToRawLookup,
         getFieldValue,
@@ -85,7 +97,7 @@ describe('sortChartData', () => {
 
   describe('VALUE_ASC sorting', () => {
     it('should sort by numeric value ascending', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.VALUE_ASC,
         formattedToRawLookup,
@@ -99,7 +111,7 @@ describe('sortChartData', () => {
 
   describe('VALUE_DESC sorting', () => {
     it('should sort by numeric value descending', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.VALUE_DESC,
         formattedToRawLookup,
@@ -115,7 +127,7 @@ describe('sortChartData', () => {
     it('should sort by manual order', () => {
       const manualSortOrder = ['GAMMA', 'ALPHA', 'BETA'];
 
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.MANUAL,
         manualSortOrder,
@@ -132,7 +144,7 @@ describe('sortChartData', () => {
     });
 
     it('should return data unchanged when manual order is undefined', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.MANUAL,
         manualSortOrder: undefined,
@@ -145,7 +157,7 @@ describe('sortChartData', () => {
     });
 
     it('should return data unchanged when manual order is null', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.MANUAL,
         manualSortOrder: null,
@@ -166,7 +178,7 @@ describe('sortChartData', () => {
     ];
 
     it('should sort by select option position ascending', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.FIELD_POSITION_ASC,
         formattedToRawLookup,
@@ -184,7 +196,7 @@ describe('sortChartData', () => {
 
     it('should throw error when select options are not provided', () => {
       expect(() =>
-        sortChartData({
+        sortChartDataIfNeeded({
           data: testData,
           orderBy: GraphOrderBy.FIELD_POSITION_ASC,
           formattedToRawLookup,
@@ -196,7 +208,7 @@ describe('sortChartData', () => {
 
     it('should throw error when select options are empty', () => {
       expect(() =>
-        sortChartData({
+        sortChartDataIfNeeded({
           data: testData,
           orderBy: GraphOrderBy.FIELD_POSITION_ASC,
           formattedToRawLookup,
@@ -216,7 +228,7 @@ describe('sortChartData', () => {
     ];
 
     it('should sort by select option position descending', () => {
-      const result = sortChartData({
+      const result = sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.FIELD_POSITION_DESC,
         formattedToRawLookup,
@@ -237,7 +249,7 @@ describe('sortChartData', () => {
     it('should not mutate the original data array', () => {
       const originalData = [...testData];
 
-      sortChartData({
+      sortChartDataIfNeeded({
         data: testData,
         orderBy: GraphOrderBy.FIELD_ASC,
         formattedToRawLookup,

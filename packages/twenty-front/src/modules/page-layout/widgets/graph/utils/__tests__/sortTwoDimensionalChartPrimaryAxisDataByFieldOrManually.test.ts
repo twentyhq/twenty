@@ -1,4 +1,4 @@
-import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
+import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
 import { GraphOrderBy } from '~/generated/graphql';
 
 type TestItem = { label: string };
@@ -8,44 +8,55 @@ const testData: TestItem[] = [
   { label: 'Alpha' },
   { label: 'Gamma' },
 ];
+
+const fieldAscTestData: TestItem[] = [
+  { label: 'Alpha' },
+  { label: 'Beta' },
+  { label: 'Gamma' },
+];
+
 const formattedToRawLookup = new Map([
   ['Alpha', 'ALPHA'],
   ['Beta', 'BETA'],
   ['Gamma', 'GAMMA'],
 ]);
+
 const getFormattedValue = (item: TestItem) => item.label;
 
-describe('sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually', () => {
-  it('should sort by FIELD_ASC', () => {
-    const result = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-      data: testData,
-      orderBy: GraphOrderBy.FIELD_ASC,
-      formattedToRawLookup,
-      getFormattedValue,
-    });
+describe('sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded', () => {
+  it('should return data unchanged by FIELD_ASC, since it is already sorted by the backend', () => {
+    const result =
+      sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
+        data: fieldAscTestData,
+        orderBy: GraphOrderBy.FIELD_ASC,
+        formattedToRawLookup,
+        getFormattedValue,
+      });
 
     expect(result.map((i) => i.label)).toEqual(['Alpha', 'Beta', 'Gamma']);
   });
 
   it('should sort by MANUAL order', () => {
-    const result = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-      data: testData,
-      orderBy: GraphOrderBy.MANUAL,
-      manualSortOrder: ['GAMMA', 'ALPHA', 'BETA'],
-      formattedToRawLookup,
-      getFormattedValue,
-    });
+    const result =
+      sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
+        data: testData,
+        orderBy: GraphOrderBy.MANUAL,
+        manualSortOrder: ['GAMMA', 'ALPHA', 'BETA'],
+        formattedToRawLookup,
+        getFormattedValue,
+      });
 
     expect(result.map((i) => i.label)).toEqual(['Gamma', 'Alpha', 'Beta']);
   });
 
   it('should return data unchanged when orderBy is undefined', () => {
-    const result = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-      data: testData,
-      orderBy: undefined,
-      formattedToRawLookup,
-      getFormattedValue,
-    });
+    const result =
+      sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
+        data: testData,
+        orderBy: undefined,
+        formattedToRawLookup,
+        getFormattedValue,
+      });
 
     expect(result).toEqual(testData);
   });
