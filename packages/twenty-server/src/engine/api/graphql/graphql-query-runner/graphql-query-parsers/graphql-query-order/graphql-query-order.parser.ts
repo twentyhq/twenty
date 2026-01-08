@@ -65,6 +65,8 @@ export class GraphqlQueryOrderFieldParser {
 
     for (const item of orderBy) {
       for (const [fieldName, orderByDirection] of Object.entries(item)) {
+        // Check if accessed by relation name (company) vs FK name (companyId)
+        const isAccessedByRelationName = !!this.fieldIdByName[fieldName];
         const fieldMetadataId =
           this.fieldIdByName[fieldName] ||
           this.fieldIdByJoinColumnName[fieldName];
@@ -78,8 +80,11 @@ export class GraphqlQueryOrderFieldParser {
           );
         }
 
-        // Metadata-driven: check field type first, then validate input shape
-        if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
+        // Only treat as relation if accessed by relation name (not FK like companyId)
+        if (
+          isAccessedByRelationName &&
+          isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+        ) {
           // For relation fields, input must be an object with nested field ordering
           if (!isObject(orderByDirection)) {
             throw new GraphqlQueryRunnerException(
