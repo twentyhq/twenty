@@ -1659,7 +1659,10 @@ export const ManyToOneRelationCardWidget: Story = {
     await userEvent.click(expandButton);
 
     const lastUpdateField = await canvas.findByText('Last update');
-    expect(lastUpdateField).toBeVisible();
+
+    await waitFor(() => {
+      expect(lastUpdateField).toBeVisible();
+    });
   },
 };
 
@@ -1957,7 +1960,10 @@ export const TimelineActivityRelationCardWidget: Story = {
     await userEvent.click(expandButton);
 
     const lastUpdateField = await canvas.findByText('Last update');
-    expect(lastUpdateField).toBeVisible();
+
+    await waitFor(() => {
+      expect(lastUpdateField).toBeVisible();
+    });
   },
 };
 
