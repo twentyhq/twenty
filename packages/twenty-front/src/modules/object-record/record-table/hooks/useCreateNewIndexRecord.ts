@@ -173,6 +173,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
+      closeCommandMenu,
     ],
   );
 
