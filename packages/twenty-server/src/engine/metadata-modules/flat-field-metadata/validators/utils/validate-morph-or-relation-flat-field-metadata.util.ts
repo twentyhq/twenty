@@ -83,6 +83,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   remainingFlatEntityMapsToValidate,
   buildOptions,
   workspaceId,
+  additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadataToValidate;
@@ -197,6 +198,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         workspaceId,
         updates,
         buildOptions,
+        additionalCacheDataMaps,
       }),
     );
   } else {
