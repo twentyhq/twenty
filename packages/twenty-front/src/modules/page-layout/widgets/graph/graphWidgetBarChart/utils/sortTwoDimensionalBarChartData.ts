@@ -1,8 +1,11 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
 import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
 import { type BarDatum } from '@nivo/bar';
@@ -28,6 +31,7 @@ type SortTwoDimensionalBarChartDataResult = {
   sortedData: BarDatum[];
   sortedKeys: string[];
   sortedSeries: BarChartSeries[];
+  colorMode: GraphColorMode;
 };
 
 export const sortTwoDimensionalBarChartData = ({
@@ -59,11 +63,19 @@ export const sortTwoDimensionalBarChartData = ({
     subFieldName: secondaryAxisSubFieldName,
   });
 
-  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => ({
-    key,
-    label: key,
-    color: color as GraphColor,
-  }));
+  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => {
+    const rawValue = secondaryAxisFormattedToRawLookup?.get(key);
+
+    return {
+      key,
+      label: key,
+      color: determineChartItemColor({
+        configurationColor: parseGraphColor(color),
+        selectOptions: secondaryAxisSelectFieldOptions,
+        rawValue: isDefined(rawValue) ? String(rawValue) : key,
+      }),
+    };
+  });
 
   let sortedData: BarDatum[] = data;
 
@@ -90,9 +102,15 @@ export const sortTwoDimensionalBarChartData = ({
     }
   }
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: color,
+    selectFieldOptions: secondaryAxisSelectFieldOptions,
+  });
+
   return {
     sortedData,
     sortedKeys,
     sortedSeries,
+    colorMode,
   };
 };
