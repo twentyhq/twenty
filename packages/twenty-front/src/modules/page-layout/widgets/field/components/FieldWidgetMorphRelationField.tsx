@@ -14,6 +14,7 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
@@ -24,17 +25,17 @@ const StyledRelationChipsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-type FieldWidgetMorphRelationProps = {
+type FieldWidgetMorphRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
   isInRightDrawer: boolean;
 };
 
-export const FieldWidgetMorphRelation = ({
+export const FieldWidgetMorphRelationField = ({
   fieldDefinition,
   recordId,
   isInRightDrawer,
-}: FieldWidgetMorphRelationProps) => {
+}: FieldWidgetMorphRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
 
   const recordsWithObjectNameSingular =
