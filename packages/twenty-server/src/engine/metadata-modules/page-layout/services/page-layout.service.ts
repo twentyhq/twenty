@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DashboardSyncService } from 'src/engine/metadata-modules/dashboard/services/dashboard-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -44,6 +45,7 @@ export class PageLayoutService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardSyncService: DashboardSyncService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<PageLayoutDTO[]> {
@@ -262,12 +264,20 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
+    const updatedLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(updatedLayout.updatedAt),
+      },
     );
+
+    return fromFlatPageLayoutToPageLayoutDto(updatedLayout);
   }
 
   async delete(
@@ -318,12 +328,20 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
-    );
+    const deletedLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.softDeleteLinkedDashboardsByPageLayoutId({
+      pageLayoutId: id,
+      workspaceId,
+      deletedAt: isDefined(deletedLayout.deletedAt)
+        ? new Date(deletedLayout.deletedAt)
+        : new Date(),
+    });
+
+    return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
   }
 
   async destroy(
@@ -456,11 +474,16 @@ export class PageLayoutService {
         },
       );
 
-    return fromFlatPageLayoutToPageLayoutDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedFlatPageLayoutMaps,
-      }),
-    );
+    const restoredLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    await this.dashboardSyncService.restoreLinkedDashboardsByPageLayoutId({
+      pageLayoutId: id,
+      workspaceId,
+    });
+
+    return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
   }
 }
