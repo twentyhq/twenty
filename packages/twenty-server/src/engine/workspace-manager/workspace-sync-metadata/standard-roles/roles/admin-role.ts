@@ -1,4 +1,4 @@
-import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
 export const ADMIN_ROLE = {
   standardId: '20202020-0001-0001-0001-000000000001',
@@ -16,7 +16,7 @@ export const ADMIN_ROLE = {
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
   applicationId: null, // TODO: Replace with Twenty application ID
-} as const satisfies  Pick<
+} as const satisfies Pick<
   FlatRole,
   | 'standardId'
   | 'label'
