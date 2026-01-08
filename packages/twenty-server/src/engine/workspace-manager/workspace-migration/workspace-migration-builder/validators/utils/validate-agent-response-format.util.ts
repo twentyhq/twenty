@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import {
-    type AgentJsonResponseFormat,
-    type AgentResponseFormat,
+  type AgentJsonResponseFormat,
+  type AgentResponseFormat,
 } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 

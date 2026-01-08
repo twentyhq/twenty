@@ -1,8 +1,8 @@
 import {
-    type CallHandler,
-    type ExecutionContext,
-    Injectable,
-    type NestInterceptor,
+  type CallHandler,
+  type ExecutionContext,
+  Injectable,
+  type NestInterceptor,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 

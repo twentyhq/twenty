@@ -5,10 +5,10 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import {
-    collectEnumOperationsForField,
-    EnumOperation,
-    type EnumOperationSpec,
-    executeBatchEnumOperations,
+  collectEnumOperationsForField,
+  EnumOperation,
+  type EnumOperationSpec,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 describe('WorkspaceSchemaEnumOperations', () => {

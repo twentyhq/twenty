@@ -3,20 +3,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-    ApplicationManifest,
-    FieldManifest,
-    ObjectManifest,
-    RoleManifest,
-    ServerlessFunctionManifest,
-    ServerlessFunctionTriggerManifest,
+  ApplicationManifest,
+  FieldManifest,
+  ObjectManifest,
+  RoleManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
 } from 'twenty-shared/application';
 import { HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-    ApplicationException,
-    ApplicationExceptionCode,
+  ApplicationException,
+  ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';

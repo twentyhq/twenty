@@ -7,8 +7,8 @@ import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
 import {
-    CronTriggerException,
-    CronTriggerExceptionCode,
+  CronTriggerException,
+  CronTriggerExceptionCode,
 } from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { fromCreateCronTriggerInputToFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/from-create-cron-trigger-input-to-flat-cron-trigger.util';

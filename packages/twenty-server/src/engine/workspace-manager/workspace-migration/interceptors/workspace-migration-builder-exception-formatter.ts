@@ -4,8 +4,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    BaseGraphQLError,
-    ErrorCode,
+  BaseGraphQLError,
+  ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';

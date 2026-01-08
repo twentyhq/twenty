@@ -13,9 +13,9 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
-    collectEnumOperationsForObject,
-    EnumOperation,
-    executeBatchEnumOperations,
+  collectEnumOperationsForObject,
+  EnumOperation,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 @Injectable()

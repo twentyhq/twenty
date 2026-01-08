@@ -7,8 +7,8 @@ import { CreateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/dat
 import { DatabaseEventTriggerIdInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/database-event-trigger-id.input';
 import { UpdateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/database-event-trigger/dtos/update-database-event-trigger.input';
 import {
-    DatabaseEventTriggerException,
-    DatabaseEventTriggerExceptionCode,
+  DatabaseEventTriggerException,
+  DatabaseEventTriggerExceptionCode,
 } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/from-create-database-event-trigger-input-to-flat-database-event-trigger.util';

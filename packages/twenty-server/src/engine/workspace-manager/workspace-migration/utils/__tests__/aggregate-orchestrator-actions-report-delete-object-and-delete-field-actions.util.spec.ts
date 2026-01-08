@@ -1,6 +1,6 @@
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
