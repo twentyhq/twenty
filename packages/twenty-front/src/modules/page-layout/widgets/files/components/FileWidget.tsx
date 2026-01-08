@@ -5,6 +5,7 @@ import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDraw
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;

@@ -17,7 +17,6 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     AiChatModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
-    WorkspaceMigrationModule,
     RoleModule,
     PermissionsModule,
     RouteTriggerModule,

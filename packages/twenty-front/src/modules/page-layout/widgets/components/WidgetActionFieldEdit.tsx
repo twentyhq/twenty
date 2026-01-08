@@ -18,7 +18,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/FieldWidgetEditAction';
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
-import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
+import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
@@ -72,7 +72,7 @@ export const WidgetActionFieldEdit = () => {
   const isRelationField =
     isFieldRelation(fieldDefinition) || isFieldMorphRelation(fieldDefinition);
 
-  const instanceId = getFieldWidgetInstanceId({
+  const instanceId = generateFieldWidgetInstanceId({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem.name,
