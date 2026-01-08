@@ -25,7 +25,10 @@ export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { Relation } from './fields/relation.decorator';
 export { defineFunction } from './functions/define-function';
-export type { FunctionConfig, FunctionHandler } from './functions/function-config';
+export type {
+  FunctionHandler,
+  FunctionConfig,
+} from './functions/function-config';
 export type { CronPayload } from './functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,
@@ -38,7 +41,6 @@ export type {
   ObjectRecordRestoreEvent,
   ObjectRecordUpsertEvent,
 } from './functions/triggers/database-event-payload-type';
-export type { ObjectDefinition } from './objects/define-object';
 export { defineObject } from './objects/define-object';
 export { Object } from './objects/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';

@@ -11,7 +11,6 @@ import {
 } from 'twenty-shared/application';
 import { type Sources } from 'twenty-shared/types';
 import { type FunctionConfig } from '@/application/functions/function-config';
-import { type ObjectDefinition } from '@/application/objects/define-object';
 import { type RoleConfig } from '@/application/role-config';
 import { loadConfig, loadFunctionModule } from './config-loader';
 import { findPathFile } from './find-path-file';
@@ -30,18 +29,13 @@ const validateFolderStructure = async (appPath: string): Promise<void> => {
 
   if (!(await fs.pathExists(appFolder))) {
     throw new Error(
-      `Missing app/ folder in ${appPath}.\n` +
-        'Create it with: mkdir app\n\n' +
-        'Or run: twenty app generate',
+      `Missing app/ folder in ${appPath}.\n` + 'Create it with: mkdir app',
     );
   }
 
   const configFile = path.join(appPath, 'app', 'application.config.ts');
   if (!(await fs.pathExists(configFile))) {
-    throw new Error(
-      `Missing app/application.config.ts\n` +
-        'Create it with: twenty app add config',
-    );
+    throw new Error('Missing app/application.config.ts');
   }
 };
 
@@ -66,19 +60,7 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
 
   for (const filepath of objectFiles) {
     try {
-      const config = await loadConfig<ObjectDefinition>(filepath);
-
-      // Convert ObjectDefinition to ObjectManifest
-      const manifest: ObjectManifest = {
-        universalIdentifier: config.universalIdentifier,
-        nameSingular: config.nameSingular,
-        namePlural: config.namePlural,
-        labelSingular: config.labelSingular,
-        labelPlural: config.labelPlural,
-        description: config.description,
-        icon: config.icon,
-        fields: config.fields,
-      };
+      const manifest = await loadConfig<ObjectManifest>(filepath);
 
       objects.push(manifest);
     } catch (error) {
@@ -197,6 +179,7 @@ const loadSources = async (appPath: string): Promise<Sources> => {
 
 /**
  * Check if the app imports from the generated folder.
+ * Detects any `import ... from '...generated'` or `import ... from '...generated/...'` pattern.
  */
 const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
   const tsFiles = await glob(['app/**/*.ts', 'src/**/*.ts'], {
@@ -205,18 +188,14 @@ const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
     ignore: ['**/node_modules/**', '**/*.d.ts'],
   });
 
+  // Matches: import ... from 'generated' or from '.../generated' or from '.../generated/...'
+  const generatedImportPattern =
+    /from\s+['"][^'"]*\/generated(?:\/[^'"]*)?['"]|from\s+['"]generated['"]/;
+
   for (const filepath of tsFiles) {
     const content = await fs.readFile(filepath, 'utf8');
 
-    // Check if file imports from 'generated' or './generated' etc.
-    if (
-      content.includes("from 'generated'") ||
-      content.includes('from "generated"') ||
-      content.includes("from './generated'") ||
-      content.includes('from "./generated"') ||
-      content.includes("from '../generated'") ||
-      content.includes('from "../generated"')
-    ) {
+    if (generatedImportPattern.test(content)) {
       return true;
     }
   }

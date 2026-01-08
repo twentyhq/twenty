@@ -1,8 +1,9 @@
-import { defineObject, type ObjectDefinition } from '../objects/define-object';
+import { defineObject } from '../objects/define-object';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type ObjectManifest } from 'twenty-shared/application';
 
 describe('defineObject', () => {
-  const validConfig: ObjectDefinition = {
+  const validConfig: ObjectManifest = {
     universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     nameSingular: 'postCard',
     namePlural: 'postCards',
@@ -13,6 +14,7 @@ describe('defineObject', () => {
       {
         universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
         type: FieldMetadataType.TEXT,
+        name: 'content',
         label: 'Content',
       },
     ],
@@ -25,7 +27,7 @@ describe('defineObject', () => {
   });
 
   it('should pass through all optional fields', () => {
-    const config: ObjectDefinition = {
+    const config: ObjectManifest = {
       ...validConfig,
       description: 'A post card object',
     };
@@ -151,11 +153,29 @@ describe('defineObject', () => {
         {
           universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
           type: FieldMetadataType.TEXT,
+          name: 'content',
         },
       ],
     };
 
-    expect(() => defineObject(config as any)).toThrow('Field must have a label');
+    expect(() => defineObject(config as any)).toThrow(
+      'Field must have a label',
+    );
+  });
+
+  it('should throw error when field is missing name', () => {
+    const config = {
+      ...validConfig,
+      fields: [
+        {
+          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          type: FieldMetadataType.TEXT,
+          label: 'Content',
+        },
+      ],
+    };
+
+    expect(() => defineObject(config as any)).toThrow('Field must have a name');
   });
 
   it('should throw error when SELECT field has no options', () => {
@@ -166,6 +186,7 @@ describe('defineObject', () => {
           universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
           type: FieldMetadataType.SELECT,
           label: 'Status',
+          name: 'status',
         },
       ],
     };
@@ -183,6 +204,7 @@ describe('defineObject', () => {
           universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
           type: FieldMetadataType.MULTI_SELECT,
           label: 'Tags',
+          name: 'tag',
         },
       ],
     };
@@ -199,6 +221,7 @@ describe('defineObject', () => {
         {
           universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
           type: FieldMetadataType.SELECT,
+          name: 'status',
           label: 'Status',
           options: [
             { value: 'draft', label: 'Draft', color: 'gray', position: 0 },

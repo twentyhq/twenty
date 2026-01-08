@@ -1,16 +1,5 @@
-import {
-  type ObjectManifest,
-  type FieldManifest,
-} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-/**
- * Object definition with fields array instead of decorators.
- * This is the config-based alternative to the @Object decorator.
- */
-export type ObjectDefinition = Omit<ObjectManifest, 'fields'> & {
-  fields: FieldManifest[];
-};
+import { type ObjectManifest } from 'twenty-shared/application';
 
 /**
  * Define an object configuration with validation.
@@ -45,7 +34,7 @@ export type ObjectDefinition = Omit<ObjectManifest, 'fields'> & {
  * });
  * ```
  */
-export const defineObject = <T extends ObjectDefinition>(config: T): T => {
+export const defineObject = <T extends ObjectManifest>(config: T): T => {
   if (!config.universalIdentifier) {
     throw new Error('Object must have a universalIdentifier');
   }
@@ -78,6 +67,10 @@ export const defineObject = <T extends ObjectDefinition>(config: T): T => {
 
     if (!field.type) {
       throw new Error(`Field "${field.label}" must have a type`);
+    }
+
+    if (!field.name) {
+      throw new Error('Field must have a name');
     }
 
     if (!field.label) {

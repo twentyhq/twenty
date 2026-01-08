@@ -33,7 +33,7 @@ declare module 'twenty-sdk' {
     description?: string;
   };
 
-  export type ObjectDefinition = SyncableEntityOptions & {
+  export type ObjectManifest = SyncableEntityOptions & {
     nameSingular: string;
     namePlural: string;
     labelSingular: string;
