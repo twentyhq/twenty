@@ -8184,8 +8184,10 @@ msgid "No records matching the filter criteria were found."
 msgstr "Der blev ikke fundet nogen poster, der matcher filterkriterierne."
 
 #. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelation.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelation.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
 msgid "No related records"
 msgstr "Ingen relaterede poster"
 
