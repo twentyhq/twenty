@@ -226,6 +226,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       if (
         isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
+        isDefined(optimisticFlatFieldMetadata.settings.joinColumnName) &&
         isPropertyUpdate(update, 'settings') &&
         isDefined(update.from?.onDelete) &&
         isDefined(update.to?.onDelete) &&
@@ -236,7 +237,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
             queryRunner,
             schemaName,
             tableName,
-            update.from.joinColumnName,
+            optimisticFlatFieldMetadata.settings.joinColumnName,
           );
 
         if (!isDefined(foreignKeyName)) {

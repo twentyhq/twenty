@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import {
-  RelationType,
   type FieldMetadataRelationSettings,
+  RelationType,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -124,24 +124,30 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     }
   }
 
-  const update = isDefined(updates)
+  const settingsUpdate = isDefined(updates)
     ? findFlatEntityPropertyUpdate({
         flatEntityUpdates: updates,
         property: 'settings',
       })
     : undefined;
 
-  const toSettings = update?.to as FieldMetadataRelationSettings | undefined;
-  const fromSettings = update?.from as
+  const toSettings = settingsUpdate?.to as
+    | FieldMetadataRelationSettings
+    | undefined;
+  const fromSettings = settingsUpdate?.from as
     | FieldMetadataRelationSettings
     | undefined;
 
-  if (
-    !isDefined(update) ||
-    (isDefined(toSettings) &&
-      isDefined(fromSettings) &&
-      toSettings.joinColumnName !== fromSettings.joinColumnName)
-  )
+  const isJoinColumnNameUpdated =
+    isDefined(settingsUpdate) &&
+    isDefined(toSettings?.joinColumnName) &&
+    isDefined(fromSettings?.joinColumnName) &&
+    toSettings.joinColumnName !== fromSettings.joinColumnName;
+
+  const shouldValidateJoinColumnName =
+    !isDefined(updates) || isJoinColumnNameUpdated;
+
+  if (shouldValidateJoinColumnName) {
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
@@ -152,6 +158,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         },
       }),
     );
+  }
 
   if (
     isDefined(toSettings) &&
