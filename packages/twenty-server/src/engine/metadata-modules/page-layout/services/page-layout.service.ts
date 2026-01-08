@@ -333,13 +333,15 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    await this.dashboardSyncService.softDeleteLinkedDashboardsByPageLayoutId({
-      pageLayoutId: id,
-      workspaceId,
-      deletedAt: isDefined(deletedLayout.deletedAt)
-        ? new Date(deletedLayout.deletedAt)
-        : new Date(),
-    });
+    if (deletedLayout.type === PageLayoutType.DASHBOARD) {
+      await this.deleteAssociatedDashboards(
+        id,
+        workspaceId,
+        isDefined(deletedLayout.deletedAt)
+          ? new Date(deletedLayout.deletedAt)
+          : new Date(),
+      );
+    }
 
     return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
   }
@@ -389,41 +391,6 @@ export class PageLayoutService {
     }
 
     return fromFlatPageLayoutToPageLayoutDto(flatPageLayoutToDestroy);
-  }
-
-  private async destroyAssociatedDashboards(
-    pageLayoutId: string,
-    workspaceId: string,
-  ): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    try {
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const dashboardRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const dashboards = await dashboardRepository.find({
-            where: {
-              pageLayoutId,
-            },
-          });
-
-          for (const dashboard of dashboards) {
-            await dashboardRepository.delete(dashboard.id);
-          }
-        },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to destroy associated dashboards for page layout ${pageLayoutId}: ${error}`,
-      );
-    }
   }
 
   async restore(
@@ -479,11 +446,103 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    await this.dashboardSyncService.restoreLinkedDashboardsByPageLayoutId({
-      pageLayoutId: id,
-      workspaceId,
-    });
+    if (restoredLayout.type === PageLayoutType.DASHBOARD) {
+      await this.restoreAssociatedDashboards(id, workspaceId);
+    }
 
     return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
+  }
+
+  private async destroyAssociatedDashboards(
+    pageLayoutId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    try {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const dashboards = await dashboardRepository.find({
+            where: {
+              pageLayoutId,
+            },
+          });
+
+          for (const dashboard of dashboards) {
+            await dashboardRepository.delete(dashboard.id);
+          }
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to destroy associated dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
+  }
+
+  private async deleteAssociatedDashboards(
+    pageLayoutId: string,
+    workspaceId: string,
+    deletedAt: Date,
+  ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    try {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          await dashboardRepository.update({ pageLayoutId }, { deletedAt });
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete associated dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
+  }
+
+  private async restoreAssociatedDashboards(
+    pageLayoutId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    try {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          await dashboardRepository.update(
+            { pageLayoutId },
+            { deletedAt: null },
+          );
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to restore associated dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
   }
 }
