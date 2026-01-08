@@ -103,9 +103,5 @@ export const getOrderByForRelationField = (
   // Wrap the entire label field orderBy in the relation field name
   // Result: { company: { name: 'AscNullsLast' } }
   // or: { company: { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } } }
-  // Type assertion needed because RecordGqlOperationOrderBy doesn't support 3-level nesting
-  // but GraphQL API does for relation + composite fields
-  return [
-    { [field.name]: labelFieldOrderBy[0] },
-  ] as unknown as RecordGqlOperationOrderBy;
+  return [{ [field.name]: labelFieldOrderBy[0] }];
 };
