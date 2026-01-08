@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { CrudOperationType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -8,7 +9,7 @@ import { type DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { DashboardPageLayoutService } from 'src/modules/dashboard/services/dashboard-page-layout.service';
+import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 
 @Injectable()
 @WorkspaceQueryHook(`dashboard.deleteOne`)
@@ -16,7 +17,7 @@ export class DashboardDeleteOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly dashboardPageLayoutService: DashboardPageLayoutService,
+    private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
   ) {}
 
   async execute(
@@ -28,10 +29,10 @@ export class DashboardDeleteOnePreQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.dashboardPageLayoutService.handlePageLayoutForDashboards({
+    await this.dashboardToPageLayoutSyncService.syncPageLayoutsWithDashboards({
       dashboardIds: [payload.id],
       workspaceId: workspace.id,
-      operation: 'delete',
+      operation: CrudOperationType.DELETE,
     });
 
     return payload;

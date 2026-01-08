@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { CrudOperationType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -11,8 +12,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
-export class DashboardPageLayoutService {
-  private readonly logger = new Logger(DashboardPageLayoutService.name);
+export class DashboardToPageLayoutSyncService {
+  private readonly logger = new Logger(DashboardToPageLayoutSyncService.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -45,14 +46,17 @@ export class DashboardPageLayoutService {
     return pageLayout.id;
   }
 
-  public async handlePageLayoutForDashboards({
+  public async syncPageLayoutsWithDashboards({
     dashboardIds,
     workspaceId,
     operation,
   }: {
     dashboardIds: string[];
     workspaceId: string;
-    operation: 'delete' | 'restore' | 'destroy';
+    operation:
+      | CrudOperationType.DELETE
+      | CrudOperationType.RESTORE
+      | CrudOperationType.DESTROY;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -79,19 +83,19 @@ export class DashboardPageLayoutService {
           }
 
           switch (operation) {
-            case 'delete':
+            case CrudOperationType.DELETE:
               await this.pageLayoutService.delete(
                 dashboard.pageLayoutId,
                 workspaceId,
               );
               break;
-            case 'restore':
+            case CrudOperationType.RESTORE:
               await this.pageLayoutService.restore(
                 dashboard.pageLayoutId,
                 workspaceId,
               );
               break;
-            case 'destroy':
+            case CrudOperationType.DESTROY:
               await this.pageLayoutService.destroy(
                 dashboard.pageLayoutId,
                 workspaceId,

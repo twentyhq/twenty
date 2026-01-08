@@ -10,7 +10,7 @@ import { DashboardDestroyManyPreQueryHook } from 'src/modules/dashboard/query-ho
 import { DashboardDestroyOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-one.pre-query.hook';
 import { DashboardRestoreManyPreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-restore-many.pre-query.hook';
 import { DashboardRestoreOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-restore-one.pre-query.hook';
-import { DashboardPageLayoutService } from 'src/modules/dashboard/services/dashboard-page-layout.service';
+import { DashboardPageLayoutService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 
 @Module({
   imports: [PageLayoutModule, PageLayoutTabModule],
