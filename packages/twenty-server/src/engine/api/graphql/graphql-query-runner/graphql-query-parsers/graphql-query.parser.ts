@@ -9,6 +9,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
 import {
   GraphqlQueryOrderFieldParser,
   type OrderByCondition,
@@ -29,6 +30,7 @@ export class GraphqlQueryParser {
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
+  private orderGroupByParser: GraphqlQueryOrderGroupByParser;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
@@ -44,6 +46,11 @@ export class GraphqlQueryParser {
       this.flatFieldMetadataMaps,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
+      this.flatObjectMetadata,
+      this.flatObjectMetadataMaps,
+      this.flatFieldMetadataMaps,
+    );
+    this.orderGroupByParser = new GraphqlQueryOrderGroupByParser(
       this.flatObjectMetadata,
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
@@ -192,7 +199,7 @@ export class GraphqlQueryParser {
     groupByFields: GroupByField[],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
-    const parsedOrderBys = this.orderFieldParser.parseForGroupBy({
+    const parsedOrderBys = this.orderGroupByParser.parse({
       orderBy,
       groupByFields,
     });
