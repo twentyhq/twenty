@@ -37,4 +37,5 @@ export type ClientConfig = {
   signInPrefilled: boolean;
   support: Support;
   isTwoFactorAuthenticationEnabled: boolean;
+  allowRequestsToTwentyIcons: boolean;
 };

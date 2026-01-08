@@ -160,6 +160,14 @@ export class ConfigVariables {
   IS_IMAP_SMTP_CALDAV_ENABLED = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      "Enable or disable requests to twenty-icons to get companies' icons",
+    type: ConfigVariableType.BOOLEAN,
+  })
+  ALLOW_REQUESTS_TO_TWENTY_ICONS = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,

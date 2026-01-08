@@ -15,7 +15,7 @@ export const getAvatarUrl = (
   objectNameSingular: string,
   record: ObjectRecord,
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
-  allowExternalRequests?: boolean | undefined,
+  allowRequestsToTwentyIcons?: boolean | undefined,
 ) => {
   if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return record.avatarUrl ?? undefined;
@@ -23,7 +23,7 @@ export const getAvatarUrl = (
 
   if (
     objectNameSingular === CoreObjectNameSingular.Company &&
-    allowExternalRequests === true
+    allowRequestsToTwentyIcons === true
   ) {
     return getLogoUrlFromDomainName(
       getCompanyDomainName(record as Company) ?? '',

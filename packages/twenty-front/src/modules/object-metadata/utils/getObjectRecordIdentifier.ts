@@ -11,7 +11,7 @@ import { getLinkToShowPage } from './getLinkToShowPage';
 export const getObjectRecordIdentifier = ({
   objectMetadataItem,
   record,
-  allowExternalRequests,
+  allowRequestsToTwentyIcons,
 }: {
   objectMetadataItem: Pick<
     ObjectMetadataItem,
@@ -21,7 +21,7 @@ export const getObjectRecordIdentifier = ({
     | 'imageIdentifierFieldMetadataId'
   >;
   record: ObjectRecord;
-  allowExternalRequests?: boolean;
+  allowRequestsToTwentyIcons?: boolean;
 }): ObjectRecordIdentifier => {
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
@@ -42,7 +42,7 @@ export const getObjectRecordIdentifier = ({
     objectMetadataItem.nameSingular,
     record,
     imageIdentifierFieldMetadata,
-    allowExternalRequests,
+    allowRequestsToTwentyIcons,
   );
 
   const linkToShowPage = getLinkToShowPage(

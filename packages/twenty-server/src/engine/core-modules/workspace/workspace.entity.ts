@@ -311,8 +311,4 @@ export class WorkspaceEntity {
     onDelete: 'CASCADE',
   })
   applications: Relation<Application[]>;
-
-  @Field()
-  @Column({ default: true })
-  allowExternalRequests: boolean;
 }

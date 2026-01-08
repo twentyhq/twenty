@@ -87,7 +87,6 @@ export const USER_QUERY_FRAGMENT = gql`
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       editableProfileFields
-      allowExternalRequests
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
