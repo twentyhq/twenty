@@ -12,6 +12,18 @@ describe('sortChartData', () => {
     { label: 'Gamma', value: 20 },
   ];
 
+  const fieldAscTestData: TestDataPoint[] = [
+    { label: 'Alpha', value: 10 },
+    { label: 'Beta', value: 30 },
+    { label: 'Gamma', value: 20 },
+  ];
+
+  const fieldDescTestData: TestDataPoint[] = [
+    { label: 'Gamma', value: 20 },
+    { label: 'Beta', value: 30 },
+    { label: 'Alpha', value: 10 },
+  ];
+
   const formattedToRawLookup = new Map<string, RawDimensionValue>([
     ['Alpha', 'ALPHA'],
     ['Beta', 'BETA'],
@@ -50,7 +62,7 @@ describe('sortChartData', () => {
   describe('FIELD_ASC sorting', () => {
     it('should return data unchanged by field value ascending, since it is already sorted by the backend', () => {
       const result = sortChartData({
-        data: testData,
+        data: fieldAscTestData,
         orderBy: GraphOrderBy.FIELD_ASC,
         formattedToRawLookup,
         getFieldValue,
@@ -58,8 +70,8 @@ describe('sortChartData', () => {
       });
 
       expect(result.map((item) => item.label)).toEqual([
-        'Beta',
         'Alpha',
+        'Beta',
         'Gamma',
       ]);
     });
@@ -68,7 +80,7 @@ describe('sortChartData', () => {
   describe('FIELD_DESC sorting', () => {
     it('should return data unchanged by field value descending, since it is already sorted by the backend', () => {
       const result = sortChartData({
-        data: testData,
+        data: fieldDescTestData,
         orderBy: GraphOrderBy.FIELD_DESC,
         formattedToRawLookup,
         getFieldValue,
@@ -76,8 +88,8 @@ describe('sortChartData', () => {
       });
 
       expect(result.map((item) => item.label)).toEqual([
-        'Beta',
         'Gamma',
+        'Beta',
         'Alpha',
       ]);
     });
