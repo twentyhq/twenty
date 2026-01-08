@@ -1,18 +1,77 @@
 import { msg } from '@lingui/core/macro';
-import {
-  type FieldMetadataRelationSettings,
-  RelationType,
-} from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
+import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
+import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
+
+type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
+  FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>,
+  'updates'
+> & {
+  updates: FlatEntityPropertiesUpdates<'fieldMetadata'>;
+};
+
+export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
+  flatEntityToValidate: flatFieldMetadataToValidate,
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+  },
+  updates,
+  buildOptions,
+}: ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs): FlatFieldMetadataValidationError[] => {
+  const errors: FlatFieldMetadataValidationError[] = [];
+
+  const settingsUpdate = findFlatEntityPropertyUpdate({
+    flatEntityUpdates: updates,
+    property: 'settings',
+  }) as
+    | PropertyUpdate<
+        FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+        'settings'
+      >
+    | undefined;
+
+  const toSettings = settingsUpdate?.to;
+  const fromSettings = settingsUpdate?.from;
+
+  const isJoinColumnNameUpdated =
+    isDefined(settingsUpdate) &&
+    isDefined(toSettings?.joinColumnName) &&
+    isDefined(fromSettings?.joinColumnName) &&
+    toSettings.joinColumnName !== fromSettings.joinColumnName;
+
+  if (isJoinColumnNameUpdated) {
+    errors.push(
+      ...validateMorphOrRelationFlatFieldJoinColumName({
+        buildOptions,
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        },
+      }),
+    );
+  }
+
+  errors.push(
+    ...validateMorphOrRelationFlatFieldOnDelete({
+      flatFieldMetadata: flatFieldMetadataToValidate,
+    }),
+  );
+
+  return errors;
+};
 
 export const validateMorphOrRelationFlatFieldMetadata = ({
   flatEntityToValidate: flatFieldMetadataToValidate,
@@ -23,6 +82,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   updates,
   remainingFlatEntityMapsToValidate,
   buildOptions,
+  workspaceId,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadataToValidate;
@@ -124,30 +184,22 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     }
   }
 
-  const settingsUpdate = isDefined(updates)
-    ? findFlatEntityPropertyUpdate({
-        flatEntityUpdates: updates,
-        property: 'settings',
-      })
-    : undefined;
-
-  const toSettings = settingsUpdate?.to as
-    | FieldMetadataRelationSettings
-    | undefined;
-  const fromSettings = settingsUpdate?.from as
-    | FieldMetadataRelationSettings
-    | undefined;
-
-  const isJoinColumnNameUpdated =
-    isDefined(settingsUpdate) &&
-    isDefined(toSettings?.joinColumnName) &&
-    isDefined(fromSettings?.joinColumnName) &&
-    toSettings.joinColumnName !== fromSettings.joinColumnName;
-
-  const shouldValidateJoinColumnName =
-    !isDefined(updates) || isJoinColumnNameUpdated;
-
-  if (shouldValidateJoinColumnName) {
+  // TODO prastoin refactor FlatFieldMetadataTypeValidator to implement two code flow: create and update https://github.com/twentyhq/core-team-issues/issues/2044
+  if (isDefined(updates)) {
+    errors.push(
+      ...validateMorphOrRelationFlatFieldMetadataUpdates({
+        flatEntityToValidate: flatFieldMetadataToValidate,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        },
+        remainingFlatEntityMapsToValidate,
+        workspaceId,
+        updates,
+        buildOptions,
+      }),
+    );
+  } else {
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
@@ -157,19 +209,10 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
           flatObjectMetadataMaps,
         },
       }),
+      ...validateMorphOrRelationFlatFieldOnDelete({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+      }),
     );
-  }
-
-  if (
-    isDefined(toSettings) &&
-    isDefined(fromSettings) &&
-    isDefined(toSettings.onDelete) &&
-    toSettings.relationType !== RelationType.MANY_TO_ONE
-  ) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: 'On delete action is only supported for many to one relations',
-    });
   }
 
   return errors;
