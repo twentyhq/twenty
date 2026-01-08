@@ -78,7 +78,12 @@ export const useUpdateViewAggregate = () => {
           loadRecordIndexStates(updatedView, objectMetadataItem);
         }
       },
-    [canPersistChanges, currentViewId, performViewAPIUpdate, loadRecordIndexStates],
+    [
+      canPersistChanges,
+      currentViewId,
+      performViewAPIUpdate,
+      loadRecordIndexStates,
+    ],
   );
 
   return {

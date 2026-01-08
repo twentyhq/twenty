@@ -96,20 +96,23 @@ export const useSaveRecordFiltersToViewFilters = () => {
           }),
         );
 
-        const createResult =
-          await performViewFilterAPICreate(createViewFilterInputs);
+        const createResult = await performViewFilterAPICreate(
+          createViewFilterInputs,
+        );
         if (createResult.status === 'failed') {
           return;
         }
 
-        const updateResult =
-          await performViewFilterAPIUpdate(updateViewFilterInputs);
+        const updateResult = await performViewFilterAPIUpdate(
+          updateViewFilterInputs,
+        );
         if (updateResult.status === 'failed') {
           return;
         }
 
-        const deleteResult =
-          await performViewFilterAPIDelete(deleteViewFilterInputs);
+        const deleteResult = await performViewFilterAPIDelete(
+          deleteViewFilterInputs,
+        );
         if (deleteResult.status === 'failed') {
           return;
         }
