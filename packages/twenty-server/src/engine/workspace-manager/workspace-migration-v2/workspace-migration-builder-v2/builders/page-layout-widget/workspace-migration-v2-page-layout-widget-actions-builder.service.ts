@@ -19,14 +19,16 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     super(ALL_METADATA_NAME.pageLayoutWidget);
   }
 
-  protected validateFlatEntityCreation(
+  protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'created'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayoutWidget,
+      'create'
+    >
   > {
     const validationResult =
-      this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetCreation(
+      await this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetCreation(
         args,
       );
 
@@ -40,8 +42,9 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     return {
       status: 'success',
       action: {
-        type: 'create_page_layout_widget',
-        pageLayoutWidget: args.flatEntityToValidate,
+        type: 'create',
+        metadataName: 'pageLayoutWidget',
+        flatEntity: args.flatEntityToValidate,
       },
     };
   }
@@ -50,7 +53,7 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
   ): FlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'deleted'
+    'delete'
   > {
     const validationResult =
       this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetDeletion(
@@ -69,22 +72,25 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     return {
       status: 'success',
       action: {
-        type: 'delete_page_layout_widget',
-        pageLayoutWidgetId: flatPageLayoutWidgetToValidate.id,
+        type: 'delete',
+        metadataName: 'pageLayoutWidget',
+        entityId: flatPageLayoutWidgetToValidate.id,
       },
     };
   }
 
-  protected validateFlatEntityUpdate(
+  protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.pageLayoutWidget
     >,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'updated'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayoutWidget,
+      'update'
+    >
   > {
     const validationResult =
-      this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetUpdate(
+      await this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetUpdate(
         args,
       );
 
@@ -98,8 +104,9 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     const { flatEntityId, flatEntityUpdates } = args;
 
     const updatePageLayoutWidgetAction: UpdatePageLayoutWidgetAction = {
-      type: 'update_page_layout_widget',
-      pageLayoutWidgetId: flatEntityId,
+      type: 'update',
+      metadataName: 'pageLayoutWidget',
+      entityId: flatEntityId,
       updates: flatEntityUpdates,
     };
 

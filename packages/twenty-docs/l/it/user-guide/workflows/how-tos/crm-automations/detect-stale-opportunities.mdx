@@ -1,0 +1,136 @@
+---
+title: Rileva opportunità stagnanti
+description: Notifica automaticamente i responsabili quando le opportunità non sono state aggiornate.
+---
+
+Mantieni in salute la tua pipeline avvisando i responsabili quando le opportunità diventano stagnanti. Questo flusso di lavoro verifica le opportunità che non sono state aggiornate in un numero di giorni specificato.
+
+## Il problema
+
+Le opportunità senza aggiornamenti comportano:
+
+* Trattative che si raffreddano
+* Previsioni inaffidabili
+* Perdita di ricavi
+
+## La soluzione
+
+Crea un flusso di lavoro pianificato che individua le opportunità stagnanti e invia un'email ai loro responsabili.
+
+## Configurazione passo-passo
+
+### Passaggio 1: Crea il flusso di lavoro
+
+1. Vai a **Impostazioni → Flussi di lavoro**
+2. Fai clic su **+ Nuovo flusso di lavoro**
+3. Assegna il nome "Avviso di opportunità stagnanti"
+
+### Passaggio 2: Configura il trigger
+
+1. Seleziona **On a Schedule**
+2. Imposta l'esecuzione giornaliera (ad es., ogni giorno alle 8:00)
+
+### Passaggio 3: Cerca le opportunità stagnanti
+
+1. Aggiungi un'azione **Search Records**
+2. Configura:
+
+| Campo       | Valore                                         |
+| ----------- | ---------------------------------------------- |
+| **Oggetto** | Opportunità                                    |
+| **Filtro**  | Updated At è precedente a (oggi - 7 giorni)    |
+| **Filtro**  | Stage non è "Closed Won" AND non "Closed Lost" |
+| **Limite**  | 100                                            |
+
+### Passaggio 4: Verifica se ne sono state trovate
+
+1. Aggiungi l'azione **Filter**
+2. Condizione: `{{searchRecords.length}}` è maggiore di 0
+3. Se non ci sono opportunità stagnanti, il flusso di lavoro si ferma qui
+
+### Passaggio 5: Formatta l'avviso (azione Code)
+
+Aggiungi un'azione **Code** per formattare l'email:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Passaggio 6: Invia l'email di avviso
+
+Aggiungi l'azione **Send Email**:
+
+| Campo       | Valore                                                               |
+| ----------- | -------------------------------------------------------------------- |
+| **A**       | sales-manager@yourcompany.com                                        |
+| **Oggetto** | `🚨 {{code.totalCount}} opportunità stagnanti richiedono attenzione` |
+| **Corpo**   | `{{code.summary}}`                                                   |
+
+### Passaggio 7: Testa e attiva
+
+1. Fai clic su **Test** per eseguire il flusso di lavoro
+2. Verifica che l'email contenga i dati corretti
+3. Attiva quando sei pronto
+
+## Opzioni di personalizzazione
+
+### Modifica la soglia di stagnazione
+
+Modifica il filtro di **Search Records** per passare da 7 giorni al periodo preferito:
+
+* 3 giorni per vendite ad alta velocità
+* 14 giorni per trattative enterprise
+* 30 giorni per cicli di vendita lunghi
+
+### Avvisa i singoli rappresentanti
+
+Invece di un'unica email al responsabile, usa **Iterator** per inviare email personalizzate a ciascun rappresentante sulle proprie trattative stagnanti.
+
+### Aggiungi un'escalation
+
+Crea più flussi di lavoro con gravità crescente:
+
+1. Giorno 7: Email al rappresentante
+2. Giorno 14: Email al rappresentante + al responsabile
+3. Giorno 21: Crea un'attività per il responsabile affinché intervenga
+
+### Includi in Slack
+
+Usa **HTTP Request** per inviare a un webhook Slack invece o in aggiunta all'email.
+
+## Correlati
+
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -1,0 +1,228 @@
+---
+title: Import relací mezi objekty pomocí CSV
+description: Kompletní podrobný průvodce propojením záznamů během importu CSV.
+---
+
+## Přehled
+
+Tento průvodce vás provede importem relací mezi objekty — například propojením lidí se společnostmi nebo příležitostí s lidmi.
+
+<Note>**Co lze importovat:** Pouze relace „jeden ku mnoha“ směřující k jednomu typu objektu. Relace směřující k více typům objektů (např. poznámky propojené s lidmi a společnostmi) zatím nejsou pro import podporovány.</Note>
+
+## Porozumění relacím
+
+### Co je to relace „jeden ku mnoha“?
+
+V relaci jeden ku mnoha:
+
+* **Jedna** společnost má **mnoho** lidí (zaměstnanců)
+* **Jedna** společnost má **mnoho** příležitostí
+* **Jedna** osoba má **mnoho** úkolů
+
+Strana „jedna“ je **nadřazená**. Strana „mnoho“ je **podřízená**.
+
+### Běžné relace v Twenty
+
+| Vztah                      | Strana „jedna“ (nadřazený) | Strana „mnoho“ (podřízený) |
+| -------------------------- | -------------------------- | -------------------------- |
+| Společnosti → Lidé         | Společnost                 | Osoby                      |
+| Společnosti → Příležitosti | Společnost                 | Příležitosti               |
+| Lidé → Úkoly               | Osoba                      | Úkoly                      |
+| Lidé → Poznámky            | Osoba                      | Poznámky                   |
+
+## Krok 1: Určete strany „jedna“ a „mnoho“
+
+Před importem určete, který objekt je nadřazený a který podřízený.
+
+**Zeptejte se sami sebe:** "Má JEDEN [Objekt A] MNOHO [Objekt B]?"
+
+* Jedna společnost → Mnoho lidí ✓ (společnost je nadřazená)
+* Jedna osoba → Mnoho společností ✗ (To je špatně — osoba patří k jedné společnosti)
+
+## Krok 2: Nejprve importujte nadřazené záznamy
+
+Nadřazený („jedna“ strana) musí v Twenty existovat, než na něj budete moci odkazovat.
+
+**Pořadí importu:**
+
+1. **Společnosti** jako první (bez závislostí)
+2. **Lidé** jako druzí (propojení se společnostmi)
+3. **Příležitosti** jako třetí (propojené se společnostmi a/nebo lidmi)
+4. **Úkoly/Poznámky** (propojené s jakýmkoli z výše uvedených)
+
+<Warning>
+  **Pokud nadřazený záznam neexistuje, import selže.**
+
+  Vždy ověřte, že společnosti jsou importovány dříve, než budete importovat lidi s odkazy na společnost.
+</Warning>
+
+## Krok 3: Poznamenejte si jedinečný identifikátor nadřazeného objektu
+
+Na nadřazený záznam musíte odkazovat pomocí **jedinečného identifikátoru**. Dostupné možnosti:
+
+| Nadřazený objekt                | Dostupné jedinečné identifikátory                                       |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| **Společnosti**                 | `id` (UUID), `domain` (doporučeno) nebo jakékoli vlastní jedinečné pole |
+| **Lidé**                        | `id` (UUID), `email` nebo jakékoli vlastní jedinečné pole               |
+| **Členové pracovního prostoru** | `id` (UUID), `email` (ne jméno)                                         |
+| **Vlastní objekty**             | `id` (UUID) nebo jakékoli pole označené jako jedinečné                  |
+
+<Note>**Doporučeno:** Pro společnosti použijte `domain` a pro lidi `email`. Jsou čitelné pro člověka a snadno ověřitelné ve vaší tabulce.</Note>
+
+### Jak zjistit identifikátor
+
+Pokud potřebujete `id`:
+
+1. Exportujte nadřazené záznamy z Twenty
+2. Export obsahuje sloupec `id`
+3. Použijte tato ID v souboru s podřízenými záznamy
+
+## Krok 4: Ověřte, že existuje relační pole
+
+Před importem se ujistěte, že mezi vašimi objekty existuje relační pole.
+
+**Jak ověřit nebo vytvořit:**
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte svůj podřízený objekt (např. Lidé)
+3. Vyhledejte relační pole směřující na nadřazený objekt (např. Společnost)
+4. Pokud neexistuje, vytvořte jej:
+   * Klikněte na **+ Add field**
+   * Vyberte typ **Relation**
+   * Vyberte nadřazený objekt
+
+## Krok 5: Připravte svůj soubor CSV
+
+Do podřízeného CSV přidejte sloupec, který odkazuje na nadřazený objekt pomocí jeho jedinečného identifikátoru.
+
+### Příklad: Propojení lidí se společnostmi
+
+**Vaše CSV s lidmi:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+Sloupec `companyDomain` odkazuje na doménu společnosti.
+
+### Požadavky na formát
+
+| Identifikátor | Formát            | Příklad                                |
+| ------------- | ----------------- | -------------------------------------- |
+| Doména        | Formát URL        | `https://acme.com`                     |
+| Email         | Standardní e-mail | `john@acme.com`                        |
+| ID            | UUID              | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Na formátu domény záleží!**
+
+  Použijte `https://domain.com` (ne pouze `domain.com`). To odpovídá způsobu, jak Twenty ukládá domény společností, a předchází chybám při párování.
+</Warning>
+
+### Důležitá pravidla
+
+1. **Je vyžadována přesná shoda** — hodnota se musí přesně shodovat s nadřazeným záznamem
+2. **Mapujte pouze JEDEN jedinečný identifikátor** — nezahrnujte současně `companyId` A `companyDomain`
+3. **Rozlišuje se velikost písmen** — `Acme.com` ≠ `acme.com`
+
+## Krok 6: Nahrajte a namapujte relaci
+
+1. Přejděte k podřízenému objektu (např. Lidé)
+2. Klikněte na **⋮** → **Import records**
+3. Nahrajte svůj soubor CSV
+4. V kroku mapování polí:
+   * Najděte svůj relační sloupec (např. `companyDomain`)
+   * Namapujte jej na relační pole **Společnost**
+5. Dokončete zbývající mapování
+6. Zkontrolujte chyby a potvrďte
+
+Twenty automaticky propojí každý podřízený záznam s odpovídajícím nadřazeným.
+
+## Krok 7: Ověřte import
+
+Po importu:
+
+1. Otevřete několik podřízených záznamů (např. Lidé)
+2. Ověřte, že relační pole zobrazuje správný nadřazený objekt (např. Společnost)
+3. Otevřete nadřazený záznam a zkontrolujte sekci souvisejících záznamů
+
+## Časté chyby, kterým se vyhnout
+
+| Chyba                        | Problém                                         | Řešení                                                          |
+| ---------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| **Chybné pořadí importu**    | Importujete lidi před společnostmi              | Vždy nejprve importujte nadřazené, poté podřízené               |
+| **Chybný formát domény**     | Použití `acme.com` místo `https://acme.com`     | Použijte plný formát URL s `https://`                           |
+| **Více jedinečných polí**    | Mapujete současně `companyId` A `companyDomain` | Mapujte pouze JEDEN jedinečný identifikátor                     |
+| **Chybí relační pole**       | Relační pole v datovém modelu neexistuje        | Vytvořte jej v **Nastavení → Datový model** před importem       |
+| **Neexistující záznamy**     | Nadřazený záznam v Twenty neexistuje            | Nejprve importujte nadřazené záznamy nebo zkontrolujte překlepy |
+| **Rozdílná velikost písmen** | `Acme.com` v souboru, ale v Twenty `acme.com`   | Zajistěte přesnou shodu velikosti písmen                        |
+
+## Propojování s členy pracovního prostoru
+
+Při propojování s členy pracovního prostoru (vaším týmem):
+
+* Použijte jejich **e-mailovou adresu**, ne jméno
+* Příklad: `owner@yourcompany.com`, ne "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## Časté dotazy
+
+<AccordionGroup>
+  <Accordion title="Co když můj nadřazený záznam nemá doménu ani e-mail?">
+    Máte dvě možnosti:
+
+    1. Použijte Twenty `id` (exportujte nadřazené záznamy, abyste získali jejich ID)
+    2. Vytvořte ve svém datovém modelu vlastní jedinečné pole pro uložení externího ID z vašeho předchozího systému
+  </Accordion>
+
+  <Accordion title="Mohu aktualizovat relace u existujících záznamů?">
+    Ano! Zahrňte jedinečný identifikátor podřízeného záznamu (např. `email` u lidí) a novou hodnotu relace. Import relaci aktualizuje.
+  </Accordion>
+
+  <Accordion title="Mohu importovat vztahy mnoho k mnoha?">
+    Vztahy mnoho k mnoha zatím nejsou pro import podporovány. To je plánováno na 1. pololetí 2026.
+  </Accordion>
+
+  <Accordion title="Mohu propojovat s více typy objektů (například poznámky s lidmi A společnostmi)?">
+    Relace směřující k více typům objektů zatím nejsou pro import/export podporovány. Je to v našem plánu.
+  </Accordion>
+
+  <Accordion title="Co se stane, když nadřazený záznam neexistuje?">
+    Import u daného řádku zobrazí chybu. Můžete buď:
+
+    * Nejprve importujte nadřazený záznam, poté znovu importujte
+    * Opravte referenční hodnotu
+    * Odstraňte řádek z importu
+  </Accordion>
+
+  <Accordion title="Proč se moje relace nepropojuje správně?">
+    Časté příčiny:
+
+    * Nesprávný formát (pro domény použijte `https://domain.com`)
+    * Nesoulad ve velikosti písmen (zkontrolujte přesný zápis)
+    * Nadřazený neexistuje (nejprve importujte nadřazené)
+    * Mapujete více identifikátorů (použijte pouze jeden)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Pamatujte: Záznamy „soft-deleted“ se započítávají do jedinečnosti.**
+
+  Pokud dostáváte chyby "not found", ale záznam se zdá existovat, zkontrolujte Command Menu → See deleted records. Nadřazený mohl být „soft-deleted“.
+</Warning>
+
+## Řešení potíží
+
+Máte potíže? Podívejte se na:
+
+* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Možnosti importu relací](/l/cs/user-guide/data-migration/capabilities/import-relations)
+* [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)

@@ -1,12 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
-
-type AggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActionsArgs = {
-  orchestratorActionsReport: OrchestratorActionsReport;
-};
 
 type AggregatedActions = {
   deleteFieldActionByFieldMetadataId: Record<string, DeleteFieldAction>;
@@ -14,13 +11,13 @@ type AggregatedActions = {
 export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions =
   ({
     orchestratorActionsReport,
-  }: AggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActionsArgs): OrchestratorActionsReport => {
+  }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
     const deleteObjectActionByObjectMetadataId = (
-      orchestratorActionsReport.objectMetadata.deleted as DeleteObjectAction[]
+      orchestratorActionsReport.objectMetadata.delete as DeleteObjectAction[]
     ).reduce<Record<string, DeleteObjectAction>>(
       (acc, deleteObjectAction) => ({
         ...acc,
-        [deleteObjectAction.objectMetadataId]: deleteObjectAction,
+        [deleteObjectAction.entityId]: deleteObjectAction,
       }),
       {},
     );
@@ -29,7 +26,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
     };
 
     const { deleteFieldActionByFieldMetadataId } = (
-      orchestratorActionsReport.fieldMetadata.deleted as DeleteFieldAction[]
+      orchestratorActionsReport.fieldMetadata.delete as DeleteFieldAction[]
     ).reduce<AggregatedActions>(
       ({ deleteFieldActionByFieldMetadataId }, deleteFieldAction) => {
         const fieldParentObjectDeleteObjectAction =
@@ -46,7 +43,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
         return {
           deleteFieldActionByFieldMetadataId: {
             ...deleteFieldActionByFieldMetadataId,
-            [deleteFieldAction.fieldMetadataId]: deleteFieldAction,
+            [deleteFieldAction.entityId]: deleteFieldAction,
           },
         };
       },
@@ -57,7 +54,7 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
       ...orchestratorActionsReport,
       fieldMetadata: {
         ...orchestratorActionsReport.fieldMetadata,
-        deleted: Object.values(deleteFieldActionByFieldMetadataId),
+        delete: Object.values(deleteFieldActionByFieldMetadataId),
       },
     };
   };

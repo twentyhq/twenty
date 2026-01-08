@@ -13,7 +13,7 @@ export class CreateViewFilterGroupInput {
 
   @Field(() => ViewFilterGroupLogicalOperator, {
     nullable: true,
-    defaultValue: ViewFilterGroupLogicalOperator.NOT,
+    defaultValue: ViewFilterGroupLogicalOperator.AND,
   })
   logicalOperator?: ViewFilterGroupLogicalOperator;
 

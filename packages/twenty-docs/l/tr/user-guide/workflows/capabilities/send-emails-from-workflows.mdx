@@ -1,0 +1,149 @@
+---
+title: İş Akışları Aracılığıyla E-posta Gönderme
+description: İş akışı eylemlerini kullanarak kişiselleştirilmiş e-postaları otomatik olarak gönderin.
+image: /images/user-guide/workflows/workflow.png
+---
+
+CRM'inizde belirli olaylar gerçekleştiğinde e-postaları otomatik olarak gönderin—yeni kişilere hoş geldiniz e-postası gönderin, fırsatları takip edin veya ekip üyelerini bilgilendirin.
+
+## Ön Gereksinimler
+
+İş akışlarından e-posta göndermeden önce:
+
+1. **Ayarlar → Hesaplar** altında bir e-posta hesabı bağlayın
+2. Hesabın gönderme izinlerinin etkin olduğundan emin olun
+
+## Temel E-posta İş Akışı
+
+### Örnek: Yeni Kişiler için Hoş Geldiniz E-postası
+
+**Amaç**: CRM'e yeni bir kişi eklendiğinde bir hoş geldiniz e-postası gönderin.
+
+**Kurulum**:
+
+1. **İş akışı oluşturun**: **Ayarlar → İş Akışları** bölümüne gidin ve **+ Yeni İş Akışı**'na tıklayın
+
+2. **Tetikleyici ekleyin**: **Kayıt Oluşturuldu** → **Kişiler** öğelerini seçin
+
+3. **E-posta Gönder eylemini ekleyin**:
+   * Bir eylem eklemek için **+**'a tıklayın
+   * **E-posta Gönder**'i seçin
+   * E-postayı yapılandırın:
+
+| Alan      | Değer                                       |
+| --------- | ------------------------------------------- |
+| **Kime**  | `{{trigger.object.email}}`                  |
+| **Konu**  | `{{Your Company Name}}'e Hoş Geldiniz`      |
+| **Gövde** | `Merhaba {{trigger.object.firstName}}, ...` |
+
+4. **Test edin ve etkinleştirin**: Örnek bir kayıtla test edin, ardından etkinleştirin
+
+## E-postalarda Değişkenlerin Kullanımı
+
+`{{variable}}` söz dizimini kullanarak önceki adımlardaki verilere başvurun:
+
+```text
+Merhaba {{trigger.object.firstName}},
+
+Bizimle iletişime geçtiğiniz için teşekkür ederiz!
+
+Şirketiniz, {{trigger.object.company.name}}, artık sistemimizde.
+
+Saygılarımızla,
+Ekip
+```
+
+### Tetikleyicilerden Kullanılabilir Değişkenler
+
+| Tetikleyici Türü                  | Yaygın Değişkenler                     |
+| --------------------------------- | -------------------------------------- |
+| **Kayıt Oluşturuldu/Güncellendi** | `{{trigger.object.fieldName}}`         |
+| **Manuel**                        | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                       | `{{trigger.body.fieldName}}`           |
+
+## Gelişmiş: Koşullu E-postalar
+
+### Örnek: Potansiyel Müşteri Kaynağına Göre Farklı E-postalar
+
+**Amaç**: Potansiyel müşterinin geldiği kaynağa göre farklı hoş geldiniz e-postaları gönderin.
+
+**Kurulum**:
+
+1. **Tetikleyici**: Kayıt Oluşturuldu (Kişiler)
+
+2. **Filtre eylemi ekleyin**:
+   * Koşul: `{{trigger.object.source}}` `"Website"` değerine eşittir
+   * Doğruysa → web sitesi hoş geldiniz e-postasıyla devam edin
+
+3. **Diğer kaynaklar için dal**:
+   * Farklı kaynaklar için paralel dallar oluşturun
+   * Her dalın kendi E-posta Gönder eylemi vardır
+
+## Birden Fazla Alıcıya E-posta Gönderme
+
+### Örnek: Fırsat Kapandığında Ekibi Bilgilendirin
+
+**Amaç**: Bir fırsat kazanıldığında satış temsilcisine ve yöneticisine e-posta gönderin.
+
+**Kurulum**:
+
+1. **Tetikleyici**: Kayıt Güncellendi (Fırsatlar, Aşama = "Closed Won")
+
+2. **Kayıtları Ara**: Fırsat sahibinin yöneticisini bulun
+
+3. **E-posta Gönder #1**: Fırsat sahibine
+   * Kime: `{{trigger.object.owner.email}}`
+   * Konu: `{{trigger.object.name}} fırsatını kapattığınız için tebrikler!`
+
+4. **E-posta Gönder #2**: Yöneticiye
+   * Kime: `{{searchRecords.manager.email}}`
+   * Konu: `Fırsat Kazanıldı: {{trigger.object.name}}`
+
+## Zamanlanmış Takip E-postaları
+
+### Örnek: Toplantıdan 3 Gün Sonra Takip
+
+**Amaç**: Bir toplantı kaydedildikten 3 gün sonra bir takip e-postası gönderin.
+
+**Kurulum**:
+
+1. **Tetikleyici**: Kayıt Oluşturuldu (Aktiviteler, Tür = "Toplantı")
+
+2. **Gecikme eylemi**: 3 gün bekleyin
+
+3. **E-posta Gönder**:
+   * Kime: Toplantı katılımcısı
+   * Konu: Görüşmemize ilişkin takip
+   * Gövde: Tetikleyiciden toplantı ayrıntılarına referans verin
+
+## En İyi Uygulamalar
+
+### E-posta İçeriği
+
+* Konu satırlarını öz ve ilgili tutun
+* Alıcının adıyla kişiselleştirin
+* Açık bir harekete geçirici mesaj ekleyin
+* Etkinleştirmeden önce e-postaları test edin
+
+### Teslim Edilebilirlik
+
+* Çok kısa sürede çok fazla e-posta göndermeyin
+* Profesyonel e-posta imzaları kullanın
+* Spam tetikleyici kelimelerden kaçının
+* Pazarlama e-postalarında abonelikten çıkma seçeneklerinin bulunduğundan emin olun
+
+### Sorun Giderme
+
+* E-posta hesabının bağlı ve aktif olduğunu doğrulayın
+* Alıcının e-posta adresinin geçerli olduğunu kontrol edin
+* Hata mesajları için iş akışı çalıştırmalarını gözden geçirin
+* Önce kendi e-posta adresinizle test edin
+
+<Note>
+  **Yakında**: E-posta ekleri 2026'nın 1. çeyreğinde kullanılabilir olacak.
+</Note>
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)

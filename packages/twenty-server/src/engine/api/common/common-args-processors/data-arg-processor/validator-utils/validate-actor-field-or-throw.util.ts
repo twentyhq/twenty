@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { FieldActorSource } from 'twenty-shared/types';
 
@@ -40,6 +41,7 @@ export const validateActorFieldOrThrow = (
         throw new CommonQueryRunnerException(
           `Invalid subfield ${subField} for actor field "${fieldName}"`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: msg`Invalid value for actor.` },
         );
     }
   }

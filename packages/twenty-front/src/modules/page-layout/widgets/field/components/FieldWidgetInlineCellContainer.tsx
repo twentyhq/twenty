@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
-import { FieldWidgetInlineCellValue } from '@/page-layout/widgets/field/components/FieldWidgetInlineCellValue';
+import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 
 const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
@@ -52,7 +52,7 @@ export const FieldWidgetInlineCellContainer = () => {
       onMouseLeave={handleContainerMouseLeave}
     >
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
-        <FieldWidgetInlineCellValue />
+        <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

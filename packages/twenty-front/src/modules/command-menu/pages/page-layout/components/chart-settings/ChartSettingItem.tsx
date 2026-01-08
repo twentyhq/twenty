@@ -16,6 +16,7 @@ import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/C
 import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -35,6 +36,7 @@ export const ChartSettingItem = ({
   configuration,
 }: ChartSettingItemProps) => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
   const { openDropdown } = useOpenDropdown();
   const { setSelectedItemId } = useSelectableList(
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
@@ -71,6 +73,7 @@ export const ChartSettingItem = ({
   };
 
   const handleDropdownOpen = () => {
+    closeAnyOpenDropdown();
     openDropdown({
       dropdownComponentInstanceIdFromProps: item.id,
     });
@@ -110,28 +113,24 @@ export const ChartSettingItem = ({
 
     return (
       <SelectableListItem key={item.id} itemId={item.id}>
-        <CommandMenuItem
+        <CommandMenuItemNumberInput
           id={item.id}
           label={t(item.label)}
           Icon={item.Icon}
-          RightComponent={
-            <CommandMenuItemNumberInput
-              value={stringValue}
-              onChange={handleInputChange}
-              onValidate={(value) =>
-                !isDefined(value) ||
-                isMinMaxRangeValid(
-                  item.id as
-                    | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
-                    | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
-                  value,
-                  configuration,
-                )
-              }
-              placeholder={
-                item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
-              }
-            />
+          value={stringValue}
+          onChange={handleInputChange}
+          onValidate={(value) =>
+            !isDefined(value) ||
+            isMinMaxRangeValid(
+              item.id as
+                | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
+                | CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+              value,
+              configuration,
+            )
+          }
+          placeholder={
+            item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
           }
         />
       </SelectableListItem>
@@ -144,18 +143,14 @@ export const ChartSettingItem = ({
 
     return (
       <SelectableListItem key={item.id} itemId={item.id}>
-        <CommandMenuItem
+        <CommandMenuItemTextInput
           id={item.id}
           label={t(item.label)}
           Icon={item.Icon}
-          RightComponent={
-            <CommandMenuItemTextInput
-              value={stringValue}
-              onChange={handleTextInputChange}
-              placeholder={
-                item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
-              }
-            />
+          value={stringValue}
+          onChange={handleTextInputChange}
+          placeholder={
+            item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
           }
         />
       </SelectableListItem>

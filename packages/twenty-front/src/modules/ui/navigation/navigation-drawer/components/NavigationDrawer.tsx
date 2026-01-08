@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -9,12 +9,12 @@ import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/c
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
-} from '../../states/navigationDrawerWidthState';
-import { NavigationDrawerWidthEffect } from '../../components/NavigationDrawerWidthEffect';
+} from '@/ui/navigation/states/navigationDrawerWidthState';
+import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -93,25 +93,22 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const handleCollapse = useCallback(() => {
+  const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
-  }, [setIsNavigationDrawerExpanded, setTableWidthResizeIsActive]);
+  };
 
-  const handleWidthChange = useCallback(
-    (width: number) => {
-      setNavigationDrawerWidth(width);
-      setIsResizing(false);
-      setTableWidthResizeIsActive(true);
-    },
-    [setNavigationDrawerWidth, setTableWidthResizeIsActive],
-  );
+  const handleWidthChange = (width: number) => {
+    setNavigationDrawerWidth(width);
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  };
 
-  const handleResizeStart = useCallback(() => {
+  const handleResizeStart = () => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
-  }, [setTableWidthResizeIsActive]);
+  };
 
   return (
     <>

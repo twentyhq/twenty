@@ -1,0 +1,147 @@
+---
+title: API'ler
+description: Query and modify your CRM data programmatically using REST or GraphQL.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty, geliştirici dostu olacak şekilde tasarlanmıştır ve özel veri modelinize uyum sağlayan güçlü API'ler sunar. Farklı entegrasyon ihtiyaçlarını karşılamak üzere dört farklı API türü sunuyoruz.
+
+## Öncelik Geliştiricide Yaklaşımı
+
+Twenty generates APIs specifically for your data model:
+
+* **Uzun kimlik numaralarına gerek yok**: Uç noktalarda nesne ve alan adlarınızı doğrudan kullanın
+* **Standart ve özel nesneler eşit şekilde ele alınır**: Özel nesneleriniz yerleşik olanlarla aynı API muamelesini görür.
+* **Özel uç noktalar**: Her nesne ve alan kendi API uç noktasına sahiptir
+* **Özel dokümantasyon**: Çalışma alanınızın veri modeli için özel olarak üretilmiştir.
+
+<Note>
+  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+</Note>
+
+## The Two API Types
+
+### Temel API
+
+Accessed on `/rest/` or `/graphql/`
+
+Work with your actual **records** (the data):
+
+* Create, read, update, delete People, Companies, Opportunities, etc.
+* Query and filter data
+* Kayıt ilişkilerini yönetin
+
+### Meta Veriler API
+
+Accessed on `/rest/metadata/` or `/metadata/`
+
+Manage your **workspace and data model**:
+
+* Nesne ve alanlar oluşturun, değiştirin veya silin
+* Çalışma alanı ayarlarını yapılandırın
+* Define relationships between objects
+
+## REST vs GraphQL
+
+Both Core and Metadata APIs are available in REST and GraphQL formats:
+
+| Biçim       | Available Operations                                       |
+| ----------- | ---------------------------------------------------------- |
+| **REST**    | CRUD, batch operations, upserts                            |
+| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+
+Choose based on your needs — both formats access the same data.
+
+## API Uç Noktaları
+
+| Environment     | Base URL                  |
+| --------------- | ------------------------- |
+| **Cloud**       | `https://api.twenty.com/` |
+| **Self-Hosted** | `https://{your-domain}/`  |
+
+## Kimlik Doğrulama
+
+Every API request requires an API key in the header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Bir API Anahtarı Oluştur
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click **+ Create key**
+3. Alanı Yapılandır:
+   * **Name**: Descriptive name for the key
+   * **Expiration Date**: When the key expires
+4. **Kaydet**'e tıklayın
+5. **Copy immediately** — the key is only shown once
+
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+<Warning>
+  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+</Warning>
+
+### Assign a Role to an API Key
+
+For better security, assign a specific role to limit access:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Click on the role to assign
+3. **Atama** sekmesini açın
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key
+
+The key will inherit that role's permissions. See [Permissions](/l/tr/user-guide/permissions-access/capabilities/permissions) for details.
+
+### API Anahtarlarını Yönet
+
+**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+
+**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+
+## API Playground
+
+Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+
+### Access the Playground
+
+1. Go to **Settings → APIs & Webhooks**
+2. Create an API key (required)
+3. Click on **REST API** or **GraphQL API** to open the playground
+
+### What You Get
+
+* **Interactive documentation**: Generated for your specific data model
+* **Live testing**: Execute real API calls against your workspace
+* **Schema explorer**: Browse available objects, fields, and relationships
+* **Request builder**: Construct queries with autocomplete
+
+The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+
+## Toplu İşlemler
+
+Both REST and GraphQL support batch operations:
+
+* **Toplu boyut**: İstek başına 60 kayıt kadar
+* **Operations**: Create, update, delete multiple records
+
+**GraphQL-only features:**
+
+* **Batch Upsert**: Create or update in one call
+* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+
+## Rate Limits
+
+API requests are throttled to ensure platform stability:
+
+| Limit          | Değer                |
+| -------------- | -------------------- |
+| **Requests**   | 100 calls per minute |
+| **Batch size** | 60 records per call  |
+
+<Tip>
+  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+</Tip>

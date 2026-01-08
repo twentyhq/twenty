@@ -1,0 +1,120 @@
+---
+title: Configura una pipeline di vendita
+description: Configura la tua pipeline di vendita per tracciare le opportunità attraverso le fasi.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Una pipeline di vendita in Twenty è una vista Kanban del tuo oggetto Opportunità, in cui ogni colonna rappresenta una fase del tuo processo di vendita.
+
+## Passaggio 1: Configura le tue fasi
+
+Le fasi sono definite nel campo **Fase** dell'oggetto Opportunità.
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona **Opportunità**
+3. Trova e fai clic sul campo **Fase**
+4. Aggiungi, rimuovi o rinomina le fasi per allinearle al tuo processo
+
+<VimeoEmbed videoId="927890428" title="Dimostrazione video" />
+
+### Fasi consigliate
+
+| Fase               | Scopo                          |
+| ------------------ | ------------------------------ |
+| **Nuovo**          | Opportunità appena individuate |
+| **Qualificato**    | Confermate come idonee         |
+| **Incontro**       | In fase di discussione         |
+| **Proposta**       | Proposta inviata               |
+| **Negoziazione**   | Definizione dei termini        |
+| **Chiuso - Vinta** | Trattativa vinta               |
+| **Chiuso - Persa** | Trattativa persa               |
+
+<Note>
+  **5-7 fasi sono ottimali.** Troppe fasi rendono la pipeline difficile da consultare; troppo poche riducono la visibilità sull'avanzamento delle trattative.
+</Note>
+
+## Passaggio 2: Crea una vista pipeline
+
+1. Vai a **Opportunità**
+2. Clicca sul menu a discesa della vista → **+ Aggiungi vista**
+3. Chiamala "Pipeline di vendita"
+4. Clicca **Crea**
+5. Apri **Opzioni** e seleziona **Kanban** come layout
+
+La vista utilizza automaticamente il campo Fase per le colonne.
+
+## Passaggio 3: Configura la tua vista
+
+### Mostra i campi chiave
+
+1. Clicca su **Opzioni → Campi**
+2. Cerca i campi nella sezione "Campi nascosti"
+3. Clicca sull'**icona a forma di occhio** per visualizzare: Azienda, Importo, Data di chiusura, Proprietario
+
+### Abilita le aggregazioni
+
+Mostra i totali nella parte superiore di ogni colonna:
+
+1. Clicca sul numero visualizzato accanto al nome di una fase nella parte superiore di una colonna
+2. Seleziona il tipo di aggregazione (Conteggio, Somma, Media, ecc.)
+3. Scegli il campo da aggregare (ad es., Importo)
+
+**Esempio:** Mostra il valore totale delle trattative per fase aggregando Importo con Somma.
+
+### Usa la vista compatta (opzionale)
+
+Per una panoramica di alto livello con contenuto della scheda minimo:
+
+1. Clicca su **Opzioni**
+2. Attiva l'interruttore per **Vista compatta**
+
+## Passaggio 4: Crea viste personali e di team
+
+### "La mia pipeline"
+
+* **Filtro**: Proprietario = Io
+* **Visibilità**: Non in elenco (vista personale)
+
+### "Pipeline del team"
+
+* **Filtro**: Nessuno (mostra tutto)
+* **Visibilità**: Spazio di lavoro (vista condivisa)
+
+### "In chiusura questo mese"
+
+* **Tipo**: Tabella
+* **Filtro**: Data di chiusura = Questo mese, Fase ≠ Chiuso - Vinta, Fase ≠ Chiuso - Persa
+* **Ordina**: Data di chiusura crescente
+
+## Lavorare con le opportunità
+
+### Creazione di opportunità
+
+* Clicca su **+ Nuovo** nella vista Opportunità
+* Oppure clicca su **+** nella colonna di una specifica fase
+
+### Passare tra le fasi
+
+Trascina e rilascia le schede delle opportunità tra le colonne per aggiornarne la fase.
+
+<VimeoEmbed videoId="927888627" title="Dimostrazione video" />
+
+## Migliori Pratiche
+
+### Igiene della pipeline
+
+* Aggiorna quotidianamente le trattative man mano che avanzano
+* Sposta o chiudi tempestivamente le trattative stagnanti
+* Mantieni realistiche le date di chiusura
+
+### Disciplina delle fasi
+
+* Definisci criteri chiari per ogni fase
+* Sposta le trattative tempestivamente quando i criteri sono soddisfatti
+* Non lasciare le trattative troppo a lungo nelle fasi
+
+## Correlati
+
+* [Viste Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni e vista compatta
+* [Filtri e ordinamento](/l/it/user-guide/views-pipelines/capabilities/filters-and-sorting) — creazione di viste filtrate

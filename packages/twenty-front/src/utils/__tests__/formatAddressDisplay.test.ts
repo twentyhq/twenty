@@ -1,5 +1,5 @@
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { formatAddressDisplay } from '../formatAddressDisplay';
+import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
 
 describe('formatAddressDisplay', () => {
   const mockAddressValue: FieldAddressValue = {

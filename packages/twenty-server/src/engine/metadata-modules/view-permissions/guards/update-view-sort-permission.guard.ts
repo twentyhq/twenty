@@ -45,6 +45,7 @@ export class UpdateViewSortPermissionGuard implements CanActivate {
       viewId,
       request.userWorkspaceId,
       request.workspace.id,
+      request.apiKey?.id,
     );
   }
 }

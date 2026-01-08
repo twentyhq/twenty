@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 
-import { CalendarStartDay } from 'twenty-shared';
-
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { Select } from '@/ui/input/components/Select';
 import { type DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { t } from '@lingui/core/macro';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { type SelectOption } from 'twenty-ui/input';
 
 type DateTimeSettingsCalendarStartDaySelectProps = {

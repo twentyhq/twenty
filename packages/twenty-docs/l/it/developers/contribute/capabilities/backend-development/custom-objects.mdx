@@ -1,0 +1,39 @@
+---
+title: Oggetti personalizzati
+---
+
+Gli oggetti sono strutture che permettono di memorizzare dati (record, attributi e valori) specifici di un'organizzazione. Twenty offre sia oggetti standard che personalizzati.
+
+Gli oggetti standard sono oggetti integrati con un set di attributi disponibili per tutti gli utenti. Examples of standard objects in Twenty include Company and Person. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+
+Gli oggetti personalizzati sono oggetti che puoi creare per memorizzare informazioni uniche per la tua organizzazione. Non sono integrati; i membri del tuo workspace possono creare e personalizzare oggetti personalizzati per contenere informazioni non adatte per gli oggetti standard.
+
+## Schema di alto livello
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Schema di alto livello" />
+</div>
+
+<br />
+
+## Come funziona
+
+Gli oggetti personalizzati derivano da tabelle di metadati che determinano la forma, il nome e il tipo degli oggetti. Tutte queste informazioni sono presenti nello schema di metadati, composto da tabelle:
+
+* **DataSource**: Dettagli su dove sono presenti i dati.
+* **Oggetto**: Descrive l'oggetto e si collega a una DataSource.
+* **Campo**: Delinea i campi di un Oggetto e si collega all'Oggetto.
+
+Per aggiungere un oggetto personalizzato, il membro del workspace interrogherà l'API /metadata. Questo aggiorna i metadati di conseguenza e calcola uno schema GraphQL basato sui metadati, memorizzandolo in una cache GQL per un uso successivo.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Interroga l'API /metadata per aggiungere oggetti personalizzati" />
+</div>
+
+<br />
+
+Per recuperare i dati, il processo consiste nel effettuare interrogazioni tramite l'endpoint /graphql e passarle tramite il Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Interroga l'endpoint /graphql per recuperare dati" />
+</div>

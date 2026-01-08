@@ -1,0 +1,228 @@
+---
+title: Importare le relazioni tra oggetti tramite CSV
+description: Guida completa passo dopo passo per collegare i record durante l'importazione CSV.
+---
+
+## Panoramica
+
+Questa guida ti accompagna nell'importazione delle relazioni tra oggetti — ad esempio, collegare Persone ad Aziende o Opportunità a Persone.
+
+<Note>**Cosa può essere importato:** Solo relazioni uno-a-molti che puntano a un singolo tipo di oggetto. Le relazioni che puntano a più tipi di oggetto (come Note collegate a Persone E Aziende) non sono ancora supportate per l'importazione.</Note>
+
+## Comprendere le relazioni
+
+### Che cos'è una relazione "uno-a-molti"?
+
+In una relazione uno-a-molti:
+
+* **Una** Azienda ha **molte** Persone (dipendenti)
+* **Una** Azienda ha **molte** Opportunità
+* **Una** Persona ha **molte** Attività
+
+Il lato "uno" è il **genitore**. Il lato "molti" è il **figlio**.
+
+### Relazioni comuni in Twenty
+
+| Relazione             | Lato "uno" (genitore) | Lato "molti" (figlio) |
+| --------------------- | --------------------- | --------------------- |
+| Aziende → Persone     | Azienda               | Persone               |
+| Aziende → Opportunità | Azienda               | Opportunità           |
+| Persone → Attività    | Persona               | Attività              |
+| Persone → Note        | Persona               | Note                  |
+
+## Passaggio 1: Identifica i lati "Uno" e "Molti"
+
+Prima di importare, determina quale oggetto è il genitore e quale è il figlio.
+
+**Chiediti:** "Un [Oggetto A] ha molti [Oggetto B]?"
+
+* Un'Azienda → Molte Persone ✓ (l'Azienda è il genitore)
+* Una Persona → Molte Aziende ✗ (Questo è sbagliato: una persona appartiene a un'azienda)
+
+## Passaggio 2: Importa prima i record genitore
+
+Il genitore (lato "uno") deve esistere in Twenty prima di potervi fare riferimento.
+
+**Ordine di importazione:**
+
+1. **Aziende** per prime (nessuna dipendenza)
+2. **Persone** dopo (collegate alle Aziende)
+3. **Opportunità** al terzo posto (collegate ad Aziende e/o Persone)
+4. **Attività/Note** (collegate a uno qualsiasi dei precedenti)
+
+<Warning>
+  **Se il record genitore non esiste, l'importazione fallirà.**
+
+  Verifica sempre che le Aziende siano importate prima di importare le Persone con riferimenti all'Azienda.
+</Warning>
+
+## Passaggio 3: Annota l'identificatore univoco del genitore
+
+Devi fare riferimento al record genitore usando un **identificatore univoco**. Opzioni disponibili:
+
+| Oggetto genitore                  | Identificatori univoci disponibili                                           |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| **Aziende**                       | `id` (UUID), `domain` (consigliato) o qualsiasi campo univoco personalizzato |
+| **Persone**                       | `id` (UUID), `email` o qualsiasi campo univoco personalizzato                |
+| **Membri dello spazio di lavoro** | `id` (UUID), `email` (non il nome)                                           |
+| **Oggetti personalizzati**        | `id` (UUID) o qualsiasi campo contrassegnato come univoco                    |
+
+<Note>**Consigliato:** Usa `domain` per le Aziende ed `email` per le Persone. Sono leggibili e facili da verificare nel tuo foglio di calcolo.</Note>
+
+### Trovare l'identificatore
+
+Se ti serve l'`id`:
+
+1. Esporta i record genitore da Twenty
+2. L'esportazione include la colonna `id`
+3. Usa questi ID nel file dei record figlio
+
+## Passaggio 4: Verifica che il campo di relazione esista
+
+Prima di importare, assicurati che esista il campo di relazione tra i tuoi oggetti.
+
+**Per verificare o creare:**
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona il tuo oggetto figlio (ad es., Persone)
+3. Cerca un campo di relazione che punti al genitore (ad es., Azienda)
+4. Se non esiste, crealo:
+   * Fai clic su **+ Aggiungi campo**
+   * Seleziona il tipo **Relazione**
+   * Scegli l'oggetto genitore
+
+## Passaggio 5: Prepara il tuo file CSV
+
+Aggiungi al CSV dei record figlio una colonna che faccia riferimento al genitore usando il suo identificatore univoco.
+
+### Esempio: Persone collegate ad Aziende
+
+**Il tuo CSV delle Persone:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+La colonna `companyDomain` fa riferimento al dominio dell'Azienda.
+
+### Requisiti di formato
+
+| Identificatore | Formato        | Esempio                                |
+| -------------- | -------------- | -------------------------------------- |
+| Dominio        | Formato URL    | `https://acme.com`                     |
+| Email          | Email standard | `john@acme.com`                        |
+| ID             | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Il formato del dominio è importante!**
+
+  Usa `https://domain.com` (non solo `domain.com`). Questo corrisponde a come Twenty archivia i domini delle Aziende e previene errori di corrispondenza.
+</Warning>
+
+### Regole importanti
+
+1. **Corrispondenza esatta richiesta** — il valore deve corrispondere esattamente al record genitore
+2. **Mappa un solo identificatore univoco** — non includere sia `companyId` che `companyDomain`
+3. **Sensibile alle maiuscole/minuscole** — `Acme.com` ≠ `acme.com`
+
+## Passaggio 6: Carica e mappa la relazione
+
+1. Vai all'oggetto figlio (ad es., Persone)
+2. Fai clic su **⋮** → **Importa record**
+3. Carica il tuo file CSV
+4. Nella fase di mappatura dei campi:
+   * Trova la tua colonna di relazione (ad es., `companyDomain`)
+   * Mappala al campo di relazione **Azienda**
+5. Completa le restanti mappature
+6. Controlla gli errori e conferma
+
+Twenty collegherà automaticamente ogni record figlio al genitore corrispondente.
+
+## Passaggio 7: Verifica l'importazione
+
+Dopo l'importazione:
+
+1. Apri alcuni record figlio (ad es., Persone)
+2. Verifica che il campo di relazione mostri il genitore corretto (ad es., Azienda)
+3. Apri un record genitore e controlla la sezione dei record correlati
+
+## Errori comuni da evitare
+
+| Errore                                    | Problema                                          | Soluzione                                                                          |
+| ----------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Ordine di importazione errato**         | Importare le Persone prima delle Aziende          | Importa sempre prima i genitori, poi i figli                                       |
+| **Formato del dominio errato**            | Uso di `acme.com` invece di `https://acme.com`    | Usa il formato URL completo con `https://`                                         |
+| **Più campi univoci**                     | Mappare sia `companyId` che `companyDomain`       | Mappa un solo identificatore univoco                                               |
+| **Campo di relazione mancante**           | Il campo di relazione non esiste nel modello dati | Crealo in **Impostazioni → Modello dati** prima dell'importazione                  |
+| **Record inesistenti**                    | Il record genitore non esiste in Twenty           | Importa prima i record genitore oppure verifica la presenza di errori di battitura |
+| **Discrepanza tra maiuscole e minuscole** | `Acme.com` nel file ma `acme.com` in Twenty       | Assicurati che le maiuscole/minuscole corrispondano esattamente                    |
+
+## Collegamento ai membri del Workspace
+
+Quando colleghi i membri del Workspace (il tuo team):
+
+* Usa il loro **indirizzo email**, non il nome
+* Esempio: `owner@yourcompany.com`, non "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Cosa succede se il mio record genitore non ha un dominio o un'email?">
+    Hai due opzioni:
+
+    1. Usa l'`id` di Twenty (esporta i record genitore per ottenere i loro ID)
+    2. Crea un campo univoco personalizzato nel tuo modello dati per archiviare un ID esterno dal sistema precedente
+  </Accordion>
+
+  <Accordion title="Posso aggiornare le relazioni sui record esistenti?">
+    Sì! Includi l'identificatore univoco del record figlio (ad es., `email` per Persone) e il nuovo valore della relazione. L'importazione aggiornerà la relazione.
+  </Accordion>
+
+  <Accordion title="Posso importare relazioni molti-a-molti?">
+    Le relazioni molti-a-molti non sono ancora supportate per l'importazione. È previsto per H1 2026.
+  </Accordion>
+
+  <Accordion title="Posso collegare a più tipi di oggetto (come Note a Persone E Aziende)?">
+    Le relazioni che puntano a più tipi di oggetto non sono ancora supportate per importazione/esportazione. È nella nostra roadmap.
+  </Accordion>
+
+  <Accordion title="Cosa succede se un record genitore non esiste?">
+    L'importazione mostrerà un errore per quella riga. Puoi:
+
+    * Importa prima il record genitore, poi ripeti l'importazione
+    * Correggi il valore di riferimento
+    * Rimuovi la riga dall'importazione
+  </Accordion>
+
+  <Accordion title="Perché la mia relazione non si collega correttamente?">
+    Cause comuni:
+
+    * Formato errato (usa `https://domain.com` per i domini)
+    * Discrepanza tra maiuscole e minuscole (controlla l'ortografia esatta)
+    * Il genitore non esiste (importa prima i genitori)
+    * Mappatura di più identificatori (usane uno solo)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Ricorda: i record eliminati in modo non definitivo contano ai fini dell'unicità.**
+
+  Se ricevi errori "not found" ma il record sembra esistere, controlla Menu comandi → Visualizza record eliminati. Il genitore potrebbe essere stato eliminato in modo non definitivo.
+</Warning>
+
+## Risoluzione dei problemi
+
+Hai problemi? Controlla:
+
+* [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
+* [Capacità di importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
+* [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)

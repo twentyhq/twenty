@@ -3,7 +3,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
-import { CRUD_PERMISSIONS } from '../constants/WorkflowAiAgentCrudPermissions';
+import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
 import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 

@@ -1,0 +1,201 @@
+---
+title: Import Companies via CSV
+description: Complete step-by-step guide to importing companies into Twenty.
+---
+
+## Overview
+
+This guide walks you through importing your companies into Twenty. **Companies should be imported first** because People and Opportunities link to Companies.
+
+## Before You Start
+
+### Prerequisites Checklist
+
+<Check>
+  Your file is CSV, XLSX, or XLS format
+</Check>
+
+<Check>
+  File has fewer than 10,000 records
+</Check>
+
+<Check>
+  No duplicate domains in your file
+</Check>
+
+<Check>
+  All custom fields exist in **Settings → Data Model**
+</Check>
+
+<Note>
+  Need to import more than 10,000 companies? Split into multiple files or use the [API import](/l/ja/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
+
+## Step 1: Prepare Your Company Data
+
+### Required and Recommended Fields
+
+| Field             | Required?   | Format               | Notes                    |
+| ----------------- | ----------- | -------------------- | ------------------------ |
+| **Name**          | Recommended | Text                 | Company display name     |
+| **Domain**        | Recommended | `https://domain.com` | Unique identifier        |
+| **Address**       | Optional    | Multiple columns     | See below                |
+| **Employees**     | Optional    | Number               | Employee count           |
+| **Custom fields** | Optional    | Varies               | Must exist in Data Model |
+
+### Domain Format
+
+<Warning>
+  **Use the format `https://domain.com` for domains.**
+
+  This matches the format used when Companies are auto-created from email/calendar sync, preventing duplicates later.
+</Warning>
+
+**Domain columns:**
+
+* **Domain / Domain Label**: `acme.com`
+* **Domain / Domain URL**: `https://acme.com`
+
+### Address Format
+
+Address is a nested field with multiple columns:
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### Sample CSV Structure
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **Pro tip:** Click **Download sample file** during import to see the exact column names Twenty expects.
+</Note>
+
+## Step 2: Access the Import Feature
+
+**Option 1: From the Companies View**
+
+1. Navigate to **Companies** in the left sidebar
+2. Click the **⋮** icon on the top right
+3. Select **Import records**
+
+**Option 2: Using Command Menu**
+
+1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
+2. Type "import"
+3. Select **Import records**
+4. Choose **Companies**
+
+## Step 3: Upload Your File
+
+1. Click **Select file**
+2. Choose your CSV, XLSX, or XLS file
+3. Wait for Twenty to analyze your file
+
+## Step 4: Map Your Columns
+
+Twenty automatically tries to match your columns to fields. Review and adjust:
+
+1. **Check automatic mappings** — verify they're correct
+2. **Fix incorrect mappings** — click the dropdown to select the right field
+3. **Skip columns** — select **Do not map** for columns you don't want to import
+
+### Important Mapping Rules
+
+* **Domain**: Map to **Domain / Domain URL** (not Domain Label)
+* **Address**: Map each part to its specific column (City, State, etc.)
+* **Select fields**: Values must match existing options (or you'll map them in the next step)
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## Step 5: Map Select Field Values
+
+If you have Select or Multi-Select fields:
+
+1. Twenty shows your values alongside existing options
+2. Match each value in your file to a Twenty option
+3. Or create new options if needed
+
+<Note>
+  Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+</Note>
+
+## Step 6: Review and Fix Errors
+
+Before completing the import, Twenty validates your data:
+
+1. Click **Next Steps**
+2. Rows with errors are highlighted in **yellow**
+3. **Fix errors directly** — click a cell and edit the value
+4. **Remove problematic rows** — click the X to skip that row
+
+### Common Company Import Errors
+
+| Error                      | Cause                           | Solution                                   |
+| -------------------------- | ------------------------------- | ------------------------------------------ |
+| **Duplicate domain**       | Domain already exists in Twenty | Remove from file or update existing record |
+| **Invalid domain format**  | Wrong format                    | Use `https://domain.com`                   |
+| **Missing required field** | Required field is empty         | Fill in the value or remove the row        |
+
+## Step 7: Complete the Import
+
+1. Review the import summary
+2. Click **Confirm** to import
+3. Wait for the import to complete
+4. Verify by checking a few records
+
+## After Importing Companies
+
+Now you can import records that link to Companies:
+
+1. **[Import People](/l/ja/user-guide/data-migration/how-tos/import-contacts-via-csv)** — link them to Companies using the domain
+2. **Import Opportunities** — link them to Companies
+3. **Verify the import** — spot-check a few records to ensure data is correct
+
+## Updating Existing Companies
+
+To update companies instead of creating new ones:
+
+1. Include the `domain` or `id` column in your file
+2. Twenty matches records by this unique identifier
+3. Existing companies are updated; new ones are created
+
+See [How to Update Existing Records](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import) for details.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why can't two Companies have the same domain?">
+    Domain is a unique identifier in Twenty. This prevents duplicate companies and ensures email sync correctly links emails to the right company.
+  </Accordion>
+
+  <Accordion title="What if I have companies without a domain?">
+    You can leave the domain empty. However, we recommend adding domains when possible for better data quality and automatic email linking.
+  </Accordion>
+
+  <Accordion title="Can I import companies without any People linked?">
+    Yes! You can import companies first, then import People later and link them using the company domain.
+  </Accordion>
+
+  <Accordion title="What happens if I import a domain that already exists?">
+    If you include a unique identifier (domain or id) that matches an existing company, Twenty updates that company instead of creating a duplicate.
+  </Accordion>
+
+  <Accordion title="How do I fix 'duplicate domain' errors?">
+    Either remove the duplicate from your file, or include the company's `id` to update the existing record instead.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+Having issues? Check:
+
+* [How to Fix Import Errors](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)
+* [Field Mapping Reference](/l/ja/user-guide/data-migration/capabilities/field-mapping)
+* [Uniqueness Constraints](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)

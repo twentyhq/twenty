@@ -1,0 +1,85 @@
+---
+title: İş Akışı Versiyonları
+description: İş akışı sürümlerini ve taslaklarını yönetin.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Sürümler Hakkında
+
+Bir iş akışını her etkinleştirdiğinizde yeni bir sürüm oluşturulur. Bu, zaman içinde değişiklikleri izlemenize ve gerekirse önceki yapılandırmalara geri dönmenize olanak tanır.
+
+## Sürüm Durumları
+
+| Durum           | Açıklama                                        |
+| --------------- | ----------------------------------------------- |
+| **Taslak**      | Düzenleniyor, henüz yayımlanmadı                |
+| **Aktif**       | Tetikleyicilere yanıt veren canlı sürüm         |
+| **Devre Dışı**  | Önceden aktifti, ancak manuel olarak durduruldu |
+| **Arşivlenmiş** | Geçmiş için saklanan önceki sürümler            |
+
+## Taslaklarla Çalışma
+
+Aktif bir iş akışını düzenlediğinizde, değişiklikleriniz **taslak** olarak kaydedilir. Güncellemeler üzerinde çalışırken aktif sürüm çalışmaya devam eder.
+
+Düzenlemeyi bitirdiğinizde şunları yapabilirsiniz:
+
+* **Etkinleştir**: Taslağı yeni aktif sürüm olarak yayımlayın (önceki sürüm arşivlenir)
+* **Sil**: Taslağı silin ve mevcut aktif sürümü koruyun
+
+## Versiyon Tarihçesi
+
+### Önceki Sürümleri Görüntüleme
+
+1. İş akışını açın
+2. **Sürümler** sekmesine tıklayın
+3. Zaman damgalarıyla birlikte tüm önceki sürümleri görün
+
+### Bir Sürümü Geri Yükleme
+
+1. Geri yüklemek istediğiniz sürümü bulun
+2. **Taslak olarak kullan** seçeneğine tıklayın
+3. Sürüm yeni bir taslağa kopyalanır
+4. Gerekli tüm güncellemeleri yapın
+5. Hazır olduğunuzda etkinleştirin
+
+## En İyi Uygulamalar
+
+### Sürüm Yönetimi
+
+* Yalnızca üretime hazır olduğunda etkinleştirin
+* Sürümler arasında yalnızca anlamlı değişiklikler bulundurun
+* İş akışı adları veya açıklamalarındaki büyük değişiklikleri belgeleyin
+* Etkinleştirmeden önce taslak modunda test edin
+
+### Değişiklikleri Geri Alma
+
+* Yeni bir sürüm sorunlara neden olursa önceki sürümü geri yükleyin
+* Nelerin değiştiğini izlemek için sürüm geçmişini kullanın
+* Geri yüklenen sürümleri etkinleştirmeden önce her zaman test edin
+
+## Yaygın İş Akışları
+
+### Hızlı Düzenleme
+
+1. Aktif bir iş akışında küçük değişiklikler yapın
+2. Taslak modunda test edin
+3. Yeni sürümü etkinleştirin
+
+### Kapsamlı Revizyon
+
+1. Önceki sürümü başlangıç noktası olarak kullanın
+2. Taslakta önemli değişiklikler yapın
+3. Tüm senaryoları kapsamlı şekilde test edin
+4. Emin olduğunuzda etkinleştirin
+
+### Geri Alma
+
+1. Mevcut sürümdeki sorunu belirleyin
+2. Geçmişte çalışan son sürümü bulun
+3. **Taslak olarak kullan** seçeneğine tıklayın
+4. Eski davranışı geri getirmek için etkinleştirin
+
+## İlgili
+
+* [İş Akışlarına Başlarken](/l/tr/user-guide/workflows/overview)
+* [İş Akışı Çalıştırmaları](/l/tr/user-guide/workflows/capabilities/workflow-runs)

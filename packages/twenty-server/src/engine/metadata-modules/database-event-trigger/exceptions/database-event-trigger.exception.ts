@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -10,14 +11,21 @@ export enum DatabaseEventTriggerExceptionCode {
   SERVERLESS_FUNCTION_NOT_FOUND = 'SERVERLESS_FUNCTION_NOT_FOUND',
 }
 
-const databaseEventTriggerExceptionUserFriendlyMessages: Record<
-  DatabaseEventTriggerExceptionCode,
-  MessageDescriptor
-> = {
-  [DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND]: msg`Database event trigger not found.`,
-  [DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_ALREADY_EXIST]: msg`Database event trigger already exists.`,
-  [DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_INVALID]: msg`Invalid database event trigger.`,
-  [DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND]: msg`Serverless function not found.`,
+const getDatabaseEventTriggerExceptionUserFriendlyMessage = (
+  code: DatabaseEventTriggerExceptionCode,
+) => {
+  switch (code) {
+    case DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_NOT_FOUND:
+      return msg`Database event trigger not found.`;
+    case DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_ALREADY_EXIST:
+      return msg`Database event trigger already exists.`;
+    case DatabaseEventTriggerExceptionCode.DATABASE_EVENT_TRIGGER_INVALID:
+      return msg`Invalid database event trigger.`;
+    case DatabaseEventTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      return msg`Serverless function not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class DatabaseEventTriggerException extends CustomException<DatabaseEventTriggerExceptionCode> {
@@ -29,7 +37,7 @@ export class DatabaseEventTriggerException extends CustomException<DatabaseEvent
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        databaseEventTriggerExceptionUserFriendlyMessages[code],
+        getDatabaseEventTriggerExceptionUserFriendlyMessage(code),
     });
   }
 }

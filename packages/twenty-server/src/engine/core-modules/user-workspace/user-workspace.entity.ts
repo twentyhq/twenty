@@ -2,8 +2,8 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
-  PermissionsOnAllObjectRecords,
   PermissionFlagType,
+  PermissionsOnAllObjectRecords,
 } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
@@ -16,7 +16,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -24,8 +24,8 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorAuthenticationMethodSummaryDto } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
 
 registerEnumType(PermissionFlagType, {
   name: 'PermissionFlagType',
@@ -47,7 +47,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 )
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
-export class UserWorkspaceEntity {
+export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -62,17 +62,6 @@ export class UserWorkspaceEntity {
   @Field(() => UUIDScalarType, { nullable: false })
   @Column()
   userId: string;
-
-  @Field(() => WorkspaceEntity, { nullable: true })
-  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.workspaceUsers, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
-  @Field(() => UUIDScalarType, { nullable: false })
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @Column({ nullable: true })
   defaultAvatarUrl: string;

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -9,13 +10,19 @@ export enum PublicDomainExceptionCode {
   PUBLIC_DOMAIN_NOT_FOUND = 'PUBLIC_DOMAIN_NOT_FOUND',
 }
 
-const publicDomainExceptionUserFriendlyMessages: Record<
-  PublicDomainExceptionCode,
-  MessageDescriptor
-> = {
-  [PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED]: msg`This public domain is already registered.`,
-  [PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN]: msg`This domain is already registered as a custom domain.`,
-  [PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND]: msg`Public domain not found.`,
+const getPublicDomainExceptionUserFriendlyMessage = (
+  code: PublicDomainExceptionCode,
+) => {
+  switch (code) {
+    case PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED:
+      return msg`This public domain is already registered.`;
+    case PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN:
+      return msg`This domain is already registered as a custom domain.`;
+    case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND:
+      return msg`Public domain not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class PublicDomainException extends CustomException<PublicDomainExceptionCode> {
@@ -26,7 +33,8 @@ export class PublicDomainException extends CustomException<PublicDomainException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? publicDomainExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ??
+        getPublicDomainExceptionUserFriendlyMessage(code),
     });
   }
 }

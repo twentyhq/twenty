@@ -1,0 +1,209 @@
+---
+title: Exportieren Sie Ihre Daten
+description: Vollständige Schritt-für-Schritt-Anleitung zum Exportieren von Daten aus Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Überblick
+
+Exportieren Sie die Daten Ihres Arbeitsbereichs als CSV für Backups, Berichte oder Migrationen.
+
+**Anwendungsfälle:**
+
+* **Regelmäßige Backups** — behalten Sie Kopien Ihrer Daten
+* **Externe Berichterstattung** — analysieren Sie Daten in Excel, Google Sheets oder BI-Tools
+* **Migration** — übertragen Sie Daten in ein anderes System
+* **Massenaktualisierungen** — exportieren, bearbeiten und erneut importieren, um Datensätze zu aktualisieren
+
+## Was Sie wissen müssen
+
+### Exportbeschränkungen
+
+* **Maximal 20.000 Datensätze** pro Export
+* Nur **sichtbare Spalten** werden exportiert
+* Nur **gefilterte Datensätze** werden exportiert (basierend auf Ihrer aktuellen Ansicht)
+
+<Note>Für größere Exporte (mehr als 20.000 Datensätze) verwenden Sie Filter, um stapelweise zu exportieren, oder nutzen Sie die [API](/l/de/developers/extend/capabilities/apis).</Note>
+
+### Berechtigungen
+
+Sie benötigen die Berechtigung **"Export CSV"**, um Daten zu exportieren. Kontaktieren Sie Ihren Workspace-Admin, wenn Sie diese Option nicht haben.
+
+## Schritt 1: Zum Objekt navigieren
+
+Gehen Sie zu dem Objekt, das Sie exportieren möchten:
+
+* **People** — für Kontakte
+* **Companies** — für Organisationen
+* **Opportunities** — für Deals
+* **Benutzerdefinierte Objekte** — jedes Objekt, das Sie erstellt haben
+
+## Schritt 2: Ansicht konfigurieren
+
+**Wichtig:** Der Export enthält nur das, was in Ihrer aktuellen Ansicht sichtbar ist.
+
+### Spalten hinzufügen/entfernen
+
+1. Klicken Sie auf **Optionen → Felder** (oder auf das **+** am Ende der Spalten)
+2. Wählen Sie die Felder aus, die Sie exportieren möchten
+3. Deaktivieren Sie Felder, die Sie nicht benötigen
+
+### Datensätze filtern (optional)
+
+Wenn Sie nur einen Teil der Daten benötigen:
+
+1. Klicken Sie auf **Filter**
+2. Fügen Sie Filterbedingungen hinzu (z. B. "Erstellungsdatum > 1. Januar 2024")
+3. Es werden nur übereinstimmende Datensätze exportiert
+
+### Datensätze sortieren (optional)
+
+1. Klicken Sie auf eine Spaltenüberschrift, um zu sortieren
+2. Der Export übernimmt Ihre Sortierreihenfolge
+
+<Note>**Erstellen Sie eine dedizierte Exportansicht.** Speichern Sie eine Ansicht, die speziell für Exporte konfiguriert ist, damit Sie sie nicht jedes Mal neu konfigurieren müssen.</Note>
+
+## Schritt 3: Daten exportieren
+
+1. Klicken Sie auf das Symbol **⋮** oben rechts in der Tabelle
+2. Wählen Sie **Ansicht exportieren**
+3. Wählen Sie den Speicherort für die CSV-Datei
+4. Warten Sie, bis der Download abgeschlossen ist
+
+## Was exportiert wird
+
+| Enthalten                                         | Nicht enthalten                       |
+| ------------------------------------------------- | ------------------------------------- |
+| Alle sichtbaren Spalten                           | Ausgeblendete Spalten                 |
+| Datensätze, die den aktuellen Filtern entsprechen | Herausgefilterte Datensätze           |
+| Benutzerdefinierte Feldwerte                      | Felder, die nicht in der Ansicht sind |
+| Datensatz-IDs                                     | Dateianhänge                          |
+| Beziehungs-IDs                                    | Bilder                                |
+
+### Relationsfelder
+
+Beziehungs-IDs werden nur auf der **"Many"-Seite** einer Beziehung exportiert:
+
+* **People-Export** enthält eine `companyId`-Spalte (Beziehung People → Company)
+* **Companies-Export** enthält NICHT `peopleIds` (Companies ist die "One"-Seite)
+
+Das bedeutet, Sie können den People-Export zum Re-Import verwenden und die Verknüpfung zur Company beibehalten, müssen jedoch People nach Companies erneut importieren, um die Beziehungen wiederherzustellen.
+
+## Exportieren für bestimmte Zwecke
+
+### Für Backups
+
+1. Erstellen Sie eine Ansicht, in der **alle Felder** sichtbar sind
+2. Entfernen Sie alle Filter, um alle Datensätze einzubeziehen
+3. Exportieren Sie jeden Objekttyp separat
+4. Speichern Sie Exporte an einem sicheren Ort
+5. Richten Sie eine wiederkehrende Erinnerung ein (wöchentlich/monatlich)
+
+### Für externe Berichterstattung
+
+1. Nehmen Sie nur die Felder auf, die Sie für die Analyse benötigen
+2. Wenden Sie Filter an, um sich auf relevante Daten zu konzentrieren
+3. Erwägen Sie, nach dem Feld zu sortieren, das Sie analysieren werden
+
+### Für Massenaktualisierungen
+
+1. Exportieren Sie die Datensätze, die Sie aktualisieren möchten
+2. Fügen Sie den eindeutigen Bezeichner ein (`email`, `domain` oder `id`)
+3. Bearbeiten Sie die exportierte Datei
+4. Erneut importieren, um Datensätze zu aktualisieren
+   Siehe: [So aktualisieren Sie vorhandene Datensätze](/l/de/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Für Migration
+
+Wenn Sie zum Zweck der Migration in ein anderes System exportieren:
+
+1. **Exportieren Sie jedes Objekt separat** — People, Companies, Opportunities usw.
+2. **ID-Felder einbeziehen** — diese helfen, Beziehungen beizubehalten
+3. **Feldzuordnungen dokumentieren** — notieren Sie, wie Twenty-Felder Ihrem Zielsystem zugeordnet werden
+
+## Umgang mit großen Datensätzen (mehr als 20.000 Datensätze)
+
+Das Exportlimit beträgt 20.000 Datensätze. Für größere Datensätze:
+
+### Option 1: Stapelweiser Export
+
+1. Fügen Sie einen Filter hinzu (z. B. "Erstellungsdatum"-Bereiche)
+2. Exportieren Sie den ersten Stapel
+3. Ändern Sie den Filter
+4. Exportieren Sie den nächsten Stapel
+5. Kombinieren Sie die Dateien in Ihrer Tabellenkalkulation
+
+**Beispielfilter für die Stapelverarbeitung:**
+
+* Nach Datumsbereich (Januar, Februar, März ...)
+* Nach Eigentümer/in (Teammitglied A, Teammitglied B ...)
+* Nach Status (Aktiv, Inaktiv ...)
+
+### Option 2: Verwenden Sie die API
+
+Die API hat kein Datensatzlimit:
+
+1. Holen Sie sich Ihren API-Schlüssel unter **Einstellungen → Entwickler**
+2. Verwenden Sie die GraphQL-API, um Datensätze abzufragen
+3. Verarbeiten Sie die Ergebnisse in Ihrer Anwendung
+
+Siehe: [API-Dokumentation](/l/de/developers/extend/capabilities/apis)
+
+## Tipps und Best Practices
+
+### Exportansichten erstellen
+
+Speichern Sie Ansichten, die speziell für Exporte konfiguriert sind:
+
+1. Konfigurieren Sie Spalten und Filter
+2. Klicken Sie auf **Ansichtsoptionen** → **Als neue Ansicht speichern**
+3. Benennen Sie sie "Export - [Zweck]"
+
+### Sichern Sie Ihre Exporte
+
+Exportierte Dateien können sensible Daten enthalten:
+
+* Speichern Sie sie an sicheren Orten
+* Löschen Sie alte Exporte, wenn sie nicht mehr benötigt werden
+* Seien Sie vorsichtig beim Teilen von Exportdateien
+
+### Vor dem Export prüfen
+
+<Check>Die richtigen Spalten sind sichtbar</Check>
+<Check>Filter sind korrekt gesetzt (oder für den Vollexport entfernt)</Check>
+<Check>Sie haben eine Exportberechtigung</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Warum fehlen in meinem Export einige Spalten?">
+    Es werden nur sichtbare Spalten exportiert. Fügen Sie die benötigten Spalten vor dem Export über **Optionen → Felder** hinzu.
+  </Accordion>
+
+  <Accordion title="Warum enthält mein Export nicht alle Datensätze?">
+    Überprüfen Sie Ihre Filter. Der Export enthält nur Datensätze, die Ihren aktuellen Ansichtsfiltern entsprechen. Entfernen Sie Filter, um alle Datensätze zu exportieren.
+  </Accordion>
+
+  <Accordion title="Kann ich mehr als 20.000 Datensätze exportieren?">
+    Nicht in einem einzigen Export. Verwenden Sie Filter, um stapelweise zu exportieren, oder nutzen Sie die API für größere Datensätze.
+  </Accordion>
+
+  <Accordion title="Welches Format hat die Exportdatei?">
+    CSV (durch Kommas getrennte Werte). Lässt sich in Excel, Google Sheets oder jeder Tabellenkalkulationsanwendung öffnen.
+  </Accordion>
+
+  <Accordion title="Sind Beziehungs-IDs enthalten?">
+    Ja, aber nur auf der "Many"-Seite von Beziehungen. Beispielsweise enthält ein People-Export `companyId`, ein Companies-Export enthält jedoch keine People-IDs.
+  </Accordion>
+
+  <Accordion title="Kann ich Exporte automatisieren?">
+    Nicht direkt über die UI. Verwenden Sie die API, um automatisierte Export-Workflows zu erstellen.
+  </Accordion>
+</AccordionGroup>
+
+## Nächste Schritte
+
+* [So aktualisieren Sie vorhandene Datensätze](/l/de/user-guide/data-migration/how-tos/update-existing-records-via-import) — bearbeiten Sie Ihren Export und importieren Sie ihn erneut
+* [So importieren Sie Daten über die API](/l/de/user-guide/data-migration/how-tos/import-data-via-api) — für große Datensätze
+* [API-Dokumentation](/l/de/developers/extend/capabilities/apis) — erstellen Sie benutzerdefinierte Export-Workflows

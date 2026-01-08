@@ -3,6 +3,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordCalendar } from '@/object-record/record-calendar/components/RecordCalendar';
 import { RecordIndexCalendarDataLoaderEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarDataLoaderEffect';
+import { RecordIndexCalendarSelectedDateInitEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarSelectedDateInitEffect';
 import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -52,6 +53,7 @@ export const RecordIndexCalendarContainer = ({
       >
         <RecordCalendar />
         <RecordIndexCalendarDataLoaderEffect />
+        <RecordIndexCalendarSelectedDateInitEffect />
       </RecordCalendarContextProvider>
     </RecordComponentInstanceContextsWrapper>
   );

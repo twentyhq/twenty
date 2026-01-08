@@ -1,0 +1,311 @@
+---
+title: Azioni del workflow
+description: Scopri le azioni disponibili nei workflow di Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Informazioni sulle azioni
+
+Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concatenare più azioni per creare automazioni complesse.
+
+<Tip>
+  * Usa il selettore di variabili (fai clic sull'icona `(x+)`) per sfogliare i dati disponibili dai passaggi precedenti
+  * Passa il mouse su qualsiasi campo di input per vedere da quale passaggio proviene una variabile — utile quando lo stesso campo (ad es., ID) esiste in più passaggi precedenti
+  * Assegna a ogni azione un nome descrittivo per una manutenzione più semplice
+</Tip>
+
+## Azioni sui record
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Crea un Record
+
+Aggiunge un nuovo record a un oggetto selezionato.
+
+**Configurazione:**
+
+* Seleziona l'oggetto di destinazione
+* Compila i campi richiesti e opzionali
+* Usa i dati dai passaggi precedenti oppure inserisci i valori manualmente per popolare i campi
+
+**Output**: I dati del nuovo record creato sono disponibili per l'uso in passaggi successivi.
+
+### Aggiorna Record
+
+Modifica un record esistente in un oggetto selezionato.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Configurazione:**
+
+* Seleziona l'oggetto di destinazione
+* Scegli il record specifico da aggiornare.
+  * Puoi scegliere un record fisso, utilizzando il menu a discesa che mostra tutti i record disponibili.
+  * Oppure puoi selezionare dinamicamente il record, indicando un record trovato in un passaggio precedente, usando `(x+)`. In questa fase non è possibile cercare il record in base a criteri diversi. Se non hai ancora identificato il record, aggiungi un passaggio `Search Record` prima di questo passaggio `Update Record`.
+* Seleziona i campi da modificare e inserisci nuovi valori
+
+**Output**: I dati del record aggiornato sono disponibili per l'uso in passaggi successivi.
+
+### Elimina Record
+
+Rimuove un record da un oggetto selezionato.
+
+**Configurazione**:
+
+* Seleziona l'oggetto di destinazione
+* Scegli il record specifico da eliminare
+
+**Output**: I dati del record eliminato rimangono disponibili per l'uso in passaggi successivi.
+
+### Cerca Record
+
+Trova i record all'interno di un oggetto selezionato utilizzando condizioni di filtro.
+
+**Configurazione**:
+
+* Seleziona l'oggetto da cercare
+* Imposta criteri di filtro per restringere i risultati
+* Configura l'ordinamento e i limiti
+
+**Output**: Restituisce i record corrispondenti utilizzabili in passaggi successivi.
+
+<Note>
+  **Limite**: Search Records restituisce un massimo di **200 record**. Se devi elaborarne di più, aggiungi filtri specifici per ridurre i risultati oppure usa workflow pianificati per elaborare a lotti.
+</Note>
+
+**Migliore Pratica**: Usa [rami](/l/it/user-guide/workflows/capabilities/workflow-branches) dopo Search Records per gestire scenari "trovato" vs "non trovato".
+
+### Inserisci o aggiorna Record
+
+Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrispondenza. È utile quando non sei sicuro che un record esista già.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Configurazione**:
+
+* Seleziona l'oggetto di destinazione
+* Tieni presente quali campi possono essere utilizzati per la corrispondenza: email per Persone, dominio per Aziende, ID per qualsiasi oggetto o qualsiasi campo contrassegnato come Univoco. Dovrai compilare almeno uno di questi qui sotto.
+* Compila i valori dei campi. Non dimenticare di valorizzare almeno uno degli identificatori univoci.
+
+<Note>
+  **La corrispondenza di solito funziona ancora meglio aggiungendo un solo identificatore univoco.** Ad esempio, lo screenshot qui sotto abbinerà le aziende in base al loro dominio. L'ID non è necessariamente richiesto.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Usa dati dai passaggi precedenti per popolare i campi
+
+**Come funziona**:
+
+1. Cerca un record che corrisponde ai tuoi criteri
+2. Se trovato → aggiorna il record esistente
+3. Se non trovato → crea un nuovo record
+
+**Output**: I dati del record creato o aggiornato sono disponibili per l'uso nei passaggi successivi.
+
+## Azioni del flusso
+
+### Iteratore
+
+**Esegue un ciclo su un array di record** restituito da un passaggio precedente, consentendo di eseguire azioni su ciascun record individualmente.
+
+**Configurazione**:
+
+* Seleziona l'array di record da un passaggio precedente (ad es., risultati da Search Records, da un trigger Manual con disponibilità Bulk, da un nodo di codice)
+* Definisci le azioni da eseguire su ciascun record nel ciclo.
+
+<Note>
+  - Puoi aggiungere diverse azioni all'interno di un iteratore.
+  - Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
+</Note>
+
+* Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive.
+
+<VimeoEmbed videoId="1146577247" title="Dimostrazione video" />
+
+### Filtro
+
+Filtra i record in base a condizioni specificate, consentendo il passaggio solo ai record che soddisfano i criteri.
+
+**Configurazione**:
+
+* Seleziona il record da filtrare
+* Definisci le condizioni e i criteri di filtro
+* Configura quali record devono passare ai passaggi successivi
+
+<Note>
+  1. **Output**: I nodi filtro non restituiscono dati — agiscono come porte di accesso. Se le condizioni sono soddisfatte, il flusso di lavoro continua. In caso contrario, il flusso di lavoro si interrompe in quel ramo.
+  2. L'operatore `IS` può essere utilizzato con i campi numerici. Funziona come `EQUAL`.
+</Note>
+
+### Ritardo
+
+Mette in pausa l'esecuzione del flusso di lavoro per una durata specificata o fino a una data/ora specifica.
+
+**Tipi di ritardo**:
+
+| Tipo                 | Descrizione                                                                |
+| -------------------- | -------------------------------------------------------------------------- |
+| **Durata**           | Attendi per una quantità di tempo specifica (giorni, ore, minuti, secondi) |
+| **Data programmata** | Attendi fino a una data e un'ora specifiche                                |
+
+**Configurazione della durata**:
+
+* Imposta giorni, ore, minuti e/o secondi
+* Combina più unità (ad es., 2 giorni e 4 ore)
+
+**Configurazione della data programmata**:
+
+* Seleziona una data e un'ora
+* Può fare riferimento a un campo data di un passaggio precedente (ad es., follow-up 3 giorni dopo una riunione)
+
+**Casi di utilizzo**:
+
+* Attendi 24 ore prima di inviare un'email di follow-up
+* Metti in pausa fino alla data di chiusura di un'opportunità
+* Pianifica azioni per l'orario lavorativo
+
+<Note>
+  La data programmata non può essere nel passato. Se viene utilizzato un campo data di un passaggio precedente e la data è già passata, il flusso di lavoro non riuscirà.
+</Note>
+
+**Limiti e crediti**:
+
+* **Nessun limite massimo di durata** — puoi impostare ritardi di minuti, giorni, settimane o oltre
+* **1 credito consumato** quando il nodo Ritardo viene eseguito, indipendentemente dalla durata
+* **Nessun credito consumato** durante l'attesa — un ritardo di 5 minuti costa come un ritardo di 5 giorni
+
+## Azioni di comunicazione
+
+### Invia email
+
+Invia un'email dal tuo flusso di lavoro. Ottimo per email di gruppo basate su modelli. Le email avranno l'aspetto di quelle inviate dalla tua casella di posta.
+Non adatto a newsletter (che richiedono una formattazione più ricca) o a sequenze di email automatizzate.
+
+**Prerequisiti**: Aggiungi un account email in Impostazioni → Account
+
+**Configurazione**:
+
+* Seleziona l'account email del mittente
+
+<Note>
+  Puoi inviare email solo dalle caselle di posta sincronizzate con il tuo account Twenty. L'invio dalle caselle di posta di altri membri del team (ad es., l'email del proprietario dell'account) è nella roadmap.
+</Note>
+
+Per tutti i passaggi seguenti, puoi fare riferimento a variabili dei passaggi precedenti per la personalizzazione.
+
+* Inserisci l'indirizzo email del destinatario.
+
+<Note>
+  Al momento è possibile un solo destinatario.
+</Note>
+
+* Imposta l'oggetto della email.
+* Componi il corpo del messaggio. Puoi formattare i link, creare elenchi numerati, elenchi puntati, aggiungere allegati.
+
+<Note>
+  Al momento non è possibile aggiungere firme HTML.
+</Note>
+
+### Modulo
+
+Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l'input dell'utente. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
+
+<Warning>
+  **I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro notifiche sarà rilasciato nel 2026 per supportare correttamente i moduli nei flussi di lavoro automatizzati.
+</Warning>
+
+**Configurazione**:
+
+* Configura i campi che verranno chiesti agli utenti di compilare. Per ogni campo, scegli
+  * un tipo tra testo, numero, data, un determinato record, un campo di selezione. I campi di selezione di tutti gli oggetti sono disponibili.
+  * un'etichetta
+  * un valore predefinito sotto `Placeholder` (opzionale)
+* Modifica il titolo del modulo
+
+**Output**: Le risposte ai moduli sono disponibili per l'uso in passaggi successivi.
+
+**Esempio**: Il flusso di lavoro "Quick Lead" è disponibile per impostazione predefinita in tutti gli spazi di lavoro, disponibile ovunque nel Menu Comandi `Cmd + K`.
+
+**Come compilare il modulo**:
+
+* Attiva il tuo flusso di lavoro manuale dal menu comandi `Cmd K`
+* Compila il modulo visualizzato nel pannello laterale e fai clic su `Submit`.
+
+<Note>
+  I campi non possono essere resi obbligatori.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Dimostrazione video" />
+
+## Azioni di integrazione
+
+### Codice
+
+Esegue JavaScript personalizzato all'interno del tuo workflow.
+
+**Configurazione**:
+
+* Accedi alle variabili dai passaggi precedenti. Puoi modificare dinamicamente i nomi delle variabili.
+
+<VimeoEmbed videoId="1147281795" title="Dimostrazione video" />
+
+* Scrivi il codice JavaScript nell'editor
+* Restituisci variabili per l'uso in passaggi successivi
+* Verifica il codice direttamente nel passaggio
+
+<Note>
+  Se devi utilizzare chiavi API esterne nel tuo codice, devi inserirle direttamente nel corpo della funzione. Non puoi configurare le chiavi API altrove e farvi riferimento nella funzione serverless.
+</Note>
+
+<Tip>
+  **Lavori con gli array?** Gli array provenienti da sistemi esterni o da passaggi precedenti possono arrivare come stringhe. Vedi [Come gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) per la soluzione.
+</Tip>
+
+<Tip>
+  Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a schermo intero — utile poiché la larghezza predefinita dell'editor è limitata.
+</Tip>
+
+### Richiesta HTTP
+
+Invia una richiesta a un API esterno come parte del tuo workflow.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Configurazione**:
+
+* Inserisci l'URL del punto finale dell'API. È possibile utilizzare parametri dai passaggi precedenti.
+* Seleziona metodo HTTP (GET, POST, PUT, PATCH, DELETE)
+* Aggiungi intestazioni e valori richiesti
+* Fornisci una risposta di esempio per l'anteprima della struttura
+
+## Azioni AI
+
+### Agente AI - In arrivo
+
+Esegue un agente AI all'interno del tuo flusso di lavoro per svolgere attività intelligenti.
+
+**Configurazione**:
+
+* **Agente**: Seleziona un agente AI esistente o usa l'agente predefinito
+* **Prompt**: Scrivi l'istruzione per l'agente AI
+* Fai riferimento a variabili dei passaggi precedenti nel prompt
+
+**Cosa possono fare gli agenti AI**:
+
+* Analizzare e riassumere dati
+* Classificare o categorizzare i record
+* Generare contenuti testuali
+* Prendere decisioni basate sui dati
+* Interagire con i dati del tuo CRM utilizzando strumenti
+
+**Output**: La risposta dell'agente AI è disponibile per l'uso nei passaggi successivi. Se l'agente ha uno schema di output strutturato, la risposta seguirà tale formato.
+
+<Note>
+  Le azioni dell'agente AI consumano crediti del flusso di lavoro in base al modello AI utilizzato. Vedi [Crediti del flusso di lavoro](/l/it/user-guide/workflows/capabilities/workflow-credits) per i dettagli.
+</Note>
+
+<Note>
+  Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
+</Note>

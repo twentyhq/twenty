@@ -1,0 +1,311 @@
+---
+title: Akce pracovních postupů
+description: Zjistěte, jaké akce jsou k dispozici v pracovních postupech Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## O akcích
+
+Akce definují, co se stane po spuštění. Můžete řetězit více akcí dohromady a vytvářet tak složité automatizace.
+
+<Tip>
+  * Použijte nástroj pro výběr proměnných (klikněte na ikonu `(x+)`) k procházení dostupných dat z předchozích kroků
+  * Najetím myší na libovolné vstupní pole zjistíte, ze kterého kroku proměnná pochází — užitečné, když stejné pole (např. ID) existuje ve více předchozích krocích
+  * Každé akci dejte výstižný název pro snazší údržbu
+</Tip>
+
+## Akce se záznamy
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Vytvořit záznam
+
+Přidává nový záznam do vybraného objektu.
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyplňte povinná a volitelná pole
+* Použijte data z předchozích kroků nebo hodnoty zadané ručně k vyplnění polí
+
+**Výstup**: Data nově vytvořeného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Aktualizovat záznam
+
+Mění existující záznam ve vybraném objektu.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyberte specifický záznam pro aktualizaci.
+  * Můžete buď vybrat pevně daný záznam pomocí rozevírací nabídky zobrazující všechny dostupné záznamy.
+  * Nebo můžete nechat záznam vybrat dynamicky tím, že určíte záznam nalezený v předchozím kroku pomocí `(x+)`. V této fázi nemůžete vyhledávat záznam podle různých kritérií. Pokud jste zatím neurčili záznam, přidejte krok `Search Record` před tento krok `Update Record`.
+* Vyberte pole k úpravě a zadejte nové hodnoty
+
+**Výstup**: Data aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Smazat záznam
+
+Odstraní záznam z vybraného objektu.
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Vyberte specifický záznam pro smazání
+
+**Výstup**: Data smazaného záznamu zůstávají k dispozici pro použití v následujících krocích.
+
+### Hledání záznamů
+
+Najde záznamy ve vybraném objektu pomocí filtračních podmínek.
+
+**Konfigurace**:
+
+* Vyberte objekt pro hledání
+* Nastavte kritéria filtru k zúžení výsledků
+* Nakonfigurujte řazení a limity
+
+**Výstup**: Vrací odpovídající záznamy, které lze použít v následujících krocích.
+
+<Note>
+  **Omezení**: Search Records vrací maximálně **200 záznamů**. Pokud potřebujete zpracovat více, přidejte konkrétní filtry k omezení výsledků nebo použijte naplánované pracovní postupy ke zpracování v dávkách.
+</Note>
+
+**Doporučená praxe**: Použijte [větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) po kroku Search Records pro zpracování scénářů "nalezeno" vs "nenalezeno".
+
+### Vložit nebo aktualizovat záznam
+
+Vytvoří nový záznam nebo aktualizuje existující na základě kritérií shody. Hodí se, když si nejste jisti, zda záznam již existuje.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Vyberte cílový objekt
+* Všimněte si, která pole lze použít pro shodu: e-mail u osob, doména u společností, ID u libovolného objektu nebo jakékoli pole označené jako jedinečné. Níže budete muset vyplnit alespoň jedno z nich.
+* Vyplňte hodnoty polí. Nezapomeňte vyplnit alespoň jeden z jedinečných identifikátorů.
+
+<Note>
+  **Shoda obvykle funguje ještě lépe, když přidáte pouze jeden jedinečný identifikátor.** Například snímek obrazovky níže bude párovat společnosti podle jejich domény. ID není nutně potřeba.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Použijte data z předchozích kroků k vyplnění polí
+
+**Jak to funguje**:
+
+1. Vyhledá záznam odpovídající vašim kritériím
+2. Pokud nalezeno → aktualizuje existující záznam
+3. Pokud nenalezeno → vytvoří nový záznam
+
+**Výstup**: Data vytvořeného nebo aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
+
+## Akce toku
+
+### Iterátor
+
+**Prochází polem záznamů** vrácených z předchozího kroku, což umožňuje provádět akce na každém záznamu jednotlivě.
+
+**Konfigurace**:
+
+* Vyberte pole záznamů z předchozího kroku (např. výsledky z vyhledávání záznamů, z ručního spouštěče s hromadnou dostupností, z uzlu kódu)
+* Definujte akce, které budou provedeny na každém záznamu v cyklu.
+
+<Note>
+  - V rámci iterátoru můžete přidat několik akcí.
+  - Při používání větví uvnitř iterátoru se ujistěte, že poslední krok každé větve se vrací zpět do iterátoru, aby se smyčka uzavřela.
+</Note>
+
+* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích.
+
+<VimeoEmbed videoId="1146577247" title="Ukázka videa" />
+
+### Filtr
+
+Filtruje záznamy na základě zadaných podmínek a propustí pouze záznamy, které splňují kritéria.
+
+**Konfigurace**:
+
+* Vyberte záznam k filtrování
+* Definujte filtrační podmínky a kritéria
+* Nakonfigurujte, které záznamy by měly projít do následujících kroků
+
+<Note>
+  1. **Výstup**: Uzly filtru nevracejí data — fungují jako brány. Pokud jsou podmínky splněny, pracovní postup pokračuje. Pokud ne, pracovní postup se v dané větvi zastaví.
+  2. Operátor `IS` lze použít s číselnými poli. Chová se jako `EQUAL`.
+</Note>
+
+### Zpoždění
+
+Pozastaví provádění pracovního postupu na zadanou dobu nebo do konkrétního data/času.
+
+**Typy zpoždění**:
+
+| Typ                   | Popis                                                  |
+| --------------------- | ------------------------------------------------------ |
+| **Doba trvání**       | Čekat po konkrétní dobu (dny, hodiny, minuty, sekundy) |
+| **Naplánované datum** | Čekat do konkrétního data a času                       |
+
+**Konfigurace pro dobu trvání**:
+
+* Nastavte dny, hodiny, minuty a/nebo sekundy
+* Kombinujte více jednotek (např. 2 dny a 4 hodiny)
+
+**Konfigurace pro naplánované datum**:
+
+* Vyberte datum a čas
+* Může odkazovat na datumové pole z předchozího kroku (např. navázání kontaktu 3 dny po schůzce)
+
+**Případy použití**:
+
+* Počkejte 24 hodin před odesláním navazujícího e-mailu
+* Pozastavte až do data uzavření příležitosti
+* Naplánujte akce na pracovní hodiny
+
+<Note>
+  Naplánované datum nesmí být v minulosti. Pokud je použito datumové pole z předchozího kroku a datum již uplynulo, pracovní postup selže.
+</Note>
+
+**Limity a kredity**:
+
+* **Žádný maximální limit délky** — můžete nastavit zpoždění v minutách, dnech, týdnech nebo i delší období
+* **Spotřebován 1 kredit** při spuštění uzlu Zpoždění, bez ohledu na délku
+* **Žádné kredity se nespotřebovávají** během čekání — 5minutové zpoždění stojí stejně jako 5denní zpoždění
+
+## Komunikační akce
+
+### Odeslat e-mail
+
+Odesílá e-mail z vašeho pracovního postupu. Skvělé pro šablonované hromadné e-maily. E-maily budou vypadat jako ty, které posíláte ze své schránky.
+Nevhodné pro newslettery (které vyžadují bohatší formátování) ani pro automatizované e-mailové sekvence.
+
+**Předpoklady**: Přidejte e-mailový účet v Nastavení → Účty
+
+**Konfigurace**:
+
+* Vyberte e-mailový účet odesílatele
+
+<Note>
+  E-maily můžete odesílat pouze z poštovních schránek synchronizovaných s vaším vlastním účtem Twenty. Odesílání z poštovních schránek ostatních členů týmu (např. e-mail vlastníka účtu) je v plánu.
+</Note>
+
+Ve všech následujících krocích můžete pro personalizaci odkazovat na proměnné z předchozích kroků.
+
+* Zadejte e-mailovou adresu příjemce.
+
+<Note>
+  V tuto chvíli je možný pouze jeden příjemce.
+</Note>
+
+* Nastavte předmět.
+* Sestavte tělo zprávy. Můžete formátovat odkazy, vytvářet číslované i odrážkové seznamy, přidávat přílohy.
+
+<Note>
+  Přidávání HTML podpisů momentálně není možné.
+</Note>
+
+### Formulář
+
+Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů. Odpovědi lze poté použít v následujících krocích k vytváření záznamů, odesílání e-mailů nebo provádění jiných akcí na základě zadaných údajů.
+
+<Warning>
+  **Formuláře jsou navrženy pouze pro ruční spuštění**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+</Warning>
+
+**Konfigurace**:
+
+* Nakonfigurujte pole, která budou uživatelé vyplňovat. Pro každé pole zvolte
+  * typ z možností: text, číslo, datum, daný záznam, výběrové pole. Výběrová pole ze všech objektů jsou k dispozici.
+  * štítek
+  * výchozí hodnotu pod `Placeholder` (volitelné)
+* Upravte název formuláře
+
+**Výstup**: Odpovědi z formuláře jsou k dispozici pro použití v následujících krocích.
+
+**Příklad**: Pracovní postup "Quick Lead" je ve výchozím nastavení dostupný ve všech pracovních prostorech a je dostupný odkudkoli v nabídce Command `Cmd + K`.
+
+**Jak vyplnit formulář**:
+
+* Spusťte svůj ruční pracovní postup z příkazové nabídky `Cmd K`
+* Vyplňte formulář zobrazený v postranním panelu a klikněte na `Submit`.
+
+<Note>
+  Pole nelze nastavit jako povinná.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Ukázka videa" />
+
+## Integrační akce
+
+### Kód
+
+Spouští vlastní JavaScript ve vašem pracovním postupu.
+
+**Konfigurace**:
+
+* Přístup k proměnným z předchozích kroků. Názvy proměnných můžete upravovat dynamicky.
+
+<VimeoEmbed videoId="1147281795" title="Ukázka videa" />
+
+* Zapište JavaScriptový kód v editoru
+* Vrátit proměnné pro použití v následujících krocích
+* Testovat kód přímo ve kroku
+
+<Note>
+  Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zadat přímo do těla funkce. Klíče API nelze nakonfigurovat jinde a odkazovat na ně v bezserverové funkci.
+</Note>
+
+<Tip>
+  **Pracujete s poli?** Pole z externích systémů nebo předchozích kroků mohou přijít jako řetězce. Řešení viz [Jak pracovat s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+<Tip>
+  Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
+</Tip>
+
+### HTTP požadavek
+
+Odešle požadavek na externí API v rámci vašeho pracovního postupu.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Zadejte URL endpointu API. Je možné použít parametry z předchozích kroků.
+* Vyberte metodu HTTP (GET, POST, PUT, PATCH, DELETE)
+* Přidejte potřebné hlavičky a hodnoty
+* Poskytněte ukázku odpovědi pro zobrazení struktury
+
+## Akce AI
+
+### Agent AI – již brzy
+
+Spouští agenta AI ve vašem pracovním postupu k provádění inteligentních úloh.
+
+**Konfigurace**:
+
+* **Agent**: Vyberte existujícího agenta AI nebo použijte výchozího agenta
+* **Prompt**: Napište instrukci pro agenta AI
+* Odkazujte v promptu na proměnné z předchozích kroků
+
+**Co agenti AI dokážou**:
+
+* Analyzovat a shrnovat data
+* Klasifikovat nebo kategorizovat záznamy
+* Generovat textový obsah
+* Rozhodovat se na základě dat
+* Pracovat s vašimi daty CRM pomocí nástrojů
+
+**Výstup**: Odpověď agenta AI je k dispozici pro použití v následujících krocích. Pokud má agent strukturované schéma výstupu, bude odpověď tento formát dodržovat.
+
+<Note>
+  Akce agenta AI spotřebovávají kredity pracovního postupu podle použitého modelu AI. Podrobnosti viz [Kredity pracovního postupu](/l/cs/user-guide/workflows/capabilities/workflow-credits).
+</Note>
+
+<Note>
+  Agenti AI respektují oprávnění založená na rolích. V části **Nastavení → Role** můžete agentům přiřadit konkrétní role, abyste řídili, k jakým datům mají přístup. Podrobnosti viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
+</Note>

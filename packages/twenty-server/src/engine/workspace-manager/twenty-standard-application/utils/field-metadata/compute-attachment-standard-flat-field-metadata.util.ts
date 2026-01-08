@@ -118,6 +118,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment name',
       icon: 'IconFileUpload',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -134,6 +135,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment full path',
       icon: 'IconLink',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -150,6 +152,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment file category',
       icon: 'IconList',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'OTHER'",
       options: [
         { value: 'ARCHIVE', label: 'Archive', position: 0, color: 'gray' },
@@ -204,6 +207,28 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  updatedBy: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'updatedBy',
+      type: FieldMetadataType.ACTOR,
+      label: 'Updated by',
+      description: 'The workspace member who last updated the record',
+      icon: 'IconUserCircle',
+      isUIReadOnly: true,
+      isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 
   // Relation fields
   task: createStandardRelationFieldFlatMetadata({
@@ -217,6 +242,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment task',
       icon: 'IconNotes',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'attachments',
       settings: {
@@ -241,6 +267,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment note',
       icon: 'IconNotes',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'note',
       targetFieldName: 'attachments',
       settings: {
@@ -265,6 +292,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'attachments',
       settings: {
@@ -289,6 +317,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'attachments',
       settings: {
@@ -313,6 +342,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment opportunity',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'attachments',
       settings: {
@@ -337,6 +367,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment dashboard',
       icon: 'IconLayout',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'dashboard',
       targetFieldName: 'attachments',
       settings: {
@@ -361,6 +392,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'attachments',
       settings: {

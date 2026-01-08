@@ -26,7 +26,7 @@ export const RecordTableCellEditButton = () => {
 
   const handleMainButtonClick = () => {
     if (!isFieldInputOnly && isFirstColumn) {
-      openTableCell(undefined, false, true);
+      openTableCell(undefined, true);
     } else {
       openTableCell();
     }

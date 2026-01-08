@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Decorator } from '@storybook/react';
-import { messages as enMessages } from '../../locales/generated/en';
+import { messages as enMessages } from '~/locales/generated/en';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 i18n.load({

@@ -1,0 +1,325 @@
+---
+title: Best Practices
+---
+
+This document outlines the best practices you should follow when working on the frontend.
+
+## State management
+
+React and Recoil handle state management in the codebase.
+
+### Use `useRecoilState` to store state
+
+It's good practice to create as many atoms as you need to store your state.
+
+<Warning>
+  It's better to use extra atoms than trying to be too concise with props drilling.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Do not use `useRef` to store state
+
+Avoid using `useRef` to store state.
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+See [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+
+## Managing re-renders
+
+Re-renders can be hard to manage in React.
+
+Here are some rules to follow to avoid unnecessary re-renders.
+
+Keep in mind that you can **always** avoid re-renders by understanding their cause.
+
+### Work at the root level
+
+Avoiding re-renders in new features is now made easy by eliminating them at the root level.
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+That way you know that there's just one place that can trigger a re-render.
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+You can also find them in libraries like Apollo: `onCompleted`, `onError`, etc.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+You can apply the same for data fetching logic, with Apollo hooks.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Use recoil family states and recoil family selectors
+
+Recoil family states and selectors are a great way to avoid re-renders.
+
+They are useful when you need to store a list of items.
+
+### You shouldn't use `React.memo(MyComponent)`
+
+Avoid using `React.memo()` because it does not solve the cause of the re-render, but instead breaks the re-render chain, which can lead to unexpected behavior and make the code very hard to refactor.
+
+### Limit `useCallback` or `useMemo` usage
+
+They are often not necessary and will make the code harder to read and maintain for a gain of performance that is unnoticeable.
+
+## Console.logs
+
+`console.log` statements are valuable during development, offering real-time insights into variable values and code flow. But, leaving them in production code can lead to several issues:
+
+1. **Performance**: Excessive logging can affect the runtime performance, especially on client-side applications.
+
+2. **Security**: Logging sensitive data can expose critical information to anyone who inspects the browser's console.
+
+3. **Cleanliness**: Filling up the console with logs can obscure important warnings or errors that developers or tools need to see.
+
+4. **Professionalism**: End users or clients checking the console and seeing a myriad of log statements might question the code's quality and polish.
+
+Make sure you remove all `console.logs` before pushing the code to production.
+
+## Naming
+
+### Variable Naming
+
+Variable names ought to precisely depict the purpose or function of the variable.
+
+#### The issue with generic names
+
+Generic names in programming are not ideal because they lack specificity, leading to ambiguity and reduced code readability. Such names fail to convey the variable or function's purpose, making it challenging for developers to understand the code's intent without deeper investigation. This can result in increased debugging time, higher susceptibility to errors, and difficulties in maintenance and collaboration. Meanwhile, descriptive naming makes the code self-explanatory and easier to navigate, enhancing code quality and developer productivity.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Some words to avoid in variable names
+
+* dummy
+
+### Event handlers
+
+Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Optional Props
+
+Avoid passing the default value for an optional prop.
+
+**EXAMPLE**
+
+Take the`EmailField` component defined below:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Usage**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Component as props
+
+Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
+
+The most common example for that is icon components:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+For React to understand that the component is a component, you need to use PascalCase, to later instantiate it with `<MyIcon>`
+
+## Prop Drilling: Keep It Minimal
+
+Prop drilling, in the React context, refers to the practice of passing state variables and their setters through many component layers, even if intermediary components don't use them. While sometimes necessary, excessive prop drilling can lead to:
+
+1. **Decreased Readability**: Tracing where a prop originates or where it's utilized can become convoluted in a deeply nested component structure.
+
+2. **Maintenance Challenges**: Changes in one component's prop structure might require adjustments in several components, even if they don't directly use the prop.
+
+3. **Reduced Component Reusability**: A component receiving a lot of props solely for passing them down becomes less general-purpose and harder to reuse in different contexts.
+
+If you feel that you are using excessive prop drilling, see [state management best practices](#state-management).
+
+## Imports
+
+When importing, opt for the designated aliases rather than specifying complete or relative paths.
+
+**The Aliases**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Usage**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Schema Validation
+
+[Zod](https://github.com/colinhacks/zod) is the schema validator for untyped objects:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breaking Changes
+
+Always perform thorough manual testing before proceeding to guarantee that modifications haven’t caused disruptions elsewhere, given that tests have not yet been extensively integrated.

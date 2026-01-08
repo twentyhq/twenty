@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOneOptions, Repository } from 'typeorm';
+import { type FindOneOptions, type Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -17,7 +17,7 @@ import {
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
@@ -192,8 +192,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadata: [
               {
                 errors: inputTranspilationResult.errors,
-                type: 'update_field',
-                flatEntityMinimalInformation: {},
+                type: 'update',
+                metadataName: 'fieldMetadata',
+                flatEntityMinimalInformation: {
+                  id: '',
+                },
               },
             ],
           },
@@ -284,6 +287,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     createFieldInputs,
     workspaceId,
     applicationId,
+    isSystemBuild = false,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
@@ -292,6 +296,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
      * when interacting with another application than workspace custom one
      * */
     applicationId?: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
@@ -363,7 +368,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
         },
       );
 

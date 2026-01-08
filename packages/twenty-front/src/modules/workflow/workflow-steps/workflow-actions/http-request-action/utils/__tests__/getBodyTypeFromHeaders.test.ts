@@ -1,5 +1,5 @@
-import { BODY_TYPES } from '../../constants/HttpRequest';
-import { getBodyTypeFromHeaders } from '../getBodyTypeFromHeaders';
+import { BODY_TYPES } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 
 describe('getBodyTypeFromHeaders', () => {
   describe('when headers is undefined or null', () => {

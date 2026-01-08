@@ -1,0 +1,125 @@
+---
+title: Arhitectura Folderului
+info: A detailed look into our server folder architecture
+---
+
+Structura directorului backend este următoarea:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Abilitate
+
+Definește permisiunile și include gestionari pentru fiecare entitate.
+
+## Decoratori
+
+Definește decoratori personalizați în NestJS pentru funcționalitate adăugată.
+
+Vezi [decoratori personalizați](https://docs.nestjs.com/custom-decorators) pentru mai multe detalii.
+
+## Filtre
+
+Include filtre de excepție pentru a gestiona excepțiile care ar putea apărea în punctele finale GraphQL.
+
+## Paznici
+
+Vezi [paznici](https://docs.nestjs.com/guards) pentru mai multe detalii.
+
+## Sănătate
+
+Include o API REST disponibilă public (healthz) care returnează un JSON pentru a verifica dacă baza de date funcționează așa cum este de așteptat.
+
+## Metadate
+
+Definește obiecte personalizate și face disponibilă o API GraphQL (graphql/metadata).
+
+## Spațiu de lucru
+
+Generează și servește o schemă GraphQL personalizată pe baza metadatelor.
+
+### Structura Directorului de Spațiu de Lucru
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. Această funcție generează schema specifică spațiului de lucru folosind metadatele pentru a personaliza o schemă pentru spațiile de lucru individuale. Prin separarea construcției de schema și rezolvatori, folosim funcția `makeExecutableSchema`, care combină aceste elemente discrete.
+
+Această strategie nu este doar despre organizare, ci ajută și la optimizare, cum ar fi caching-ul definițiilor de tip generate pentru a îmbunătăți performanța și scalabilitatea.
+
+### Constructor Schema Spațiu de Lucru
+
+Generează schema GraphQL și include:
+
+#### Fabrici:
+
+Constructori specializați pentru a genera construcții legate de GraphQL.
+
+* Tipul.fabrică traduce metadatele câmpului în tipuri GraphQL folosind `TypeMapperService`.
+* Tipul-definiție.fabrică creează obiecte GraphQL de intrare sau ieșire derivate din `objectMetadata`.
+
+#### Tipuri GraphQL
+
+Include enumerări, inputuri, obiecte și scalari și servește ca blocuri de construcție pentru construcția schema.
+
+#### Interfețe și Definiții de Obiect
+
+Conține planurile pentru entitățile GraphQL și include atât tipuri predefinite, cât și personalizate, precum `MONEY` sau `URL`.
+
+#### Servicii
+
+Conține serviciul responsabil pentru asocierea FieldMetadataType cu scalarul GraphQL corespunzător sau modificatorii de interogare.
+
+#### Stocare
+
+Include clasa `TypeDefinitionsStorage` care conține definiții de tip reutilizabile, prevenind duplicarea tipurilor GraphQL.
+
+### Constructor Rezolvator Spațiu de Lucru
+
+Creează funcții de rezolvare pentru interogarea și modificarea schemei GraphQL.
+
+Fiecare fabrică din acest director este responsabilă pentru producerea unui tip de rezolvator distinct, cum ar fi `FindManyResolverFactory`, proiectată pentru aplicare adaptabilă în diverse tabele.
+
+### Executor Întrebări Spațiu de Lucru
+
+Rulează interogările generate pe baza de date și parcurge rezultatul.

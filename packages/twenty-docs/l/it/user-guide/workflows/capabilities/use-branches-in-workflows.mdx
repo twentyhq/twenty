@@ -1,0 +1,90 @@
+---
+title: Usare le diramazioni nei flussi di lavoro
+description: Comprendi come funzionano le diramazioni e come controllare quale percorso viene eseguito.
+---
+
+## Come funzionano le diramazioni
+
+Nell'editor dei flussi di lavoro, puoi creare più percorsi (diramazioni) che partono da un singolo nodo. Questo ti consente di creare automazioni complesse con risultati diversi.
+
+**Importante**: Quando viene eseguito un flusso di lavoro, **tutte le diramazioni vengono eseguite in parallelo per impostazione predefinita**. Non esiste una logica "if/else" integrata per scegliere una diramazione rispetto a un'altra — ogni percorso verrà eseguito simultaneamente.
+
+## Controllare quale diramazione viene eseguita
+
+Per eseguire una sola diramazione in base a condizioni specifiche, **aggiungi un nodo Filtro all'inizio di ogni diramazione**.
+
+### Esempio di configurazione
+
+1. Crea il tuo flusso di lavoro con più diramazioni da un singolo nodo
+2. Aggiungi un nodo **Filtro** come primo passaggio in ogni diramazione
+3. Imposta le condizioni su ciascun Filtro per determinare quando quella diramazione deve continuare
+4. Procederanno solo le diramazioni per cui le condizioni del Filtro sono soddisfatte
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Come funzionano i filtri
+
+* Se la condizione del Filtro è **soddisfatta**: la diramazione continua l'esecuzione
+* Se la condizione del Filtro **non è soddisfatta**: la diramazione si ferma al nodo Filtro
+
+Questo crea di fatto una logica condizionale in cui, in base ai tuoi dati, viene eseguita solo la diramazione appropriata.
+
+## Esempio: instradare in base al valore dell'opportunità
+
+**Scenario**: Quando un'opportunità viene chiusa, invia notifiche diverse in base al valore dell'opportunità.
+
+1. **Trigger**: Opportunità aggiornata (Fase = Chiusa vinta)
+2. **Diramazione 1**: Filtro per Importo > $10.000 → Invia un messaggio Slack a #big-deals
+3. **Diramazione 2**: Filtro per Importo ≤ $10.000 → Invia un'email al responsabile vendite
+
+Entrambe le diramazioni iniziano, ma solo quella che corrisponde all'importo dell'opportunità continuerà oltre il suo Filtro.
+
+## Creare le diramazioni
+
+<Note>
+  Per creare una nuova diramazione da un passaggio esistente, fai clic sul pulsante **+** nel passaggio e aggiungi la tua azione. Puoi aggiungere più diramazioni facendo clic su **+** più volte.
+</Note>
+
+1. Nell'editor dei flussi di lavoro, seleziona il passaggio da cui vuoi creare la diramazione
+2. Fai clic su **+** per aggiungere un'azione
+3. Questo crea una diramazione
+4. Fai di nuovo clic su **+** sullo stesso passaggio per creare diramazioni aggiuntive
+5. Ogni diramazione può avere la propria sequenza di azioni
+
+## Riunire le diramazioni
+
+Dopo che le diramazioni parallele hanno completato il loro lavoro, puoi riunirle in un unico percorso:
+
+1. Completa le azioni nelle diramazioni
+2. Aggiungi un nuovo passaggio che deve essere eseguito dopo tutte le diramazioni
+3. Trascina una connessione dall'ultimo passaggio di ciascuna diramazione verso questo nuovo passaggio
+4. Il passaggio riunito attende il completamento di tutte le diramazioni collegate prima di essere eseguito
+
+### Esempio: elabora quindi notifica
+
+```
+Trigger
+   │
+   ├── Diramazione A: Aggiorna il record cliente
+   │
+   └── Diramazione B: Crea ticket di assistenza
+
+       ↘  ↙
+
+   Passaggio riunito: Invia email di conferma
+```
+
+L'email di conferma viene inviata solo dopo che sia l'aggiornamento del cliente sia la creazione del ticket sono stati completati.
+
+## Migliori Pratiche
+
+* Usa sempre i **nodi Filtro** all'inizio delle diramazioni quando desideri un'esecuzione condizionale
+* Mantieni le condizioni delle diramazioni **mutuamente esclusive** per evitare azioni duplicate
+* Testa i tuoi flussi di lavoro con dati diversi per assicurarti che vengano eseguite le diramazioni corrette
+* **Rinomina i passaggi delle diramazioni** in modo descrittivo, così è chiaro cosa fa ogni percorso
+* **Riunisci le diramazioni** quando ti serve un'azione finale dopo l'elaborazione parallela
+
+## Correlati
+
+* [Domande frequenti sui flussi di lavoro](/l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq) — risposte sull'esecuzione parallela
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions) — azioni disponibili per le diramazioni

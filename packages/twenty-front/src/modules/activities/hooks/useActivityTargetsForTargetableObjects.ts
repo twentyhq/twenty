@@ -28,11 +28,13 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects: targetableObjects,
+    activityObjectNameSingular: objectNameSingular,
+    objectMetadataItems,
   });
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
     findActivityTargetsOperationSignatureFactory({

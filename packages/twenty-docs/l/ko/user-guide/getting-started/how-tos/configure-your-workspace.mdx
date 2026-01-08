@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Every business works differently. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. This gives you immediate value and helps your team see Twenty in action with real data. You can do so under Settings → Accounts.</Note>
+
+## 1. Customize your data model
+
+Twenty offers the flexibility you need to shape the data model that will best support your day-to-day.
+Create objects and fields of any type, including relations between your different objects. You can do so under Settings → Data Model.
+Here are a few tips:
+
+* **You are not limited in the number of custom fields nor custom objects**. Adding custom objects and fields will not lead to upgrading your plan.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
+  * It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Because you would not be able to access the emails exchanged with this person from the Partner records.
+  * Create different views under People, one to display partners and one to display prospects.
+* Two People cannot have the same email address. Two Companies cannot have the same domain.
+* You can deactivate standard fields and objects you do not want to use.
+* You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
+
+Read [this article](/l/ko/user-guide/data-model/overview) to learn how to design your data model.
+
+## 2. Bring your data in
+
+Bringing your existing data into Twenty gives your team context from the start.
+
+### Connect your mailbox
+
+If you have not done so when creating your workspace, connect your **Google or Microsoft account** under Settings → Accounts. This allows Twenty to:
+
+* Import your messages and meetings
+* Auto-create contacts based on interactions (optional)
+* Keep communication history visible for your team
+
+**Using another provider?**
+You can add another mailbox via SMTP or another calendar via CalDAV. You will need to activate the feature under Settings → Releases → Lab, and then go back to the Settings → Accounts tab.
+
+### Import data via csv
+
+Use the Command menu (`Cmd + K` or `Ctrl + K`) to import People, Companies, Opportunities, or any custom objects via CSV.
+
+**Key guidelines**:
+
+* Download the sample file to understand the expected format
+* Limit each file to 10k records
+* Remove duplicate emails for People or duplicate domains for Companies
+* Review and fix errors (highlighted in yellow) before importing
+
+Read [this article](/l/ko/user-guide/data-migration/overview) to learn more about data import.
+
+## 3. Create your first view
+
+Creating different views is key to make the data actionable for your team.
+Here is how to proceed:
+
+* **Add or hide columns**
+  Manage the fields visible in a given view clicking on Options → Fields (from the top right). You can show/hide fields from there.
+
+* **Reorder fields**
+  Reorder the fields from a given view clicking on Options → Fields (from the top right). Drag and drop the fields to reorder them.
+
+* **Filter your view**
+  Narrow down the records displayed using the Filters from the top right.
+
+* **Sort records**
+  Reorder records displayed using the Sort function from the top right, or by clicking directly on the column name.
+
+* **Choose the layout**
+  You can switch to a **Kanban layout** or a list **Group By** layout, as long as the object has a `Stage` or similar select-type field.
+
+* **Save your view as Favorites**
+  This can be done using the dropdown menu showing the different views.
+
+## What's next?
+
+Start creating automations using [workflows](/l/ko/user-guide/workflows/overview).

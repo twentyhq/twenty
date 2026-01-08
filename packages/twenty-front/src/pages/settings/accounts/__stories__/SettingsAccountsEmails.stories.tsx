@@ -7,7 +7,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsAccountsEmails } from '../SettingsAccountsEmails';
+import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsEmails',

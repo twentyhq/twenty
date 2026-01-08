@@ -1,8 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -21,14 +23,17 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('PieChartConfiguration')
-export class PieChartConfigurationDTO {
-  @Field(() => GraphType)
-  @IsEnum(GraphType)
+export class PieChartConfigurationDTO
+  implements PageLayoutWidgetConfigurationBase
+{
+  @Field(() => WidgetConfigurationType)
+  @IsIn([WidgetConfigurationType.PIE_CHART])
   @IsNotEmpty()
-  graphType: GraphType.PIE;
+  configurationType: WidgetConfigurationType.PIE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -65,6 +70,12 @@ export class PieChartConfigurationDTO {
   @IsEnum(GraphOrderBy)
   @IsOptional()
   orderBy?: GraphOrderBy;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  manualSortOrder?: string[];
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()

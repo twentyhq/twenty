@@ -15,8 +15,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
-import { REST_API_BASE_URL } from '../../apollo/constant/rest-api-base-url';
-import { agentChatInputState } from '../states/agentChatInputState';
+import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -89,13 +89,27 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       fetch: async (input, init) => {
         const response = await fetch(input, init);
 
-        if (response.status !== 401) {
-          return response;
+        if (response.status === 401) {
+          const retriedResponse = await retryFetchWithRenewedToken(input, init);
+
+          return retriedResponse ?? response;
         }
 
-        const retriedResponse = await retryFetchWithRenewedToken(input, init);
+        // For non-2xx responses, parse the error body and throw with the code
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          const error = new Error(
+            errorBody.messages?.[0] ||
+              `Request failed with status ${response.status}`,
+          ) as Error & { code?: string };
 
-        return retriedResponse ?? response;
+          if (isDefined(errorBody.code)) {
+            error.code = errorBody.code;
+          }
+          throw error;
+        }
+
+        return response;
       },
     }),
     messages: uiMessages,

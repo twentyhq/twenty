@@ -4,7 +4,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useContext } from 'react';
 import { type FieldRatingValue } from 'twenty-shared/types';
-import { useRatingField } from '../../hooks/useRatingField';
+import { useRatingField } from '@/object-record/record-field/ui/meta-types/hooks/useRatingField';
 
 export const RatingFieldInput = () => {
   const { rating } = useRatingField();

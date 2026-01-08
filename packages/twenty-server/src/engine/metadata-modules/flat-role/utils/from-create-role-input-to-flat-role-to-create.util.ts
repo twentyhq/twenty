@@ -44,8 +44,6 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canBeAssignedToUsers: createRoleInput.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: createRoleInput.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: createRoleInput.canBeAssignedToApiKeys ?? true,
-    canBeAssignedToApplications:
-      createRoleInput.canBeAssignedToApplications ?? true,
     isEditable: true,
     workspaceId,
     createdAt: now,

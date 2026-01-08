@@ -1,0 +1,254 @@
+---
+title: Întrebări frecvente despre fluxuri de lucru
+description: Întrebări frecvente despre fluxurile de lucru din Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="De ce nu pot activa un flux de lucru?">
+    Este probabil o problemă de permisiuni. Aveți nevoie de acces la fluxuri de lucru pentru a le crea și activa.
+
+    **Soluție**: Contactați administratorul spațiului de lucru pentru a vă acorda acces la fluxuri de lucru în **Setări → Roluri**.
+
+    Dacă nu vedeți deloc secțiunea Fluxuri de lucru în bara laterală, acest lucru confirmă că este o problemă de permisiuni.
+  </Accordion>
+
+  <Accordion title="De ce nu văd butonul fluxului de lucru manual în bara de navigare de sus?">
+    Fluxurile de lucru manuale apar în bara de navigare doar dacă sunt configurate corect:
+
+    1. Fluxul de lucru trebuie să fie **activat** (nu în modul de schiță)
+    2. Poziționarea în bara de navigare trebuie setată la **Pinned**
+    3. Pentru declanșatoarele Single/Bulk, trebuie să vă aflați pe pagina obiectului corect
+
+    **Pentru a verifica**: Deschideți fluxul de lucru → faceți clic pe declanșator → verificați că "Navbar placement" este setat la "Pinned".
+
+    Puteți accesa oricând fluxurile de lucru manuale prin **Cmd + K** (sau **Ctrl + K**), indiferent de setările barei de navigare.
+  </Accordion>
+
+  <Accordion title="Care este diferența dintre declanșatoarele manuale Single, Global și Bulk?">
+    | Tip | Înregistrări necesare | Rulările fluxului de lucru |
+    | --- | --------------------- | -------------------------- |
+
+    \| **Global** | Niciuna | O dată, fără input de înregistrare |
+    \| **Single** | Una sau mai multe selectate | O dată pentru fiecare înregistrare selectată |
+    \| **Bulk** | Una sau mai multe selectate | O dată, cu toate înregistrările ca un array |
+
+    * **Global**: Utilizați când fluxul de lucru nu are nevoie de context de înregistrare (de ex., generarea unui raport)
+    * **Single**: Utilizați când doriți să procesați fiecare înregistrare selectată independent (de ex., trimiteți e-mailuri individuale)
+    * **Bulk**: Utilizați când aveți nevoie să procesați înregistrările împreună sau să optimizați utilizarea creditelor (necesită acțiunea Iterator)
+
+    Consultați [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers) pentru detalii.
+  </Accordion>
+
+  <Accordion title="Nu văd un nod If/Else. Ce ar trebui să fac?">
+    Un nod If/Else explicit nu este încă disponibil, dar se află pe foaia noastră de parcurs.
+
+    **Soluție temporară**: Creați mai multe ramuri din pasul dvs., fiecare începând cu o acțiune **Filter**:
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Doar ramura în care condiția filtrului este îndeplinită își va executa acțiunile următoare.
+
+    Consultați [Cum să utilizați ramurile](/l/ro/user-guide/workflows/capabilities/workflow-branches) pentru un ghid pas cu pas.
+  </Accordion>
+
+  <Accordion title="Rulează ramurile fluxului de lucru în paralel?">
+    **Da**, ramurile rulează în paralel în mod implicit.
+
+    Dacă doriți ca doar o singură ramură să se execute:
+
+    * Adăugați o acțiune **Filter** la începutul fiecărei ramuri
+    * Setați condiții opuse (de ex., Ramura A: status = "Open", Ramura B: status ≠ "Open")
+
+    Ramurile care nu îndeplinesc condiția filtrului se opresc din execuție, în timp ce altele continuă.
+  </Accordion>
+
+  <Accordion title="Pot să îmbin din nou ramurile?">
+    **Da**. După ce ramurile paralele se finalizează, puteți adăuga un pas la care se conectează ambele ramuri.
+
+    În editorul de fluxuri de lucru:
+
+    1. Finalizați acțiunile din ramuri
+    2. Adăugați un pas nou după ramuri
+    3. Trageți conexiuni de la finalul fiecărei ramuri către acest pas nou
+
+    Pasul îmbinat se va executa după ce toate ramurile conectate se finalizează.
+  </Accordion>
+
+  <Accordion title="Care este limita rezultatelor pentru Search Records?">
+    **Search Records returnează maximum 200 de înregistrări.**
+
+    Dacă aveți nevoie să procesați mai multe:
+
+    * Adăugați filtre mai specifice pentru a reduce rezultatele
+    * Utilizați fluxuri de lucru programate pentru a procesa în loturi
+    * Luați în considerare utilizarea API-ului pentru operațiuni în masă
+
+    Pentru majoritatea fluxurilor de lucru, 200 de înregistrări sunt suficiente. Dacă atingeți frecvent această limită, luați în considerare restructurarea automatizării.
+  </Accordion>
+
+  <Accordion title="Pot adăuga persoane în CC în e-mailurile fluxurilor de lucru?">
+    **Încă nu.** Câmpurile CC și BCC pentru acțiunea Send Email se află pe foaia noastră de parcurs.
+
+    **Soluție temporară**: Adăugați mai multe acțiuni Send Email pentru a trimite către destinatari suplimentari sau utilizați un HTTP Request pentru a trimite printr-un serviciu extern de e-mail care acceptă CC.
+  </Accordion>
+
+  <Accordion title="Cum folosesc rezultatele din pașii anteriori?">
+    Fiecare acțiune produce date de ieșire care pot fi utilizate în pașii următori.
+
+    **Pentru a face referire la datele din pașii anteriori**:
+
+    * Utilizați selectorul de variabile când configurați un câmp
+    * Sau tastați direct `{{stepName.fieldName}}`
+
+    **Exemple**:
+
+    * Datele declanșatorului: `{{trigger.object.email}}`
+    * Rezultatele căutării: `{{searchRecords[0].name}}`
+    * Rezultatul codului: `{{code.calculatedValue}}`
+
+    Treceți cursorul peste orice câmp din configurația acțiunii pentru a vedea variabilele disponibile din pașii anteriori.
+  </Accordion>
+
+  <Accordion title="De ce eșuează Iteratorul?">
+    **Iterator necesită un input de tip array.** Probleme frecvente:
+
+    1. **Inputul nu este un array**: Asigurați-vă că transmiteți rezultate din Search Records sau dintr-o altă acțiune care returnează un array
+    2. **Array-ul este gol**: Adăugați un filtru înainte de Iterator pentru a verifica `{{searchRecords.length}} > 0`
+    3. **Variabilă selectată greșit**: Asigurați-vă că selectați array-ul în sine, nu o singură înregistrare
+
+    **Configurare corectă**:
+
+    1. Search Records (returnează un array)
+    2. Filter: length > 0
+    3. Iterator: selectați `{{searchRecords}}`
+    4. Acțiunile din interiorul iteratorului folosesc `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Care este timpul maxim de execuție pentru acțiunile Code?">
+    Acțiunile Code (funcții serverless) au un **timeout implicit de 5 minute** (300 de secunde).
+
+    Timeoutul maxim configurabil este de **15 minute** (900 de secunde).
+
+    Dacă codul depășește această limită, acțiunea va eșua cu o eroare de timeout.
+
+    **Sfaturi pentru a evita timeout-urile**:
+
+    * Împărțiți operațiunile mari în bucăți mai mici folosind Iterator
+    * Evitați calculele grele; utilizați servicii externe prin HTTP Request pentru procesări intensive
+    * Optimizați codul pentru a reduce timpul de execuție
+    * Dacă aveți nevoie de procesare mai lungă, luați în considerare utilizarea fluxurilor de lucru programate care procesează datele în loturi
+  </Accordion>
+
+  <Accordion title="Cum citesc rulările fluxului de lucru?">
+    Rulările fluxului de lucru afișează istoricul execuției și vă ajută să depanați problemele.
+
+    **Accesarea rulărilor**:
+
+    * În editorul de fluxuri de lucru → panoul **Runs** din dreapta
+    * Sau accesați **Rulări ale fluxurilor de lucru** în bara laterală
+
+    **Înțelegerea unei rulări**:
+
+    * **Status**: Running, Completed, Failed, Waiting
+    * **Pași**: Vedeți ce pași au fost executați și rezultatul lor
+    * **Erori**: Faceți clic pe pașii eșuați pentru a vedea mesajele de eroare
+    * **Date**: Vizualizați datele de intrare/ieșire la fiecare pas
+
+    Consultați [Rulări ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-runs) pentru detalii.
+  </Accordion>
+
+  <Accordion title="De ce nu văd rulările fluxului meu de lucru?">
+    Rulările fluxului de lucru ar putea eșua imediat din cauza limitelor de rată.
+
+    **Limită hard: 5.000 de rulări pe oră per spațiu de lucru.**
+
+    Dacă depășiți această limită, fluxurile de lucru sunt marcate imediat ca eșuate și nu vor apărea în lista de rulări, așa cum v-ați aștepta.
+
+    **Scenarii comune care ating această limită**:
+
+    * Selectarea a mai mult de 5.000 de înregistrări cu un declanșator manual Single
+    * Mai multe fluxuri de lucru care rulează simultan în spațiul dvs. de lucru
+    * Declanșatoare automate cu frecvență ridicată (de ex., Record Updated pe un obiect aglomerat)
+
+    **Soluții**:
+
+    * Utilizați declanșatoare **Bulk** în loc de Single pentru a procesa multe înregistrări într-o singură rulare
+    * Eșalonați în timp operațiunile mari efectuate în loturi
+    * Folosiți filtre pentru a reduce frecvența declanșărilor
+    * Programați fluxurile de lucru intensive în afara orelor de vârf
+  </Accordion>
+
+  <Accordion title="Care sunt limitele de rată pentru fluxurile de lucru?">
+    Twenty are două limite de rată pentru a asigura stabilitatea sistemului:
+
+    | Limită | Valoare | Comportament |
+    | ------ | ------- | ------------ |
+
+    \| **Limită soft** | 100 rulări/minut | Rulările se pun în coadă cu statusul "Not Started", procesate treptat |
+    \| **Limită hard** | 5.000 rulări/oră | Rulările eșuează imediat |
+
+    **Limită soft (100/min)**: Fluxurile dvs. de lucru nu vor eșua — doar așteaptă în coadă și sunt procesate în timp. Puteți declanșa mai mult de 100 de înregistrări; execuția va fi mai lentă.
+
+    **Limită hard (5.000/oră)**: Se aplică întregului dvs. spațiu de lucru. Dacă toate fluxurile dvs. de lucru cumulate depășesc 5.000 de rulări într-o oră, rulările suplimentare vor eșua imediat.
+
+    **Sfaturi pentru a rămâne în limite**:
+
+    * Utilizați declanșatoare Bulk cu Iterator în locul declanșatoarelor Single pentru loturi mari
+    * Combinați automatizările înrudite în mai puține fluxuri de lucru
+    * Utilizați fluxuri de lucru programate pentru a distribui încărcarea în timp
+  </Accordion>
+
+  <Accordion title="Pot reîncerca o rulare de flux de lucru eșuată?">
+    **Nu, momentan nu există o funcționalitate de reîncercare automată.**
+
+    Dacă o rulare de flux de lucru eșuează, va trebui să:
+
+    1. Examinați eroarea în **Setări → Workflows → [Workflow-ul dvs.] → Runs**
+    2. Remediați problema (date, configurație sau serviciu extern)
+    3. Declanșați manual din nou fluxul de lucru pe înregistrarea/înregistrările afectate
+
+    **Sfaturi pentru a reduce eșecurile**:
+
+    * Adăugați noduri **Filter** pentru a valida datele înaintea acțiunilor
+    * Utilizați **Search Records** pentru a verifica dacă există înregistrări asociate
+    * Testați temeinic cu câteva înregistrări înainte de operațiuni în masă
+
+    Funcționalitatea de reîncercare automată este pe foaia noastră de parcurs pentru o versiune viitoare.
+  </Accordion>
+
+  <Accordion title="Ar trebui să dezactivez fluxurile de lucru înainte de importurile CSV?">
+    **Da, dacă fluxurile dvs. de lucru sunt declanșate de crearea sau actualizarea înregistrărilor.**
+
+    Când importați date prin CSV, fiecare înregistrare creată sau actualizată poate declanșa fluxuri de lucru. Un import mare (mii de înregistrări) ar putea:
+
+    * Atinge limita de 5.000 de rulări/oră
+    * Consumă un număr semnificativ de credite de flux de lucru
+    * Trimite e-mailuri sau notificări neașteptate
+    * Creează sarcini sau înregistrări duplicate
+
+    **Înaintea unui import în masă**:
+
+    1. Accesați **Setări → Fluxuri de lucru**
+    2. Identificați fluxurile de lucru declanșate de obiectul pe care îl importați
+    3. **Dezactivați**-le temporar
+    4. Rulați importul CSV
+    5. **Reactivați** fluxurile de lucru când ați terminat
+
+    **Alternativă**: Dacă aveți nevoie ca fluxurile de lucru să ruleze pe datele importate, importați în loturi mai mici pentru a rămâne în limitele de rată.
+  </Accordion>
+
+  <Accordion title="Cum îmi curăț aspectul fluxului de lucru?">
+    Dacă planșa fluxului de lucru arată dezordonată, cu noduri împrăștiate, o puteți organiza automat:
+
+    1. Faceți clic dreapta oriunde pe planșa fluxului de lucru
+    2. Faceți clic pe **Aranjează fluxul de lucru**
+
+    Acest lucru va rearanja automat toate nodurile într-un aspect curat și organizat.
+  </Accordion>
+</AccordionGroup>

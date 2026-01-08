@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -9,13 +10,19 @@ export enum CronTriggerExceptionCode {
   SERVERLESS_FUNCTION_NOT_FOUND = 'SERVERLESS_FUNCTION_NOT_FOUND',
 }
 
-const cronTriggerExceptionUserFriendlyMessages: Record<
-  CronTriggerExceptionCode,
-  MessageDescriptor
-> = {
-  [CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND]: msg`Cron trigger not found.`,
-  [CronTriggerExceptionCode.CRON_TRIGGER_ALREADY_EXIST]: msg`Cron trigger already exists.`,
-  [CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND]: msg`Serverless function not found.`,
+const getCronTriggerExceptionUserFriendlyMessage = (
+  code: CronTriggerExceptionCode,
+) => {
+  switch (code) {
+    case CronTriggerExceptionCode.CRON_TRIGGER_NOT_FOUND:
+      return msg`Cron trigger not found.`;
+    case CronTriggerExceptionCode.CRON_TRIGGER_ALREADY_EXIST:
+      return msg`Cron trigger already exists.`;
+    case CronTriggerExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      return msg`Serverless function not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class CronTriggerException extends CustomException<CronTriggerExceptionCode> {
@@ -26,7 +33,7 @@ export class CronTriggerException extends CustomException<CronTriggerExceptionCo
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? cronTriggerExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getCronTriggerExceptionUserFriendlyMessage(code),
     });
   }
 }

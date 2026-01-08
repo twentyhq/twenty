@@ -9,7 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormSingleRecordPicker } from '../FormSingleRecordPicker';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 
 const meta: Meta<typeof FormSingleRecordPicker> = {
   title: 'UI/Data/Field/Form/Input/FormSingleRecordPicker',

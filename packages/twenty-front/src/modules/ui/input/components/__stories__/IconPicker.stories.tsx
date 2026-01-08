@@ -7,7 +7,10 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { sleep } from '~/utils/sleep';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { IconPicker, type IconPickerProps } from '../IconPicker';
+import {
+  IconPicker,
+  type IconPickerProps,
+} from '@/ui/input/components/IconPicker';
 
 type RenderProps = IconPickerProps;
 const Render = (args: RenderProps) => {

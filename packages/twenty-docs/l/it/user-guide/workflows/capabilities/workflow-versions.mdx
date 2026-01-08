@@ -1,0 +1,85 @@
+---
+title: Versioni del workflow
+description: Gestisci le versioni e le bozze dei workflow.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Informazioni sulle versioni
+
+Ogni volta che attivi un workflow, viene creata una nuova versione. Questo ti permette di tenere traccia delle modifiche nel tempo e ripristinare le configurazioni precedenti se necessario.
+
+## Stati delle versioni
+
+| Stato           | Descrizione                                   |
+| --------------- | --------------------------------------------- |
+| **Bozza**       | In fase di modifica, non ancora pubblicata    |
+| **Attivo**      | Versione live che risponde ai trigger         |
+| **Disattivato** | In precedenza attivo ma fermato manualmente   |
+| **Archiviato**  | Versioni passate conservate per la cronologia |
+
+## Lavorare con le bozze
+
+Quando modifichi un workflow attivo, le modifiche vengono salvate come **bozza**. La versione attiva continua a essere eseguita mentre lavori agli aggiornamenti.
+
+Una volta terminata la modifica, puoi:
+
+* **Attiva**: Pubblica la bozza come nuova versione attiva (la versione precedente viene archiviata)
+* **Scarta**: Elimina la bozza e mantieni l'attuale versione attiva
+
+## Cronologia Versioni
+
+### Visualizzare le versioni precedenti
+
+1. Apri il workflow
+2. Fai clic sulla scheda **Versioni**
+3. Visualizza tutte le versioni precedenti con timestamp
+
+### Ripristinare una versione
+
+1. Trova la versione che desideri ripristinare
+2. Fai clic su **Usa come bozza**
+3. La versione viene copiata in una nuova bozza
+4. Apporta gli aggiornamenti necessari
+5. Attiva quando sei pronto
+
+## Migliori Pratiche
+
+### Gestione delle versioni
+
+* Attiva solo quando pronta per la produzione
+* Mantieni modifiche significative tra le versioni
+* Documenta le modifiche importanti nei nomi o nelle descrizioni dei workflow
+* Testa in modalità bozza prima di attivare i workflow
+
+### Ripristino delle modifiche
+
+* Se una nuova versione causa problemi, ripristina la versione precedente
+* Usa la cronologia delle versioni per tenere traccia delle modifiche
+* Testa sempre le versioni ripristinate prima di attivare
+
+## Workflow comuni
+
+### Modifica rapida
+
+1. Apporta piccole modifiche a un workflow attivo
+2. Testa in modalità bozza
+3. Attiva la nuova versione
+
+### Revisione importante
+
+1. Usa la versione precedente come punto di partenza
+2. Apporta modifiche significative in bozza
+3. Testa approfonditamente tutti gli scenari
+4. Attiva quando sei sicuro
+
+### Ripristino
+
+1. Identifica il problema con la versione corrente
+2. Trova nella cronologia l'ultima versione funzionante
+3. Fai clic su **Usa come bozza**
+4. Attiva per ripristinare il comportamento precedente
+
+## Correlati
+
+* [Guida introduttiva ai workflow](/l/it/user-guide/workflows/overview)
+* [Esecuzioni dei workflow](/l/it/user-guide/workflows/capabilities/workflow-runs)

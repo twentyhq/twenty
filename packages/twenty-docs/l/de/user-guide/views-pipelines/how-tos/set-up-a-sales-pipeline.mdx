@@ -1,0 +1,120 @@
+---
+title: Vertriebspipeline einrichten
+description: Konfigurieren Sie Ihre Vertriebspipeline, um Verkaufschancen durch die Phasen zu verfolgen.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Eine Vertriebspipeline in Twenty ist eine Kanban-Ansicht Ihres Objekts "Opportunities", in der jede Spalte eine Phase Ihres Vertriebsprozesses darstellt.
+
+## Schritt 1: Phasen konfigurieren
+
+Phasen werden im Feld **Phase** des Objekts "Opportunities" definiert.
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie **Opportunities** aus
+3. Suchen Sie das Feld **Phase** und klicken Sie darauf
+4. Fügen Sie Phasen hinzu, entfernen oder benennen Sie sie um, um Ihren Prozess abzubilden
+
+<VimeoEmbed videoId="927890428" title="Video-Demonstration" />
+
+### Empfohlene Phasen
+
+| Phase            | Zweck                              |
+| ---------------- | ---------------------------------- |
+| **Neu**          | Neu identifizierte Verkaufschancen |
+| **Qualifiziert** | Als geeignet bestätigt             |
+| **Termin**       | In Gesprächen                      |
+| **Angebot**      | Angebot gesendet                   |
+| **Verhandlung**  | Konditionen werden ausgehandelt    |
+| **Gewonnen**     | Geschäft gewonnen                  |
+| **Verloren**     | Geschäft verloren                  |
+
+<Note>
+  **5-7 Phasen sind optimal.** Zu viele Phasen erschweren das Erfassen der Pipeline; zu wenige verringern die Sichtbarkeit des Deal-Fortschritts.
+</Note>
+
+## Schritt 2: Pipeline-Ansicht erstellen
+
+1. Gehen Sie zu **Opportunities**
+2. Klicken Sie auf das Ansichts-Dropdown → **+ Ansicht hinzufügen**
+3. Nennen Sie sie "Vertriebspipeline"
+4. Klicken Sie auf **Erstellen**
+5. Öffnen Sie **Optionen** und wählen Sie **Kanban** als Layout
+
+Die Ansicht verwendet automatisch das Feld "Phase" für die Spalten.
+
+## Schritt 3: Ansicht konfigurieren
+
+### Wichtige Felder anzeigen
+
+1. Klicken Sie auf **Optionen → Felder**
+2. Suchen Sie im Abschnitt "Ausgeblendete Felder" nach Feldern
+3. Klicken Sie auf das **Augen-Symbol**, um Folgendes anzuzeigen: Unternehmen, Betrag, Abschlussdatum, Eigentümer
+
+### Aggregationen aktivieren
+
+Summen oben in jeder Spalte anzeigen:
+
+1. Klicken Sie auf die Zahl, die oben in einer Spalte neben einem Phasennamen angezeigt wird
+2. Wählen Sie den Aggregationstyp (Anzahl, Summe, Durchschnitt usw.)
+3. Wählen Sie das zu aggregierende Feld (z. B. Betrag)
+
+**Beispiel:** Zeigen Sie den Gesamtwert der Geschäfte pro Phase an, indem Sie das Feld Betrag mit Summe aggregieren.
+
+### Kompaktansicht verwenden (optional)
+
+Für eine grobe Übersicht mit minimalem Karteninhalt:
+
+1. Klicken Sie auf **Optionen**
+2. Aktivieren Sie den Schalter für **Kompaktansicht**
+
+## Schritt 4: Persönliche und Team-Ansichten erstellen
+
+### "Meine Pipeline"
+
+* **Filter**: Eigentümer = Ich
+* **Sichtbarkeit**: Nicht gelistet (persönliche Ansicht)
+
+### "Team-Pipeline"
+
+* **Filter**: Keiner (alle anzeigen)
+* **Sichtbarkeit**: Arbeitsbereich (geteilte Ansicht)
+
+### "Abschluss in diesem Monat"
+
+* **Typ**: Tabelle
+* **Filter**: Abschlussdatum = Dieser Monat, Phase ≠ Gewonnen, Phase ≠ Verloren
+* **Sortierung**: Abschlussdatum aufsteigend
+
+## Arbeiten mit Opportunities
+
+### Opportunities erstellen
+
+* Klicken Sie in der Opportunities-Ansicht auf **+ Neu**
+* Oder klicken Sie in einer bestimmten Phasenspalte auf **+**
+
+### Durch die Phasen wechseln
+
+Ziehen Sie Opportunity-Karten per Drag & Drop zwischen die Spalten, um ihre Phase zu aktualisieren.
+
+<VimeoEmbed videoId="927888627" title="Video-Demonstration" />
+
+## Beste Praktiken
+
+### Pipeline-Hygiene
+
+* Aktualisieren Sie Geschäfte täglich entsprechend ihrem Fortschritt
+* Verschieben oder schließen Sie ruhende Geschäfte umgehend
+* Halten Sie Abschlussdaten realistisch
+
+### Phasendisziplin
+
+* Definieren Sie klare Kriterien für jede Phase
+* Verschieben Sie Geschäfte umgehend, wenn Kriterien erfüllt sind
+* Lassen Sie Geschäfte nicht zu lange in Phasen liegen
+
+## Verwandt
+
+* [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Aggregationen und Kompaktansicht
+* [Filter und Sortierung](/l/de/user-guide/views-pipelines/capabilities/filters-and-sorting) — gefilterte Ansichten erstellen

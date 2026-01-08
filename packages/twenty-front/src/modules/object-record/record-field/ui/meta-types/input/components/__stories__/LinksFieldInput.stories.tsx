@@ -13,7 +13,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { LinksFieldInput } from '../LinksFieldInput';
+import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 
 const updateRecord = fn();
 

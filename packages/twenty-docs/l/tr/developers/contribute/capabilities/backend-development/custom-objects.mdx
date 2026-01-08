@@ -1,0 +1,39 @@
+---
+title: Özel Nesneler
+---
+
+Nesneler, bir kuruluşa özgü verileri (kayıtlar, nitelikler ve değerler) saklamanıza olanak tanır. Twenty provides both standard and custom objects.
+
+Standart nesneler, tüm kullanıcılar için kullanılabilir bir dizi niteliğe sahip yerleşik nesnelerdir. Twenty'deki standart nesne örnekleri arasında Şirket ve Kişi yer alır. Standart nesneler, tüm Twenty kullanıcıları için de mevcut olan standart alanlara sahiptir, örneğin Şirket.görünenAd.
+
+Özel nesneler, kuruluşunuza özgü bilgileri depolamak için oluşturabileceğiniz nesnelerdir. Yerleşik değildir; çalışma alanınızdaki üyeler, standart nesnelerin uygun olmadığı bilgileri tutmak için özel nesneler oluşturabilir ve özelleştirebilir.
+
+## Üst Düzey Şema
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Üst Düzey Şema" />
+</div>
+
+<br />
+
+## Nasıl Çalışır
+
+Özel nesneler, nesnelerin şekli, adı ve türünü belirleyen meta veri tablolarından gelir. Tüm bu bilgiler, tablolar içeren meta veri şema veritabanında bulunur:
+
+* **VeriKaynağı**: Verinin nerede bulunduğuna dair detaylar.
+* **Nesne**: Nesneyi tarif eder ve bir Veri Kaynağı'na bağlanır.
+* **Alan**: Bir Nesnenin alanlarını özetler ve Nesneye bağlanır.
+
+Özel bir nesne eklemek için, çalışma alanı üyesi /metadata API'sini sorgulayacaktır. Bu, meta verileri uygun şekilde günceller ve meta verilere dayanarak bir GraphQL şeması hesaplar ve bunu daha sonra kullanmak üzere bir GQL önbelleğine kaydeder.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Özel nesneler eklemek için /metadata API'sini sorgulayın" />
+</div>
+
+<br />
+
+Veri almak için süreç, /graphql uçnoktasına sorgular yapmayı ve bunları Sorgu Çözücü'den geçirmeyi içerir.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="/graphql uçnoktasını sorgulayarak verileri alın" />
+</div>

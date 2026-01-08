@@ -4,7 +4,7 @@ image: /images/user-guide/notes/notes_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+  <img src="/images/user-guide/notes/notes_header.png" alt="Hlavička" />
 </Frame>
 
 ## Text Input
@@ -12,59 +12,53 @@ image: /images/user-guide/notes/notes_header.png
 Umožňuje uživatelům zadávat a upravovat text.
 
 <Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
 
-```jsx
-import { RecoilRoot } from "recoil";
-import { TextInput } from "@/ui/input/components/TextInput";
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
 
-export const MyComponent = () => {
-  const handleChange = (text) => {
-    console.log("Input changed:", text);
-  };
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
 
-  const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
-  };
+    ```
+  </Tab>
 
-  return (
-    <RecoilRoot>
-      <TextInput
-        className
-        label="Username"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Invalid username"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
-    </RecoilRoot>
-  );
-};
+  <Tab title="Vlastnosti">
+    | Vlastnosti     | Typ                | Popis                                                                                                                     |
+    | -------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+    | className      | řetězec            | Volitelný název pro další stylování                                                                                       |
+    | štítek         | řetězec            | Reprezentuje štítek pro vstup                                                                                             |
+    | onChange       | funkce             | Funkce, která se zavolá, když se změní hodnota vstupu                                                                     |
+    | fullWidth      | booleovská hodnota | Udává, zda by měl vstup zabírat 100 % šířky                                                                               |
+    | disableHotkeys | booleovská hodnota | Indikuje, zda jsou pro vstup povoleny horké klávesy                                                                       |
+    | chyba          | řetězec            | Reprezentuje chybovou zprávu, která se má zobrazit. Pokud je poskytnuta, také přidává ikonu chyby na pravou stranu vstupu |
+    | onKeyDown      | funkce             | Called when a key is pressed down while the input field is focused. Přijímá `React.KeyboardEvent` jako argument           |
+    | Pravá Ikona    | Ikonová komponenta | Volitelná komponenta ikony zobrazená na pravé straně vstupu                                                               |
 
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti     | Typ                | Popis                                                                                                                                     |
-| -------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| className      | textový řetězec    | Volitelný název pro dodatečné stylování                                                                                                   |
-| štítek         | textový řetězec    | Reprezentuje štítek pro vstup                                                                                                             |
-| onChange       | funkce             | Funkce, která se zavolá, když se změní hodnota vstupu                                                                                     |
-| fullWidth      | booleovská hodnota | Udává, zda by měl vstup zabírat 100 % šířky                                                                                               |
-| disableHotkeys | booleovská hodnota | Indikuje, zda jsou pro vstup povoleny horké klávesy                                                                                       |
-| chyba          | textový řetězec    | Reprezentuje chybovou zprávu, která se má zobrazit. Pokud je poskytnuta, také přidává ikonu chyby na pravou stranu vstupu |
-| onKeyDown      | funkce             | Called when a key is pressed down while the input field is focused. Přijímá `React.KeyboardEvent` jako argument           |
-| Pravá Ikona    | Ikonová komponenta | Volitelná komponenta ikony zobrazená na pravé straně vstupu                                                                               |
-
-Komponenta také přijímá jiné vlastnosti HTML vstupního prvku.
-
-</Tab>
-
+    Komponenta také přijímá jiné vlastnosti HTML vstupního prvku.
+  </Tab>
 </Tabs>
 
 ## Automatická velikost vstupního textu
@@ -72,46 +66,40 @@ Komponenta také přijímá jiné vlastnosti HTML vstupního prvku.
 Textová vstupní komponenta, která automaticky přizpůsobuje svou výšku na základě obsahu.
 
 <Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { RecoilRoot } from "recoil";
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
-
-export const MyComponent = () => {
-  return (
-    <RecoilRoot>
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate function fired")}
-        minRows={1}
-        placeholder="Write a comment"
-        onFocus={() => console.log("onFocus function fired")}
-        variant="icon"
-        buttonTitle
-        value="Task: "
-      />
-    </RecoilRoot>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti    | Typ             | Popis                                                                                                |
-| ------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
-| onValidate    | funkce          | The callback function you want to trigger when the user validates the input                          |
-| minRows       | číslo           | Minimální počet řádků pro textovou oblast                                                            |
-| zástupný text | textový řetězec | Náhradní text, který chcete zobrazit, když je textová oblast prázdná                                 |
-| onFocus       | funkce          | The callback function you want to trigger when the text area gains focus                             |
-| varianta      | textový řetězec | Varianta vstupu. Možnosti zahrnují: `výchozí`, `ikona`, a `tlačítko` |
-| buttonTitle   | textový řetězec | Název pro tlačítko (pouze pro variantu tlačítka)                                  |
-| hodnota       | textový řetězec | Úvodní hodnota pro textovou oblast                                                                   |
-
-</Tab>
-
+  <Tab title="Vlastnosti">
+    | Vlastnosti    | Typ     | Popis                                                                       |
+    | ------------- | ------- | --------------------------------------------------------------------------- |
+    | onValidate    | funkce  | The callback function you want to trigger when the user validates the input |
+    | minRows       | číslo   | Minimální počet řádků pro textovou oblast                                   |
+    | zástupný text | řetězec | Náhradní text, který chcete zobrazit, když je textová oblast prázdná        |
+    | onFocus       | funkce  | The callback function you want to trigger when the text area gains focus    |
+    | varianta      | řetězec | Varianta vstupu. Možnosti zahrnují: `výchozí`, `ikona`, a `tlačítko`        |
+    | buttonTitle   | řetězec | Název pro tlačítko (pouze pro variantu tlačítka)                            |
+    | hodnota       | řetězec | Úvodní hodnota pro textovou oblast                                          |
+  </Tab>
 </Tabs>
 
 ## Textová Oblast
@@ -119,35 +107,31 @@ export const MyComponent = () => {
 Umožňuje vytvoření víceřádkových textových vstupů.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Použití">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
 
-```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('On change function fired')}
-    placeholder="Enter text here"
-    value=""
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Vlastnosti    | Typ                | Popis                                                                  |
-| ------------- | ------------------ | ---------------------------------------------------------------------- |
-| neaktivní     | booleovská hodnota | Naznačuje, zda je textová oblast deaktivovaná                          |
-| minRows       | číslo              | Minimální počet viditelných řádků pro textovou oblast. |
-| onChange      | funkce             | Callback function triggered when the text area content changes         |
-| zástupný text | textový řetězec    | Zástupný text zobrazený, když je textová oblast prázdná                |
-| hodnota       | textový řetězec    | Aktuální hodnota textové oblasti                                       |
-
-</Tab>
+  <Tab title="Vlastnosti">
+    | Vlastnosti    | Typ                | Popis                                                          |
+    | ------------- | ------------------ | -------------------------------------------------------------- |
+    | neaktivní     | booleovská hodnota | Naznačuje, zda je textová oblast deaktivovaná                  |
+    | minRows       | číslo              | Minimální počet viditelných řádků pro textovou oblast.         |
+    | onChange      | funkce             | Callback function triggered when the text area content changes |
+    | zástupný text | řetězec            | Zástupný text zobrazený, když je textová oblast prázdná        |
+    | hodnota       | řetězec            | Aktuální hodnota textové oblasti                               |
+  </Tab>
 </Tabs>

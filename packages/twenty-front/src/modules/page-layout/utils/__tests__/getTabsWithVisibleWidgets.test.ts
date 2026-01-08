@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { WidgetType } from '~/generated/graphql';
-import { getTabsWithVisibleWidgets } from '../getTabsWithVisibleWidgets';
+import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 
 describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (
@@ -20,7 +20,11 @@ describe('getTabsWithVisibleWidgets', () => {
       rowSpan: 1,
       columnSpan: 1,
     },
-    configuration: null,
+    configuration: {
+      __typename: 'FieldsConfiguration',
+      configurationType: 'FIELDS',
+      sections: [],
+    },
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,

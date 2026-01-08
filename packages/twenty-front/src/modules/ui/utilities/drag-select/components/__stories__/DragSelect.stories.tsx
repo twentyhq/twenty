@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { DragSelect } from '../DragSelect';
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 
 const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};

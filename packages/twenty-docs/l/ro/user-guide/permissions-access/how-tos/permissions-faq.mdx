@@ -1,0 +1,126 @@
+---
+title: Întrebări frecvente despre permisiuni
+description: Întrebări frecvente despre roluri și permisiuni.
+---
+
+## Roluri
+
+<AccordionGroup>
+  <Accordion title="Ce roluri sunt incluse implicit în Twenty?">
+    Twenty include în mod implicit rolurile **Admin** și **Member**. Puteți crea roluri personalizate suplimentare în funcție de nevoile echipei dvs. (de exemplu, Reprezentant de vânzări, Manager, Utilizator doar pentru citire).
+  </Accordion>
+
+  <Accordion title="Pot să șterg rolul Admin?">
+    Nu, rolul Admin nu poate fi șters. Trebuie să existe întotdeauna cel puțin un membru atribuit rolului Admin.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă când șterg un rol?">
+    Orice membru al spațiului de lucru atribuit acelui rol va fi reatribuit automat rolului implicit.
+  </Accordion>
+
+  <Accordion title="Cum setez un rol implicit pentru noii membri?">
+    Accesați **Settings → Roles**, găsiți opțiunea **Default Role** și selectați ce rol ar trebui să primească automat noii membri când se alătură.
+  </Accordion>
+
+  <Accordion title="Pot să atribui mai multe roluri unui singur utilizator?">
+    Nu, fiecare utilizator poate avea un singur rol la un moment dat. Creați un rol personalizat dacă aveți nevoie de o combinație de permisiuni.
+  </Accordion>
+</AccordionGroup>
+
+## Permisiuni
+
+<AccordionGroup>
+  <Accordion title="Care este diferența dintre permisiunile la nivel de obiect și cele la nivel de câmp?">
+    * **Permisiuni pentru obiecte**: Controlează accesul la înregistrări întregi (de exemplu, pot vedea/edita/șterge înregistrări People)
+    * **Permisiuni pentru câmpuri**: Controlează accesul la câmpuri specifice dintr-un obiect (de exemplu, pot vedea, dar nu pot edita câmpul Salary)
+
+    Permisiunile pentru câmpuri permit un control mai granular asupra datelor sensibile.
+  </Accordion>
+
+  <Accordion title="Cum funcționează suprascrierile permisiunilor?">
+    Permisiunile se propagă în cascadă de la global la specific:
+
+    1. **All Objects** stabilește configurația de bază pentru toate obiectele
+    2. **Object-Level Permissions** pot suprascrie setarea globală pentru anumite obiecte
+    3. **Field-Level Permissions** pot suprascrie setarea la nivel de obiect pentru anumite câmpuri
+
+    Setările mai specifice au întotdeauna prioritate.
+  </Accordion>
+
+  <Accordion title="Ce înseamnă diferitele niveluri de permisiuni?">
+    Pentru obiecte:
+
+    * **See Records**: Vizualizați înregistrările în liste și în paginile de detaliu
+    * **Edit Records**: Modificați înregistrările existente
+    * **Delete Records**: Ștergeți temporar înregistrările (pot fi restaurate)
+    * **Destroy Records**: Ștergeți definitiv înregistrările
+
+    Pentru câmpuri:
+
+    * **See Field**: Vizualizați valoarea câmpului
+    * **Edit Field**: Modificați valoarea câmpului
+    * **No Access**: Câmpul este complet ascuns
+  </Accordion>
+
+  <Accordion title="Pot restricționa accesul la anumite înregistrări (permisiuni la nivel de rând)?">
+    Permisiunile la nivel de rând vor fi disponibile în planul **Organization** până în trimestrul I 2026. Acest lucru vă permite să restricționați accesul la anumite înregistrări pe baza unor criterii (de exemplu, să vedeți doar propriile oportunități).
+  </Accordion>
+
+  <Accordion title="Cum fac un câmp doar pentru citire pentru anumiți utilizatori?">
+    1. Accesați **Setări → Roluri**
+    2. Selectați rolul
+    3. Navigați la obiectul care conține câmpul
+    4. Setați permisiunea câmpului la **See Field** (fără Edit Field)
+  </Accordion>
+</AccordionGroup>
+
+## Setări și acțiuni
+
+<AccordionGroup>
+  <Accordion title="Ce permisiuni pentru setări sunt disponibile?">
+    Puteți controla accesul la:
+
+    * Generarea cheilor API
+    * Preferințe ale spațiului de lucru
+    * Atribuirea rolurilor
+    * Configurarea modelului de date
+    * Setări de securitate
+    * Gestionarea fluxurilor de lucru
+
+    Folosiți **Settings All Access** pentru a acorda acces complet, sau activați permisiuni specifice.
+  </Accordion>
+
+  <Accordion title="Ce permisiuni pentru acțiuni sunt disponibile?">
+    Puteți controla:
+
+    * **Send Email**: Posibilitatea de a trimite e-mailuri din Twenty
+    * **Import CSV**: Posibilitatea de a importa date prin CSV
+    * **Export CSV**: Posibilitatea de a exporta date în CSV
+
+    Folosiți **Application All Access** pentru a permite toate acțiunile, sau activați doar pe cele specifice.
+  </Accordion>
+</AccordionGroup>
+
+## Autentificare Unică
+
+<AccordionGroup>
+  <Accordion title="Este SSO disponibil pe toate planurile?">
+    Nu, SSO este o funcționalitate Premium disponibilă doar în planul **Organization**.
+  </Accordion>
+
+  <Accordion title="Ce furnizori de identitate sunt acceptați?">
+    Twenty acceptă:
+
+    * **SAML 2.0** (funcționează cu majoritatea furnizorilor de identitate pentru întreprinderi)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (fostul Azure AD)
+  </Accordion>
+
+  <Accordion title="Ce este provisionarea Just-in-Time (JIT)?">
+    Cu provisionarea JIT, conturile de utilizator sunt create automat în Twenty atunci când cineva se autentifică prin SSO pentru prima dată. Li se atribuie automat rolul implicit.
+  </Accordion>
+
+  <Accordion title="Pot impune SSO pentru toți utilizatorii?">
+    Da, odată ce SSO este configurat, puteți dezactiva autentificarea cu parolă pentru utilizatorii SSO, pentru a impune autentificarea prin furnizorul dvs. de identitate.
+  </Accordion>
+</AccordionGroup>

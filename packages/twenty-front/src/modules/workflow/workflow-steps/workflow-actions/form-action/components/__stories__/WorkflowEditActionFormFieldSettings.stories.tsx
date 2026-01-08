@@ -6,7 +6,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
-import { WorkflowEditActionFormFieldSettings } from '../WorkflowEditActionFormFieldSettings';
+import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 
 const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFieldSettings',

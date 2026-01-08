@@ -54,7 +54,7 @@ export default [
     },
     rules: {
       'prettier/prettier': 'error',
-      
+
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
       'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -137,7 +137,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
@@ -145,10 +145,10 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'error', // Stricter for server

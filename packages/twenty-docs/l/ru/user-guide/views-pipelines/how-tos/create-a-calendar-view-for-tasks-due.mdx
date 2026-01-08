@@ -1,0 +1,61 @@
+---
+title: Создайте календарное представление задач по срокам
+description: Отображайте задачи и сроки в календаре.
+---
+
+<img src="/images/user-guide/views/calendar-view-zoom.png" style={{width:'100%'}} />
+
+## Требования
+
+В объекте **Tasks** должно быть поле **Due Date** (типа Date или Date & Time).
+
+## Шаги
+
+1. Перейдите в **Tasks**
+2. Откройте выпадающее меню представления → **+ Добавить представление**
+3. Назовите представление (например, "Календарь задач")
+4. Нажмите **Создать**
+5. Нажмите **Параметры** и выберите **Календарь** в качестве макета
+6. Выберите **Due Date** в качестве поля даты
+7. Нажмите **Сохранить**
+
+## Настройка календаря
+
+### Отображение полей на событиях
+
+1. Нажмите **Параметры → Поля**
+2. Нажмите **значок глаза**, чтобы показать/скрыть поля
+3. Перетащите, чтобы изменить порядок
+
+Рекомендуемые поля для отображения:
+
+* **Title** — название задачи
+* **Assignee** — ответственный
+* **Status** — текущий прогресс
+
+### Фильтрация календаря
+
+Создавайте целевые представления:
+
+* **Мои задачи**: Фильтр по ответственному = Я
+* **This Week**: Filter by Due Date = This week
+* **Overdue**: Filter by Due Date < Today, Status ≠ Done
+
+## Other Calendar Use Cases
+
+| Объект        | Date Field | Purpose                   |
+| ------------- | ---------- | ------------------------- |
+| Возможности   | Close Date | Track expected closes     |
+| Custom Events | Event Date | Plan activities           |
+| Projects      | Deadline   | Monitor project timelines |
+
+## Tips
+
+* **Review weekly**: Start each week by checking your calendar view
+* **Combine with table view**: Use calendar for overview, table for details
+* **Set visibility**: Keep personal task calendars as Unlisted
+
+## Related
+
+* [Calendar View](/l/ru/user-guide/views-pipelines/capabilities/calendar-view) — all calendar features
+* [Filters and Sorting](/l/ru/user-guide/views-pipelines/capabilities/filters-and-sorting) — filter your calendar

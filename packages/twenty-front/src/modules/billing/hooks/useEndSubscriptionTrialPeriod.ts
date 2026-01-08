@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -13,6 +14,7 @@ export const useEndSubscriptionTrialPeriod = () => {
     currentWorkspaceState,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const { redirect } = useRedirect();
 
   const endTrialPeriod = async () => {
     try {
@@ -24,6 +26,14 @@ export const useEndSubscriptionTrialPeriod = () => {
       const hasPaymentMethod = endTrialPeriodOutput?.hasPaymentMethod;
 
       if (isDefined(hasPaymentMethod) && hasPaymentMethod === false) {
+        const billingPortalUrl = endTrialPeriodOutput?.billingPortalUrl;
+
+        if (isDefined(billingPortalUrl)) {
+          redirect(billingPortalUrl);
+
+          return { success: false };
+        }
+
         enqueueErrorSnackBar({
           message: t`No payment method found. Please update your billing details.`,
         });

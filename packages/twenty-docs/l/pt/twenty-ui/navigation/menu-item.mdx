@@ -1,5 +1,5 @@
 ---
-title: Item de Menu
+title: Menu Item
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
@@ -7,452 +7,422 @@ image: /images/user-guide/kanban-views/kanban.png
   <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
 </Frame>
 
-Um item de menu versátil projetado para ser usado em um menu ou lista de navegação.
+A versatile menu item designed to be used in a menu or navigation list.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
-  };
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
 
-  const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
-  };
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItem
-      LeftIcon={IconBell}
-      accent="default"
-      text="Menu item text"
-      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-      isTooltipOpen={true}
-      testId="menu-item-1"
-      onClick={handleMenuItemClick}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props         | Tipo                                     | Descrição                                                                                                                             |
-| ------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| ÍconeEsquerdo | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu                                                                     |
-| realce        | Nome opcional para estilização adicional | Especifica a cor de destaque do item de menu. As opções incluem: `default`, `danger`, e `placeholder` |
-| texto         | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                                                                                    |
-| iconButtons   | matriz                                   | Um array de objetos representando botões de ícones adicionais associados ao item de menu                                              |
-| isTooltipOpen | booleano                                 | Controla a visibilidade da dica de ferramenta associada ao item de menu                                                               |
-| testId        | Nome opcional para estilização adicional | O atributo data-testid para fins de teste                                                                                             |
-| onClick       | funções                                  | Função de retorno de chamada acionada quando o item de menu é clicado                                                                 |
-| className     | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                                                                              |
-
-</Tab>
+  <Tab title="Props">
+    | Props         | Type          | Description                                                                                          |
+    | ------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+    | LeftIcon      | IconComponent | An optional left icon displayed before the text in the menu item                                     |
+    | accent        | string        | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
+    | text          | string        | The text content of the menu item                                                                    |
+    | iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item               |
+    | isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                 |
+    | testId        | string        | The data-testid attribute for testing purposes                                                       |
+    | onClick       | function      | Callback function triggered when the menu item is clicked                                            |
+    | className     | string        | Optional name for additional styling                                                                 |
+  </Tab>
 </Tabs>
 
-## Variantes
+## Variants
 
-As diferentes variantes do componente de item de menu incluem o seguinte:
+The different variants of the menu item component include the following:
 
-### Comando
+### Command
 
-Um item de menu estilo comando em um menu para indicar atalhos de teclado.
+A command-style menu item within a menu to indicate keyboard shortcuts.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
 
-export const MyComponent = () => {
-  const handleCommandClick = () => {
-    console.log("Command clicked!");
-  };
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemCommand
-      LeftIcon={IconBell}
-      text="First Option"
-      firstHotKey="⌘"
-      secondHotKey="1"
-      isSelected={true}
-      onClick={handleCommandClick}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props         | Tipo                                     | Descrição                                                             |
-| ------------- | ---------------------------------------- | --------------------------------------------------------------------- |
-| ÍconeEsquerdo | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu     |
-| texto         | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                    |
-| firstHotKey   | Nome opcional para estilização adicional | O primeiro atalho de teclado associado ao comando                     |
-| secondHotKey  | Nome opcional para estilização adicional | O segundo atalho de teclado associado ao comando                      |
-| isSelected    | booleano                                 | Indica se o item de menu está selecionado ou destacado                |
-| aoClicar      | função                                   | Função de retorno de chamada acionada quando o item de menu é clicado |
-| className     | Nome opcional para estilização adicional | Nome opcional para estilização adicional                              |
-
-</Tab>
+  <Tab title="Props">
+    | Props        | Type          | Description                                                      |
+    | ------------ | ------------- | ---------------------------------------------------------------- |
+    | LeftIcon     | IconComponent | An optional left icon displayed before the text in the menu item |
+    | text         | string        | The text content of the menu item                                |
+    | firstHotKey  | string        | The first keyboard shortcut associated with the command          |
+    | secondHotKey | string        | The second keyboard shortcut associated with the command         |
+    | isSelected   | boolean       | Indicates whether the menu item is selected or highlighted       |
+    | onClick      | function      | Callback function triggered when the menu item is clicked        |
+    | className    | string        | Optional name for additional styling                             |
+  </Tab>
 </Tabs>
 
-### Arrastável
+### Draggable
 
-Um componente de item de menu arrastável projetado para ser usado em um menu ou lista onde os itens podem ser arrastados e ações adicionais podem ser realizadas através de botões de ícones.
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
-  };
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemDraggable
-      LeftIcon={IconBell}
-      accent="default"
-      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-      isTooltipOpen={false}
-      onClick={handleMenuItemClick}
-      text="Menu item draggable"
-      isDragDisabled={false}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props          | Tipo                                     | Descrição                                                                                                   |
-| -------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| ÍconeEsquerdo  | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu                                           |
-| realce         | Nome opcional para estilização adicional | Especifica a cor de destaque do item de menu. Pode ser `default`, `placeholder`, e `danger` |
-| iconButtons    | matriz                                   | Um array de objetos representando botões de ícones adicionais associados ao item de menu                    |
-| isTooltipOpen  | booleano                                 | Controla a visibilidade da dica de ferramenta associada ao item de menu                                     |
-| onClick        | funções                                  | Função de retorno de chamada acionada quando o link é clicado                                               |
-| texto          | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                                                          |
-| isDragDisabled | booleano                                 | Indica se o arrasto está desativado                                                                         |
-| className      | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                                                    |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type          | Description                                                                                |
+    | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
+    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item                           |
+    | accent         | string        | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
+    | iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item     |
+    | isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                       |
+    | onClick        | function      | Callback function to be triggered when the link is clicked                                 |
+    | text           | string        | The text content of the menu item                                                          |
+    | isDragDisabled | boolean       | Indicates whether dragging is disabled                                                     |
+    | className      | string        | Optional name for additional styling                                                       |
+  </Tab>
 </Tabs>
 
-### Seleção Múltipla
+### Multi Select
 
-Fornece uma maneira de implementar funcionalidade de multi-seleção com uma caixa de seleção associada.
+Provides a way to implement multi-select functionality with an associated checkbox.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemMultiSelect
-      LeftIcon={IconBell}
-      text="First Option"
-      selected={false}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props          | Tipo                                     | Descrição                                                                      |
-| -------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
-| ÍconeEsquerdo  | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu              |
-| texto          | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                             |
-| selecionado    | booleano                                 | Indica se o item do menu está selecionado (marcado)         |
-| onSelectChange | funções                                  | Função de retorno de chamada acionada quando o estado da caixa de seleção muda |
-| className      | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                       |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type          | Description                                                      |
+    | -------------- | ------------- | ---------------------------------------------------------------- |
+    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item |
+    | text           | string        | The text content of the menu item                                |
+    | selected       | boolean       | Indicates whether the menu item is selected (checked)            |
+    | onSelectChange | function      | Callback function triggered when the checkbox state changes      |
+    | className      | string        | Optional name for additional styling                             |
+  </Tab>
 </Tabs>
 
-### Avatar de Seleção Múltipla
+### Multi Select Avatar
 
-Um item de menu de multi-seleção com um avatar, uma caixa de seleção para seleção e conteúdo textual.
+A multi-select menu item with an avatar, a checkbox for selection, and textual content.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
-```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-export const MyComponent = () => {
-  const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemMultiSelectAvatar
-      avatar={<img src={imageUrl} alt="Avatar" />}
-      text="First Option"
-      selected={false}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props          | Tipo                                     | Descrição                                                                      |
-| -------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
-| avatar         | `ReactNode`                              | O avatar ou ícone a ser exibido no lado esquerdo do item do menu               |
-| texto          | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                             |
-| selecionado    | booleano                                 | Indica se o item do menu está selecionado (marcado)         |
-| onSelectChange | funções                                  | Função de retorno de chamada acionada quando o estado da caixa de seleção muda |
-| className      | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                       |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type        | Description                                                          |
+    | -------------- | ----------- | -------------------------------------------------------------------- |
+    | avatar         | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
+    | text           | string      | The text content of the menu item                                    |
+    | selected       | boolean     | Indicates whether the menu item is selected (checked)                |
+    | onSelectChange | function    | Callback function triggered when the checkbox state changes          |
+    | className      | string      | Optional name for additional styling                                 |
+  </Tab>
 </Tabs>
 
-### Navegar
+### Navigate
 
-Um item de menu contendo um ícone opcional à esquerda, conteúdo textual e um ícone de chevron à direita.
+A menu item featuring an optional left icon, textual content, and a right-chevron icon.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
 
-export const MyComponent = () => {
-  const handleNavigation = () => {
-    console.log("Navigate to another page");
-  };
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemNavigate
-      LeftIcon={IconBell}
-      text="First Option"
-      onClick={handleNavigation}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props         | Tipo                                     | Descrição                                                             |
-| ------------- | ---------------------------------------- | --------------------------------------------------------------------- |
-| ÍconeEsquerdo | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu     |
-| texto         | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                    |
-| onClick       | funções                                  | Função de retorno de chamada acionada quando o item de menu é clicado |
-| className     | Nome opcional para estilização adicional | Nome opcional para estilização adicional                              |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type          | Description                                                      |
+    | --------- | ------------- | ---------------------------------------------------------------- |
+    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
+    | text      | string        | The text content of the menu item                                |
+    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
+    | className | string        | Optional name for additional styling                             |
+  </Tab>
 </Tabs>
 
-### Selecionar
+### Select
 
-Um item de menu selecionável, com opção de conteúdo à esquerda (ícone e texto) e um indicador (ícone de seleção) para o estado selecionado.
+A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
 
-```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
 
-export const MyComponent = () => {
-  const handleSelection = () => {
-    console.log("Menu item selected");
-  };
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemSelect
-      LeftIcon={IconBell}
-      text="First Option"
-      selected={true}
-      disabled={false}
-      hovered={false}
-      onClick={handleSelection}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props         | Tipo                                     | Descrição                                                              |
-| ------------- | ---------------------------------------- | ---------------------------------------------------------------------- |
-| ÍconeEsquerdo | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu      |
-| texto         | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                     |
-| selected      | booleano                                 | Indica se o item do menu está selecionado (marcado) |
-| desativado    | booleano                                 | Indica se o item do menu está desativado                               |
-| em destaque   | booleano                                 | Indica se o item do menu está atualmente em destaque com o mouse       |
-| onClick       | função                                   | Função de retorno de chamada acionada quando o item de menu é clicado  |
-| className     | Nome opcional para estilização adicional | Nome opcional para estilização adicional                               |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type          | Description                                                      |
+    | --------- | ------------- | ---------------------------------------------------------------- |
+    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
+    | text      | string        | The text content of the menu item                                |
+    | selected  | boolean       | Indicates whether the menu item is selected (checked)            |
+    | disabled  | boolean       | Indicates whether the menu item is disabled                      |
+    | hovered   | boolean       | Indicates whether the menu item is currently being hovered over  |
+    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
+    | className | string        | Optional name for additional styling                             |
+  </Tab>
 </Tabs>
 
-### Avatar de Seleção
+### Select Avatar
 
-Um item de menu selecionável com um avatar, apresentando conteúdo opcional à esquerda (avatar e texto) e um indicador (ícone de seleção) para o estado selecionado.
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
 
-```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-export const MyComponent = () => {
-  const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
 
-  const handleSelection = () => {
-    console.log("Menu item selected");
-  };
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
 
-  return (
-    <MenuItemSelectAvatar
-      avatar={<img src={imageUrl} alt="Avatar" />}
-      text="First Option"
-      selected={true}
-      disabled={false}
-      hovered={false}
-      testId="menu-item-test"
-      onClick={handleSelection}
-      className
-    />
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props       | Tipo                                     | Descrição                                                              |
-| ----------- | ---------------------------------------- | ---------------------------------------------------------------------- |
-| avatar      | `ReactNode`                              | O avatar ou ícone a ser exibido no lado esquerdo do item do menu       |
-| texto       | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                     |
-| selected    | booleano                                 | Indica se o item do menu está selecionado (marcado) |
-| desativado  | booleano                                 | Indica se o item do menu está desativado                               |
-| em destaque | booleano                                 | Indica se o item do menu está atualmente em destaque com o mouse       |
-| testId      | Nome opcional para estilização adicional | O atributo data-testid para fins de teste                              |
-| aoClicar    | função                                   | Função de retorno de chamada acionada quando o item de menu é clicado  |
-| className   | Nome opcional para estilização adicional | Nome opcional para estilização adicional                               |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type        | Description                                                          |
+    | --------- | ----------- | -------------------------------------------------------------------- |
+    | avatar    | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
+    | text      | string      | The text content of the menu item                                    |
+    | selected  | boolean     | Indicates whether the menu item is selected (checked)                |
+    | disabled  | boolean     | Indicates whether the menu item is disabled                          |
+    | hovered   | boolean     | Indicates whether the menu item is currently being hovered over      |
+    | testId    | string      | The data-testid attribute for testing purposes                       |
+    | onClick   | function    | Callback function to be triggered when the menu item is clicked      |
+    | className | string      | Optional name for additional styling                                 |
+  </Tab>
 </Tabs>
 
-### Selecionar Cor
+### Select Color
 
-Um item de menu selecionável com uma amostra de cor para cenários onde você deseja que os usuários escolham uma cor a partir de um menu.
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
 
-```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
 
-export const MyComponent = () => {
-  const handleSelection = () => {
-    console.log("Menu item selected");
-  };
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemSelectColor
-      color="green"
-      selected={true}
-      disabled={false}
-      hovered={true}
-      variant="default"
-      onClick={handleSelection}
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props       | Tipo                                     | Descrição                                                                                                                                                                                                        |
-| ----------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| cor         | Nome opcional para estilização adicional | A cor do tema a ser exibida como uma amostra no item do menu. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `rosa`, `vermelho`, `laranja`, `amarelo`, e `cinza` |
-| selecionado | booleano                                 | Indica se o item do menu está selecionado (marcado)                                                                                                                                           |
-| desativado  | booleano                                 | Indica se o item do menu está desativado                                                                                                                                                                         |
-| em destaque | booleano                                 | Indica se o item do menu está atualmente em destaque com o mouse                                                                                                                                                 |
-| variante    | Nome opcional para estilização adicional | A variante da amostra de cor. Pode ser `default` ou `pipeline`                                                                                                                                   |
-| onClick     | função                                   | Função de retorno de chamada acionada quando o item de menu é clicado                                                                                                                                            |
-| className   | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                                                                                                                                                         |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type     | Description                                                                                                                                                                 |
+    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | color     | string   | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
+    | selected  | boolean  | Indicates whether the menu item is selected (checked)                                                                                                                       |
+    | disabled  | boolean  | Indicates whether the menu item is disabled                                                                                                                                 |
+    | hovered   | boolean  | Indicates whether the menu item is currently being hovered over                                                                                                             |
+    | variant   | string   | The variant of the color sample. It can either be `default` or `pipeline`                                                                                                   |
+    | onClick   | function | Callback function to be triggered when the menu item is clicked                                                                                                             |
+    | className | string   | Optional name for additional styling                                                                                                                                        |
+  </Tab>
 </Tabs>
 
-### Alternar
+### Toggle
 
-Um item de menu com um interruptor associado para permitir que os usuários ativem ou desativem um recurso específico
+A menu item with an associated toggle switch to allow users to enable or disable a specific feature
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
 
-```jsx
-import { IconBell } from '@tabler/icons-react';
+    import { MenuItemToggle } from 'twenty-ui/display';
 
-import { MenuItemToggle } from 'twenty-ui/display';
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <MenuItemToggle
-      LeftIcon={IconBell}
-      text="First Option"
-      toggled={true}
-      toggleSize="small"
-      className
-    />
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props           | Tipo                                     | Descrição                                                                  |
-| --------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| ÍconeEsquerdo   | ComponenteÍcone                          | Um ícone esquerdo opcional exibido antes do texto no item de menu          |
-| texto           | Nome opcional para estilização adicional | O conteúdo textual do item de menu                                         |
-| alternado       | booleano                                 | Indica se o interruptor está na posição "ligado" ou "desligado"            |
-| onToggleChange  | funções                                  | Função de retorno de chamada acionada quando o estado do interruptor muda  |
-| alternarTamanho | Nome opcional para estilização adicional | O tamanho do interruptor de alternância. Pode ser tanto \ |
-| className       | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                   |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type          | Description                                                       |
+    | -------------- | ------------- | ----------------------------------------------------------------- |
+    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item  |
+    | text           | string        | The text content of the menu item                                 |
+    | toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state |
+    | onToggleChange | function      | Callback function triggered when the toggle switch state changes  |
+    | toggleSize     | string        | The size of the toggle switch. It can be either \                 |
+    | className      | string        | Optional name for additional styling                              |
+  </Tab>
 </Tabs>

@@ -17,7 +17,7 @@ import {
   initialFavorites,
   mockWorkspaceMember,
   mocks,
-} from '../__mocks__/useFavorites';
+} from '@/favorites/hooks/__mocks__/useFavorites';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),

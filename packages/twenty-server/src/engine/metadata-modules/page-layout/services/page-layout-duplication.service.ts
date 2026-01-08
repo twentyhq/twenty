@@ -272,10 +272,7 @@ export class PageLayoutDuplicationService {
             gridPosition: originalWidget.gridPosition,
             type: originalWidget.type,
             objectMetadataId: originalWidget.objectMetadataId,
-            configuration: originalWidget.configuration as Record<
-              string,
-              unknown
-            > | null,
+            configuration: originalWidget.configuration,
             pageLayoutTabId: newTabId,
           },
           workspaceId,

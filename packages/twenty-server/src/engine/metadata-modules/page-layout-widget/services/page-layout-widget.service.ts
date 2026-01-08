@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
@@ -20,8 +18,6 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
-import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
@@ -29,10 +25,10 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
-import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
 
 type WidgetMigrationOperations = {
   flatEntityToCreate: FlatPageLayoutWidget[];
@@ -43,10 +39,10 @@ type WidgetMigrationOperations = {
 @Injectable()
 export class PageLayoutWidgetService {
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly dashboardSyncService: DashboardSyncService,
   ) {}
 
   private async getFlatPageLayoutWidgetMaps(
@@ -61,56 +57,6 @@ export class PageLayoutWidgetService {
       );
 
     return flatPageLayoutWidgetMaps;
-  }
-
-  private async validateWidgetConfigurationOrThrow({
-    type,
-    configuration,
-    workspaceId,
-    titleForError,
-  }: {
-    type: WidgetType;
-    configuration: Record<string, unknown>;
-    workspaceId: string;
-    titleForError: string;
-  }): Promise<WidgetConfigurationInterface> {
-    const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
-      workspaceId,
-    );
-
-    let validatedConfig: WidgetConfigurationInterface | null = null;
-
-    try {
-      validatedConfig = await validateAndTransformWidgetConfiguration({
-        type,
-        configuration,
-        isDashboardV2Enabled,
-      });
-    } catch (error) {
-      throw new PageLayoutWidgetException(
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
-          titleForError,
-          type,
-          error instanceof Error ? error.message : String(error),
-        ),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
-
-    if (!isDefined(validatedConfig)) {
-      throw new PageLayoutWidgetException(
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
-          titleForError,
-          type,
-        ),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
-
-    return validatedConfig;
   }
 
   private async validateAndRunWidgetMigration({
@@ -189,18 +135,6 @@ export class PageLayoutWidgetService {
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput,
     workspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    this.validateCreateInput(createPageLayoutWidgetInput);
-
-    validateWidgetGridPosition(
-      createPageLayoutWidgetInput.gridPosition,
-      createPageLayoutWidgetInput.title,
-    );
-
-    const validatedConfig = await this.getValidatedConfigurationForCreate(
-      createPageLayoutWidgetInput,
-      workspaceId,
-    );
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -208,12 +142,7 @@ export class PageLayoutWidgetService {
 
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
-        createPageLayoutWidgetInput: {
-          ...createPageLayoutWidgetInput,
-          ...(validatedConfig && {
-            configuration: validatedConfig as Record<string, unknown>,
-          }),
-        },
+        createPageLayoutWidgetInput,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
@@ -231,57 +160,18 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatPageLayoutWidgetToCreate.id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
-  }
-
-  private validateCreateInput(input: CreatePageLayoutWidgetInput): void {
-    if (!isDefined(input.title)) {
-      throw new PageLayoutWidgetException(
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.TITLE_REQUIRED,
-        ),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
-
-    if (!isDefined(input.pageLayoutTabId)) {
-      throw new PageLayoutWidgetException(
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_ID_REQUIRED,
-        ),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
-
-    if (!isDefined(input.gridPosition)) {
-      throw new PageLayoutWidgetException(
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.GRID_POSITION_REQUIRED,
-        ),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
-  }
-
-  private async getValidatedConfigurationForCreate(
-    input: CreatePageLayoutWidgetInput,
-    workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
-    if (!input.configuration || !input.type) {
-      return null;
-    }
-
-    return this.validateWidgetConfigurationOrThrow({
-      type: input.type,
-      configuration: input.configuration,
-      workspaceId,
-      titleForError: input.title,
+    const createdWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatPageLayoutWidgetToCreate.id,
+      flatEntityMaps: recomputedMaps,
     });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
+      widgetId: flatPageLayoutWidgetToCreate.id,
+      workspaceId,
+      updatedAt: new Date(createdWidget.updatedAt),
+    });
+
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(createdWidget);
   }
 
   async update(
@@ -303,19 +193,10 @@ export class PageLayoutWidgetService {
       validateWidgetGridPosition(updateData.gridPosition, titleForValidation);
     }
 
-    const validatedConfig = await this.getValidatedConfigurationForUpdate(
-      updateData,
-      existingWidget,
-      workspaceId,
-    );
-
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,
       update: {
         ...updateData,
-        ...(validatedConfig && {
-          configuration: validatedConfig as Record<string, unknown>,
-        }),
       },
     };
 
@@ -338,12 +219,18 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    const updatedWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
+      widgetId: id,
+      workspaceId,
+      updatedAt: new Date(updatedWidget.updatedAt),
+    });
+
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(updatedWidget);
   }
 
   private getExistingWidgetOrThrow(
@@ -363,31 +250,6 @@ export class PageLayoutWidgetService {
     }
 
     return existingWidget;
-  }
-
-  private async getValidatedConfigurationForUpdate(
-    updateData: UpdatePageLayoutWidgetInput,
-    existingWidget: FlatPageLayoutWidget,
-    workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
-    if (!updateData.configuration) {
-      return null;
-    }
-
-    const typeForValidation = updateData.type ?? existingWidget.type;
-
-    if (!typeForValidation) {
-      return null;
-    }
-
-    const titleForError = updateData.title ?? existingWidget.title;
-
-    return this.validateWidgetConfigurationOrThrow({
-      type: typeForValidation,
-      configuration: updateData.configuration,
-      workspaceId,
-      titleForError,
-    });
   }
 
   async delete(id: string, workspaceId: string): Promise<PageLayoutWidgetDTO> {
@@ -413,12 +275,18 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    const deletedWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
+      widgetId: id,
+      workspaceId,
+      updatedAt: new Date(deletedWidget.updatedAt),
+    });
+
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(deletedWidget);
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -440,6 +308,12 @@ export class PageLayoutWidgetService {
       },
       errorMessage:
         'Multiple validation errors occurred while destroying page layout widget',
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
+      widgetId: id,
+      workspaceId,
+      updatedAt: new Date(),
     });
 
     return true;
@@ -468,11 +342,17 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: recomputedMaps,
-      }),
-    );
+    const restoredWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
+      widgetId: id,
+      workspaceId,
+      updatedAt: new Date(restoredWidget.updatedAt),
+    });
+
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(restoredWidget);
   }
 }

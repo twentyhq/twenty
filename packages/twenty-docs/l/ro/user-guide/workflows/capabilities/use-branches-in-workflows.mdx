@@ -1,0 +1,90 @@
+---
+title: Utilizați ramuri în fluxuri de lucru
+description: Înțelegeți cum funcționează ramurile și cum să controlați care cale este executată.
+---
+
+## Cum funcționează ramurile
+
+În editorul de fluxuri de lucru, puteți crea mai multe căi (ramuri) care pornesc dintr-un singur nod. Acest lucru vă permite să creați automatizări complexe cu rezultate diferite.
+
+**Important**: Când rulează un flux de lucru, **toate ramurile se execută în paralel în mod implicit**. Nu există o logică "if/else" integrată pentru a alege o ramură în locul alteia — fiecare cale va rula simultan.
+
+## Controlul ramurii care se execută
+
+Pentru a executa doar o singură ramură pe baza unor condiții specifice, **adăugați un nod Filter la începutul fiecărei ramuri**.
+
+### Exemplu de configurare
+
+1. Creați fluxul de lucru cu mai multe ramuri dintr-un singur nod
+2. Adăugați un nod **Filter** ca primul pas în fiecare ramură
+3. Setați condiții în fiecare nod Filter pentru a determina când ar trebui să continue acea ramură
+4. Vor continua doar ramurile pentru care condițiile din Filter sunt îndeplinite
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Cum funcționează nodurile Filter
+
+* Dacă condiția din Filter este **îndeplinită**: Ramura își continuă execuția
+* Dacă condiția din Filter **nu este îndeplinită**: Ramura se oprește la nodul Filter
+
+Acest lucru creează, în mod eficient, o logică condițională în care rulează doar ramura potrivită, pe baza datelor dvs.
+
+## Exemplu: Rutare după valoarea tranzacției
+
+**Scenariu**: Când o tranzacție este închisă, trimiteți notificări diferite în funcție de valoarea tranzacției.
+
+1. **Declanșator**: Opportunity updated (Stage = Closed Won)
+2. **Ramura 1**: Filter pentru Amount > $10,000 → Trimiteți mesaj Slack către #big-deals
+3. **Ramura 2**: Filter pentru Amount ≤ $10,000 → Trimiteți e-mail managerului de vânzări
+
+Ambele ramuri pornesc, dar doar cea care corespunde sumei tranzacției va continua dincolo de propriul Filter.
+
+## Crearea ramurilor
+
+<Note>
+  Pentru a crea o ramură nouă dintr-un pas existent, faceți clic pe butonul **+** al acelui pas și adăugați acțiunea. Puteți adăuga mai multe ramuri făcând clic pe **+** de mai multe ori.
+</Note>
+
+1. În editorul de fluxuri de lucru, selectați pasul din care doriți să creați o ramură
+2. Faceți clic pe butonul **+** pentru a adăuga o acțiune
+3. Aceasta creează o ramură
+4. Faceți clic din nou pe **+** la același pas pentru a crea ramuri suplimentare
+5. Fiecare ramură poate avea propria secvență de acțiuni
+
+## Îmbinarea ramurilor la loc
+
+După ce ramurile paralele își finalizează activitatea, le puteți îmbina la loc într-o singură cale:
+
+1. Finalizați acțiunile din ramuri
+2. Adăugați un pas nou care ar trebui să ruleze după toate ramurile
+3. Trageți o conexiune de la ultimul pas al fiecărei ramuri către acest pas nou
+4. Pasul îmbinat așteaptă ca toate ramurile conectate să se finalizeze înainte de a se executa
+
+### Exemplu: Procesare, apoi notificare
+
+```
+Declanșator
+   │
+   ├── Ramura A: Actualizați înregistrarea clientului
+   │
+   └── Ramura B: Creați tichet de suport
+
+       ↘  ↙
+
+   Pas îmbinat: Trimiteți e-mail de confirmare
+```
+
+E-mailul de confirmare se trimite doar după ce atât actualizarea clientului, cât și crearea tichetului sunt finalizate.
+
+## Cele mai bune practici
+
+* Folosiți întotdeauna **noduri Filter** la începutul ramurilor atunci când doriți execuție condițională
+* Mențineți condițiile ramurilor **reciproc exclusive** pentru a evita acțiunile duplicate
+* Testați fluxurile de lucru cu date diferite pentru a vă asigura că rulează ramurile corecte
+* **Redenumiți pașii ramurilor** într-un mod descriptiv pentru a fi clar ce face fiecare cale
+* **Îmbinați ramurile** când aveți nevoie de o acțiune finală după procesare în paralel
+
+## Conexe
+
+* [Întrebări frecvente despre fluxuri de lucru](/l/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq) — răspunsuri despre execuția în paralel
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions) — acțiuni disponibile pentru ramuri

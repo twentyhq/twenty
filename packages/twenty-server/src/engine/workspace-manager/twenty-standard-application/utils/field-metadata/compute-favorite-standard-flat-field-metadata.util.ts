@@ -113,6 +113,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       icon: 'IconList',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -130,6 +131,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'ViewId',
       icon: 'IconView',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -149,6 +151,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'favorites',
       settings: {
@@ -173,6 +176,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'favorites',
       settings: {
@@ -197,6 +201,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'favorites',
       settings: {
@@ -221,6 +226,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'favorites',
       settings: {
@@ -245,6 +251,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'favorites',
       settings: {
@@ -269,6 +276,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow version',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'favorites',
       settings: {
@@ -293,6 +301,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow run',
       icon: 'IconSettingsAutomation',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'workflowRun',
       targetFieldName: 'favorites',
       settings: {
@@ -317,6 +326,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite task',
       icon: 'IconCheckbox',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'favorites',
       settings: {
@@ -341,6 +351,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite note',
       icon: 'IconNotes',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'note',
       targetFieldName: 'favorites',
       settings: {
@@ -365,6 +376,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite dashboard',
       icon: 'IconLayoutDashboard',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'dashboard',
       targetFieldName: 'favorites',
       settings: {
@@ -389,6 +401,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'The folder this favorite belongs to',
       icon: 'IconFolder',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'favoriteFolder',
       targetFieldName: 'favorites',
       settings: {

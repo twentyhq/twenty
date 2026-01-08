@@ -12,6 +12,7 @@ import { DelayWorkflowAction } from 'src/modules/workflow/workflow-executor/work
 import { EmptyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty.workflow-action';
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
+import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
@@ -32,6 +33,7 @@ export class WorkflowActionFactory {
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
     private readonly formWorkflowAction: FormWorkflowAction,
     private readonly filterWorkflowAction: FilterWorkflowAction,
+    private readonly ifElseWorkflowAction: IfElseWorkflowAction,
     private readonly iteratorWorkflowAction: IteratorWorkflowAction,
     private readonly toolExecutorWorkflowAction: ToolExecutorWorkflowAction,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
@@ -59,6 +61,8 @@ export class WorkflowActionFactory {
         return this.formWorkflowAction;
       case WorkflowActionType.FILTER:
         return this.filterWorkflowAction;
+      case WorkflowActionType.IF_ELSE:
+        return this.ifElseWorkflowAction;
       case WorkflowActionType.ITERATOR:
         return this.iteratorWorkflowAction;
       case WorkflowActionType.HTTP_REQUEST:

@@ -1,0 +1,311 @@
+---
+title: Acțiuni Workflow
+description: Aflați despre acțiunile disponibile în fluxurile de lucru Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Despre acțiuni
+
+Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți înlănțui mai multe acțiuni pentru a construi automatizări complexe.
+
+<Tip>
+  * Folosiți selectorul de variabile (faceți clic pe pictograma `(x+)`) pentru a răsfoi datele disponibile din pașii anteriori
+  * Plasați cursorul peste orice câmp de intrare pentru a vedea din care pas provine o variabilă — util atunci când același câmp (de ex., ID) există în mai mulți pași anteriori
+  * Dați fiecărei acțiuni un nume descriptiv pentru o mentenanță mai ușoară
+</Tip>
+
+## Acțiuni asupra înregistrărilor
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Creați o Înregistrare
+
+Adaugă o nouă înregistrare la un obiect selectat.
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Completați câmpurile obligatorii și opționale
+* Folosiți date din pașii anteriori sau introduceți manual valori pentru a completa câmpurile
+
+**Output**: Datele noii înregistrări create sunt disponibile pentru utilizare în pașii următori.
+
+### Actualizați Înregistrarea
+
+Modifică o înregistrare existentă într-un obiect selectat.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Alegeți înregistrarea specifică de actualizat.
+  * Puteți alege fie o înregistrare specifică, folosind meniul derulant care afișează toate înregistrările disponibile.
+  * Sau puteți selecta dinamic înregistrarea, desemnând o înregistrare găsită într-un pas anterior, folosind `(x+)`. Nu puteți căuta înregistrarea pe baza unor criterii diferite în această etapă. Dacă încă nu ați identificat înregistrarea, adăugați un pas `Search Record` înaintea acestui pas `Update Record`.
+* Selectați câmpurile de modificat și introduceți valori noi
+
+**Output**: Datele înregistrării actualizate sunt disponibile pentru utilizare în pașii următori.
+
+### Ștergeți Înregistrarea
+
+Îndepărtează o înregistrare dintr-un obiect selectat.
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Alegeți înregistrarea specifică de șters
+
+**Output**: Datele înregistrării șterse rămân disponibile pentru utilizare în pașii următori.
+
+### Căutați Înregistrări
+
+Găsește înregistrări într-un obiect selectat folosind condițiile de filtrare.
+
+**Configurare**:
+
+* Selectați obiectul de căutat
+* Setați criterii de filtrare pentru a restrânge rezultatele
+* Configurați ordonarea și limitele
+
+**Output**: Returnează înregistrările care se potrivesc care pot fi utilizate în pașii următori.
+
+<Note>
+  **Limită**: Search Records returnează maximum **200 de înregistrări**. Dacă aveți nevoie să procesați mai multe, adăugați filtre specifice pentru a reduce rezultatele sau folosiți fluxuri de lucru programate pentru a procesa în loturi.
+</Note>
+
+**Cea mai bună practică**: Utilizați [ramuri](/l/ro/user-guide/workflows/capabilities/workflow-branches) după Search Records pentru a gestiona scenariile "găsit" vs "ne-găsit".
+
+### Upsert Record
+
+Creează o înregistrare nouă sau actualizează una existentă pe baza criteriilor de potrivire. Este util când nu sunteți sigur dacă o înregistrare există deja.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Selectați obiectul țintă
+* Rețineți ce câmpuri pot fi folosite pentru potrivire: email pentru Persoane, domeniu pentru Companii, ID pentru orice obiect sau orice câmp marcat ca Unique. Va trebui să completați cel puțin unul dintre acestea mai jos.
+* Completați valorile câmpurilor. Nu uitați să completați cel puțin unul dintre identificatorii unici.
+
+<Note>
+  **Potrivirea funcționează de obicei și mai bine când adăugați un singur identificator unic.** De exemplu, captura de ecran de mai jos va potrivi companiile pe baza domeniului lor. ID-ul nu este neapărat necesar.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Folosiți datele din pașii anteriori pentru a completa câmpurile
+
+**Cum funcționează**:
+
+1. Caută o înregistrare care corespunde condițiilor specificate
+2. Dacă este găsită → actualizează înregistrarea existentă
+3. Dacă nu este găsită → creează o înregistrare nouă
+
+**Output**: Datele înregistrării create sau actualizate sunt disponibile pentru utilizare în pașii următori.
+
+## Acțiuni de flux
+
+### Iterator
+
+**Parcurge un array de înregistrări** returnat de un pas anterior, permițându-vă să efectuați acțiuni pe fiecare înregistrare individual.
+
+**Configurare**:
+
+* Selectați array-ul de înregistrări dintr-un pas anterior (de ex., rezultate din Search Records, dintr-un declanșator Manual cu disponibilitate Bulk, dintr-un nod de cod)
+* Definiți acțiunile de efectuat pe fiecare înregistrare în buclă.
+
+<Note>
+  - Puteți adăuga mai multe acțiuni în cadrul unui iterator.
+  - Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
+</Note>
+
+* Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare.
+
+<VimeoEmbed videoId="1146577247" title="Demonstrație video" />
+
+### Filtru
+
+Filtrează înregistrările pe baza condițiilor specificate, permițând trecerea doar a înregistrărilor care îndeplinesc criteriile.
+
+**Configurare**:
+
+* Selectați înregistrarea de filtrat
+* Definiți condițiile și criteriile de filtrare
+* Configurați care înregistrări ar trebui să treacă la pașii următori
+
+<Note>
+  1. **Output**: Nodurile Filter nu returnează date — acționează ca porți. Dacă condițiile sunt îndeplinite, fluxul de lucru continuă. Dacă nu, fluxul de lucru se oprește pe acea ramură.
+  2. Operatorul `IS` poate fi utilizat cu câmpuri numerice. Se comportă ca un `EQUAL`.
+</Note>
+
+### Întârziere
+
+Pauzează execuția fluxului de lucru pentru o durată specificată sau până la o anumită dată/oră.
+
+**Tipuri de întârziere**:
+
+| Tip                 | Descriere                                                            |
+| ------------------- | -------------------------------------------------------------------- |
+| **Durată**          | Așteaptă o perioadă de timp specificată (zile, ore, minute, secunde) |
+| **Dată programată** | Așteaptă până la o dată și o oră specifice                           |
+
+**Configurare pentru durată**:
+
+* Setați zile, ore, minute și/sau secunde
+* Combinați mai multe unități (de ex., 2 zile și 4 ore)
+
+**Configurare pentru dată programată**:
+
+* Selectați o dată și o oră
+* Poate face referire la un câmp de tip dată dintr-un pas anterior (de ex., un follow-up la 3 zile după o întâlnire)
+
+**Cazuri de utilizare**:
+
+* Așteaptă 24 de ore înainte de a trimite un email de follow-up
+* Pauzează până la data de închidere a unei oportunități
+* Programează acțiuni pentru programul de lucru
+
+<Note>
+  Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dată dintr-un pas anterior și data a trecut deja, fluxul de lucru va eșua.
+</Note>
+
+**Limitări și credite**:
+
+* **Fără limită maximă de durată** — puteți seta întârzieri de minute, zile, săptămâni sau mai mult
+* Se consumă **1 credit** la executarea nodului Delay, indiferent de durată
+* **Nu se consumă credite** în timpul așteptării — o întârziere de 5 minute costă la fel ca o întârziere de 5 zile
+
+## Acțiuni de comunicare
+
+### Trimite email
+
+Trimite un email din fluxul dumneavoastră de lucru. Este excelent pentru emailuri de grup bazate pe șabloane. Emailurile vor arăta ca cele pe care le trimiteți din căsuța de e-mail.
+Nu este potrivit pentru newslettere (care necesită o formatare mai bogată) sau pentru secvențe automate de emailuri.
+
+**Cerințe prealabile**: Adăugați un cont de email în Settings → Accounts
+
+**Configurare**:
+
+* Selectați contul de email expeditor
+
+<Note>
+  Puteți trimite emailuri doar din căsuțele poștale sincronizate cu propriul dvs. cont Twenty. Trimiterea din căsuțele poștale ale altor membri ai echipei (de ex., emailul proprietarului contului) este pe roadmap.
+</Note>
+
+Pentru toți pașii următori, puteți face referire la variabile din pașii anteriori pentru personalizare.
+
+* Introduceți adresa de email a destinatarului.
+
+<Note>
+  În acest moment este posibil un singur destinatar.
+</Note>
+
+* Setați linia de subiect.
+* Compuneți corpul mesajului. Puteți formata linkuri, crea liste numerotate, liste cu puncte, adăuga atașamente.
+
+<Note>
+  Adăugarea semnăturilor HTML nu este posibilă în acest moment.
+</Note>
+
+### Formular
+
+Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
+
+<Warning>
+  **Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+</Warning>
+
+**Configurare**:
+
+* Configurați câmpurile pe care utilizatorii vor fi solicitați să le completeze. Pentru fiecare câmp, alegeți
+  * un tip dintre text, număr, dată, o anumită înregistrare, un câmp select. Câmpurile de tip select din toate obiectele sunt disponibile.
+  * o etichetă
+  * o valoare implicită la `Placeholder` (opțional)
+* Editați titlul formularului
+
+**Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
+
+**Exemplu**: Fluxul de lucru "Quick Lead" este disponibil implicit în toate spațiile de lucru, disponibil oriunde în Command Menu `Cmd + K`.
+
+**Cum să completați formularul**:
+
+* Declanșați fluxul de lucru manual din meniul de comandă `Cmd K`
+* Completați formularul afișat în panoul lateral și faceți clic pe `Submit`.
+
+<Note>
+  Câmpurile nu pot fi făcute obligatorii.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Demonstrație video" />
+
+## Acțiuni de integrare
+
+### Cod
+
+Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
+
+**Configurare**:
+
+* Accesați variabilele din pașii anteriori. Puteți edita dinamic numele variabilelor.
+
+<VimeoEmbed videoId="1147281795" title="Demonstrație video" />
+
+* Scrieți cod JavaScript în editor
+* Returnați variabilele pentru utilizare în pașii următori
+* Testați codul direct în pas
+
+<Note>
+  Dacă trebuie să utilizați chei API externe în codul dvs., trebuie să le introduceți direct în corpul funcției. Nu puteți configura cheile API în altă parte și face referire la ele în funcția serverless.
+</Note>
+
+<Tip>
+  **Lucrați cu array-uri?** Array-urile din sisteme externe sau din pași anteriori pot veni ca stringuri. Consultați [Cum să gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pentru soluție.
+</Tip>
+
+<Tip>
+  Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
+</Tip>
+
+### Solicitare HTTP
+
+Trimite o cerere la un API extern ca parte a fluxului dumneavoastră de lucru.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Configurare**:
+
+* Introduceți URL-ul punctului final API. Puteți utiliza parametri din pașii anteriori.
+* Selectați metoda HTTP (GET, POST, PUT, PATCH, DELETE)
+* Adăugați anteturile și valorile necesare
+* Oferiți un exemplu de răspuns pentru previzualizarea structurii
+
+## Acțiuni AI
+
+### Agent AI - În curând
+
+Rulează un agent AI în cadrul fluxului dvs. de lucru pentru a efectua sarcini inteligente.
+
+**Configurare**:
+
+* **Agent**: Selectați un agent AI existent sau folosiți agentul implicit
+* **Prompt**: Scrieți instrucțiunea pentru agentul AI
+* Faceți referire la variabile din pașii anteriori în prompt
+
+**Ce pot face agenții AI**:
+
+* Analizează și rezumă date
+* Clasifică sau categorizează înregistrări
+* Generează conținut text
+* Ia decizii pe baza datelor
+* Interacționează cu datele CRM folosind instrumente
+
+**Output**: Răspunsul agentului AI este disponibil pentru utilizare în pașii următori. Dacă agentul are o schemă de ieșire structurată, răspunsul va urma acel format.
+
+<Note>
+  Acțiunile agentului AI consumă credite ale fluxului de lucru în funcție de modelul AI utilizat. Consultați [Credite pentru fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/workflow-credits) pentru detalii.
+</Note>
+
+<Note>
+  Agenții AI respectă permisiunile bazate pe roluri. Puteți atribui roluri specifice agenților în **Settings → Roles** pentru a controla la ce date pot avea acces. Consultați [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
+</Note>

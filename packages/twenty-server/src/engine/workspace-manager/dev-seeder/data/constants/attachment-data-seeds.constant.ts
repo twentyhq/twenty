@@ -15,6 +15,9 @@ type AttachmentDataSeed = {
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
   personId: string | null;
   companyId: string | null;
   noteId: string | null;
@@ -30,6 +33,9 @@ export const ATTACHMENT_DATA_SEED_COLUMNS: (keyof AttachmentDataSeed)[] = [
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
   'personId',
   'companyId',
   'noteId',
@@ -251,6 +257,9 @@ const GENERATE_ATTACHMENT_SEEDS = (): AttachmentDataSeed[] => {
       createdBySource: FieldActorSource.MANUAL,
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim A',
+      updatedBySource: FieldActorSource.MANUAL,
+      updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      updatedByName: 'Tim A',
       personId,
       companyId,
       noteId,

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +12,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -32,7 +32,6 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -105,6 +104,7 @@ export abstract class CommonBaseQueryRunnerService<
       throw new CommonQueryRunnerException(
         'Invalid auth context',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
@@ -316,6 +316,7 @@ export abstract class CommonBaseQueryRunnerService<
       throw new CommonQueryRunnerException(
         'Invalid auth context',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
@@ -337,16 +338,9 @@ export abstract class CommonBaseQueryRunnerService<
       intersectionOf: [roleId],
     };
 
-    const isReadOnReplicaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_READ_ON_REPLICA_ENABLED,
-        workspaceId,
-      );
-
-    const globalWorkspaceDataSource =
-      this.isReadOnly && isReadOnReplicaEnabled
-        ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
-        : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    const globalWorkspaceDataSource = this.isReadOnly
+      ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
+      : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     const repository = globalWorkspaceDataSource.getRepository(
       queryRunnerContext.flatObjectMetadata.nameSingular,
@@ -422,7 +416,7 @@ export abstract class CommonBaseQueryRunnerService<
         `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
         CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
         {
-          userFriendlyMessage: msg`Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       );
     }
@@ -437,7 +431,7 @@ export abstract class CommonBaseQueryRunnerService<
         `Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
         CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
         {
-          userFriendlyMessage: msg`Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       );
     }

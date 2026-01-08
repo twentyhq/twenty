@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import { useAttachments } from '../useAttachments';
+import { useAttachments } from '@/activities/files/hooks/useAttachments';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),

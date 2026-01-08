@@ -1,0 +1,136 @@
+---
+title: Attivatori dei flussi di lavoro
+description: Scopri i diversi attivatori che avviano i tuoi flussi di lavoro.
+---
+
+## Informazioni sugli attivatori
+
+I flussi di lavoro iniziano sempre con un singolo attivatore che definisce quando deve essere eseguita l'automazione.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Gli oggetti avanzati sono supportati!** Oltre agli oggetti CRM standard (Persone, Aziende, Opportunità), puoi anche avviare flussi di lavoro ed eseguire azioni su:
+
+  * Membri dello spazio di lavoro
+  * Eventi del calendario
+  * Messaggi (email)
+  * Attività, note e molti altri oggetti di sistema
+
+  Questo consente potenti automazioni, come notificare i membri del team quando vengono creati eventi del calendario oppure elaborare automaticamente le email in arrivo.
+</Tip>
+
+## Record Creato
+
+Avvia il flusso di lavoro quando viene creato un nuovo record in un oggetto selezionato (Persone, Aziende, Opportunità o un qualsiasi oggetto personalizzato).
+
+**Configurazione**: Seleziona il tipo di oggetto da monitorare per i nuovi record.
+
+<Note>
+  * Questo attivatore è ottimo per i record creati tramite csv, sincronizzazione della casella di posta e del calendario, API.
+  * **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Poiché Twenty UI offre il salvataggio automatico al volo (non esiste una modalità di modifica e poi una validazione per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
+    Per attivare questo flusso di lavoro sui record creati manualmente, si consiglia invece di usare l'attivatore `Record is created or updated`.
+</Note>
+
+## Record Aggiornato
+
+Avvia il flusso di lavoro quando vengono apportate modifiche a un record esistente.
+
+**Configurazione**:
+
+* Seleziona il tipo di oggetto
+* Specifica opzionalmente quali campi monitorare per le modifiche
+
+## Record Aggiornato o Creato
+
+Avvia il flusso di lavoro quando un record viene creato o aggiornato in un oggetto selezionato.
+
+**Perché è Importante:** Questo trigger è particolarmente utile perché i record creati tramite diversi metodi si comportano diversamente:
+
+* **Importazioni API/CSV:** I record vengono creati con tutti i campi popolati immediatamente
+* **Creazione manuale:** Prima vengono creati i record, poi i campi vengono aggiunti con aggiornamenti successivi
+
+**Configurazione**:
+
+* Seleziona il tipo di oggetto da monitorare
+* Specifica opzionalmente quali campi monitorare per le modifiche
+* Il flusso di lavoro verrà attivato sia alla creazione iniziale sia a qualsiasi aggiornamento successivo
+
+## Record Eliminato
+
+Avvia il flusso di lavoro quando un record viene rimosso da un oggetto.
+
+**Configurazione**: Seleziona il tipo di oggetto da monitorare per le eliminazioni.
+
+## Attivatore manuale
+
+Avvia il flusso di lavoro quando viene attivato da un'azione dell'utente. È possibile accedere a questo attivatore tramite il menu `Cmd+K` o tramite un pulsante personalizzato che verrà visualizzato nella barra di navigazione superiore dopo aver selezionato uno o più record.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Configurazione di Disponibilità:**
+Scegli come il flusso di lavoro dovrebbe gestire la selezione dei record:
+
+* **Globale:** Non è richiesto alcun record per attivare questo flusso di lavoro. Il flusso di lavoro viene attivato dal menu comandi `Cmd + K` ovunque (da qualsiasi oggetto) e non utilizza record come input.
+
+* **Singolo**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito dall'inizio alla fine tante volte quanti sono i record selezionati.
+
+  <Note>
+    **Limite soft: 100 esecuzioni/minuto**. Oltre questa soglia, i flussi di lavoro rimangono nello stato "Not Started" e vengono elaborati gradualmente—o da un processo in background oppure quando un altro flusso di lavoro entra in coda. Questo significa che puoi selezionare più di 100 record con un attivatore Singolo; l'esecuzione sarà semplicemente più lenta.
+  </Note>
+
+* **Bulk**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito una sola volta, fornendo l'intero elenco di record come input. Questo significa che il flusso di lavoro deve contenere un'[azione Iteratore](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  È più avanzato ed è ideale per chi vuole ottimizzare il numero di esecuzioni del flusso di lavoro.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Configurazione Aggiuntiva**:
+
+* Seleziona l'oggetto di destinazione (per disponibilità Singola e Bulk)
+* Scegli un'icona di comando per attivare il flusso di lavoro.
+* Configura la posizione nella barra di navigazione (Fissa o Non Fissa)
+
+**Metodi di Accesso**:
+
+* Menu `Cmd+K` per trovare e avviare flussi di lavoro manuali
+* Pulsante personalizzato nella barra di navigazione in alto (se configurato)
+
+## Attivatore basato sul tempo: Su pianificazione
+
+Avvia il flusso di lavoro con una ricorrenza da te definita.
+
+**Configurazione**:
+
+* Seleziona l'unità di tempo (minuti, ore, giorni)
+* Inserisci un valore o usa espressioni cron personalizzate per pianificazioni avanzate
+
+<Note>
+  **Fuso orario**: I flussi di lavoro pianificati vengono eseguiti in **UTC**. Quando imposti gli orari per le pianificazioni giornaliere, converti la tua ora locale in UTC.
+</Note>
+
+## Attivatore esterno: Webhook
+
+Avvia il flusso di lavoro quando viene ricevuta una richiesta GET o POST da un servizio esterno.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Configurazione**:
+
+* Il flusso di lavoro fornisce un URL webhook univoco: copialo e aggiungilo al tuo sistema esterno come endpoint da chiamare.
+* Per le richieste POST, definisci la struttura del body prevista in modo che Twenty sappia quali dati aspettarsi. Aggiungi qui i campi che riceverai e che saranno necessari più avanti nel tuo flusso di lavoro.
+* Configura l'autenticazione (presto disponibile).
+
+## Scegliere l'attivatore giusto
+
+| Caso d'uso                            | Attivatore consigliato      |
+| ------------------------------------- | --------------------------- |
+| Nuovi lead da elaborare               | Record Creato               |
+| Modifiche ai dati da sincronizzare    | Record Aggiornato           |
+| Gestione dati da importazione/manuale | Record Aggiornato o Creato  |
+| Pulizia dopo l'eliminazione           | Record Eliminato            |
+| Azione avviata dall'utente            | Avvia Manualmente           |
+| Report ricorrenti                     | Su pianificazione           |
+| Integrazione esterna                  | Webhook o Su pianificazione |

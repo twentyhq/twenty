@@ -1,0 +1,430 @@
+---
+title: İçe aktarma hatalarını düzeltin
+description: CSV içe aktarma hatalarını çözmeye yönelik eksiksiz bir sorun giderme kılavuzu.
+---
+
+## Genel Bakış
+
+İçe aktarma çalışmıyor mu? Bu kılavuz, yaygın içe aktarma hatalarını adım adım belirlemenize ve düzeltmenize yardımcı olur.
+
+## İçe Aktarma Doğrulaması Nasıl Çalışır
+
+Dosyanızı yükledikten ve sütunları eşledikten sonra, Twenty verilerinizi doğrular:
+
+1. **Doğrulama çalışır** — Twenty her satırı hatalar için kontrol eder
+2. **Hatalar vurgulanır** — sorunlu satırlar **sarı** görünür
+3. **Yerinde düzeltebilirsiniz** — hücreleri doğrudan içe aktarma arayüzünde düzenleyin
+4. **Veya satırları kaldırın** — sorunlu kayıtları tamamen atlayın
+
+<Note>**Hataları arayüzde düzeltin.** E-tablonuza geri dönmenize gerek yok. Zamandan tasarruf etmek için içe aktarma sırasında hücreleri doğrudan düzenleyin.</Note>
+
+## Adım Adım Sorun Giderme
+
+### Adım 1: Hata Türünü Belirleyin
+
+Özel hata mesajını görmek için vurgulanmış bir satıra tıklayın. Yaygın hata türleri:
+
+| Hata Mesajı                                                                    | Ne Anlama Gelir                                                |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Yinelenen değerler sarı renkle vurgulanır                                      | Değer Twenty'de zaten mevcut veya dosyanızda iki kez görünüyor |
+| `{field} is not a valid {type}` (sarı hücrenin üzerine gelin)                  | Veri beklenen biçimle eşleşmiyor                               |
+| Zorunlu alan vurgulanmış                                                       | Zorunlu bir alan boş                                           |
+| `Can't connect to {object}. No unique record found...` (içe aktarma başarısız) | Başvurulan kayıt mevcut değil                                  |
+| `Too many records. Up to 10000 allowed` (yükleme engellendi)                   | Dosyada 10.000'den fazla kayıt var                             |
+
+### Adım 2: Hatayı Düzeltin
+
+Her hata türü için aşağıdaki özel talimatları izleyin.
+
+---
+
+## Hata: Yinelenen Değer
+
+### Görecekleriniz
+
+İçe aktarma başlamadan önce içe aktarma arayüzünde yinelenen değerlere sahip satırlar **sarı renkle vurgulanır**.
+
+### Ne Anlama Gelir
+
+Benzersiz bir alan (e-posta, alan adı) ya:
+
+* Twenty'de zaten mevcut
+* Dosyanızda iki kez görünüyor
+
+### Nasıl Düzeltilir
+
+**Seçenek 1: Yinelenen değeri düzenleyin**
+
+1. Hatanın bulunduğu hücreye tıklayın
+2. Benzersiz bir değere değiştirin
+3. İçe aktarmaya devam edin
+
+**Seçenek 2: Yinelenen satırı kaldırın**
+
+1. Satırın yanındaki X'e tıklayın
+2. Satır, içe aktarma sırasında atlanacaktır
+
+**Seçenek 3: Mevcut kaydı Twenty'nin güncellemesine izin verin**
+
+1. Dosyanızın benzersiz bir tanımlayıcı (`email`, `domain` veya `id`) içerdiğinden emin olun
+2. Benzersiz tanımlayıcı alanını eşleyin
+3. Twenty, yinelenen bir kayıt oluşturmak yerine mevcut kaydı güncelleyecektir
+
+<Note>
+  **Benzersiz alanları da güncelleyebilirsiniz.**
+
+  * `id`'yi korur ancak `email`'i değiştirirseniz → e-posta güncellenir
+  * `email`'i korur ancak `id`'yi değiştirirseniz → id güncellenir
+
+  Benzersiz tanımlayıcılardan biri eşleştiği sürece Twenty kaydı günceller.
+</Note>
+
+### Bu Hata Nasıl Önlenir
+
+İçe aktarmadan önce:
+
+1. E-tablonuzu benzersiz alana göre sıralayın
+2. Yinelenen satırları kaldırın
+3. Kayıtların Twenty'de zaten mevcut olup olmadığını kontrol edin
+
+<Warning>
+  **Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
+
+  Komut Menüsünü kontrol edin → Silinen kayıtları görün. Oradaki kayıtlar benzersizliği yine de uygular. Onları kalıcı olarak silin ya da geri yükleyip güncelleyin.
+</Warning>
+
+Daha fazla ayrıntı için: [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+---
+
+## Hata: Geçersiz Biçim
+
+### Görecekleriniz
+
+Hücre değeri sarı renkle vurgulanır. Hata mesajını görmek için üzerine gelin:
+
+```
+{field name} is not a valid {field type}
+```
+
+### Ne Anlama Gelir
+
+Veriler, o alan türü için beklenen biçimle eşleşmiyor.
+
+### Nasıl Düzeltilir — Alan Türüne Göre
+
+#### E-posta
+
+**Sorun:** Geçersiz e-posta biçimi
+**Çözüm:** `name@domain.com` biçimini kullanın
+
+```
+❌ john.smith@
+❌ john smith@acme.com
+✓ john.smith@acme.com
+```
+
+#### Alan Adı
+
+**Sorun:** Tutarsız biçim yinelenmelere neden olabilir
+**Çözüm:** `https://domain.com` biçimini kullanın (önerilir)
+
+```
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
+```
+
+<Note>Tüm biçimler geçerlidir, ancak e-posta/takvim senkronizasyonunun kullandığı biçimle eşleştiği için `https://domain.com` önerilir. Diğer biçimlerin kullanılması yinelenen şirketler oluşturabilir.</Note>
+
+#### Tarih
+
+**Sorun:** Tanınmayan tarih biçimi
+**Çözüm:** Dosya genelinde tutarlı bir biçim kullanın
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - recommended)
+✓ 03/15/2024        (MM/DD/YYYY)
+✓ 15/03/2024        (DD/MM/YYYY)
+```
+
+#### Telefon
+
+**Sorun:** Gerekli sütunlar eksik
+**Çözüm:** Tüm telefon sütunlarını dahil edin
+
+| Sütun                                   | Örnek        |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+#### Boolean
+
+**Sorun:** Hatalı boolean değeri
+**Çözüm:** Büyük harfle `TRUE` veya `FALSE` kullanın
+
+```
+❌ true
+❌ yes
+❌ 1
+✓ TRUE
+✓ FALSE
+```
+
+#### Seçim / Çoklu Seçim
+
+**Sorun:** Değer mevcut seçeneklerle eşleşmiyor
+**Çözüm:** Görünen etiketler değil, **API adlarını** kullanın
+
+API adları nasıl bulunur:
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi ve alanı seçin
+3. **Gelişmiş modu** etkinleştirin (sağ alttaki anahtarı kullanarak)
+4. API adını kullanın (ör. `OPTION_1`, "Option 1" değil)
+
+```
+❌ High Priority
+✓ HIGH_PRIORITY
+```
+
+#### Para Birimi
+
+**Sorun:** Tutar veya para birimi kodu eksik
+**Çözüm:** Her iki sütunu da doldurun
+
+| Sütun                 | Örnek     |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+#### Sayı
+
+**Sorun:** Sayısal olmayan karakterler
+**Çözüm:** Yalnızca sayılar, ondalıklar için nokta kullanın
+
+```
+❌ $1,234.56
+❌ 1,234.56
+✓ 1234.56
+```
+
+Tam biçim başvurusu için: [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+
+---
+
+## Hata: Zorunlu Alan Eksik
+
+### Görecekleriniz
+
+Satır, zorunlu alan hücresi işaretlenmiş şekilde sarı renkle vurgulanır.
+
+### Ne Anlama Gelir
+
+Bu satır için zorunlu bir alan boş.
+
+### Nasıl Düzeltilir
+
+**Seçenek 1: Bir değer girin**
+
+1. Boş hücreye tıklayın
+2. Bir değer girin
+3. İçe aktarmaya devam edin
+
+**Seçenek 2: Satırı kaldırın**
+
+1. Veri yoksa, satırı atlamak için X'e tıklayın
+
+### Bu Hata Nasıl Önlenir
+
+İçe aktarmadan önce, zorunlu alanları belirleyin:
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin
+3. Hangi alanların zorunlu olarak işaretlendiğini kontrol edin
+
+---
+
+## Hata: İlişki Bulunamadı
+
+### Görecekleriniz
+
+Bu hata **içe aktarma başladıktan sonra** görünür — içe aktarma şu tür bir mesajla başarısız olur:
+
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+Bu, Twenty'de o özel tanımlayıcıya sahip bir Şirket olmadığı anlamına gelir.
+
+<Note>Diğer hatalardan farklı olarak, bu hata veri inceleme adımında yakalanmaz. İçe aktarma başlar ve eksik ilişkiyle karşılaştığında başarısız olur.</Note>
+
+### Ne Anlama Gelir
+
+Twenty'de mevcut olmayan bir kayda bağlanmaya çalışıyorsunuz.
+
+### Nasıl Düzeltilir
+
+**Seçenek 1: Önce ana kayıtları içe aktarın**
+
+1. Geçerli içe aktarmayı iptal edin
+2. Ana kayıtları içe aktarın (ör. Şirketler)
+3. Ardından alt kayıtları içe aktarın (ör. Kişiler)
+
+**Seçenek 2: Referans değerini düzeltin**
+
+1. Dosyanızdaki referans değerini kontrol edin
+2. Mevcut bir kayıtla tam olarak eşleştiğinden emin olun
+3. Biçimi doğrulayın: alan adları `https://domain.com` olmalıdır
+
+**Seçenek 3: İlişkiyi kaldırın**
+
+1. İlişki olmadan içe aktarmak için hücreyi temizleyin
+2. İlişkiyi daha sonra manuel olarak ekleyin
+
+### Bu Hata Nasıl Önlenir
+
+1. **Doğru sırayla içe aktarın:**
+   * Önce Şirketler
+   * İkinci olarak Kişiler (şirket referanslarıyla)
+   * Üçüncü olarak Fırsatlar
+
+2. **Referans değerlerini doğrulayın:**
+   * Tam tanımlayıcıları almak için ana kayıtları dışa aktarın
+   * Alan adı biçimi `https://domain.com` kullanın
+   * Yazım hatalarını ve büyük/küçük harf duyarlılığını kontrol edin
+
+<Warning>
+  **Var olmayan bir kayda referans verilirse içe aktarma başarısız olur.**
+
+  Her zaman alt nesnelerden önce ana nesneleri içe aktarın.
+</Warning>
+
+Daha fazla ayrıntı için: [İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Hata: Dosya Çok Büyük
+
+### Görecekleriniz
+
+Bu hata **dosyanızı yüklerken** görünür — yükleme tamamen engellenir:
+
+```
+Too many records. Up to 10000 allowed
+```
+
+Dosya boyutunu küçültmeden veri inceleme adımına ilerleyemezsiniz.
+
+### Ne Anlama Gelir
+
+Dosyanızda 10.000'den fazla kayıt var.
+
+### Nasıl Düzeltilir
+
+**Seçenek 1: Birden çok dosyaya bölün**
+
+1. Verilerinizi 10.000 veya daha az kayıttan oluşan dosyalara bölün
+2. Her dosyayı ayrı ayrı içe aktarın
+3. İçe aktarma sırasını koruyun (Şirketler Kişilerden önce)
+
+**Seçenek 2: API ile içe aktarmayı kullanın**
+Çok büyük veri kümeleri için, kayıt sınırı olmayan API'yi kullanın.
+Bkz.: [API ile Veri Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Hata: Alan Tanınmadı
+
+### Ne Anlama Gelir
+
+Dosyanızdaki bir sütun eşlenemiyor çünkü alan Twenty'de mevcut değil.
+
+### Nasıl Düzeltilir
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. İçe aktardığınız nesneyi seçin
+3. **+ Alan Ekle**'ye tıklayın
+4. Uygun türde özel alanı oluşturun
+5. Dosyanızı yeniden yükleyin
+
+<Note>CSV içe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce tüm alanlar mevcut olmalıdır.</Note>
+
+---
+
+## Hata: Kullanıcı İlişkisi Boş
+
+### Ne Anlama Gelir
+
+Bir kaydı bir kullanıcıya (Sahip, Atanan) atamaya çalışıyorsunuz ancak ilişki eşlenmiyor.
+
+### Yaygın Nedenler
+
+1. **Kullanıcı davetini kabul etmedi** — kullanıcı henüz Twenty'de mevcut değil
+2. **Eski sistemdeki kullanıcı kimliğini kullanma** — Twenty başka bir sistemin kimliklerini eşleştiremez
+3. **Yanlış e-posta biçimi** — e-posta, kullanıcının Twenty hesabıyla eşleşmiyor
+
+### Nasıl Düzeltilir
+
+1. Tüm kullanıcıların Twenty çalışma alanınıza **davetlerini kabul ettiğinden** emin olun
+2. Kullanıcının **e-posta adresini** kullanın (adlarını veya eski sistem kimliğini değil)
+3. Twenty'ye katılmak için kullandıkları aynı e-postayı kullanın
+
+<Warning>
+  **Kullanıcılar, içe aktarmadan önce davetleri kabul etmelidir.**
+
+  Bir kullanıcı davetini kabul etmediyse, onlara referans veren kayıtların kullanıcı ilişkileri boş olacaktır.
+</Warning>
+
+---
+
+## İçe Aktarma Öncesi Kontrol Listesi
+
+İçe aktarmadan önce bunları kontrol ederek hatalardan kaçının:
+
+### Dosya Gereksinimleri
+
+<Check>Dosya CSV, XLSX veya XLS biçiminde</Check>
+<Check>Dosyada 10.000'den az kayıt var</Check>
+<Check>Dosya UTF-8 kodlaması kullanıyor</Check>
+
+### Veri Kalitesi
+
+<Check>Yinelenen e-postalar yok (Kişiler için)</Check>
+<Check>Yinelenen alan adları yok (Şirketler için)</Check>
+<Check>Tüm tarihler tutarlı biçim kullanır</Check>
+<Check>Tüm alan adları `https://domain.com` biçimini kullanır</Check>
+
+### Alan Biçimleri
+
+<Check>Boolean alanlar `TRUE` veya `FALSE` kullanır (büyük harf)</Check>
+<Check>Seçim alanları, görünen etiketler değil API adlarını kullanır</Check>
+<Check>Telefon alanlarında gerekli tüm sütunlar vardır</Check>
+<Check>Para birimi alanlarında hem Amount hem de Currency Code bulunur</Check>
+
+### İlişkiler
+
+<Check>Ana kayıtlar, alt kayıtlardan önce içe aktarılır</Check>
+<Check>İlişki sütunları mevcut kayıtlara referans verir</Check>
+<Check>Alan adı biçimi, Twenty'nin biçimiyle birebir eşleşir</Check>
+
+### Veri modeli
+
+<Check>Tüm özel alanlar Ayarlar → Veri Modeli'nde mevcut</Check>
+<Check>Seçim seçenekleri içe aktarmadan önce mevcut</Check>
+
+---
+
+## Hâlâ Sorun mu Yaşıyorsunuz?
+
+Yukarıdaki çözümleri denediyseniz:
+
+1. **Örnek dosyayı indirin** — Twenty'nin beklediği tam biçimi görün
+2. **Mevcut kayıtları dışa aktarın** — dosyanızı çalışır durumdaki verilerle karşılaştırın
+3. **Küçük bir partiyle test edin** — önce 5-10 satırı deneyin
+4. **Referans makaleleri kontrol edin:**
+   * [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+   * [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
+   * [Hata İşleme](/l/tr/user-guide/data-migration/capabilities/error-handling)

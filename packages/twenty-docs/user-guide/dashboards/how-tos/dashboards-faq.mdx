@@ -1,0 +1,59 @@
+---
+title: Dashboards FAQ
+description: Frequently asked questions about dashboards in Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Can I create private dashboards?">
+    No, dashboards are currently visible to everyone with access to your Twenty workspace. Private dashboards are not yet available.
+  </Accordion>
+
+  <Accordion title="Why do my metrics look different from my colleague's?">
+    Dashboards currently display data based on the viewer's timezone. If you're in different regions (e.g., APAC vs. US), you may see slightly different numbers for the same dashboard. We're working on adding a timezone setting per dashboard to ensure consistent data across teams.
+  </Accordion>
+
+  <Accordion title="Can I export my dashboard?">
+    Exporting dashboards is not available at the moment. This feature is on our roadmap.
+  </Accordion>
+
+  <Accordion title="Can I share dashboards with external users?">
+    No, sharing dashboards with users outside your Twenty workspace (non-Twenty users) is not currently supported.
+  </Accordion>
+
+  <Accordion title="How do I add a dashboard to my favorites?">
+    Open the dashboard you want to favorite, then click the star icon. Favorites are personal—they won't affect other users.
+  </Accordion>
+
+  <Accordion title="What's the difference between tabs and widgets?">
+    - **Tabs** organize your dashboard into sections (like pages within the dashboard)
+    - **Widgets** are the individual visualizations (charts, numbers, iFrames) within each tab
+
+    Structure: Dashboard → Tabs → Widgets
+  </Accordion>
+
+  <Accordion title="Why do I see 'Undisplayed data' warning on my bar chart?">
+    Bar charts have display limits: 100 bars for horizontal charts, 50 for vertical. If your data exceeds this, add filters to narrow down the results or change the grouping (e.g., group by week instead of day).
+  </Accordion>
+
+  <Accordion title="Can I filter an entire dashboard at once?">
+    Dashboard-level filters are not available yet, but this feature is on our roadmap. Currently, you need to apply filters to each widget individually.
+  </Accordion>
+
+  <Accordion title="Are gauge charts or tables available?">
+    Not yet. Gauge charts and tables are on our roadmap and will be added in a future release.
+  </Accordion>
+
+  <Accordion title="How do I duplicate a dashboard?">
+    1. Make sure you're in view mode (not editing)
+    2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
+    3. Select **Duplicate dashboard**
+  </Accordion>
+
+  <Accordion title="How often does dashboard data refresh?">
+    Widgets update automatically as your CRM data changes:
+    - Real-time updates for most metrics
+    - Use the refresh button for a manual update if needed
+    - Historical data is preserved for trend analysis
+  </Accordion>
+</AccordionGroup>
+

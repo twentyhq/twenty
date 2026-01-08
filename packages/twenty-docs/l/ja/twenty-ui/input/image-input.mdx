@@ -1,5 +1,5 @@
 ---
-title: 画像入力
+title: Image Input
 image: /images/user-guide/objects/objects.png
 ---
 
@@ -7,36 +7,28 @@ image: /images/user-guide/objects/objects.png
   <img src="/images/user-guide/objects/objects.png" alt="Header" />
 </Frame>
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import { SandpackEditor} from '@site/src/ui/SandpackEditor'
-import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
-
 Allows users to upload and remove an image.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
 
-```jsx
-import { ImageInput } from "@/ui/input/components/ImageInput";
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ImageInput/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ        | タイプ    | 説明                                                                                     |
-| ------------ | ------ | -------------------------------------------------------------------------------------- |
-| 写真           | string | 画像ソースURL                                                                               |
-| onUpload     | 機能     | 新しい画像がアップロードされたときに呼び出される関数。 新しい画像がアップロードされたときに呼び出される関数。 パラメーターとして `File` オブジェクトを受け取ります |
-| onRemove     | 機能     | ユーザーが削除ボタンをクリックしたときに呼び出される関数                                                           |
-| onAbort      | 機能     | 画像のアップロード中に中止ボタンをクリックしたときに呼び出される関数                                                     |
-| isUploading  | ブール型   | 画像が現在アップロード中であるかどうかを示します                                                               |
-| errorMessage | string | 画像入力の下に表示されるオプションのエラーメッセージ                                                             |
-| disabled     | ブール型   | `true` の場合、入力全体が無効化され、ボタンをクリックできなくなります。                                                |
-
-</Tab>
+  <Tab title="Props">
+    | Props        | Type     | Description                                                                                       |
+    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
+    | picture      | string   | The image source URL                                                                              |
+    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
+    | onRemove     | function | The function called when the user clicks on the remove button                                     |
+    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
+    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
+    | errorMessage | string   | An optional error message to display below the image input                                        |
+    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  </Tab>
 </Tabs>

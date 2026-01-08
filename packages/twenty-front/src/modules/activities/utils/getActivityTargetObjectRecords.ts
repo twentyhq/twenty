@@ -24,6 +24,8 @@ export const getActivityTargetObjectRecords = ({
     return [];
   }
 
+  const isNote = isDefined(activityRecord) && 'noteTargets' in activityRecord;
+
   const targets = activityTargets
     ? activityTargets
     : activityRecord &&
@@ -36,27 +38,50 @@ export const getActivityTargetObjectRecords = ({
         ? activityRecord.taskTargets
         : [];
 
+  const activityTargetObjectNameSingular = isNote
+    ? CoreObjectNameSingular.NoteTarget
+    : CoreObjectNameSingular.TaskTarget;
+
+  const activityTargetObjectMetadata = objectMetadataItems.find(
+    (item) => item.nameSingular === activityTargetObjectNameSingular,
+  );
+
+  const activityTargetRelationFields =
+    activityTargetObjectMetadata?.fields.filter(
+      (field) =>
+        isDefined(field.relation?.targetObjectMetadata.id) &&
+        ![CoreObjectNameSingular.Note, CoreObjectNameSingular.Task].includes(
+          field.relation?.targetObjectMetadata
+            .nameSingular as CoreObjectNameSingular,
+        ),
+    ) ?? [];
+
   const activityTargetObjectRecords = targets
     .map<ActivityTargetWithTargetRecord | undefined>((activityTarget) => {
       if (!isDefined(activityTarget)) {
         throw new Error('Cannot find activity target');
       }
+      const matchingField = activityTargetRelationFields.find((field) =>
+        isDefined(activityTarget[field.name]),
+      );
+
+      if (!matchingField || !matchingField.relation) {
+        return undefined;
+      }
 
       const correspondingObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
-          isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
-          ![CoreObjectNameSingular.Note, CoreObjectNameSingular.Task].includes(
-            objectMetadataItem.nameSingular as CoreObjectNameSingular,
-          ),
+          objectMetadataItem.id ===
+          matchingField.relation?.targetObjectMetadata.id,
       );
 
       if (!correspondingObjectMetadataItem) {
         return undefined;
       }
 
-      const targetObjectRecord = activityTarget[
-        correspondingObjectMetadataItem.nameSingular
-      ] as ObjectRecord | undefined;
+      const targetObjectRecord = activityTarget[matchingField.name] as
+        | ObjectRecord
+        | undefined;
 
       if (!isDefined(targetObjectRecord)) {
         throw new Error(

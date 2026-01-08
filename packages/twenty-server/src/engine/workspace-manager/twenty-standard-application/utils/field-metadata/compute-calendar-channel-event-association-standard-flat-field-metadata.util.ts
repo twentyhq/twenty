@@ -112,6 +112,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Event external ID',
       icon: 'IconCalendar',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -128,6 +129,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Recurring Event ID',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -145,6 +147,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Channel ID',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarChannel',
       targetFieldName: 'calendarChannelEventAssociations',
       settings: {
@@ -169,6 +172,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Event ID',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarEvent',
       targetFieldName: 'calendarChannelEventAssociations',
       settings: {

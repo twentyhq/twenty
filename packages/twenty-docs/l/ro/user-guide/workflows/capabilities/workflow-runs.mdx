@@ -1,0 +1,92 @@
+---
+title: Rulările fluxului de lucru
+description: Monitorizați și gestionați execuțiile fluxurilor de lucru.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Despre Rulări
+
+O **rulare** este o înregistrare a execuției unui flux de lucru. De fiecare dată când un flux de lucru este declanșat—fie de un eveniment al unei înregistrări, de o planificare, o acțiune manuală sau un webhook—se creează o nouă rulare.
+
+## Vizualizarea Rulărilor
+
+### Din editorul de fluxuri de lucru
+
+1. Deschideți fluxul de lucru pe care doriți să îl monitorizați
+2. Faceți clic pe panoul **Rulări** din partea dreaptă
+3. Vedeți o listă cu rulările recente și starea lor
+
+### Din vizualizarea Rulări ale fluxurilor de lucru
+
+1. Accesați **Rulări ale fluxurilor de lucru** în bara laterală
+2. Vizualizați rulările din toate fluxurile de lucru
+3. Filtrați după stare, flux de lucru sau dată
+
+## Stările rulărilor
+
+| Status           | Descriere                                                                                          |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| **Se execută**   | Fluxul de lucru se execută în prezent                                                              |
+| **Completat**    | Fluxul de lucru s-a finalizat cu succes                                                            |
+| **Eșuat**        | Fluxul de lucru a întâmpinat o eroare și s-a oprit                                                 |
+| **În așteptare** | Fluxul de lucru este în pauză (de ex., așteaptă o acțiune Întârziere sau trimiterea unui formular) |
+
+## Detalii despre rulare
+
+Faceți clic pe orice rulare pentru a vedea:
+
+* **Stare**: Starea curentă a rulării
+* **Pornită la**: Când a început rularea
+* **Durată**: Cât a durat rularea
+* **Date ale declanșatorului**: Datele de intrare care au pornit fluxul de lucru
+* **Ieșirile pașilor**: Datele returnate de fiecare pas
+* **Mesaje de eroare**: Dacă rularea a eșuat, ce a mers prost
+
+## Execuție pas cu pas
+
+Fiecare rulare afișează progresul în fluxul dvs. de lucru:
+
+1. Vedeți care pași s-au finalizat cu succes
+2. Identificați unde au apărut eșecurile
+3. Vizualizați datele transmise între pași
+4. Depanați problemele examinând intrările și ieșirile pașilor
+
+## Gestionarea erorilor
+
+Când o rulare eșuează:
+
+1. Deschideți rularea eșuată
+2. Găsiți pasul care a cauzat eșecul
+3. Verificați mesajul de eroare pentru detalii
+4. Probleme comune:
+   * Lipsesc câmpuri obligatorii
+   * Format de date invalid
+   * Erori ale API-urilor externe
+   * Probleme de permisiuni
+
+## Rularea din nou a fluxurilor de lucru
+
+Dacă o rulare eșuează, puteți:
+
+* Remediați problema de bază și așteptați următorul declanșator
+* Pentru fluxurile de lucru manuale, declanșați din nou cu aceleași date sau cu date actualizate
+* Revizuiți logica fluxului de lucru pentru a preveni eșecuri viitoare
+
+## Sfaturi privind performanța
+
+### Gestionarea istoricului rulărilor
+
+* Rulările sunt păstrate pentru referință istorică
+* Rulările foarte vechi pot fi arhivate automat
+* Exportați datele rulărilor dacă trebuie să păstrați înregistrări
+
+### Cele mai bune practici de monitorizare
+
+* Verificați regulat rulările după activarea unor fluxuri de lucru noi
+* Analizați rulările eșuate pentru a identifica tipare
+
+## Conexe
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Depanarea fluxurilor de lucru](/l/ro/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

@@ -244,6 +244,42 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const updatedByFieldId = v4();
+  const updatedByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
+    type: FieldMetadataType.ACTOR,
+    id: updatedByFieldId,
+    viewFieldIds: [],
+    mainGroupByFieldMetadataViewIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    isLabelSyncedWithName: false,
+    isUnique: false,
+    objectMetadataId,
+    universalIdentifier: updatedByFieldId,
+    workspaceId,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedBy,
+    name: 'updatedBy',
+    label: 'Updated by',
+    icon: 'IconUserCircle',
+    description: 'The workspace member who last updated the record',
+    isNullable: false,
+    isActive: true,
+    isCustom: false,
+    isSystem: false,
+    isUIReadOnly: true,
+    defaultValue: { name: "''", source: "'MANUAL'" },
+    viewFilterIds: [],
+    createdAt,
+    updatedAt: createdAt,
+    options: null,
+    standardOverrides: null,
+    relationTargetFieldMetadataId: null,
+    relationTargetObjectMetadataId: null,
+    settings: null,
+    morphId: null,
+    applicationId: applicationId ?? null,
+  };
+
   const positionFieldId = v4();
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
     type: FieldMetadataType.POSITION,
@@ -327,6 +363,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       nameField,
       createdAtField,
       updatedAtField,
+      updatedByField,
       deletedAtField,
       createdByField,
       positionField,

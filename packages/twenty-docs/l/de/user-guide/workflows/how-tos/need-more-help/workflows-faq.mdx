@@ -1,0 +1,254 @@
+---
+title: FAQ zu Workflows
+description: Häufig gestellte Fragen zu Workflows in Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Warum kann ich einen Workflow nicht aktivieren?">
+    Dies ist wahrscheinlich ein Berechtigungsproblem. Sie benötigen Zugriff auf Workflows, um sie zu erstellen und zu aktivieren.
+
+    **Lösung**: Wenden Sie sich an Ihren Workspace-Administrator, damit er Ihnen unter **Einstellungen → Rollen** Zugriff auf Workflows gewährt.
+
+    Wenn Sie den Bereich Workflows in Ihrer Seitenleiste überhaupt nicht sehen, bestätigt dies ein Berechtigungsproblem.
+  </Accordion>
+
+  <Accordion title="Warum sehe ich die Schaltfläche für manuelle Workflows nicht in der oberen Navigationsleiste?">
+    Manuelle Workflows erscheinen nur in der Navigationsleiste, wenn sie korrekt konfiguriert sind:
+
+    1. Der Workflow muss **aktiviert** sein (nicht im Entwurfsmodus)
+    2. Die Platzierung in der Navigationsleiste muss auf **Pinned** gesetzt sein
+    3. Für Single-/Bulk-Trigger müssen Sie sich auf der richtigen Objektseite befinden
+
+    **Zum Überprüfen**: Öffnen Sie den Workflow → klicken Sie auf den Trigger → prüfen Sie, dass "Navbar placement" auf "Pinned" gesetzt ist.
+
+    Unabhängig von den Navbar-Einstellungen können Sie manuelle Workflows jederzeit über **Cmd + K** (oder **Ctrl + K**) aufrufen.
+  </Accordion>
+
+  <Accordion title="Was ist der Unterschied zwischen manuellen Single-, Global- und Bulk-Triggern?">
+    | Typ | Erforderliche Datensätze | Workflow-Läufe |
+    | --- | ------------------------ | -------------- |
+
+    \| **Global** | Keine | Einmal, ohne Datensatzeingabe |
+    \| **Single** | Ein oder mehrere ausgewählte | Einmal pro ausgewähltem Datensatz |
+    \| **Bulk** | Ein oder mehrere ausgewählte | Einmal, mit allen Datensätzen als Array |
+
+    * **Global**: Verwenden Sie dies, wenn der Workflow keinen Datensatzkontext benötigt (z. B. einen Bericht erzeugen)
+    * **Single**: Verwenden Sie dies, wenn Sie jeden ausgewählten Datensatz unabhängig verarbeiten möchten (z. B. einzelne E-Mails senden)
+    * **Bulk**: Verwenden Sie dies, wenn Sie Datensätze gemeinsam verarbeiten oder den Credit-Verbrauch optimieren möchten (erfordert die Iterator-Aktion)
+
+    Siehe [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers) für Details.
+  </Accordion>
+
+  <Accordion title="Ich sehe keinen If/Else-Knoten. Was sollte ich tun?">
+    Ein expliziter If/Else-Knoten ist noch nicht verfügbar, steht aber auf unserer Roadmap.
+
+    **Aktuelle Problemumgehung**: Erstellen Sie mehrere Verzweigungen von Ihrem Schritt aus, die jeweils mit einer **Filter**-Aktion beginnen:
+
+    ```
+    Schritt 1
+       │
+       ├── Verzweigung A: Filter (Bedingung = true) → Aktionen...
+       │
+       └── Verzweigung B: Filter (Bedingung = false) → Aktionen...
+    ```
+
+    Nur die Verzweigung, deren Filterbedingung erfüllt ist, führt die nachfolgenden Aktionen aus.
+
+    Siehe [Verzweigungen verwenden](/l/de/user-guide/workflows/capabilities/workflow-branches) für eine Schritt-für-Schritt-Anleitung.
+  </Accordion>
+
+  <Accordion title="Laufen Workflow-Verzweigungen parallel?">
+    **Ja**, Verzweigungen laufen standardmäßig parallel.
+
+    Wenn nur eine Verzweigung ausgeführt werden soll:
+
+    * Fügen Sie am Anfang jeder Verzweigung eine **Filter**-Aktion hinzu
+    * Legen Sie gegensätzliche Bedingungen fest (z. B., Verzweigung A: status = "Open", Verzweigung B: status ≠ "Open")
+
+    Verzweigungen, deren Filterbedingung fehlschlägt, werden nicht weiter ausgeführt; andere laufen weiter.
+  </Accordion>
+
+  <Accordion title="Kann ich Verzweigungen wieder zusammenführen?">
+    **Ja**. Nachdem Ihre parallelen Verzweigungen abgeschlossen sind, können Sie einen Schritt hinzufügen, mit dem beide Verzweigungen verbunden werden.
+
+    Im Workflow-Editor:
+
+    1. Schließen Sie Ihre verzweigten Aktionen ab
+    2. Fügen Sie nach den Verzweigungen einen neuen Schritt hinzu
+    3. Ziehen Sie Verbindungen vom Ende jeder Verzweigung zu diesem neuen Schritt
+
+    Der zusammengeführte Schritt wird ausgeführt, nachdem alle verbundenen Verzweigungen abgeschlossen sind.
+  </Accordion>
+
+  <Accordion title="Wie lautet das Limit für die Ergebnisse von Search Records?">
+    **Search Records gibt maximal 200 Datensätze zurück.**
+
+    Wenn Sie mehr verarbeiten müssen:
+
+    * Fügen Sie spezifischere Filter hinzu, um die Ergebnisse zu reduzieren
+    * Verwenden Sie geplante Workflows, um in Batches zu verarbeiten
+    * Ziehen Sie die Verwendung der API für Massenoperationen in Betracht
+
+    Für die meisten Workflows sind 200 Datensätze ausreichend. Wenn Sie dieses Limit regelmäßig erreichen, sollten Sie Ihre Automatisierung neu strukturieren.
+  </Accordion>
+
+  <Accordion title="Kann ich Personen in Workflow-E-Mails in CC setzen?">
+    **Noch nicht.** CC- und BCC-Felder für die Aktion "Send Email" stehen auf unserer Roadmap.
+
+    **Aktuelle Problemumgehung**: Fügen Sie mehrere "Send Email"-Aktionen hinzu, um an zusätzliche Empfänger zu senden, oder verwenden Sie einen HTTP Request, um über einen externen E-Mail-Dienst zu senden, der CC unterstützt.
+  </Accordion>
+
+  <Accordion title="Wie verwende ich Ausgaben aus vorherigen Schritten?">
+    Jede Aktion erzeugt Ausgabedaten, die in nachfolgenden Schritten verwendet werden können.
+
+    **So verweisen Sie auf Daten aus vorherigen Schritten**:
+
+    * Verwenden Sie den Variablenauswähler, wenn Sie ein Feld konfigurieren
+    * Oder geben Sie `{{stepName.fieldName}}` direkt ein
+
+    **Beispiele**:
+
+    * Trigger-Daten: `{{trigger.object.email}}`
+    * Suchergebnisse: `{{searchRecords[0].name}}`
+    * Code-Ausgabe: `{{code.calculatedValue}}`
+
+    Fahren Sie in der Aktionskonfiguration mit der Maus über ein beliebiges Feld, um verfügbare Variablen aus vorherigen Schritten zu sehen.
+  </Accordion>
+
+  <Accordion title="Warum schlägt mein Iterator fehl?">
+    **Iterator erfordert eine Array-Eingabe.** Häufige Probleme:
+
+    1. **Eingabe ist kein Array**: Stellen Sie sicher, dass Sie Ergebnisse von Search Records oder einer anderen Aktion übergeben, die ein Array zurückgibt
+    2. **Array ist leer**: Fügen Sie vor Iterator einen Filter hinzu, um `{{searchRecords.length}} > 0` zu prüfen
+    3. **Falsche Variable ausgewählt**: Stellen Sie sicher, dass Sie das Array selbst auswählen, nicht einen einzelnen Datensatz
+
+    **Korrekte Einrichtung**:
+
+    1. Search Records (gibt ein Array zurück)
+    2. Filter: length > 0
+    3. Iterator: Wählen Sie `{{searchRecords}}` aus
+    4. Aktionen innerhalb des Iterators verwenden `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Wie lang ist die maximale Ausführungszeit für Code-Aktionen?">
+    Code-Aktionen (serverlose Funktionen) haben ein **Standard-Timeout von 5 Minuten** (300 Sekunden).
+
+    Das maximal konfigurierbare Timeout beträgt **15 Minuten** (900 Sekunden).
+
+    Wenn Ihr Code dieses Limit überschreitet, schlägt die Aktion mit einem Timeout-Fehler fehl.
+
+    **Tipps zur Vermeidung von Timeouts**:
+
+    * Zerlegen Sie große Operationen mithilfe des Iterators in kleinere Teile
+    * Vermeiden Sie rechenintensive Vorgänge; verwenden Sie für aufwändige Verarbeitung externe Dienste über HTTP Request
+    * Optimieren Sie Ihren Code, um die Ausführungszeit zu reduzieren
+    * Wenn Sie längere Verarbeitung benötigen, sollten Sie geplante Workflows verwenden, die Daten in Batches verarbeiten
+  </Accordion>
+
+  <Accordion title="Wie lese ich Workflow-Ausführungen?">
+    Workflow-Ausführungen zeigen die Ausführungshistorie und helfen beim Debuggen von Problemen.
+
+    **Auf Ausführungen zugreifen**:
+
+    * Im Workflow-Editor → **Runs**-Bereich auf der rechten Seite
+    * Oder gehen Sie in der Seitenleiste zu **Workflow Runs**
+
+    **Eine Ausführung verstehen**:
+
+    * **Status**: Running, Completed, Failed, Waiting
+    * **Schritte**: Sehen Sie, welche Schritte ausgeführt wurden und deren Ausgabe
+    * **Fehler**: Klicken Sie auf fehlgeschlagene Schritte, um Fehlermeldungen zu sehen
+    * **Daten**: Betrachten Sie Eingabe-/Ausgabedaten in jedem Schritt
+
+    Siehe [Workflow-Ausführungen](/l/de/user-guide/workflows/capabilities/workflow-runs) für Details.
+  </Accordion>
+
+  <Accordion title="Warum sehe ich meine Workflow-Ausführungen nicht?">
+    Workflow-Ausführungen schlagen möglicherweise aufgrund von Rate Limits sofort fehl.
+
+    **Hartes Limit: 5.000 Ausführungen pro Stunde und Workspace.**
+
+    Wenn Sie dieses Limit überschreiten, werden Workflows sofort als fehlgeschlagen markiert und erscheinen nicht wie erwartet in Ihrer Ausführungsliste.
+
+    **Häufige Szenarien, die dieses Limit erreichen**:
+
+    * Auswahl von mehr als 5.000 Datensätzen mit einem manuellen Single-Trigger
+    * Mehrere Workflows, die gleichzeitig in Ihrem Workspace ausgeführt werden
+    * Hochfrequente automatisierte Trigger (z. B. Record Updated bei einem stark genutzten Objekt)
+
+    **Lösungen**:
+
+    * Verwenden Sie **Bulk**-Trigger statt Single, um viele Datensätze in einer Ausführung zu verarbeiten
+    * Staffeln Sie große Batch-Vorgänge zeitlich
+    * Verwenden Sie Filter, um die Triggerfrequenz zu reduzieren
+    * Planen Sie umfangreiche Workflows außerhalb der Stoßzeiten
+  </Accordion>
+
+  <Accordion title="Wie lauten die Workflow-Rate-Limits?">
+    Twenty hat zwei Rate-Limits, um die Systemstabilität sicherzustellen:
+
+    | Limit | Wert | Verhalten |
+    | ----- | ---- | --------- |
+
+    \| **Weiches Limit** | 100 Ausführungen/Minute | Ausführungen werden im Status "Not Started" in die Warteschlange gestellt und nach und nach verarbeitet |
+    \| **Hartes Limit** | 5.000 Ausführungen/Stunde | Ausführungen schlagen sofort fehl |
+
+    **Weiches Limit (100/Min.)**: Ihre Workflows schlagen nicht fehl – sie warten lediglich in der Warteschlange und werden mit der Zeit verarbeitet. Sie können mehr als 100 Datensätze auslösen; die Ausführung wird langsamer sein.
+
+    **Hartes Limit (5.000/Stunde)**: Dies gilt für Ihren gesamten Workspace. Wenn alle Ihre Workflows zusammen in einer Stunde mehr als 5.000 Ausführungen erreichen, schlagen zusätzliche Ausführungen sofort fehl.
+
+    **Tipps, um innerhalb der Limits zu bleiben**:
+
+    * Verwenden Sie für große Batches Bulk-Trigger mit Iterator statt Single-Triggern
+    * Kombinieren Sie verwandte Automatisierungen in weniger Workflows
+    * Verwenden Sie geplante Workflows, um die Last über die Zeit zu verteilen
+  </Accordion>
+
+  <Accordion title="Kann ich eine fehlgeschlagene Workflow-Ausführung erneut ausführen?">
+    **Nein, derzeit gibt es keine automatische Wiederholungsfunktion.**
+
+    Wenn eine Workflow-Ausführung fehlschlägt, müssen Sie:
+
+    1. Den Fehler prüfen unter **Einstellungen → Workflows → [Ihr Workflow] → Runs**
+    2. Das Problem beheben (Daten, Konfiguration oder externer Dienst)
+    3. Den Workflow erneut manuell für die betroffenen Datensätze auslösen
+
+    **Tipps zur Reduzierung von Fehlschlägen**:
+
+    * Fügen Sie **Filter**-Knoten hinzu, um Daten vor Aktionen zu validieren
+    * Verwenden Sie **Search Records**, um zu prüfen, ob verknüpfte Datensätze existieren
+    * Testen Sie gründlich mit einigen Datensätzen, bevor Sie Massenoperationen durchführen
+
+    Eine automatische Wiederholungsfunktion steht auf unserer Roadmap für eine zukünftige Version.
+  </Accordion>
+
+  <Accordion title="Sollte ich Workflows vor CSV-Importen deaktivieren?">
+    **Ja, wenn Ihre Workflows durch das Erstellen oder Aktualisieren von Datensätzen ausgelöst werden.**
+
+    Wenn Sie Daten per CSV importieren, kann jeder erstellte oder aktualisierte Datensatz Workflows auslösen. Ein großer Import (Tausende von Datensätzen) könnte:
+
+    * Das Limit von 5.000 Ausführungen/Stunde erreichen
+    * Erhebliche Workflow-Credits verbrauchen
+    * Unerwartete E-Mails oder Benachrichtigungen senden
+    * Doppelte Aufgaben oder Datensätze erstellen
+
+    **Vor einem Massenimport**:
+
+    1. Gehen Sie zu **Einstellungen → Workflows**
+    2. Identifizieren Sie Workflows, die durch das Objekt ausgelöst werden, das Sie importieren
+    3. **Deaktivieren** Sie diese vorübergehend
+    4. Führen Sie Ihren CSV-Import aus
+    5. **Reaktivieren** Sie die Workflows, wenn Sie fertig sind
+
+    **Alternative**: Wenn die Workflows für importierte Daten ausgeführt werden sollen, importieren Sie in kleineren Batches, um innerhalb der Rate-Limits zu bleiben.
+  </Accordion>
+
+  <Accordion title="Wie bereinige ich mein Workflow-Layout?">
+    Wenn Ihre Workflow-Canvas unübersichtlich aussieht, mit verstreuten Knoten, können Sie sie automatisch organisieren:
+
+    1. Klicken Sie mit der rechten Maustaste irgendwo auf der Workflow-Canvas
+    2. Klicken Sie auf **Tidy up workflow**
+
+    Dadurch werden alle Knoten automatisch in ein übersichtliches, organisiertes Layout gebracht.
+  </Accordion>
+</AccordionGroup>

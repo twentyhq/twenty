@@ -1,0 +1,41 @@
+---
+title: Nachrichtenwarteschlange
+---
+
+Warteschlangen erleichtern die Durchführung asynchroner Vorgänge. Sie können für die Ausführung von Hintergrundaufgaben verwendet werden, wie z.B. das Versenden einer Willkommens-E-Mail bei der Registrierung.
+Jeder Anwendungsfall hat seine eigene Warteschlangenklasse, die von `MessageQueueServiceBase` erweitert wird.
+
+Derzeit unterstützen wir nur `bull-mq`[bull-mq](https://bullmq.io/) als Warteschlangentreiber.
+
+## Schritte zur Erstellung und Nutzung einer neuen Warteschlange
+
+1. Fügen Sie einen Warteschlangennamen für Ihre neue Warteschlange unter dem Enum `MESSAGE_QUEUES` hinzu.
+2. Stellen Sie die Factory-Implementierung der Warteschlange mit dem Warteschlangennamen als Abhängigkeits-Token bereit.
+3. Injizieren Sie die von Ihnen erstellte Warteschlange im erforderlichen Modul/Service mit dem Warteschlangennamen als Abhängigkeits-Token.
+4. Fügen Sie eine Worker-Klasse mit tokenbasierter Injektion hinzu, genau wie der Producer.
+
+### Beispielverwendung
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

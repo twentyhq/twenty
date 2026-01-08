@@ -1,0 +1,149 @@
+---
+title: Boru Hattınızda Beklenen Tutarı Gösterin
+description: Aşama olasılığına göre ağırlıklandırılmış fırsat değerlerini hesaplayın ve görüntüleyin.
+---
+
+Beklenen Tutar, hesaplanan bir değerdir: **Tutar × Olasılık**. Bu, kapanma olasılıklarına göre fırsatları ağırlıklandırarak geliri tahmin etmenize yardımcı olur.
+
+<Tip>
+  Bu, iş akışlarını kullanarak [Formül Alanları](/l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields) oluşturmanın bir örneğidir.
+</Tip>
+
+Bu kılavuz, boru hattınızda beklenen tutarları hesaplamak ve görüntülemek için gerekli özel alanları ve iş akışlarını kurma konusunda sizi yönlendirir.
+
+## Adım 1: Özel Alanlar Oluşturun
+
+Fırsatlar nesnesinde iki özel alana ihtiyacınız var.
+
+### Olasılık Alanını Oluşturun
+
+1. **Ayarlar → Veri Modeli → Fırsatlar**'a gidin
+2. **+ Alan Ekle**'ye tıklayın
+3. Alanı Yapılandır:
+   * **Ad**: Olasılık
+   * **Tür**: Sayı
+   * **Açıklama**: Aşama tabanlı olasılık (0-100%)
+4. **Kaydet**'e tıklayın
+
+### Beklenen Tutar Alanını Oluşturun
+
+1. **+ Alan Ekle**'ye tıklayın
+2. Alanı Yapılandır:
+   * **Ad**: Beklenen Tutar
+   * **Tür**: Para Birimi
+   * **Açıklama**: Hesaplanır: Tutar × Olasılık
+3. **Kaydet**'e tıklayın
+
+### İsteğe bağlı: Alanları Kullanıcılar için Salt Okunur Yapın
+
+Kullanıcıların bu hesaplanan alanları manuel olarak düzenlemesini istemiyorsanız:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Yapılandırılacak rolü seçin
+3. Fırsatlar nesnesini bulun
+4. **Olasılık** ve **Beklenen Tutar** alanlarını salt okunur yapın
+
+Bu, bu değerleri yalnızca iş akışlarının güncelleyebilmesini sağlar.
+
+## Adım 2: İş Akışı #1'i Oluşturun — Aşama Değiştiğinde Olasılığı Güncelleyin
+
+Bu iş akışı, bir fırsat yeni bir aşamaya geçtiğinde Olasılığı otomatik olarak ayarlar.
+
+### İş Akışını Oluşturun
+
+1. **İş Akışları**'na gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Aşama Değiştiğinde Olasılığı Güncelle" koyun
+
+### Tetikleyiciyi Yapılandırın
+
+1. **Kayıt Oluşturuldu veya Güncellendi** tetikleyicisi ekleyin
+2. Nesne olarak **Fırsatlar**'ı seçin
+3. Filtre: **Aşama** alanı güncellendi
+
+### Her Aşama için Dallar Ekleyin
+
+Her aşama için kendi olasılığıyla bir dal oluşturun:
+
+| Aşama      | Olasılık |
+| ---------- | -------- |
+| Yeni       | 10%      |
+| Nitelikli  | 25%      |
+| Toplantı   | 40%      |
+| Teklif     | 60%      |
+| Müzakere   | 80%      |
+| Kazanıldı  | 100%     |
+| Kaybedildi | 0%       |
+
+<Note>
+  Yeni bir dal oluşturmak için, iş akışı kanvasına sağ tıklayın ve **Yeni eylem**'e tıklayın. Ardından, oku önceki düğümden bu yeni eyleme sürükleyerek bu eylemi önceki düğüme bağlayın.
+</Note>
+
+Her aşama için:
+
+1. Bir **Filtre** düğümü ekleyin: Aşama = [aşama adı]
+2. Bir **Kaydı Güncelle** eylemi ekleyin:
+   * Kayıt: Tetikleyen Fırsat
+   * Alan: Olasılık
+   * Değer: [o aşama için olasılık]
+
+### Beklenen Tutarı Hesaplayın
+
+Dallar yeniden birleştiğinde:
+
+1. Bir **Filtre** düğümü ekleyin: Tutar boş değil
+2. Bir **Kaydı Güncelle** eylemi ekleyin:
+   * Kayıt: Tetikleyen Fırsat
+   * Alan: Beklenen Tutar
+   * Değer: Tutar × Olasılık
+
+## Adım 3: İş Akışı #2'yi Oluşturun — Tutar Değiştiğinde Yeniden Hesaplayın
+
+Bu iş akışı, fırsatın Tutarı değiştiğinde Beklenen Tutarı günceller.
+
+### İş Akışını Oluşturun
+
+1. **İş Akışları**'na gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Tutar Değiştiğinde Beklenen Tutarı Yeniden Hesapla" koyun
+
+### Tetikleyiciyi Yapılandırın
+
+1. **Kayıt Oluşturuldu veya Güncellendi** tetikleyicisi ekleyin
+2. Nesne olarak **Fırsatlar**'ı seçin
+3. Filtre: **Tutar** alanı güncellendi
+
+### Mantığı Ekleyin
+
+1. Bir **Filtre** düğümü ekleyin: Tutar boş değil
+2. Bir **Kaydı Güncelle** eylemi ekleyin:
+   * Kayıt: Tetikleyen Fırsat
+   * Alan: Beklenen Tutar
+   * Değer: Tutar × Olasılık
+
+## Adım 4: Boru Hattınızda Görüntüleyin
+
+Şimdi Kanban görünümünüzde Beklenen Tutar toplamlarını gösterin:
+
+1. **Satış Boru Hattı** Kanban görünümünüzü açın
+2. Bir sütunun üst kısmında herhangi bir Aşama adının yanındaki **sayıya** tıklayın
+3. **Toplam**'ı seçin
+4. **Beklenen Tutar**'ı seçin
+
+Artık her sütun, o aşama için ağırlıklandırılmış boru hattı toplam değerini gösterir.
+
+## Özet
+
+| Bileşen                  | Amaç                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| **Olasılık alanı**       | Aşama tabanlı kazanma olasılığını saklar                                          |
+| **Beklenen Tutar alanı** | Tutar × Olasılık değerini saklar                                                  |
+| **İş Akışı #1**          | Aşama değiştiğinde Olasılığı günceller, ardından Beklenen Tutarı yeniden hesaplar |
+| **İş Akışı #2**          | Tutar değiştiğinde Beklenen Tutarı yeniden hesaplar                               |
+| **Toplama**              | Her aşama için Beklenen Tutar toplamını gösterir                                  |
+
+## İlgili
+
+* [Formül Alanları](/l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields) — iş akışlarını kullanarak hesaplanan alanlar oluşturun
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — sütun toplamaları
+* [Özel Alanlar Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-fields) — alan yapılandırması

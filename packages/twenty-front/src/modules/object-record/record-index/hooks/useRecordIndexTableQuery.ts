@@ -4,6 +4,7 @@ import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/ho
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+
 export const useRecordIndexTableQuery = (objectNameSingular: string) => {
   const showAuthModal = useShowAuthModal();
 

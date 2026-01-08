@@ -1,0 +1,228 @@
+---
+title: Importați relațiile dintre obiecte prin CSV
+description: Ghid complet, pas cu pas, pentru asocierea înregistrărilor în timpul importului CSV.
+---
+
+## Prezentare generală
+
+Acest ghid vă arată cum să importați relațiile dintre obiecte — de exemplu, să asociați Persoane la Companii sau Oportunități la Persoane.
+
+<Note>**Ce poate fi importat:** Doar relații de tip unu-la-mulți care indică către un singur tip de obiect. Relațiile care indică către mai multe tipuri de obiect (cum ar fi Notele care se leagă de Persoane ȘI Companii) nu sunt încă acceptate pentru import.</Note>
+
+## Înțelegerea relațiilor
+
+### Ce este o relație "unu-la-mulți"?
+
+Într-o relație unu-la-mulți:
+
+* **O** companie are **multe** persoane (angajați)
+* **O** companie are **multe** oportunități
+* **O** persoană are **multe** sarcini
+
+Partea "unu" este **părintele**. Partea "mulți" este **copilul**.
+
+### Relații obișnuite în Twenty
+
+| Relație                 | Partea "unu" (părinte) | Partea "mulți" (copil) |
+| ----------------------- | ---------------------- | ---------------------- |
+| Companii → Persoane     | Companie               | Persoane               |
+| Companii → Oportunități | Companie               | Oportunități           |
+| Persoane → Sarcini      | Persoană               | Sarcini                |
+| Persoane → Note         | Persoană               | Notițe                 |
+
+## Pasul 1: Identificați părțile „unu” și „mulți”
+
+Înainte de import, stabiliți care obiect este părinte și care este copil.
+
+**Întrebați-vă:** "Are UN [Obiect A] MULTE [Obiect B]?"
+
+* O companie → Multe persoane ✓ (Compania este părinte)
+* O persoană → Multe companii ✗ (Greșit — o persoană aparține unei singure companii)
+
+## Pasul 2: Importați mai întâi înregistrările părinte
+
+Înregistrarea părinte (partea „unu”) trebuie să existe în Twenty înainte de a o putea referi.
+
+**Ordinea importului:**
+
+1. **Companii** mai întâi (fără dependențe)
+2. **Persoane** în al doilea rând (legate de Companii)
+3. **Oportunități** în al treilea rând (legate de Companii și/sau Persoane)
+4. **Sarcini/Note** (legate de oricare dintre cele de mai sus)
+
+<Warning>
+  **Dacă înregistrarea părinte nu există, importul va eșua.**
+
+  Verificați întotdeauna că companiile au fost importate înainte de a importa persoane cu referințe la companie.
+</Warning>
+
+## Pasul 3: Notați identificatorul unic al părintelui
+
+Trebuie să faceți referire la înregistrarea părinte folosind un **identificator unic**. Opțiuni disponibile:
+
+| Obiect părinte                   | Identificatori unici disponibili                                    |
+| -------------------------------- | ------------------------------------------------------------------- |
+| **Companii**                     | `id` (UUID), `domain` (recomandat) sau orice câmp unic personalizat |
+| **Persoane**                     | `id` (UUID), `email` sau orice câmp unic personalizat               |
+| **Membri ai Spațiului de Lucru** | `id` (UUID), `email` (nu numele)                                    |
+| **Obiecte personalizate**        | `id` (UUID) sau orice câmp marcat ca unic                           |
+
+<Note>**Recomandat:** Folosiți `domain` pentru Companii și `email` pentru Persoane. Acestea sunt ușor de citit de către oameni și ușor de verificat în foaia de calcul.</Note>
+
+### Găsirea identificatorului
+
+Dacă aveți nevoie de `id`:
+
+1. Exportați înregistrările părinte din Twenty
+2. Exportul include coloana `id`
+3. Folosiți aceste ID-uri în fișierul cu înregistrări copil
+
+## Pasul 4: Verificați existența câmpului de relație
+
+Înainte de import, asigurați-vă că există câmpul de relație între obiectele dvs.
+
+**Pentru a verifica sau crea:**
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul copil (de ex., Persoane)
+3. Căutați un câmp de relație care indică către părinte (de ex., Companie)
+4. Dacă nu există, creați-l:
+   * Faceți clic pe **+ Adaugă câmp**
+   * Selectați tipul **Relație**
+   * Alegeți obiectul părinte
+
+## Pasul 5: Pregătiți fișierul CSV
+
+Adăugați o coloană în CSV-ul obiectului copil care face referire la părinte folosind identificatorul său unic.
+
+### Exemplu: Persoane asociate cu Companii
+
+**CSV-ul dvs. cu Persoane:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+Coloana `companyDomain` face referire la domeniul companiei.
+
+### Cerințe de format
+
+| Identificator | Format         | Exemplu                                |
+| ------------- | -------------- | -------------------------------------- |
+| Domeniu       | Format URL     | `https://acme.com`                     |
+| Email         | Email standard | `john@acme.com`                        |
+| ID            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Formatul domeniului contează!**
+
+  Folosiți `https://domain.com` (nu doar `domain.com`). Acest lucru corespunde modului în care Twenty stochează domeniile companiilor și previne erorile de potrivire.
+</Warning>
+
+### Reguli importante
+
+1. **Potrivire exactă necesară** — valoarea trebuie să corespundă exact înregistrării părinte
+2. **Mapați doar UN identificator unic** — nu includeți atât `companyId`, cât și `companyDomain`
+3. **Sensibil la majuscule/minuscule** — `Acme.com` ≠ `acme.com`
+
+## Pasul 6: Încărcați și mapați relația
+
+1. Navigați la obiectul copil (de ex., Persoane)
+2. Faceți clic pe **⋮** → **Import records**
+3. Încărcați fișierul CSV
+4. În etapa de mapare a câmpurilor:
+   * Găsiți coloana relației (de ex., `companyDomain`)
+   * Mapați-o la câmpul de relație **Company**
+5. Finalizați maparea rămasă
+6. Revizuiți erorile și confirmați
+
+Twenty va lega automat fiecare înregistrare copil de părintele corespunzător.
+
+## Pasul 7: Verificați importul
+
+După import:
+
+1. Deschideți câteva înregistrări copil (de ex., Persoane)
+2. Verificați că câmpul de relație arată părintele corect (de ex., Companie)
+3. Deschideți o înregistrare părinte și verificați secțiunea de înregistrări asociate
+
+## Greșeli comune de evitat
+
+| Greșeală                               | Problemă                                             | Soluție                                                                        |
+| -------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Ordine greșită a importului**        | Importarea Persoanelor înaintea Companiilor          | Importați întotdeauna mai întâi părinții, apoi copiii                          |
+| **Format de domeniu greșit**           | Folosirea `acme.com` în loc de `https://acme.com`    | Folosiți formatul URL complet cu `https://`                                    |
+| **Câmpuri unice multiple**             | Maparea atât a `companyId`, cât și a `companyDomain` | Mapați un singur identificator unic                                            |
+| **Câmp de relație lipsă**              | Câmpul de relație nu există în modelul de date       | Creați-l în **Setări → Model de date** înainte de import                       |
+| **Înregistrări inexistente**           | Înregistrarea părinte nu există în Twenty            | Importați mai întâi înregistrările părinte sau verificați greșelile de tastare |
+| **Nepotrivire de majuscule/minuscule** | `Acme.com` în fișier, dar `acme.com` în Twenty       | Asigurați potrivirea exactă a majusculelor/minusculelor                        |
+
+## Legarea la membrii spațiului de lucru
+
+Când legați la membrii spațiului de lucru (echipa dvs.):
+
+* Folosiți **adresa de email**, nu numele
+* Exemplu: `owner@yourcompany.com`, nu "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="Ce se întâmplă dacă înregistrarea mea părinte nu are un domeniu sau un email?">
+    Aveți două opțiuni:
+
+    1. Folosiți `id`-ul Twenty (exportați înregistrările părinte pentru a obține ID-urile lor)
+    2. Creați un câmp unic personalizat în modelul dvs. de date pentru a stoca un ID extern din sistemul anterior
+  </Accordion>
+
+  <Accordion title="Pot să actualizez relațiile la înregistrările existente?">
+    Da! Includeți identificatorul unic al înregistrării copil (de ex., `email` pentru Persoane) și noua valoare a relației. Importul va actualiza relația.
+  </Accordion>
+
+  <Accordion title="Pot să import relații de tip mulți-la-mulți?">
+    Relațiile mulți-la-mulți nu sunt încă acceptate pentru import. Aceasta este planificată pentru S1 2026.
+  </Accordion>
+
+  <Accordion title="Pot să leg la mai multe tipuri de obiecte (cum ar fi Note la Persoane ȘI Companii)?">
+    Relațiile care indică către mai multe tipuri de obiecte nu sunt încă acceptate pentru import/export. Această funcționalitate este în planul nostru de dezvoltare.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă dacă o înregistrare părinte nu există?">
+    Importul va afișa o eroare pentru acel rând. Puteți fie să:
+
+    * Importați mai întâi înregistrarea părinte, apoi reimportați
+    * Corectați valoarea de referință
+    * Eliminați rândul din import
+  </Accordion>
+
+  <Accordion title="De ce relația mea nu se leagă corect?">
+    Cauze comune:
+
+    * Format greșit (folosiți `https://domain.com` pentru domenii)
+    * Nepotrivire de majuscule/minuscule (verificați ortografia exactă)
+    * Părintele nu există (importați mai întâi părinții)
+    * Maparea mai multor identificatori (folosiți doar unul)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Rețineți: Înregistrările șterse logic se iau în calcul pentru unicitate.**
+
+  Dacă primiți erori „not found”, dar înregistrarea pare să existe, verificați Command Menu → See deleted records. Este posibil ca părintele să fi fost șters logic.
+</Warning>
+
+## Depanare
+
+Aveți probleme? Verificați:
+
+* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+* [Capabilități de import al relațiilor](/l/ro/user-guide/data-migration/capabilities/import-relations)
+* [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)

@@ -21,6 +21,7 @@ export const useFieldsWidgetSectionsWithFields = (
   const sectionsWithFields = filterAndOrderFieldsFromConfiguration({
     configuration: temporaryConfiguration ?? {
       __typename: 'FieldsConfiguration',
+      configurationType: 'FIELDS',
       sections: [],
     },
     availableFieldMetadataItems: fieldMetadataItems,

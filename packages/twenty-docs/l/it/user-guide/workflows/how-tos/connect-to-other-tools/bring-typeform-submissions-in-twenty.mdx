@@ -1,0 +1,130 @@
+---
+title: Bring Typeform Submissions into Twenty
+description: Handle Typeform's webhook payload to create leads from form submissions.
+---
+
+For standard webhook setup, see [Set Up a Webhook Trigger](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). This article covers the specific handling required for Typeform's custom payload structure.
+
+### Step 1: Create a Webhook Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Select **Webhook** as the trigger
+4. Copy the webhook URL
+
+### Step 2: Configure Typeform
+
+1. In Typeform, open your form
+2. Go to **Connect → Webhooks**
+3. Paste your Twenty webhook URL
+4. Salva
+
+### Step 3: Understand the Typeform Payload
+
+Typeform sends a nested JSON structure. Here's a simplified example:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Key things to note:
+
+* Form data is nested under `form_response`
+* **Answers are returned as an array**, not as named fields
+* Each answer includes the field type and title for reference
+
+### Step 4: Extract Fields from the Answers Array
+
+Since `answers` is an array, you can only select the entire array in subsequent steps — not individual fields. Add a **Code** action to extract the fields you need:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Now in subsequent steps, you can select `contact.firstName`, `contact.email`, etc. from the variable picker.
+
+<Tip>
+  For more details on handling arrays in Code actions, see [Handle Arrays in Code Actions](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Step 5: Create the Record
+
+Add a **Create Record** action:
+
+| Campo          | Valore                                               |
+| -------------- | ---------------------------------------------------- |
+| **Object**     | Persone                                              |
+| **First Name** | `{{code.contact.firstName}}`                         |
+| **Last Name**  | `{{code.contact.lastName}}`                          |
+| **Email**      | `{{code.contact.email}}`                             |
+| **Company**    | Search or create based on `{{code.contact.company}}` |
+
+### Step 6: Test and Activate
+
+1. Submit a test response in Typeform
+2. Check the workflow run to verify data was captured
+3. Activate the workflow
+
+## Related
+
+* [Set Up a Webhook Trigger](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Handle Arrays in Code Actions](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -45,7 +45,12 @@ export const FieldsWidgetCellHoveredPortal = ({
       recordId={recordId}
       instanceIdPrefix={instanceId}
     >
-      <RecordFieldListInputContextProvider>
+      <RecordFieldListInputContextProvider
+        fieldMetadataItem={hoveredFieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+        recordId={recordId}
+        instanceIdPrefix={instanceId}
+      >
         <RecordFieldListCellHoveredPortalContent />
       </RecordFieldListInputContextProvider>
     </RecordInlineCellAnchoredPortal>

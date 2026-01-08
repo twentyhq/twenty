@@ -6,6 +6,8 @@ import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPi
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
@@ -26,6 +28,8 @@ export const GraphWidgetPieChartRenderer = () => {
   const widget = useCurrentWidget();
 
   assertPieChartWidgetOrThrow(widget);
+
+  const { userTimezone } = useUserTimezone();
 
   const {
     data,
@@ -52,6 +56,8 @@ export const GraphWidgetPieChartRenderer = () => {
     }),
   );
 
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+
   const handleSliceClick = (datum: PieChartDataItem) => {
     const rawValue = formattedToRawLookup.get(datum.id) ?? null;
 
@@ -62,7 +68,8 @@ export const GraphWidgetPieChartRenderer = () => {
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: widget.configuration.timezone ?? undefined,
+      timezone: userTimezone,
+      firstDayOfTheWeek: userFirstDayOfTheWeek,
     });
 
     const url = getAppPath(

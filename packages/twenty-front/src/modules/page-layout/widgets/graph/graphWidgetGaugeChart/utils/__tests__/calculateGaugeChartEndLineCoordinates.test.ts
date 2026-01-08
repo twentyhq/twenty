@@ -1,4 +1,4 @@
-import { calculateGaugeChartEndLineCoordinates } from '../calculateGaugeChartEndLineCoordinates';
+import { calculateGaugeChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/utils/calculateGaugeChartEndLineCoordinates';
 
 describe('calculateGaugeChartEndLineCoordinates', () => {
   it('should calculate coordinates for angle π/2 (after adjustment points right)', () => {

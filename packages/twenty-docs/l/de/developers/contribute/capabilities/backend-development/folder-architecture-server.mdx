@@ -1,0 +1,125 @@
+---
+title: Ordnerarchitektur
+info: A detailed look into our server folder architecture
+---
+
+Die Server-Verzeichnisstruktur ist wie folgt:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Fähigkeit
+
+Definiert Berechtigungen und enthält Handler für jedes Element.
+
+## Dekoratoren
+
+Definiert benutzerdefinierte Dekoratoren in NestJS für zusätzliche Funktionen.
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Filter
+
+Enthält Ausnahmefilter, um mögliche Ausnahmen bei GraphQL-Endpunkten zu behandeln.
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details.
+
+## Health
+
+Enthält eine öffentlich zugängliche REST-API (healthz), die ein JSON zurückgibt, um zu bestätigen, dass die Datenbank wie erwartet funktioniert.
+
+## Metadaten
+
+Definiert benutzerdefinierte Objekte und stellt eine GraphQL-API (graphql/metadaten) bereit.
+
+## Arbeitsbereich
+
+Generates and serves custom GraphQL schema based on the metadata.
+
+### Workspace Directory Structure
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+Der Stamm des Arbeitsbereichsverzeichnisses umfasst die Datei `arbeitsbereich.fabrik.ts`, die die Funktion `createGraphQLSchema` enthält. Diese Funktion generiert arbeitsbereichsspezifische Schemata, indem sie die Metadaten nutzt, um ein Schema für einzelne Arbeitsbereiche zu gestalten. Durch die Trennung von Schema- und Resolver-Erstellung verwenden wir die Funktion `makeExecutableSchema`, die diese diskreten Elemente kombiniert.
+
+Diese Strategie dient nicht nur der Organisation, sondern hilft auch bei der Optimierung, wie z.B. dem Caching generierter Typdefinitionen zur Leistungs- und Skalierbarkeitssteigerung.
+
+### Workspace Schema builder
+
+Generiert das GraphQL-Schema und umfasst:
+
+#### Fabriken:
+
+Spezialisierte Konstruktoren, um GraphQL-bezogene Konstrukte zu generieren.
+
+* Die type.factory übersetzt Feldmetadaten in GraphQL-Typen unter Verwendung des `TypeMapperService`.
+* Die type-definition.factory erstellt GraphQL-Eingabe- oder Ausgabeobjekte, die aus `objektMetadaten` abgeleitet sind.
+
+#### GraphQL-Typen
+
+Umfasst Aufzählungen, Eingaben, Objekte und Skalare und dient als Bausteine für die Schemakonstruktion.
+
+#### Schnittstellen und Objektdefinitionen
+
+Enthält die Blaupausen für GraphQL-Entitäten und umfasst sowohl vordefinierte als auch benutzerdefinierte Typen wie `MONEY` oder `URL`.
+
+#### Dienste
+
+Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+
+#### Speicher
+
+Enthält die Klasse `TypeDefinitionsStorage`, die wiederverwendbare Typdefinitionen enthält und die Duplizierung von GraphQL-Typen verhindert.
+
+### Workspace Resolver Builder
+
+Erstellt Resolverfunktionen für die Abfrage und Änderung des GraphQL-Schemas.
+
+Jede Fabrik in diesem Verzeichnis ist für die Erstellung eines bestimmten Resolvertyps verantwortlich, wie die `FindManyResolverFactory`, die für eine vielseitige Anwendung auf verschiedenen Tabellen entwickelt wurde.
+
+### Arbeitsbereich Anfrage Ausführer
+
+Führt die generierten Anfragen auf der Datenbank aus und analysiert das Ergebnis.

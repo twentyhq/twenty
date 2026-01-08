@@ -1,5 +1,5 @@
 ---
-title: ラジオ
+title: Radio
 image: /images/user-guide/create-workspace/workspace-cover.png
 ---
 
@@ -7,98 +7,91 @@ image: /images/user-guide/create-workspace/workspace-cover.png
   <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
 </Frame>
 
-ユーザーが一連の選択肢の中から  1 つのオプションのみを選ぶことができるときに使用されます。
+Used when users may only choose one option from a series of options.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
 
-```jsx
-import { Radio } from "twenty-ui/display";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
 
-  const handleRadioChange = (event) => {
-    console.log("Radio button changed:", event.target.checked);
-  };
-
-  const handleCheckedChange = (checked) => {
-    console.log("Checked state changed:", checked);
-  };
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
 
 
-  return (
-    <Radio
-      checked={true}
-      value="Option 1"
-      onChange={handleRadioChange}
-      onCheckedChange={handleCheckedChange}
-      size="large"
-      disabled={false}
-      labelPosition="right"
-    />
-  );
-};
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
 
-```
+    ```
+  </Tab>
 
-</Tab>
-<Tab title="Props">
-
-| プロパティ           | タイプ               | 説明                                                                          |
-| --------------- | ----------------- | --------------------------------------------------------------------------- |
-| スタイル            | `React.CSS` プロパティ | コンポーネントの追加インラインスタイル                                                         |
-| className       | string            | 追加のスタイリング用のオプションのCSSクラス                                                     |
-| checked         | ブール型              | ラジオボタンが選択されているかどうかを示す                                                       |
-| 値               | string            | ラジオボタンに関連付けられたラベルまたはテキスト                                                    |
-| onChange        | 機能                | 選択したラジオボタンが変更されたときに呼ばれる関数                                                   |
-| onCheckedChange | 機能                | ラジオボタンの「checked」状態が変更されたときに呼び出される関数                                         |
-| サイズ             | string            | ラジオボタンのサイズ。 オプションには、`large` と `small` があります オプションには、`large` と `small` があります |
-| disabled        | ブール型              | 「true」の場合、ラジオボタンは無効になり、クリックできなくなります                                         |
-| ラベルの位置          | string            | ラジオボタンに対するラベルテキストの位置。 2 つのオプション：`left` と `right` 2 つのオプション：`left` と `right` |
-
-</Tab>
+  <Tab title="Props">
+    | Props           | Type                   | Description                                                                                      |
+    | --------------- | ---------------------- | ------------------------------------------------------------------------------------------------ |
+    | style           | `React.CSS` properties | Additional inline styles for the component                                                       |
+    | className       | string                 | Optional CSS class for additional styling                                                        |
+    | checked         | boolean                | Indicates whether the radio button is checked                                                    |
+    | value           | string                 | The label or text associated with the radio button                                               |
+    | onChange        | function               | The function called when the selected radio button is changed                                    |
+    | onCheckedChange | function               | The function called when the `checked` state of the radio button changes                         |
+    | size            | string                 | The size of the radio button. Options include: `large` and `small`                               |
+    | disabled        | boolean                | If `true`, the radio button is disabled and not clickable                                        |
+    | labelPosition   | string                 | The position of the label text relative to the radio button. Has two options: `left` and `right` |
+  </Tab>
 </Tabs>
 
-## ラジオグループ
+## Radio Group
 
-関連するラジオボタンをまとめます。
+Groups together related radio buttons.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
 
-```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      const [selectedValue, setSelectedValue] = useState("Option 1");
 
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
 
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-  
-  return (
-    <RadioGroup value={selectedValue} onChange={handleChange}>
-      <Radio value="Option 1" />
-      <Radio value="Option 2" />
-      <Radio value="Option 3" />
-    </RadioGroup>
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ         | タイプ               | 説明                                                                                                    |
-| ------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
-| 値             | string            | 現在選択されているラジオボタンの値                                                                                     |
-| onChange      | 機能                | ラジオボタンが変更されたときにトリガーされるコールバック関数                                                                        |
-| onValueChange | 機能                | グループ内の選択された値が変更されたときにトリガーされるコールバック関数。                                                                 |
-| children      | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props         | Type              | Description                                                                        |
+    | ------------- | ----------------- | ---------------------------------------------------------------------------------- |
+    | value         | string            | The value of the currently selected radio button                                   |
+    | onChange      | function          | The callback function triggered when the radio button is changed                   |
+    | onValueChange | function          | The callback function triggered when the selected value in the group changes.      |
+    | children      | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+  </Tab>
 </Tabs>

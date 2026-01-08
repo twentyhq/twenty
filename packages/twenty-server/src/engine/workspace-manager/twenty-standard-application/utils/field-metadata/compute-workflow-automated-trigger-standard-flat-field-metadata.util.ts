@@ -112,6 +112,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'The workflow automated trigger type',
       icon: 'IconSettingsAutomation',
       isNullable: false,
+      isUIReadOnly: true,
       options: [
         {
           value: 'DATABASE_EVENT',
@@ -137,6 +138,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'The workflow automated trigger settings',
       icon: 'IconSettings',
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -154,6 +156,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'WorkflowAutomatedTrigger workflow',
       icon: 'IconSettingsAutomation',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'workflow',
       targetFieldName: 'automatedTriggers',
       settings: {

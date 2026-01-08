@@ -13,3 +13,15 @@ export const WORKFLOW_GQL_FIELDS = `
     updatedAt
     deletedAt
 `;
+
+export const WORKFLOW_RUN_GQL_FIELDS = `
+    id
+    name
+    status
+    startedAt
+    endedAt
+    createdAt
+    updatedAt
+    workflowVersionId
+    state
+`;

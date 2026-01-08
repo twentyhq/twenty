@@ -1,0 +1,101 @@
+---
+title: Backend Komutları
+---
+
+## Faydalı Komutlar
+
+Bu komutlar packages/twenty-server klasöründen çalıştırılmalıdır.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### İlk Kurulum
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Sunucuyu Başlatma
+
+```
+npx nx run twenty-server:start
+```
+
+### Kod Temizleme
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit # birim testleri çalıştır
+npx nx run twenty-server:test:integration # entegrasyon testlerini çalıştır
+```
+
+Not: Entegrasyon testlerini çalıştırmadan önce veritabanını sıfırlamanız gerekirse `npx nx run twenty-server:test:integration:with-db-reset` komutunu kullanabilirsiniz.
+
+### Veritabanını Sıfırlama
+
+Veritabanını sıfırlamak ve tohum yüklemek istiyorsanız, aşağıdaki komutu kullanabilirsiniz:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Geçişler
+
+#### Core/Metadata şemalarında (TypeORM) nesneler için
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Çalışma Alanı Nesneleri İçin
+
+Çalışma alanı için geçiş dosyaları yoktur; her çalışma alanı için otomatik olarak oluşturulur,
+veritabanında depolanır ve bu komut ile uygulanır.
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  This will drop the database and re-run the migrations and seed.
+
+  Bu komutu çalıştırmadan önce saklamak istediğiniz verileri yedeklediğinizden emin olun.
+</Warning>
+
+## Teknoloji Yığını
+
+Twenty, arka uç için öncelikle NestJS kullanır.
+
+Prisma, kullandığımız ilk ORM idi. Ancak, kullanıcıların özel alanlar ve özel nesneler oluşturmasına izin vermek için, ince ayar kontrolü gerektirdiği için alt düzey bir seviye daha mantıklı geldi. Proje şu anda TypeORM kullanmaktadır.
+
+İşte teknoloji yığını artık böyle görünüyor.
+
+**Çekirdek**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Veritabanı**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Üçüncü Şahıs Entegrasyonları**
+
+* [Sentry](https://sentry.io/welcome/) hataları izlemek için
+
+**Test**
+
+* [Jest](https://jestjs.io/)
+
+**Araçlar**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Geliştirme**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

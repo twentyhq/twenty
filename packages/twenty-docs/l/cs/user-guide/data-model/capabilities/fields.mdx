@@ -1,0 +1,122 @@
+---
+title: Pole
+description: Pochopte roli polí a jak je spravovat.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## O polích
+
+Pole jsou jako sloupce v tabulce. Ukládají různé typy dat, jako je text, čísla nebo data. Pole mohou být standardní (vestavěná) nebo vlastní (ty, které vytvoříte).
+
+### Standardní pole
+
+Standardní pole jsou předem vestavěná v systému Twenty, aby pokryla běžné obchodní potřeby.
+
+Například `Křestní jméno` a `Příjmení` jsou standardní pole v objektu `Lidé`. Ukládají textová data pro jednotlivá jména.
+
+Nemůžete smazat standardní pole, ale můžete je deaktivovat, pokud je nepotřebujete.
+
+Můžete také přizpůsobit možnosti standardních polí typu `SELECT`, například možnosti pro `Stage` u příležitostí.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Vlastní pole
+
+Vlastní pole lze přidat k jakémukoli objektu. Můžete ukládat text, čísla, data, výběry z rozbalovacího seznamu a další. Použijte vlastní pole ke sledování informací, které jsou specifické pro vaše podnikání.
+
+Například vlastní pole pro SpaceX by mohlo být `Status aktivity rakety`, indikující, zda je raketa funkční.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Typy polí
+
+Twenty podporuje různé typy polí:
+
+| Typ                | Popis                                                    | Příklad              |
+| ------------------ | -------------------------------------------------------- | -------------------- |
+| Adresa             | Strukturovaná adresa s ulicí, městem, státem, zemí a PSČ | Adresa kanceláře     |
+| Pole               | Seznam textových hodnot                                  | Štítky               |
+| Booleovská hodnota | Zaškrtávací políčko s hodnotami ano/ne                   | Aktivní              |
+| Měna               | Peněžní hodnota s kódem měny                             | Částka obchodu (USD) |
+| Datum              | Datumové hodnoty                                         | Datum uzavření       |
+| Datum a čas        | Datum s časem                                            | Čas schůzky          |
+| Doména             | Doména webu (používá se pro společnosti)                 | acme.com             |
+| Email              | E-mailové adresy (primární + další)                      | Kontaktní e-mail     |
+| JSON               | Strukturovaná data ve formátu JSON                       | Vlastní metadata     |
+| Odkazy             | URL s popisky (primární + sekundární)                    | Web, LinkedIn        |
+| Dlouhý text        | Víceřádkový text                                         | Popis, poznámky      |
+| Vícenásobný výběr  | Více možností z předdefinovaného seznamu                 | Štítky, kategorie    |
+| Číslo              | Číselné hodnoty (celá čísla nebo desetinná čísla)        | Množství, skóre      |
+| Telefon            | Telefonní čísla s kódem země                             | Pracovní telefon     |
+| Hodnocení          | Hvězdičkové hodnocení (1-5)                              | Priorita, skóre      |
+| Vztah              | Odkazy na záznamy v jiných objektech                     | Společnost → Lidé    |
+| Vybrat             | Jedna možnost z předdefinovaného seznamu                 | Fáze, stav           |
+| Text               | Jednořádkový text                                        | Jméno, název         |
+
+## Vytvořit vlastní pole
+
+Pro přidání vlastního pole k libovolnému objektu postupujte podle těchto kroků:
+
+1. Přejděte na `Nastavení` v levém postranním panelu.
+2. Přejděte na `Datový model`, poté zvolte objekt, který chcete přizpůsobit.
+3. Pokračujte kliknutím na `Přidat pole`.
+4. Vyberte název a typ pole, který vyhovuje vašim požadavkům. Zvažte přidání popisu pole pro lepší pochopení.
+
+Vaše nově vytvořené pole je nyní dostupné mezi poli aplikace. Pro jeho zobrazení na konkrétním pohledu klikněte na nabídku možností, poté zvolte `Pole`.
+
+<VimeoEmbed videoId="927628219" title="Videoukázka" />
+
+**Rychlý způsob:** Klikněte na tlačítko **+** v pravém horním rohu tabulky objektu, poté zvolte `Přizpůsobit pole`. To vás vezme přímo do nastavení Datového modelu.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Deaktivovat pole
+
+Můžete deaktivovat pole, aby bylo skryté v aplikaci, aniž byste ztratili data. Představte si to jako skrytí pole místo jeho smazání.
+
+Takto to můžete udělat:
+
+1. Najděte pole, které chcete deaktivovat ve vašem nastavení objektu.
+
+2. Klikněte na tři tečky `⋮` vedle pole pro otevření nabídky.
+
+3. Zvolte `Deaktivovat` z nabídky.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+Co se stane, když deaktivujete pole?
+
+1. **V aplikaci:** Pole zmizí a nemůžete k němu přidat nové hodnoty.
+
+2. **Existující relace:** Pokud se jedná o relační pole, stávající spojení zůstanou, ale nemůžete vytvořit nová.
+
+3. **Přístup k API:** Stále můžete přistupovat k poli a jeho údajům prostřednictvím API.
+
+Můžete znovu aktivovat Standardní a Vlastní pole nebo máte možnost je trvale vymazat.
+
+## Unikátní pole
+
+Udělte poli unikátnost, abyste zajistili, že různé záznamy nemohou mít stejnou hodnotu. Například e-mailové adresy jsou unikátní pro každého jednotlivce.
+
+Pokud narazíte na chybu při nastavování unikátnosti, zkontrolujte duplicitní hodnoty ve svých datech (včetně smazaných záznamů).
+
+## Nejlepší praktiky pro konfiguraci polí
+
+### Nejlepší praktiky pro konfiguraci polí
+
+* **Jednotné a množné názvy musí být odlišné**: Naše GraphQL API potřebuje různá jména pro mutace
+* **Chráněné názvy polí**: některé názvy jsou vyhrazeny pro systémové použití (např. `Type`, `Application`)
+
+### Měnová a Telefonní Pole
+
+* **Výchozí měna**: může být nakonfigurována prostřednictvím datového modelu
+* **Výchozí předvolby zemí**: lze konfigurovat pro telefonní pole prostřednictvím datového modelu
+
+### Výběrová Pole
+
+* **Lze zvolit výchozí možnost** pro každé výběrové pole
+
+### Textová pole záznamů
+
+* **Každý objekt má jedno hlavní zobrazovací pole**: Toto pole se objevuje v levém sloupci a představuje záznam při propojení s jinými objekty. Musí být textové pole. Například, Lidé používají `Jméno` jako hlavní pole, takže když někoho propojujete s firmou, uvidíte jeho jméno ve firmě.

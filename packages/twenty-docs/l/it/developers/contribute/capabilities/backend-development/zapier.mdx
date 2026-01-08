@@ -1,0 +1,81 @@
+---
+title: App di Zapier
+---
+
+Sincronizza facilmente Twenty con oltre 3000 app utilizzando [Zapier](https://zapier.com/). Automatizza le attività, aumenta la produttività e potenzia le relazioni con i clienti!
+
+## Informazioni su Zapier
+
+Zapier è uno strumento che ti permette di automatizzare i flussi di lavoro collegando le app che il tuo team usa quotidianamente. Il concetto fondamentale di Zapier sono i flussi di lavoro automatici, chiamati Zaps, che includono trigger e azioni.
+
+Puoi saperne di più su come funziona Zapier [qui](https://zapier.com/how-it-works).
+
+## Setup
+
+### Passo 1: Installa i pacchetti di Zapier
+
+```bash
+cd packages/twenty-zapier\n\nyarn
+```
+
+### Step 2: Login with the CLI
+
+Usa le tue credenziali Zapier per accedere usando il CLI:
+
+```bash
+zapier login
+```
+
+### Step 3: Set environment variables
+
+Dalla cartella `packages/twenty-zapier`, esegui:
+
+```bash
+cp .env.example .env
+```
+
+Esegui l'applicazione localmente, vai su [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) e genera una chiave API.
+
+Sostituisci il valore **YOUR_API_KEY** nel file `.env` con la chiave API appena generata.
+
+## Sviluppo
+
+<Warning>
+  Assicurati di eseguire `yarn build` prima di qualsiasi comando `zapier`.
+</Warning>
+
+### Test
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Osserva e compila mentre modifichi il codice
+
+```bash
+yarn watch
+```
+
+### Convalida la tua app Zapier
+
+```bash
+yarn validate
+```
+
+### Distribuisci la tua app Zapier
+
+```bash
+yarn deploy
+```
+
+### Elenca tutti i comandi del CLI di Zapier
+
+```bash
+zapier
+```

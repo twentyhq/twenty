@@ -109,6 +109,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message id from the message header',
       icon: 'IconHash',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -125,6 +126,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message Direction',
       icon: 'IconDirection',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'INCOMING'",
       options: [
         { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
@@ -146,6 +148,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Subject',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -162,6 +165,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Text',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -178,6 +182,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'The date the message was received',
       icon: 'IconCalendar',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -195,6 +200,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message Thread Id',
       icon: 'IconHash',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageThread',
       targetFieldName: 'messages',
       settings: {
@@ -219,6 +225,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'message',
       settings: {
@@ -241,6 +248,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'message',
       settings: {

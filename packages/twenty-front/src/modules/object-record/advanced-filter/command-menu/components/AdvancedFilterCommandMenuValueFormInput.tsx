@@ -20,6 +20,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -32,9 +33,12 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
 }: {
   recordFilterId: string;
 }) => {
-  const { readonly, VariablePicker, objectMetadataItem } = useContext(
-    AdvancedFilterContext,
-  );
+  const {
+    readonly,
+    VariablePicker,
+    objectMetadataItem,
+    isWorkflowFindRecords,
+  } = useContext(AdvancedFilterContext);
 
   const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
@@ -179,6 +183,9 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     metadata: fieldDefinition?.metadata as FieldMetadata,
   };
 
+  const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
+  const timeZone = shouldUseUTCTimeZone ? WORKFLOW_TIMEZONE : undefined;
+
   return (
     <FormFieldInput
       field={field}
@@ -187,6 +194,7 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
       readonly={readonly}
       // VariablePicker is not supported for date filters yet
       VariablePicker={isFilterableByDateValue ? undefined : VariablePicker}
+      timeZone={timeZone}
     />
   );
 };

@@ -1,0 +1,100 @@
+---
+title: Comandi Backend
+---
+
+## Comandi utili
+
+Questi comandi devono essere eseguiti dalla cartella packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Impostazione iniziale
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Avvio del server
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # passa --fix per correggere gli errori di lint
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit          # esegui test unitari
+npx nx run twenty-server:test:integration   # esegui test di integrazione
+```
+
+Nota: puoi eseguire `npx nx run twenty-server:test:integration:with-db-reset` nel caso in cui sia necessario resettare il database prima di eseguire i test di integrazione.
+
+### Ripristino del database
+
+Se vuoi resettare e seminare il database, puoi eseguire il seguente comando:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrazioni
+
+#### Per oggetti negli schemi Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Per gli oggetti del Workspace
+
+Non ci sono file di migrazioni; le migrazioni sono generate automaticamente per ogni workspace, memorizzate nel database e applicate con questo comando
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  This will drop the database and re-run the migrations and seed.
+
+  Assicurati di eseguire il backup dei dati che vuoi mantenere prima di eseguire questo comando.
+</Warning>
+
+## Tech Stack
+
+Twenty utilizza principalmente NestJS per il backend.
+
+Prisma è stato il primo ORM che abbiamo usato. Ma per permettere agli utenti di creare campi personalizzati e oggetti personalizzati, un livello più basso aveva più senso poiché abbiamo bisogno di avere un controllo granulare. Il progetto ora utilizza TypeORM.
+
+Ecco come appare ora lo stack tecnologico.
+
+**Core**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Integrazioni di terze parti**
+
+* [Sentry](https://sentry.io/welcome/) per il tracciamento degli errori
+
+**Testing**
+
+* [Jest](https://jestjs.io/)
+
+**Strumenti**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Sviluppo**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

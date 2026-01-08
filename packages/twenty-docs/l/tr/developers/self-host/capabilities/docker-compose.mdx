@@ -1,0 +1,253 @@
+---
+title: 1-Tıklama ile Docker Compose
+---
+
+<Warning>
+  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/tr/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## Genel Bakış
+
+This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
+
+**Important:** Only modify settings explicitly mentioned in this guide. Diğer yapılandırmaları değiştirmek sorunlara yol açabilir.
+
+See docs [Setup Environment Variables](/l/tr/developers/self-host/capabilities/setup) for advanced configuration. Tüm ortam değişkenleri, sunucu ve / veya işçi düzeyine bağlı olarak docker-compose.yml dosyasında ilan edilmelidir.
+
+## Sistem Gereksinimleri
+
+* RAM: Ortamınızda en az 2GB RAM bulunduğundan emin olun. Yetersiz bellek, işlemlerin çökmesine neden olabilir.
+* Docker & Docker Compose: Her ikisinin de yüklendiğinden ve güncel olduğundan emin olun.
+
+## Seçenek 1: Tek satırlık komut dosyası
+
+Tek bir komutla en son kararlı Twenty sürümünü yükleyin:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Belirli bir sürüm veya dal yüklemek için:
+
+```bash
+VERSION=vx.y.z BRANCH=dal-adı bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* x.y.z'yi istediğiniz sürüm numarasıyla değiştirin.
+* dal-adını yüklemek istediğiniz dal adıyla değiştirin.
+
+## Seçenek 2: Manuel adımlar
+
+Manuel kurulum için bu adımları uygulayın.
+
+### Adım 1: Çevre Dosyasını Kurun
+
+1. **.env Dosyasını Oluşturun**
+
+   Örnek çevre dosyasını, çalışma dizininizde yeni bir .env dosyasına kopyalayın:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Gizli Jetonlar Oluşturun**
+
+   Run the following command to generate a unique random string:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Önemli:** Bu değeri gizli tutun / paylaşmayın.
+
+3. **`.env` Güncelleyin**
+
+   .env dosyanızdaki yer tutucu değeri oluşturulan jetonla değiştirin:
+
+   ```ini
+   APP_SECRET=birinci_rastgele_dize
+   ```
+
+4. **Postgres Şifresini Ayarlayın**
+
+   .env dosyasındaki `PG_DATABASE_PASSWORD` değerini özel karakter içermeyen güçlü bir şifre ile güncelleyin.
+
+   ```ini
+   PG_DATABASE_PASSWORD=benim_guclu_sifrem
+   ```
+
+### Adım 2: Docker Compose Dosyasını Edinin
+
+`docker-compose.yml` dosyasını çalışma dizininize indirin:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Adım 3: Uygulamayı Başlatın
+
+Docker konteynerlerini başlatın:
+
+```bash
+docker compose up -d
+```
+
+### Adım 4: Uygulamaya Erişin
+
+If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+Bir sunucuda barındırıyorsanız, sunucunun çalıştığını ve her şeyin yolunda olduğunu kontrol edin
+
+```bash
+curl http://localhost:3000
+```
+
+## Yapılandırma
+
+### Twenty'yi Dış Erişime Açma
+
+Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. Harici bir alan adı veya IP adresi aracılığıyla erişim sağlamak için `.env` dosyanızda `SERVER_URL`'i yapılandırmanız gerekir.
+
+#### `SERVER_URL`'a Genel Bakış
+
+* **Protokol:** Yapılandırmanıza bağlı olarak `http` veya `https` kullanın.
+  * SSL ayarlamadıysanız `http` kullanın.
+  * SSL yapılandırıldıysa `https` kullanın.
+* **Alan Adı/IP:** Uygulamanızın erişilebilir olduğu alan adı veya IP adresi.
+* **Port:** Varsayılan portları kullanmıyorsanız, port numarasını ekleyin (`80` `http` için, `443` `https` için).
+
+### SSL Gereksinimleri
+
+Belirli tarayıcı özelliklerinin düzgün çalışabilmesi için SSL (HTTPS) gereklidir. Bu özellikler yerel geliştirme sırasında çalışabilirken (tarayıcılar localhost'u farklı şekilde ele alır), Twenty'yi düzenli bir alanda barındırırken uygun bir SSL kurulumu gereklidir.
+
+Örneğin, panoya kopyalama API'si güvenli bir bağlam gerektirebilir - uygulama boyunca kopyalama düğmeleri gibi bazı özellikler HTTPS etkinleştirilmediğinde çalışmayabilir.
+
+Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters proxy arkasında ayarlanmasını şiddetle öneririz.
+
+#### `SERVER_URL`'ı Yapılandırma
+
+1. **Erişim URL'nizi Belirleyin**
+   * **Ters Proxy Olmadan (Doğrudan Erişim):**
+
+     Uygulamaya doğrudan bir ters proxy olmadan erişiyorsanız:
+
+     ```ini
+     SERVER_URL=http://alan-adiniz-veya-ip:3000
+     ```
+
+   * **Ters Proxy ile (Standart Portlar):**
+
+     Nginx veya Traefik gibi bir ters proxy kullanıyorsanız ve SSL yapılandırıldıysa:
+
+     ```ini
+     SERVER_URL=https://alan-adiniz-veya-ip
+     ```
+
+   * **Ters Proxy ile (Özel Portlar):**
+
+     Standart olmayan portlar kullanıyorsanız:
+
+     ```ini
+     SERVER_URL=https://alan-adiniz-veya-ip:ozel-port
+     ```
+
+2. **`.env` Dosyasını Güncelleyin**
+
+   `.env` dosyanızı açın ve `SERVER_URL`'i güncelleyin:
+
+   ```ini
+   SERVER_URL=http(s)://alan-adiniz-veya-ip:portunuz
+   ```
+
+   **Örnekler:**
+
+   * SSL olmadan doğrudan erişim:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * SSL ile alan adı aracılığıyla erişim:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Uygulamayı Yeniden Başlatın**
+
+   For changes to take effect, restart the Docker containers:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Considerations
+
+* **Reverse Proxy Configuration:**
+
+  Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+
+* **Güvenlik Duvarı Ayarları:**
+
+  Dış erişime izin vermek için güvenlik duvarınızdaki gerekli portları açın.
+
+* **Tutarlılık:**
+
+  `SERVER_URL`, kullanıcıların uygulamanıza tarayıcıları ile nasıl eriştiği ile eşleşmelidir.
+
+#### Süreklilik
+
+* **Veri Hacimleri:**
+
+  Docker Compose yapılandırması, veritabanı ve sunucu depolama için verileri kalıcı kılmak adına hacimler kullanmaktadır.
+
+* **Durumsuz Ortamlar:**
+
+  Eğer durumsuz bir ortama (örneğin, bazı bulut hizmetleri) dağıtım yapıyorsanız, verilerin kalıcılığını sağlamak için harici depolama yapılandırın.
+
+## Backup and Restore
+
+Regular backups protect your CRM data from loss.
+
+### Create a Database Backup
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automate Daily Backups
+
+Add to your crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restore from Backup
+
+1. Stop the application:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restore the database:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Restart services:
+
+```bash
+docker compose up -d
+```
+
+### Backup Best Practices
+
+* **Test restores regularly** — verify backups actually work
+* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
+* **Encrypt sensitive data** — protect backups with encryption
+* **Retain multiple copies** — keep daily, weekly, and monthly backups
+
+## Sorun Giderme
+
+Herhangi bir sorunla karşılaşırsanız, çözümler için [Sorun Giderme](/l/tr/developers/self-host/capabilities/troubleshooting) sayfasına bakın.

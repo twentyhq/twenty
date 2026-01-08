@@ -1,0 +1,198 @@
+---
+title: Mappatura dei campi
+description: Come funziona la mappatura dei campi durante l'importazione dei dati.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Come funziona la mappatura dei campi
+
+Quando carichi un file, Twenty analizza le colonne e tenta di abbinarle ai campi esistenti.
+
+### Mappatura automatica
+
+Twenty tenta di abbinare le colonne in base a:
+
+* Nomi delle intestazioni di colonna (corrispondenze esatte o simili)
+* Rilevamento del tipo di dati (date, numeri, email)
+* Modelli comuni dei campi
+
+<Note>**Suggerimento rapido:** Esporta alcune righe dall'oggetto che desideri importare. Il file esportato avrà esattamente i nomi di colonna che Twenty si aspetta, rendendo la mappatura automatica agevole durante l'importazione.</Note>
+
+### Opzioni di mappatura manuale
+
+Per ogni colonna, puoi:
+
+* **Mappa a un campo**: seleziona dal menu a discesa il campo di Twenty corrispondente
+* **Non mappare**: salta completamente la colonna (i dati non verranno importati)
+
+<Note>**I campi devono esistere prima dell'importazione.** L'importazione crea record, non campi. Crea i campi personalizzati in **Impostazioni → Modello dati** prima di importare.</Note>
+
+## Compatibilità dei tipi di campo
+
+Tutti i tipi di campo disponibili nel Modello dati sono supportati per l'importazione.
+
+Puoi anche importare valori di `id` per assegnare un ID specifico ai nuovi record oppure aggiornare quelli esistenti.
+
+<img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
+
+## Requisiti del formato dei dati
+
+<Note>**Alcuni campi hanno una sintassi speciale.** Consigliamo di scaricare il file di esempio prima di preparare l'importazione per vedere la sintassi prevista per ciascun tipo di campo.</Note>
+
+### Campi indirizzo
+
+Indirizzo è un campo annidato con più colonne. Alcuni possono essere lasciati vuoti.
+
+* **Indirizzo / Indirizzo 1**: Prima riga dell'indirizzo
+* **Indirizzo / Indirizzo 2**: Seconda riga dell'indirizzo
+* **Indirizzo / Città**: Nome della città
+* **Indirizzo / Stato**: Stato o provincia
+* **Indirizzo / Paese**: Nome del paese
+* **Indirizzo / Codice postale**: Codice postale/CAP
+
+### Campi array
+
+Usa il seguente formato:
+
+```
+[\"value1\",\"value2\"]
+```
+
+### Campi booleani
+
+Usa `TRUE` o `FALSE` (maiuscolo), non `true` o `false`
+
+### Campi valuta
+
+Valuta è un campo annidato con due colonne che **devono essere entrambe compilate**:
+
+* **Importo / Importo**: Il valore numerico (es. `1234.56`)
+* **Importo / Valuta**: Il codice valuta (es. `USD`, `EUR`)
+
+### Campi data
+
+Formati supportati:
+
+* `YYYY-MM-DD` (consigliato)
+* `MM/DD/YYYY`
+* `DD/MM/YYYY`
+* Formato ISO 8601
+
+### Campi dominio
+
+* Si consiglia di usare il formato `https://domain.com` per evitare la creazione di duplicati, poiché è il formato utilizzato per le Aziende create dalle sincronizzazioni della casella di posta e del calendario
+* Si possono compilare `Domain Label` e `Domain URL`: la pratica consigliata è inserire `domain.com` nell'etichetta e `https://domain.com` nell'URL
+* I domini devono essere univoci all'interno dell'oggetto Aziende
+* **I domini devono essere univoci all'interno del file da importare**
+
+### Campi email
+
+* Devono avere un formato email valido
+* Le email devono essere univoche all'interno dell'oggetto Persone
+* **Le email devono essere univoche all'interno del file da importare**
+* Per email aggiuntive: usa **Email / Email primaria** per l'email principale e **Email / Email aggiuntive** con questo formato:
+
+```
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+```
+
+### Campi ID
+
+Specificare un `id` durante l'importazione è facoltativo. Twenty ne genera automaticamente uno se non viene fornito.
+
+Casi d'uso per la mappatura di una colonna `id`:
+
+* **Imposta un ID specifico**: scegli l'UUID per i record appena creati
+* **Aggiorna i record esistenti**: abbinali ai record esistenti per aggiornarli, invece di creare duplicati. In tal caso, si consiglia di non mappare gli altri campi univoci: mappare un solo campo univoco garantisce un'importazione più fluida.
+
+<Note>Se fornisci un `id`, deve essere nel formato UUID (ad es. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+### Campi JSON
+
+Usa un formato JSON valido:
+
+```
+{\"key\":\"value\",\"key2\":\"value2\"}
+```
+
+### Campi link
+
+Simili ai campi dominio:
+
+* Compila sia la colonna etichetta sia la colonna URL: **Link / URL del link** e **Link / Etichetta del link**
+* Usa il formato URL completo: `https://example.com`
+* Per i link secondari, usa la colonna **Link / Link secondari** con questo formato:
+
+```
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
+```
+
+### Campi a selezione multipla
+
+Usa i nomi API (non le etichette visualizzate) nel seguente formato:
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+Vedi [qui](#finding-api-names-for-select-fields) dove trovare i nomi API.
+
+<Note>Le nuove opzioni di selezione non verranno create automaticamente dall'importazione. Devono essere aggiunte in **Impostazioni → Modello dati** prima di importare.</Note>
+
+<Warning>
+  **L'importazione sovrascrive, non aggiunge.**
+
+  Se un record ha già selezionato `VALUE2` e `VALUE3` e importi `[\"VALUE1\"]`, il record avrà solo `VALUE1` dopo l'importazione. Le selezioni precedenti vengono sostituite, non unite.
+</Warning>
+
+### Campi numerici
+
+* Solo numeri
+* Per i decimali si usa il punto: `1234.56`
+* Nessun separatore delle migliaia
+
+### Campi telefono
+
+Telefono è un campo annidato con più colonne che **devono essere compilate**
+
+* **Telefoni / Numero di telefono principale**: Il numero di telefono (es. `4159095555`)
+* **Telefoni / Codice paese del telefono principale**: Codice paese (es. `US`)
+* **Telefoni / Prefisso di chiamata del telefono principale**: Prefisso di chiamata (es. `+1`)
+
+### Campi valutazione
+
+Usa il formato del nome API: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+
+### Campi di Relazione
+
+Consulta il nostro articolo dedicato: [Importare relazioni tra oggetti](/l/it/user-guide/data-migration/capabilities/import-relations)
+
+### Campi Selezione
+
+Usa il nome API dell'opzione (non l'etichetta visualizzata):
+
+```
+VALUE1
+```
+
+Vedi [qui](#finding-api-names-for-select-fields) dove trovare i nomi API.
+<Note>Le nuove opzioni di Select non verranno create automaticamente dall'importazione. Devono essere aggiunte in **Impostazioni → Modello dati** prima dell'importazione.</Note>
+
+### Campi di testo
+
+* Nessuna formattazione speciale richiesta
+* Gli spazi iniziali e finali vengono rimossi
+
+## Trovare i nomi API
+
+Per i campi Select, Multi-Select e Array con opzioni predefinite, è necessario usare i **nomi API**, non le etichette visualizzate.
+
+### Come trovare i nomi API
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto e il campo
+3. Abilita la **Modalità avanzata** (interruttore in basso a destra nella pagina delle impostazioni)
+4. Visualizza il nome API per ogni opzione
+
+<VimeoEmbed videoId="1144910809" title="Dimostrazione video" />

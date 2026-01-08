@@ -1,0 +1,68 @@
+---
+title: Uniqueness Constraints
+description: How Twenty enforces data uniqueness during import.
+---
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Overview
+
+Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+
+## Default Unique Fields
+
+| Object | Unique Fields |
+|--------|---------------|
+| **People** | `id`, `email` |
+| **Companies** | `id`, `domain` |
+| **Custom objects** | `id` only (by default) |
+
+<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Custom Unique Fields
+
+You can define additional unique fields under **Settings → Data Model**:
+
+1. Go to **Settings → Data Model**
+2. Select the object
+3. Click on a field
+4. Enable **Unique** in field settings
+
+### Use Cases for Custom Unique Fields
+- **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
+- **Business identifiers**: Employee numbers, customer codes
+- **Alternative contact info**: LinkedIn profile, phone number
+
+<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+
+## Import Behavior
+
+### Creating New Records
+If a unique field value doesn't exist, a new record is created.
+
+### Updating Existing Records
+If a unique field value matches an existing record, that record is **updated** with the new data.
+<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+
+### Soft-Deleted Records
+
+<Warning>
+**Deleted records count toward uniqueness.**
+
+Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+</Warning>
+
+## Duplicate Detection During Import
+
+During the validation phase:
+- Duplicates within your file are highlighted in yellow
+- You can edit or remove duplicate rows from the UI before starting the import
+
+<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+
+## Best Practices
+
+1. **Remove duplicates** from your file before importing
+2. **Check for existing records** in Twenty before importing
+3. **Use external IDs** when migrating from other systems
+4. **Include unique fields** if you want to update existing records
+

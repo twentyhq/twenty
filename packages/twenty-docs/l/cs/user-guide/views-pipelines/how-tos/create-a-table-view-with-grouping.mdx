@@ -1,0 +1,51 @@
+---
+title: Vytvořte tabulkové zobrazení se seskupením
+description: Uspořádejte své záznamy do sbalitelných skupin podle hodnoty pole.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Seskupte své tabulkové zobrazení podle pole Select, abyste uspořádali záznamy do sbalitelných sekcí.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Postup
+
+1. Přejděte k objektu (Lidé, Společnosti, atd.)
+2. Klikněte na rozbalovací nabídku zobrazení → **+ Přidat zobrazení**
+3. Pojmenujte své zobrazení (např. "Společnosti podle typu")
+4. Klikněte na **Vytvořit**
+5. Klikněte na **Možnosti → Seskupení**
+6. Zvolte pole Select, podle kterého chcete seskupovat
+7. Klikněte na **Uložit**
+
+## Konfigurace pořadí skupin
+
+V části **Možnosti → Seskupení → Seřadit** zvolte, jak budou skupiny seřazeny:
+
+| Možnost               | Popis                                                                 |
+| --------------------- | --------------------------------------------------------------------- |
+| **Abecedně**          | A až Z                                                                |
+| **Obráceně abecedně** | Z až A                                                                |
+| **Ruční pořadí**      | Přetáhněte skupiny a změňte jejich pořadí v části "Viditelné skupiny" |
+
+Klikněte na **ikonu oka** vedle skupiny a skryjte ji ze zobrazení.
+
+<Note>
+  **Pro nejlepší výkon omezte počet viditelných skupin na 10-15.** Pokud jich potřebujete více, zvažte místo toho použití Dashboardu.
+</Note>
+
+## Příklad: Společnosti podle odvětví
+
+1. Přejděte na **Společnosti**
+2. Vytvořte nové zobrazení s názvem "Podle odvětví"
+3. Klikněte na **Možnosti → Seskupení**
+4. Vyberte pole **Odvětví**
+5. Uložit
+
+Nyní jsou vaše společnosti uspořádány podle odvětví, takže se můžete snadno soustředit vždy na jeden segment.
+
+## Související
+
+* [Tabulková zobrazení](/l/cs/user-guide/views-pipelines/capabilities/table-views) — všechny funkce tabulkových zobrazení
+* [Filtry a řazení](/l/cs/user-guide/views-pipelines/capabilities/filters-and-sorting) — kombinujte seskupení s filtry

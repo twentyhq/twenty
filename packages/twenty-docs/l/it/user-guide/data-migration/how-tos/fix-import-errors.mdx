@@ -1,0 +1,430 @@
+---
+title: Correggere gli errori di importazione
+description: Guida completa alla risoluzione degli errori di importazione CSV.
+---
+
+## Panoramica
+
+L'importazione non funziona? Questa guida ti aiuta a identificare e correggere, passo dopo passo, gli errori di importazione più comuni.
+
+## Come funziona la convalida dell'importazione
+
+Dopo aver caricato il file e mappato le colonne, Twenty convalida i tuoi dati:
+
+1. **Esecuzione della convalida** — Twenty controlla ogni riga per individuare errori
+2. **Gli errori sono evidenziati** — le righe problematiche appaiono in **giallo**
+3. **Puoi correggere direttamente** — modifica le celle direttamente nell'interfaccia di importazione
+4. **Oppure rimuovi le righe** — salta completamente i record problematici
+
+<Note>**Correggi gli errori nell'interfaccia.** Non è necessario tornare al tuo foglio di calcolo. Modifica le celle direttamente durante l'importazione per risparmiare tempo.</Note>
+
+## Risoluzione dei problemi passo passo
+
+### Passaggio 1: Identifica il tipo di errore
+
+Fai clic su una riga evidenziata per vedere il messaggio di errore specifico. Tipi di errore comuni:
+
+| Messaggio di errore                                                                | Cosa significa                                                  |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Valori duplicati evidenziati in giallo                                             | Il valore esiste già in Twenty o compare due volte nel tuo file |
+| `{field} is not a valid {type}` (passa il mouse sulla cella gialla)                | I dati non corrispondono al formato previsto                    |
+| Campo obbligatorio evidenziato                                                     | Un campo obbligatorio è vuoto                                   |
+| `Can't connect to {object}. No unique record found...` (importazione non riuscita) | Il record di riferimento non esiste                             |
+| `Too many records. Up to 10000 allowed` (caricamento bloccato)                     | Il file contiene più di 10.000 record                           |
+
+### Passaggio 2: Correggi l'errore
+
+Segui le istruzioni specifiche qui sotto per ciascun tipo di errore.
+
+---
+
+## Errore: valore duplicato
+
+### Cosa vedrai
+
+Le righe con valori duplicati vengono **evidenziate in giallo** nell'interfaccia di importazione prima che l'importazione inizi.
+
+### Cosa significa
+
+Un campo univoco (email, dominio) può:
+
+* Esistere già in Twenty
+* Comparire due volte nel tuo file
+
+### Come risolvere
+
+**Opzione 1: Modifica il valore duplicato**
+
+1. Fai clic sulla cella con l'errore
+2. Modifica con un valore univoco
+3. Continua con l'importazione
+
+**Opzione 2: Rimuovi la riga duplicata**
+
+1. Fai clic sulla X accanto alla riga
+2. La riga verrà saltata durante l'importazione
+
+**Opzione 3: Consenti a Twenty di aggiornare il record esistente**
+
+1. Assicurati che il tuo file includa un identificatore univoco (`email`, `domain` o `id`)
+2. Mappa il campo identificatore univoco
+3. Twenty aggiornerà il record esistente invece di creare un duplicato
+
+<Note>
+  **Puoi aggiornare anche i campi univoci.**
+
+  * Se mantieni l'`id` ma cambi l'`email` → l'email verrà aggiornata
+  * Se mantieni l'`email` ma cambi l'`id` → l'id verrà aggiornato
+
+  Finché almeno un identificatore univoco corrisponde, Twenty aggiorna il record.
+</Note>
+
+### Come prevenire questo errore
+
+Prima di importare:
+
+1. Ordina il foglio di calcolo per il campo univoco
+2. Rimuovi le righe duplicate
+3. Verifica se i record esistono già in Twenty
+
+<Warning>
+  **I record eliminati in modo non definitivo contano ai fini dell'unicità.**
+
+  Controlla il menu Comandi → Visualizza i record eliminati. I record presenti lì impongono comunque l'unicità. Eliminali definitivamente oppure ripristinali e aggiornali.
+</Warning>
+
+Per maggiori dettagli: [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+---
+
+## Errore: formato non valido
+
+### Cosa vedrai
+
+Il valore della cella è evidenziato in giallo. Passa il mouse sopra per vedere il messaggio di errore:
+
+```
+{field name} is not a valid {field type}
+```
+
+### Cosa significa
+
+I dati non corrispondono al formato previsto per quel tipo di campo.
+
+### Come risolvere — in base al tipo di campo
+
+#### Email
+
+**Problema:** formato email non valido
+**Soluzione:** usa il formato `name@domain.com`
+
+```
+❌ john.smith@
+❌ john smith@acme.com
+✓ john.smith@acme.com
+```
+
+#### Dominio
+
+**Problema:** un formato incoerente può causare duplicati
+**Soluzione:** usa il formato `https://domain.com` (consigliato)
+
+```
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
+```
+
+<Note>Tutti i formati sono validi, ma `https://domain.com` è consigliato perché corrisponde al formato utilizzato dalla sincronizzazione email/calendario. Usare altri formati può creare aziende duplicate.</Note>
+
+#### Data
+
+**Problema:** formato data non riconosciuto
+**Soluzione:** usa un formato coerente in tutto il file
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - recommended)
+✓ 03/15/2024        (MM/DD/YYYY)
+✓ 15/03/2024        (DD/MM/YYYY)
+```
+
+#### Telefono
+
+**Problema:** colonne obbligatorie mancanti
+**Soluzione:** includi tutte le colonne del telefono
+
+| Colonna                                                    | Esempio      |
+| ---------------------------------------------------------- | ------------ |
+| **Telefoni / Numero di telefono principale**               | `4159095555` |
+| **Telefoni / Codice paese del telefono principale**        | `US`         |
+| **Telefoni / Prefisso telefonico del telefono principale** | `+1`         |
+
+#### Booleano
+
+**Problema:** valore booleano errato
+**Soluzione:** usa `TRUE` o `FALSE` in maiuscolo
+
+```
+❌ true
+❌ yes
+❌ 1
+✓ TRUE
+✓ FALSE
+```
+
+#### Selezione / Selezione multipla
+
+**Problema:** il valore non corrisponde alle opzioni esistenti
+**Soluzione:** usa i **nomi API**, non le etichette visualizzate
+
+Come trovare i nomi API:
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto e il campo
+3. Abilita la **Modalità avanzata** (interruttore in basso a destra)
+4. Usa il nome API (ad es., `OPTION_1`, non "Option 1")
+
+```
+❌ High Priority
+✓ HIGH_PRIORITY
+```
+
+#### Valuta
+
+**Problema:** importo o codice valuta mancanti
+**Soluzione:** compila entrambe le colonne
+
+| Colonna               | Esempio   |
+| --------------------- | --------- |
+| **Importo / Importo** | `1234.56` |
+| **Importo / Valuta**  | `USD`     |
+
+#### Numero
+
+**Problema:** caratteri non numerici
+**Soluzione:** solo numeri, punto per i decimali
+
+```
+❌ $1,234.56
+❌ 1,234.56
+✓ 1234.56
+```
+
+Per il riferimento completo ai formati: [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
+
+---
+
+## Errore: campo obbligatorio mancante
+
+### Cosa vedrai
+
+La riga è evidenziata in giallo con la cella del campo obbligatorio contrassegnata.
+
+### Cosa significa
+
+Un campo obbligatorio è vuoto per questa riga.
+
+### Come risolvere
+
+**Opzione 1: Inserisci un valore**
+
+1. Fai clic sulla cella vuota
+2. Inserisci un valore
+3. Continua con l'importazione
+
+**Opzione 2: Rimuovi la riga**
+
+1. Se non disponi dei dati, fai clic su X per saltare la riga
+
+### Come prevenire questo errore
+
+Prima di importare, identifica i campi obbligatori:
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona il tuo oggetto
+3. Verifica quali campi sono contrassegnati come obbligatori
+
+---
+
+## Errore: relazione non trovata
+
+### Cosa vedrai
+
+Questo errore compare **dopo l'avvio dell'importazione** — l'importazione non riesce con un messaggio come:
+
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+Ciò significa che non esiste alcuna Azienda in Twenty con quello specifico identificatore.
+
+<Note>A differenza di altri errori, questo non viene intercettato durante la fase di revisione dei dati. L'importazione inizierà e poi non riuscirà quando incontrerà la relazione mancante.</Note>
+
+### Cosa significa
+
+Stai tentando di collegarti a un record che non esiste in Twenty.
+
+### Come risolvere
+
+**Opzione 1: importa prima i record genitore**
+
+1. Annulla l'importazione corrente
+2. Importa i record genitore (ad es., Aziende)
+3. Quindi importa i record figlio (ad es., Persone)
+
+**Opzione 2: correggi il valore di riferimento**
+
+1. Controlla il valore di riferimento nel tuo file
+2. Assicurati che corrisponda esattamente a un record esistente
+3. Verifica il formato: i domini devono essere `https://domain.com`
+
+**Opzione 3: rimuovi la relazione**
+
+1. Svuota la cella per importare senza la relazione
+2. Aggiungi la relazione manualmente in seguito
+
+### Come prevenire questo errore
+
+1. **Importa nell'ordine corretto:**
+   * Prima le Aziende
+   * Poi le Persone (con riferimenti all'Azienda)
+   * Le Opportunità al terzo posto
+
+2. **Verifica i valori di riferimento:**
+   * Esporta i record genitore per ottenere identificatori esatti
+   * Usa il formato dominio `https://domain.com`
+   * Verifica errori di battitura e differenze tra maiuscole/minuscole
+
+<Warning>
+  **L'importazione non riuscirà se viene fatto riferimento a un record inesistente.**
+
+  Importa sempre gli oggetti genitore prima degli oggetti figlio.
+</Warning>
+
+Per maggiori dettagli: [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Errore: file troppo grande
+
+### Cosa vedrai
+
+Questo errore compare **quando carichi il file** — il caricamento viene completamente bloccato:
+
+```
+Too many records. Up to 10000 allowed
+```
+
+Non potrai procedere alla fase di revisione dei dati finché non riduci la dimensione del file.
+
+### Cosa significa
+
+Il tuo file contiene più di 10.000 record.
+
+### Come risolvere
+
+**Opzione 1: Dividi in più file**
+
+1. Dividi i tuoi dati in file da 10.000 record o meno
+2. Importa ogni file separatamente
+3. Mantieni l'ordine di importazione (Aziende prima delle Persone)
+
+**Opzione 2: Usa l'importazione tramite API**
+Per set di dati molto grandi, usa le API che non hanno un limite di record.
+Vedi: [Come importare i dati tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Errore: campo non riconosciuto
+
+### Cosa significa
+
+Una colonna del tuo file non può essere mappata perché il campo non esiste in Twenty.
+
+### Come risolvere
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto che stai importando
+3. Fai clic su **+ Aggiungi campo**
+4. Crea il campo personalizzato con il tipo appropriato
+5. Carica di nuovo il tuo file
+
+<Note>L'importazione CSV crea record, non campi. Tutti i campi devono esistere prima dell'importazione.</Note>
+
+---
+
+## Errore: relazione utente vuota
+
+### Cosa significa
+
+Stai tentando di assegnare un record a un utente (Proprietario, Assegnatario) ma la relazione non viene mappata.
+
+### Cause comuni
+
+1. **L'utente non ha accettato l'invito** — l'utente non esiste ancora in Twenty
+2. **Uso dell'ID utente dal vecchio sistema** — Twenty non può abbinare gli ID di un altro sistema
+3. **Formato email errato** — l'email non corrisponde all'account Twenty dell'utente
+
+### Come risolvere
+
+1. Assicurati che tutti gli utenti abbiano **accettato il loro invito** al tuo spazio di lavoro Twenty
+2. Usa l'**indirizzo email** dell'utente (non il nome o l'ID del vecchio sistema)
+3. Usa la stessa email che hanno utilizzato per aderire a Twenty
+
+<Warning>
+  **Gli utenti devono accettare gli inviti prima di importare.**
+
+  Se un utente non ha accettato l'invito, i record che fanno riferimento a quell'utente avranno relazioni utente vuote.
+</Warning>
+
+---
+
+## Lista di controllo pre-importazione
+
+Evita errori verificando questi elementi prima di importare:
+
+### Requisiti del file
+
+<Check>Il file è in formato CSV, XLSX o XLS</Check>
+<Check>Il file contiene meno di 10.000 record</Check>
+<Check>Il file utilizza la codifica UTF-8</Check>
+
+### Qualità dei dati
+
+<Check>Nessuna email duplicata (per Persone)</Check>
+<Check>Nessun dominio duplicato (per Aziende)</Check>
+<Check>Tutte le date utilizzano un formato coerente</Check>
+<Check>Tutti i domini utilizzano il formato `https://domain.com`</Check>
+
+### Formati dei campi
+
+<Check>I campi booleani utilizzano `TRUE` o `FALSE` (maiuscolo)</Check>
+<Check>I campi Selezione utilizzano i nomi API, non le etichette visualizzate</Check>
+<Check>I campi Telefono hanno tutte le colonne richieste</Check>
+<Check>I campi Valuta hanno sia Importo che Codice valuta</Check>
+
+### Relazioni
+
+<Check>I record genitore sono importati prima dei record figlio</Check>
+<Check>Le colonne di relazione fanno riferimento a record esistenti</Check>
+<Check>Il formato del dominio corrisponde esattamente al formato di Twenty</Check>
+
+### Modello dati
+
+<Check>Tutti i campi personalizzati esistono in Impostazioni → Modello dati</Check>
+<Check>Le opzioni Selezione esistono prima dell'importazione</Check>
+
+---
+
+## Hai ancora problemi?
+
+Se hai provato le soluzioni sopra:
+
+1. **Scarica il file di esempio** — vedi il formato esatto che Twenty si aspetta
+2. **Esporta i record esistenti** — confronta il tuo file con i dati funzionanti
+3. **Esegui un test con un piccolo lotto** — prova prima con 5-10 righe
+4. **Consulta gli articoli di riferimento:**
+   * [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
+   * [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
+   * [Gestione degli errori](/l/it/user-guide/data-migration/capabilities/error-handling)

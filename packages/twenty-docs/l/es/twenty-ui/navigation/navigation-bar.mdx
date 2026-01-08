@@ -1,5 +1,5 @@
 ---
-title: Barra de navegación
+title: Navigation Bar
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -7,46 +7,43 @@ image: /images/user-guide/table-views/table.png
   <img src="/images/user-guide/table-views/table.png" alt="Header" />
 </Frame>
 
-Renderiza una barra de navegación que contiene varios componentes `NavigationBarItem`.
+Renders a navigation bar that contains multiple `NavigationBarItem` components.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-```jsx
-import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+       const navigationItems = [
+         {
+           name: "Home",
+           Icon: IconHome,
+           onClick: () => console.log("Home clicked"),
+         },
+         {
+           name: "Profile",
+           Icon: IconUser,
+           onClick: () => console.log("Profile clicked"),
+         },
+         {
+           name: "Settings",
+           Icon: IconSettings,
+           onClick: () => console.log("Settings clicked"),
+         },
+       ];
 
-   const navigationItems = [
-     {
-       name: "Home",
-       Icon: IconHome,
-       onClick: () => console.log("Home clicked"),
-     },
-     {
-       name: "Profile",
-       Icon: IconUser,
-       onClick: () => console.log("Profile clicked"),
-     },
-     {
-       name: "Settings",
-       Icon: IconSettings,
-       onClick: () => console.log("Settings clicked"),
-     },
-   ];
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
 
-  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| "Props"                 | Tipo     | Descripción                                                                                                                                                                                                                                   |
-| ----------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nombreDelElementoActivo | "cadena" | El nombre del elemento de navegación actualmente activo                                                                                                                                                                                       |
-| elementos               | array    | Una matriz de objetos que representan cada elemento de navegación. Cada objeto contiene el `nombre` del elemento, el componente `Icono` a mostrar y una función `cuandoHagaClick` que se llamará al hacer clic en el elemento |
-
-</Tab>
+  <Tab title="Props">
+    | Props          | Type   | Description                                                                                                                                                                                          |
+    | -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | string | The name of the currently active navigation item                                                                                                                                                     |
+    | items          | array  | An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked |
+  </Tab>
 </Tabs>

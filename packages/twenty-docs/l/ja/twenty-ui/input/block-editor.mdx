@@ -1,5 +1,5 @@
 ---
-title: ブロックエディター
+title: Block Editor
 image: /images/user-guide/api/api.png
 ---
 
@@ -7,28 +7,25 @@ image: /images/user-guide/api/api.png
   <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
 
-ブロックベースのリッチテキストエディター[BlockNote](https://www.blocknotejs.org/)を使用して、ユーザーがコンテンツのブロックを編集および表示できるようにします。
+Uses a block-based rich text editor from [BlockNote](https://www.blocknotejs.org/) to allow users to edit and view blocks of content.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-```jsx
-import { useBlockNote } from "@blocknote/react";
-import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
 
-export const MyComponent = () => {
-  const BlockNoteEditor = useBlockNote();
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
 
-  return <BlockEditor editor={BlockNoteEditor} />;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ | タイプ               | 説明                   |
-| ----- | ----------------- | -------------------- |
-| エディター | `BlockNoteEditor` | ブロックエディターインスタンスまたは構成 |
-
-</Tab>
+  <Tab title="Props">
+    | Props  | Type              | Description                                |
+    | ------ | ----------------- | ------------------------------------------ |
+    | editor | `BlockNoteEditor` | The block editor instance or configuration |
+  </Tab>
 </Tabs>

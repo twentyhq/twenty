@@ -30,7 +30,9 @@ describe('computeRecordGqlOperationFilter', () => {
       fields: [companyIdField],
       recordFilters,
       recordFilterGroups: [],
-      filterValueDependencies: {},
+      filterValueDependencies: {
+        timeZone: 'UTC',
+      },
     });
 
     expect(filter).toEqual({

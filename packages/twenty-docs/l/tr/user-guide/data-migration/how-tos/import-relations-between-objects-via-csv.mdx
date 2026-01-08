@@ -1,0 +1,228 @@
+---
+title: CSV ile Nesneler Arasındaki İlişkileri İçe Aktarma
+description: CSV içe aktarma sırasında kayıtları bağlamaya yönelik eksiksiz adım adım kılavuz.
+---
+
+## Genel Bakış
+
+Bu kılavuz, nesneler arasındaki ilişkileri içe aktarma konusunda size yol gösterir—örneğin, Kişileri Şirketlere ya da Fırsatları Kişilere bağlama.
+
+<Note>**İçe aktarılabilecekler:** Yalnızca tek bir nesne türüne işaret eden bire-çoğa ilişkiler. Birden fazla nesne türüne işaret eden ilişkiler (ör. Notların Kişilere VE Şirketlere bağlanması) henüz içe aktarmada desteklenmiyor.</Note>
+
+## İlişkileri Anlama
+
+### "Bire-Çoğa" İlişki Nedir?
+
+Bir bire-çoğa ilişkide:
+
+* **Bir** Şirketin **birçok** Kişisi (çalışanı) vardır
+* **Bir** Şirketin **birçok** Fırsatı vardır
+* **Bir** Kişinin **birçok** Görevi vardır
+
+"Bir" taraf **ana** taraftır. "Çok" taraf **alt** taraftır.
+
+### Twenty'de Yaygın İlişkiler
+
+| İlişki                | "Bir" Taraf (Ana) | "Çok" Taraf (Alt) |
+| --------------------- | ----------------- | ----------------- |
+| Şirketler → Kişiler   | Şirket            | İnsanlar          |
+| Şirketler → Fırsatlar | Şirket            | Fırsatlar         |
+| Kişiler → Görevler    | Kişi              | Görevler          |
+| Kişiler → Notlar      | Kişi              | Notlar            |
+
+## Adım 1: "Bir" ve "Çok" Tarafları Belirleyin
+
+İçe aktarmadan önce hangi nesnenin ana, hangisinin alt olduğunu belirleyin.
+
+**Kendinize sorun:** "BİR [Nesne A]'nın ÇOK [Nesne B]'si var mı?"
+
+* Bir Şirket → Çok Kişi ✓ (Şirket ana taraftır)
+* Bir Kişi → Çok Şirket ✗ (Bu yanlıştır—bir kişi bir şirkete aittir)
+
+## Adım 2: Önce Ana Kayıtları İçe Aktarın
+
+Ana ("bir" taraf) kaydı, ona referans verebilmeden önce Twenty'de mevcut olmalıdır.
+
+**İçe aktarma sırası:**
+
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlanır)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere ve/veya Kişilere bağlanır)
+4. **Görevler/Notlar** (yukarıdakilerin herhangi birine bağlanır)
+
+<Warning>
+  **Ana kayıt mevcut değilse içe aktarma başarısız olur.**
+
+  Şirket referansları olan Kişileri içe aktarmadan önce, Şirketlerin içe aktarılmış olduğunu her zaman doğrulayın.
+</Warning>
+
+## Adım 3: Ana kaydın benzersiz tanımlayıcısını not edin
+
+Ana kayda **benzersiz bir tanımlayıcı** kullanarak referans vermeniz gerekir. Kullanılabilir seçenekler:
+
+| Ana Nesne                 | Kullanılabilir Benzersiz Tanımlayıcılar                                |
+| ------------------------- | ---------------------------------------------------------------------- |
+| **Şirketler**             | `id` (UUID), `domain` (önerilir) veya herhangi bir özel benzersiz alan |
+| **Kişiler**               | `id` (UUID), `email` veya herhangi bir özel benzersiz alan             |
+| **Çalışma Alanı Üyeleri** | `id` (UUID), `email` (isim değil)                                      |
+| **Özel Nesneler**         | `id` (UUID) veya benzersiz olarak işaretlenmiş herhangi bir alan       |
+
+<Note>**Önerilir:** Şirketler için `domain`, Kişiler için `email` kullanın. Bunlar insan tarafından okunabilirdir ve e-tablonuzda doğrulanması kolaydır.</Note>
+
+### Tanımlayıcıyı Bulma
+
+`id` gerekiyorsa:
+
+1. Ana kayıtları Twenty'den dışa aktarın
+2. Dışa aktarma `id` sütununu içerir
+3. Bu kimlikleri alt kayıtlar dosyanızda kullanın
+
+## Adım 4: İlişki Alanının Var Olduğunu Doğrulayın
+
+İçe aktarmadan önce, nesneleriniz arasında ilişki alanının mevcut olduğundan emin olun.
+
+**Kontrol etmek veya oluşturmak için:**
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alt nesnenizi seçin (ör. Kişiler)
+3. Ana tarafa işaret eden bir ilişki alanı olup olmadığına bakın (ör. Şirket)
+4. Yoksa oluşturun:
+   * **+ Alan Ekle**'ye tıklayın
+   * **İlişki** türünü seçin
+   * Ana nesneyi seçin
+
+## Adım 5: CSV Dosyanızı Hazırlayın
+
+Alt CSV'nize, ana tarafa benzersiz tanımlayıcısıyla referans veren bir sütun ekleyin.
+
+### Örnek: Kişilerin Şirketlere Bağlanması
+
+**Kişiler CSV'niz:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+`companyDomain` sütunu, Şirketin alan adına referans verir.
+
+### Biçim Gereksinimleri
+
+| Tanımlayıcı | Biçim            | Örnek                                  |
+| ----------- | ---------------- | -------------------------------------- |
+| Alan Adı    | URL biçimi       | `https://acme.com`                     |
+| E-posta     | Standart e-posta | `john@acme.com`                        |
+| Kimlik      | UUID             | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Alan adı biçimi önemlidir!**
+
+  `https://domain.com` kullanın (yalnızca `domain.com` değil). Bu, Twenty'nin Şirket alan adlarını saklama biçimiyle eşleşir ve eşleştirme hatalarını önler.
+</Warning>
+
+### Önemli Kurallar
+
+1. **Bire bir eşleşme gerekir** — değer ana kayda tam olarak uymalıdır
+2. **Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin** — hem `companyId` HEM DE `companyDomain` eklemeyin
+3. **Büyük/küçük harf duyarlı** — `Acme.com` ≠ `acme.com`
+
+## Adım 6: İlişkiyi Yükleyin ve Eşleyin
+
+1. Alt nesneye gidin (ör. Kişiler)
+2. **⋮** → **Kayıtları içe aktar**'ı tıklayın
+3. CSV dosyanızı yükleyin
+4. Alan eşleme adımında:
+   * İlişki sütununuzu bulun (ör. `companyDomain`)
+   * Bunu **Şirket** ilişki alanına eşleyin
+5. Kalan eşlemeleri tamamlayın
+6. Hataları gözden geçirin ve onaylayın
+
+Twenty, her alt kaydı otomatik olarak eşleşen ana kayda bağlar.
+
+## Adım 7: İçe Aktarmayı Doğrulayın
+
+İçe aktardıktan sonra:
+
+1. Birkaç alt kaydı açın (ör. Kişiler)
+2. İlişki alanının doğru ana kaydı gösterdiğini doğrulayın (ör. Şirket)
+3. Bir ana kaydı açın ve ilişkili kayıtlar bölümünü kontrol edin
+
+## Kaçınılması Gereken Yaygın Hatalar
+
+| Hata                             | Sorun                                          | Çözüm                                                             |
+| -------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| **Yanlış içe aktarma sırası**    | Şirketlerden önce Kişileri içe aktarmak        | Her zaman önce ana kayıtları, sonra alt kayıtları içe aktarın     |
+| **Yanlış alan adı biçimi**       | `https://acme.com` yerine `acme.com` kullanmak | `https://` ile tam URL biçimini kullanın                          |
+| **Birden fazla benzersiz alan**  | Hem `companyId` HEM DE `companyDomain` eşlemek | Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin                  |
+| **İlişki alanı eksik**           | İlişki alanı veri modelinde yok                | İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde oluşturun    |
+| **Mevcut olmayan kayıtlar**      | Ana kayıt Twenty'de mevcut değil               | Önce ana kayıtları içe aktarın veya yazım hatalarını kontrol edin |
+| **Büyük/küçük harf uyumsuzluğu** | Dosyada `Acme.com`, Twenty'de ise `acme.com`   | Bire bir büyük/küçük harf eşleşmesini sağlayın                    |
+
+## İş Alanı Üyelerine Bağlama
+
+İş Alanı Üyelerine (ekibiniz) bağlarken:
+
+* Adları yerine **e-posta adreslerini** kullanın
+* Örnek: `owner@yourcompany.com`, "John Smith" değil
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="Ana kaydımın alan adı veya e-postası yoksa ne olur?">
+    İki seçeneğiniz var:
+
+    1. Twenty `id` değerini kullanın (kimlikleri almak için ana kayıtları dışa aktarın)
+    2. Önceki sisteminizden gelen harici bir kimliği saklamak için veri modelinizde özel bir benzersiz alan oluşturun
+  </Accordion>
+
+  <Accordion title="Mevcut kayıtlardaki ilişkileri güncelleyebilir miyim?">
+    Evet! Alt kaydın benzersiz tanımlayıcısını (ör. Kişiler için `email`) ve yeni ilişki değerini ekleyin. İçe aktarma ilişkiyi günceller.
+  </Accordion>
+
+  <Accordion title="Çoktan-çoka ilişkileri içe aktarabilir miyim?">
+    Çoktan-çoka ilişkiler henüz içe aktarmada desteklenmiyor. Bu, 2026'nın ilk yarısı için planlanıyor.
+  </Accordion>
+
+  <Accordion title="Birden fazla nesne türüne bağlantı verebilir miyim (ör. Notları Kişilere VE Şirketlere)?">
+    Birden fazla nesne türüne işaret eden ilişkiler henüz içe/dışa aktarma için desteklenmiyor. Bu özellik yol haritamızda.
+  </Accordion>
+
+  <Accordion title="Ana kayıt mevcut değilse ne olur?">
+    İçe aktarma, o satır için bir hata gösterir. Aşağıdakileri yapabilirsiniz:
+
+    * Önce ana kaydı içe aktarın, ardından yeniden içe aktarın
+    * Referans değerini düzeltin
+    * Satırı içe aktarmadan çıkarın
+  </Accordion>
+
+  <Accordion title="İlişkim neden doğru şekilde bağlanmıyor?">
+    Yaygın nedenler:
+
+    * Yanlış biçim (alan adları için `https://domain.com` kullanın)
+    * Büyük/küçük harf uyumsuzluğu (yazımı tam olarak kontrol edin)
+    * Ana kayıt mevcut değil (önce ana kayıtları içe aktarın)
+    * Birden fazla tanımlayıcıyı eşleme (yalnızca birini kullanın)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Unutmayın: Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
+
+  "bulunamadı" hataları alıyorsanız ancak kayıt var gibi görünüyorsa, Komut Menüsü → Silinen kayıtları göster'i kontrol edin. Ana kayıt yumuşak silinmiş olabilir.
+</Warning>
+
+## Sorun Giderme
+
+Sorun mu yaşıyorsunuz? Şunları kontrol edin:
+
+* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [İlişkileri İçe Aktarma Yetenekleri](/l/tr/user-guide/data-migration/capabilities/import-relations)
+* [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)

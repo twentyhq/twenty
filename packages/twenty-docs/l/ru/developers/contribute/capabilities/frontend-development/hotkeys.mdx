@@ -1,0 +1,178 @@
+---
+title: Горячие клавиши
+---
+
+## Введение
+
+Когда вам нужно прослушивать горячую клавишу, вы обычно используете обработчик событий `onKeyDown`.
+
+Однако в `twenty-front` могут возникнуть конфликты между одинаковыми горячими клавишами, которые используются в разных компонентах, смонтированных одновременно.
+
+Например, если у вас есть страница, которая реагирует на клавишу Enter, и модальное окно, реагирующее на ту же клавишу Enter, с компонентом Select внутри этого окна, то может возникнуть конфликт, когда все они смонтированы одновременно.
+
+## Хук `useScopedHotkeys`
+
+Для решения этой проблемы у нас есть индивидуальный хук, который позволяет мониторить горячие клавиши без конфликтов.
+
+Вы размещаете его в компоненте, и он будет реагировать на горячие клавиши только тогда, когда компонент смонтирован И заданные **области горячих клавиш** активны.
+
+## Как прослушивать горячие клавиши на практике?
+
+Настройка мониторинга горячих клавиш включает в себя два шага :
+
+1. Установить [область горячих клавиш](#what-is-a-hotkey-scope-), которая будет реагировать на горячие клавиши
+2. Использовать хук `useScopedHotkeys` для мониторинга горячих клавиш
+
+Настройка областей горячих клавиш необходима даже на простых страницах, так как другие элементы пользовательского интерфейса, такие как меню слева или меню команд, также могут реагировать на горячие клавиши.
+
+## Кейсы использования горячих клавиш
+
+В общем, у вас будет два случая использования, требующих горячих клавиш :
+
+1. На странице или в компоненте, смонтированном на странице
+2. В компоненте типа модального окна, который фокусируется из-за действия пользователя
+
+Второй случай использования может происходить рекурсивно : например, раскрывающееся меню в модальном окне.
+
+### Прослушивание горячих клавиш на странице
+
+Пример :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Прослушивание горячих клавиш в компоненте типа модального окна
+
+Для этого примера мы используем модальный компонент, который прослушивает ключ Escape, чтобы сообщить своему родителю закрыть его.
+
+В этом случае взаимодействие пользователя меняет область операций.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Затем в компоненте модального окна :
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+Важно использовать этот шаблон, когда вы не уверены, что просто использование useEffect при монтировании/размонтировании будет достаточным для избегания конфликтов.
+
+Эти конфликты могут быть сложными для отладки, и они могут возникать чаще, чем ожидалось, с использованием useEffects.
+
+## Что такое область горячих клавиш?
+
+Область горячих клавиш — это строка, представляющая собой контекст, в котором активны горячие клавиши. Она обычно кодируется в виде перечисления (enum).
+
+При изменении области горячих клавиш, горячие клавиши, слушающие эту область, будут включены, а слушающие другие области — отключены.
+
+Вы можете установить только одну область за раз.
+
+Например, области горячих клавиш для каждой страницы определены в enum `PageHotkeyScope`:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Внутренне текущая выбранная область хранится в состоянии Recoil, которое используется по всему приложению:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Но это состояние Recoil никогда не следует обрабатывать вручную! Мы увидим, как использовать это в следующем разделе.
+
+## Как это работает внутренне?
+
+Мы сделали тонкую обертку поверх [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro), которая делает его более производительным и избегает ненужных повторных рендеров.
+
+Мы также создаем состояние Recoil, чтобы управлять состоянием горячей клавиши и сделать его доступным везде в приложении.

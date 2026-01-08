@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   appendCommonExceptionCode,
@@ -16,18 +17,29 @@ export const WorkspaceMigrationRunnerExceptionCode = appendCommonExceptionCode({
   FLAT_ENTITY_NOT_FOUND: 'FLAT_ENTITY_NOT_FOUND',
 } as const);
 
-const workspaceMigrationRunnerExceptionUserFriendlyMessages: Record<
-  keyof typeof WorkspaceMigrationRunnerExceptionCode,
-  MessageDescriptor
-> = {
-  FIELD_METADATA_NOT_FOUND: msg`Field metadata not found.`,
-  OBJECT_METADATA_NOT_FOUND: msg`Object metadata not found.`,
-  ENUM_OPERATION_FAILED: msg`Enum operation failed.`,
-  UNSUPPORTED_COMPOSITE_COLUMN_TYPE: msg`Unsupported composite column type.`,
-  NOT_SUPPORTED: msg`This operation is not supported.`,
-  INVALID_ACTION_TYPE: msg`Invalid action type.`,
-  FLAT_ENTITY_NOT_FOUND: msg`Entity not found.`,
-  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
+  code: keyof typeof WorkspaceMigrationRunnerExceptionCode,
+) => {
+  switch (code) {
+    case WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND:
+      return msg`Field metadata not found.`;
+    case WorkspaceMigrationRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND:
+      return msg`Object metadata not found.`;
+    case WorkspaceMigrationRunnerExceptionCode.ENUM_OPERATION_FAILED:
+      return msg`Enum operation failed.`;
+    case WorkspaceMigrationRunnerExceptionCode.UNSUPPORTED_COMPOSITE_COLUMN_TYPE:
+      return msg`Unsupported composite column type.`;
+    case WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED:
+      return msg`This operation is not supported.`;
+    case WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE:
+      return msg`Invalid action type.`;
+    case WorkspaceMigrationRunnerExceptionCode.FLAT_ENTITY_NOT_FOUND:
+      return msg`Entity not found.`;
+    case WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR:
+      return msg`An unexpected error occurred.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkspaceMigrationRunnerException extends CustomException<
@@ -41,7 +53,7 @@ export class WorkspaceMigrationRunnerException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workspaceMigrationRunnerExceptionUserFriendlyMessages[code],
+        getWorkspaceMigrationRunnerExceptionUserFriendlyMessage(code),
     });
   }
 }

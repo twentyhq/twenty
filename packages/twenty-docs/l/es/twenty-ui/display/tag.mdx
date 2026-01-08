@@ -1,5 +1,5 @@
 ---
-title: Etiqueta
+title: Tag
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -7,38 +7,32 @@ image: /images/user-guide/table-views/table.png
   <img src="/images/user-guide/table-views/table.png" alt="Header" />
 </Frame>
 
-Componente para categorizar o etiquetar contenido visualmente.
+Component to visually categorize or label content.
 
 <Tabs>
+  <Tab title="Usage">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { Tag } from "@/ui/display/tag/components/Tag";
-
-export const MyComponent = () => {
-  return (
-    <Tag
-      className
-      color="red"
-      text="Urgent"
-      onClick={() => console.log("click")}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| "Props"     | Tipo      | Descripción                                                                                                                                                                 |
-| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "className" | cadena    | "Nombre opcional para estilización adicional"                                                                                                                               |
-| color       | cadena    | Color de la etiqueta. Las opciones incluyen: `verde`, `turquesa`, `cielo`, `azul`, `púrpura`, `rosa`, `rojo`, `naranja`, `amarillo`, `gris` |
-| texto       | "cadena"  | El contenido de la etiqueta                                                                                                                                                 |
-| alHacerClic | "función" | Función opcional llamada cuando un usuario hace clic en la etiqueta                                                                                                         |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props     | Type     | Description                                                                                                                 |
+    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+    | className | string   | Optional name for additional styling                                                                                        |
+    | color     | string   | Color of the tag. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+    | text      | string   | The content of the tag                                                                                                      |
+    | onClick   | function | Optional function called when a user clicks on the tag                                                                      |
+  </Tab>
 </Tabs>

@@ -34,12 +34,16 @@ export const useCreateStep = () => {
     nextStepId,
     position,
     connectionOptions,
+    shouldSelectNode = true,
+    workflowVersionId: providedWorkflowVersionId,
   }: {
     newStepType: WorkflowActionType;
     parentStepId: string | undefined;
     nextStepId: string | undefined;
     position?: { x: number; y: number };
     connectionOptions?: WorkflowStepConnectionOptions;
+    shouldSelectNode?: boolean;
+    workflowVersionId?: string;
   }) => {
     if (isLoading === true) {
       return;
@@ -48,7 +52,8 @@ export const useCreateStep = () => {
     setIsLoading(true);
 
     try {
-      const workflowVersionId = await getUpdatableWorkflowVersion();
+      const workflowVersionId =
+        providedWorkflowVersionId ?? (await getUpdatableWorkflowVersion());
       const id = v4();
 
       const workflowVersionStepChanges = (
@@ -77,7 +82,9 @@ export const useCreateStep = () => {
         throw new Error("Couldn't create step");
       }
 
-      setWorkflowSelectedNode(id);
+      if (shouldSelectNode) {
+        setWorkflowSelectedNode(id);
+      }
       setWorkflowLastCreatedStepId(id);
 
       return isDefined(createdFirstStepDiff)

@@ -1,0 +1,48 @@
+---
+title: Formate de fișiere acceptate!
+description: Formate de fișier acceptate pentru importul de date în Twenty.
+---
+
+## Formate acceptate
+
+Twenty acceptă trei formate de fișier pentru import:
+
+| Format            | Extensie | Notițe                         |
+| ----------------- | -------- | ------------------------------ |
+| **CSV**           | .csv     | Recomandat, cel mai compatibil |
+| **Excel**         | .xlsx    | Format Excel modern            |
+| **Excel (vechi)** | .xls     | Format Excel mai vechi         |
+
+## Cerințe pentru fișiere
+
+| Cerință                    | Valoare                                            |
+| -------------------------- | -------------------------------------------------- |
+| **Codare**                 | Se recomandă UTF-8                                 |
+| **Limită de înregistrări** | 10.000 de înregistrări pe fișier                   |
+| **Structură**              | Primul rând trebuie să conțină antetele coloanelor |
+| **Conținut**               | Un singur tip de obiect pe fișier                  |
+
+## Cele mai bune practici pentru CSV
+
+* **Delimitator**: utilizați virgula (`,`) sau punct și virgulă (`;`)
+* **Calificator de text**: utilizați ghilimele duble (`\"`) pentru text care conține virgule
+* **Sfârșituri de linie**: Windows (CRLF) sau Unix (LF), ambele sunt acceptate
+* **Valori goale**: Lăsați celulele necompletate, nu folosiți "NULL" sau "N/A"
+
+## Cele mai bune practici pentru Excel
+
+Când exportați din Excel:
+
+* Eliminați formulele (exportați doar valorile)
+* Ștergeți rândurile goale de la final
+* Asigurați-vă că nu există celule îmbinate
+* Folosiți doar prima foaie
+
+## Seturi de date mari
+
+Pentru seturi de date mai mari de 10.000 de înregistrări:
+
+* Împărțiți în mai multe fișiere
+* Sau folosiți [importul prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api) pentru un număr nelimitat de înregistrări
+
+<Note>Pentru migrarea unor volume foarte mari (peste 100.000 de înregistrări), API-ul este semnificativ mai rapid și mai fiabil decât importurile CSV.</Note>

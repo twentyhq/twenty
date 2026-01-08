@@ -66,6 +66,12 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
           response,
           400,
         );
+      case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          402,
+        );
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,

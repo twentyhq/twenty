@@ -35,9 +35,9 @@ import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { type ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils/loggerLink';
-import { StreamingRestLink } from '../utils/streamingRestLink';
+import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { loggerLink } from '@/apollo/utils/loggerLink';
+import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
 

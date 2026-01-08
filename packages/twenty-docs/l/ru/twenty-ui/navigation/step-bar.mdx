@@ -4,35 +4,31 @@ image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="Заголовок" />
 </Frame>
 
 Отображает прогресс через последовательность пронумерованных шагов, выделяя активный шаг. Он отображает контейнер с шагами, каждый из которых представлен компонентом `Step`.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Использование">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-```jsx
-import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <StepBar activeStep={2}>
-      <StepBar.Step>Step 1</StepBar.Step>
-      <StepBar.Step>Step 2</StepBar.Step>
-      <StepBar.Step>Step 3</StepBar.Step>
-    </StepBar>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Свойства    | Тип   | Описание                                                                                                              |
-| ----------- | ----- | --------------------------------------------------------------------------------------------------------------------- |
-| активныйШаг | число | Индекс текущего активного шага. Это определяет, какой шаг следует визуально выделить. |
-
-</Tab>
+  <Tab title="Свойства">
+    | Свойства    | Тип   | Описание                                                                              |
+    | ----------- | ----- | ------------------------------------------------------------------------------------- |
+    | активныйШаг | число | Индекс текущего активного шага. Это определяет, какой шаг следует визуально выделить. |
+  </Tab>
 </Tabs>

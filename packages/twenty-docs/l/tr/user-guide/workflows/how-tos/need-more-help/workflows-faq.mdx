@@ -1,0 +1,254 @@
+---
+title: İş Akışları SSS
+description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
+---
+
+<AccordionGroup>
+  <Accordion title="Bir iş akışını neden etkinleştiremiyorum?">
+    Bu muhtemelen bir yetki sorunudur. İş akışlarını oluşturmak ve etkinleştirmek için iş akışlarına erişiminiz olmalıdır.
+
+    **Çözüm**: **Ayarlar → Roller** altında size iş akışı erişimi vermesi için çalışma alanı yöneticinizle iletişime geçin.
+
+    Kenar çubuğunuzda İş Akışları bölümünü hiç görmüyorsanız, bunun bir yetki sorunu olduğunu doğrular.
+  </Accordion>
+
+  <Accordion title="Üst gezinme çubuğunda manuel iş akışım düğmesini neden görmüyorum?">
+    Manuel iş akışları, doğru şekilde yapılandırılmışsa üst gezinme çubuğunda görünür:
+
+    1. İş akışı **etkinleştirilmiş** olmalıdır (taslak modunda olmamalı)
+    2. Üst gezinme çubuğu konumu **Pinned** olarak ayarlanmış olmalıdır
+    3. Single/Bulk tetikleyiciler için, doğru nesne sayfasında olmanız gerekir
+
+    **Kontrol etmek için**: iş akışını açın → tetikleyiciye tıklayın → "Navbar placement" alanının "Pinned" olarak ayarlandığını doğrulayın.
+
+    Üst gezinme çubuğu ayarlarından bağımsız olarak manuel iş akışlarına her zaman **Cmd + K** (veya **Ctrl + K**) ile erişebilirsiniz.
+  </Accordion>
+
+  <Accordion title="Single, Global ve Bulk manuel tetikleyiciler arasındaki fark nedir?">
+    | Tür | Gerekli Kayıtlar | İş Akışı Çalıştırmaları |
+    | --- | ---------------- | ----------------------- |
+
+    \| **Global** | Yok | Bir kez, kayıt girişi olmadan |
+    \| **Single** | Bir veya daha fazlası seçili | Seçilen her kayıt için bir kez |
+    \| **Bulk** | Bir veya daha fazlası seçili | Bir kez, tüm kayıtlar dizi olarak |
+
+    * **Global**: İş akışının herhangi bir kayıt bağlamına ihtiyaç duymadığı durumlarda kullanın (ör. bir rapor oluşturma)
+    * **Single**: Seçilen her kaydı bağımsız olarak işlemek istediğinizde kullanın (ör. bireysel e-postalar gönderme)
+    * **Bulk**: Kayıtları birlikte işlemeniz veya kredi kullanımını optimize etmeniz gerektiğinde kullanın (Iterator eylemi gerektirir)
+
+    Ayrıntılar için [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers) bölümüne bakın.
+  </Accordion>
+
+  <Accordion title="Bir If/Else düğümü görmüyorum. Ne yapmalıyım?">
+    Açık bir If/Else düğümü henüz mevcut değil, ancak yol haritamızda yer alıyor.
+
+    **Geçici çözüm**: Adımınızdan birden fazla dal oluşturun; her biri bir **Filter** eylemiyle başlasın:
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Yalnızca filtre koşulu geçen dal, sonraki eylemlerini çalıştırır.
+
+    Adım adım bir kılavuz için [Dalları Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/workflow-branches) bölümüne bakın.
+  </Accordion>
+
+  <Accordion title="İş akışı dalları paralel mi çalışıyor?">
+    **Evet**, dallar varsayılan olarak paralel çalışır.
+
+    Yalnızca bir dalın çalışmasını istiyorsanız:
+
+    * Her dalın başlangıcına bir **Filter** eylemi ekleyin
+    * Zıt koşullar ayarlayın (ör. Dal A: status = "Open", Dal B: status ≠ "Open")
+
+    Filtre koşulunu sağlamayan dallar çalışmayı durdurur, diğerleri devam eder.
+  </Accordion>
+
+  <Accordion title="Dalları yeniden birleştirebilir miyim?">
+    **Evet**. Paralel dallarınız tamamlandıktan sonra, her iki dalın da bağlanacağı bir adım ekleyebilirsiniz.
+
+    İş Akışı Düzenleyicisinde:
+
+    1. Dallanmış eylemlerinizi tamamlayın
+    2. Dallardan sonra yeni bir adım ekleyin
+    3. Her dalın sonundan bu yeni adıma bağlantıları sürükleyin
+
+    Birleştirilen adım, bağlı tüm dallar tamamlandıktan sonra çalışacaktır.
+  </Accordion>
+
+  <Accordion title="Search Records sonuçlarının sınırı nedir?">
+    **Search Records en fazla 200 kayıt döndürür.**
+
+    Daha fazlasını işlemeniz gerekiyorsa:
+
+    * Sonuçları azaltmak için daha spesifik filtreler ekleyin
+    * Toplu işlem yapmak için zamanlanmış iş akışlarını kullanın
+    * Toplu işlemler için API kullanmayı düşünün
+
+    Çoğu iş akışı için 200 kayıt yeterlidir. Bu sınıra düzenli olarak ulaşıyorsanız otomasyonunuzu yeniden yapılandırmayı düşünün.
+  </Accordion>
+
+  <Accordion title="İş akışı e-postalarında kişileri CC'ye ekleyebilir miyim?">
+    **Henüz değil.** Send Email eylemi için CC ve BCC alanları yol haritamızda.
+
+    **Geçici çözüm**: Ek alıcılara göndermek için birden fazla Send Email eylemi ekleyin veya CC'yi destekleyen harici bir e-posta hizmeti üzerinden göndermek için bir HTTP Request kullanın.
+  </Accordion>
+
+  <Accordion title="Önceki adımların çıktılarını nasıl kullanırım?">
+    Her eylem, sonraki adımlarda kullanılabilecek çıktı verileri üretir.
+
+    **Önceki adım verilerine başvurmak için**:
+
+    * Bir alanı yapılandırırken değişken seçiciyi kullanın
+    * Ya da doğrudan `{{stepName.fieldName}}` yazın
+
+    **Örnekler**:
+
+    * Tetikleyici verisi: `{{trigger.object.email}}`
+    * Arama sonuçları: `{{searchRecords[0].name}}`
+    * Kod çıktısı: `{{code.calculatedValue}}`
+
+    Eylem yapılandırmasında herhangi bir alanın üzerine gelerek önceki adımlardan kullanılabilir değişkenleri görebilirsiniz.
+  </Accordion>
+
+  <Accordion title="Iterator neden başarısız oluyor?">
+    **Iterator bir dizi girdisi gerektirir.** Yaygın sorunlar:
+
+    1. **Girdi bir dizi değil**: Search Records'tan veya bir dizi döndüren başka bir eylemden gelen sonuçları ilettiğinizden emin olun
+    2. **Dizi boş**: Iterator'dan önce `{{searchRecords.length}} > 0` kontrolü için bir filtre ekleyin
+    3. **Yanlış değişken seçildi**: Tek bir kayıt yerine dizinin kendisini seçtiğinizden emin olun
+
+    **Doğru kurulum**:
+
+    1. Search Records (dizi döndürür)
+    2. Filter: length > 0
+    3. Iterator: `{{searchRecords}}` öğesini seçin
+    4. Iterator içindeki eylemler `{{iterator.currentItem.fieldName}}` kullanır
+  </Accordion>
+
+  <Accordion title="Code eylemleri için en uzun yürütme süresi nedir?">
+    Code eylemlerinin (sunucusuz fonksiyonlar) **varsayılan zaman aşımı 5 dakikadır** (300 saniye).
+
+    Yapılandırılabilir en yüksek zaman aşımı **15 dakikadır** (900 saniye).
+
+    Kodunuz bu sınırı aşarsa, eylem zaman aşımı hatasıyla başarısız olur.
+
+    **Zaman aşımından kaçınma ipuçları**:
+
+    * Büyük işlemleri Iterator kullanarak daha küçük parçalara bölün
+    * Ağır hesaplamalardan kaçının; yoğun işlemler için HTTP Request üzerinden harici hizmetler kullanın
+    * Yürütme süresini azaltmak için kodunuzu optimize edin
+    * Daha uzun işlemeye ihtiyacınız varsa, verileri toplu olarak işleyen zamanlanmış iş akışlarını kullanmayı düşünün
+  </Accordion>
+
+  <Accordion title="İş akışı çalıştırmalarını nasıl incelerim?">
+    İş akışı çalıştırmaları yürütme geçmişini gösterir ve sorunları ayıklamanıza yardımcı olur.
+
+    **Çalıştırmalara erişim**:
+
+    * İş akışı düzenleyicisinde → sağdaki **Runs** paneli
+    * Ya da kenar çubuğunda **İş Akışı Çalıştırmaları**'na gidin
+
+    **Bir çalıştırmayı anlamak**:
+
+    * **Durum**: Running, Completed, Failed, Waiting
+    * **Adımlar**: Hangi adımların çalıştığını ve çıktısını görün
+    * **Hatalar**: Hata ile sonuçlanan adımlara tıklayarak hata mesajlarını görün
+    * **Veri**: Her adımda giriş/çıkış verilerini görüntüleyin
+
+    Ayrıntılar için [İş Akışı Çalıştırmaları](/l/tr/user-guide/workflows/capabilities/workflow-runs) bölümüne bakın.
+  </Accordion>
+
+  <Accordion title="İş akışı çalıştırmalarımı neden görmüyorum?">
+    İş akışı çalıştırmaları hız sınırları nedeniyle anında başarısız oluyor olabilir.
+
+    **Katı sınır: çalışma alanı başına saatte 5.000 çalıştırma.**
+
+    Bu sınırı aşarsanız, iş akışları derhal başarısız olarak işaretlenir ve beklendiği gibi çalıştırma listenizde görünmez.
+
+    **Bu sınıra ulaşan yaygın senaryolar**:
+
+    * Single manuel tetikleyici ile 5.000'den fazla kayıt seçmek
+    * Çalışma alanınız genelinde eşzamanlı olarak birden fazla iş akışının çalışması
+    * Yüksek frekanslı otomatik tetikleyiciler (ör. yoğun bir nesnede Record Updated)
+
+    **Çözümler**:
+
+    * Tek bir çalıştırmada birçok kaydı işlemek için Single yerine **Bulk** tetikleyicileri kullanın
+    * Büyük toplu işlemleri zamana yayın
+    * Tetikleyici frekansını azaltmak için filtreler kullanın
+    * Ağır iş akışlarını yoğun olmayan saatlerde zamanlayın
+  </Accordion>
+
+  <Accordion title="İş akışlarına ilişkin hız sınırları nelerdir?">
+    Twenty, sistem kararlılığını sağlamak için iki hız sınırına sahiptir:
+
+    | Sınır | Değer | Davranış |
+    | ----- | ----- | -------- |
+
+    \| **Yumuşak sınır** | dakikada 100 çalıştırma | Çalıştırmalar "Not Started" durumunda kuyruğa alınır, kademeli olarak işlenir |
+    \| **Katı sınır** | saatte 5.000 çalıştırma | Çalıştırmalar anında başarısız olur |
+
+    **Yumuşak sınır (100/dk)**: İş akışlarınız başarısız olmaz—sadece kuyruğa alınır ve zaman içinde işlenir. 100'den fazla kaydı tetikleyebilirsiniz; yürütme daha yavaş olacaktır.
+
+    **Katı sınır (5.000/saat)**: Bu, tüm çalışma alanınız için geçerlidir. Tüm iş akışlarınız toplamda bir saat içinde 5.000 çalıştırmayı aşarsa, ilave çalıştırmalar anında başarısız olur.
+
+    **Sınırlar içinde kalmak için ipuçları**:
+
+    * Büyük toplu işlemler için Single tetikleyiciler yerine Iterator ile birlikte Bulk tetikleyicileri kullanın
+    * İlgili otomasyonları daha az sayıda iş akışında birleştirin
+    * Yükü zamana yaymak için zamanlanmış iş akışlarını kullanın
+  </Accordion>
+
+  <Accordion title="Başarısız olmuş bir iş akışı çalıştırmasını yeniden deneyebilir miyim?">
+    **Hayır, şu anda otomatik yeniden deneme işlevi yok.**
+
+    Bir iş akışı çalıştırması başarısız olursa şunları yapmanız gerekir:
+
+    1. **Ayarlar → İş Akışları → [Your Workflow] → Runs** içinde hatayı inceleyin
+    2. Sorunu düzeltin (veri, yapılandırma veya harici hizmet)
+    3. Etkilenen kayıt(lar) üzerinde iş akışını manuel olarak yeniden tetikleyin
+
+    **Hataları azaltmak için ipuçları**:
+
+    * Eylemlerden önce veriyi doğrulamak için **Filter** düğümleri ekleyin
+    * İlgili kayıtların var olup olmadığını kontrol etmek için **Search Records** kullanın
+    * Toplu işlemlerden önce birkaç kayıtla kapsamlı şekilde test edin
+
+    Otomatik yeniden deneme işlevi gelecekteki bir sürüm için yol haritamızda.
+  </Accordion>
+
+  <Accordion title="CSV içe aktarmalarından önce iş akışlarını devre dışı bırakmalı mıyım?">
+    **Evet, iş akışlarınız kayıt oluşturma veya güncellemelerle tetikleniyorsa.**
+
+    CSV ile veri içe aktardığınızda, oluşturulan veya güncellenen her kayıt iş akışlarını tetikleyebilir. Büyük bir içe aktarma (binlerce kayıt) şunlara yol açabilir:
+
+    * Saatte 5.000 çalıştırma sınırına ulaşmak
+    * Önemli miktarda iş akışı kredisi tüketmek
+    * Beklenmedik e-postalar veya bildirimler göndermek
+    * Yinelenen görevler veya kayıtlar oluşturmak
+
+    **Toplu bir içe aktarmadan önce**:
+
+    1. **Ayarlar → İş Akışları** bölümüne gidin
+    2. İçe aktardığınız nesne tarafından tetiklenen iş akışlarını belirleyin
+    3. Bunları geçici olarak **devre dışı bırakın**
+    4. CSV içe aktarmanızı çalıştırın
+    5. İşiniz bittiğinde iş akışlarını **yeniden etkinleştirin**
+
+    **Alternatif**: İş akışlarının içe aktarılan veriler üzerinde çalışması gerekiyorsa, hız sınırları içinde kalmak için daha küçük partiler halinde içe aktarın.
+  </Accordion>
+
+  <Accordion title="İş akışı yerleşimimi nasıl temizlerim?">
+    İş akışı tuvaliniz etrafa dağılmış düğümlerle dağınık görünüyorsa, onu otomatik olarak düzenleyebilirsiniz:
+
+    1. İş akışı tuvalinde herhangi bir yere sağ tıklayın
+    2. **Tidy up workflow** öğesine tıklayın
+
+    Bu, tüm düğümleri otomatik olarak temiz ve düzenli bir yerleşime yeniden düzenleyecektir.
+  </Accordion>
+</AccordionGroup>

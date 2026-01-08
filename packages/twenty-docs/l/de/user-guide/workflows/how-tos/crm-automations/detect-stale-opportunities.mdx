@@ -1,0 +1,136 @@
+---
+title: Ruhende Gelegenheiten erkennen
+description: Manager automatisch benachrichtigen, wenn Gelegenheiten nicht aktualisiert wurden.
+---
+
+Halten Sie Ihre Pipeline gesund, indem Sie Manager benachrichtigen, wenn Gelegenheiten ruhend werden. Dieser Workflow prüft Gelegenheiten, die seit einer festgelegten Anzahl von Tagen nicht aktualisiert wurden.
+
+## Das Problem
+
+Nicht aktualisierte Gelegenheiten führen zu:
+
+* Erkaltende Deals
+* Unzuverlässige Prognosen
+* Entgangener Umsatz
+
+## Die Lösung
+
+Erstellen Sie einen geplanten Workflow, der ruhende Gelegenheiten findet und deren Manager per E-Mail benachrichtigt.
+
+## Schritt-für-Schritt-Einrichtung
+
+### Schritt 1: Workflow erstellen
+
+1. Gehen Sie zu **Einstellungen → Workflows**
+2. Klicken Sie auf **+ Neuer Workflow**
+3. Benennen Sie ihn "Benachrichtigung für ruhende Gelegenheiten"
+
+### Schritt 2: Trigger konfigurieren
+
+1. Wählen Sie **Nach Zeitplan**
+2. Auf täglich festlegen (z. B. jeden Tag um 8 Uhr)
+
+### Schritt 3: Nach ruhenden Gelegenheiten suchen
+
+1. Fügen Sie die Aktion **Datensätze suchen** hinzu
+2. Konfigurieren:
+
+| Feld       | Wert                                                 |
+| ---------- | ---------------------------------------------------- |
+| **Objekt** | Opportunities                                        |
+| **Filter** | Aktualisiert am ist vor (heute - 7 Tage)             |
+| **Filter** | Phase ist nicht "Closed Won" UND nicht "Closed Lost" |
+| **Limit**  | 100                                                  |
+
+### Schritt 4: Prüfen, ob Einträge gefunden wurden
+
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Bedingung: `{{searchRecords.length}}` ist größer als 0
+3. Wenn keine ruhenden Gelegenheiten vorhanden sind, endet der Workflow hier
+
+### Schritt 5: Benachrichtigung formatieren (Code-Aktion)
+
+Fügen Sie eine **Code**-Aktion hinzu, um die E-Mail zu formatieren:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Schritt 6: Benachrichtigungs-E-Mail senden
+
+Fügen Sie eine **E-Mail senden**-Aktion hinzu:
+
+| Feld        | Wert                                                                    |
+| ----------- | ----------------------------------------------------------------------- |
+| **An**      | sales-manager@yourcompany.com                                           |
+| **Betreff** | `🚨 {{code.totalCount}} ruhende Gelegenheiten erfordern Aufmerksamkeit` |
+| **Inhalt**  | `{{code.summary}}`                                                      |
+
+### Schritt 7: Testen und aktivieren
+
+1. Klicken Sie auf **Test**, um den Workflow auszuführen
+2. Überprüfen Sie, dass die E-Mail die richtigen Daten enthält
+3. Aktivieren Sie, sobald alles bereit ist
+
+## Anpassungsoptionen
+
+### Schwellenwert für Inaktivität ändern
+
+Passen Sie den Filter der Aktion Datensätze suchen an, um statt 7 Tagen Ihren bevorzugten Zeitraum zu verwenden:
+
+* 3 Tage für schnelllebige Verkäufe
+* 14 Tage für Enterprise-Deals
+* 30 Tage für lange Verkaufszyklen
+
+### Einzelne Vertriebsmitarbeiter benachrichtigen
+
+Verwenden Sie statt einer einzelnen Manager-E-Mail den **Iterator**, um jedem Vertriebsmitarbeiter personalisierte E-Mails zu seinen eigenen ruhenden Deals zu senden.
+
+### Eskalation hinzufügen
+
+Erstellen Sie mehrere Workflows mit zunehmender Dringlichkeit:
+
+1. Tag 7: E-Mail an den Vertriebsmitarbeiter
+2. Tag 14: E-Mail an Vertriebsmitarbeiter + Manager
+3. Tag 21: Aufgabe für den Manager erstellen, um einzugreifen
+
+### In Slack einbinden
+
+Verwenden Sie **HTTP Request**, um an einen Slack-Webhook zu posten, anstelle von oder zusätzlich zu E-Mail.
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)

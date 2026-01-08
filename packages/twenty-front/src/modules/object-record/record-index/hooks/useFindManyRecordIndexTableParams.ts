@@ -13,6 +13,7 @@ import {
   computeRecordGqlOperationFilter,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
+
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
 ) => {

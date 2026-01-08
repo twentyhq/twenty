@@ -1,0 +1,90 @@
+---
+title: Příkazy Frontend
+---
+
+## Užitečné příkazy
+
+### Spuštění aplikace
+
+```bash
+npx nx start twenty-front
+```
+
+### Regenerujte schéma GraphQL na základě API graphql schématu
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+NEBO
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Linter
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Překlady
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Testovat
+
+```bash
+npx nx run twenty-front:test # spusťte jest testy
+npx nx run twenty-front:storybook:serve:dev # spusťte storybook
+npx nx run twenty-front:storybook:test # spusťte testy # (vyžaduje, aby byl spuštěn yarn storybook:serve:dev)
+npx nx run twenty-front:storybook:coverage # (vyžaduje, aby byl spuštěn yarn storybook:serve:dev)
+```
+
+## Technologický stack
+
+Projekt má čistý a jednoduchý stack s minimálním počtem šablonových kódů.
+
+**Aplikace**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**Testování**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**Nástroje**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## Architektura
+
+### Směrování
+
+[React Router](https://reactrouter.com/) zajišťuje směrování.
+
+To avoid unnecessary [re-renders](/l/cs/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+
+### Správa stavu
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) zajišťuje správu stavu.
+
+Podívejte se na [osvědčené postupy](/l/cs/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pro více informací o správě stavu.
+
+## Testování
+
+[Jest](https://jestjs.io/) slouží jako nástroj pro testování jednotek, zatímco [Storybook](https://storybook.js.org/) je pro testování komponent.
+
+Jest je primárně určen pro testování pomocných funkcí, nikoli samotných komponent.
+
+Storybook slouží k testování chování izolovaných komponent, stejně jako k zobrazování návrhového systému.

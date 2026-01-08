@@ -1,0 +1,76 @@
+---
+title: Workflow Credits
+description: Understand workflow credit consumption and management.
+---
+
+Workflow credits power your automations in Twenty. Понимание принципов их работы помогает оптимизировать затраты и эффективно управлять бюджетом автоматизации.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## How Credit Consumption Works
+
+Credits are consumed when workflows execute, not when you create them. Each workflow action consumes credits based on its complexity:
+
+### Потребление кредитов по типу действия
+
+* **Основные внутренние операции**: Очень низкое потребление кредитов
+  * Поиск записей
+  * Create Record
+  * Обновление записи
+  * Удаление записи
+  * Действия с формой
+
+* **Сложные операции**: Более высокое потребление кредитов
+  * Действия с кодом (выполнение JavaScript)
+  * HTTP-запросы к внешним сервисам
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### Списание в реальном времени
+
+Credits are deducted in real-time as workflows execute. Это означает, что:
+
+* Черновые рабочие процессы не потребляют кредиты
+* Только активные, выполняемые рабочие процессы используют ваш кредитный лимит
+* Неудавшиеся рабочие процессы все равно потребляют кредиты за выполненные шаги
+
+## Управление кредитами
+
+### Проверить использование кредитов
+
+1. Перейдите в **Настройки → Оплата**
+2. Просмотрите текущее потребление кредитов и оставшийся баланс
+3. Отслеживайте шаблоны использования, чтобы оптимизировать ваши рабочие процессы
+
+### Приобретение дополнительных кредитов
+
+Если вам нужно больше кредитов, чем в вашем лимите плана:
+
+1. Перейдите в **Настройки → Оплата**
+2. Нажмите на опцию, чтобы приобрести дополнительные кредиты. Доступны пакеты разного размера.
+3. Кредиты добавляются к вашему текущему балансу
+
+## Лучшие практики
+
+* **Пакетная обработка**: Используйте массовые операции и действия с Итератором эффективно
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* Оптимизируйте действия с кодом для повышения эффективности
+* Пакетные операции для снижения числа отдельных вызовов действий

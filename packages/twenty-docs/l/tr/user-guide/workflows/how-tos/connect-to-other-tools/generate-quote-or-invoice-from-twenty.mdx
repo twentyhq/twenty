@@ -1,0 +1,143 @@
+---
+title: Twenty'den Teklif veya Fatura Oluşturun
+description: Fırsatlar kapandığında harici araçlarda otomatik olarak faturalar oluşturun.
+---
+
+Fırsat verilerini faturalama sisteminize (Stripe, QuickBooks, Xero, vb.) otomatik olarak gönderin bir fırsat kazanıldığında.
+
+## İş Akışı Yapısı
+
+1. **Tetikleme**: Kayıt Güncellendi (Fırsat)
+2. **Filtre**: Aşama = Closed Won
+3. **Kayıt Ara**: Şirket ayrıntılarını alın
+4. **Kod** (isteğe bağlı): Yükü biçimlendirin
+5. **HTTP İsteği**: Faturalama sistemine gönderin
+
+## Adım 1: Tetiklemeyi Ayarlayın
+
+1. Yeni bir iş akışı oluşturun
+2. **Kayıt Güncellendi** tetikleyicisini seçin
+3. Nesne olarak **Fırsat**'ı seçin
+
+## Adım 2: Closed Won için filtreleyin
+
+Yalnızca fırsat kazanıldığında devam etmek için bir **Filtre** eylemi ekleyin:
+
+| Ayar      | Değer                            |
+| --------- | -------------------------------- |
+| **Alan**  | Aşama                            |
+| **Koşul** | Eşittir                          |
+| **Değer** | `CLOSED_WON` (veya aşama adınız) |
+
+<Tip>
+  Tetikleyici, herhangi bir Fırsat güncellemesinde tetiklenir. Filtre, aşama Closed Won olduğunda iş akışının devam etmesini sağlar.
+</Tip>
+
+## Adım 3: Şirket Ayrıntılarını Alın
+
+Fırsat kaydı, fatura için ihtiyaç duyduğunuz tüm Şirket alanlarını içermeyebilir. Bir **Kayıt Ara** eylemi ekleyin:
+
+| Ayar                   | Değer                                               |
+| ---------------------- | --------------------------------------------------- |
+| **Nesne**              | Şirket                                              |
+| **Şuna göre eşleştir** | ID, `{{trigger.object.companyId}}` değerine eşittir |
+
+Bu, fatura adresi, vergi kimliği vb. ile birlikte tam Şirket kaydını getirir.
+
+## Adım 4: Yükü Biçimlendirin (İsteğe Bağlı)
+
+Faturalama sisteminiz belirli bir biçim bekliyorsa bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Adım 5: Faturalama Sistemine Gönderin
+
+Bir **HTTP İsteği** eylemi ekleyin:
+
+| Ayar          | Değer                                             |
+| ------------- | ------------------------------------------------- |
+| **Yöntem**    | POST                                              |
+| **URL**       | Faturalama API uç noktanız                        |
+| **Başlıklar** | `Authorization: Bearer YOUR_API_KEY`              |
+| **Gövde**     | `{{code.invoice}}` veya alanları doğrudan eşleyin |
+
+### Örnek: Stripe Faturası
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Örnek: QuickBooks Faturası
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Tam İş Akışı Özeti
+
+| Adım | Eylem                        | Amaç                                          |
+| ---- | ---------------------------- | --------------------------------------------- |
+| 1    | Tetikleme: Kayıt Güncellendi | Herhangi bir Fırsat değiştiğinde tetiklenir   |
+| 2    | Filtre                       | Yalnızca Aşama = Closed Won ise devam edin    |
+| 3    | Kayıt Ara                    | Faturalama için tam Şirket ayrıntılarını alın |
+| 4    | Kod                          | Faturalama API'si için verileri biçimlendirin |
+| 5    | HTTP İsteği                  | Harici sistemde fatura oluşturun              |
+
+## İpuçları
+
+* **Harici kimlikleri saklayın**: API tarafından döndürülen fatura kimliğini bir **Kayıt Güncelle** eylemi kullanarak Fırsat'a geri kaydedin
+* **Hata işleme**: HTTP isteği başarısız olursa bir bildirim göndermek için bir dal ekleyin
+* **Önce test edin**: Canlıya almadan önce faturalama sisteminizin sandbox/test modunu kullanın
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Kazanıldı Otomasyonları](/l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

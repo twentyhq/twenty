@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
 import {
@@ -16,9 +17,12 @@ export const validateArrayFieldOrThrow = (
   if (typeof value === 'string') return value;
 
   if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
+    const inspectedValue = inspect(value);
+
     throw new CommonQueryRunnerException(
-      `Invalid value ${inspect(value)} for field "${fieldName} - Array values need to be string"`,
+      `Invalid value ${inspectedValue} for field "${fieldName} - Array values need to be string"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      { userFriendlyMessage: msg`Invalid value: "${inspectedValue}"` },
     );
   }
 

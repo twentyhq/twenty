@@ -119,6 +119,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget task',
       icon: 'IconCheckbox',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
       settings: {
@@ -143,6 +144,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
       settings: {
@@ -167,6 +169,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
       settings: {
@@ -191,6 +194,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
       settings: {

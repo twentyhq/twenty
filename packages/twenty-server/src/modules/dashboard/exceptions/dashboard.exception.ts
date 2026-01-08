@@ -16,13 +16,19 @@ export enum DashboardExceptionMessageKey {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
 }
 
-const dashboardExceptionUserFriendlyMessages: Record<
-  DashboardExceptionCode,
-  MessageDescriptor
-> = {
-  [DashboardExceptionCode.DASHBOARD_NOT_FOUND]: msg`Dashboard not found.`,
-  [DashboardExceptionCode.DASHBOARD_DUPLICATION_FAILED]: msg`Failed to duplicate dashboard.`,
-  [DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND]: msg`Page layout not found.`,
+const getDashboardExceptionUserFriendlyMessage = (
+  code: DashboardExceptionCode,
+) => {
+  switch (code) {
+    case DashboardExceptionCode.DASHBOARD_NOT_FOUND:
+      return msg`Dashboard not found.`;
+    case DashboardExceptionCode.DASHBOARD_DUPLICATION_FAILED:
+      return msg`Failed to duplicate dashboard.`;
+    case DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND:
+      return msg`Page layout not found.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class DashboardException extends CustomException<DashboardExceptionCode> {
@@ -33,7 +39,7 @@ export class DashboardException extends CustomException<DashboardExceptionCode> 
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? dashboardExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getDashboardExceptionUserFriendlyMessage(code),
     });
   }
 }

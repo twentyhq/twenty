@@ -1,14 +1,12 @@
-import {
-  type AggregateChartConfiguration,
-  type BarChartConfiguration,
-  type GaugeChartConfiguration,
-  type LineChartConfiguration,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
+import { type TypedAggregateChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedAggregateChartConfiguration';
+import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
+import { type TypedGaugeChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedGaugeChartConfiguration';
+import { type TypedLineChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedLineChartConfiguration';
+import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 
 export type ChartWidgetConfiguration =
-  | BarChartConfiguration
-  | GaugeChartConfiguration
-  | LineChartConfiguration
-  | AggregateChartConfiguration
-  | PieChartConfiguration;
+  | TypedBarChartConfiguration
+  | TypedGaugeChartConfiguration
+  | TypedLineChartConfiguration
+  | TypedAggregateChartConfiguration
+  | TypedPieChartConfiguration;

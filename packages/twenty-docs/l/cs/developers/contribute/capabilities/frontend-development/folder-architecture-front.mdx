@@ -1,0 +1,109 @@
+---
+title: Architektura složek
+info: Podrobný pohled na naši architekturu složek
+---
+
+V tomto průvodci prozkoumáte detaily struktury projektového adresáře a jak přispívá k organizaci a udržovatelnosti Twenty.
+
+Následováním této konvence architektury složek je snazší najít soubory související s konkrétními funkcemi a zajistit rozšiřitelnost a udržovatelnost aplikace.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Stránky
+
+Zahrnuje komponenty nejvyšší úrovně definované aplikačními trasami. Importují více nízkoúrovňových komponent ze složky modulů (více podrobností níže).
+
+## Moduly
+
+Každý modul představuje funkci nebo skupinu funkcí s jejich specifickými komponenty, stavy a provozní logikou.
+Všechny by měly dodržovat strukturu níže. You can nest modules within modules (referred to as submodules) and the same rules will apply.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Kontexty
+
+Kontext je způsob, jak předávat data skrz strom komponent, aniž by se musely na každé úrovni ručně předávat props.
+
+Více podrobností naleznete v [React Context](https://react.dev/reference/react#context-hooks).
+
+### GraphQL
+
+Zahrnuje fragmenty, dotazy a mutace.
+
+Více podrobností naleznete v [GraphQL](https://graphql.org/learn/).
+
+* Fragmenty
+
+Fragment je znovupoužitelný kus dotazu, který můžete použít na různých místech. By using fragments, it's easier to avoid duplicating code.
+
+Více podrobností naleznete v [GraphQL Fragments](https://graphql.org/learn/queries/#fragments).
+
+* Dotazy
+
+Více podrobností naleznete v [GraphQL Queries](https://graphql.org/learn/queries/).
+
+* Mutace
+
+Více podrobností naleznete v [GraphQL Mutations](https://graphql.org/learn/queries/#mutations).
+
+### Hooks
+
+Více podrobností naleznete v [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks).
+
+### Stavy
+
+Obsahuje logiku správy stavů. To řeší [RecoilJS](https://recoiljs.org).
+
+* Selektory: Více podrobností naleznete v [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors).
+
+Vestavěná správa stavů v Reactu stále spravuje stav uvnitř komponenty.
+
+### Utils
+
+Měly by obsahovat pouze znovupoužitelné čisté funkce. Otherwise, create custom hooks in the `hooks` folder.
+
+## UI
+
+Obsahuje všechny znovupoužitelné komponenty UI použité v aplikaci.
+
+Tato složka může obsahovat podsložky, jako jsou `data`, `display`, `feedback` a `input` pro specifické typy komponent. Každá komponenta by měla být samostatná a znovupoužitelná, takže ji můžete použít v různých částech aplikace.
+
+Oddělením komponent UI od ostatních komponent ve složce `modules` je snazší udržovat konzistentní design a provádět změny v rozhraní, aniž by to ovlivnilo jiné části (obchodní logiku) kódové základny.
+
+## Rozhraní a závislosti
+
+Můžete importovat kód jiných modulů z jakéhokoliv modulu kromě složky `ui`. Díky tomu zůstane jeho kód snadno testovatelný.
+
+### Interní
+
+Každá část (hooky, stavy, ...) modulu může mít složku `internal`, která obsahuje části používané pouze v rámci modulu.

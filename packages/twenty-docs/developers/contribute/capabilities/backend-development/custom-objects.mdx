@@ -1,0 +1,41 @@
+---
+title: Custom Objects
+---
+
+
+Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.
+
+Standard objects are in-built objects with a set of attributes available for all users. Examples of standard objects in Twenty include Company and Person. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+
+Custom objects are objects that you can create to store information that is unique to your organization. They are not built-in; members of your workspace can create and customize custom objects to hold information that standard objects aren't suitable for.
+
+
+## High-level schema
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## How it works
+
+Custom objects come from metadata tables that determine the shape, name, and type of the objects. All this information is present in the metadata schema database, consisting of tables:
+
+- **DataSource**: Details where the data is present.
+- **Object**: Describes the object and links to a DataSource.
+- **Field**: Outlines an Object's fields and connects to the Object.
+
+To add a custom object, the workspaceMember will query the /metadata API. This updates the metadata accordingly and computes a GraphQL schema based on the metadata, storing it in a GQL cache for later use.
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+To fetch data, the process involves making queries through the /graphql endpoint and passing them through the Query Resolver.
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+
+

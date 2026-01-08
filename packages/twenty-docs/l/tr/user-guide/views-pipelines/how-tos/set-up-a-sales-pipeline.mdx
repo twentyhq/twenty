@@ -1,0 +1,120 @@
+---
+title: Bir Satış Boru Hattı Kurun
+description: Fırsatları aşamalar boyunca izlemek için satış boru hattınızı yapılandırın
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty'deki satış boru hattı, her sütunun satış sürecinizdeki bir aşamayı temsil ettiği Fırsatlar nesnenizin bir Kanban görünümüdür.
+
+## Adım 1: Aşamalarınızı yapılandırın
+
+Aşamalar, Fırsatlar nesnesinin **Aşama** alanında tanımlanır.
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. **Fırsatlar**'ı seçin
+3. **Aşama** alanını bulun ve tıklayın
+4. Sürecinize uyması için aşama ekleyin, kaldırın veya yeniden adlandırın
+
+<VimeoEmbed videoId="927890428" title="Video gösterimi" />
+
+### Önerilen Aşamalar
+
+| Aşama          | Amaç                          |
+| -------------- | ----------------------------- |
+| **Yeni**       | Yeni belirlenen fırsatlar     |
+| **Nitelikli**  | Uygun olduğu doğrulandı       |
+| **Toplantı**   | Görüşmeler yapılıyor          |
+| **Teklif**     | Teklif gönderildi             |
+| **Müzakere**   | Koşullar üzerinde çalışılıyor |
+| **Kazanıldı**  | Anlaşma başarıyla sonuçlandı  |
+| **Kaybedildi** | Anlaşma olumsuz sonuçlandı    |
+
+<Note>
+  **5-7 aşama idealdir.** Çok fazla aşama, boru hattının hızlı taranmasını zorlaştırır; çok az aşama ise anlaşma ilerleyişine ilişkin görünürlüğü azaltır.
+</Note>
+
+## Adım 2: Boru Hattı Görünümü oluşturun
+
+1. **Fırsatlar**'a gidin
+2. Görünüm açılır menüsüne tıklayın → **+ Görünüm ekle**
+3. Adını "Satış Boru Hattı" koyun
+4. **Oluştur**'a tıklayın
+5. **Seçenekler**'i açın ve düzen olarak **Kanban**'ı seçin
+
+Görünüm, sütunlar için otomatik olarak Aşama alanını kullanır.
+
+## Adım 3: Görünümünüzü yapılandırın
+
+### Önemli Alanları Göster
+
+1. **Seçenekler → Alanlar**'a tıklayın
+2. "Gizli Alanlar" bölümünde alanlara bakın
+3. Görüntülemek için **göz simgesine** tıklayın: Şirket, Tutar, Kapanış Tarihi, Sahip
+
+### Toplamaları Etkinleştir
+
+Her sütunun üstünde toplamları gösterin:
+
+1. Bir sütunun üst kısmında bir Aşama adının yanında gösterilen sayıya tıklayın
+2. Toplama türünü seçin (Adet, Toplam, Ortalama vb.)
+3. Toplanacak alanı seçin (ör. Tutar)
+
+**Örnek:** Tutar'ı Toplam ile toplayarak aşama başına toplam anlaşma değerini gösterin.
+
+### Kompakt Görünümü Kullanın (İsteğe bağlı)
+
+Kart içeriğini en aza indirerek genel bir görünüm için:
+
+1. **Seçenekler**'e tıklayın
+2. **Kompakt görünüm** için anahtarı açın
+
+## Adım 4: Kişisel ve Ekip Görünümleri oluşturun
+
+### "Boru Hattım"
+
+* **Filtre**: Sahip = Ben
+* **Görünürlük**: Liste dışı (kişisel görünüm)
+
+### "Ekip Boru Hattı"
+
+* **Filtre**: Yok (tümünü göster)
+* **Görünürlük**: Çalışma alanı (paylaşılan görünüm)
+
+### "Bu Ay Kapanacaklar"
+
+* **Tür**: Tablo
+* **Filtre**: Kapanış Tarihi = Bu ay, Aşama ≠ Kazanıldı, Aşama ≠ Kaybedildi
+* **Sırala**: Kapanış Tarihi artan
+
+## Fırsatlarla Çalışma
+
+### Fırsat Oluşturma
+
+* Fırsatlar görünümünde **+ Yeni**'ye tıklayın
+* Ya da belirli bir aşama sütununda **+**'a tıklayın
+
+### Aşamalar Arasında İlerleme
+
+Aşamalarını güncellemek için fırsat kartlarını sütunlar arasında sürükleyip bırakın.
+
+<VimeoEmbed videoId="927888627" title="Video gösterimi" />
+
+## En İyi Uygulamalar
+
+### Boru Hattı Hijyeni
+
+* Anlaşmaları ilerledikçe günlük olarak güncelleyin
+* Durağan anlaşmaları hızlıca taşıyın veya kapatın
+* Kapanış tarihlerini gerçekçi tutun
+
+### Aşama Disiplini
+
+* Her aşama için net kriterler tanımlayın
+* Kriterler karşılandığında anlaşmaları hızla taşıyın
+* Anlaşmaların aşamalarda çok uzun süre beklemesine izin vermeyin
+
+## İlgili
+
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar ve kompakt görünüm
+* [Filtreler ve Sıralama](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — filtrelenmiş görünümler oluşturma

@@ -1,0 +1,325 @@
+---
+title: أفضل الممارسات
+---
+
+تحدد هذه الوثيقة أفضل الممارسات التي يجب اتباعها عند العمل في الواجهة الأمامية.
+
+## إدارة الحالة
+
+تقوم React و Recoil بإدارة الحالة في قاعدة الشيفرة.
+
+### استخدم `useRecoilState` لتخزين الحالة
+
+من الجيد إنشاء أكبر عدد ممكن من الذرات لتخزين الحالة الخاصة بك.
+
+<Warning>
+  من الأفضل استخدام ذرات إضافية بدلاً من محاولة أن تكون مقتضبًا باستخدام تمرير الخصائص.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### لا تستخدم `useRef` لتخزين الحالة
+
+تجنب استخدام `useRef` لتخزين الحالة.
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+انظر [كيفية إدارة إعادة العرض](#managing-re-renders) إذا شعرت أنك بحاجة إلى `useRef` لمنع بعض إعادة العرض من الحدوث.
+
+## إدارة إعادة العرض
+
+يمكن أن تكون إعادة العرض صعبة الإدارة في React.
+
+إليك بعض القواعد التي يجب اتباعها لتجنب إعادة العرض غير الضرورية.
+
+تذكر أنه يمكنك **دائمًا** تجنب إعادة العرض من خلال فهم سببها.
+
+### العمل على المستوى الجذري
+
+تجنب إعادة العرض في الميزات الجديدة أصبح سهلاً الآن عن طريق إزالتها على المستوى الجذري.
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+بهذه الطريقة، تعرف أن هناك مكان واحد فقط يمكنه تحفيز إعادة العرض.
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+يمكنك أيضًا العثور عليها في المكتبات مثل Apollo: `onCompleted`، `onError`، إلخ.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### استخدم حالات عائلة Recoil ومحددات عائلة Recoil
+
+حالات عائلة Recoil والمحددات تعتبر طريقة رائعة لتجنب إعادة العرض.
+
+إنها مفيدة عندما تحتاج إلى تخزين قائمة من العناصر.
+
+### يجب ألا تستخدم `React.memo(MyComponent)`
+
+تجنب استخدام `React.memo()` لأنه لا يحل سبب إعادة العرض، بل يكسر سلسلة إعادة العرض، مما قد يؤدي إلى سلوك غير متوقع ويجعل التعليمات البرمجية صعبة التعديل.
+
+### حدد استخدام `useCallback` أو `useMemo`
+
+غالبًا ما لا تكون ضرورية وستجعل التعليمات البرمجية أصعب في القراءة والصيانة لأداء غير ملحوظ.
+
+## Console.logs
+
+تصريحات `console.log` ذات قيمة أثناء التطوير، حيث تقدم رؤى في الوقت الفعلي عن قيمة المتغيرات وتدفق التعليمات البرمجية. ولكن، تركها في التعليمات البرمجية في الإنتاج قد يؤدي إلى عدة مشكلات:
+
+1. **الأداء**: تسجيل كثير قد يؤثر على أداء وقت التشغيل، خاصة في التطبيقات على الجانب العميل.
+
+2. **الأمان**: تسجيل البيانات الحساسة قد يكشف المعلومات الحرجة لأي شخص يقوم بتفتيش وحدة التحكم في المتصفح.
+
+3. **النظافة**: ملء وحدة التحكم بالسجلات قد يحجب التحذيرات أو الأخطاء الهامة التي يحتاج المطورون أو الأدوات إلى رؤيتها.
+
+4. **الاحترافية**: المستخدمون النهائيون أو العملاء الذين يفحصون وحدة التحكم ويجدون الكثير من تصريحات السجلات قد يشككون في جودة وتأنق التعليمات البرمجية.
+
+تأكد من إزالة جميع تصريحات `console.log` قبل دفع التعليمات البرمجية إلى الإنتاج.
+
+## التسمية
+
+### تسمية المتغيرات
+
+يجب أن تعبر أسماء المتغيرات بدقة عن الغرض أو وظيفة المتغير.
+
+#### المشكلة مع الأسماء العامة
+
+الأسماء العامة في البرمجة ليست مثالية لأنها تفتقر إلى التحديد، مما يؤدي إلى الغموض وتقليل قابلية قراءة التعليمات البرمجية. مثل هذه الأسماء تفشل في التعبير عن الغرض من المتغير أو الوظيفة، مما يجعل من الصعب على المطورين فهم نية التعليمات البرمجية دون تحقيق أعمق. يمكن أن يؤدي ذلك إلى زيادة وقت إزالة الأخطاء، وزيادة قابلية التعرض للأخطاء، وصعوبات في الصيانة والتعاون. في الوقت نفسه، تجعل التسمية الوصفية التعليمات البرمجية تفسيرية بذاتها وأسهل في التنقل، مما يعزز جودة التعليمات البرمجية وإنتاجية المطور.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### بعض الكلمات يجب تجنبها في أسماء المتغيرات
+
+* dummy
+
+### معالجات الأحداث
+
+يجب أن تبدأ أسماء معالجات الأحداث بكلمة `handle`، بينما يعتبر `on` بادئة تستخدم لتسمية الأحداث في خصائص المكونات.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## الخصائص الاختيارية
+
+تجنب تمرير القيمة الافتراضية لخاصية اختيارية.
+
+**مثال**
+
+خذ مكون`EmailField` المحدد أدناه:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**الاستخدام**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## المكون كخصائص
+
+حاول قدر الإمكان تمرير المكونات غير المنشأة كمكونات، بحيث يمكن للأطفال تحديد ما يحتاجون لتمريره.
+
+المثال الأكثر شيوعا لذلك هو مكونات الأيقونات:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+لفهم React أن المكون هو مكون، يجب عليك استخدام PascalCase، للتمكن من معاملته لاحقًا كـ `<MyIcon>`
+
+## تمرير الخصائص: اجعلها محدودة
+
+يشير تمرير الخصائص في سياق React إلى ممارسة تمرير متغيرات الحالة وأدوات تحكمها عبر العديد من طبقات المكونات، حتى لو لم تستخدمها المكونات الوسيطة. رغم أنها تكون ضرورية في بعض الأحيان، إلا أن تمرير الخصائص الزائد يمكن أن يؤدي إلى:
+
+1. **انخفاض القابلية للقراءة**: يمكن أن يصبح تتبع مصدر الخاصية أو مكان استخدامها معقدا في هيكل مكون معقد.
+
+2. **تحديات الصيانة**: قد تتطلب التغييرات في هيكل خاصية أحد المكونات تعديلات في عدة مكونات، حتى لو لم تستخدم الخاصية مباشرة.
+
+3. **تقليل إعادة استخدام المكونات**: يصبح المكون الذي يتلقى الكثير من الخصائص لتمريرها فقط أقل شمولية وأصعب في إعادة استخدامه في سياقات مختلفة.
+
+إذا شعرت أنك تستخدم تمرير الخصائص بشكل مفرط، راجع [أفضل ممارسات إدارة الحالة](#state-management).
+
+## استيرادات
+
+عند الاستيراد، اختر الأسماء المستعارة المتعينة بدلا من تحديد المسارات كاملة أو نسبية.
+
+**الأسماء المستعارة**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**الاستخدام**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## التحقق من المخططات
+
+[Zod](https://github.com/colinhacks/zod) هو مدقق المخططات للكائنات غير المTyped:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## التغييرات الجذرية
+
+قم دائمًا بإجراء اختبارات يدوية شاملة قبل المتابعة لضمان أن التعديلات لم تسبب تعطيلًا في أماكن أخرى، نظرًا لأن الاختبارات لم تدمج حتى الآن بشكل كبير.

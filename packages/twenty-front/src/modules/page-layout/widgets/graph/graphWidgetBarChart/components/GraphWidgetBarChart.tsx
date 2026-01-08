@@ -2,14 +2,16 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
+import { CustomSliceHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomSliceHoverLayer';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
@@ -33,13 +35,14 @@ import {
   type BarDatum,
   type BarItemProps,
   type ComputedBarDatum,
-  type ComputedDatum,
 } from '@nivo/bar';
-import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { BarChartLayout } from '~/generated/graphql';
 
 type NoDataLayerWrapperProps = BarCustomLayerProps<BarDatum>;
+type SliceHoverLayerWrapperProps = BarCustomLayerProps<BarDatum>;
 
 type GraphWidgetBarChartProps = {
   data: BarDatum[];
@@ -58,7 +61,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
-  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
+  onSliceClick?: (slice: BarChartSlice) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -92,7 +95,7 @@ export const GraphWidgetBarChart = ({
   prefix,
   suffix,
   customFormatter,
-  onBarClick,
+  onSliceClick,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -103,6 +106,10 @@ export const GraphWidgetBarChart = ({
 
   const setActiveBarTooltip = useSetRecoilComponentState(
     graphWidgetBarTooltipComponentState,
+  );
+
+  const setHoveredSliceIndex = useSetRecoilComponentState(
+    graphWidgetHoveredSliceIndexComponentState,
   );
 
   const formatOptions: GraphValueFormatOptions = {
@@ -158,9 +165,13 @@ export const GraphWidgetBarChart = ({
       tickCount: tickConfig.numberOfValueTicks,
     });
 
-  const hasClickableItems = isDefined(onBarClick);
+  const hasClickableItems = isDefined(onSliceClick);
 
-  const hideTooltip = () => setActiveBarTooltip(null);
+  const hideTooltip = () => {
+    setActiveBarTooltip(null);
+    setHoveredSliceIndex(null);
+  };
+
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
   const handleTooltipMouseEnter = () => {
@@ -169,20 +180,28 @@ export const GraphWidgetBarChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleBarEnter = useCallback(
-    (datum: ComputedDatum<BarDatum>, event: MouseEvent<SVGRectElement>) => {
+  const handleSliceHover = (
+    sliceData: {
+      slice: BarChartSlice;
+      offsetLeft: number;
+      offsetTop: number;
+    } | null,
+  ) => {
+    if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
       setActiveBarTooltip({
-        datum,
-        anchorElement: event.currentTarget,
+        slice: sliceData.slice,
+        offsetLeft: sliceData.offsetLeft,
+        offsetTop: sliceData.offsetTop,
       });
-    },
-    [debouncedHideTooltip, setActiveBarTooltip],
-  );
+    } else {
+      debouncedHideTooltip();
+    }
+  };
 
-  const handleBarLeave = useCallback(() => {
+  const handleSliceLeave = () => {
     debouncedHideTooltip();
-  }, [debouncedHideTooltip]);
+  };
 
   const {
     axisBottom: axisBottomConfig,
@@ -243,6 +262,21 @@ export const GraphWidgetBarChart = ({
     />
   );
 
+  const SliceHoverLayerWrapper = (layerProps: SliceHoverLayerWrapperProps) =>
+    hasNoData ? null : (
+      <CustomSliceHoverLayer
+        bars={layerProps.bars}
+        innerWidth={layerProps.innerWidth}
+        innerHeight={layerProps.innerHeight}
+        marginLeft={margins.left}
+        marginTop={margins.top}
+        layout={layout}
+        onSliceHover={handleSliceHover}
+        onSliceClick={onSliceClick}
+        onSliceLeave={handleSliceLeave}
+      />
+    );
+
   const hasNegativeValues = calculatedValueRange.minimum < 0;
   const zeroMarker = hasNegativeValues
     ? [
@@ -279,7 +313,9 @@ export const GraphWidgetBarChart = ({
           margin={margins}
           padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
           groupMode={groupMode}
-          layout={layout}
+          layout={
+            layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'
+          }
           valueScale={{
             type: 'linear',
             min: valueDomain.min,
@@ -292,6 +328,7 @@ export const GraphWidgetBarChart = ({
             'grid',
             'markers',
             'axes',
+            SliceHoverLayerWrapper,
             'bars',
             'legends',
             TotalsLayer,
@@ -330,9 +367,6 @@ export const GraphWidgetBarChart = ({
             formatGraphValue(Number(barDatumCandidate.value), formatOptions)
           }
           tooltip={() => null}
-          onMouseEnter={hasNoData ? undefined : handleBarEnter}
-          onMouseLeave={hasNoData ? undefined : handleBarLeave}
-          onClick={hasNoData ? undefined : onBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
@@ -342,9 +376,8 @@ export const GraphWidgetBarChart = ({
         containerRef={containerRef}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
-        enableGroupTooltip={groupMode === 'stacked'}
-        layout={layout}
-        onBarClick={onBarClick}
+        layout={layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'}
+        onSliceClick={onSliceClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />

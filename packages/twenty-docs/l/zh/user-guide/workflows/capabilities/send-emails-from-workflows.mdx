@@ -1,0 +1,149 @@
+---
+title: Send Emails from Workflows
+description: Send personalized emails automatically using workflow actions.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+
+## Prerequisites
+
+Before you can send emails from workflows:
+
+1. Connect an email account under **Settings → Accounts**
+2. Ensure the account has sending permissions enabled
+
+## Basic Email Workflow
+
+### Example: Welcome Email for New Contacts
+
+**Goal**: Send a welcome email when a new person is added to the CRM.
+
+**Setup**:
+
+1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+
+2. **Add trigger**: Select **Record is Created** → **People**
+
+3. **Add Send Email action**:
+   * Click **+** to add an action
+   * Select **Send Email**
+   * Configure the email:
+
+| Field       | Value                                  |
+| ----------- | -------------------------------------- |
+| **To**      | `{{trigger.object.email}}`             |
+| **Subject** | `Welcome to {{Your Company Name}}`     |
+| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Test and activate**: Test with a sample record, then activate
+
+## Using Variables in Emails
+
+Reference data from previous steps using `{{variable}}` syntax:
+
+```text
+Hi {{trigger.object.firstName}},
+
+Thank you for connecting with us!
+
+Your company, {{trigger.object.company.name}}, is now in our system.
+
+Best regards,
+The Team
+```
+
+### Available Variables from Triggers
+
+| Trigger Type               | Common Variables                       |
+| -------------------------- | -------------------------------------- |
+| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
+| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                | `{{trigger.body.fieldName}}`           |
+
+## Advanced: Conditional Emails
+
+### Example: Different Emails Based on Lead Source
+
+**Goal**: Send different welcome emails based on where the lead came from.
+
+**Setup**:
+
+1. **Trigger**: Record is Created (People)
+
+2. **Add Filter action**:
+   * Condition: `{{trigger.object.source}}` equals `"Website"`
+   * If true → continue to website welcome email
+
+3. **Branch for other sources**:
+   * Create parallel branches for different sources
+   * Each branch has its own Send Email action
+
+## Sending Emails to Multiple Recipients
+
+### Example: Notify Team When Deal Closes
+
+**Goal**: Email the sales rep and their manager when an opportunity is won.
+
+**Setup**:
+
+1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+
+2. **Search Records**: Find the opportunity owner's manager
+
+3. **Send Email #1**: To opportunity owner
+   * To: `{{trigger.object.owner.email}}`
+   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+
+4. **Send Email #2**: To manager
+   * To: `{{searchRecords.manager.email}}`
+   * Subject: `Deal Won: {{trigger.object.name}}`
+
+## Scheduled Follow-up Emails
+
+### Example: Follow Up 3 Days After Meeting
+
+**Goal**: Send a follow-up email 3 days after a meeting is logged.
+
+**Setup**:
+
+1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+
+2. **Delay action**: Wait 3 days
+
+3. **Send Email**:
+   * To: Meeting attendee
+   * Subject: Following up on our conversation
+   * Body: Reference meeting details from trigger
+
+## Best Practices
+
+### Email Content
+
+* Keep subject lines concise and relevant
+* Personalize with recipient's name
+* Include a clear call to action
+* Test emails before activating
+
+### Deliverability
+
+* Don't send too many emails too quickly
+* Use professional email signatures
+* Avoid spam trigger words
+* Ensure unsubscribe options for marketing emails
+
+### Troubleshooting
+
+* Verify email account is connected and active
+* Check recipient email address is valid
+* Review workflow runs for error messages
+* Test with your own email address first
+
+<Note>
+  **Coming soon**: Email attachments will be available in Q1 2026.
+</Note>
+
+## Related
+
+* [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)

@@ -1,8 +1,13 @@
 import { type ChartWidget } from '@/command-menu/pages/page-layout/types/ChartWidget';
-import { WidgetType } from '~/generated/graphql';
+import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type WidgetConfiguration } from '~/generated/graphql';
 
 export const isChartWidget = (
-  pageLayoutWidget: any,
+  pageLayoutWidget: PageLayoutWidget,
 ): pageLayoutWidget is ChartWidget => {
-  return pageLayoutWidget.type === WidgetType.GRAPH;
+  return isWidgetConfigurationOfTypeGraph(
+    // TODO: Remove this cast when we FieldsConfiguration and FieldConfiguration are in the backend
+    pageLayoutWidget.configuration as WidgetConfiguration,
+  );
 };

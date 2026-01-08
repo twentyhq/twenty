@@ -1,0 +1,178 @@
+---
+title: Kısayollar
+---
+
+## Giriş
+
+Bir kısayolu dinlemeniz gerektiğinde, normalde `onKeyDown` olay dinleyicisini kullanırsınız.
+
+Ancak `twenty-front` uygulamasında, aynı anda monte edilmiş farklı bileşenlerde kullanılan aynı kısayollar arasında çakışmalar olabilir.
+
+Örneğin, Enter tuşunu dinleyen bir sayfanız ve Enter tuşunu dinleyen bir modalınız varsa, ve modalın içinde Enter tuşunu dinleyen bir Seçim bileşeni varsa, hepsi aynı anda monte edildiğinde bir çakışma yaşayabilirsiniz.
+
+## `useScopedHotkeys` hook'u
+
+Bu sorunu ele almak için, kısayolları çakışma olmadan dinlemeyi mümkün kılan özel bir kanca geliştirdik.
+
+Bir bileşene yerleştirirsiniz ve sadece bileşen monte edildiğinde VE belirtilen **kısayol kapsamı** aktif olduğunda kısayolları dinleyecektir.
+
+## Pratikte kısayolları nasıl dinleyebilirsiniz?
+
+Kısayol dinleme kurulumu iki adımdan oluşur:
+
+1. Kısayolları dinleyecek [kısayol kapsamını](#what-is-a-hotkey-scope-) ayarlayın
+2. Kısayolları dinlemek için `useScopedHotkeys` hook'unu kullanın
+
+Kısayol kapsamlarının kurulumu, sol menü veya komut menüsü gibi diğer kullanıcı arayüzü öğelerinin de kısayolları dinleyebileceği için, basit sayfalarda bile gereklidir.
+
+## Kısayollar için kullanım durumları
+
+Genel olarak, kısayollara ihtiyaç duyan iki kullanım durumunuz olacaktır:
+
+1. Bir sayfada veya bir sayfada monte edilmiş bir bileşende
+2. Bir kullanıcı eylemi nedeniyle dikkati çeken modal-tipi bir bileşende
+
+İkinci kullanım durumu, örneğin bir modal içinde bir açılır menü gibi, yineleyici olabilir.
+
+### Bir sayfada kısayolları dinlemek
+
+Örnek:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Modal-tipi bir bileşende kısayolları dinlemek
+
+Bu örnekte, ebeveynine kapanmasını söylemek için Escape tuşunu dinleyen bir modal bileşeni kullanacağız.
+
+Burada kullanıcı etkileşimi, kapsamı değiştirmektir.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Sonra modal bileşeninde:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+Bu modeli, mount/unmount ile yalnızca bir useEffect'e güvenmenin çakışmayı önlemek için yeterli olmayabileceği durumlarda kullanmak önemlidir.
+
+Bu çakışmaların hata ayıklaması zor olabilir ve genellikle useEffect'lerle daha sık meydana gelebilir.
+
+## Kısayol kapsamı nedir?
+
+Kısayol kapsamı, kısayolların aktif olduğu bir bağlamı temsil eden bir dizedir. Genellikle bir enum olarak kodlanmıştır.
+
+Kısayol kapsamını değiştirdiğinizde, bu kapsamı dinleyen kısayollar etkinleştirilecek ve diğer kapsamları dinleyen kısayollar devre dışı bırakılacaktır.
+
+Aynı anda yalnızca bir kapsam ayarlayabilirsiniz.
+
+Örneğin, her sayfa için kısayol kapsamları `PageHotkeyScope` enum'unda tanımlanmıştır:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Dahili olarak, şu anda seçili olan kapsam, uygulama genelinde paylaşılan bir Recoil durumunda saklanır:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Ancak bu Recoil durumu asla el ile yönetilmemelidir! Bunu bir sonraki bölümde nasıl kullanacağımızı göreceğiz.
+
+## İçsel olarak nasıl çalışıyor?
+
+Gereksiz yeniden render etme işlemlerinden kaçınarak daha performanslı hale getiren [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) üzerine ince bir sarmalayıcı yaptık.
+
+Ayrıca, kısayol kapsamı durumunu yönetmek ve uygulamanın her yerinde kullanılabilir hale getirmek için bir Recoil durumu oluşturuyoruz.
