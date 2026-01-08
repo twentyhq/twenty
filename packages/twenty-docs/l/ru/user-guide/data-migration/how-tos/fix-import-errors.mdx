@@ -5,118 +5,118 @@ description: Полное руководство по устранению ош�
 
 ## Обзор
 
-Импорт не работает? This guide helps you identify and fix common import errors step by step.
+Импорт не работает? Это руководство поможет вам поэтапно выявлять и устранять распространённые ошибки импорта.
 
-## How Import Validation Works
+## Как работает проверка импорта
 
-After uploading your file and mapping columns, Twenty validates your data:
+После загрузки файла и сопоставления столбцов Twenty проверяет ваши данные:
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **Запускается проверка** — Twenty проверяет каждую строку на ошибки
+2. **Ошибки подсвечиваются** — проблемные строки отображаются **жёлтым**
+3. **Исправляйте на месте** — редактируйте ячейки прямо в интерфейсе импорта
+4. **Или удалите строки** — полностью пропустите проблемные записи
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**Исправляйте ошибки в интерфейсе.** Вам не нужно возвращаться к своей таблице. Редактируйте ячейки прямо во время импорта, чтобы сэкономить время.</Note>
 
-## Step-by-Step Troubleshooting
+## Пошаговое устранение неполадок
 
-### Step 1: Identify the Error Type
+### Шаг 1: Определите тип ошибки
 
-Click on a highlighted row to see the specific error message. Common error types:
+Нажмите на подсвеченную строку, чтобы увидеть конкретное сообщение об ошибке. Распространённые типы ошибок:
 
-| Сообщение об ошибке                                                   | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| Сообщение об ошибке                                                                      | Что это означает                                                      |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Дублирующиеся значения, подсвеченные жёлтым                                              | Значение уже существует в Twenty или встречается дважды в вашем файле |
+| `{field} не является допустимым {type}` (наведите курсор на жёлтую ячейку)               | Данные не соответствуют ожидаемому формату                            |
+| Подсвечено обязательное поле                                                             | Обязательное поле пусто                                               |
+| `Не удаётся подключиться к {object}. Уникальная запись не найдена...` (импорт не удался) | Связанная запись не существует                                        |
+| `Слишком много записей. Разрешено не более 10000` (загрузка заблокирована)               | В файле более 10 000 записей                                          |
 
-### Step 2: Fix the Error
+### Шаг 2: Исправьте ошибку
 
-Follow the specific instructions below for each error type.
+Следуйте приведённым ниже инструкциям для каждого типа ошибки.
 
 ---
 
-## Error: Duplicate Value
+## Ошибка: Дублирующееся значение
 
 ### Что вы увидите
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+Строки с дублирующимися значениями **подсвечиваются жёлтым** в интерфейсе импорта до начала импорта.
 
-### What It Means
+### Что это означает
 
-A unique field (email, domain) either:
+Уникальное поле (email, домен) либо:
 
-* Already exists in Twenty
-* Appears twice in your file
+* Уже существует в Twenty
+* Встречается дважды в вашем файле
 
-### How to Fix
+### Как исправить
 
-**Option 1: Edit the duplicate value**
+**Вариант 1: Измените дублирующееся значение**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. Нажмите на ячейку с ошибкой
+2. Измените на уникальное значение
+3. Продолжайте импорт
 
-**Option 2: Remove the duplicate row**
+**Вариант 2: Удалите строку-дубликат**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. Нажмите X рядом со строкой
+2. Эта строка будет пропущена при импорте
 
-**Option 3: Let Twenty update the existing record**
+**Вариант 3: Разрешите Twenty обновить существующую запись**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. Убедитесь, что ваш файл содержит уникальный идентификатор (`email`, `domain` или `id`)
+2. Сопоставьте поле уникального идентификатора
+3. Twenty обновит существующую запись вместо создания дубликата
 
 <Note>
-  **You can update unique fields too.**
+  **Можно обновлять и уникальные поля.**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * Если вы оставите `id`, но измените `email` → адрес электронной почты будет обновлён
+  * Если вы оставите `email`, но измените `id` → идентификатор будет обновлён
 
-  As long as one unique identifier matches, Twenty updates the record.
+  Пока совпадает хотя бы один уникальный идентификатор, Twenty обновит запись.
 </Note>
 
-### How to Prevent This Error
+### Как предотвратить эту ошибку
 
-Before importing:
+Перед импортом:
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. Отсортируйте таблицу по уникальному полю
+2. Удалите строки-дубликаты
+3. Проверьте, существуют ли записи уже в Twenty
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **Записи, помеченные как удалённые, учитываются при проверке уникальности.**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  Откройте Командное меню → Просмотреть удалённые записи. Записи там по-прежнему учитываются при проверке уникальности. Удалите их окончательно или восстановите и обновите.
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
+Подробнее: [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## Ошибка: Неверный формат
 
 ### Что вы увидите
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+Значение ячейки подсвечено жёлтым. Наведите на него курсор, чтобы увидеть сообщение об ошибке:
 
 ```
-{field name} is not a valid {field type}
+{field name} — недопустимое значение для {field type}
 ```
 
-### What It Means
+### Что это означает
 
-The data doesn't match the expected format for that field type.
+Данные не соответствуют ожидаемому формату для этого типа поля.
 
-### How to Fix — By Field Type
+### Как исправить — по типам полей
 
 #### Электронная почта
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**Проблема:** Неверный формат email
+**Решение:** Используйте формат `name@domain.com`
 
 ```
 ❌ john.smith@
@@ -126,8 +126,8 @@ The data doesn't match the expected format for that field type.
 
 #### Домен
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**Проблема:** Несогласованный формат может вызывать дубликаты
+**Решение:** Используйте формат `https://domain.com` (рекомендуется)
 
 ```
 ⚠️ acme.com         (valid, but not recommended)
@@ -135,12 +135,12 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>Все форматы допустимы, но `https://domain.com` рекомендуется, потому что он соответствует формату, используемому при синхронизации почты/календаря. Использование других форматов может привести к созданию дублирующихся компаний.</Note>
 
 #### Дата
 
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**Проблема:** Нераспознанный формат даты
+**Решение:** Используйте единый формат по всему файлу
 
 ```
 ✓ 2024-03-15        (YYYY-MM-DD - recommended)
@@ -150,19 +150,19 @@ The data doesn't match the expected format for that field type.
 
 #### Телефон
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**Проблема:** Отсутствуют обязательные столбцы
+**Решение:** Добавьте все столбцы для телефонов
 
-| Column                                  | Пример       |
-| --------------------------------------- | ------------ |
-| **Phones / Primary Phone Number**       | `4159095555` |
-| **Phones / Primary Phone Country Code** | `US`         |
-| **Phones / Primary Phone Calling Code** | `+1`         |
+| Столбец                                        | Пример       |
+| ---------------------------------------------- | ------------ |
+| **Телефоны / Основной номер телефона**         | `4159095555` |
+| **Телефоны / Код страны основного номера**     | `US`         |
+| **Телефоны / Телефонный код основного номера** | `+1`         |
 
-#### Boolean
+#### Логический тип
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**Проблема:** Неверное логическое значение
+**Решение:** Используйте прописные `TRUE` или `FALSE`
 
 ```
 ❌ true
@@ -172,17 +172,17 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### Выбор / Множественный выбор
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**Проблема:** Значение не совпадает с существующими опциями
+**Решение:** Используйте **имена API**, а не отображаемые метки
 
-How to find API names:
+Как найти имена API:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект и поле
+3. Включите **Расширенный режим** (переключатель внизу справа)
+4. Используйте имя API (например, `OPTION_1`, а не "Option 1")
 
 ```
 ❌ High Priority
@@ -191,18 +191,18 @@ How to find API names:
 
 #### Валюта
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**Проблема:** Отсутствует сумма или код валюты
+**Решение:** Заполните оба столбца
 
-| Column                | Пример    |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Столбец            | Пример    |
+| ------------------ | --------- |
+| **Сумма / Сумма**  | `1234.56` |
+| **Сумма / Валюта** | `USD`     |
 
 #### Число
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**Проблема:** Нечисловые символы
+**Решение:** Только цифры, точка для десятичных дробей
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/ru/user-guide/data-migration/capabilities/field-mapping)
+Полная справка по форматам: [Справочник по сопоставлению полей](/l/ru/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## Ошибка: Отсутствует обязательное поле
 
 ### Что вы увидите
 
-The row is highlighted in yellow with the required field cell marked.
+Строка подсвечена жёлтым, а ячейка обязательного поля отмечена.
 
-### What It Means
+### Что это означает
 
-A required field is empty for this row.
+В этой строке не заполнено обязательное поле.
 
-### How to Fix
+### Как исправить
 
-**Option 1: Enter a value**
+**Вариант 1: Введите значение**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. Нажмите на пустую ячейку
+2. Введите значение
+3. Продолжайте импорт
 
-**Option 2: Remove the row**
+**Вариант 2: Удалите строку**
 
-1. If you don't have the data, click X to skip the row
+1. Если данных нет, нажмите X, чтобы пропустить строку
 
-### How to Prevent This Error
+### Как предотвратить эту ошибку
 
-Before importing, identify required fields:
+Перед импортом определите обязательные поля:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите ваш объект
+3. Проверьте, какие поля помечены как обязательные
 
 ---
 
-## Error: Relation Not Found
+## Ошибка: Связь не найдена
 
 ### Что вы увидите
 
-This error appears **after the import starts** — the import fails with a message like:
+Эта ошибка возникает **после начала импорта** — импорт завершается с сообщением вроде:
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+Это означает, что в Twenty нет компании с таким идентификатором.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>В отличие от других ошибок, эта не обнаруживается на этапе проверки данных. Импорт начнётся, а затем завершится с ошибкой, когда встретит отсутствующую связь.</Note>
 
-### What It Means
+### Что это означает
 
-You're trying to link to a record that doesn't exist in Twenty.
+Вы пытаетесь сослаться на запись, которой не существует в Twenty.
 
-### How to Fix
+### Как исправить
 
-**Option 1: Import parent records first**
+**Вариант 1: Сначала импортируйте родительские записи**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. Отмените текущий импорт
+2. Импортируйте родительские записи (например, Компании)
+3. Затем импортируйте дочерние записи (например, Контакты)
 
-**Option 2: Fix the reference value**
+**Вариант 2: Исправьте ссылочное значение**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. Проверьте ссылочное значение в вашем файле
+2. Убедитесь, что оно в точности совпадает с существующей записью
+3. Проверьте формат: домены должны быть в виде `https://domain.com`
 
-**Option 3: Remove the relation**
+**Вариант 3: Удалите связь**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. Очистите ячейку, чтобы импортировать без связи
+2. Добавьте связь вручную позже
 
-### How to Prevent This Error
+### Как предотвратить эту ошибку
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **Импортируйте в правильном порядке:**
+   * Сначала — Компании
+   * Затем — Контакты (со ссылками на компании)
+   * Третьими — Возможности
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **Проверьте ссылочные значения:**
+   * Экспортируйте родительские записи, чтобы получить точные идентификаторы
+   * Используйте формат домена `https://domain.com`
+   * Проверьте опечатки и учтите регистр
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+  **Импорт завершится с ошибкой, если ссылка указывает на несуществующую запись.**
 
-  Always import parent objects before child objects.
+  Всегда импортируйте родительские объекты перед дочерними объектами.
 </Warning>
 
-For more details: [Import Relations](/l/ru/user-guide/data-migration/capabilities/import-relations)
+Подробнее: [Импорт связей](/l/ru/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## Ошибка: Слишком большой файл
 
 ### Что вы увидите
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+Эта ошибка появляется **при загрузке файла** — загрузка полностью блокируется:
 
 ```
-Too many records. Up to 10000 allowed
+Слишком много записей. Разрешено не более 10000
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+Вы не сможете перейти к этапу проверки данных, пока не уменьшите размер файла.
 
-### What It Means
+### Что это означает
 
-Your file has more than 10,000 records.
+В вашем файле более 10 000 записей.
 
-### How to Fix
+### Как исправить
 
-**Option 1: Split into multiple files**
+**Вариант 1: Разделите на несколько файлов**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. Разделите данные на файлы по 10 000 записей или меньше
+2. Импортируйте каждый файл отдельно
+3. Соблюдайте порядок импорта (Компании перед Контактами)
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/ru/user-guide/data-migration/how-tos/import-data-via-api)
+**Вариант 2: Используйте импорт через API**
+Для очень больших наборов данных используйте API, у которого нет ограничения по количеству записей.
+См.: [Как импортировать данные через API](/l/ru/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: Field Not Recognized
+## Ошибка: Поле не распознано
 
-### What It Means
+### Что это означает
 
-A column in your file can't be mapped because the field doesn't exist in Twenty.
+Столбец в вашем файле нельзя сопоставить, потому что такого поля нет в Twenty.
 
-### How to Fix
+### Как исправить
 
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект, который вы импортируете
+3. Нажмите **+ Добавить поле**
+4. Создайте настраиваемое поле с соответствующим типом
+5. Загрузите файл повторно
 
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+<Note>Импорт CSV создаёт записи, а не поля. Все поля должны существовать до начала импорта.</Note>
 
 ---
 
-## Error: User Relation Empty
+## Ошибка: Пустая связь с пользователем
 
-### What It Means
+### Что это означает
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+Вы пытаетесь назначить запись пользователю (Owner, Assignee), но связь не сопоставляется.
 
-### Common Causes
+### Распространённые причины
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. **Пользователь не принял приглашение** — пользователь ещё не существует в Twenty
+2. **Используется ID пользователя из старой системы** — Twenty не может сопоставить идентификаторы из другой системы
+3. **Неверный формат email** — адрес электронной почты не совпадает с аккаунтом пользователя в Twenty
 
-### How to Fix
+### Как исправить
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+1. Убедитесь, что все пользователи **приняли приглашение** в ваше рабочее пространство Twenty
+2. Используйте **адрес электронной почты** пользователя (не его имя и не ID из старой системы)
+3. Используйте тот же адрес электронной почты, который использовался для присоединения к Twenty
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **Пользователи должны принять приглашения до начала импорта.**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  Если пользователь не принял приглашение, у записей, ссылающихся на него, будет пустая пользовательская связь.
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## Контрольный список перед импортом
 
-Avoid errors by checking these before importing:
+Избегайте ошибок, проверив следующее перед импортом:
 
-### File Requirements
+### Требования к файлу
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>Файл в формате CSV, XLSX или XLS</Check>
+<Check>В файле менее 10 000 записей</Check>
+<Check>Файл использует кодировку UTF-8</Check>
 
-### Data Quality
+### Качество данных
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>Нет дублирующихся адресов электронной почты (для Контактов)</Check>
+<Check>Нет дублирующихся доменов (для Компаний)</Check>
+<Check>Все даты используют единый формат</Check>
+<Check>Все домены в формате `https://domain.com`</Check>
 
-### Field Formats
+### Форматы полей
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>Логические поля используют `TRUE` или `FALSE` (прописные)</Check>
+<Check>Поля типа Select используют имена API, а не отображаемые метки</Check>
+<Check>Телефонные поля содержат все обязательные столбцы</Check>
+<Check>Поля валюты содержат и сумму, и код валюты</Check>
 
 ### Связи
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>Родительские записи импортированы до дочерних записей</Check>
+<Check>Столбцы со связями ссылаются на существующие записи</Check>
+<Check>Формат домена точно соответствует формату Twenty</Check>
 
 ### Модель данных
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>Все настраиваемые поля существуют в Настройки → Модель данных</Check>
+<Check>Опции для Select созданы до импорта</Check>
 
 ---
 
-## Still Having Issues?
+## Всё ещё возникают проблемы?
 
-If you've tried the above solutions:
+Если вы попробовали решения выше:
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/ru/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/ru/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/ru/user-guide/data-migration/capabilities/error-handling)
+1. **Скачайте пример файла** — посмотрите точный формат, который ожидает Twenty
+2. **Экспортируйте существующие записи** — сравните свой файл с рабочими данными
+3. **Протестируйте на небольшой выборке** — сначала попробуйте 5–10 строк
+4. **Ознакомьтесь со справочными статьями:**
+   * [Справочник по сопоставлению полей](/l/ru/user-guide/data-migration/capabilities/field-mapping)
+   * [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Импорт связей](/l/ru/user-guide/data-migration/capabilities/import-relations)
+   * [Обработка ошибок](/l/ru/user-guide/data-migration/capabilities/error-handling)

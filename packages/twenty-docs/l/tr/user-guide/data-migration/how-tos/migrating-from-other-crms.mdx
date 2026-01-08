@@ -1,43 +1,43 @@
 ---
 title: Diğer CRM'lerden Taşınma
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Verilerinizi herhangi bir CRM'den Twenty'ye taşımak için adım adım kılavuz.
 ---
 
 ## Genel Bakış
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Bu kılavuz, verilerinizi herhangi bir CRM'den Twenty'ye taşıma sürecinde size yol gösterir. Süreç, verilerinizi denetlemeyi, Twenty çalışma alanınızı hazırlamayı, mevcut sisteminizden dışa aktarmayı ve Twenty'ye içe aktarmayı içerir.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Görünümler, iş akışları ve izinler geçişten sonra manuel olarak yeniden oluşturulmalıdır. Bu yapılandırma çalışması için zaman planlayın.</Note>
 
-## Step 1: Audit Your Current Data
+## Adım 1: Mevcut Verilerinizi Denetleyin
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Geçiş, yeni bir başlangıç için bir fırsattır. Gereksiz karmaşayı taşımayın.
 
-**What to keep:**
+**Tutulacaklar:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Aktif kişiler ve şirketler
+* Açık fırsatlar ve anlaşmalar
+* Önemli notlar ve aktiviteler
+* Gerçekten kullandığınız özel alanlar
 
-**What to leave behind:**
+**Geride bırakılacaklar:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Güncelliğini yitirmiş kişiler (2 yıldan uzun süredir aktivite yok)
+* Yinelenen kayıtlar
+* Test verileri
+* Kullanılmayan özel alanlar
 
-## Step 2: Map Your Data Model
+## Adım 2: Veri Modelinizi Eşleyin
 
-Create a mapping document between your current CRM and Twenty:
+Mevcut CRM'iniz ile Twenty arasında bir eşleme belgesi oluşturun:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| CRM'iniz         | Twenty               |
+| ---------------- | -------------------- |
+| Hesap / Kuruluş  | **Şirket**           |
+| İrtibat / Kişi   | **Kişiler**          |
+| Anlaşma / Fırsat | **Opportunity**      |
+| Activity         | **Task** or **Note** |
+| Custom Object    | **Custom Object**    |
 
 **For each field, document:**
 
