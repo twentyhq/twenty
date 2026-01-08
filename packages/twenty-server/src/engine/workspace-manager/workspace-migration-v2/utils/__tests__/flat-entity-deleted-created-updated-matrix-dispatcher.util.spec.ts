@@ -1,13 +1,13 @@
 import {
-  eachTestingContextFilter,
-  type EachTestingContext,
+    eachTestingContextFilter,
+    type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 type TestContext = FromTo<MetadataFlatEntity<'fieldMetadata'>[]> & {
   metadataName: 'fieldMetadata';

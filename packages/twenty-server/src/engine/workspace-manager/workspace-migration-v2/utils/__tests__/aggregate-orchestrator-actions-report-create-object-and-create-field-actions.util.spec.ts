@@ -1,6 +1,6 @@
 import {
-  eachTestingContextFilter,
-  type EachTestingContext,
+    eachTestingContextFilter,
+    type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -9,8 +9,8 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report-create-object-and-create-field-actions.util';
-import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
-import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
+import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/field/types/workspace-migration-field-action-v2';
+import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/object/types/workspace-migration-object-action-v2';
 
 type CreateAggregationTestCase = EachTestingContext<{
   input: OrchestratorActionsReport;

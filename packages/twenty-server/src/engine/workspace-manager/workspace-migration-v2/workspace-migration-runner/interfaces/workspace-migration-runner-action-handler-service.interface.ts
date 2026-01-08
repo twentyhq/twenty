@@ -11,7 +11,7 @@ import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-e
 import {
     buildActionHandlerKey,
     type WorkspaceMigrationActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/workspace-migration-action-common-v2';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';

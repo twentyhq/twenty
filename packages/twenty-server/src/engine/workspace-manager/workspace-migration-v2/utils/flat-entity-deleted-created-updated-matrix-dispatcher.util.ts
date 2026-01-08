@@ -12,7 +12,7 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/utils/should-infer-deletion-from-missing-entities.util';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
   createdFlatEntityMaps: MetadataFlatEntityMaps<T>;

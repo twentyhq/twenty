@@ -10,7 +10,7 @@ import {
     buildActionHandlerKey,
     type WorkspaceMigrationActionHandlerKey,
     type WorkspaceMigrationActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/workspace-migration-action-common-v2';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {

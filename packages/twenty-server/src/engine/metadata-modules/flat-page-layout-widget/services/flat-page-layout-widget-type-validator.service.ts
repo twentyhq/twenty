@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import {
-  type FlatPageLayoutWidgetTypeValidatorForCreation,
-  type FlatPageLayoutWidgetTypeValidatorForUpdate,
+    type FlatPageLayoutWidgetTypeValidatorForCreation,
+    type FlatPageLayoutWidgetTypeValidatorForUpdate,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';
@@ -18,7 +18,7 @@ import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/e
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/flat-entity-validation-args.type';
 
 export type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs =
   FlatEntityValidationArgs<'pageLayoutWidget'> & {

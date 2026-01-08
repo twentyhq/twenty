@@ -3,11 +3,11 @@ import { msg } from '@lingui/core/macro';
 import { WIDGET_GRID_MAX_COLUMNS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-columns.constant';
 import { WIDGET_GRID_MAX_ROWS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-rows.constant';
 import {
-  PageLayoutWidgetExceptionCode,
-  PageLayoutWidgetExceptionMessageKey,
-  generatePageLayoutWidgetExceptionMessage,
+    PageLayoutWidgetExceptionCode,
+    PageLayoutWidgetExceptionMessageKey,
+    generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 type GridPosition = {
   row: number;

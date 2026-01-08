@@ -2,7 +2,7 @@ import { type I18n, type MessageDescriptor } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
-import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor =>
   isDefined(obj) &&
