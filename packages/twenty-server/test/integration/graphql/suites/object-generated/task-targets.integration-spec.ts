@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import request from 'supertest';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
@@ -120,21 +120,17 @@ describe('taskTargets hooks on task actions', () => {
     taskIds.push(taskId);
     taskTargetIds.push(taskTargetId);
 
-    const createTaskOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'task',
       gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId, title: 'Test Task for DeleteOne' },
+      input: { id: taskId, title: 'Test Task for DeleteOne' },
     });
 
-    await makeGraphqlAPIRequest(createTaskOperation);
-
-    const createTaskTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'taskTarget',
       gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId, taskId },
+      input: { id: taskTargetId, taskId },
     });
-
-    await makeGraphqlAPIRequest(createTaskTargetOperation);
 
     const deleteTaskOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'task',
@@ -176,38 +172,30 @@ describe('taskTargets hooks on task actions', () => {
     taskIds.push(taskId1, taskId2);
     taskTargetIds.push(taskTargetId1, taskTargetId2);
 
-    const createTask1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId1, title: 'Test Task 1 for DeleteMany' },
-    });
-
-    const createTask2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId2, title: 'Test Task 2 for DeleteMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTask1Operation),
-      makeGraphqlAPIRequest(createTask2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId1, title: 'Test Task 1 for DeleteMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId2, title: 'Test Task 2 for DeleteMany' },
+      }),
     ]);
 
-    const createTaskTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId1, taskId: taskId1 },
-    });
-
-    const createTaskTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId2, taskId: taskId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTaskTarget1Operation),
-      makeGraphqlAPIRequest(createTaskTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId1, taskId: taskId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId2, taskId: taskId2 },
+      }),
     ]);
 
     const deleteTasksOperation = deleteManyOperationFactory({
@@ -251,21 +239,17 @@ describe('taskTargets hooks on task actions', () => {
     taskIds.push(taskId);
     taskTargetIds.push(taskTargetId);
 
-    const createTaskOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'task',
       gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId, title: 'Test Task for RestoreOne' },
+      input: { id: taskId, title: 'Test Task for RestoreOne' },
     });
 
-    await makeGraphqlAPIRequest(createTaskOperation);
-
-    const createTaskTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'taskTarget',
       gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId, taskId },
+      input: { id: taskTargetId, taskId },
     });
-
-    await makeGraphqlAPIRequest(createTaskTargetOperation);
 
     const deleteTaskOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'task',
@@ -312,38 +296,30 @@ describe('taskTargets hooks on task actions', () => {
     taskIds.push(taskId1, taskId2);
     taskTargetIds.push(taskTargetId1, taskTargetId2);
 
-    const createTask1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId1, title: 'Test Task 1 for RestoreMany' },
-    });
-
-    const createTask2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId2, title: 'Test Task 2 for RestoreMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTask1Operation),
-      makeGraphqlAPIRequest(createTask2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId1, title: 'Test Task 1 for RestoreMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId2, title: 'Test Task 2 for RestoreMany' },
+      }),
     ]);
 
-    const createTaskTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId1, taskId: taskId1 },
-    });
-
-    const createTaskTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId2, taskId: taskId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTaskTarget1Operation),
-      makeGraphqlAPIRequest(createTaskTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId1, taskId: taskId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId2, taskId: taskId2 },
+      }),
     ]);
 
     const deleteTasksOperation = deleteManyOperationFactory({
@@ -392,21 +368,17 @@ describe('taskTargets hooks on task actions', () => {
 
     taskIds.push(taskId);
 
-    const createTaskOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'task',
       gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId, title: 'Test Task for DestroyOne' },
+      input: { id: taskId, title: 'Test Task for DestroyOne' },
     });
 
-    await makeGraphqlAPIRequest(createTaskOperation);
-
-    const createTaskTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'taskTarget',
       gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId, taskId },
+      input: { id: taskTargetId, taskId },
     });
-
-    await makeGraphqlAPIRequest(createTaskTargetOperation);
 
     const destroyTaskOperation = destroyOneOperationFactory({
       objectMetadataSingularName: 'task',
@@ -440,38 +412,30 @@ describe('taskTargets hooks on task actions', () => {
 
     taskIds.push(taskId1, taskId2);
 
-    const createTask1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId1, title: 'Test Task 1 for DestroyMany' },
-    });
-
-    const createTask2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'task',
-      gqlFields: TASK_GQL_FIELDS,
-      data: { id: taskId2, title: 'Test Task 2 for DestroyMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTask1Operation),
-      makeGraphqlAPIRequest(createTask2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId1, title: 'Test Task 1 for DestroyMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        gqlFields: TASK_GQL_FIELDS,
+        input: { id: taskId2, title: 'Test Task 2 for DestroyMany' },
+      }),
     ]);
 
-    const createTaskTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId1, taskId: taskId1 },
-    });
-
-    const createTaskTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      gqlFields: TASK_TARGET_GQL_FIELDS,
-      data: { id: taskTargetId2, taskId: taskId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createTaskTarget1Operation),
-      makeGraphqlAPIRequest(createTaskTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId1, taskId: taskId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: TASK_TARGET_GQL_FIELDS,
+        input: { id: taskTargetId2, taskId: taskId2 },
+      }),
     ]);
 
     const destroyTasksOperation = destroyManyOperationFactory({

@@ -234,10 +234,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       ) {
         const foreignKeyName =
           await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
-            queryRunner,
-            schemaName,
-            tableName,
-            optimisticFlatFieldMetadata.settings.joinColumnName,
+            {
+              queryRunner,
+              schemaName,
+              tableName,
+              columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+            },
           );
 
         if (!isDefined(foreignKeyName)) {

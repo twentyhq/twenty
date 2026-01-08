@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import request from 'supertest';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
@@ -120,21 +120,17 @@ describe('noteTargets hooks on note actions', () => {
     noteIds.push(noteId);
     noteTargetIds.push(noteTargetId);
 
-    const createNoteOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'note',
       gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId, title: 'Test Note for DeleteOne' },
+      input: { id: noteId, title: 'Test Note for DeleteOne' },
     });
 
-    await makeGraphqlAPIRequest(createNoteOperation);
-
-    const createNoteTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'noteTarget',
       gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId, noteId },
+      input: { id: noteTargetId, noteId },
     });
-
-    await makeGraphqlAPIRequest(createNoteTargetOperation);
 
     const deleteNoteOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'note',
@@ -176,38 +172,30 @@ describe('noteTargets hooks on note actions', () => {
     noteIds.push(noteId1, noteId2);
     noteTargetIds.push(noteTargetId1, noteTargetId2);
 
-    const createNote1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId1, title: 'Test Note 1 for DeleteMany' },
-    });
-
-    const createNote2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId2, title: 'Test Note 2 for DeleteMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNote1Operation),
-      makeGraphqlAPIRequest(createNote2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId1, title: 'Test Note 1 for DeleteMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId2, title: 'Test Note 2 for DeleteMany' },
+      }),
     ]);
 
-    const createNoteTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId1, noteId: noteId1 },
-    });
-
-    const createNoteTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId2, noteId: noteId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNoteTarget1Operation),
-      makeGraphqlAPIRequest(createNoteTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId1, noteId: noteId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId2, noteId: noteId2 },
+      }),
     ]);
 
     const deleteNotesOperation = deleteManyOperationFactory({
@@ -251,21 +239,17 @@ describe('noteTargets hooks on note actions', () => {
     noteIds.push(noteId);
     noteTargetIds.push(noteTargetId);
 
-    const createNoteOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'note',
       gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId, title: 'Test Note for RestoreOne' },
+      input: { id: noteId, title: 'Test Note for RestoreOne' },
     });
 
-    await makeGraphqlAPIRequest(createNoteOperation);
-
-    const createNoteTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'noteTarget',
       gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId, noteId },
+      input: { id: noteTargetId, noteId },
     });
-
-    await makeGraphqlAPIRequest(createNoteTargetOperation);
 
     const deleteNoteOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'note',
@@ -312,38 +296,30 @@ describe('noteTargets hooks on note actions', () => {
     noteIds.push(noteId1, noteId2);
     noteTargetIds.push(noteTargetId1, noteTargetId2);
 
-    const createNote1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId1, title: 'Test Note 1 for RestoreMany' },
-    });
-
-    const createNote2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId2, title: 'Test Note 2 for RestoreMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNote1Operation),
-      makeGraphqlAPIRequest(createNote2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId1, title: 'Test Note 1 for RestoreMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId2, title: 'Test Note 2 for RestoreMany' },
+      }),
     ]);
 
-    const createNoteTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId1, noteId: noteId1 },
-    });
-
-    const createNoteTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId2, noteId: noteId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNoteTarget1Operation),
-      makeGraphqlAPIRequest(createNoteTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId1, noteId: noteId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId2, noteId: noteId2 },
+      }),
     ]);
 
     const deleteNotesOperation = deleteManyOperationFactory({
@@ -392,21 +368,17 @@ describe('noteTargets hooks on note actions', () => {
 
     noteIds.push(noteId);
 
-    const createNoteOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'note',
       gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId, title: 'Test Note for DestroyOne' },
+      input: { id: noteId, title: 'Test Note for DestroyOne' },
     });
 
-    await makeGraphqlAPIRequest(createNoteOperation);
-
-    const createNoteTargetOperation = createOneOperationFactory({
+    await createOneOperation({
       objectMetadataSingularName: 'noteTarget',
       gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId, noteId },
+      input: { id: noteTargetId, noteId },
     });
-
-    await makeGraphqlAPIRequest(createNoteTargetOperation);
 
     const destroyNoteOperation = destroyOneOperationFactory({
       objectMetadataSingularName: 'note',
@@ -440,38 +412,30 @@ describe('noteTargets hooks on note actions', () => {
 
     noteIds.push(noteId1, noteId2);
 
-    const createNote1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId1, title: 'Test Note 1 for DestroyMany' },
-    });
-
-    const createNote2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'note',
-      gqlFields: NOTE_GQL_FIELDS,
-      data: { id: noteId2, title: 'Test Note 2 for DestroyMany' },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNote1Operation),
-      makeGraphqlAPIRequest(createNote2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId1, title: 'Test Note 1 for DestroyMany' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        input: { id: noteId2, title: 'Test Note 2 for DestroyMany' },
+      }),
     ]);
 
-    const createNoteTarget1Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId1, noteId: noteId1 },
-    });
-
-    const createNoteTarget2Operation = createOneOperationFactory({
-      objectMetadataSingularName: 'noteTarget',
-      gqlFields: NOTE_TARGET_GQL_FIELDS,
-      data: { id: noteTargetId2, noteId: noteId2 },
-    });
-
     await Promise.all([
-      makeGraphqlAPIRequest(createNoteTarget1Operation),
-      makeGraphqlAPIRequest(createNoteTarget2Operation),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId1, noteId: noteId1 },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: noteTargetId2, noteId: noteId2 },
+      }),
     ]);
 
     const destroyNotesOperation = destroyManyOperationFactory({

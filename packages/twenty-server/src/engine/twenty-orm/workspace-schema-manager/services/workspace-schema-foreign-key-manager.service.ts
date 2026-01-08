@@ -90,12 +90,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async getForeignKeyName(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<string | undefined> {
+  async getForeignKeyName({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<string | undefined> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
