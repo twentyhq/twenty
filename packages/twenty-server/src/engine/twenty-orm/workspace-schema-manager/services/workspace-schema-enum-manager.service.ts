@@ -1,8 +1,8 @@
 import { type QueryRunner } from 'typeorm';
 
 import {
-    WorkspaceSchemaManagerException,
-    WorkspaceSchemaManagerExceptionCode,
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
 } from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';

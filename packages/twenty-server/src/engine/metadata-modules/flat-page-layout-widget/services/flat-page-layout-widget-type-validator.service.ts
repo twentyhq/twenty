@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import {
-    type FlatPageLayoutWidgetTypeValidatorForCreation,
-    type FlatPageLayoutWidgetTypeValidatorForUpdate,
+  type FlatPageLayoutWidgetTypeValidatorForCreation,
+  type FlatPageLayoutWidgetTypeValidatorForUpdate,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';

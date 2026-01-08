@@ -13,12 +13,12 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
-    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-    TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 

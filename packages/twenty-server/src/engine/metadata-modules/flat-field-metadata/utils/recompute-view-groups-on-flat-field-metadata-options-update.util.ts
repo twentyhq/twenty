@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
-    FlatEntityMapsException,
-    FlatEntityMapsExceptionCode,
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';

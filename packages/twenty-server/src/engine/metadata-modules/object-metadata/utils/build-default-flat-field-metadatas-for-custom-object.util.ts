@@ -5,8 +5,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import {
-    BASE_OBJECT_STANDARD_FIELD_IDS,
-    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  BASE_OBJECT_STANDARD_FIELD_IDS,
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {

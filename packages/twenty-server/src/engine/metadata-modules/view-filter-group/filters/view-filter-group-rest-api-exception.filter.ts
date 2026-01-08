@@ -1,8 +1,8 @@
 import {
-    type ArgumentsHost,
-    Catch,
-    type ExceptionFilter,
-    Injectable,
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+  Injectable,
 } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -12,14 +12,14 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
 import {
-    type CustomException,
-    UnknownException,
+  type CustomException,
+  UnknownException,
 } from 'src/utils/custom-exception';
 
 @Injectable()

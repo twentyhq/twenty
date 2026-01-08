@@ -2,14 +2,14 @@ import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ConflictError,
-    ForbiddenError,
-    NotFoundError,
-    UserInputError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';

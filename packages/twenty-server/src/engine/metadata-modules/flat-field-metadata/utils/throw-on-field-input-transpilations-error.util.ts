@@ -1,6 +1,6 @@
 import {
-    type FieldInputTranspilationResult,
-    type SuccessfulFieldInputTranspilation,
+  type FieldInputTranspilationResult,
+  type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';

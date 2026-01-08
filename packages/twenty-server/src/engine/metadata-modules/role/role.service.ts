@@ -14,9 +14,9 @@ import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-module
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';

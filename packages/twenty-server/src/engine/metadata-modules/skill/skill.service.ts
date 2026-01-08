@@ -15,8 +15,8 @@ import { type CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/cr
 import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
 import {
-    SkillException,
-    SkillExceptionCode,
+  SkillException,
+  SkillExceptionCode,
 } from 'src/engine/metadata-modules/skill/skill.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';

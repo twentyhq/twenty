@@ -3,8 +3,8 @@ import { type EnumFieldMetadataType } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';

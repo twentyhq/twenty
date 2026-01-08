@@ -2,34 +2,34 @@ import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-    ForbiddenError,
-    InternalServerError,
-    NotFoundError,
-    UserInputError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
+  ViewFieldException,
+  ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import {
-    ViewFilterException,
-    ViewFilterExceptionCode,
+  ViewFilterException,
+  ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import {
-    ViewGroupException,
-    ViewGroupExceptionCode,
+  ViewGroupException,
+  ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
+  ViewSortException,
+  ViewSortExceptionCode,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import {
-    ViewException,
-    ViewExceptionCode,
+  ViewException,
+  ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';

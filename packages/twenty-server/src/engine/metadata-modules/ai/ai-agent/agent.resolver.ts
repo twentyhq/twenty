@@ -7,8 +7,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
-    FeatureFlagGuard,
-    RequireFeatureFlag,
+  FeatureFlagGuard,
+  RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';

@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 import {
-    FlatEntityMapsException,
-    FlatEntityMapsExceptionCode,
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';

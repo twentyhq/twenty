@@ -19,8 +19,8 @@ import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomai
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
-    FileWorkspaceFolderDeletionJob,
-    type FileWorkspaceFolderDeletionJobData,
+  FileWorkspaceFolderDeletionJob,
+  type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -32,15 +32,15 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    WorkspaceException,
-    WorkspaceExceptionCode,
-    WorkspaceNotFoundDefaultError,
+  WorkspaceException,
+  WorkspaceExceptionCode,
+  WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';

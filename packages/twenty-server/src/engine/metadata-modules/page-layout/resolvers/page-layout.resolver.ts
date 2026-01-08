@@ -1,8 +1,8 @@
 import {
-    UseFilters,
-    UseGuards,
-    UseInterceptors,
-    UsePipes,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 

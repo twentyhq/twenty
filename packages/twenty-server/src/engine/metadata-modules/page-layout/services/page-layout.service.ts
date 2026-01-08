@@ -14,8 +14,8 @@ import { fromDeletePageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/met
 import { fromDestroyPageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util';
 import { fromRestorePageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util';
 import {
-    fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow,
-    type UpdatePageLayoutInputWithId,
+  fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow,
+  type UpdatePageLayoutInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
@@ -23,10 +23,10 @@ import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/d
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-    PageLayoutException,
-    PageLayoutExceptionCode,
-    PageLayoutExceptionMessageKey,
-    generatePageLayoutExceptionMessage,
+  PageLayoutException,
+  PageLayoutExceptionCode,
+  PageLayoutExceptionMessageKey,
+  generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-to-page-layout-dto.util';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';

@@ -1,16 +1,16 @@
 import {
-    UseFilters,
-    UseGuards,
-    UseInterceptors,
-    UsePipes,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import {
-    Args,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';

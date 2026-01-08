@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
-    isDefined,
-    isLabelIdentifierFieldMetadataTypes,
+  isDefined,
+  isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

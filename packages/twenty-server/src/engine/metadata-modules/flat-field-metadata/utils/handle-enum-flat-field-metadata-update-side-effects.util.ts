@@ -3,13 +3,13 @@ import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
-    type FlatViewFiltersToDeleteAndUpdate,
-    recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate,
+  type FlatViewFiltersToDeleteAndUpdate,
+  recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-enum-flat-field-metadata-is-nullable-update.util';
 import {
-    type FlatViewGroupsToDeleteUpdateAndCreate,
-    recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate,
+  type FlatViewGroupsToDeleteUpdateAndCreate,
+  recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
 import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 

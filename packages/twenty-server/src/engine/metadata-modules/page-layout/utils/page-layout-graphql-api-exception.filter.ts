@@ -1,8 +1,8 @@
 import {
-    Catch,
-    type ExceptionFilter,
-    type ExecutionContext,
-    Injectable,
+  Catch,
+  type ExceptionFilter,
+  type ExecutionContext,
+  Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
