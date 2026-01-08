@@ -17,7 +17,7 @@ import {
   ViewType,
 } from '~/generated/graphql';
 
-export const usePersistView = () => {
+export const usePerformViewAPIPersist = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
@@ -26,7 +26,7 @@ export const usePersistView = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createView = useCallback(
+  const performViewAPICreate = useCallback(
     async (
       variables: CreateCoreViewMutationVariables,
       objectMetadataItemId: string,
@@ -90,7 +90,7 @@ export const usePersistView = () => {
     ],
   );
 
-  const destroyView = useCallback(
+  const performViewAPIDestroy = useCallback(
     async (
       variables: DestroyCoreViewMutationVariables,
     ): Promise<
@@ -125,7 +125,7 @@ export const usePersistView = () => {
   );
 
   return {
-    createView,
-    destroyView,
+    performViewAPICreate,
+    performViewAPIDestroy,
   };
 };

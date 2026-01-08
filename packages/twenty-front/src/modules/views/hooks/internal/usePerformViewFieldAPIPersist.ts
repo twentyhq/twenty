@@ -18,7 +18,7 @@ import {
   useDestroyCoreViewFieldMutation,
   useUpdateCoreViewFieldMutation,
 } from '~/generated/graphql';
-export const usePersistViewField = () => {
+export const usePerformViewFieldAPIPersist = () => {
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
 
@@ -31,7 +31,7 @@ export const usePersistViewField = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createViewFields = useCallback(
+  const performViewFieldAPICreate = useCallback(
     async (
       createCoreViewFieldInputs: CreateManyCoreViewFieldsMutationVariables,
     ): Promise<
@@ -92,7 +92,7 @@ export const usePersistViewField = () => {
     ],
   );
 
-  const updateViewFields = useCallback(
+  const performViewFieldAPIUpdate = useCallback(
     async (
       createCoreViewFieldInputs: UpdateCoreViewFieldMutationVariables[],
     ): Promise<
@@ -154,7 +154,7 @@ export const usePersistViewField = () => {
     ],
   );
 
-  const deleteViewFields = useCallback(
+  const performViewFieldAPIDelete = useCallback(
     async (
       deleteCoreViewFieldInputs: DeleteCoreViewFieldMutationVariables[],
     ): Promise<
@@ -216,7 +216,7 @@ export const usePersistViewField = () => {
     ],
   );
 
-  const destroyViewFields = useCallback(
+  const performViewFieldAPIDestroy = useCallback(
     async (
       destroyCoreViewFieldInputs: DestroyCoreViewFieldMutationVariables[],
     ): Promise<
@@ -264,9 +264,9 @@ export const usePersistViewField = () => {
   );
 
   return {
-    createViewFields,
-    updateViewFields,
-    deleteViewFields,
-    destroyViewFields,
+    performViewFieldAPICreate,
+    performViewFieldAPIUpdate,
+    performViewFieldAPIDelete,
+    performViewFieldAPIDestroy,
   };
 };

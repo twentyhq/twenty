@@ -22,7 +22,7 @@ export const usePerformViewGroupAPIPersist = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const updateViewGroups = useCallback(
+  const performViewGroupAPIUpdate = useCallback(
     async (
       updateCoreViewGroupInputs: UpdateCoreViewGroupMutationVariables[],
     ): Promise<
@@ -85,6 +85,6 @@ export const usePerformViewGroupAPIPersist = () => {
   );
 
   return {
-    updateViewGroups,
+    performViewGroupAPIUpdate,
   };
 };

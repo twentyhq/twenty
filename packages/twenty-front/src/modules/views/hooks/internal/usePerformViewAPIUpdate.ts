@@ -23,7 +23,7 @@ export const usePerformViewAPIUpdate = () => {
 
   const setCoreViews = useSetRecoilState(coreViewsState);
 
-  const updateView = useCallback(
+  const performViewAPIUpdate = useCallback(
     async (
       variables: UpdateCoreViewMutationVariables,
     ): Promise<
@@ -82,5 +82,5 @@ export const usePerformViewAPIUpdate = () => {
     ],
   );
 
-  return { updateView };
+  return { performViewAPIUpdate };
 };

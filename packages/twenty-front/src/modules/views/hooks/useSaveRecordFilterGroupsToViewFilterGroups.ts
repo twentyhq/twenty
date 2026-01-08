@@ -1,7 +1,7 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
+import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
@@ -14,10 +14,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
   const {
-    createViewFilterGroups,
-    updateViewFilterGroups,
-    deleteViewFilterGroups,
-  } = usePersistViewFilterGroupRecords();
+    performViewFilterGroupAPICreate,
+    performViewFilterGroupAPIUpdate,
+    performViewFilterGroupAPIDelete,
+  } = usePerformViewFilterGroupAPIPersist();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -65,17 +65,20 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
           (viewFilterGroup) => viewFilterGroup.id,
         );
 
-        await createViewFilterGroups(viewFilterGroupsToCreate, currentView);
-        await updateViewFilterGroups(viewFilterGroupsToUpdate);
-        await deleteViewFilterGroups(viewFilterGroupIdsToDelete);
+        await performViewFilterGroupAPICreate(
+          viewFilterGroupsToCreate,
+          currentView,
+        );
+        await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
+        await performViewFilterGroupAPIDelete(viewFilterGroupIdsToDelete);
       },
     [
       canPersistChanges,
       currentView,
       currentRecordFilterGroupsCallbackState,
-      createViewFilterGroups,
-      updateViewFilterGroups,
-      deleteViewFilterGroups,
+      performViewFilterGroupAPICreate,
+      performViewFilterGroupAPIUpdate,
+      performViewFilterGroupAPIDelete,
     ],
   );
 

@@ -4,7 +4,7 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useUpdateView } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -20,7 +20,7 @@ export const useUpdateViewAggregate = () => {
   const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { updateView } = useUpdateView();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const updateViewAggregate = useRecoilCallback(
@@ -50,7 +50,7 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        const updatedViewResult = await updateView({
+        const updatedViewResult = await performViewAPIUpdate({
           id: currentViewId,
           input: {
             kanbanAggregateOperationFieldMetadataId,
@@ -78,7 +78,7 @@ export const useUpdateViewAggregate = () => {
           loadRecordIndexStates(updatedView, objectMetadataItem);
         }
       },
-    [canPersistChanges, currentViewId, updateView, loadRecordIndexStates],
+    [canPersistChanges, currentViewId, performViewAPIUpdate, loadRecordIndexStates],
   );
 
   return {

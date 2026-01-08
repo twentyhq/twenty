@@ -7,11 +7,11 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistView } from '@/views/hooks/internal/usePerformViewAPIPersist';
-import { usePersistViewField } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
-import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
-import { usePersistViewSortRecords } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
+import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
+import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
+import { usePerformViewSortAPIPersist } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -29,7 +29,7 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
-  const { createView } = usePersistView();
+  const { performViewAPICreate } = usePerformViewAPIPersist();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -40,13 +40,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     anyFieldFilterValueComponentState,
   );
 
-  const { createViewFields } = usePersistViewField();
+  const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
 
-  const { createViewSorts } = usePersistViewSortRecords();
+  const { performViewSortAPICreate } = usePerformViewSortAPIPersist();
 
-  const { createViewFilters } = usePersistViewFilterRecords();
+  const { performViewFilterAPICreate } = usePerformViewFilterAPIPersist();
 
-  const { createViewFilterGroups } = usePersistViewFilterGroupRecords();
+  const { performViewFilterGroupAPICreate } =
+    usePerformViewFilterGroupAPIPersist();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -113,7 +114,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         const viewType = type ?? sourceView.type;
 
-        const result = await createView(
+        const result = await performViewAPICreate(
           {
             input: {
               id: id ?? v4(),
@@ -160,7 +161,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           throw new Error('Failed to create view');
         }
 
-        const fieldResult = await createViewFields({
+        const fieldResult = await performViewFieldAPICreate({
           inputs: sourceView.viewFields.map(
             ({ __typename, id: _id, ...viewField }) => ({
               ...viewField,
@@ -202,7 +203,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               id: v4(),
             }));
 
-          await createViewFilterGroups(viewFilterGroupsToCreate, {
+          await performViewFilterGroupAPICreate(viewFilterGroupsToCreate, {
             id: newViewId,
           });
 
@@ -221,13 +222,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             }),
           );
 
-          const filterResult = await createViewFilters(createViewFilterInputs);
+          const filterResult =
+            await performViewFilterAPICreate(createViewFilterInputs);
 
           if (filterResult.status === 'failed') {
             return undefined;
           }
 
-          await createViewSorts(viewSortsToCreate, { id: newViewId });
+          await performViewSortAPICreate(viewSortsToCreate, { id: newViewId });
         }
 
         await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
@@ -236,17 +238,17 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      createView,
+      performViewAPICreate,
       anyFieldFilterValue,
       objectMetadataItem,
-      createViewFields,
+      performViewFieldAPICreate,
       refreshCoreViewsByObjectMetadataId,
       currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
-      createViewFilterGroups,
-      createViewFilters,
-      createViewSorts,
+      performViewFilterGroupAPICreate,
+      performViewFilterAPICreate,
+      performViewSortAPICreate,
     ],
   );
 

@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistView } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
@@ -44,7 +44,7 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { changeView } = useChangeView();
 
-  const { destroyView } = usePersistView();
+  const { performViewAPIDestroy } = usePerformViewAPIPersist();
 
   const destroyViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -74,14 +74,14 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
             views.filter((view) => view.id !== viewPickerReferenceViewId),
         );
 
-        await destroyView({ id: viewPickerReferenceViewId });
+        await performViewAPIDestroy({ id: viewPickerReferenceViewId });
       },
     [
       currentView,
       closeAndResetViewPicker,
       objectMetadataItem.id,
       changeView,
-      destroyView,
+      performViewAPIDestroy,
       viewPickerIsDirtyCallbackState,
       viewPickerIsPersistingCallbackState,
       viewPickerReferenceViewIdCallbackState,

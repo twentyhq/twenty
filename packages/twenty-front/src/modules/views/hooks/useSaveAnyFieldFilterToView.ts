@@ -1,6 +1,6 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useUpdateView } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveAnyFieldFilterToView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { updateView } = useUpdateView();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -31,7 +31,7 @@ export const useSaveAnyFieldFilterToView = () => {
           .getValue();
 
         if (currentAnyFieldFilterValue !== currentViewAnyFieldFilterValue) {
-          await updateView({
+          await performViewAPIUpdate({
             id: currentView.id,
             input: convertUpdateViewInputToCore({
               ...currentView,
@@ -42,7 +42,7 @@ export const useSaveAnyFieldFilterToView = () => {
       },
     [
       canPersistChanges,
-      updateView,
+      performViewAPIUpdate,
       anyFieldFilterValueCallbackState,
       currentView,
     ],

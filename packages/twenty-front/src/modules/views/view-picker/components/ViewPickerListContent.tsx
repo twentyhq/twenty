@@ -11,7 +11,7 @@ import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/Dropdo
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useUpdateView } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
@@ -61,7 +61,7 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { updateView } = useUpdateView();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();
@@ -98,12 +98,12 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await updateView({ id: view.id, input: { position: index } });
+            await performViewAPIUpdate({ id: view.id, input: { position: index } });
           }
         }),
       );
     },
-    [updateView, workspaceViews],
+    [performViewAPIUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
@@ -118,12 +118,12 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await updateView({ id: view.id, input: { position: index } });
+            await performViewAPIUpdate({ id: view.id, input: { position: index } });
           }
         }),
       );
     },
-    [updateView, unlistedViews],
+    [performViewAPIUpdate, unlistedViews],
   );
 
   return (

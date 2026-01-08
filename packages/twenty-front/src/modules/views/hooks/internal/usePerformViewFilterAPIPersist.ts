@@ -30,7 +30,7 @@ export const usePerformViewFilterAPIPersist = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createViewFilters = useCallback(
+  const performViewFilterAPICreate = useCallback(
     async (
       createCoreViewFilterInputs: CreateCoreViewFilterMutationVariables[],
     ): Promise<
@@ -92,7 +92,7 @@ export const usePerformViewFilterAPIPersist = () => {
     ],
   );
 
-  const updateViewFilters = useCallback(
+  const performViewFilterAPIUpdate = useCallback(
     async (
       updateCoreViewFilterInputs: UpdateCoreViewFilterMutationVariables[],
     ): Promise<
@@ -154,7 +154,7 @@ export const usePerformViewFilterAPIPersist = () => {
     ],
   );
 
-  const deleteViewFilters = useCallback(
+  const performViewFilterAPIDelete = useCallback(
     async (
       deleteCoreViewFilterInputs: DeleteCoreViewFilterMutationVariables[],
     ): Promise<
@@ -216,7 +216,7 @@ export const usePerformViewFilterAPIPersist = () => {
     ],
   );
 
-  const destroyViewFilters = useCallback(
+  const performViewFilterAPIDestroy = useCallback(
     async (
       destroyCoreViewFilterInputs: DestroyCoreViewFilterMutationVariables[],
     ): Promise<
@@ -264,9 +264,9 @@ export const usePerformViewFilterAPIPersist = () => {
   );
 
   return {
-    createViewFilters,
-    updateViewFilters,
-    deleteViewFilters,
-    destroyViewFilters,
+    performViewFilterAPICreate,
+    performViewFilterAPIUpdate,
+    performViewFilterAPIDelete,
+    performViewFilterAPIDestroy,
   };
 };
