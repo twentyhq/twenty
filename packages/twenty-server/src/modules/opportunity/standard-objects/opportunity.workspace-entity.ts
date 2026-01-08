@@ -1,7 +1,7 @@
 import {
-    type ActorMetadata,
-    type CurrencyMetadata,
-    FieldMetadataType,
+  type ActorMetadata,
+  type CurrencyMetadata,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';

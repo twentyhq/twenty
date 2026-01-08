@@ -1,10 +1,10 @@
 import {
-    type ActorMetadata,
-    type EmailsMetadata,
-    FieldMetadataType,
-    type FullNameMetadata,
-    type LinksMetadata,
-    type PhonesMetadata,
+  type ActorMetadata,
+  type EmailsMetadata,
+  FieldMetadataType,
+  type FullNameMetadata,
+  type LinksMetadata,
+  type PhonesMetadata,
 } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';

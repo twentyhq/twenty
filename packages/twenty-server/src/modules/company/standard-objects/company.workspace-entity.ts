@@ -1,9 +1,9 @@
 import {
-    FieldMetadataType,
-    type ActorMetadata,
-    type AddressMetadata,
-    type CurrencyMetadata,
-    type LinksMetadata,
+  FieldMetadataType,
+  type ActorMetadata,
+  type AddressMetadata,
+  type CurrencyMetadata,
+  type LinksMetadata,
 } from 'twenty-shared/types';
 
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
