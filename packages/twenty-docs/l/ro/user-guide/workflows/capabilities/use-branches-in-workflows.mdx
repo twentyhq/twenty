@@ -1,5 +1,5 @@
 ---
-title: Utilizați ramuri în fluxuri de lucru},{
+title: Utilizați ramuri în fluxuri de lucru
 description: Înțelegeți cum funcționează ramurile și cum să controlați care cale este executată.
 ---
 
@@ -63,15 +63,15 @@ După ce ramurile paralele își finalizează activitatea, le puteți îmbina la
 ### Exemplu: Procesare, apoi notificare
 
 ```
-Trigger
+Declanșator
    │
-   ├── Branch A: Update Customer Record
+   ├── Ramura A: Actualizați înregistrarea clientului
    │
-   └── Branch B: Create Support Ticket
+   └── Ramura B: Creați tichet de suport
 
        ↘  ↙
 
-   Merged Step: Send Confirmation Email
+   Pas îmbinat: Trimiteți e-mail de confirmare
 ```
 
 E-mailul de confirmare se trimite doar după ce atât actualizarea clientului, cât și crearea tichetului sunt finalizate.
