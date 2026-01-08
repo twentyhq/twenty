@@ -13,7 +13,7 @@ import { FieldWidgetCellEditModePortal } from '@/page-layout/widgets/field/compo
 import { FieldWidgetCellHoveredPortal } from '@/page-layout/widgets/field/components/FieldWidgetCellHoveredPortal';
 import { FieldWidgetInlineCell } from '@/page-layout/widgets/field/components/FieldWidgetInlineCell';
 import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
-import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
+import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
@@ -45,7 +45,7 @@ export const FieldWidgetDisplay = ({
     fieldWidgetHoverComponentState,
   );
 
-  const instanceId = getFieldWidgetInstanceId({
+  const instanceId = generateFieldWidgetInstanceId({
     widgetId: widget.id,
     recordId,
     fieldName: fieldMetadataItem.name,

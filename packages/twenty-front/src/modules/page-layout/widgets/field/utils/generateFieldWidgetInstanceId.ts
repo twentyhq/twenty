@@ -1,4 +1,4 @@
-export const getFieldWidgetInstanceId = ({
+export const generateFieldWidgetInstanceId = ({
   widgetId,
   recordId,
   fieldName,

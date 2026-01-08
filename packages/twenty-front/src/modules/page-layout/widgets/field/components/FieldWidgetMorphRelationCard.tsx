@@ -16,7 +16,7 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
+import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
@@ -46,7 +46,7 @@ export const FieldWidgetMorphRelationCard = ({
   const [expandedItem, setExpandedItem] = useState('');
   const targetRecord = useTargetRecord();
 
-  const instanceId = getFieldWidgetInstanceId({
+  const instanceId = generateFieldWidgetInstanceId({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldDefinition.metadata.fieldName,
