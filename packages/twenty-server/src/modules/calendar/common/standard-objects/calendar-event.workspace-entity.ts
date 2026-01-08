@@ -1,6 +1,6 @@
 import { type LinksMetadata } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -19,10 +19,10 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   iCalUid: string | null;
   conferenceSolution: string | null;
   conferenceLink: LinksMetadata;
-  calendarChannelEventAssociations: Relation<
+  calendarChannelEventAssociations: EntityRelation<
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;
-  calendarEventParticipants: Relation<
+  calendarEventParticipants: EntityRelation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
 }

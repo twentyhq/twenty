@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -7,8 +7,8 @@ import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/s
 export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspaceEntity {
   eventExternalId: string | null;
   recurringEventExternalId: string | null;
-  calendarChannel: Relation<CalendarChannelWorkspaceEntity>;
+  calendarChannel: EntityRelation<CalendarChannelWorkspaceEntity>;
   calendarChannelId: string;
-  calendarEvent: Relation<CalendarEventWorkspaceEntity>;
+  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity>;
   calendarEventId: string;
 }

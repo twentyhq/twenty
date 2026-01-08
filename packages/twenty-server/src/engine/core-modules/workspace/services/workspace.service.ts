@@ -46,7 +46,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration-v2/constant/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()

@@ -4,10 +4,10 @@ import {
   type RichTextV2Metadata,
 } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
@@ -30,11 +30,11 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   status: string | null;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
-  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
-  assignee: Relation<WorkspaceMemberWorkspaceEntity> | null;
+  taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
+  attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  assignee: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   assigneeId: string | null;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
   searchVector: string;
 }

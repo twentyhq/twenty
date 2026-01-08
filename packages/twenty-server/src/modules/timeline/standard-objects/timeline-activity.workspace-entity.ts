@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -20,26 +20,26 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   linkedRecordCachedName: string | null;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
+  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   workspaceMemberId: string | null;
-  targetPerson: Relation<PersonWorkspaceEntity> | null;
+  targetPerson: EntityRelation<PersonWorkspaceEntity> | null;
   targetPersonId: string | null;
-  targetCompany: Relation<CompanyWorkspaceEntity> | null;
+  targetCompany: EntityRelation<CompanyWorkspaceEntity> | null;
   targetCompanyId: string | null;
-  targetOpportunity: Relation<OpportunityWorkspaceEntity> | null;
+  targetOpportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
   targetOpportunityId: string | null;
-  targetNote: Relation<NoteWorkspaceEntity> | null;
+  targetNote: EntityRelation<NoteWorkspaceEntity> | null;
   targetNoteId: string | null;
-  targetTask: Relation<TaskWorkspaceEntity> | null;
+  targetTask: EntityRelation<TaskWorkspaceEntity> | null;
   targetTaskId: string | null;
-  targetWorkflow: Relation<WorkflowWorkspaceEntity> | null;
+  targetWorkflow: EntityRelation<WorkflowWorkspaceEntity> | null;
   targetWorkflowId: string | null;
-  targetWorkflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
+  targetWorkflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity> | null;
   targetWorkflowVersionId: string | null;
-  targetWorkflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
+  targetWorkflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
   targetWorkflowRunId: string | null;
-  targetDashboard: Relation<DashboardWorkspaceEntity> | null;
+  targetDashboard: EntityRelation<DashboardWorkspaceEntity> | null;
   targetDashboardId: string | null;
-  custom: Relation<CustomWorkspaceEntity>;
-  targetCustom: Relation<CustomWorkspaceEntity>;
+  custom: EntityRelation<CustomWorkspaceEntity>;
+  targetCustom: EntityRelation<CustomWorkspaceEntity>;
 }

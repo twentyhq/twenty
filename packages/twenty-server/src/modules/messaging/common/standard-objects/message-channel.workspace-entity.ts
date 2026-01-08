@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -99,10 +99,10 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;
   throttleFailureCount: number;
-  connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
+  connectedAccount: EntityRelation<ConnectedAccountWorkspaceEntity>;
   connectedAccountId: string;
-  messageChannelMessageAssociations: Relation<
+  messageChannelMessageAssociations: EntityRelation<
     MessageChannelMessageAssociationWorkspaceEntity[]
   >;
-  messageFolders: Relation<MessageFolderWorkspaceEntity[]>;
+  messageFolders: EntityRelation<MessageFolderWorkspaceEntity[]>;
 }

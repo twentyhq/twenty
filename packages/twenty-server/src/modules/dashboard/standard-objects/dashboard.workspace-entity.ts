@@ -1,9 +1,9 @@
 import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -20,8 +20,8 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   searchVector: string;
 }

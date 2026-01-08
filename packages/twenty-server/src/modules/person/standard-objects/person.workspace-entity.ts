@@ -2,15 +2,15 @@ import {
   type ActorMetadata,
   type EmailsMetadata,
   FieldMetadataType,
-  type PhonesMetadata,
   type FullNameMetadata,
   type LinksMetadata,
+  type PhonesMetadata,
 } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -46,17 +46,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
-  company: Relation<CompanyWorkspaceEntity> | null;
+  company: EntityRelation<CompanyWorkspaceEntity> | null;
   companyId: string | null;
-  pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]>;
-  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
-  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
-  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
-  calendarEventParticipants: Relation<
+  pointOfContactForOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
+  taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
+  noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
+  calendarEventParticipants: EntityRelation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   searchVector: string;
 }

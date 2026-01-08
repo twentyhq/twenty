@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -8,13 +8,13 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
-  task: Relation<TaskWorkspaceEntity> | null;
+  task: EntityRelation<TaskWorkspaceEntity> | null;
   taskId: string | null;
-  person: Relation<PersonWorkspaceEntity> | null;
+  person: EntityRelation<PersonWorkspaceEntity> | null;
   personId: string | null;
-  company: Relation<CompanyWorkspaceEntity> | null;
+  company: EntityRelation<CompanyWorkspaceEntity> | null;
   companyId: string | null;
-  opportunity: Relation<OpportunityWorkspaceEntity> | null;
+  opportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
   opportunityId: string | null;
-  custom: Relation<CustomWorkspaceEntity>;
+  custom: EntityRelation<CustomWorkspaceEntity>;
 }

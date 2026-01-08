@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
@@ -13,6 +13,6 @@ export enum AutomatedTriggerType {
 export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   type: AutomatedTriggerType;
   settings: AutomatedTriggerSettings;
-  workflow: Relation<WorkflowWorkspaceEntity>;
+  workflow: EntityRelation<WorkflowWorkspaceEntity>;
   workflowId: string;
 }

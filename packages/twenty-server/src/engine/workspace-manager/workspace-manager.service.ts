@@ -11,6 +11,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -21,7 +22,6 @@ import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class WorkspaceManagerService {

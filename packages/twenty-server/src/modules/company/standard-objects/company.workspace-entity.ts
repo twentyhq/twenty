@@ -6,9 +6,9 @@ import {
   type LinksMetadata,
 } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
@@ -49,13 +49,13 @@ export class CompanyWorkspaceEntity {
   searchVector: string;
 
   // Relations
-  people: Relation<PersonWorkspaceEntity[]>;
-  accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
+  people: EntityRelation<PersonWorkspaceEntity[]>;
+  accountOwner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   accountOwnerId: string | null;
-  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
-  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
-  opportunities: Relation<OpportunityWorkspaceEntity[]>;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
+  noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
+  opportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
 }

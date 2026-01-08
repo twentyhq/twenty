@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -16,28 +16,28 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
-  forWorkspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  forWorkspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity>;
   forWorkspaceMemberId: string;
-  person: Relation<PersonWorkspaceEntity> | null;
+  person: EntityRelation<PersonWorkspaceEntity> | null;
   personId: string;
-  company: Relation<CompanyWorkspaceEntity> | null;
+  company: EntityRelation<CompanyWorkspaceEntity> | null;
   companyId: string;
-  favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
+  favoriteFolder: EntityRelation<FavoriteFolderWorkspaceEntity> | null;
   favoriteFolderId: string;
-  opportunity: Relation<OpportunityWorkspaceEntity> | null;
+  opportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
   opportunityId: string;
-  workflow: Relation<WorkflowWorkspaceEntity> | null;
+  workflow: EntityRelation<WorkflowWorkspaceEntity> | null;
   workflowId: string;
-  workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
+  workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity> | null;
   workflowVersionId: string;
-  workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
+  workflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
   workflowRunId: string;
-  task: Relation<TaskWorkspaceEntity> | null;
+  task: EntityRelation<TaskWorkspaceEntity> | null;
   taskId: string;
-  note: Relation<NoteWorkspaceEntity> | null;
+  note: EntityRelation<NoteWorkspaceEntity> | null;
   noteId: string;
-  dashboard: Relation<DashboardWorkspaceEntity> | null;
+  dashboard: EntityRelation<DashboardWorkspaceEntity> | null;
   dashboardId: string;
   viewId: string;
-  custom: Relation<CustomWorkspaceEntity>;
+  custom: EntityRelation<CustomWorkspaceEntity>;
 }

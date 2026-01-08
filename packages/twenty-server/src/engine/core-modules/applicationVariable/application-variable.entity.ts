@@ -1,18 +1,18 @@
 import { ObjectType } from '@nestjs/graphql';
 
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Unique,
+    UpdateDateColumn,
+} from 'typeorm';
 
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -55,7 +55,7 @@ export class ApplicationVariableEntity {
     },
   )
   @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity> | null;
+  application: EntityRelation<ApplicationEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -3,10 +3,10 @@ import { registerEnumType } from '@nestjs/graphql';
 import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -70,10 +70,10 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   state: WorkflowRunState;
   position: number;
   searchVector: string;
-  workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
+  workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
   workflowVersionId: string;
-  workflow: Relation<WorkflowWorkspaceEntity>;
+  workflow: EntityRelation<WorkflowWorkspaceEntity>;
   workflowId: string;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
 }

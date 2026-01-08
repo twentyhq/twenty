@@ -1,6 +1,6 @@
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -20,21 +20,21 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   fileCategory: string;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
-  author: Relation<WorkspaceMemberWorkspaceEntity> | null;
+  author: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   authorId: string | null;
-  task: Relation<TaskWorkspaceEntity> | null;
+  task: EntityRelation<TaskWorkspaceEntity> | null;
   taskId: string | null;
-  note: Relation<NoteWorkspaceEntity> | null;
+  note: EntityRelation<NoteWorkspaceEntity> | null;
   noteId: string | null;
-  person: Relation<PersonWorkspaceEntity> | null;
+  person: EntityRelation<PersonWorkspaceEntity> | null;
   personId: string | null;
-  company: Relation<CompanyWorkspaceEntity> | null;
+  company: EntityRelation<CompanyWorkspaceEntity> | null;
   companyId: string | null;
-  opportunity: Relation<OpportunityWorkspaceEntity> | null;
+  opportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
   opportunityId: string | null;
-  dashboard: Relation<DashboardWorkspaceEntity> | null;
+  dashboard: EntityRelation<DashboardWorkspaceEntity> | null;
   dashboardId: string | null;
-  workflow: Relation<WorkflowWorkspaceEntity> | null;
+  workflow: EntityRelation<WorkflowWorkspaceEntity> | null;
   workflowId: string | null;
-  custom: Relation<CustomWorkspaceEntity>;
+  custom: EntityRelation<CustomWorkspaceEntity>;
 }

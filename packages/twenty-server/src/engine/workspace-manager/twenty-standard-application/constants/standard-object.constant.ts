@@ -30,7 +30,7 @@ import {
   WORKFLOW_STANDARD_FIELD_IDS,
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+} from 'src/engine/workspace-manager/workspace-migration-v2/constant/standard-field-ids';
 
 export const STANDARD_OBJECTS = {
   attachment: {

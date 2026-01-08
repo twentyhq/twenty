@@ -1,4 +1,4 @@
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -9,8 +9,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageExternalId: string | null;
   messageThreadExternalId: string | null;
   direction: MessageDirection;
-  messageChannel: Relation<MessageChannelWorkspaceEntity> | null;
+  messageChannel: EntityRelation<MessageChannelWorkspaceEntity> | null;
   messageChannelId: string;
-  message: Relation<MessageWorkspaceEntity> | null;
+  message: EntityRelation<MessageWorkspaceEntity> | null;
   messageId: string;
 }

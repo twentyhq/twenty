@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -16,7 +16,7 @@ registerEnumType(MessageFolderPendingSyncAction, {
 
 export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
-  messageChannel: Relation<MessageChannelWorkspaceEntity>;
+  messageChannel: EntityRelation<MessageChannelWorkspaceEntity>;
   syncCursor: string | null;
   isSentFolder: boolean;
   isSynced: boolean;

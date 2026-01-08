@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/workspace-sync/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',

@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -65,9 +65,9 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncedAt: string | null;
   syncStageStartedAt: string | null;
   throttleFailureCount: number;
-  connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
+  connectedAccount: EntityRelation<ConnectedAccountWorkspaceEntity>;
   connectedAccountId: string;
-  calendarChannelEventAssociations: Relation<
+  calendarChannelEventAssociations: EntityRelation<
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;
 }

@@ -3,10 +3,10 @@ import { registerEnumType } from '@nestjs/graphql';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType, type FullNameMetadata } from 'twenty-shared/types';
 
-import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -74,17 +74,17 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   timeZone: string;
   dateFormat: string;
   timeFormat: string;
-  assignedTasks: Relation<TaskWorkspaceEntity[]>;
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
-  authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
-  connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
-  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
-  blocklist: Relation<BlocklistWorkspaceEntity[]>;
-  calendarEventParticipants: Relation<
+  assignedTasks: EntityRelation<TaskWorkspaceEntity[]>;
+  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  accountOwnerForCompanies: EntityRelation<CompanyWorkspaceEntity[]>;
+  authoredAttachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  connectedAccounts: EntityRelation<ConnectedAccountWorkspaceEntity[]>;
+  messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
+  blocklist: EntityRelation<BlocklistWorkspaceEntity[]>;
+  calendarEventParticipants: EntityRelation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;
 }
