@@ -48,7 +48,7 @@ describe('sortChartData', () => {
   });
 
   describe('FIELD_ASC sorting', () => {
-    it('should sort by field value ascending', () => {
+    it('should return data unchanged by field value ascending, since it is already sorted by the backend', () => {
       const result = sortChartData({
         data: testData,
         orderBy: GraphOrderBy.FIELD_ASC,
@@ -58,15 +58,15 @@ describe('sortChartData', () => {
       });
 
       expect(result.map((item) => item.label)).toEqual([
-        'Alpha',
         'Beta',
+        'Alpha',
         'Gamma',
       ]);
     });
   });
 
   describe('FIELD_DESC sorting', () => {
-    it('should sort by field value descending', () => {
+    it('should return data unchanged by field value descending, since it is already sorted by the backend', () => {
       const result = sortChartData({
         data: testData,
         orderBy: GraphOrderBy.FIELD_DESC,
@@ -76,8 +76,8 @@ describe('sortChartData', () => {
       });
 
       expect(result.map((item) => item.label)).toEqual([
-        'Gamma',
         'Beta',
+        'Gamma',
         'Alpha',
       ]);
     });
