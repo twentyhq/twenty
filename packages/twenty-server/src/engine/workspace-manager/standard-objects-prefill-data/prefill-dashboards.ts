@@ -17,7 +17,8 @@ export const prefillDashboards = async (
 ) => {
   const revenueOverviewPageLayout = findFlatEntityByUniversalIdentifier({
     flatEntityMaps: flatPageLayoutMaps,
-    universalIdentifier: STANDARD_PAGE_LAYOUTS.revenueOverview.universalIdentifier,
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUTS.revenueOverview.universalIdentifier,
   });
 
   if (!isDefined(revenueOverviewPageLayout)) {

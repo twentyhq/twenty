@@ -22,6 +22,7 @@ import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/u
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
+import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -59,6 +60,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly fixNanPositionValuesInNotesCommand: FixNanPositionValuesInNotesCommand,
     protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
     protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
+
+    // 1.16 Commands
+    protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
   ) {
     super(
       workspaceRepository,
@@ -92,11 +96,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.addWorkspaceForeignKeysMigrationCommand,
     ];
 
+    const commands_1160: VersionCommands = [
+      this.backfillOpportunityOwnerFieldCommand,
+    ];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
       '1.14.0': commands_1140,
       '1.15.0': commands_1150,
+      '1.16.0': commands_1160,
     };
   }
 
