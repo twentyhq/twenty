@@ -70,10 +70,13 @@ export class PageLayoutService {
     );
   }
 
-  async findByObjectMetadataId(
-    workspaceId: string,
-    objectMetadataId: string,
-  ): Promise<PageLayoutDTO[]> {
+  async findByObjectMetadataId({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<PageLayoutDTO[]> {
     const {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
@@ -99,10 +102,13 @@ export class PageLayoutService {
     );
   }
 
-  async findByIdOrThrow(
-    id: string,
-    workspaceId: string,
-  ): Promise<PageLayoutDTO> {
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<PageLayoutDTO> {
     const {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
@@ -147,10 +153,13 @@ export class PageLayoutService {
     );
   }
 
-  async create(
-    createPageLayoutInput: CreatePageLayoutInput,
-    workspaceId: string,
-  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  async create({
+    createPageLayoutInput,
+    workspaceId,
+  }: {
+    createPageLayoutInput: CreatePageLayoutInput;
+    workspaceId: string;
+  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
     if (!isNonEmptyString(createPageLayoutInput.name)) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(
@@ -210,11 +219,15 @@ export class PageLayoutService {
     );
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    updateData: UpdatePageLayoutInput,
-  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  async update({
+    id,
+    workspaceId,
+    updateData,
+  }: {
+    id: string;
+    workspaceId: string;
+    updateData: UpdatePageLayoutInput;
+  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -280,10 +293,13 @@ export class PageLayoutService {
     return fromFlatPageLayoutToPageLayoutDto(updatedLayout);
   }
 
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -334,22 +350,25 @@ export class PageLayoutService {
     });
 
     if (deletedLayout.type === PageLayoutType.DASHBOARD) {
-      await this.deleteAssociatedDashboards(
-        id,
+      await this.deleteAssociatedDashboards({
+        pageLayoutId: id,
         workspaceId,
-        isDefined(deletedLayout.deletedAt)
+        deletedAt: isDefined(deletedLayout.deletedAt)
           ? new Date(deletedLayout.deletedAt)
           : new Date(),
-      );
+      });
     }
 
     return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
   }
 
-  async destroy(
-    id: string,
-    workspaceId: string,
-  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  async destroy({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -387,16 +406,22 @@ export class PageLayoutService {
     }
 
     if (flatPageLayoutToDestroy.type === PageLayoutType.DASHBOARD) {
-      await this.destroyAssociatedDashboards(id, workspaceId);
+      await this.destroyAssociatedDashboards({
+        pageLayoutId: id,
+        workspaceId,
+      });
     }
 
     return fromFlatPageLayoutToPageLayoutDto(flatPageLayoutToDestroy);
   }
 
-  async restore(
-    id: string,
-    workspaceId: string,
-  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  async restore({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -447,16 +472,22 @@ export class PageLayoutService {
     });
 
     if (restoredLayout.type === PageLayoutType.DASHBOARD) {
-      await this.restoreAssociatedDashboards(id, workspaceId);
+      await this.restoreAssociatedDashboards({
+        pageLayoutId: id,
+        workspaceId,
+      });
     }
 
     return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
   }
 
-  private async destroyAssociatedDashboards(
-    pageLayoutId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async destroyAssociatedDashboards({
+    pageLayoutId,
+    workspaceId,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
@@ -488,11 +519,15 @@ export class PageLayoutService {
     }
   }
 
-  private async deleteAssociatedDashboards(
-    pageLayoutId: string,
-    workspaceId: string,
-    deletedAt: Date,
-  ): Promise<void> {
+  private async deleteAssociatedDashboards({
+    pageLayoutId,
+    workspaceId,
+    deletedAt,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+    deletedAt: Date;
+  }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
@@ -516,10 +551,13 @@ export class PageLayoutService {
     }
   }
 
-  private async restoreAssociatedDashboards(
-    pageLayoutId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  private async restoreAssociatedDashboards({
+    pageLayoutId,
+    workspaceId,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {

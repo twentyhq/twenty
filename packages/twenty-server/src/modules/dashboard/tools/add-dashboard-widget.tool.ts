@@ -52,10 +52,10 @@ See create_complete_dashboard for configuration examples.`,
     configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
-      const widget = await deps.pageLayoutWidgetService.create(
-        parameters as CreatePageLayoutWidgetInput,
-        context.workspaceId,
-      );
+      const widget = await deps.pageLayoutWidgetService.create({
+        createPageLayoutWidgetInput: parameters as CreatePageLayoutWidgetInput,
+        workspaceId: context.workspaceId,
+      });
 
       return {
         success: true,

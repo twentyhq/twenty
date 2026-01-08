@@ -43,10 +43,10 @@ export class PageLayoutResolver {
     objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
     if (objectMetadataId) {
-      return this.pageLayoutService.findByObjectMetadataId(
-        workspace.id,
+      return this.pageLayoutService.findByObjectMetadataId({
+        workspaceId: workspace.id,
         objectMetadataId,
-      );
+      });
     }
 
     return this.pageLayoutService.findByWorkspaceId(workspace.id);
@@ -58,7 +58,10 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutDTO)
@@ -67,7 +70,10 @@ export class PageLayoutResolver {
     @Args('input') input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.create(input, workspace.id);
+    return this.pageLayoutService.create({
+      createPageLayoutInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutDTO)
@@ -77,7 +83,11 @@ export class PageLayoutResolver {
     @Args('input') input: UpdatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.update(id, workspace.id, input);
+    return this.pageLayoutService.update({
+      id,
+      workspaceId: workspace.id,
+      updateData: input,
+    });
   }
 
   @Mutation(() => PageLayoutDTO)
@@ -86,10 +96,10 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    const deletedPageLayout = await this.pageLayoutService.delete(
+    const deletedPageLayout = await this.pageLayoutService.delete({
       id,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     return deletedPageLayout;
   }
@@ -100,10 +110,10 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedPageLayout = await this.pageLayoutService.destroy(
+    const deletedPageLayout = await this.pageLayoutService.destroy({
       id,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     return isDefined(deletedPageLayout);
   }
@@ -114,7 +124,10 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.restore(id, workspace.id);
+    return this.pageLayoutService.restore({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutDTO)

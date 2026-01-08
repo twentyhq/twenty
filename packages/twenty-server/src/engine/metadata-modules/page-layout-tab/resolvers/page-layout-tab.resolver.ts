@@ -36,10 +36,10 @@ export class PageLayoutTabResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('pageLayoutId', { type: () => String }) pageLayoutId: string,
   ): Promise<PageLayoutTabDTO[]> {
-    return this.pageLayoutTabService.findByPageLayoutId(
-      workspace.id,
+    return this.pageLayoutTabService.findByPageLayoutId({
+      workspaceId: workspace.id,
       pageLayoutId,
-    );
+    });
   }
 
   @Query(() => PageLayoutTabDTO)
@@ -48,7 +48,10 @@ export class PageLayoutTabResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutTabService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutTabDTO)
@@ -57,7 +60,10 @@ export class PageLayoutTabResolver {
     @Args('input') input: CreatePageLayoutTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.create(input, workspace.id);
+    return this.pageLayoutTabService.create({
+      createPageLayoutTabInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutTabDTO)
@@ -67,7 +73,11 @@ export class PageLayoutTabResolver {
     @Args('input') input: UpdatePageLayoutTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.update(id, workspace.id, input);
+    return this.pageLayoutTabService.update({
+      id,
+      workspaceId: workspace.id,
+      updateData: input,
+    });
   }
 
   @Mutation(() => Boolean)
@@ -76,10 +86,10 @@ export class PageLayoutTabResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedPageLayoutTab = await this.pageLayoutTabService.delete(
+    const deletedPageLayoutTab = await this.pageLayoutTabService.delete({
       id,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     return isDefined(deletedPageLayoutTab);
   }
@@ -90,7 +100,10 @@ export class PageLayoutTabResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.pageLayoutTabService.destroy(id, workspace.id);
+    return this.pageLayoutTabService.destroy({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutTabDTO)
@@ -99,6 +112,9 @@ export class PageLayoutTabResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.restore(id, workspace.id);
+    return this.pageLayoutTabService.restore({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 }

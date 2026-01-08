@@ -26,22 +26,22 @@ export class DashboardToPageLayoutSyncService {
   }: {
     workspaceId: string;
   }): Promise<string> {
-    const pageLayout = await this.pageLayoutService.create(
-      {
+    const pageLayout = await this.pageLayoutService.create({
+      createPageLayoutInput: {
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
         name: 'Dashboard Layout',
       },
       workspaceId,
-    );
+    });
 
-    await this.pageLayoutTabService.create(
-      {
+    await this.pageLayoutTabService.create({
+      createPageLayoutTabInput: {
         title: 'Tab 1',
         pageLayoutId: pageLayout.id,
       },
       workspaceId,
-    );
+    });
 
     return pageLayout.id;
   }
@@ -84,22 +84,22 @@ export class DashboardToPageLayoutSyncService {
 
           switch (operation) {
             case CrudOperationType.DELETE:
-              await this.pageLayoutService.delete(
-                dashboard.pageLayoutId,
+              await this.pageLayoutService.delete({
+                id: dashboard.pageLayoutId,
                 workspaceId,
-              );
+              });
               break;
             case CrudOperationType.RESTORE:
-              await this.pageLayoutService.restore(
-                dashboard.pageLayoutId,
+              await this.pageLayoutService.restore({
+                id: dashboard.pageLayoutId,
                 workspaceId,
-              );
+              });
               break;
             case CrudOperationType.DESTROY:
-              await this.pageLayoutService.destroy(
-                dashboard.pageLayoutId,
+              await this.pageLayoutService.destroy({
+                id: dashboard.pageLayoutId,
                 workspaceId,
-              );
+              });
               break;
             default:
               assertUnreachable(operation);

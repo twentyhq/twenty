@@ -45,10 +45,10 @@ export class PageLayoutWidgetResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('pageLayoutTabId', { type: () => String }) pageLayoutTabId: string,
   ): Promise<PageLayoutWidgetDTO[]> {
-    return this.pageLayoutWidgetService.findByPageLayoutTabId(
-      workspace.id,
+    return this.pageLayoutWidgetService.findByPageLayoutTabId({
+      workspaceId: workspace.id,
       pageLayoutTabId,
-    );
+    });
   }
 
   @Query(() => PageLayoutWidgetDTO)
@@ -57,7 +57,10 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutWidgetService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -66,7 +69,10 @@ export class PageLayoutWidgetResolver {
     @Args('input') input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    return this.pageLayoutWidgetService.create({
+      createPageLayoutWidgetInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -76,7 +82,11 @@ export class PageLayoutWidgetResolver {
     @Args('input') input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    return this.pageLayoutWidgetService.update({
+      id,
+      workspaceId: workspace.id,
+      updateData: input,
+    });
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -85,7 +95,10 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+    return this.pageLayoutWidgetService.delete({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => Boolean)
@@ -94,7 +107,10 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.pageLayoutWidgetService.destroy(id, workspace.id);
+    return this.pageLayoutWidgetService.destroy({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -103,7 +119,10 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.restore(id, workspace.id);
+    return this.pageLayoutWidgetService.restore({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => WidgetConfiguration, { nullable: true })

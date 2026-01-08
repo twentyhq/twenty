@@ -87,10 +87,13 @@ export class PageLayoutWidgetService {
     }
   }
 
-  async findByPageLayoutTabId(
-    workspaceId: string,
-    pageLayoutTabId: string,
-  ): Promise<PageLayoutWidgetDTO[]> {
+  async findByPageLayoutTabId({
+    workspaceId,
+    pageLayoutTabId,
+  }: {
+    workspaceId: string;
+    pageLayoutTabId: string;
+  }): Promise<PageLayoutWidgetDTO[]> {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -109,10 +112,13 @@ export class PageLayoutWidgetService {
       .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
   }
 
-  async findByIdOrThrow(
-    id: string,
-    workspaceId: string,
-  ): Promise<PageLayoutWidgetDTO> {
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<PageLayoutWidgetDTO> {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -131,10 +137,13 @@ export class PageLayoutWidgetService {
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(flatWidget);
   }
 
-  async create(
-    createPageLayoutWidgetInput: CreatePageLayoutWidgetInput,
-    workspaceId: string,
-  ): Promise<PageLayoutWidgetDTO> {
+  async create({
+    input,
+    workspaceId,
+  }: {
+    input: CreatePageLayoutWidgetInput;
+    workspaceId: string;
+  }): Promise<PageLayoutWidgetDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -142,7 +151,7 @@ export class PageLayoutWidgetService {
 
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
-        createPageLayoutWidgetInput,
+        createPageLayoutWidgetInput: input,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
@@ -174,11 +183,15 @@ export class PageLayoutWidgetService {
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(createdWidget);
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    updateData: UpdatePageLayoutWidgetInput,
-  ): Promise<PageLayoutWidgetDTO> {
+  async update({
+    id,
+    workspaceId,
+    updateData,
+  }: {
+    id: string;
+    workspaceId: string;
+    updateData: UpdatePageLayoutWidgetInput;
+  }): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -252,7 +265,13 @@ export class PageLayoutWidgetService {
     return existingWidget;
   }
 
-  async delete(id: string, workspaceId: string): Promise<PageLayoutWidgetDTO> {
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -289,7 +308,13 @@ export class PageLayoutWidgetService {
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(deletedWidget);
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
+  async destroy({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<boolean> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -319,7 +344,13 @@ export class PageLayoutWidgetService {
     return true;
   }
 
-  async restore(id: string, workspaceId: string): Promise<PageLayoutWidgetDTO> {
+  async restore({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
