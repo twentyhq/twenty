@@ -101,10 +101,4 @@ export const addWorkspaceForeignKeysQueries = async (
     `ALTER TABLE "core"."workspaceMigration" ADD CONSTRAINT "FK_bebfcf8dcb299fd39ad04ed4c7f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
   );
 
-  await queryRunner.query(
-    `ALTER TABLE "core"."remoteServer" DROP CONSTRAINT IF EXISTS "FK_d1293835c5a0bb89fc0ed45713f"`,
-  );
-  await queryRunner.query(
-    `ALTER TABLE "core"."remoteServer" ADD CONSTRAINT "FK_d1293835c5a0bb89fc0ed45713f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-  );
 };
