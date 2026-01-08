@@ -36,6 +36,7 @@ export class FlatFieldMetadataValidatorService {
     },
     workspaceId,
     buildOptions,
+    additionalCacheDataMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'update'> {
@@ -184,6 +185,7 @@ export class FlatFieldMetadataValidatorService {
           buildOptions,
           remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
           workspaceId,
+          additionalCacheDataMaps,
         },
       );
 
@@ -285,6 +287,7 @@ export class FlatFieldMetadataValidatorService {
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
+    additionalCacheDataMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
@@ -372,6 +375,7 @@ export class FlatFieldMetadataValidatorService {
           buildOptions,
           workspaceId,
           remainingFlatEntityMapsToValidate,
+          additionalCacheDataMaps,
         },
       ),
     );

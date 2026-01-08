@@ -1,43 +1,43 @@
 ---
 title: "Миграция с других CRM-систем "
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Пошаговое руководство по миграции ваших данных из любой CRM в Twenty.
 ---
 
 ## Обзор
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Это руководство проведет вас через процесс миграции ваших данных из любой CRM в Twenty. Процесс включает аудит ваших данных, подготовку рабочего пространства Twenty, экспорт из вашей текущей системы и импорт в Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Представления, рабочие процессы и права доступа необходимо воссоздать вручную после миграции. Запланируйте время на эту настройку.</Note>
 
-## Step 1: Audit Your Current Data
+## Шаг 1: Проведите аудит текущих данных
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Миграция — это возможность начать с чистого листа. Не переносите лишние данные.
 
-**What to keep:**
+**Что сохранить:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Активные контакты и компании
+* Открытые возможности и сделки
+* Важные заметки и активности
+* Пользовательские поля, которые вы действительно используете
 
-**What to leave behind:**
+**Что не переносить:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Устаревшие контакты (нет активности более 2 лет)
+* Дубликаты записей
+* Тестовые данные
+* Неиспользуемые пользовательские поля
 
-## Step 2: Map Your Data Model
+## Шаг 2: Сопоставьте модель данных
 
-Create a mapping document between your current CRM and Twenty:
+Создайте документ сопоставления между вашей текущей CRM и Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| Ваша CRM              | Twenty               |
+| --------------------- | -------------------- |
+| Аккаунт / Организация | **Компания**         |
+| Контакт / Персона     | **Люди**             |
+| Сделка / Возможность  | **Opportunity**      |
+| Activity              | **Task** or **Note** |
+| Custom Object         | **Custom Object**    |
 
 **For each field, document:**
 

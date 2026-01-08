@@ -1,126 +1,126 @@
 ---
-title: Permissions FAQ
-description: Frequently asked questions about roles and permissions.
+title: FAQ zu Berechtigungen
+description: Häufig gestellte Fragen zu Rollen und Berechtigungen.
 ---
 
 ## Rollen
 
 <AccordionGroup>
-  <Accordion title="What roles come with Twenty by default?">
-    Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+  <Accordion title="Welche Rollen sind in Twenty standardmäßig enthalten?">
+    Twenty enthält standardmäßig die Rollen **Admin** und **Member**. Sie können je nach Bedarf Ihres Teams zusätzliche benutzerdefinierte Rollen erstellen (z. B. Vertriebsmitarbeiter, Manager, Nur-Lese-Benutzer).
   </Accordion>
 
-  <Accordion title="Can I delete the Admin role?">
-    No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  <Accordion title="Kann ich die Admin-Rolle löschen?">
+    Nein, die Admin-Rolle kann nicht gelöscht werden. Es muss immer mindestens ein Mitglied der Admin-Rolle zugewiesen sein.
   </Accordion>
 
-  <Accordion title="What happens when I delete a role?">
-    Any workspace member assigned to that role will be automatically reassigned to the default role.
+  <Accordion title="Was passiert, wenn ich eine Rolle lösche?">
+    Jedes Mitglied des Arbeitsbereichs, dem diese Rolle zugewiesen ist, wird automatisch der Standardrolle zugewiesen.
   </Accordion>
 
-  <Accordion title="How do I set a default role for new members?">
-    Go to **Settings → Roles**, find the **Default Role** option, and select which role new members should automatically receive when they join.
+  <Accordion title="Wie lege ich eine Standardrolle für neue Mitglieder fest?">
+    Gehen Sie zu **Einstellungen → Rollen**, suchen Sie die Option **Standardrolle** und wählen Sie aus, welche Rolle neue Mitglieder beim Beitritt automatisch erhalten sollen.
   </Accordion>
 
-  <Accordion title="Can I assign multiple roles to one user?">
-    No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+  <Accordion title="Kann ich einem Benutzer mehrere Rollen zuweisen?">
+    Nein, jeder Benutzer kann immer nur eine Rolle haben. Erstellen Sie eine benutzerdefinierte Rolle, wenn Sie eine Kombination von Berechtigungen benötigen.
   </Accordion>
 </AccordionGroup>
 
 ## Berechtigungen
 
 <AccordionGroup>
-  <Accordion title="What's the difference between object and field permissions?">
-    * **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
-    * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+  <Accordion title="Was ist der Unterschied zwischen Objekt- und Feldberechtigungen?">
+    * **Objektberechtigungen**: Steuern den Zugriff auf ganze Datensätze (z. B. kann Personen-Datensätze sehen/bearbeiten/löschen)
+    * **Feldberechtigungen**: Steuern den Zugriff auf bestimmte Felder innerhalb eines Objekts (z. B. kann das Feld Gehalt sehen, aber nicht bearbeiten)
 
-    Field permissions allow more granular control over sensitive data.
+    Feldberechtigungen ermöglichen eine granularere Kontrolle über sensible Daten.
   </Accordion>
 
-  <Accordion title="How do permission overrides work?">
-    Permissions cascade from global to specific:
+  <Accordion title="Wie funktionieren Berechtigungsüberschreibungen?">
+    Berechtigungen kaskadieren von global zu spezifisch:
 
-    1. **All Objects** sets the baseline for all objects
-    2. **Object-Level Permissions** can override the global setting for specific objects
-    3. **Field-Level Permissions** can override the object setting for specific fields
+    1. **Alle Objekte** legt die Basis für alle Objekte fest
+    2. **Berechtigungen auf Objektebene** können die globale Einstellung für bestimmte Objekte überschreiben
+    3. **Berechtigungen auf Feldebene** können die Objekteinstellung für bestimmte Felder überschreiben
 
-    More specific settings always take precedence.
+    Spezifischere Einstellungen haben immer Vorrang.
   </Accordion>
 
-  <Accordion title="What do the different permission levels mean?">
-    For objects:
+  <Accordion title="Was bedeuten die verschiedenen Berechtigungsstufen?">
+    Für Objekte:
 
-    * **See Records**: View records in lists and detail pages
-    * **Edit Records**: Modify existing records
-    * **Delete Records**: Soft-delete records (can be restored)
-    * **Destroy Records**: Permanently delete records
+    * **Datensätze anzeigen**: Datensätze in Listen und auf Detailseiten ansehen
+    * **Datensätze bearbeiten**: Vorhandene Datensätze ändern
+    * **Datensätze löschen**: Datensätze vorläufig löschen (können wiederhergestellt werden)
+    * **Datensätze vernichten**: Datensätze dauerhaft löschen
 
-    For fields:
+    Für Felder:
 
-    * **See Field**: View the field value
-    * **Edit Field**: Modify the field value
-    * **No Access**: Field is completely hidden
+    * **Feld anzeigen**: Feldwert anzeigen
+    * **Feld bearbeiten**: Feldwert ändern
+    * **Kein Zugriff**: Feld ist vollständig ausgeblendet
   </Accordion>
 
-  <Accordion title="Can I restrict access to specific records (row-level permissions)?">
-    Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  <Accordion title="Kann ich den Zugriff auf bestimmte Datensätze einschränken (Berechtigungen auf Zeilenebene)?">
+    Berechtigungen auf Zeilenebene werden bis Q1 2026 im Tarif **Organization** verfügbar sein. Damit können Sie den Zugriff auf bestimmte Datensätze anhand von Kriterien einschränken (z. B. nur die eigenen Verkaufschancen sehen).
   </Accordion>
 
-  <Accordion title="How do I make a field read-only for certain users?">
+  <Accordion title="Wie mache ich ein Feld für bestimmte Benutzer schreibgeschützt?">
     1. Gehen Sie zu **Einstellungen → Rollen**
-    2. Select the role
-    3. Navigate to the object containing the field
-    4. Set the field permission to **See Field** (without Edit Field)
+    2. Wählen Sie die Rolle aus
+    3. Navigieren Sie zu dem Objekt, das das Feld enthält
+    4. Setzen Sie die Feldberechtigung auf **Feld anzeigen** (ohne Feld bearbeiten)
   </Accordion>
 </AccordionGroup>
 
-## Settings & Actions
+## Einstellungen & Aktionen
 
 <AccordionGroup>
-  <Accordion title="What settings permissions are available?">
-    You can control access to:
+  <Accordion title="Welche Berechtigungen für Einstellungen sind verfügbar?">
+    Sie können den Zugriff auf Folgendes steuern:
 
-    * API key generation
-    * Workspace preferences
-    * Role assignment
-    * Data model configuration
-    * Security settings
-    * Workflow management
+    * Erstellung von API-Schlüsseln
+    * Arbeitsbereichseinstellungen
+    * Rollenzuweisung
+    * Konfiguration des Datenmodells
+    * Sicherheitseinstellungen
+    * Workflow-Management
 
-    Use **Settings All Access** to grant full access, or enable specific permissions.
+    Verwenden Sie **Settings All Access**, um vollen Zugriff zu gewähren, oder aktivieren Sie bestimmte Berechtigungen.
   </Accordion>
 
-  <Accordion title="What action permissions are available?">
-    You can control:
+  <Accordion title="Welche Berechtigungen für Aktionen sind verfügbar?">
+    Sie können steuern:
 
-    * **Send Email**: Ability to send emails from Twenty
-    * **Import CSV**: Ability to import data via CSV
-    * **Export CSV**: Ability to export data to CSV
+    * **E-Mail senden**: Möglichkeit, E-Mails aus Twenty zu senden
+    * **CSV importieren**: Möglichkeit, Daten per CSV zu importieren
+    * **CSV exportieren**: Möglichkeit, Daten als CSV zu exportieren
 
-    Use **Application All Access** to grant all actions, or enable specific ones.
+    Verwenden Sie **Application All Access**, um alle Aktionen zu gewähren, oder aktivieren Sie einzelne.
   </Accordion>
 </AccordionGroup>
 
 ## SSO
 
 <AccordionGroup>
-  <Accordion title="Is SSO available on all plans?">
-    No, SSO is a Premium feature available on the **Organization** plan only.
+  <Accordion title="Ist SSO in allen Tarifen verfügbar?">
+    Nein, SSO ist eine Premium-Funktion und nur im Tarif **Organization** verfügbar.
   </Accordion>
 
-  <Accordion title="Which identity providers are supported?">
-    Twenty supports:
+  <Accordion title="Welche Identitätsanbieter werden unterstützt?">
+    Twenty unterstützt:
 
-    * **SAML 2.0** (works with most enterprise identity providers)
+    * **SAML 2.0** (funktioniert mit den meisten Identitätsanbietern für Unternehmen)
     * **Google Workspace**
-    * **Microsoft Entra ID** (formerly Azure AD)
+    * **Microsoft Entra ID** (früher Azure AD)
   </Accordion>
 
-  <Accordion title="What is Just-in-Time (JIT) provisioning?">
-    With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  <Accordion title="Was ist Just-in-Time-(JIT)-Bereitstellung?">
+    Mit JIT-Bereitstellung werden Benutzerkonten in Twenty automatisch erstellt, wenn sich jemand zum ersten Mal über SSO anmeldet. Ihnen wird automatisch die Standardrolle zugewiesen.
   </Accordion>
 
-  <Accordion title="Can I require SSO for all users?">
-    Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+  <Accordion title="Kann ich SSO für alle Benutzer erzwingen?">
+    Ja, sobald SSO konfiguriert ist, können Sie die Anmeldung per Passwort für SSO-Benutzer deaktivieren, um die Authentifizierung über Ihren Identitätsanbieter durchzusetzen.
   </Accordion>
 </AccordionGroup>
