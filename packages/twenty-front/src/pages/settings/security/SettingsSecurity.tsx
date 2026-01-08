@@ -49,7 +49,6 @@ export const SettingsSecurity = () => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const saveWorkspace = useDebouncedCallback(async (value: number) => {

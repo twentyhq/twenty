@@ -4806,7 +4806,6 @@ export type UpdateWorkflowVersionStepInput = {
 };
 
 export type UpdateWorkspaceInput = {
-  allowExternalRequests?: InputMaybe<Scalars['Boolean']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
