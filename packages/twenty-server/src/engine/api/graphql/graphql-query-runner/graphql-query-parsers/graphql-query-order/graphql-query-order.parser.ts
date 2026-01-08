@@ -1,6 +1,7 @@
 import { isObject } from 'class-validator';
 import {
   type AggregateOrderByWithGroupByField,
+  compositeTypeDefinitions,
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
   type ObjectRecordOrderByForCompositeField,
@@ -15,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -105,9 +107,6 @@ export class GraphqlQueryOrderFieldParser {
 
             Object.assign(acc, compositeOrder);
           } else {
-            const orderByCasting =
-              this.getOptionalOrderByCasting(fieldMetadata);
-
             const columnName = isMorphOrRelationFlatFieldMetadata(fieldMetadata)
               ? formatColumnNameForRelationField(
                   fieldMetadata.name,
@@ -115,11 +114,16 @@ export class GraphqlQueryOrderFieldParser {
                 )
               : fieldName;
 
-            acc[`"${objectNameSingular}"."${columnName}"${orderByCasting}`] =
-              convertOrderByToFindOptionsOrder(
-                orderByDirection as OrderByDirection,
-                isForwardPagination,
-              );
+            const columnExpr = this.buildOrderByColumnExpression(
+              objectNameSingular,
+              columnName,
+              fieldMetadata,
+            );
+
+            acc[columnExpr] = convertOrderByToFindOptionsOrder(
+              orderByDirection as OrderByDirection,
+              isForwardPagination,
+            );
           }
         });
 
@@ -261,6 +265,33 @@ export class GraphqlQueryOrderFieldParser {
     }
 
     return '';
+  }
+
+  // Determines if a field type should use case-insensitive sorting
+  private shouldUseCaseInsensitiveOrder(
+    fieldMetadata: Pick<FlatFieldMetadata, 'type'>,
+  ): boolean {
+    return (
+      fieldMetadata.type === FieldMetadataType.TEXT ||
+      fieldMetadata.type === FieldMetadataType.SELECT ||
+      fieldMetadata.type === FieldMetadataType.MULTI_SELECT
+    );
+  }
+
+  // Builds the ORDER BY column expression, wrapping with LOWER() for text fields
+  buildOrderByColumnExpression(
+    tableName: string,
+    columnName: string,
+    fieldMetadata: Pick<FlatFieldMetadata, 'type'>,
+  ): string {
+    const casting = this.getOptionalOrderByCasting(fieldMetadata);
+    const columnExpr = `"${tableName}"."${columnName}"${casting}`;
+
+    if (this.shouldUseCaseInsensitiveOrder(fieldMetadata)) {
+      return `LOWER(${columnExpr})`;
+    }
+
+    return columnExpr;
   }
 
   isAggregateOrderByArg = (
@@ -451,16 +482,20 @@ export class GraphqlQueryOrderFieldParser {
       );
     }
 
-    const orderByCasting = this.getOptionalOrderByCasting(fieldMetadata);
     const orderByDirection = Object.values(orderByArg)[0];
 
     if (!isDefined(orderByDirection)) {
       return null;
     }
 
+    const columnExpr = this.buildOrderByColumnExpression(
+      flatObjectMetadata.nameSingular,
+      fieldMetadata.name,
+      fieldMetadata,
+    );
+
     return {
-      [`"${flatObjectMetadata.nameSingular}"."${fieldMetadata.name}"${orderByCasting}`]:
-        convertOrderByToFindOptionsOrder(orderByDirection),
+      [columnExpr]: convertOrderByToFindOptionsOrder(orderByDirection),
     };
   };
 
@@ -632,11 +667,20 @@ export class GraphqlQueryOrderFieldParser {
         [nestedSubFieldName],
       )[0];
 
-      const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+      // Composite subfields of type TEXT should use case-insensitive sorting
+      const compositeType = compositeTypeDefinitions.get(
+        nestedFieldMetadata.type as CompositeFieldMetadataType,
+      );
+      const subFieldMetadata = compositeType?.properties.find(
+        (property) => property.name === nestedSubFieldName,
+      );
+      const useLower = subFieldMetadata?.type === FieldMetadataType.TEXT;
+
+      const columnExpr = `"${joinAlias}"."${nestedColumnName}"`;
+      const orderByExpr = useLower ? `LOWER(${columnExpr})` : columnExpr;
 
       return {
-        [columnNameWithQuotes]:
-          convertOrderByToFindOptionsOrder(orderByDirection),
+        [orderByExpr]: convertOrderByToFindOptionsOrder(orderByDirection),
       };
     }
 
@@ -707,11 +751,12 @@ export class GraphqlQueryOrderFieldParser {
           : undefined,
       )[0];
 
-      const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+      const columnExpr = `"${joinAlias}"."${nestedColumnName}"`;
+      const useLower = this.shouldUseCaseInsensitiveOrder(nestedFieldMetadata);
+      const orderByExpr = useLower ? `LOWER(${columnExpr})` : columnExpr;
 
       return {
-        [columnNameWithQuotes]:
-          convertOrderByToFindOptionsOrder(orderByDirection),
+        [orderByExpr]: convertOrderByToFindOptionsOrder(orderByDirection),
       };
     }
 

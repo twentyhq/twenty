@@ -20,7 +20,15 @@ export const sortNullsLast = (
 export const sortAsc = (
   fieldValueA: string | number,
   fieldValueB: string | number,
-) => (fieldValueA === fieldValueB ? 0 : fieldValueA < fieldValueB ? -1 : 1);
+) => {
+  // Case-insensitive comparison for strings
+  const valueA =
+    typeof fieldValueA === 'string' ? fieldValueA.toLowerCase() : fieldValueA;
+  const valueB =
+    typeof fieldValueB === 'string' ? fieldValueB.toLowerCase() : fieldValueB;
+
+  return valueA === valueB ? 0 : valueA < valueB ? -1 : 1;
+};
 
 export const sortDesc = (
   fieldValueA: string | number,
