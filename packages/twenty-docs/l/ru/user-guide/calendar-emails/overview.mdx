@@ -1,44 +1,43 @@
 ---
-title: Calendar & Emails
-description: Connect your email and calendar accounts to Twenty.
+title: Календарь и электронная почта
+description: Подключите свои учетные записи электронной почты и календаря к Twenty.
 image: /images/user-guide/emails/emails_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+  <img src="/images/user-guide/emails/emails_header.png" alt="Календарь и электронная почта" />
 </Frame>
 
-## Connection Options
+## Параметры подключения
 
-### Google Account (Gmail & Google Calendar)
+### Учетная запись Google (Gmail и Календарь Google)
 
 1. Перейдите в **Настройки → Аккаунты**
 2. Нажмите **Добавить аккаунт**
-3. Select **Continue with Google**
+3. Выберите **Продолжить с Google**
 4. Авторизуйте Twenty на доступ к вашим Gmail и Google Календарю
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+5. Настройте параметры синхронизации электронной почты (видимость, автоматическое создание) → нажмите **Далее**
+6. Настройте параметры синхронизации календаря (видимость, автоматическое создание) → нажмите **Добавить учетную запись**
 7. Ваши электронные письма и события календаря начнут автоматически синхронизироваться
 
-### Microsoft Account (Outlook & Microsoft Calendar)
+### Учетная запись Microsoft (Outlook и Календарь Microsoft)
 
 1. Перейдите в **Настройки → Аккаунты**
 2. Нажмите **Добавить аккаунт**
 3. Выберите **Продолжить с Microsoft**
 4. Авторизуйте Twenty на доступ к вашим Outlook и Microsoft Календарю
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+5. Настройте параметры синхронизации электронной почты (видимость, автоматическое создание) → нажмите **Далее**
+6. Настройте параметры синхронизации календаря (видимость, автоматическое создание) → нажмите **Добавить учетную запись**
 7. Ваши электронные письма и события календаря начнут автоматически синхронизироваться
 
-### SMTP/CalDAV Setup (Other Providers)
+### Настройка SMTP/CalDAV (другие провайдеры)
 
 Для других провайдеров электронной почты и календаря:
 
-1. Перейдите в **Настройки → Выпуски → Лаборатория**, чтобы включить функцию
-2. Вернитесь в **Настройки → Аккаунты**
-3. Настройте параметры SMTP для электронной почты
-4. Настройте параметры CalDAV для календаря
-5. Проверьте соединение
+1. Перейдите в **Настройки → Аккаунты**
+2. Настройте параметры SMTP для электронной почты
+3. Настройте параметры CalDAV для календаря
+4. Проверьте соединение
 
 ### Несколько почтовых ящиков
 
@@ -67,15 +66,14 @@ image: /images/user-guide/emails/emails_header.png
 * **Только для отправленных сообщений**: Создайте контакты только для отправленных вами писем
 * **Примечание**: Внутренние электронные письма (тот же домен) никогда не синхронизируются для сохранения конфиденциальности
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>Когда эта опция включена, контакты автоматически связываются с записями компании на основе их домена электронной почты. Если компании еще не существует, Twenty создаст ее для вас.</Note>
 
-### Управляйте, какие электронные письма будут синхронизированы с выбором папок сообщений (Функция лаборатории)
+### Control which emails get synced with Message Folder Selection
 
 Управляйте, какие папки электронной почты синхронизируются с Twenty:
 
-1. Перейдите в **Настройки → Выпуски → Лаборатория** и включите **Папку сообщений**
-2. Вернитесь в **Настройки → Аккаунты** и выберите ваш подключенный аккаунт электронной почты
-3. Выберите папки для синхронизации:
+1. Go to **Settings → Accounts** and select your connected email account
+2. Выберите папки для синхронизации:
    * **Входящие**: Основные входящие письма
    * **Отправленные**: Исходящие письма, которые вы отправили
    * **Пользовательские папки**: Любые определенные папки, которые вы хотите включить
@@ -105,7 +103,7 @@ image: /images/user-guide/emails/emails_header.png
 * **Да**: Автоматически создавайте контакты для участников встречи, не находящихся в вашем CRM
 * **Нет**: Связывайте встречи только с существующими контактами
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>Когда эта опция включена, контакты автоматически связываются с записями компании на основе их домена электронной почты. Если компании еще не существует, Twenty создаст ее для вас.</Note>
 
 ### Контролируйте, какие события будут синхронизированы
 
@@ -123,10 +121,10 @@ image: /images/user-guide/emails/emails_header.png
 **Обновления каждые 5 минут**: Данные по электронной почте и календарю синхронизируются автоматически каждые 5 минут после начального импорта.
 
 <Note>
-  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting), so a mailbox with 10,000 emails takes about 25 minutes. Не беспокойтесь, если вы видите, что контакты из событий календаря появляются раньше ваших контактов из электронной почты; это нормальное поведение.
 </Note>
 
 ## Следующие шаги
 
-* [Mailbox capabilities](/l/ru/user-guide/calendar-emails/capabilities/mailbox)
-* [Troubleshoot missing emails](/l/ru/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+* [Возможности почтового ящика](/l/ru/user-guide/calendar-emails/capabilities/mailbox)
+* [Устранение неполадок с отсутствующими письмами](/l/ru/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

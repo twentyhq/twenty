@@ -2,7 +2,7 @@ import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/inte
 import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
 export const failingFilterInputByFieldMetadataType: {
   [K in Exclude<

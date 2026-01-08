@@ -66,6 +66,17 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     omitNullValues: {
       control: 'boolean',
     },
+    colorMode: {
+      control: 'select',
+      options: [
+        'automaticPalette',
+        'explicitSingleColor',
+        'selectFieldOptionColors',
+      ],
+    },
+  },
+  args: {
+    colorMode: 'automaticPalette',
   },
 };
 
@@ -95,6 +106,7 @@ const renderChart = (args: ChartArgs) => (
       prefix={args.prefix}
       suffix={args.suffix}
       decimals={args.decimals}
+      colorMode={args.colorMode}
     />
   </Container>
 );

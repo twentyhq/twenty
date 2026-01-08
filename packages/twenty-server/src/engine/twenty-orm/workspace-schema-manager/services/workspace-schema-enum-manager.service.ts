@@ -6,8 +6,8 @@ import {
 } from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
-import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // TODO: upstream does not guarantee transactionality, implement IF EXISTS or equivalent for idempotency
 export class WorkspaceSchemaEnumManagerService {
@@ -391,17 +391,17 @@ export class WorkspaceSchemaEnumManagerService {
     mappedValuesCondition: string;
   }) {
     return `
-          UPDATE "${safeSchemaName}"."${safeTableName}" 
+          UPDATE "${safeSchemaName}"."${safeTableName}"
           SET "${safeNewColumnName}" = (
             SELECT array_agg(
-              CASE unnest_value::text 
+              CASE unnest_value::text
                 ${caseStatements}
                 ELSE unnest_value::text::"${safeSchemaName}"."${newEnumTypeName}"
               END
             )
             FROM unnest("${safeOldColumnName}") AS unnest_value
           )
-          WHERE "${safeOldColumnName}" IS NOT NULL 
+          WHERE "${safeOldColumnName}" IS NOT NULL
             AND "${safeOldColumnName}" && ARRAY[${mappedValuesCondition}]::"${safeSchemaName}"."${oldEnumTypeName}"[]`;
   }
 
@@ -421,12 +421,12 @@ export class WorkspaceSchemaEnumManagerService {
     safeNewColumnName: string;
   }) {
     return `
-          UPDATE "${safeSchemaName}"."${safeTableName}" 
-          SET "${safeNewColumnName}" = 
-            CASE "${safeOldColumnName}"::text 
+          UPDATE "${safeSchemaName}"."${safeTableName}"
+          SET "${safeNewColumnName}" =
+            CASE "${safeOldColumnName}"::text
               ${caseStatements}
             END
-          WHERE "${safeOldColumnName}" IS NOT NULL 
+          WHERE "${safeOldColumnName}" IS NOT NULL
             AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
   }
 }

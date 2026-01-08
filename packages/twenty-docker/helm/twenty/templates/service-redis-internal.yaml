@@ -1,0 +1,21 @@
+{{- if .Values.redisInternal.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "twenty.fullname" . }}-redis
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: redis
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/component: redis
+  ports:
+    - port: {{ .Values.redisInternal.service.port }}
+      targetPort: {{ .Values.redisInternal.service.port }}
+      protocol: TCP
+      name: redis
+{{- end }}

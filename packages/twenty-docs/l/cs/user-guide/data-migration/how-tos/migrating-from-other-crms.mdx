@@ -1,133 +1,133 @@
 ---
 title: Migrace z jiných CRM
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Podrobný průvodce krok za krokem pro migraci vašich dat z libovolného CRM do Twenty.
 ---
 
 ## Přehled
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Tento průvodce vás provede migrací vašich dat z libovolného CRM do Twenty. Proces zahrnuje audit vašich dat, přípravu vašeho pracovního prostoru Twenty, export z vašeho současného systému a import do Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Zobrazení, pracovní postupy a oprávnění je po migraci nutné vytvořit ručně. Naplánujte si čas na tuto konfigurační práci.</Note>
 
-## Step 1: Audit Your Current Data
+## Krok 1: Proveďte audit svých aktuálních dat
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Migrace je příležitostí k novému začátku. Nepřenášejte balast.
 
-**What to keep:**
+**Co ponechat:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Aktivní kontakty a společnosti
+* Otevřené obchodní příležitosti a obchody
+* Důležité poznámky a aktivity
+* Vlastní pole, která skutečně používáte
 
-**What to leave behind:**
+**Co nechat za sebou:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Zastaralé kontakty (bez aktivity 2 a více let)
+* Duplicitní záznamy
+* Testovací data
+* Nepoužívaná vlastní pole
 
-## Step 2: Map Your Data Model
+## Krok 2: Zmapujte svůj datový model
 
-Create a mapping document between your current CRM and Twenty:
+Vytvořte mapovací dokument mezi vaším současným CRM a Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| Vaše CRM             | Twenty                     |
+| -------------------- | -------------------------- |
+| Účet / organizace    | **Společnost**             |
+| Kontakt / osoba      | **Lidé**                   |
+| Obchod / příležitost | **Příležitost**            |
+| Aktivita             | **Úkol** nebo **Poznámka** |
+| Vlastní objekt       | **Vlastní objekt**         |
 
-**For each field, document:**
+**Pro každé pole zdokumentujte:**
 
-* The source field name
-* The target Twenty field
-* Any format transformations needed (dates, phone numbers, etc.)
+* Název zdrojového pole
+* Cílové pole v Twenty
+* Jakékoli potřebné úpravy formátu (datumy, telefonní čísla apod.)
 
-<Note>Keep this mapping document handy during import—you'll reference it when mapping columns.</Note>
+<Note>Mějte tento mapovací dokument po ruce během importu — budete na něj odkazovat při mapování sloupců.</Note>
 
-## Step 3: Set Up Your Twenty Workspace
+## Krok 3: Nastavte svůj pracovní prostor Twenty
 
-Before importing data, prepare your Twenty workspace:
+Před importem dat připravte svůj pracovní prostor Twenty:
 
-### Create Custom Objects and Fields
+### Vytvořte vlastní objekty a pole
 
-1. Go to **Settings → Data Model**
-2. Create any custom objects you need
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, select options, etc.)
+1. Přejděte do **Nastavení → Datový model**
+2. Vytvořte všechny vlastní objekty, které potřebujete
+3. Přidejte vlastní pole ke standardním i vlastním objektům
+4. Nastavte vlastnosti polí (jedinečné, povinné, možnosti výběru apod.)
 
 <Warning>
-  **Fields must exist before import.**
+  **Všechna pole musí existovat před importem.**
 
-  The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
+  Import CSV vytváří záznamy, nikoli pole. Vytvořte všechna vlastní pole v Nastavení → Datový model před importem.
 </Warning>
 
-### Invite Your Team
+### Pozvěte svůj tým
 
 <Warning>
-  **Invite users BEFORE importing data.**
+  **Pozvěte uživatele PŘED importem dat.**
 
-  If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
+  Pokud vaše data obsahují odkazy na uživatele (vlastník účtu, přiřazený uživatel apod.), tito uživatelé musí v Twenty existovat před importem. Jinak tyto relace nelze namapovat.
 </Warning>
 
 1. Přejděte na **Nastavení → Členové**
-2. Invite all team members
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+2. Pozvěte všechny členy týmu
+3. **Počkejte, až všichni přijmou** své pozvání
+4. Ověřte, že se všichni uživatelé zobrazují v seznamu Members
 
-## Step 4: Export from Your Current CRM
+## Krok 4: Export z vašeho stávajícího CRM
 
-Export your data from your current CRM:
+Exportujte svá data ze svého stávajícího CRM:
 
-1. Look for an **Export** function (usually under Settings, Data Management, or Admin)
-2. Export to **CSV format** when possible
-3. Export each object type separately (Companies, Contacts, Deals, etc.)
-4. Include all fields you want to migrate
+1. Najděte funkci **Export** (obvykle v Nastavení, Správě dat nebo Administraci)
+2. Pokud možno exportujte do **formátu CSV**
+3. Exportujte každý typ objektu zvlášť (Společnosti, Kontakty, Obchody apod.)
+4. Zahrňte všechna pole, která chcete migrovat
 
-**Export these objects (in this order for reference):**
+**Exportujte tyto objekty (v tomto pořadí pro referenci):**
 
-1. Companies / Accounts / Organizations
-2. Contacts / People
-3. Deals / Opportunities
-4. Notes and Activities
+1. Společnosti / Účty / Organizace
+2. Kontakty / Lidé
+3. Obchody / Příležitosti
+4. Poznámky a aktivity
 5. Vlastní objekty
 
-## Step 5: Clean and Format Your Data
+## Krok 5: Vyčistěte a naformátujte svá data
 
-Open each exported CSV in a spreadsheet application and prepare it for Twenty.
+Otevřete každý exportovaný soubor CSV v tabulkovém editoru a připravte jej pro Twenty.
 
-### Remove Duplicates
+### Odstraňte duplicity
 
-1. Sort by the unique field (email for People, domain for Companies)
-2. Remove or merge duplicate rows
-3. Verify no duplicates exist in Twenty already
+1. Seřaďte podle jedinečného pole (e-mail u lidí, doména u společností)
+2. Odstraňte nebo sloučte duplicitní řádky
+3. Ověřte, že v Twenty již neexistují žádné duplicity
 
-### Format Fields Correctly
+### Správně naformátujte pole
 
-| Field Type        | Required Format                                   |
-| ----------------- | ------------------------------------------------- |
-| **Domain**        | `https://domain.com`                              |
-| **Email**         | `name@domain.com` (must be unique)                |
-| **Date**          | `YYYY-MM-DD`                                      |
-| **Phone**         | Three columns: Number, Country Code, Calling Code |
-| **Boolean**       | `TRUE` or `FALSE` (uppercase)                     |
-| **Select fields** | Use API names, not display labels                 |
+| Typ pole               | Požadovaný formát                                 |
+| ---------------------- | ------------------------------------------------- |
+| **Doména**             | `https://domain.com`                              |
+| **Email**              | `name@domain.com` (musí být jedinečná)            |
+| **Datum**              | `YYYY-MM-DD`                                      |
+| **Telefon**            | Tři sloupce: číslo, kód země, telefonní předvolba |
+| **Booleovská hodnota** | `TRUE` nebo `FALSE` (velkými písmeny)             |
+| **Výběrová pole**      | Používejte názvy API, nikoli zobrazované štítky   |
 
 <Warning>
-  **Domain format is critical.**
+  **Formát domény je zásadní.**
 
-  Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
+  Použijte `https://domain.com` (ne `domain.com` ani `www.domain.com`). To odpovídá formátu Twenty a předchází duplicitám, když připojíte synchronizaci e-mailu/kalendáře.
 </Warning>
 
-See [How to Prepare Your CSV Files](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
+Úplné požadavky na formátování pro všechny typy polí viz [Jak připravit soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
 
-### Add Relation Columns
+### Přidejte relační sloupce
 
-To link records (e.g., People to Companies), add a column with the parent's unique identifier.
+Pro propojení záznamů (např. lidé se společnostmi) přidejte sloupec s jedinečným identifikátorem nadřazeného záznamu.
 
-**Example: People CSV with Company link**
+**Příklad: CSV s lidmi a odkazem na společnost**
 
 ```csv
 firstName,lastName,email,companyDomain
@@ -135,159 +135,159 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-See [How to Import Relations](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions on linking records.
+Podrobné pokyny k propojení záznamů viz [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv).
 
-### Update User References
+### Aktualizujte odkazy na uživatele
 
-If your data includes user assignments (Owner, Assignee):
+Pokud vaše data obsahují přiřazení uživatele (vlastník, přiřazený uživatel):
 
-1. Add a column with the **user's email** (not just their ID from the old system)
-2. Use the same email addresses that users used to join your Twenty workspace
+1. Přidejte sloupec s **e-mailem uživatele** (nejen jeho ID ze starého systému)
+2. Použijte stejné e-mailové adresy, které uživatelé použili při připojení do vašeho pracovního prostoru Twenty
 
-See [How to Prepare Your CSV Files](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting guide.
+Kompletní průvodce formátováním viz [Jak připravit soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
 
-## Step 6: Import to Twenty
+## Krok 6: Import do Twenty
 
 <Warning>
-  **Import Order Matters!**
+  **Na pořadí importu záleží!**
 
-  Always import in this order:
+  Vždy importujte v tomto pořadí:
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (link to Companies)
-  3. **Opportunities** third (link to Companies/People)
-  4. **Notes and Tasks** (link to records)
-  5. **Custom objects** following their dependencies
+  1. **Společnosti** jako první (bez závislostí)
+  2. **Lidé** jako druzí (propojení se společnostmi)
+  3. **Příležitosti** jako třetí (propojení se společnostmi/lidmi)
+  4. **Poznámky a úkoly** (propojení na záznamy)
+  5. **Vlastní objekty** podle jejich závislostí
 
-  The parent record must exist before you can reference it.
+  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
 </Warning>
 
-### Import Each Object
+### Importujte každý objekt
 
-For each CSV file, in order:
+Pro každý soubor CSV, v daném pořadí:
 
-1. Navigate to the object in Twenty
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map relation columns (like `companyDomain`) to relation fields
-5. Review and fix any errors in the UI
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Přejděte k objektu v Twenty
+2. Klikněte na **⋮ → Import records**
+3. Nahrajte soubor CSV
+4. Namapujte sloupce na pole:
+   * Namapujte sloupce s e-maily uživatelů na příslušná relační pole
+   * Namapujte sloupce relací (např. `companyDomain`) na relační pole
+5. Zkontrolujte a opravte případné chyby v uživatelském rozhraní
+6. Potvrďte import
+7. Ověřte několik záznamů, než přejdete k dalšímu souboru
 
-**Detailed guides:**
+**Podrobné návody:**
 
-* [How to Import Companies](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv)
-* [How to Import Contacts](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [How to Import Relations](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Jak importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Jak importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
-## Step 7: Large Migrations (50,000+ Records)
+## Krok 7: Rozsáhlé migrace (50 000+ záznamů)
 
-For large migrations:
+Pro rozsáhlé migrace:
 
-| Volume                  | Recommended Approach          |
-| ----------------------- | ----------------------------- |
-| Under 10,000 records    | Single CSV import             |
-| 10,000 - 50,000 records | Split into multiple CSV files |
-| 50,000+ records         | Use the API                   |
+| Objem                   | Doporučený postup            |
+| ----------------------- | ---------------------------- |
+| Méně než 10 000 záznamů | Jeden import CSV             |
+| 10 000–50 000 záznamů   | Rozdělte do více souborů CSV |
+| 50 000+ záznamů         | Použijte API                 |
 
-**For API imports:**
+**Pro importy přes API:**
 
-* Faster and more reliable for large datasets
-* Supports batch operations (up to 60 records per call)
-* See [How to Import Data via API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)
+* Rychlejší a spolehlivější pro velké datové sady
+* Podporuje dávkové operace (až 60 záznamů na jedno volání)
+* Viz [Jak importovat data přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)
 
-## Step 8: Post-Migration Setup
+## Krok 8: Nastavení po migraci
 
-After importing data, complete your workspace configuration:
+Po importu dat dokončete konfiguraci pracovního prostoru:
 
-### Recreate Views
+### Znovu vytvořte zobrazení
 
-* Set up saved views with filters, sorts, and column configurations
-* Create any kanban or calendar views you need
+* Nastavte uložená zobrazení s filtry, řazením a nastavením sloupců
+* Vytvořte případná kanbanová nebo kalendářová zobrazení
 
 ### Znovuvytvoření pracovních postupů
 
-* Rebuild your automations in **Settings → Workflows**
-* Start with the most critical workflows
-* Test each one before relying on it
+* Znovu vytvořte automatizace v **Settings → Workflows**
+* Začněte s nejdůležitějšími pracovními postupy
+* Každý z nich otestujte, než se na něj spolehnete
 
-### Configure Roles and Permissions
+### Nakonfigurujte role a oprávnění
 
-* Set up roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Nakonfigurujte role v **Settings → Roles**
+* Přiřaďte uživatele ke vhodným rolím
 
-### Connect Email and Calendar
+### Propojte e-mail a kalendář
 
-* Each user connects their own account in **Settings → Accounts**
-* Twenty will start syncing emails to contact records
-* See [Email & Calendar](/l/cs/user-guide/calendar-emails/overview)
+* Každý uživatel si připojí svůj účet v **Nastavení → Účty**
+* Twenty začne synchronizovat e-maily k záznamům kontaktů
+* Viz [E-mail a kalendář](/l/cs/user-guide/calendar-emails/overview)
 
-### Train Your Team
+### Vyškolte svůj tým
 
-* Walk through the new interface together
-* Document any team-specific processes
+* Společně si projděte nové rozhraní
+* Zdokumentujte procesy specifické pro tým
 
 ## Běžné problémy a řešení
 
-| Issue                   | Cause                       | Solution                                                                             |
-| ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| **Duplicate errors**    | Email/domain already exists | Remove duplicates from file, or include unique identifier to update existing records |
-| **Relation not found**  | Parent record doesn't exist | Import parent objects first (Companies before People)                                |
-| **Missing fields**      | Custom field doesn't exist  | Create field in Settings → Data Model before importing                               |
-| **Select field errors** | Using display labels        | Use API names (enable Advanced mode in Settings to find them)                        |
-| **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing                                 |
+| Problém                      | Příčina                        | Řešení                                                                                                   |
+| ---------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| **Chyby duplicit**           | E-mail/doména již existuje     | Odstraňte duplicity ze souboru, nebo uveďte jedinečný identifikátor pro aktualizaci existujících záznamů |
+| **Vztah nebyl nalezen**      | Nadřazený záznam neexistuje    | Nejprve importujte nadřazené objekty (společnosti před lidmi)                                            |
+| **Chybějící pole**           | Vlastní pole neexistuje        | Vytvořte pole v Nastavení → Datový model před importem                                                   |
+| **Chyby u výběrových polí**  | Používání zobrazovaných štítků | Používejte názvy API (pro jejich zobrazení povolte v Nastavení režim pro pokročilé)                      |
+| **Prázdná relace uživatele** | Uživatel nepřijal pozvánku     | Ujistěte se, že všichni uživatelé přijali pozvánky před importem                                         |
 
-See [How to Fix Import Errors](/l/cs/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
+Podrobné kroky pro řešení problémů viz [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors).
 
 ## Post-migrační kontrolní seznam
 
-### Data Integrity
+### Integrita dat
 
-<Check>All records imported (compare counts with source system)</Check>
-<Check>Relations working correctly (People linked to Companies)</Check>
-<Check>User assignments mapped correctly (Owner, Assignee)</Check>
-<Check>Custom fields populated</Check>
-<Check>No unexpected duplicates</Check>
+<Check>Všechny záznamy byly importovány (porovnejte počty se zdrojovým systémem)</Check>
+<Check>Relace fungují správně (lidé jsou propojeni se společnostmi)</Check>
+<Check>Přiřazení uživatelů je správně namapováno (vlastník, přiřazený uživatel)</Check>
+<Check>Vlastní pole vyplněna</Check>
+<Check>Žádné neočekávané duplicity</Check>
 
 ### Konfigurace
 
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync connected</Check>
+<Check>Zobrazení znovu vytvořena</Check>
+<Check>Pracovní postupy znovu vytvořeny a otestovány</Check>
+<Check>Role a oprávnění nakonfigurovány</Check>
+<Check>Synchronizace e-mailu/kalendáře připojena</Check>
 
-### Team Readiness
+### Připravenost týmu
 
-<Check>Team trained on new system</Check>
-<Check>Old CRM access plan decided (keep for reference? When to disable?)</Check>
+<Check>Tým proškolen v novém systému</Check>
+<Check>Plán přístupu ke starému CRM rozhodnut (ponechat pro referenci? Kdy vypnout?)</Check>
 
-## FAQ
+## Časté dotazy
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in Twenty.
+  <Accordion title="Mohu migrovat pracovní postupy automaticky?">
+    V tuto chvíli ne. Pracovní postupy je nutné v Twenty znovu vytvořit ručně.
   </Accordion>
 
-  <Accordion title="What about file attachments?">
-    File attachments are not included in CSV exports. You'll need to re-upload them manually, migrate via API, or contact our team for assistance.
+  <Accordion title="A co souborové přílohy?">
+    Souborové přílohy nejsou součástí exportů CSV. Budete je muset znovu nahrát ručně, migrovat je přes API, nebo požádat náš tým o pomoc.
   </Accordion>
 
-  <Accordion title="Can I keep both systems running during migration?">
-    Yes, we recommend keeping your old CRM running until you've verified the migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Mohu během migrace ponechat oba systémy v provozu?">
+    Ano, doporučujeme ponechat vaše staré CRM v provozu, dokud neověříte, že je migrace dokončena. Jen si dejte pozor, abyste nevytvářeli nová data na obou místech.
   </Accordion>
 
-  <Accordion title="How long does migration typically take?">
-    Depends on data volume and complexity. Small migrations (under 10,000 records) can be done in a few hours. Large migrations may take several days including data cleanup and testing.
+  <Accordion title="Jak dlouho obvykle migrace trvá?">
+    Záleží na objemu a složitosti dat. Menší migrace (do 10 000 záznamů) lze zvládnout během několika hodin. Rozsáhlé migrace mohou trvat několik dní, včetně čištění dat a testování.
   </Accordion>
 </AccordionGroup>
 
 ## Potřebujete pomoc?
 
-For complex migrations or large datasets:
+Pro složité migrace nebo velké datové sady:
 
-* **Guided setup:** Book a 4-hour onboarding pack
-* **Full migration service:** Our partners can handle the entire migration
+* **Průvodce nastavením:** Objednejte si 4hodinový onboardingový balíček
+* **Kompletní migrační služba:** Naši partneři mohou zajistit celou migraci
 
-Contact [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/cs/user-guide/getting-started/capabilities/implementation-services).
+Kontaktujte [contact@twenty.com](mailto:contact@twenty.com) nebo si prohlédněte naše [Implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services).

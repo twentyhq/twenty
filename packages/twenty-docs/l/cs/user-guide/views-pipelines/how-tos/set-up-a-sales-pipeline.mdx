@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: Nastavte prodejní pipeline
+description: Nakonfigurujte svou prodejní pipeline pro sledování příležitostí napříč fázemi.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+Prodejní pipeline v Twenty je kanbanové zobrazení vašeho objektu Příležitosti, kde každý sloupec představuje fázi ve vašem prodejním procesu.
 
-## Step 1: Configure Your Stages
+## Krok 1: Nakonfigurujte své fáze
 
-Stages are defined in the Opportunities object's **Stage** field.
+Fáze jsou definovány v objektu Příležitosti v poli **Stage**.
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte **Příležitosti**
+3. Najděte a klikněte na pole **Stage**
+4. Přidejte, odeberte nebo přejmenujte fáze tak, aby odpovídaly vašemu procesu
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Ukázka videa" />
 
-### Recommended Stages
+### Doporučené fáze
 
-| Fáze            | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| Fáze                    | Účel                             |
+| ----------------------- | -------------------------------- |
+| **Nový**                | Nově identifikované příležitosti |
+| **Kvalifikovaný**       | Potvrzeno jako vhodné            |
+| **Schůzka**             | Probíhají jednání                |
+| **Nabídka**             | Nabídka odeslána                 |
+| **Vyjednávání**         | Dolaďování podmínek              |
+| **Uzavřeno – vyhráno**  | Obchod úspěšný                   |
+| **Uzavřeno – prohráno** | Obchod neúspěšný                 |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5–7 fází je optimálních.** Příliš mnoho fází ztěžuje rychlé procházení pipeline; příliš málo snižuje přehled o postupu obchodu.
 </Note>
 
-## Step 2: Create a Pipeline View
+## Krok 2: Vytvořte zobrazení pipeline
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. Přejděte na **Příležitosti**
+2. Klikněte na rozbalovací nabídku zobrazení → **+ Přidat zobrazení**
+3. Pojmenujte jej "Sales Pipeline"
+4. Klikněte na **Vytvořit**
+5. Otevřete **Možnosti** a jako rozvržení vyberte **Kanban**
 
-The view automatically uses the Stage field for columns.
+Zobrazení automaticky používá pro sloupce pole Stage.
 
-## Step 3: Configure Your View
+## Krok 3: Nakonfigurujte své zobrazení
 
-### Show Key Fields
+### Zobrazte klíčová pole
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. Klikněte na **Možnosti → Pole**
+2. Vyhledejte pole v sekci "Skrytá pole"
+3. Klikněte na **ikonu oka** a zobrazte: Společnost, Částka, Datum uzavření, Vlastník
 
-### Enable Aggregations
+### Povolte agregace
 
-Show totals at the top of each column:
+Zobrazte součty v horní části každého sloupce:
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. Klikněte na číslo zobrazené vedle názvu fáze v horní části sloupce
+2. Vyberte typ agregace (Počet, Součet, Průměr atd.)
+3. Zvolte pole pro agregaci (např. Částka)
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**Příklad:** Zobrazte celkovou hodnotu obchodu podle fází agregováním pole Částka pomocí Součtu.
 
-### Use Compact View (Optional)
+### Použijte kompaktní zobrazení (volitelné)
 
-For a high-level overview with minimal card content:
+Pro přehled na vysoké úrovni s minimálním obsahem karet:
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. Klikněte na **Možnosti**
+2. Zapněte přepínač **Kompaktní zobrazení**
 
-## Step 4: Create Personal and Team Views
+## Krok 4: Vytvořte osobní a týmová zobrazení
 
-### "My Pipeline"
+### "Moje pipeline"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **Filtr**: Vlastník = Já
+* **Viditelnost**: Neveřejné (osobní zobrazení)
 
-### "Team Pipeline"
+### "Týmová pipeline"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **Filtr**: Žádný (zobrazit vše)
+* **Viditelnost**: Workspace (sdílené zobrazení)
 
-### "Closing This Month"
+### "Uzavření tento měsíc"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **Typ**: Tabulka
+* **Filtr**: Datum uzavření = Tento měsíc, Stage ≠ Closed Won, Stage ≠ Closed Lost
+* **Řazení**: Datum uzavření vzestupně
 
-## Working with Opportunities
+## Práce s příležitostmi
 
-### Creating Opportunities
+### Vytváření příležitostí
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* Klikněte na **+ New** v zobrazení Příležitostí
+* Nebo klikněte na **+** ve sloupci konkrétní fáze
 
-### Moving Through Stages
+### Přesun mezi fázemi
 
-Drag and drop opportunity cards between columns to update their stage.
+Přetažením karet příležitostí mezi sloupci aktualizujte jejich fázi.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Ukázka videa" />
 
 ## Osvědčené postupy
 
-### Pipeline Hygiene
+### Hygiena pipeline
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* Denně aktualizujte obchody podle jejich postupu
+* Zastaralé obchody rychle přesouvejte nebo uzavírejte
+* Udržujte realistická data uzavření
 
-### Stage Discipline
+### Disciplína fází
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* Definujte jasná kritéria pro každou fázi
+* Jakmile jsou kritéria splněna, obchody neprodleně přesouvejte
+* Nenechávejte obchody ve fázích příliš dlouho
 
-## Related
+## Související
 
-* [Kanban Views](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/cs/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [Kanban zobrazení](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — agregace a kompaktní zobrazení
+* [Filtry a řazení](/l/cs/user-guide/views-pipelines/capabilities/filters-and-sorting) — tvorba filtrovaných zobrazení

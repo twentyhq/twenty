@@ -1,0 +1,106 @@
+suite: pvc configuration
+templates:
+  - templates/pvc-server.yaml
+  - templates/pvc-db-internal.yaml
+  - templates/pvc-docker-data.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: server pvc renders when persistence enabled
+    template: templates/pvc-server.yaml
+    set:
+      server.persistence.enabled: true
+      server.persistence.size: 10Gi
+    asserts:
+      - isKind:
+          of: PersistentVolumeClaim
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-server
+      - equal:
+          path: spec.resources.requests.storage
+          value: 10Gi
+      - contains:
+          path: spec.accessModes
+          content: ReadWriteOnce
+
+  - it: server pvc does not render when persistence disabled
+    template: templates/pvc-server.yaml
+    set:
+      server.persistence.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: server pvc renders with correct defaults
+    template: templates/pvc-server.yaml
+    set:
+      server.persistence.enabled: true
+    asserts:
+      - isKind:
+          of: PersistentVolumeClaim
+
+  - it: server pvc omits storageClassName when set to hyphen
+    template: templates/pvc-server.yaml
+    set:
+      server.persistence.enabled: true
+      server.persistence.storageClass: ""
+    asserts:
+      - isNull:
+          path: spec.storageClassName
+
+  - it: db-internal pvc renders with correct size
+    template: templates/pvc-db-internal.yaml
+    set:
+      db.enabled: true
+      db.internal.persistence.enabled: true
+      db.internal.persistence.size: 20Gi
+    asserts:
+      - isKind:
+          of: PersistentVolumeClaim
+      - equal:
+          path: metadata.name
+          value: my-twenty-twenty-db
+      - isKind:
+          of: PersistentVolumeClaim
+
+  - it: db-internal pvc does not render when disabled
+    template: templates/pvc-db-internal.yaml
+    set:
+      db.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: db-internal pvc renders when enabled
+    template: templates/pvc-db-internal.yaml
+    set:
+      db.enabled: true
+      db.internal.persistence.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: docker-data pvc renders when enabled
+    template: templates/pvc-docker-data.yaml
+    set:
+      server.enabled: true
+      server.dockerDataPersistence.enabled: true
+      server.dockerDataPersistence.size: 5Gi
+    asserts:
+      - isKind:
+          of: PersistentVolumeClaim
+
+  - it: all pvcs use ReadWriteOnce access mode
+    templates:
+      - templates/pvc-server.yaml
+      - templates/pvc-db-internal.yaml
+    set:
+      server.persistence.enabled: true
+      db.enabled: true
+      db.internal.persistence.enabled: true
+    asserts:
+      - contains:
+          path: spec.accessModes
+          content: ReadWriteOnce

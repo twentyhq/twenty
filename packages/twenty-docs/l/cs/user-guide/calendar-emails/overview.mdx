@@ -34,11 +34,10 @@ image: /images/user-guide/emails/emails_header.png
 
 Pro další poskytovatele emailu a kalendáře:
 
-1. Přejděte na **Nastavení → Vydání → Laboratoř** pro povolení funkce
-2. Vraťte se na **Nastavení → Účty**
-3. Nakonfigurujte nastavení SMTP pro email
-4. Nakonfigurujte nastavení CalDAV pro kalendář
-5. Otestujte připojení
+1. Přejděte na **Nastavení → Účty**
+2. Nakonfigurujte nastavení SMTP pro email
+3. Nakonfigurujte nastavení CalDAV pro kalendář
+4. Otestujte připojení
 
 ### Více Poštovních Schránek
 
@@ -69,13 +68,12 @@ Vyberte různé úrovně viditelnosti pro vaše emaily:
 
 <Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
 
-### Řízení, které emaily se synchronizují s Výběrem Složek Zpráv (Laboratorní Funkce)
+### Control which emails get synced with Message Folder Selection
 
 Ovládejte, které emailové složky se synchronizují s Twenty:
 
-1. Přejděte na **Nastavení → Vydání → Laboratoř** a povolte **Složku Zpráv**
-2. Vraťte se na **Nastavení → Účty** a vyberte svůj propojený emailový účet
-3. Vyberte, které složky chcete synchronizovat:
+1. Go to **Settings → Accounts** and select your connected email account
+2. Vyberte, které složky chcete synchronizovat:
    * **Doručená Pošta**: Hlavní příchozí emaily
    * **Odeslané**: Odchozí emaily, které jste odeslali
    * **Vlastní Složky**: Jakékoli specifické složky, které chcete zahrnout
@@ -123,7 +121,7 @@ Vyberte, co bude viditelné pro ostatní uživatele ve vašem pracovním prostor
 **Aktualizace každých 5 minut**: Data emailu a kalendáře se automaticky synchronizují každých 5 minut po úvodním importu.
 
 <Note>
-  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting), so a mailbox with 10,000 emails takes about 25 minutes. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
 </Note>
 
 ## Další kroky

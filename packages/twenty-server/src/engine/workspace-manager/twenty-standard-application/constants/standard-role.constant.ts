@@ -1,4 +1,4 @@
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 
 export const STANDARD_ROLE = {
   admin: { universalIdentifier: ADMIN_ROLE.standardId },
