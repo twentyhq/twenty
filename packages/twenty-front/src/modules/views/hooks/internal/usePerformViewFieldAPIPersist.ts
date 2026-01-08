@@ -3,75 +3,75 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewFilterOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFilterOptimisticEffect';
+import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type CreateCoreViewFilterMutationVariables,
-  type DeleteCoreViewFilterMutationVariables,
-  type DestroyCoreViewFilterMutationVariables,
-  type UpdateCoreViewFilterMutationVariables,
-  useCreateCoreViewFilterMutation,
-  useDeleteCoreViewFilterMutation,
-  useDestroyCoreViewFilterMutation,
-  useUpdateCoreViewFilterMutation,
+  type CreateManyCoreViewFieldsMutationVariables,
+  type DeleteCoreViewFieldMutationVariables,
+  type DestroyCoreViewFieldMutationVariables,
+  type UpdateCoreViewFieldMutationVariables,
+  useCreateManyCoreViewFieldsMutation,
+  useDeleteCoreViewFieldMutation,
+  useDestroyCoreViewFieldMutation,
+  useUpdateCoreViewFieldMutation,
 } from '~/generated/graphql';
+export const usePerformViewFieldAPIPersist = () => {
+  const { triggerViewFieldOptimisticEffect } =
+    useTriggerViewFieldOptimisticEffect();
 
-export const usePersistViewFilterRecords = () => {
-  const { triggerViewFilterOptimisticEffect } =
-    useTriggerViewFilterOptimisticEffect();
-  const [createCoreViewFilterMutation] = useCreateCoreViewFilterMutation();
-  const [updateCoreViewFilterMutation] = useUpdateCoreViewFilterMutation();
-  const [deleteCoreViewFilterMutation] = useDeleteCoreViewFilterMutation();
-  const [destroyCoreViewFilterMutation] = useDestroyCoreViewFilterMutation();
+  const [createManyCoreViewFieldsMutation] =
+    useCreateManyCoreViewFieldsMutation();
+  const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
+  const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
+  const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createViewFilters = useCallback(
+  const performViewFieldAPICreate = useCallback(
     async (
-      createCoreViewFilterInputs: CreateCoreViewFilterMutationVariables[],
+      createCoreViewFieldInputs: CreateManyCoreViewFieldsMutationVariables,
     ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof createCoreViewFilterMutation>>[]
-      >
+      MetadataRequestResult<Awaited<
+        ReturnType<typeof createManyCoreViewFieldsMutation>
+      > | null>
     > => {
-      if (createCoreViewFilterInputs.length === 0) {
+      if (
+        !Array.isArray(createCoreViewFieldInputs.inputs) ||
+        createCoreViewFieldInputs.inputs.length === 0
+      ) {
         return {
           status: 'successful',
-          response: [],
+          response: null,
         };
       }
 
       try {
-        const results = await Promise.all(
-          createCoreViewFilterInputs.map((variables) =>
-            createCoreViewFilterMutation({
-              variables,
-              update: (_cache, { data }) => {
-                const createdViewFilter = data?.createCoreViewFilter;
-                if (!isDefined(createdViewFilter)) {
-                  return;
-                }
+        const result = await createManyCoreViewFieldsMutation({
+          variables: createCoreViewFieldInputs,
+          update: (_cache, { data }) => {
+            const createdViewFields = data?.createManyCoreViewFields;
+            if (!isDefined(createdViewFields)) {
+              return;
+            }
 
-                triggerViewFilterOptimisticEffect({
-                  createdViewFilters: [createdViewFilter],
-                });
-              },
-            }),
-          ),
-        );
+            triggerViewFieldOptimisticEffect({
+              createdViewFields,
+            });
+          },
+        });
 
         return {
           status: 'successful',
-          response: results,
+          response: result,
         };
       } catch (error) {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
-            primaryMetadataName: 'viewFilter',
+            primaryMetadataName: 'viewField',
             operationType: CrudOperationType.CREATE,
           });
         } else {
@@ -85,22 +85,22 @@ export const usePersistViewFilterRecords = () => {
       }
     },
     [
-      triggerViewFilterOptimisticEffect,
-      createCoreViewFilterMutation,
+      triggerViewFieldOptimisticEffect,
+      createManyCoreViewFieldsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
   );
 
-  const updateViewFilters = useCallback(
+  const performViewFieldAPIUpdate = useCallback(
     async (
-      updateCoreViewFilterInputs: UpdateCoreViewFilterMutationVariables[],
+      createCoreViewFieldInputs: UpdateCoreViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof updateCoreViewFilterMutation>>[]
+        Awaited<ReturnType<typeof updateCoreViewFieldMutation>>[]
       >
     > => {
-      if (updateCoreViewFilterInputs.length === 0) {
+      if (createCoreViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -109,17 +109,17 @@ export const usePersistViewFilterRecords = () => {
 
       try {
         const results = await Promise.all(
-          updateCoreViewFilterInputs.map((variables) =>
-            updateCoreViewFilterMutation({
+          createCoreViewFieldInputs.map((variables) =>
+            updateCoreViewFieldMutation({
               variables,
               update: (_cache, { data }) => {
-                const updatedViewFilter = data?.updateCoreViewFilter;
-                if (!isDefined(updatedViewFilter)) {
+                const updatedViewField = data?.updateCoreViewField;
+                if (!isDefined(updatedViewField)) {
                   return;
                 }
 
-                triggerViewFilterOptimisticEffect({
-                  updatedViewFilters: [updatedViewFilter],
+                triggerViewFieldOptimisticEffect({
+                  updatedViewFields: [updatedViewField],
                 });
               },
             }),
@@ -133,7 +133,7 @@ export const usePersistViewFilterRecords = () => {
       } catch (error) {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
-            primaryMetadataName: 'viewFilter',
+            primaryMetadataName: 'viewField',
             operationType: CrudOperationType.UPDATE,
           });
         } else {
@@ -147,22 +147,22 @@ export const usePersistViewFilterRecords = () => {
       }
     },
     [
-      triggerViewFilterOptimisticEffect,
-      updateCoreViewFilterMutation,
+      triggerViewFieldOptimisticEffect,
+      updateCoreViewFieldMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
   );
 
-  const deleteViewFilters = useCallback(
+  const performViewFieldAPIDelete = useCallback(
     async (
-      deleteCoreViewFilterInputs: DeleteCoreViewFilterMutationVariables[],
+      deleteCoreViewFieldInputs: DeleteCoreViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteCoreViewFilterMutation>>[]
+        Awaited<ReturnType<typeof deleteCoreViewFieldMutation>>[]
       >
     > => {
-      if (deleteCoreViewFilterInputs.length === 0) {
+      if (deleteCoreViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -171,17 +171,17 @@ export const usePersistViewFilterRecords = () => {
 
       try {
         const results = await Promise.all(
-          deleteCoreViewFilterInputs.map((variables) =>
-            deleteCoreViewFilterMutation({
+          deleteCoreViewFieldInputs.map((variables) =>
+            deleteCoreViewFieldMutation({
               variables,
               update: (_cache, { data }) => {
-                const deletedViewFilter = data?.deleteCoreViewFilter;
-                if (!isDefined(deletedViewFilter)) {
+                const deletedViewField = data?.deleteCoreViewField;
+                if (!isDefined(deletedViewField)) {
                   return;
                 }
 
-                triggerViewFilterOptimisticEffect({
-                  deletedViewFilters: [deletedViewFilter],
+                triggerViewFieldOptimisticEffect({
+                  deletedViewFields: [deletedViewField],
                 });
               },
             }),
@@ -195,7 +195,7 @@ export const usePersistViewFilterRecords = () => {
       } catch (error) {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
-            primaryMetadataName: 'viewFilter',
+            primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DELETE,
           });
         } else {
@@ -209,22 +209,22 @@ export const usePersistViewFilterRecords = () => {
       }
     },
     [
-      triggerViewFilterOptimisticEffect,
-      deleteCoreViewFilterMutation,
+      triggerViewFieldOptimisticEffect,
+      deleteCoreViewFieldMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
   );
 
-  const destroyViewFilters = useCallback(
+  const performViewFieldAPIDestroy = useCallback(
     async (
-      destroyCoreViewFilterInputs: DestroyCoreViewFilterMutationVariables[],
+      destroyCoreViewFieldInputs: DestroyCoreViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof destroyCoreViewFilterMutation>>[]
+        Awaited<ReturnType<typeof destroyCoreViewFieldMutation>>[]
       >
     > => {
-      if (destroyCoreViewFilterInputs.length === 0) {
+      if (destroyCoreViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -233,8 +233,8 @@ export const usePersistViewFilterRecords = () => {
 
       try {
         const results = await Promise.all(
-          destroyCoreViewFilterInputs.map((variables) =>
-            destroyCoreViewFilterMutation({
+          destroyCoreViewFieldInputs.map((variables) =>
+            destroyCoreViewFieldMutation({
               variables,
             }),
           ),
@@ -247,7 +247,7 @@ export const usePersistViewFilterRecords = () => {
       } catch (error) {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
-            primaryMetadataName: 'viewFilter',
+            primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DESTROY,
           });
         } else {
@@ -260,13 +260,13 @@ export const usePersistViewFilterRecords = () => {
         };
       }
     },
-    [destroyCoreViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
+    [destroyCoreViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {
-    createViewFilters,
-    updateViewFilters,
-    deleteViewFilters,
-    destroyViewFilters,
+    performViewFieldAPICreate,
+    performViewFieldAPIUpdate,
+    performViewFieldAPIDelete,
+    performViewFieldAPIDestroy,
   };
 };

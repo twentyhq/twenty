@@ -10,13 +10,13 @@ import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewSort } from '~/generated/graphql';
 
-export const usePersistViewSortRecords = () => {
+export const usePerformViewSortAPIPersist = () => {
   const apolloClient = useApolloClient();
 
   const { triggerViewSortOptimisticEffect } =
     useTriggerViewSortOptimisticEffect();
 
-  const createViewSorts = useCallback(
+  const performViewSortAPICreate = useCallback(
     (
       viewSortsToCreate: CoreViewSortEssential[],
       view: Pick<GraphQLView, 'id'>,
@@ -49,7 +49,7 @@ export const usePersistViewSortRecords = () => {
     [apolloClient, triggerViewSortOptimisticEffect],
   );
 
-  const updateViewSorts = useCallback(
+  const performViewSortAPIUpdate = useCallback(
     (viewSortsToUpdate: CoreViewSortEssential[]) => {
       if (!viewSortsToUpdate.length) return;
       return Promise.all(
@@ -77,7 +77,7 @@ export const usePersistViewSortRecords = () => {
     [apolloClient, triggerViewSortOptimisticEffect],
   );
 
-  const deleteViewSorts = useCallback(
+  const performViewSortAPIDelete = useCallback(
     (viewSortsToDelete: Pick<CoreViewSortEssential, 'id' | 'viewId'>[]) => {
       if (!viewSortsToDelete.length) return;
       return Promise.all(
@@ -100,8 +100,8 @@ export const usePersistViewSortRecords = () => {
   );
 
   return {
-    createViewSorts,
-    updateViewSorts,
-    deleteViewSorts,
+    performViewSortAPICreate,
+    performViewSortAPIUpdate,
+    performViewSortAPIDelete,
   };
 };

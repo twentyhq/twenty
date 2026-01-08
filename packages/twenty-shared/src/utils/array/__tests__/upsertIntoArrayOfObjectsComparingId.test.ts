@@ -1,4 +1,4 @@
-import { upsertIntoArrayOfObjectsComparingId } from '@/utils/array/upsertIntoArrayOfObjectComparingId';
+import { upsertIntoArrayOfObjectsComparingId } from '@/utils/array/upsertIntoArrayOfObjectsComparingId';
 
 type TestObject = {
   id: string;
