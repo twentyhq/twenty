@@ -10,7 +10,6 @@ export const filterSortableFieldMetadataItems = (field: FieldMetadataItem) => {
     field.type,
   );
 
-  // Allow MANY_TO_ONE relations to be sorted (sorts by related object's label identifier)
   const isRelationFieldSortable =
     field.type === FieldMetadataType.RELATION &&
     field.relation?.type === RelationType.MANY_TO_ONE;

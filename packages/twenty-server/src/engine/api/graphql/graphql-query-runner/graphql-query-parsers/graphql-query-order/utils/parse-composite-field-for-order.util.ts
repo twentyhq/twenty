@@ -38,8 +38,7 @@ export const parseCompositeFieldForOrder = (
         );
       }
 
-      // Use unquoted property path for TypeORM's getMany() alias resolution
-      const fullFieldName = `${objectNameSingular}.${fieldMetadata.name}${capitalize(subFieldKey)}`;
+      const fullFieldName = `"${objectNameSingular}"."${fieldMetadata.name}${capitalize(subFieldKey)}"`;
 
       if (!isOrderByDirection(subFieldValue)) {
         throw new Error(
