@@ -25,8 +25,10 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
       skip: showAuthModal,
     });
 
+  const safeRecords = (records ?? []).filter(Boolean);
+
   return {
-    records: showAuthModal ? SIGN_IN_BACKGROUND_MOCK_COMPANIES : records,
+    records: showAuthModal ? SIGN_IN_BACKGROUND_MOCK_COMPANIES : safeRecords,
     loading: showAuthModal ? false : loading,
     hasNextPage,
     queryIdentifier,
