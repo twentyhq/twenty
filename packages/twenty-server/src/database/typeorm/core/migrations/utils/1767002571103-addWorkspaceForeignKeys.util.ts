@@ -100,5 +100,4 @@ export const addWorkspaceForeignKeysQueries = async (
   await queryRunner.query(
     `ALTER TABLE "core"."workspaceMigration" ADD CONSTRAINT "FK_bebfcf8dcb299fd39ad04ed4c7f" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
   );
-
 };
