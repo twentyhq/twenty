@@ -476,7 +476,6 @@ msgstr "Došlo k neočekávané konfigurační chybě."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Došlo k neočekávané chybě."
 
@@ -1827,11 +1826,6 @@ msgstr "Očekává se, že stejná omezení polí budou použita konzistentně v
 msgid "External ID"
 msgstr "Externí ID"
 
-#. js-lingui-id: AOxB/G
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Failed to connect to remote server."
-msgstr "Nepodařilo se připojit ke vzdálenému serveru."
-
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
@@ -2113,7 +2107,6 @@ msgstr "Metadata pole nenalezena"
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
 msgstr "Metadata pole nenalezena."
@@ -2640,11 +2633,6 @@ msgstr "Neplatný parametr filtru."
 msgid "Invalid filter value: \"{value}\""
 msgstr ""
 
-#. js-lingui-id: oxZTCD
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "Invalid foreign table input."
-msgstr "Neplatný vstup cizí tabulky."
-
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -2789,16 +2777,6 @@ msgstr "Neplatné zadání pro vytvoření vztahu"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
-
-#. js-lingui-id: JQ+mZ6
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Invalid remote server input."
-msgstr "Neplatný vstup vzdáleného serveru."
-
-#. js-lingui-id: exysLG
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Invalid remote table input."
-msgstr "Neplatný vstup vzdálené tabulky."
 
 #. js-lingui-id: lOyHVQ
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3695,11 +3673,6 @@ msgstr "Nebylo nalezeno žádné aktivní předplatné."
 msgid "No event name provided in database event trigger"
 msgstr "Nebylo poskytnuto jméno události v databázovém spouštěči událostí"
 
-#. js-lingui-id: Xlzkd8
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "No foreign tables found."
-msgstr "Nenalezeny žádné cizí tabulky."
-
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
@@ -3902,7 +3875,6 @@ msgstr "Metadata objektu nenalezena"
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
 msgstr "Metadata objektu nenalezena."
@@ -4593,35 +4565,10 @@ msgstr "Vzdálené objekty nejsou připraveny na produkční prostředí"
 msgid "Remote objects are not supported yet"
 msgstr "Vzdálené objekty nejsou zatím podporovány"
 
-#. js-lingui-id: haIkpk
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server already exists."
-msgstr "Vzdálený server již existuje."
-
-#. js-lingui-id: kcB/qR
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server not found."
-msgstr "Vzdálený server nenalezen."
-
-#. js-lingui-id: QxXX+p
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table already exists."
-msgstr "Vzdálená tabulka již existuje."
-
-#. js-lingui-id: eaN14K
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table not found."
-msgstr "Vzdálená tabulka nenalezena."
-
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Žádost vypršela, zkuste to prosím znovu."
-
-#. js-lingui-id: sSkbaZ
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-msgid "Request timed out."
-msgstr "Časový limit požadavku vypršel."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -5588,11 +5535,6 @@ msgstr "Toto pole nelze upravit."
 msgid "This field name is not available."
 msgstr "Tento název pole není k dispozici."
 
-#. js-lingui-id: JwdaFV
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "This foreign table cannot be modified."
-msgstr "Tuto cizí tabulku nelze upravovat."
-
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -5661,11 +5603,6 @@ msgstr "Tento záznam již existuje. Zkontrolujte svá data a zkuste to znovu."
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr ""
-
-#. js-lingui-id: NxunhS
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "This remote server cannot be modified."
-msgstr "Tento vzdálený server nelze upravit."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts

@@ -715,7 +715,6 @@ msgstr "Workflow aktivieren"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -734,7 +733,6 @@ msgstr "Active Sync"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -6310,11 +6308,6 @@ msgstr "Datensätze importieren"
 msgid "Import workflows"
 msgstr "Workflows importieren"
 
-#. js-lingui-id: 9eZDRo
-#: src/modules/settings/integrations/components/SettingsIntegrationPreview.tsx
-msgid "Import your tables as remote objects"
-msgstr "Importieren Sie Ihre Tabellen als Remote-Objekte"
-
 #. js-lingui-id: wsKZ+v
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Imported data"
@@ -6444,12 +6437,6 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Instructions for AI"
 msgstr "Anweisungen für die KI"
-
-#. js-lingui-id: nbfdhU
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
-msgid "Integrations"
-msgstr "Integrationen"
 
 #. js-lingui-id: RGm66q
 #: src/utils/title-utils.ts
@@ -7968,6 +7955,7 @@ msgstr "Keine Währung"
 #. js-lingui-id: plhHQt
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
 msgstr "Keine Daten"
 
@@ -10841,7 +10829,6 @@ msgstr "Einige Ordner"
 
 #. js-lingui-id: yHwG3y
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -12202,7 +12189,6 @@ msgid "update"
 msgstr "aktualisieren"
 
 #. js-lingui-id: EkH9pt
-#: src/modules/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -12305,11 +12291,6 @@ msgstr "URL"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
 msgstr "URL zum Einbetten"
-
-#. js-lingui-id: DsBeuB
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
-msgid "Use"
-msgstr "Verwenden"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -12790,7 +12771,6 @@ msgstr "Workflows"
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
