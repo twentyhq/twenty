@@ -31,8 +31,7 @@ const validateFolderStructure = async (appPath: string): Promise<void> => {
   if (!(await fs.pathExists(appFolder))) {
     throw new Error(
       `Missing app/ folder in ${appPath}.\n` +
-        'Create it with:\n' +
-        '  mkdir -p app/objects app/functions app/roles\n\n' +
+        'Create it with: mkdir app\n\n' +
         'Or run: twenty app generate',
     );
   }
@@ -55,10 +54,10 @@ const toPosixRelative = (filepath: string, appPath: string): string => {
 };
 
 /**
- * Load all object definitions from app/objects/.
+ * Load all object definitions from app/ (any *.object.ts file).
  */
 const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
-  const objectFiles = await glob('app/objects/**/*.object.ts', {
+  const objectFiles = await glob('app/**/*.object.ts', {
     cwd: appPath,
     absolute: true,
   });
@@ -94,12 +93,12 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
 };
 
 /**
- * Load all function definitions from app/functions/.
+ * Load all function definitions from app/ (any *.function.ts file).
  */
 const loadFunctions = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
-  const functionFiles = await glob('app/functions/**/*.function.ts', {
+  const functionFiles = await glob('app/**/*.function.ts', {
     cwd: appPath,
     absolute: true,
   });
@@ -136,10 +135,10 @@ const loadFunctions = async (
 };
 
 /**
- * Load all role definitions from app/roles/.
+ * Load all role definitions from app/ (any *.role.ts file).
  */
 const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
-  const roleFiles = await glob('app/roles/**/*.role.ts', {
+  const roleFiles = await glob('app/**/*.role.ts', {
     cwd: appPath,
     absolute: true,
   });
@@ -233,20 +232,32 @@ export type LoadManifestV2Result = {
 };
 
 /**
- * Load an application manifest using the new folder structure with jiti runtime evaluation.
+ * Load an application manifest using the folder structure with jiti runtime evaluation.
  *
- * Expected structure:
+ * Files are detected by their suffix (*.object.ts, *.function.ts, *.role.ts)
+ * and can be placed anywhere within app/.
+ *
+ * Example structures:
  * ```
+ * # Traditional (by type)
  * my-app/
  * ├── app/
  * │   ├── application.config.ts
- * │   ├── objects/*.object.ts
- * │   ├── functions/*.function.ts
- * │   └── roles/*.role.ts
- * ├── src/
- * │   └── (user code)
- * ├── package.json
- * └── tsconfig.json
+ * │   ├── objects/
+ * │   │   └── postCard.object.ts
+ * │   ├── functions/
+ * │   │   └── createPostCard.function.ts
+ * │   └── roles/
+ * │       └── admin.role.ts
+ *
+ * # Feature-based
+ * my-app/
+ * ├── app/
+ * │   ├── application.config.ts
+ * │   └── post-card/
+ * │       ├── postCard.object.ts
+ * │       ├── createPostCard.function.ts
+ * │       └── postCardAdmin.role.ts
  * ```
  */
 export const loadManifest = async (
