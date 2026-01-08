@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skill deletion should fail should fail when attempting to delete a standard skill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "SKILL_IS_STANDARD",
+    "userFriendlyMessage": "Standard skills cannot be modified.",
+  },
+  "message": "Cannot delete standard skill",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Skill deletion should fail when deleting a non-existent skill 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "SKILL_NOT_FOUND",
+    "userFriendlyMessage": "Skill not found.",
+  },
+  "message": "Skill not found",
+  "name": "NotFoundError",
+}
+`;

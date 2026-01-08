@@ -9,6 +9,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
+import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -25,8 +27,6 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
-import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
-import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -86,7 +86,7 @@ const convertIconKeyToLabel = (iconKey: string) =>
 
 type IconPickerIconProps = {
   iconKey: string;
-  onClick: () => void;
+  onSelect: () => void;
   selectedIconKey?: string;
   Icon: IconComponent;
   focusedIconKey?: string;
@@ -94,7 +94,7 @@ type IconPickerIconProps = {
 
 const IconPickerIcon = ({
   iconKey,
-  onClick,
+  onSelect,
   selectedIconKey,
   Icon,
   focusedIconKey,
@@ -106,7 +106,7 @@ const IconPickerIcon = ({
 
   return (
     <StyledMatrixItem>
-      <SelectableListItem itemId={iconKey} onEnter={onClick}>
+      <SelectableListItem itemId={iconKey} onEnter={onSelect}>
         <StyledLightIconButton
           key={iconKey}
           aria-label={convertIconKeyToLabel(iconKey)}
@@ -115,7 +115,7 @@ const IconPickerIcon = ({
           isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
           isFocused={iconKey === focusedIconKey}
           Icon={Icon}
-          onClick={onClick}
+          onClick={onSelect}
         />
       </SelectableListItem>
     </StyledMatrixItem>
@@ -301,7 +301,7 @@ export const IconPicker = ({
                         <IconPickerIcon
                           key={iconKey}
                           iconKey={iconKey}
-                          onClick={() => {
+                          onSelect={() => {
                             onChange({ iconKey, Icon: getIcon(iconKey) });
                             closeDropdown(dropdownId);
                           }}

@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: استيراد العلاقات بين الكائنات عبر CSV
+description: دليل كامل خطوة بخطوة لربط السجلات أثناء استيراد CSV.
 ---
 
 ## نظرة عامة
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+يأخذك هذا الدليل خلال استيراد العلاقات بين الكائنات—على سبيل المثال، ربط الأشخاص بالشركات، أو الفرص بالأشخاص.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**ما الذي يمكن استيراده:** العلاقات من واحد إلى متعدد التي تشير إلى نوع كائن واحد فقط. العلاقات التي تشير إلى أنواع كائنات متعددة (مثل ملاحظات مرتبطة بالأشخاص والشركات معًا) غير مدعومة للاستيراد بعد.</Note>
 
-## Understanding Relations
+## فهم العلاقات
 
-### What is a "One-to-Many" Relation?
+### ما هي علاقة "واحد إلى متعدد"؟
 
-In a one-to-many relation:
+في علاقة واحد إلى متعدد:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **شركة واحدة** لديها **العديد** من الأشخاص (الموظفين)
+* **شركة واحدة** لديها **العديد** من الفرص
+* **شخص واحد** لديه **العديد** من المهام
 
-The "one" side is the **parent**. The "many" side is the **child**.
+جانب "الواحد" هو **الأصل**. جانب "المتعدد" هو **التابع**.
 
-### Common Relations in Twenty
+### العلاقات الشائعة في Twenty
 
-| علاقة                     | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | الشركة              | الأشخاص             |
-| Companies → Opportunities | الشركة              | الفرص               |
-| People → Tasks            | شخص                 | المهام              |
-| People → Notes            | شخص                 | الملاحظات           |
+| علاقة               | جانب "الواحد" (الأصل) | جانب "المتعدد" (التابع) |
+| ------------------- | --------------------- | ----------------------- |
+| الشركات → الأشخاص   | الشركة                | الأشخاص                 |
+| الشركات → الفرص     | الشركة                | الفرص                   |
+| الأشخاص → المهام    | شخص                   | المهام                  |
+| الأشخاص → الملاحظات | شخص                   | الملاحظات               |
 
-## Step 1: Identify the "One" and "Many" Sides
+## الخطوة 1: تحديد جانبي "الواحد" و"المتعدد"
 
-Before importing, determine which object is the parent and which is the child.
+قبل الاستيراد، حدّد أي الكائنات هو الأصل وأيها التابع.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**اسأل نفسك:** "هل لدى كائن واحد من [Object A] العديد من [Object B]؟"
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* شركة واحدة → العديد من الأشخاص ✓ (الشركة هي الأصل)
+* شخص واحد → العديد من الشركات ✗ (هذا خطأ — الشخص ينتمي إلى شركة واحدة)
 
-## Step 2: Import the Parent Records First
+## الخطوة 2: استيراد سجلات الأصل أولًا
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+يجب أن يكون الأصل (جانب "الواحد") موجودًا في Twenty قبل أن تتمكّن من الإشارة إليه.
 
-**Import order:**
+**ترتيب الاستيراد:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. **الشركات** أولًا (من دون تبعيات)
+2. **الأشخاص** ثانيًا (مرتبطون بالشركات)
+3. **الفرص** ثالثًا (مرتبطة بالشركات و/أو الأشخاص)
+4. **المهام/الملاحظات** (مرتبطة بأي مما سبق)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **إذا كان سجل الأصل غير موجود، فسيفشل الاستيراد.**
 
-  Always verify that Companies are imported before importing People with company references.
+  تحقّق دائمًا من استيراد الشركات قبل استيراد الأشخاص الذين لديهم مراجع للشركات.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## الخطوة 3: تدوين المعرّف الفريد للأصل
 
-You need to reference the parent record using a **unique identifier**. Available options:
+تحتاج إلى الإشارة إلى سجل الأصل باستخدام **مُعرّف فريد**. الخيارات المتاحة:
 
-| Parent Object         | Available Unique Identifiers                                    |
-| --------------------- | --------------------------------------------------------------- |
-| **الشركات**           | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**            | `id` (UUID), `email`, or any custom unique field                |
-| **أعضاء مساحة العمل** | `id` (UUID), `email` (not name)                                 |
-| **كائنات مخصصة**      | `id` (UUID), or any field marked as unique                      |
+| كائن الأصل            | المُعرّفات الفريدة المتاحة                           |
+| --------------------- | ---------------------------------------------------- |
+| **الشركات**           | `id` (UUID)، `domain` (موصى به)، أو أي حقل فريد مخصص |
+| **الأشخاص**           | `id` (UUID)، `email`، أو أي حقل فريد مخصص            |
+| **أعضاء مساحة العمل** | `id` (UUID)، `email` (ليس الاسم)                     |
+| **كائنات مخصصة**      | `id` (UUID)، أو أي حقل مميز كفريد                    |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**موصى به:** استخدم `domain` للشركات و`email` للأشخاص. هذه مقروءة للبشر وسهلة التحقّق منها في جدول البيانات الخاص بك.</Note>
 
-### Finding the Identifier
+### العثور على المعرّف
 
-If you need the `id`:
+إذا كنت تحتاج إلى `id`:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. صدّر سجلات الأصل من Twenty
+2. يتضمن التصدير عمود `id`
+3. استخدم هذه المعرّفات في ملف سجلات التابع
 
-## Step 4: Verify the Relation Field Exists
+## الخطوة 4: التحقّق من وجود حقل العلاقة
 
-Before importing, ensure the relation field exists between your objects.
+قبل الاستيراد، تأكّد من وجود حقل العلاقة بين كائناتك.
 
-**To check or create:**
+**للتحقّق أو الإنشاء:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر كائن التابع الخاص بك (مثلًا، الأشخاص)
+3. ابحث عن حقل علاقة يشير إلى الأصل (مثلًا، الشركة)
+4. إذا لم يكن موجودًا، فقم بإنشائه:
+   * انقر **+ إضافة حقل**
+   * اختر نوع **العلاقة**
+   * اختر كائن الأصل
 
-## Step 5: Prepare Your CSV File
+## الخطوة 5: جهّز ملف CSV الخاص بك
 
-Add a column to your child CSV that references the parent using its unique identifier.
+أضِف عمودًا إلى ملف CSV للتابع يشير إلى الأصل باستخدام مُعرّفه الفريد.
 
-### Example: People Linking to Companies
+### مثال: ربط الأشخاص بالشركات
 
-**Your People CSV:**
+**ملف CSV الخاص بالأشخاص لديك:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+يشير عمود `companyDomain` إلى نطاق الشركة.
 
-### Format Requirements
+### متطلبات التنسيق
 
-| معرّف             | التنسيق        | مثال                                   |
-| ----------------- | -------------- | -------------------------------------- |
-| النطاق            | URL format     | `https://acme.com`                     |
-| البريد الإلكتروني | Standard email | `john@acme.com`                        |
-| المعرف            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| معرّف             | التنسيق             | مثال                                   |
+| ----------------- | ------------------- | -------------------------------------- |
+| النطاق            | تنسيق عنوان URL     | `https://acme.com`                     |
+| البريد الإلكتروني | بريد إلكتروني قياسي | `john@acme.com`                        |
+| المعرف            | UUID                | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **تنسيق النطاق مهم!**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  استخدم `https://domain.com` (وليس فقط `domain.com`). هذا يتوافق مع طريقة تخزين Twenty لنطاقات الشركات ويمنع أخطاء المطابقة.
 </Warning>
 
-### Important Rules
+### قواعد مهمة
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **تطابق تام مطلوب** — يجب أن تتطابق القيمة تمامًا مع سجل الأصل
+2. **قم بتعيين مُعرّف فريد واحد فقط** — لا تُدرج كلًّا من `companyId` و`companyDomain`
+3. **حسّاس لحالة الأحرف** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## الخطوة 6: ارفع الملف وعيّن العلاقة
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. انتقل إلى كائن التابع (مثلًا، الأشخاص)
+2. انقر **⋮** → **Import records**
+3. ارفع ملف CSV الخاص بك
+4. في خطوة تعيين الحقول:
+   * اعثر على عمود العلاقة الخاص بك (مثلًا، `companyDomain`)
+   * طابقه مع حقل علاقة **Company**
+5. أكمل التعيينات المتبقية
+6. راجع الأخطاء وأكّد
 
-Twenty will automatically link each child record to the matching parent.
+سيقوم Twenty بربط كل سجل تابع تلقائيًا بالأصل المطابق.
 
-## Step 7: Verify the Import
+## الخطوة 7: التحقّق من الاستيراد
 
-After importing:
+بعد الاستيراد:
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. افتح عددًا قليلًا من سجلات التابع (مثلًا، الأشخاص)
+2. تحقّق من أن حقل العلاقة يعرض الأصل الصحيح (مثلًا، الشركة)
+3. افتح سجل الأصل وتفقّد قسم السجلات المرتبطة
 
-## Common Mistakes to Avoid
+## أخطاء شائعة يجب تجنّبها
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| الخطأ                     | المشكلة                                        | الحل                                                        |
+| ------------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| **ترتيب استيراد خاطئ**    | استيراد الأشخاص قبل الشركات                    | استورد دائمًا الأصول أولًا، ثم التوابع                      |
+| **تنسيق نطاق غير صحيح**   | استخدام `acme.com` بدلًا من `https://acme.com` | استخدم تنسيق عنوان URL الكامل مع `https://`                 |
+| **حقول فريدة متعددة**     | تعيين كلٍّ من `companyId` و`companyDomain`     | قم بتعيين مُعرّف فريد واحد فقط                              |
+| **حقل علاقة مفقود**       | حقل العلاقة غير موجود في نموذج البيانات        | قم بإنشائه ضمن **الإعدادات → نموذج البيانات** قبل الاستيراد |
+| **سجلات غير موجودة**      | سجل الأصل غير موجود في Twenty                  | استورد سجلات الأصل أولًا، أو تحقّق من الأخطاء الإملائية     |
+| **عدم تطابق حالة الأحرف** | `Acme.com` في الملف ولكن `acme.com` في Twenty  | تأكّد من تطابق حالة الأحرف تمامًا                           |
 
-## Linking to Workspace Members
+## الربط بأعضاء مساحة العمل
 
-When linking to Workspace Members (your team):
+عند الربط بأعضاء مساحة العمل (فريقك):
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* استخدم **عنوان بريدهم الإلكتروني**، وليس اسمهم
+* مثال: `owner@yourcompany.com`، وليس "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -173,56 +173,56 @@ Follow up with client,john@yourcompany.com
 Review proposal,jane@yourcompany.com
 ```
 
-## FAQ
+## الأسئلة الشائعة
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="ماذا لو لم يكن لدى سجل الأصل نطاق أو بريد إلكتروني؟">
+    لديك خياران:
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. استخدم `id` الخاص بـ Twenty (صدّر سجلات الأصل للحصول على معرّفاتها)
+    2. أنشئ حقلًا فريدًا مخصصًا في نموذج البيانات لتخزين معرّف خارجي من نظامك السابق
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    نعم! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="هل يمكنني تحديث العلاقات على السجلات الموجودة؟">
+    نعم! ضمّن المُعرّف الفريد لسجل التابع (مثلًا، `email` للأشخاص) وقيمة العلاقة الجديدة. سيقوم الاستيراد بتحديث العلاقة.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="هل يمكنني استيراد علاقات عديدة-إلى-عدة؟">
+    العلاقات عديدة-إلى-عدة غير مدعومة للاستيراد بعد. هذا مُخطّط للنصف الأول من عام 2026.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="هل يمكنني الربط بأنواع كائنات متعددة (مثل ربط الملاحظات بالأشخاص والشركات معًا)؟">
+    العلاقات التي تشير إلى أنواع كائنات متعددة غير مدعومة للاستيراد/التصدير بعد. هذا على خارطة الطريق لدينا.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. يمكنك إما:
+  <Accordion title="ماذا يحدث إذا كان سجل الأصل غير موجود؟">
+    سيعرض الاستيراد خطأً لذلك الصف. يمكنك إما:
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * استورد سجل الأصل أولًا، ثم أعد الاستيراد
+    * أصلِح قيمة المرجع
+    * أزل الصف من الاستيراد
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="لماذا لا يتم ربط العلاقة بشكل صحيح؟">
+    أسباب شائعة:
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * تنسيق غير صحيح (استخدم `https://domain.com` للنطاقات)
+    * عدم تطابق حالة الأحرف (تحقّق من التهجئة الدقيقة)
+    * الأصل غير موجود (استورد الأصول أولًا)
+    * تعيين عدة مُعرّفات (استخدم واحدًا فقط)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **تذكير: السجلات المحذوفة حذفًا ناعمًا تُحتسب ضمن التفرد.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  إذا كنت تتلقى أخطاء "not found" ولكن يبدو أن السجل موجود، فتحقّق من قائمة الأوامر → عرض السجلات المحذوفة. قد يكون السجل الأصل قد حُذِف حذفًا منطقيًا.
 </Warning>
 
 ## استكشاف الأخطاء وإصلاحها
 
-Having issues? Check:
+هل تواجه مشكلات؟ اطّلع على:
 
-* [How to Fix Import Errors](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/ar/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [كيفية إصلاح أخطاء الاستيراد](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
+* [قدرات استيراد العلاقات](/l/ar/user-guide/data-migration/capabilities/import-relations)
+* [قيود التفرد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)

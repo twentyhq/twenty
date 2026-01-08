@@ -5,6 +5,7 @@ import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/c
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortalContent';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/components/FieldWidgetInputContextProvider';
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { useContext } from 'react';
 
@@ -42,7 +43,13 @@ export const FieldWidgetCellHoveredContent = ({
       onMouseLeave={onMouseLeave}
     >
       <RecordInlineCellDisplayMode isHovered={true} onClick={handleClick}>
-        {editModeContentOnly ? <FieldInput /> : <FieldDisplay />}
+        {editModeContentOnly ? (
+          <FieldWidgetInputContextProvider>
+            <FieldInput />
+          </FieldWidgetInputContextProvider>
+        ) : (
+          <FieldDisplay />
+        )}
       </RecordInlineCellDisplayMode>
     </RecordInlineCellHoveredPortalContent>
   );

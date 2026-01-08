@@ -18,6 +18,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -31,9 +32,9 @@ describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
-  let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleRepository: Repository<RoleEntity>;
+  let serverlessFunctionRepository: Repository<ServerlessFunctionEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
   let objectMetadataService: ObjectMetadataService;
 
@@ -91,6 +92,12 @@ describe('WorkspaceManagerService', () => {
         },
         {
           provide: getRepositoryToken(RoleEntity),
+          useValue: {
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(ServerlessFunctionEntity),
           useValue: {
             delete: jest.fn(),
           },
@@ -169,15 +176,15 @@ describe('WorkspaceManagerService', () => {
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
       getRepositoryToken(DataSourceEntity),
     );
-    workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
-      WorkspaceDataSourceService,
-    );
     roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
       getRepositoryToken(RoleTargetEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
+    serverlessFunctionRepository = module.get<
+      Repository<ServerlessFunctionEntity>
+    >(getRepositoryToken(ServerlessFunctionEntity));
     objectMetadataService = module.get<ObjectMetadataService>(
       ObjectMetadataService,
     );
@@ -205,9 +212,9 @@ describe('WorkspaceManagerService', () => {
       expect(roleRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(
-        workspaceDataSourceService.deleteWorkspaceDBSchema,
-      ).toHaveBeenCalled();
+      expect(serverlessFunctionRepository.delete).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+      });
     });
   });
 });

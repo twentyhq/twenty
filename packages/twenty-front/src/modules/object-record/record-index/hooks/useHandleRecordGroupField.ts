@@ -4,7 +4,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';
@@ -26,7 +26,7 @@ export const useHandleRecordGroupField = () => {
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
-  const { updateView } = usePersistView();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
@@ -55,7 +55,7 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        const updatedViewResult = await updateView({
+        const updatedViewResult = await performViewAPIUpdate({
           id: view.id,
           input: {
             mainGroupByFieldMetadataId: fieldMetadataItem.id,
@@ -133,7 +133,7 @@ export const useHandleRecordGroupField = () => {
     [
       currentViewIdCallbackState,
       getViewFromPrefetchState,
-      updateView,
+      performViewAPIUpdate,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
       refreshCoreViewsByObjectMetadataId,
@@ -162,14 +162,18 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        await updateView({
+        await performViewAPIUpdate({
           id: view.id,
           input: {
             mainGroupByFieldMetadataId: null,
           },
         });
       },
-    [currentViewIdCallbackState, getViewFromPrefetchState, updateView],
+    [
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+      performViewAPIUpdate,
+    ],
   );
 
   return { handleRecordGroupFieldChange, resetRecordGroupField };

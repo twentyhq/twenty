@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for cronTrigger 1`] = `
+[
+  "serverlessFunction",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for databaseEventTrigger 1`] = `
+[
+  "serverlessFunction",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadata 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+  "viewField",
+  "viewFilter",
+  "view",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for index 1`] = `
+[
+  "objectMetadata",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for objectMetadata 1`] = `
+[
+  "fieldMetadata",
+  "index",
+  "view",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for pageLayout 1`] = `
+[
+  "objectMetadata",
+  "pageLayoutTab",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for pageLayoutTab 1`] = `
+[
+  "pageLayout",
+  "pageLayoutWidget",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for pageLayoutWidget 1`] = `
+[
+  "pageLayoutTab",
+  "objectMetadata",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
+[
+  "roleTarget",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for roleTarget 1`] = `
+[
+  "role",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for routeTrigger 1`] = `
+[
+  "serverlessFunction",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionPredicate 1`] = `
+[
+  "role",
+  "fieldMetadata",
+  "objectMetadata",
+  "rowLevelPermissionPredicateGroup",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionPredicateGroup 1`] = `
+[
+  "role",
+  "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionPredicate",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for serverlessFunction 1`] = `
+[
+  "cronTrigger",
+  "databaseEventTrigger",
+  "routeTrigger",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for view 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+  "viewField",
+  "viewFilter",
+  "viewFilterGroup",
+  "viewGroup",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewField 1`] = `
+[
+  "fieldMetadata",
+  "view",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewFilter 1`] = `
+[
+  "fieldMetadata",
+  "view",
+  "viewFilterGroup",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewFilterGroup 1`] = `
+[
+  "viewFilterGroup",
+  "view",
+  "viewFilter",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewGroup 1`] = `
+[
+  "view",
+]
+`;

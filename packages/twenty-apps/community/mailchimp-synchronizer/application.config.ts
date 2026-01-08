@@ -1,4 +1,4 @@
-import { type ApplicationConfig } from 'twenty-sdk/application';
+import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
   universalIdentifier: '1eadac4e-db9f-4cce-b20b-de75f41e34dc',
@@ -6,16 +6,6 @@ const config: ApplicationConfig = {
   description: 'Synchronizes Twenty contacts in Mailchimp',
   icon: "IconMailFast",
   applicationVariables: {
-    TWENTY_API_KEY: {
-      universalIdentifier: '0af17af3-66b8-40cf-b6e2-6a29a1da5464',
-      isSecret: true,
-      description: 'Required to send requests to Twenty',
-    },
-    TWENTY_API_URL: {
-      universalIdentifier: '12949c1c-aed7-4a9f-bd06-9fd15f0bfa63',
-      isSecret: false,
-      description: 'Optional, defaults to cloud API URL',
-    },
     MAILCHIMP_API_KEY: {
       universalIdentifier: 'f10d4e8a-8055-4eb2-b9ad-efd69d43b1f0',
       isSecret: true,

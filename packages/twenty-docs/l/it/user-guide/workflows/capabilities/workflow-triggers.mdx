@@ -1,40 +1,40 @@
 ---
-title: Workflow Triggers
-description: Learn about the different triggers that start your workflows.
+title: Attivatori dei flussi di lavoro
+description: Scopri i diversi attivatori che avviano i tuoi flussi di lavoro.
 ---
 
-## About Triggers
+## Informazioni sugli attivatori
 
-Workflows always start with a single trigger that defines when the automation should run.
+I flussi di lavoro iniziano sempre con un singolo attivatore che definisce quando deve essere eseguita l'automazione.
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **Gli oggetti avanzati sono supportati!** Oltre agli oggetti CRM standard (Persone, Aziende, Opportunità), puoi anche avviare flussi di lavoro ed eseguire azioni su:
 
   * Membri dello spazio di lavoro
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * Eventi del calendario
+  * Messaggi (email)
+  * Attività, note e molti altri oggetti di sistema
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  Questo consente potenti automazioni, come notificare i membri del team quando vengono creati eventi del calendario oppure elaborare automaticamente le email in arrivo.
 </Tip>
 
 ## Record Creato
 
-Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+Avvia il flusso di lavoro quando viene creato un nuovo record in un oggetto selezionato (Persone, Aziende, Opportunità o un qualsiasi oggetto personalizzato).
 
-**Configuration**: Select the object type to monitor for new records.
+**Configurazione**: Seleziona il tipo di oggetto da monitorare per i nuovi record.
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * Questo attivatore è ottimo per i record creati tramite csv, sincronizzazione della casella di posta e del calendario, API.
+  * **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Poiché Twenty UI offre il salvataggio automatico al volo (non esiste una modalità di modifica e poi una validazione per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
+    Per attivare questo flusso di lavoro sui record creati manualmente, si consiglia invece di usare l'attivatore `Record is created or updated`.
 </Note>
 
 ## Record Aggiornato
 
-Starts the workflow when changes are made to an existing record.
+Avvia il flusso di lavoro quando vengono apportate modifiche a un record esistente.
 
 **Configurazione**:
 
@@ -43,7 +43,7 @@ Starts the workflow when changes are made to an existing record.
 
 ## Record Aggiornato o Creato
 
-Starts the workflow when a record is either created or updated in a selected object.
+Avvia il flusso di lavoro quando un record viene creato o aggiornato in un oggetto selezionato.
 
 **Perché è Importante:** Questo trigger è particolarmente utile perché i record creati tramite diversi metodi si comportano diversamente:
 
@@ -54,35 +54,35 @@ Starts the workflow when a record is either created or updated in a selected obj
 
 * Seleziona il tipo di oggetto da monitorare
 * Specifica opzionalmente quali campi monitorare per le modifiche
-* The workflow will trigger both on initial creation and any subsequent updates
+* Il flusso di lavoro verrà attivato sia alla creazione iniziale sia a qualsiasi aggiornamento successivo
 
 ## Record Eliminato
 
-Starts the workflow when a record is removed from an object.
+Avvia il flusso di lavoro quando un record viene rimosso da un oggetto.
 
-**Configuration**: Select the object type to monitor for deletions.
+**Configurazione**: Seleziona il tipo di oggetto da monitorare per le eliminazioni.
 
-## Manual Trigger
+## Attivatore manuale
 
-Starts the workflow when triggered by a user action. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+Avvia il flusso di lavoro quando viene attivato da un'azione dell'utente. È possibile accedere a questo attivatore tramite il menu `Cmd+K` o tramite un pulsante personalizzato che verrà visualizzato nella barra di navigazione superiore dopo aver selezionato uno o più record.
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
 **Configurazione di Disponibilità:**
 Scegli come il flusso di lavoro dovrebbe gestire la selezione dei record:
 
-* **Globale:** Non è richiesto alcun record per attivare questo flusso di lavoro. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **Globale:** Non è richiesto alcun record per attivare questo flusso di lavoro. Il flusso di lavoro viene attivato dal menu comandi `Cmd + K` ovunque (da qualsiasi oggetto) e non utilizza record come input.
 
-* **Single**: The selected record(s) will be passed to your workflow. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. The workflow will run from beginning to end as many times as there are records selected.
+* **Singolo**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito dall'inizio alla fine tante volte quanti sono i record selezionati.
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **Limite soft: 100 esecuzioni/minuto**. Oltre questa soglia, i flussi di lavoro rimangono nello stato "Not Started" e vengono elaborati gradualmente—o da un processo in background oppure quando un altro flusso di lavoro entra in coda. Questo significa che puoi selezionare più di 100 record con un attivatore Singolo; l'esecuzione sarà semplicemente più lenta.
   </Note>
 
-* **Bulk**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an [Iterator action](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Bulk**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito una sola volta, fornendo l'intero elenco di record come input. Questo significa che il flusso di lavoro deve contenere un'[azione Iteratore](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  È più avanzato ed è ideale per chi vuole ottimizzare il numero di esecuzioni del flusso di lavoro.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -95,12 +95,12 @@ Scegli come il flusso di lavoro dovrebbe gestire la selezione dei record:
 
 **Metodi di Accesso**:
 
-* `Cmd+K` menu to find and launch manual workflows
+* Menu `Cmd+K` per trovare e avviare flussi di lavoro manuali
 * Pulsante personalizzato nella barra di navigazione in alto (se configurato)
 
-## Time-Based Trigger: On a Schedule
+## Attivatore basato sul tempo: Su pianificazione
 
-Starts the workflow on a recurring basis you define.
+Avvia il flusso di lavoro con una ricorrenza da te definita.
 
 **Configurazione**:
 
@@ -108,29 +108,29 @@ Starts the workflow on a recurring basis you define.
 * Inserisci un valore o usa espressioni cron personalizzate per pianificazioni avanzate
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **Fuso orario**: I flussi di lavoro pianificati vengono eseguiti in **UTC**. Quando imposti gli orari per le pianificazioni giornaliere, converti la tua ora locale in UTC.
 </Note>
 
-## External Trigger: Webhook
+## Attivatore esterno: Webhook
 
-Starts the workflow when a GET or POST request is received from an external service.
+Avvia il flusso di lavoro quando viene ricevuta una richiesta GET o POST da un servizio esterno.
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
 
 **Configurazione**:
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* Il flusso di lavoro fornisce un URL webhook univoco: copialo e aggiungilo al tuo sistema esterno come endpoint da chiamare.
+* Per le richieste POST, definisci la struttura del body prevista in modo che Twenty sappia quali dati aspettarsi. Aggiungi qui i campi che riceverai e che saranno necessari più avanti nel tuo flusso di lavoro.
+* Configura l'autenticazione (presto disponibile).
 
-## Choosing the Right Trigger
+## Scegliere l'attivatore giusto
 
-| Use Case                    | Recommended Trigger        |
-| --------------------------- | -------------------------- |
-| New leads need processing   | Record Creato              |
-| Data changes need sync      | Record Aggiornato          |
-| Import/manual data handling | Record Aggiornato o Creato |
-| Cleanup after deletion      | Record Eliminato           |
-| User-initiated action       | Avvia Manualmente          |
-| Recurring reports           | On a Schedule              |
-| External integration        | Webhook or On a Schedule   |
+| Caso d'uso                            | Attivatore consigliato      |
+| ------------------------------------- | --------------------------- |
+| Nuovi lead da elaborare               | Record Creato               |
+| Modifiche ai dati da sincronizzare    | Record Aggiornato           |
+| Gestione dati da importazione/manuale | Record Aggiornato o Creato  |
+| Pulizia dopo l'eliminazione           | Record Eliminato            |
+| Azione avviata dall'utente            | Avvia Manualmente           |
+| Report ricorrenti                     | Su pianificazione           |
+| Integrazione esterna                  | Webhook o Su pianificazione |

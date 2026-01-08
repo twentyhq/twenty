@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -9,6 +9,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -28,34 +29,47 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
     private readonly viewFilterRepository: Repository<ViewFilterEntity>,
     @InjectRepository(ViewGroupEntity)
     private readonly viewGroupRepository: Repository<ViewGroupEntity>,
+    @InjectRepository(ViewFilterGroupEntity)
+    private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatViewMaps> {
-    const [views, viewFields, viewFilters, viewGroups] = await Promise.all([
-      this.viewRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.viewFieldRepository.find({
-        where: { workspaceId },
-        select: ['id', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewFilterRepository.find({
-        where: { workspaceId },
-        select: ['id', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewGroupRepository.find({
-        where: { workspaceId },
-        select: ['id', 'viewId'],
-        withDeleted: true,
-      }),
-    ]);
+    const [views, viewFields, viewFilters, viewGroups, viewFilterGroups] =
+      await Promise.all([
+        this.viewRepository.find({
+          where: { workspaceId },
+          withDeleted: true,
+        }),
+        this.viewFieldRepository.find({
+          where: { workspaceId },
+          select: ['id', 'viewId'],
+          withDeleted: true,
+        }),
+        this.viewFilterRepository.find({
+          where: { workspaceId },
+          select: ['id', 'viewId'],
+          withDeleted: true,
+        }),
+        this.viewGroupRepository.find({
+          where: { workspaceId },
+          select: ['id', 'viewId'],
+          withDeleted: true,
+        }),
+        this.viewFilterGroupRepository.find({
+          where: { workspaceId },
+          select: ['id', 'viewId'],
+          withDeleted: true,
+        }),
+      ]);
 
-    const [viewFieldsByViewId, viewFiltersByViewId, viewGroupsByViewId] = (
+    const [
+      viewFieldsByViewId,
+      viewFiltersByViewId,
+      viewGroupsByViewId,
+      viewFilterGroupsByViewId,
+    ] = (
       [
         {
           entities: viewFields,
@@ -69,6 +83,10 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
           entities: viewGroups,
           foreignKey: 'viewId',
         },
+        {
+          entities: viewFilterGroups,
+          foreignKey: 'viewId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -80,6 +98,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
         viewFields: viewFieldsByViewId.get(viewEntity.id) || [],
         viewFilters: viewFiltersByViewId.get(viewEntity.id) || [],
         viewGroups: viewGroupsByViewId.get(viewEntity.id) || [],
+        viewFilterGroups: viewFilterGroupsByViewId.get(viewEntity.id) || [],
       } as ViewEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

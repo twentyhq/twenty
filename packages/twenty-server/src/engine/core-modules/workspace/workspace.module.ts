@@ -35,6 +35,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
 @Module({
@@ -59,6 +60,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         FeatureFlagModule,
         DataSourceModule,
         OnboardingModule,
+        WorkspaceDataSourceModule,
         TypeORMModule,
         PermissionsModule,
         WorkspaceCacheStorageModule,
