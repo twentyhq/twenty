@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
@@ -75,6 +76,11 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility();
 
+  const { filteredRecordGroupFieldMetadataItems } = useSearchRecordGroupField();
+
+  const hasOnlyOneGroupByOption =
+    filteredRecordGroupFieldMetadataItems.length <= 1;
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -116,10 +122,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         >
           {currentView?.key !== 'INDEX' && (
             <>
-              <SelectableListItem itemId="GroupBy">
+              <SelectableListItem
+                itemId="GroupBy"
+                onEnter={() => onContentChange('recordGroupFields')}
+              >
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  disabled
+                  disabled={hasOnlyOneGroupByOption}
+                  onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}
