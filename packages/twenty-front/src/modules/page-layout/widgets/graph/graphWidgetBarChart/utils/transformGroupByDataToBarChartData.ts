@@ -96,26 +96,34 @@ export const transformGroupByDataToBarChartData = ({
     getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData?.[queryResultGqlFieldName];
 
-  const showXAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel =
-    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
-
-  const yAxisLabel =
-    showYAxis && isDefined(aggregateField)
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
-
   const layout =
     configuration.layout === BarChartLayout.HORIZONTAL
       ? BarChartLayout.HORIZONTAL
       : BarChartLayout.VERTICAL;
+
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
+
+  const showCategoryLabel = isHorizontal
+    ? configuration.axisNameDisplay === AxisNameDisplay.Y ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH
+    : configuration.axisNameDisplay === AxisNameDisplay.X ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showValueLabel = isHorizontal
+    ? configuration.axisNameDisplay === AxisNameDisplay.X ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH
+    : configuration.axisNameDisplay === AxisNameDisplay.Y ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showCategoryLabel && isDefined(groupByFieldX)
+      ? groupByFieldX.label
+      : undefined;
+
+  const yAxisLabel =
+    showValueLabel && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
 
   if (!isDefined(groupByData)) {
     return {
