@@ -148,4 +148,3 @@ describe('getOrderByForRelationField', () => {
     expect(result).toEqual([{ company: { name: 'DescNullsLast' } }]);
   });
 });
-

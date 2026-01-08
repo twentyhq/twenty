@@ -122,4 +122,3 @@ describe('filterSortableFieldMetadataItems', () => {
     expect(filterSortableFieldMetadataItems(field as any)).toBe(false);
   });
 });
-
