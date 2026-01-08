@@ -203,7 +203,7 @@ const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
   return false;
 };
 
-export type LoadManifestV2Result = {
+export type LoadManifestResult = {
   packageJson: PackageJson;
   yarnLock: string;
   manifest: ApplicationManifest;
@@ -242,7 +242,7 @@ export type LoadManifestV2Result = {
  */
 export const loadManifest = async (
   appPath: string,
-): Promise<LoadManifestV2Result> => {
+): Promise<LoadManifestResult> => {
   // Validate folder structure
   await validateFolderStructure(appPath);
 
