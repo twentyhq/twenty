@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: إرسال تنبيهات عبر البريد الإلكتروني بشأن المهام المستحقة
+description: إخطار أعضاء الفريق تلقائيًا بمهامهم القادمة أو المتأخرة.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+إرسال تذكيرات يومية عبر البريد الإلكتروني لكل عضو في الفريق بشأن المهام المستحقة اليوم.
 
 ## نظرة عامة
 
-This workflow runs on a schedule and:
+يعمل سير العمل هذا وفق جدول زمني ويقوم بما يلي:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. يجلب جميع أعضاء مساحة العمل
+2. يُنفِّذ حلقة على كل عضو
+3. يعثر على مهامهم المستحقة اليوم
+4. ينسّق ويرسل بريدًا إلكترونيًا مخصصًا
 
-## Step-by-Step Setup
+## إعداد خطوة بخطوة
 
-<VimeoEmbed videoId="1147463514" title="Video demonstration" />
+<VimeoEmbed videoId="1147463514" title="عرض توضيحي بالفيديو" />
 
-### Step 1: Configure the Trigger
+### الخطوة 1: تهيئة المشغّل
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. انتقل إلى **الإعدادات → سير العمل** وأنشئ سير عمل جديد
+2. حدّد **وفق جدول** كمشغّل
+3. استخدم تعبير cron للتشغيل يوميًا عند الساعة 8:00 صباحًا: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### الخطوة 2: البحث عن جميع أعضاء مساحة العمل
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. أضف إجراء **Search Records**
+2. حدّد **Workspace Members** (ضمن الكائنات المتقدمة)
+3. لا حاجة إلى فلاتر — فهذا يعيد جميع الأعضاء
 
-### Step 3: Add an Iterator
+### الخطوة 3: إضافة Iterator
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. أضف إجراء **Iterator**
+2. اضبط مصفوفة الإدخال على أعضاء مساحة العمل من الخطوة السابقة
+3. ستُنفَّذ جميع الإجراءات داخل المكرّر مرة واحدة لكل عضو
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### الخطوة 4: البحث عن المهام المستحقة اليوم (داخل المكرّر)
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. داخل المكرّر، أضف إجراء **Search Records**
+2. حدّد **Tasks** كالكائن
+3. أضف فلاتر:
+   * **Assignee** = عضو مساحة العمل الحالي (من المكرّر)
+   * **Due Date** = اليوم
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### الخطوة 5: تنسيق المهام ضمن محتوى البريد الإلكتروني (داخل المكرّر)
 
-Add a **Code** action to format the tasks into a readable list with links:
+أضف إجراء **Code** لتنسيق المهام في قائمة قابلة للقراءة مع روابط:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### الخطوة 6: إرسال بريد إلكتروني (داخل المكرّر)
 
-1. Add a **Send Email** action (still inside the iterator)
-2. Configure:
+1. أضف إجراء **Send Email** (ما زال داخل المكرّر)
+2. التكوين:
 
-| الحقل       | القيمة                                                          |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| الحقل       | القيمة                                                                    |
+| ----------- | ------------------------------------------------------------------------- |
+| **إلى**     | `{{iterator.currentItem.userEmail}}` (البريد الإلكتروني لعضو مساحة العمل) |
+| **الموضوع** | مهامك المستحقة اليوم                                                      |
+| **المحتوى** | `{{code.formattedTasks}}`                                                 |
 
-### Step 7: Test and Activate
+### الخطوة 7: الاختبار والتفعيل
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. انقر **Test** لتشغيل سير العمل يدويًا
+2. تحقّق من صناديق الوارد للرسائل الإلكترونية
+3. فعّل سير العمل
 
-## Related
+## ذات صلة
 
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
