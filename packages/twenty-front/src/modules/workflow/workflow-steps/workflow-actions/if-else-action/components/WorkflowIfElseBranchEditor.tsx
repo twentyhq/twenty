@@ -100,12 +100,14 @@ export const WorkflowIfElseBranchEditor = ({
                   stepFilterGroupChild,
                 ) ? (
                   <WorkflowStepFilterGroupColumn
+                    key={stepFilterGroupChild.id}
                     parentStepFilterGroup={branchFilterGroup}
                     stepFilterGroup={stepFilterGroupChild}
                     stepFilterGroupIndex={stepFilterGroupChildIndex}
                   />
                 ) : (
                   <WorkflowStepFilterColumn
+                    key={stepFilterGroupChild.id}
                     stepFilterGroup={branchFilterGroup}
                     stepFilter={stepFilterGroupChild}
                     stepFilterIndex={stepFilterGroupChildIndex}
