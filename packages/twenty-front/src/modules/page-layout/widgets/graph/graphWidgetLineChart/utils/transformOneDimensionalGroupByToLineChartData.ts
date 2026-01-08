@@ -5,9 +5,11 @@ import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/applyCumulativeTransformToLineChartData';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
 import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import {
@@ -32,6 +34,7 @@ type TransformOneDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 export const transformOneDimensionalGroupByToLineChartData = ({
@@ -94,15 +97,23 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     {
       id: aggregateField.name,
       label: aggregateField.label,
-      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
+      color: parseGraphColor(configuration.color) ?? GRAPH_DEFAULT_COLOR,
       data: transformedData,
     },
   ];
+
+  const colorMode = determineGraphColorMode({
+    configurationColor: configuration.color,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+      ? groupByFieldX.options
+      : undefined,
+  });
 
   return {
     series,
     hasTooManyGroups:
       rawResults.length > LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS,
     formattedToRawLookup,
+    colorMode,
   };
 };
