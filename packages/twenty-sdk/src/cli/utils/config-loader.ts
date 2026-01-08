@@ -133,7 +133,9 @@ export const loadFunctionModule = async (
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
-    const config = mod.config as { handler?: Function } | undefined;
+    const config = (mod.default ?? mod.config) as
+      | { handler: Function }
+      | undefined;
 
     if (!config) {
       throw new Error(
@@ -158,7 +160,12 @@ export const loadFunctionModule = async (
 
     // Parse source to find where the handler is imported from
     const source = await fs.readFile(filepath, 'utf8');
-    const importPath = extractImportPath(source, handlerName, filepath, appPath);
+    const importPath = extractImportPath(
+      source,
+      handlerName,
+      filepath,
+      appPath,
+    );
 
     // If handler is imported, use the import path; otherwise use the function file itself
     const handlerPath =
