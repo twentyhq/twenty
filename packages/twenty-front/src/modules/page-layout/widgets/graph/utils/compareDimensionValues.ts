@@ -1,5 +1,6 @@
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { Temporal } from 'temporal-polyfill';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import {
   isDefined,
   isFieldMetadataDateKind,
@@ -27,7 +28,7 @@ type CompareDimensionValuesParams = {
   formattedValueB: string;
   direction: 'ASC' | 'DESC';
   fieldType?: FieldMetadataType;
-  subFieldName?: string;
+  subFieldName?: CompositeFieldSubFieldName;
 };
 
 export const compareDimensionValues = ({
