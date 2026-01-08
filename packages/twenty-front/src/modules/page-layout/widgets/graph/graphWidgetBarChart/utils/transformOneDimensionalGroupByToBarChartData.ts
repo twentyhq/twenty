@@ -9,7 +9,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import { type BarDatum } from '@nivo/bar';
 import {
   type FirstDayOfTheWeek,
@@ -79,7 +79,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     }),
   );
 
-  const sortedData = sortChartData({
+  const sortedData = sortChartDataIfNeeded({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
     manualSortOrder: configuration.primaryAxisManualSortOrder,

@@ -13,7 +13,7 @@ import {
   useUpdateCoreViewGroupMutation,
 } from '~/generated/graphql';
 
-export const usePersistViewGroupRecords = () => {
+export const usePerformViewGroupAPIPersist = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
@@ -22,7 +22,7 @@ export const usePersistViewGroupRecords = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const updateViewGroups = useCallback(
+  const performViewGroupAPIUpdate = useCallback(
     async (
       updateCoreViewGroupInputs: UpdateCoreViewGroupMutationVariables[],
     ): Promise<
@@ -85,6 +85,6 @@ export const usePersistViewGroupRecords = () => {
   );
 
   return {
-    updateViewGroups,
+    performViewGroupAPIUpdate,
   };
 };

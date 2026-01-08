@@ -82,19 +82,12 @@ export const transformGroupByDataToLineChartData = ({
   const queryResultGqlFieldName =
     getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData?.[queryResultGqlFieldName];
-  const hasNoData =
-    !isDefined(groupByData) ||
-    !isDefined(rawResults) ||
-    !Array.isArray(rawResults) ||
-    rawResults.length === 0;
 
   const showXAxis =
-    hasNoData ||
     configuration.axisNameDisplay === AxisNameDisplay.X ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
 
   const showYAxis =
-    hasNoData ||
     configuration.axisNameDisplay === AxisNameDisplay.Y ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
 
