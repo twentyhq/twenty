@@ -6,7 +6,6 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -105,12 +104,9 @@ export const RecordBoardColumnHeader = () => {
 
   const { toggleDropdown } = useToggleDropdown();
 
-  const { closeCommandMenu } = useCommandMenu();
-
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
   const handleCreateNewRecordClick = async () => {
-    closeCommandMenu();
     await createNewIndexRecord({
       position: 'first',
       [selectFieldMetadataItem.name]: columnDefinition.value,
