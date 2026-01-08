@@ -1,8 +1,8 @@
 import {
-  Catch,
-  type ExceptionFilter,
-  type ExecutionContext,
-  Injectable,
+    Catch,
+    type ExceptionFilter,
+    type ExecutionContext,
+    Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -13,7 +13,7 @@ import { PageLayoutTabException } from 'src/engine/metadata-modules/page-layout-
 import { PageLayoutWidgetException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { PageLayoutException } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { pageLayoutGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception-handler.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
 
 @Catch(
   PageLayoutException,

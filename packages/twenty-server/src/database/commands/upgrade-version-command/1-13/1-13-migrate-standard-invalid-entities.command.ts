@@ -30,7 +30,7 @@ import {
   MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS,
   MESSAGE_STANDARD_FIELD_IDS,
   WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-migration-v2/constant/standard-field-ids';
+} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 const findStandardFlatObjectMetadataOrThrow = ({
   flatObjectMetadataMaps,

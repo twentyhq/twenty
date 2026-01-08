@@ -39,7 +39,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
 
 @Module({
   imports: [

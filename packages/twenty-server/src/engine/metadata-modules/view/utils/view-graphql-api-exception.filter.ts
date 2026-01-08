@@ -1,8 +1,8 @@
 import {
-  Catch,
-  type ExecutionContext,
-  type ExceptionFilter,
-  Injectable,
+    Catch,
+    type ExceptionFilter,
+    type ExecutionContext,
+    Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -16,7 +16,7 @@ import { ViewGroupException } from 'src/engine/metadata-modules/view-group/excep
 import { ViewSortException } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewException } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception-handler.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
 
 @Catch(
   ViewException,

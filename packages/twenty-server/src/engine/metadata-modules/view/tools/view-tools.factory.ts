@@ -9,7 +9,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
 
 const GetViewsInputSchema = z.object({
   objectNameSingular: z

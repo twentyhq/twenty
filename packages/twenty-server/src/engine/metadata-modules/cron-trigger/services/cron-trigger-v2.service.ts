@@ -7,16 +7,16 @@ import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
 import {
-  CronTriggerException,
-  CronTriggerExceptionCode,
+    CronTriggerException,
+    CronTriggerExceptionCode,
 } from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { fromCreateCronTriggerInputToFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/from-create-cron-trigger-input-to-flat-cron-trigger.util';
 import { fromUpdateCronTriggerInputToFlatCronTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/cron-trigger/utils/from-update-cron-trigger-input-to-flat-cron-trigger-to-update-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class CronTriggerV2Service {

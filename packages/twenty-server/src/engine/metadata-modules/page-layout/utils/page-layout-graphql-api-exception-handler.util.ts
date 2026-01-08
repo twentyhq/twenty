@@ -2,23 +2,23 @@ import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  NotFoundError,
-  UserInputError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  PageLayoutTabException,
-  PageLayoutTabExceptionCode,
+    PageLayoutTabException,
+    PageLayoutTabExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import {
-  PageLayoutWidgetException,
-  PageLayoutWidgetExceptionCode,
+    PageLayoutWidgetException,
+    PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
+    PageLayoutException,
+    PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-v2-formatter';
 
 export const pageLayoutGraphqlApiExceptionHandler = (
   error: Error,

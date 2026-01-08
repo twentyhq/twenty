@@ -1,13 +1,13 @@
 import {
-  FieldMetadataType,
-  type ActorMetadata,
-  type AddressMetadata,
-  type CurrencyMetadata,
-  type LinksMetadata,
+    FieldMetadataType,
+    type ActorMetadata,
+    type AddressMetadata,
+    type CurrencyMetadata,
+    type LinksMetadata,
 } from 'twenty-shared/types';
 
-import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';

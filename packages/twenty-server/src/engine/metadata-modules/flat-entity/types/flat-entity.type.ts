@@ -2,7 +2,7 @@ import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadat
 import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
 import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/types/remove-suffix.type';
+import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 import { type NonNullableProperties } from 'src/types/non-nullable-properties.type';
 
 export type SyncableFlatEntity = NonNullableProperties<

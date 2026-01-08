@@ -1,13 +1,13 @@
 import { type QueryRunner } from 'typeorm';
 
 import {
-  WorkspaceSchemaManagerException,
-  WorkspaceSchemaManagerExceptionCode,
+    WorkspaceSchemaManagerException,
+    WorkspaceSchemaManagerExceptionCode,
 } from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
-import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-v2/utils/compute-postgres-enum-name.util';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-v2/utils/remove-sql-injection.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // TODO: upstream does not guarantee transactionality, implement IF EXISTS or equivalent for idempotency
 export class WorkspaceSchemaEnumManagerService {

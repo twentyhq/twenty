@@ -1,16 +1,16 @@
 import {
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
+    UseFilters,
+    UseGuards,
+    UseInterceptors,
+    UsePipes,
 } from '@nestjs/common';
 import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -44,21 +44,21 @@ import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/d
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
+    PermissionsException,
+    PermissionsExceptionCode,
+    PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import {
-  ApiKeyForRoleDTO,
-  RoleDTO,
+    ApiKeyForRoleDTO,
+    RoleDTO,
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)

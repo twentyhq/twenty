@@ -13,7 +13,7 @@ import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/r
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { WorkspaceFlatRouteTriggerMapCacheService } from 'src/engine/metadata-modules/route-trigger/services/workspace-flat-route-trigger-map-cache.service';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
 
 @Module({
   imports: [

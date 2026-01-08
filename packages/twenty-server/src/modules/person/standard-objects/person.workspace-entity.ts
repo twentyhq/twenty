@@ -1,15 +1,15 @@
 import {
-  type ActorMetadata,
-  type EmailsMetadata,
-  FieldMetadataType,
-  type FullNameMetadata,
-  type LinksMetadata,
-  type PhonesMetadata,
+    type ActorMetadata,
+    type EmailsMetadata,
+    FieldMetadataType,
+    type FullNameMetadata,
+    type LinksMetadata,
+    type PhonesMetadata,
 } from 'twenty-shared/types';
 
-import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration-v2/types/entity-relation.interface';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';

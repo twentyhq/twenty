@@ -1,4 +1,4 @@
-import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/standard-agent-ids';
+import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-migration/constant/standard-agent-ids';
 
 export const STANDARD_AGENT = {
   helper: {

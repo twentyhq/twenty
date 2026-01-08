@@ -1,8 +1,8 @@
 import {
-  Catch,
-  type ExceptionFilter,
-  type ExecutionContext,
-  Injectable,
+    Catch,
+    type ExceptionFilter,
+    type ExecutionContext,
+    Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -11,7 +11,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ViewGroupException } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { viewGroupGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception-handler.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
 
 @Catch(ViewGroupException, WorkspaceMigrationBuilderExceptionV2)
 @Injectable()

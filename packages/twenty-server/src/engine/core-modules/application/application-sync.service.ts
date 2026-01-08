@@ -3,20 +3,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-  ApplicationManifest,
-  FieldManifest,
-  ObjectManifest,
-  RoleManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
+    ApplicationManifest,
+    FieldManifest,
+    ObjectManifest,
+    RoleManifest,
+    ServerlessFunctionManifest,
+    ServerlessFunctionTriggerManifest,
 } from 'twenty-shared/application';
 import { HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
+    ApplicationException,
+    ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
@@ -43,7 +43,7 @@ import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serv
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ApplicationSyncService {

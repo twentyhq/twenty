@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-v2/utils/remove-sql-injection.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildSqlColumnDefinition = (
   column: WorkspaceSchemaColumnDefinition,

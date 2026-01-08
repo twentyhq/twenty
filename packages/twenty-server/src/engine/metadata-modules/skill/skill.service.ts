@@ -15,11 +15,11 @@ import { type CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/cr
 import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { type UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
 import {
-  SkillException,
-  SkillExceptionCode,
+    SkillException,
+    SkillExceptionCode,
 } from 'src/engine/metadata-modules/skill/skill.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class SkillService {
