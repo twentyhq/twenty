@@ -15,7 +15,7 @@ import {
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { fromCreateRouteTriggerInputToFlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/utils/from-create-route-trigger-input-to-flat-route-trigger.util';
 import { fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/route-trigger/utils/from-update-route-trigger-input-to-flat-route-trigger-to-update-or-throw.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -66,7 +66,7 @@ export class RouteTriggerV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating route',
       );
@@ -120,7 +120,7 @@ export class RouteTriggerV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating route',
       );
@@ -181,7 +181,7 @@ export class RouteTriggerV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying route',
       );

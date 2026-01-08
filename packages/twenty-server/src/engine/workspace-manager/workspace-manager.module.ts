@@ -19,14 +19,14 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
 
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     ObjectMetadataModule,
     DevSeederModule,
     DataSourceModule,

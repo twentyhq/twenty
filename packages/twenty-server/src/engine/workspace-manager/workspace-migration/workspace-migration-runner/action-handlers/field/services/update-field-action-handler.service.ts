@@ -22,8 +22,8 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/is-property-update.util';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action-v2';
-import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value-v2.util';
+import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
     WorkspaceMigrationRunnerException,
     WorkspaceMigrationRunnerExceptionCode,
@@ -315,7 +315,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         // @ts-expect-error - TODO: fix this
         let compositeDefaultValue = update.to?.[property.name]; // not valid should be serialized
 
-        const serializedNewDefaultValue = serializeDefaultValueV2({
+        const serializedNewDefaultValue = serializeDefaultValue({
           columnName: compositeColumnName,
           schemaName,
           tableName,
@@ -341,7 +341,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatFieldMetadata.type,
     ) as ColumnType;
 
-    const serializedNewDefaultValue = serializeDefaultValueV2({
+    const serializedNewDefaultValue = serializeDefaultValue({
       columnName: flatFieldMetadata.name,
       schemaName,
       tableName,

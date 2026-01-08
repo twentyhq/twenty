@@ -9,8 +9,8 @@ import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types
 import {
     buildActionHandlerKey,
     type WorkspaceMigrationActionHandlerKey,
-    type WorkspaceMigrationActionV2,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common-v2';
+    type WorkspaceMigrationAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
@@ -56,7 +56,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     });
   }
 
-  async executeActionHandler<T extends WorkspaceMigrationActionV2>({
+  async executeActionHandler<T extends WorkspaceMigrationAction>({
     action,
     context,
     rollback,

@@ -8,12 +8,12 @@ import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules
 import { SkillResolver } from 'src/engine/metadata-modules/skill/skill.resolver';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     ApplicationModule,
     PermissionsModule,
     FlatSkillModule,

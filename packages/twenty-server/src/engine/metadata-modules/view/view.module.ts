@@ -20,7 +20,7 @@ import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/service
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     PermissionsModule,
     UserRoleModule,
     WorkspaceCacheStorageModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     FlatViewModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],

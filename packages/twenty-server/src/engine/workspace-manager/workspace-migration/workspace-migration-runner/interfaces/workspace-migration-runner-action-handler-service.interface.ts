@@ -10,8 +10,8 @@ import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-en
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
     buildActionHandlerKey,
-    type WorkspaceMigrationActionV2,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common-v2';
+    type WorkspaceMigrationAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
@@ -19,7 +19,7 @@ import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/w
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
 
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
-  TActionType extends WorkspaceMigrationActionV2,
+  TActionType extends WorkspaceMigrationAction,
 > = Pick<
   WorkspaceMigrationActionRunnerArgs<TActionType>,
   'allFlatEntityMaps' | 'action'
@@ -29,7 +29,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
   TAction extends
-    WorkspaceMigrationActionV2 = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
+    WorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;

@@ -10,8 +10,8 @@ import { type Observable, catchError } from 'rxjs';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
-import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-v2-formatter';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 
 @Injectable()
 export class WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor
@@ -27,8 +27,8 @@ export class WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor
 
     return next.handle().pipe(
       catchError((error) => {
-        if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
-          workspaceMigrationBuilderExceptionV2Formatter(error, i18n);
+        if (error instanceof WorkspaceMigrationBuilderException) {
+          workspaceMigrationBuilderExceptionFormatter(error, i18n);
         }
 
         throw error;

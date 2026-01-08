@@ -17,11 +17,11 @@ import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modul
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-v2';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 
 @Injectable()
-export class WorkspaceMigrationRunnerV2Service {
+export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
@@ -36,7 +36,7 @@ export class WorkspaceMigrationRunnerV2Service {
   private getLegacyCacheInvalidationPromises({
     workspaceMigration: { actions, workspaceId },
   }: {
-    workspaceMigration: Omit<WorkspaceMigrationV2, 'relatedFlatEntityMapsKeys'>;
+    workspaceMigration: Omit<WorkspaceMigration, 'relatedFlatEntityMapsKeys'>;
   }): Promise<void>[] {
     const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
@@ -108,7 +108,7 @@ export class WorkspaceMigrationRunnerV2Service {
     actions,
     workspaceId,
     relatedFlatEntityMapsKeys,
-  }: WorkspaceMigrationV2): Promise<AllFlatEntityMaps> => {
+  }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 

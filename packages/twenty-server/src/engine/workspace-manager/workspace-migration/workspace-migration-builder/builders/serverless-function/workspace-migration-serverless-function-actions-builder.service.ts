@@ -3,19 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
+import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import {
     ValidateAndBuildArgs,
     ValidateAndBuildReturnType,
-    WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder-v2.service';
+    WorkspaceEntityMigrationBuilderService,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service';
 
 @Injectable()
-export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+export class WorkspaceMigrationServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
   typeof ALL_METADATA_NAME.serverlessFunction
 > {
   constructor(

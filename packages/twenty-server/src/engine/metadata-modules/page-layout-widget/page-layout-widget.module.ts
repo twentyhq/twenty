@@ -14,7 +14,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';
 
 @Module({
@@ -24,7 +24,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     PermissionsModule,
     FeatureFlagModule,
     WorkspaceCacheStorageModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     FlatPageLayoutWidgetModule,
     ApplicationModule,

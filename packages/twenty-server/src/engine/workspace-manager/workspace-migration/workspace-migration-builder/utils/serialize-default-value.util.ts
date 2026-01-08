@@ -10,20 +10,20 @@ import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metada
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type SerializeDefaultValueV2Args = {
+type SerializeDefaultValueArgs = {
   defaultValue?: FieldMetadataDefaultSerializableValue;
   columnType?: ColumnType;
   schemaName: string;
   tableName: string;
   columnName: string;
 };
-export const serializeDefaultValueV2 = ({
+export const serializeDefaultValue = ({
   columnType,
   defaultValue,
   schemaName,
   tableName,
   columnName,
-}: SerializeDefaultValueV2Args) => {
+}: SerializeDefaultValueArgs) => {
   const safeSchemaName = removeSqlDDLInjection(schemaName);
   const safeTableName = removeSqlDDLInjection(tableName);
   const safeColumnName = removeSqlDDLInjection(columnName);

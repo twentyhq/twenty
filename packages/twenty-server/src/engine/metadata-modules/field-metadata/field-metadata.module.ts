@@ -30,7 +30,7 @@ import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-gro
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -58,7 +58,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         ViewFilterModule,
         ViewGroupModule,
         PermissionsModule,
-        WorkspaceMigrationV2Module,
+        WorkspaceMigrationModule,
         FlatFieldMetadataModule,
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,

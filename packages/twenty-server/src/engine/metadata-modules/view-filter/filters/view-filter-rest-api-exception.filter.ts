@@ -15,7 +15,7 @@ import {
     ViewFilterException,
     ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
 import {
     type CustomException,
@@ -23,7 +23,7 @@ import {
 } from 'src/utils/custom-exception';
 
 @Injectable()
-@Catch(ViewFilterException, WorkspaceMigrationBuilderExceptionV2)
+@Catch(ViewFilterException, WorkspaceMigrationBuilderException)
 export class ViewFilterRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
@@ -31,13 +31,13 @@ export class ViewFilterRestApiExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(
-    exception: ViewFilterException | WorkspaceMigrationBuilderExceptionV2,
+    exception: ViewFilterException | WorkspaceMigrationBuilderException,
     host: ArgumentsHost,
   ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (exception instanceof WorkspaceMigrationBuilderExceptionV2) {
+    if (exception instanceof WorkspaceMigrationBuilderException) {
       const i18n = this.i18nService.getI18nInstance(SOURCE_LOCALE);
       const { errors, summary } =
         fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError(

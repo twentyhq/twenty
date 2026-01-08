@@ -17,15 +17,15 @@ import {
     PageLayoutException,
     PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
-import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-v2-formatter';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 
 export const pageLayoutGraphqlApiExceptionHandler = (
   error: Error,
   i18n: I18n,
 ) => {
-  if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
-    return workspaceMigrationBuilderExceptionV2Formatter(error, i18n);
+  if (error instanceof WorkspaceMigrationBuilderException) {
+    return workspaceMigrationBuilderExceptionFormatter(error, i18n);
   }
 
   if (error instanceof PageLayoutException) {

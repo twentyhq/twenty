@@ -4,33 +4,33 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
-import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder-v2.service';
+import { UpdateRowLevelPermissionPredicateGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action.type';
+import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
-import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
+import { FlatRowLevelPermissionPredicateGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service';
 
 @Injectable()
-export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
+export class WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
+  typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
 > {
   constructor(
-    private readonly flatRowLevelPermissionPredicateValidatorService: FlatRowLevelPermissionPredicateValidatorService,
+    private readonly flatRowLevelPermissionPredicateGroupValidatorService: FlatRowLevelPermissionPredicateGroupValidatorService,
   ) {
-    super(ALL_METADATA_NAME.rowLevelPermissionPredicate);
+    super(ALL_METADATA_NAME.rowLevelPermissionPredicateGroup);
   }
 
   protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
+      typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
     >,
   ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
+    typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
     'create'
   > {
     const validationResult =
-      this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateCreation(
+      this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupCreation(
         args,
       );
 
@@ -47,7 +47,7 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
       status: 'success',
       action: {
         type: 'create',
-        metadataName: 'rowLevelPermissionPredicate',
+        metadataName: 'rowLevelPermissionPredicateGroup',
         flatEntity: flatEntityToValidate,
       },
     };
@@ -55,14 +55,14 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
 
   protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
+      typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
     >,
   ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
+    typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
     'delete'
   > {
     const validationResult =
-      this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateDeletion(
+      this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupDeletion(
         args,
       );
 
@@ -74,29 +74,29 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
     }
 
     const {
-      flatEntityToValidate: { id: predicateId },
+      flatEntityToValidate: { id: predicateGroupId },
     } = args;
 
     return {
       status: 'success',
       action: {
         type: 'delete',
-        metadataName: 'rowLevelPermissionPredicate',
-        entityId: predicateId,
+        metadataName: 'rowLevelPermissionPredicateGroup',
+        entityId: predicateGroupId,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<
-      typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
+      typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
     >,
   ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
+    typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
     'update'
   > {
     const validationResult =
-      this.flatRowLevelPermissionPredicateValidatorService.validateFlatRowLevelPermissionPredicateUpdate(
+      this.flatRowLevelPermissionPredicateGroupValidatorService.validateFlatRowLevelPermissionPredicateGroupUpdate(
         args,
       );
 
@@ -109,9 +109,9 @@ export class WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderServic
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updateAction: UpdateRowLevelPermissionPredicateAction = {
+    const updateAction: UpdateRowLevelPermissionPredicateGroupAction = {
       type: 'update',
-      metadataName: 'rowLevelPermissionPredicate',
+      metadataName: 'rowLevelPermissionPredicateGroup',
       entityId: flatEntityId,
       updates: flatEntityUpdates,
     };

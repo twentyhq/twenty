@@ -10,7 +10,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
   imports: [
@@ -25,9 +25,9 @@ import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/
     WorkspaceCacheModule,
   ],
   providers: [
-    WorkspaceMigrationRunnerV2Service,
+    WorkspaceMigrationRunnerService,
     WorkspaceMigrationRunnerActionHandlerRegistryService,
   ],
-  exports: [WorkspaceMigrationRunnerV2Service],
+  exports: [WorkspaceMigrationRunnerService],
 })
-export class WorkspaceMigrationRunnerV2Module {}
+export class WorkspaceMigrationRunnerModule {}

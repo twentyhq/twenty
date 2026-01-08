@@ -7,11 +7,11 @@ import {
     BaseGraphQLError,
     ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
 
-export const workspaceMigrationBuilderExceptionV2Formatter = (
-  error: WorkspaceMigrationBuilderExceptionV2,
+export const workspaceMigrationBuilderExceptionFormatter = (
+  error: WorkspaceMigrationBuilderException,
   i18n: I18n,
 ) => {
   const { errors, summary } =

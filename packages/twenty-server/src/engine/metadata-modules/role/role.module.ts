@@ -26,7 +26,7 @@ import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modul
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -47,7 +47,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ObjectPermissionModule,
     PermissionFlagModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     UserWorkspaceModule,
     FileModule,
     ApplicationModule,

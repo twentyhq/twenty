@@ -11,7 +11,7 @@ import { RowLevelPermissionPredicateResolver } from 'src/engine/metadata-modules
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ]),
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
   ],
   providers: [
     RowLevelPermissionPredicateService,

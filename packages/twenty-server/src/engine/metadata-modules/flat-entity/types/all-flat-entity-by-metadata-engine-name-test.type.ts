@@ -4,13 +4,13 @@ import { type Expect } from 'twenty-shared/testing';
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
-import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common-v2';
+import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 type ExpectedGenericFlatEntityInformation = {
   actions: {
     [P in WorkspaceMigrationActionType]:
-      | WorkspaceMigrationActionV2
-      | WorkspaceMigrationActionV2[];
+      | WorkspaceMigrationAction
+      | WorkspaceMigrationAction[];
   };
   flatEntity: SyncableFlatEntity;
 };

@@ -44,107 +44,107 @@ import {
     type CreateAgentAction,
     type DeleteAgentAction,
     type UpdateAgentAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-v2-agent-action-builder.service';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
 import {
     type CreateCronTriggerAction,
     type DeleteCronTriggerAction,
     type UpdateCronTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/types/workspace-migration-cron-trigger-action.type';
 import {
     type CreateDatabaseEventTriggerAction,
     type DeleteDatabaseEventTriggerAction,
     type UpdateDatabaseEventTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action.type';
 import {
     type CreateFieldAction,
     type DeleteFieldAction,
     type UpdateFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import {
     type CreateIndexAction,
     type DeleteIndexAction,
     type UpdateIndexAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
     type CreateObjectAction,
     type DeleteObjectAction,
     type UpdateObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import {
     type CreatePageLayoutTabAction,
     type DeletePageLayoutTabAction,
     type UpdatePageLayoutTabAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
 import {
     type CreatePageLayoutWidgetAction,
     type DeletePageLayoutWidgetAction,
     type UpdatePageLayoutWidgetAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import {
     type CreatePageLayoutAction,
     type DeletePageLayoutAction,
     type UpdatePageLayoutAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import {
     type CreateRoleTargetAction,
     type DeleteRoleTargetAction,
     type UpdateRoleTargetAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
 import {
     type CreateRoleAction,
     type DeleteRoleAction,
     type UpdateRoleAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import {
     type CreateRouteTriggerAction,
     type DeleteRouteTriggerAction,
     type UpdateRouteTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/types/workspace-migration-route-trigger-action.type';
 import {
     type CreateRowLevelPermissionPredicateGroupAction,
     type DeleteRowLevelPermissionPredicateGroupAction,
     type UpdateRowLevelPermissionPredicateGroupAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action.type';
 import {
     type CreateRowLevelPermissionPredicateAction,
     type DeleteRowLevelPermissionPredicateAction,
     type UpdateRowLevelPermissionPredicateAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
     type CreateServerlessFunctionAction,
     type DeleteServerlessFunctionAction,
     type UpdateServerlessFunctionAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
 import {
     type CreateSkillAction,
     type DeleteSkillAction,
     type UpdateSkillAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-v2-skill-action.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
 import {
     type CreateViewFieldAction,
     type DeleteViewFieldAction,
     type UpdateViewFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import {
     type CreateViewFilterGroupAction,
     type DeleteViewFilterGroupAction,
     type UpdateViewFilterGroupAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
 import {
     type CreateViewFilterAction,
     type DeleteViewFilterAction,
     type UpdateViewFilterAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action.type';
 import {
     type CreateViewGroupAction,
     type DeleteViewGroupAction,
     type UpdateViewGroupAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import {
     type CreateViewAction,
     type DeleteViewAction,
     type UpdateViewAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action-v2.type';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {

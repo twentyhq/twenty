@@ -1,8 +1,8 @@
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common-v2';
+import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-export type WorkspaceMigrationV2<
-  TActions extends WorkspaceMigrationActionV2 = WorkspaceMigrationActionV2,
+export type WorkspaceMigration<
+  TActions extends WorkspaceMigrationAction = WorkspaceMigrationAction,
 > = {
   actions: TActions[];
   workspaceId: string;

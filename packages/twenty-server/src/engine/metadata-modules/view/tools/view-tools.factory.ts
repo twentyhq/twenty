@@ -9,7 +9,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const GetViewsInputSchema = z.object({
   objectNameSingular: z
@@ -203,7 +203,7 @@ export class ViewToolsFactory {
               visibility: view.visibility,
             };
           } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
             }
             throw error;
@@ -255,7 +255,7 @@ export class ViewToolsFactory {
               visibility: view.visibility,
             };
           } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
             }
             throw error;
@@ -294,7 +294,7 @@ export class ViewToolsFactory {
               deleted: true,
             };
           } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
             }
             throw error;

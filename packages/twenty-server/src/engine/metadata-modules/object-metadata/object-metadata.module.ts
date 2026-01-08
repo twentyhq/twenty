@@ -36,7 +36,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -56,7 +56,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceCacheStorageModule,
         WorkspaceDataSourceModule,
         FeatureFlagModule,
-        WorkspaceMigrationV2Module,
+        WorkspaceMigrationModule,
         ViewModule,
         ViewFieldModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,

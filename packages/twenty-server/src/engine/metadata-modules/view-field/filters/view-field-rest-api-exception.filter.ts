@@ -15,7 +15,7 @@ import {
     ViewFieldException,
     ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
 import {
     type CustomException,
@@ -23,7 +23,7 @@ import {
 } from 'src/utils/custom-exception';
 
 @Injectable()
-@Catch(ViewFieldException, WorkspaceMigrationBuilderExceptionV2)
+@Catch(ViewFieldException, WorkspaceMigrationBuilderException)
 export class ViewFieldRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
@@ -31,13 +31,13 @@ export class ViewFieldRestApiExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(
-    exception: ViewFieldException | WorkspaceMigrationBuilderExceptionV2,
+    exception: ViewFieldException | WorkspaceMigrationBuilderException,
     host: ArgumentsHost,
   ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (exception instanceof WorkspaceMigrationBuilderExceptionV2) {
+    if (exception instanceof WorkspaceMigrationBuilderException) {
       const i18n = this.i18nService.getI18nInstance(SOURCE_LOCALE);
       const { errors, summary } =
         fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError(

@@ -1,12 +1,12 @@
 import { type I18n } from '@lingui/core';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
-import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { translateOrchestratorFailureReportErrors } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/translate-orchestrator-failure-report-errors.util';
 
 export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError =
   (
-    workspaceMigrationBuilderException: WorkspaceMigrationBuilderExceptionV2,
+    workspaceMigrationBuilderException: WorkspaceMigrationBuilderException,
     i18n: I18n,
   ): MetadataValidationErrorResponse => {
     const translatedReport = translateOrchestratorFailureReportErrors(

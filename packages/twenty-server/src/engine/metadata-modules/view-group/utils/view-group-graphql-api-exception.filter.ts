@@ -11,15 +11,15 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ViewGroupException } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { viewGroupGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception-handler.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
-@Catch(ViewGroupException, WorkspaceMigrationBuilderExceptionV2)
+@Catch(ViewGroupException, WorkspaceMigrationBuilderException)
 @Injectable()
 export class ViewGroupGraphqlApiExceptionFilter implements ExceptionFilter {
   constructor(private readonly i18nService: I18nService) {}
 
   catch(
-    exception: ViewGroupException | WorkspaceMigrationBuilderExceptionV2,
+    exception: ViewGroupException | WorkspaceMigrationBuilderException,
     host: ExecutionContext,
   ) {
     const gqlContext = GqlExecutionContext.create(host);

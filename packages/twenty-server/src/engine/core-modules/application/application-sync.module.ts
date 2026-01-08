@@ -18,7 +18,7 @@ import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/ro
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
@@ -34,7 +34,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
     DatabaseEventTriggerModule,
     CronTriggerModule,
     RouteTriggerModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     PermissionsModule,
     RoleModule,
     ObjectPermissionModule,

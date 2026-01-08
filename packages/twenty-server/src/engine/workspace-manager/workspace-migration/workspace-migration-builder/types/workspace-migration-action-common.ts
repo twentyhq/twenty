@@ -5,12 +5,12 @@ import {
   type WorkspaceMigrationActionType,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 
-export type WorkspaceMigrationActionV2 = MetadataWorkspaceMigrationAction<
+export type WorkspaceMigrationAction = MetadataWorkspaceMigrationAction<
   AllMetadataName,
   WorkspaceMigrationActionType
 >;
 
-export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionType;
+export { WorkspaceMigrationActionType };
 
 export type WorkspaceMigrationActionHandlerKey =
   `${WorkspaceMigrationActionType}_${AllMetadataName}`;

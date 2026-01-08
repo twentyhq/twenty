@@ -14,52 +14,52 @@ import {
     type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
-import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-v2-agent-actions-builder.service';
-import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
-import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
-import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-v2-field-actions-builder.service';
-import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-v2-index-actions-builder.service';
-import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-v2-object-actions-builder.service';
-import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
-import { WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/workspace-migration-v2-page-layout-widget-actions-builder.service';
-import { WorkspaceMigrationV2PageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/workspace-migration-v2-page-layout-actions-builder.service';
-import { WorkspaceMigrationV2RoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-v2-role-target-actions-builder.service';
-import { WorkspaceMigrationV2RoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-v2-role-actions-builder.service';
-import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
-import { WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-v2-row-level-permission-predicate-group-actions-builder.service';
-import { WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-v2-row-level-permission-predicate-actions-builder.service';
-import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
-import { WorkspaceMigrationV2SkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-v2-skill-actions-builder.service';
-import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
-import { WorkspaceMigrationV2ViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-v2-view-filter-group-actions-builder.service';
-import { WorkspaceMigrationV2ViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-v2-view-filter-actions-builder.service';
-import { WorkspaceMigrationV2ViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-v2-view-group-actions-builder.service';
-import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-v2-view-actions-builder.service';
+import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
+import { WorkspaceMigrationCronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/workspace-migration-cron-trigger-action-builder.service';
+import { WorkspaceMigrationDatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/workspace-migration-database-event-trigger-actions-builder.service';
+import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
+import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
+import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
+import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-page-layout-tab-actions-builder.service';
+import { WorkspaceMigrationPageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/workspace-migration-page-layout-widget-actions-builder.service';
+import { WorkspaceMigrationPageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/workspace-migration-page-layout-actions-builder.service';
+import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-role-target-actions-builder.service';
+import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
+import { WorkspaceMigrationRouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/workspace-migration-route-trigger-actions-builder.service';
+import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
+import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
+import { WorkspaceMigrationServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/workspace-migration-serverless-function-actions-builder.service';
+import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
+import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
+import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
+import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
+import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
+import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
   constructor(
-    private readonly workspaceMigrationV2ObjectActionsBuilderService: WorkspaceMigrationV2ObjectActionsBuilderService,
-    private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
-    private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
-    private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
-    private readonly workspaceMigrationV2ViewFilterActionsBuilderService: WorkspaceMigrationV2ViewFilterActionsBuilderService,
-    private readonly workspaceMigrationV2ViewFilterGroupActionsBuilderService: WorkspaceMigrationV2ViewFilterGroupActionsBuilderService,
-    private readonly workspaceMigrationV2ViewGroupActionsBuilderService: WorkspaceMigrationV2ViewGroupActionsBuilderService,
-    private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
-    private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
-    private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
-    private readonly workspaceMigrationV2RouteTriggerActionsBuilderService: WorkspaceMigrationV2RouteTriggerActionsBuilderService,
-    private readonly workspaceMigrationV2RoleTargetActionsBuilderService: WorkspaceMigrationV2RoleTargetActionsBuilderService,
-    private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
-    private readonly workspaceMigrationV2RoleActionsBuilderService: WorkspaceMigrationV2RoleActionsBuilderService,
-    private readonly workspaceMigrationV2AgentActionsBuilderService: WorkspaceMigrationV2AgentActionsBuilderService,
-    private readonly workspaceMigrationV2SkillActionsBuilderService: WorkspaceMigrationV2SkillActionsBuilderService,
-    private readonly workspaceMigrationV2PageLayoutActionsBuilderService: WorkspaceMigrationV2PageLayoutActionsBuilderService,
-    private readonly workspaceMigrationV2PageLayoutWidgetActionsBuilderService: WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
-    private readonly workspaceMigrationV2PageLayoutTabActionsBuilderService: WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
-    private readonly workspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService,
-    private readonly workspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService,
+    private readonly workspaceMigrationObjectActionsBuilderService: WorkspaceMigrationObjectActionsBuilderService,
+    private readonly workspaceMigrationIndexActionsBuilderService: WorkspaceMigrationIndexActionsBuilderService,
+    private readonly workspaceMigrationViewActionsBuilderService: WorkspaceMigrationViewActionsBuilderService,
+    private readonly workspaceMigrationViewFieldActionsBuilderService: WorkspaceMigrationViewFieldActionsBuilderService,
+    private readonly workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
+    private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
+    private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
+    private readonly workspaceMigrationServerlessFunctionActionsBuilderService: WorkspaceMigrationServerlessFunctionActionsBuilderService,
+    private readonly workspaceMigrationDatabaseEventTriggerActionsBuilderService: WorkspaceMigrationDatabaseEventTriggerActionsBuilderService,
+    private readonly workspaceMigrationCronTriggerActionsBuilderService: WorkspaceMigrationCronTriggerActionsBuilderService,
+    private readonly workspaceMigrationRouteTriggerActionsBuilderService: WorkspaceMigrationRouteTriggerActionsBuilderService,
+    private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
+    private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
+    private readonly workspaceMigrationRoleActionsBuilderService: WorkspaceMigrationRoleActionsBuilderService,
+    private readonly workspaceMigrationAgentActionsBuilderService: WorkspaceMigrationAgentActionsBuilderService,
+    private readonly workspaceMigrationSkillActionsBuilderService: WorkspaceMigrationSkillActionsBuilderService,
+    private readonly workspaceMigrationPageLayoutActionsBuilderService: WorkspaceMigrationPageLayoutActionsBuilderService,
+    private readonly workspaceMigrationPageLayoutWidgetActionsBuilderService: WorkspaceMigrationPageLayoutWidgetActionsBuilderService,
+    private readonly workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
+    private readonly workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
+    private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -166,7 +166,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatObjectMetadataMaps;
 
       const objectResult =
-        await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationObjectActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             buildOptions,
@@ -220,7 +220,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatFieldMetadataMaps, to: toFlatFieldMetadataMaps } =
         flatFieldMetadataMaps;
       const fieldResult =
-        await this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationFieldActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatFieldMetadataMaps,
@@ -252,7 +252,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     if (isDefined(flatIndexMaps)) {
       const { from: fromFlatIndexMaps, to: toFlatIndexMaps } = flatIndexMaps;
       const indexResult =
-        await this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationIndexActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatIndexMaps,
@@ -286,7 +286,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     if (isDefined(flatViewMaps)) {
       const { from: fromFlatViewMaps, to: toFlatViewMaps } = flatViewMaps;
       const viewResult =
-        await this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationViewActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             dependencyOptimisticFlatEntityMaps: {
@@ -321,7 +321,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewFieldMaps, to: toFlatViewFieldMaps } =
         flatViewFieldMaps;
       const viewFieldResult =
-        await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationViewFieldActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatViewFieldMaps,
@@ -360,7 +360,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatViewFilterGroupMaps;
 
       const viewFilterGroupResult =
-        await this.workspaceMigrationV2ViewFilterGroupActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationViewFilterGroupActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatViewFilterGroupMaps,
@@ -395,7 +395,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewFilterMaps, to: toFlatViewFilterMaps } =
         flatViewFilterMaps;
       const viewFilterResult =
-        await this.workspaceMigrationV2ViewFilterActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationViewFilterActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatViewFilterMaps,
@@ -431,7 +431,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewGroupMaps, to: toFlatViewGroupMaps } =
         flatViewGroupMaps;
       const viewGroupResult =
-        await this.workspaceMigrationV2ViewGroupActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationViewGroupActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatViewGroupMaps,
@@ -467,7 +467,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         to: toFlatRowLevelPermissionPredicateGroupMaps,
       } = flatRowLevelPermissionPredicateGroupMaps;
       const rowLevelPermissionPredicateGroupResult =
-        await this.workspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatRowLevelPermissionPredicateGroupMaps,
@@ -504,7 +504,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         to: toFlatRowLevelPermissionPredicateMaps,
       } = flatRowLevelPermissionPredicateMaps;
       const rowLevelPermissionPredicateResult =
-        await this.workspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationRowLevelPermissionPredicateActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatRowLevelPermissionPredicateMaps,
@@ -548,7 +548,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatServerlessFunctionMaps;
 
       const serverlessFunctionResult =
-        await this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationServerlessFunctionActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatServerlessFunctionMaps,
@@ -584,7 +584,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatDatabaseEventTriggerMaps;
 
       const databaseEventTriggerResult =
-        await this.workspaceMigrationV2DatabaseEventTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationDatabaseEventTriggerActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatDatabaseEventTriggerMaps,
@@ -621,7 +621,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatCronTriggerMaps;
 
       const cronTriggerResult =
-        await this.workspaceMigrationV2CronTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationCronTriggerActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatCronTriggerMaps,
@@ -655,7 +655,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatRouteTriggerMaps;
 
       const routeTriggerResult =
-        await this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationRouteTriggerActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatRouteTriggerMaps,
@@ -690,7 +690,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatRoleMaps, to: toFlatRoleMaps } = flatRoleMaps;
 
       const roleResult =
-        await this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationRoleActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatRoleMaps,
@@ -721,7 +721,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatRoleTargetMaps;
 
       const roleTargetResult =
-        await this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationRoleTargetActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatRoleTargetMaps,
@@ -754,7 +754,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatAgentMaps, to: toFlatAgentMaps } = flatAgentMaps;
 
       const agentResult =
-        await this.workspaceMigrationV2AgentActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationAgentActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatAgentMaps,
@@ -786,7 +786,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatSkillMaps, to: toFlatSkillMaps } = flatSkillMaps;
 
       const skillResult =
-        await this.workspaceMigrationV2SkillActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationSkillActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatSkillMaps,
@@ -817,7 +817,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatPageLayoutMaps;
 
       const pageLayoutResult =
-        await this.workspaceMigrationV2PageLayoutActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationPageLayoutActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatPageLayoutMaps,
@@ -854,7 +854,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatPageLayoutTabMaps;
 
       const pageLayoutTabResult =
-        await this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationPageLayoutTabActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatPageLayoutTabMaps,
@@ -892,7 +892,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatPageLayoutWidgetMaps;
 
       const pageLayoutWidgetResult =
-        await this.workspaceMigrationV2PageLayoutWidgetActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationPageLayoutWidgetActionsBuilderService.validateAndBuild(
           {
             additionalCacheDataMaps,
             from: fromFlatPageLayoutWidgetMaps,

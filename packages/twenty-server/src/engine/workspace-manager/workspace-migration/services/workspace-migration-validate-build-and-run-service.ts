@@ -23,7 +23,7 @@ import {
     WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/infer-deletion-from-missing-entities.type';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
@@ -40,7 +40,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   );
 
   constructor(
-    private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -196,7 +196,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return;
     }
 
-    await this.workspaceMigrationRunnerV2Service
+    await this.workspaceMigrationRunnerService
       .run(validateAndBuildResult.workspaceMigration)
       .catch((error) => {
         this.logger.error(error);

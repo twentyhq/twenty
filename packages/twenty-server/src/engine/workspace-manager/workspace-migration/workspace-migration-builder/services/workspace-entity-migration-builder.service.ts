@@ -41,7 +41,7 @@ export type ValidateAndBuildReturnType<T extends AllMetadataName> = Promise<
   SuccessfulFlatEntityValidateAndBuild<T> | FailedFlatEntityValidateAndBuild<T>
 >;
 
-export abstract class WorkspaceEntityMigrationBuilderV2Service<
+export abstract class WorkspaceEntityMigrationBuilderService<
   T extends AllMetadataName,
 > {
   @Inject(LoggerService)
