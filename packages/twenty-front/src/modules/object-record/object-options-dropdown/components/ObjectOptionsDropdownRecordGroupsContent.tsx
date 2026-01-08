@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
@@ -21,6 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronLeft,
@@ -76,10 +76,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility();
 
-  const { filteredRecordGroupFieldMetadataItems } = useSearchRecordGroupField();
+  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
-  const hasOnlyOneGroupByOption =
-    filteredRecordGroupFieldMetadataItems.length <= 1;
+  const hasOnlyOneGroupByOption = availableFieldsForKanban.length <= 1;
 
   useEffect(() => {
     if (
