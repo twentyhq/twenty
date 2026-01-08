@@ -2,6 +2,8 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { sortLineChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/sortLineChartDataBySecondaryDimensionSum';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
@@ -21,6 +23,7 @@ type SortTwoDimensionalLineChartDataConfiguration = {
 
 type SortTwoDimensionalLineChartDataResult = {
   sortedSeries: LineChartSeries[];
+  colorMode: GraphColorMode;
 };
 
 export const sortTwoDimensionalLineChartData = ({
@@ -91,7 +94,13 @@ export const sortTwoDimensionalLineChartData = ({
     };
   });
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: color,
+    selectFieldOptions: secondaryAxisSelectFieldOptions,
+  });
+
   return {
     sortedSeries,
+    colorMode,
   };
 };

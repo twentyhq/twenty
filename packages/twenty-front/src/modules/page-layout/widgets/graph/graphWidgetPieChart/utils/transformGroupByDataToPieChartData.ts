@@ -3,6 +3,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -27,6 +29,7 @@ type TransformGroupByDataToPieChartDataResult = {
   showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
@@ -34,6 +37,7 @@ const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
   showLegend: true,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
+  colorMode: 'automaticPalette',
 };
 
 export const transformGroupByDataToPieChartData = ({
@@ -134,11 +138,19 @@ export const transformGroupByDataToPieChartData = ({
 
   const showLegend = configuration.displayLegend ?? true;
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: configuration.color,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByField.type)
+      ? groupByField.options
+      : undefined,
+  });
+
   return {
     data,
     showLegend,
     hasTooManyGroups:
       filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
     formattedToRawLookup,
+    colorMode,
   };
 };

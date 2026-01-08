@@ -3,6 +3,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -37,6 +39,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -124,6 +127,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       })
     : limitedSortedData;
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: configuration.color,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+      ? groupByFieldX.options
+      : undefined,
+  });
+
   return {
     data: finalData,
     indexBy: indexByKey,
@@ -132,5 +142,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups:
       rawResults.length > BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     formattedToRawLookup,
+    colorMode,
   };
 };

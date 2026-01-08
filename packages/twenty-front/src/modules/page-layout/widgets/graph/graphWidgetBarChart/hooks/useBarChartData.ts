@@ -3,8 +3,8 @@ import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { checkIsExplicitColorSelection } from '@/page-layout/widgets/graph/utils/checkIsExplicitColorSelection';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -20,6 +20,7 @@ type UseBarChartDataProps = {
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
+  colorMode: GraphColorMode;
 };
 
 export const useBarChartData = ({
@@ -29,6 +30,7 @@ export const useBarChartData = ({
   series,
   colorRegistry,
   seriesLabels,
+  colorMode,
 }: UseBarChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
@@ -39,9 +41,7 @@ export const useBarChartData = ({
     [series],
   );
 
-  const isExplicitColorSelection = checkIsExplicitColorSelection(
-    series?.map((s) => s.color) ?? [],
-  );
+  const shouldApplyGradient = colorMode === 'explicitSingleColor';
 
   const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
@@ -49,7 +49,7 @@ export const useBarChartData = ({
       registry: colorRegistry,
       colorName: seriesConfig?.color,
       fallbackIndex: index,
-      totalGroups: isExplicitColorSelection ? keys.length : undefined,
+      totalGroups: shouldApplyGradient ? keys.length : undefined,
     });
 
     return {

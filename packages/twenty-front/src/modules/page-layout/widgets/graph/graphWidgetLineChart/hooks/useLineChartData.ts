@@ -2,8 +2,8 @@ import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/componen
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { checkIsExplicitColorSelection } from '@/page-layout/widgets/graph/utils/checkIsExplicitColorSelection';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type LineSeries } from '@nivo/line';
@@ -13,28 +13,28 @@ type UseLineChartDataProps = {
   data: LineChartSeries[];
   colorRegistry: GraphColorRegistry;
   id: string;
+  colorMode: GraphColorMode;
 };
 
 export const useLineChartData = ({
   data,
   colorRegistry,
   id,
+  colorMode,
 }: UseLineChartDataProps) => {
   const hiddenLegendIds = useRecoilComponentValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    const isExplicitColorSelection = checkIsExplicitColorSelection(
-      data.map((series) => series.color),
-    );
+    const shouldApplyGradient = colorMode === 'explicitSingleColor';
 
     return data.map((series, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
         fallbackIndex: index,
-        totalGroups: isExplicitColorSelection ? data.length : undefined,
+        totalGroups: shouldApplyGradient ? data.length : undefined,
       });
 
       const sanitizedSeriesId = series.id
@@ -45,7 +45,7 @@ export const useLineChartData = ({
 
       return { ...series, colorScheme, areaFillId, label };
     });
-  }, [data, colorRegistry, id]);
+  }, [data, colorRegistry, id, colorMode]);
 
   const legendItems: GraphWidgetLegendItem[] = allEnrichedSeries.map(
     (series) => ({

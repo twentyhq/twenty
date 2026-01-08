@@ -15,6 +15,7 @@ import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetB
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -54,6 +55,7 @@ type GraphWidgetBarChartProps = {
   id: string;
   layout?: BarChartLayout;
   groupMode?: 'grouped' | 'stacked';
+  colorMode: GraphColorMode;
   seriesLabels?: Record<string, string>;
   rangeMin?: number;
   rangeMax?: number;
@@ -83,6 +85,7 @@ export const GraphWidgetBarChart = ({
   id,
   layout = BarChartLayout.VERTICAL,
   groupMode,
+  colorMode,
   seriesLabels,
   rangeMin,
   rangeMax,
@@ -123,6 +126,7 @@ export const GraphWidgetBarChart = ({
       series,
       colorRegistry,
       seriesLabels,
+      colorMode,
     });
 
   const calculatedValueRange =

@@ -1,6 +1,8 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
@@ -25,6 +27,7 @@ type SortTwoDimensionalBarChartDataResult = {
   sortedData: BarDatum[];
   sortedKeys: string[];
   sortedSeries: BarChartSeries[];
+  colorMode: GraphColorMode;
 };
 
 export const sortTwoDimensionalBarChartData = ({
@@ -90,9 +93,15 @@ export const sortTwoDimensionalBarChartData = ({
     }
   }
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: color,
+    selectFieldOptions: secondaryAxisSelectFieldOptions,
+  });
+
   return {
     sortedData,
     sortedKeys,
     sortedSeries,
+    colorMode,
   };
 };

@@ -47,6 +47,7 @@ export const GraphWidgetBarChartRenderer = () => {
     loading,
     hasTooManyGroups,
     formattedToRawLookup,
+    colorMode,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -123,6 +124,7 @@ export const GraphWidgetBarChartRenderer = () => {
         showLegend={showLegend}
         layout={layout}
         groupMode={groupMode}
+        colorMode={colorMode}
         id={widget.id}
         displayType="shortNumber"
         rangeMin={configuration.rangeMin ?? undefined}

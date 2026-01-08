@@ -5,6 +5,7 @@ import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-lay
 import { buildTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/buildTwoDimensionalBarChartData';
 import { limitTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/limitTwoDimensionalBarChartData';
 import { sortTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortTwoDimensionalBarChartData';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -33,6 +34,7 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -71,7 +73,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     indexByKey,
   });
 
-  const { sortedData, sortedKeys, sortedSeries } =
+  const { sortedData, sortedKeys, sortedSeries, colorMode } =
     sortTwoDimensionalBarChartData({
       data: unsortedData,
       keys: Array.from(yValues),
@@ -107,5 +109,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     series: limitedSeries,
     hasTooManyGroups,
     formattedToRawLookup,
+    colorMode,
   };
 };
