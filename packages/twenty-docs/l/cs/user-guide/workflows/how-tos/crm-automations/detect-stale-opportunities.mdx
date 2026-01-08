@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: Odhalte zastaralé příležitosti
+description: Automaticky upozorňujte manažery, když příležitosti nebyly aktualizovány.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+Udržujte svou obchodní pipeline zdravou tím, že budete upozorňovat manažery, když příležitosti zastarávají. Tento pracovní postup kontroluje příležitosti, které nebyly aktualizovány po zadaný počet dní.
 
-## The Problem
+## Problém
 
-Opportunities sitting without updates lead to:
+Příležitosti bez aktualizací vedou k:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* Obchody chladnou
+* Nespolehlivé prognózy
+* Ztracené tržby
 
-## The Solution
+## Řešení
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+Vytvořte plánovaný pracovní postup, který najde zastaralé příležitosti a odešle e-mail jejich manažerům.
 
-## Step-by-Step Setup
+## Nastavení krok za krokem
 
-### Step 1: Create the Workflow
+### Krok 1: Vytvořte pracovní postup
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. Přejděte na **Nastavení → Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte jej "Upozornění na zastaralé příležitosti"
 
-### Step 2: Configure the Trigger
+### Krok 2: Nakonfigurujte spouštěč
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. Vyberte **Podle plánu**
+2. Nastavte spouštění denně (např. každý den v 8:00)
 
-### Step 3: Search for Stale Opportunities
+### Krok 3: Vyhledejte zastaralé příležitosti
 
-1. Add **Search Records** action
+1. Přidejte akci **Vyhledat záznamy**
 2. Nakonfigurujte:
 
-| Pole       | Hodnota                                         |
-| ---------- | ----------------------------------------------- |
-| **Object** | Příležitosti                                    |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| Pole       | Hodnota                                       |
+| ---------- | --------------------------------------------- |
+| **Objekt** | Příležitosti                                  |
+| **Filtr**  | Datum aktualizace je dříve než (dnes - 7 dní) |
+| **Filtr**  | Fáze není "Closed Won" a není "Closed Lost"   |
+| **Limit**  | 100                                           |
 
-### Step 4: Check If Any Found
+### Krok 4: Zkontrolujte, zda se něco našlo
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. Přidejte akci **Filtr**
+2. Podmínka: `{{searchRecords.length}}` je větší než 0
+3. Pokud nejsou žádné zastaralé příležitosti, pracovní postup se zde zastaví
 
-### Step 5: Format the Alert (Code Action)
+### Krok 5: Naformátujte upozornění (akce Code)
 
-Add a **Code** action to format the email:
+Přidejte akci **Code** pro formátování e-mailu:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### Krok 6: Odešlete upozornění e-mailem
 
-Add **Send Email** action:
+Přidejte akci **Odeslat e-mail**:
 
-| Pole        | Hodnota                                                     |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| Pole            | Hodnota                                                              |
+| --------------- | -------------------------------------------------------------------- |
+| **Komu**        | sales-manager@yourcompany.com                                        |
+| **Předmět**     | `🚨 {{code.totalCount}} zastaralých příležitostí vyžaduje pozornost` |
+| **Text zprávy** | `{{code.summary}}`                                                   |
 
-### Step 7: Test and Activate
+### Krok 7: Otestujte a aktivujte
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. Klikněte na **Test** a spusťte pracovní postup
+2. Zkontrolujte, že e-mail obsahuje správné údaje
+3. Až budete připraveni, aktivujte
 
-## Customization Options
+## Možnosti přizpůsobení
 
-### Change Staleness Threshold
+### Změňte hranici zastarání
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+Upravte filtr akce Vyhledat záznamy a změňte ze 7 dnů na vámi preferované období:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 3 dny pro rychlé prodeje
+* 14 dní pro podnikové obchody
+* 30 dní pro dlouhé prodejní cykly
 
-### Alert Individual Reps
+### Upozorněte jednotlivé obchodní zástupce
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+Místo jednoho e-mailu manažerovi použijte **Iterator** k odeslání personalizovaných e-mailů každému zástupci o jeho vlastních zastaralých obchodech.
 
-### Add Escalation
+### Přidejte eskalaci
 
-Create multiple workflows with increasing severity:
+Vytvořte více pracovních postupů se zvyšující se závažností:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. Den 7: E-mail zástupci
+2. Den 14: E-mail zástupci + manažerovi
+3. Den 21: Vytvořte úkol pro manažera k zásahu
 
-### Include in Slack
+### Zahrňte do Slacku
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+Použijte **HTTP Request** k odeslání na webhook ve Slacku místo e-mailu nebo navíc k e-mailu.
 
-## Related
+## Související
 
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)

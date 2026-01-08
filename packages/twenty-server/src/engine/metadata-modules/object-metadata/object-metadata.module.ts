@@ -28,7 +28,6 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -56,7 +55,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
-        RemoteTableRelationsModule,
         IndexMetadataModule,
         PermissionsModule,
         WorkspaceCacheStorageModule,

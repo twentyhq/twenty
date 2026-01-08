@@ -47,6 +47,16 @@ A seconda delle impostazioni della casella di posta, potresti vedere:
 
 ## Comportamento di sincronizzazione delle email
 
+### Sync Rate
+
+Twenty imports emails at approximately **400 messages per minute**. This rate is currently limited by Gmail API rate limiting (and applies similarly to other providers).
+
+For reference:
+
+* 1,000 emails → ~2.5 minutes
+* 10,000 emails → ~25 minutes
+* 50,000 emails → ~2 hours
+
 ### Cosa viene sincronizzato
 
 * **Email esterne**: Tutte le email con contatti al di fuori della tua organizzazione
@@ -60,12 +70,12 @@ A seconda delle impostazioni della casella di posta, potresti vedere:
 * **Email di gruppo**: Liste di distribuzione e email di gruppo sono escluse
 * **Cartelle escluse**: Cartelle che hai scelto di non sincronizzare (configurate in Impostazioni → Account → Email)
 
-### Sincronizzazione selettiva delle cartelle (Funzione Lab)
+### Selective Folder Sync
 
 Controlla quali cartelle email sincronizzano con Twenty:
 
-1. Abilita `Cartella Messaggi` in Impostazioni → Rilasci → Lab
-2. Configura le cartelle in Impostazioni → Account → Email
+1. Go to **Settings → Accounts** and select your connected email account
+2. Configure folders under the Email section
 3. Scegli cartelle specifiche da includere o escludere (Posta in arrivo, Inviati, Archivio, cartelle personalizzate)
 
 ## Risoluzione dei problemi di sincronizzazione delle email

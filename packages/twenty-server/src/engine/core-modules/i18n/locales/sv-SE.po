@@ -340,6 +340,26 @@ msgstr "Agent hittades inte."
 msgid "Agent with name \"{name}\" already exists"
 msgstr "En agent med namnet \"{name}\" finns redan"
 
+#. js-lingui-id: wqJIjz
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
+msgid "Aggregate field is required for graph widget"
+msgstr ""
+
+#. js-lingui-id: Wmauvm
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
+msgid "Aggregate field metadata ID is required for graph widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: uhRAsd
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
+msgid "Aggregate operation is required for graph widget"
+msgstr ""
+
+#. js-lingui-id: YCzwBK
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
+msgid "Aggregate operation is required for graph widget \"{widgetTitle}\""
+msgstr ""
+
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -456,7 +476,6 @@ msgstr "Ett oväntat konfigurationsfel inträffade."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Ett oväntat fel inträffade."
 
@@ -792,6 +811,26 @@ msgstr "Blocklistor"
 msgid "Body"
 msgstr "Innehåll"
 
+#. js-lingui-id: Ara8xP
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
+msgid "Body is required for standalone rich text widget"
+msgstr ""
+
+#. js-lingui-id: I6oEwz
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
+msgid "Body is required for standalone rich text widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: YCGofH
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
+msgid "Body must be an object"
+msgstr ""
+
+#. js-lingui-id: TaToDK
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
+msgid "Body must be an object for widget \"{widgetTitle}\""
+msgstr ""
+
 #. js-lingui-id: 6+byWT
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
@@ -1088,6 +1127,50 @@ msgstr "Sammansatt typ hittades inte."
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Lösning för konferenssamtal"
+
+#. js-lingui-id: wOVBIH
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for graph widget"
+msgstr ""
+
+#. js-lingui-id: BGpA6L
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for graph widget \"{title}\""
+msgstr ""
+
+#. js-lingui-id: heMezC
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for iframe widget"
+msgstr ""
+
+#. js-lingui-id: QUAb9a
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for iframe widget \"{title}\""
+msgstr ""
+
+#. js-lingui-id: viS7/+
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for standalone rich text widget"
+msgstr ""
+
+#. js-lingui-id: iFLH99
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for standalone rich text widget \"{title}\""
+msgstr ""
+
+#. js-lingui-id: oH0/eJ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+msgid "Configuration type is required"
+msgstr ""
+
+#. js-lingui-id: SlSmjG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+msgid "Configuration type is required for widget \"{widgetTitle}\""
+msgstr ""
 
 #. js-lingui-id: n8EtHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -1743,11 +1826,6 @@ msgstr "Förväntade att samma begränsningsfält ska användas konsekvent i all
 msgid "External ID"
 msgstr "Externt ID"
 
-#. js-lingui-id: AOxB/G
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Failed to connect to remote server."
-msgstr "Det gick inte att ansluta till fjärrserver."
-
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
@@ -2029,7 +2107,6 @@ msgstr "Fältmetadata hittades inte"
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
 msgstr "Fältmetadata hittades inte."
@@ -2240,6 +2317,22 @@ msgstr "Funktionsversion hittades inte."
 msgid "Google API authentication is disabled."
 msgstr "Google-API-autentisering är inaktiverad."
 
+#. js-lingui-id: pXkgL2
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Grid position is required"
+msgstr ""
+
+#. js-lingui-id: 7Arr+N
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-pie-chart-configuration.util.ts
+msgid "Group by field is required for pie chart"
+msgstr ""
+
+#. js-lingui-id: G5/lsy
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-pie-chart-configuration.util.ts
+msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
+msgstr ""
+
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
@@ -2436,6 +2529,41 @@ msgstr "Ogiltig captcha. Försök igen."
 msgid "Invalid composite type."
 msgstr "Ogiltig sammansatt typ."
 
+#. js-lingui-id: C25VTR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
+msgstr ""
+
+#. js-lingui-id: PXgd1R
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+msgid "Invalid configuration type for graph widget"
+msgstr ""
+
+#. js-lingui-id: g4PB8S
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
+msgid "Invalid configuration type for graph widget \"{widgetTitle}\". Expected one of {expectedConfigurationTypes}, got {configurationTypeString}"
+msgstr ""
+
+#. js-lingui-id: KZhbBk
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
+msgid "Invalid configuration type for iframe widget"
+msgstr ""
+
+#. js-lingui-id: SKoxDC
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
+msgid "Invalid configuration type for iframe widget \"{widgetTitle}\". Expected IFRAME, got {configurationTypeString}"
+msgstr ""
+
+#. js-lingui-id: JmuFK8
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
+msgid "Invalid configuration type for standalone rich text widget"
+msgstr ""
+
+#. js-lingui-id: TnqLFj
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
+msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected {expectedConfigurationType}, got {configurationType}"
+msgstr ""
+
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid connected account ID."
@@ -2504,11 +2632,6 @@ msgstr "Ogiltig filterparameter."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
 msgstr ""
-
-#. js-lingui-id: oxZTCD
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "Invalid foreign table input."
-msgstr "Ogiltig inmatning för extern tabell."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -2654,16 +2777,6 @@ msgstr "Ogiltig relationsskapadragsdata"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
-
-#. js-lingui-id: JQ+mZ6
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Invalid remote server input."
-msgstr "Ogiltig inmatning för fjärrserver."
-
-#. js-lingui-id: exysLG
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Invalid remote table input."
-msgstr "Ogiltig inmatning för fjärrtabell."
 
 #. js-lingui-id: lOyHVQ
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3146,6 +3259,16 @@ msgstr "Senaste tiden posten ändrades"
 msgid "Last update"
 msgstr "Senaste uppdatering"
 
+#. js-lingui-id: 0x2TQ/
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
+msgid "Layout is required for bar chart"
+msgstr ""
+
+#. js-lingui-id: qBrKIA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
+msgid "Layout is required for bar chart widget \"{widgetTitle}\""
+msgstr ""
+
 #. js-lingui-id: wR9USP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3552,11 +3675,6 @@ msgstr "Ingen aktiv prenumeration hittades."
 msgid "No event name provided in database event trigger"
 msgstr "Inget händelsenamn angivet i databasens händelseutlösare"
 
-#. js-lingui-id: Xlzkd8
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "No foreign tables found."
-msgstr "Inga externa tabeller hittades."
-
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
@@ -3759,7 +3877,6 @@ msgstr "Objektmetadata hittades inte"
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
 msgstr "Objektmetadata hittades inte."
@@ -4278,6 +4395,26 @@ msgstr "F\"or\"aldrade f\"argschema"
 msgid "Preferred language"
 msgstr "Föredraget språk"
 
+#. js-lingui-id: +DJKfQ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
+msgid "Primary axis group by field is required for bar chart"
+msgstr ""
+
+#. js-lingui-id: CV1zCG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
+msgid "Primary axis group by field is required for bar chart widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: SdXGbu
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-line-chart-configuration.util.ts
+msgid "Primary axis group by field is required for line chart"
+msgstr ""
+
+#. js-lingui-id: v874L+
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-line-chart-configuration.util.ts
+msgid "Primary axis group by field is required for line chart widget \"{widgetTitle}\""
+msgstr ""
+
 #. js-lingui-id: WJIL29
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
@@ -4430,35 +4567,10 @@ msgstr "Fjärrobjekt är ännu inte produktionsklara"
 msgid "Remote objects are not supported yet"
 msgstr "Fjärrobjekt stöds ännu inte"
 
-#. js-lingui-id: haIkpk
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server already exists."
-msgstr "Fjärrserver finns redan."
-
-#. js-lingui-id: kcB/qR
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server not found."
-msgstr "Fjärrserver hittades inte."
-
-#. js-lingui-id: QxXX+p
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table already exists."
-msgstr "Fjärrtabell finns redan."
-
-#. js-lingui-id: eaN14K
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table not found."
-msgstr "Fjärrtabell hittades inte."
-
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Förfrågan har löpt ut, försök igen."
-
-#. js-lingui-id: sSkbaZ
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-msgid "Request timed out."
-msgstr "Tidsgränsen för begäran överskreds."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -5374,6 +5486,11 @@ msgstr "Den här API-nyckeln har gått ut. Vänligen skapa en ny."
 msgid "This API key has no role assigned."
 msgstr "Denna API-nyckel har ingen roll tilldelad."
 
+#. js-lingui-id: FY4xDH
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "This chart type requires the Dashboard V2 feature to be enabled"
+msgstr ""
+
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -5423,11 +5540,6 @@ msgstr "Detta fält kan inte ändras."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field name is not available."
 msgstr "Detta fältnamn är inte tillgängligt."
-
-#. js-lingui-id: JwdaFV
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "This foreign table cannot be modified."
-msgstr "Denna externa tabell kan inte ändras."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5497,11 +5609,6 @@ msgstr "Den här posten finns redan. Vänligen kontrollera dina uppgifter och f�
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr ""
-
-#. js-lingui-id: NxunhS
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "This remote server cannot be modified."
-msgstr "Denna fjärrserver kan inte ändras."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -5758,6 +5865,12 @@ msgstr "Icke-stödd cron-schema typ"
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "Osupporterad fältmetadatyp {fieldType}"
 
+#. js-lingui-id: s+1Ldg
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Unsupported page layout widget type {widgetType}"
+msgstr ""
+
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5787,6 +5900,16 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
 msgstr "Uppdaterat fältnamn är inte synkroniserat med etikett"
+
+#. js-lingui-id: Gjk0so
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
+msgid "URL must be a string"
+msgstr ""
+
+#. js-lingui-id: yV6160
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
+msgid "URL must be a string for widget \"{widgetTitle}\""
+msgstr ""
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -6229,6 +6352,100 @@ msgstr "Onsdag"
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Välkommen till Twenty: Bekräfta din e-post"
+
+#. js-lingui-id: OHlJ1X
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+msgid "Widget extends beyond grid height"
+msgstr ""
+
+#. js-lingui-id: PFI4iS
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+msgid "Widget extends beyond grid width"
+msgstr ""
+
+#. js-lingui-id: D5gHL1
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+msgid "Widget row exceeds grid height"
+msgstr ""
+
+#. js-lingui-id: deSJ/B
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type CALENDAR is not supported yet."
+msgstr ""
+
+#. js-lingui-id: +IjuqI
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type EMAILS is not supported yet."
+msgstr ""
+
+#. js-lingui-id: F+TRXG
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type FIELD is not supported yet."
+msgstr ""
+
+#. js-lingui-id: nuvnbi
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type FIELD_RICH_TEXT is not supported yet."
+msgstr ""
+
+#. js-lingui-id: GNisQR
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type FIELDS is not supported yet."
+msgstr ""
+
+#. js-lingui-id: UZo3be
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type FILES is not supported yet."
+msgstr ""
+
+#. js-lingui-id: SL+U0X
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type NOTES is not supported yet."
+msgstr ""
+
+#. js-lingui-id: vczFIm
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type TASKS is not supported yet."
+msgstr ""
+
+#. js-lingui-id: ynJTP+
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type TIMELINE is not supported yet."
+msgstr ""
+
+#. js-lingui-id: rL2haJ
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type VIEW is not supported yet."
+msgstr ""
+
+#. js-lingui-id: geYIT7
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type WORKFLOW is not supported yet."
+msgstr ""
+
+#. js-lingui-id: RcZOVk
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type WORKFLOW_RUN is not supported yet."
+msgstr ""
+
+#. js-lingui-id: U4YrVk
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
+msgid "Widget type WORKFLOW_VERSION is not supported yet."
+msgstr ""
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
