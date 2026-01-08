@@ -47,6 +47,16 @@ Posta kutunuzun ayarlarına bağlı olarak, şunları görebilirsiniz:
 
 ## E-posta Senkronizasyon Davranışı
 
+### Sync Rate
+
+Twenty imports emails at approximately **400 messages per minute**. This rate is currently limited by Gmail API rate limiting (and applies similarly to other providers).
+
+For reference:
+
+* 1,000 emails → ~2.5 minutes
+* 10,000 emails → ~25 minutes
+* 50,000 emails → ~2 hours
+
 ### Ne Senkronize Edilir
 
 * **Dış E-postalar**: Kuruluşunuz dışındaki kişilerle yapılan tüm e-postalar
@@ -60,12 +70,12 @@ Posta kutunuzun ayarlarına bağlı olarak, şunları görebilirsiniz:
 * **Grup E-postaları**: Dağıtım listeleri ve grup e-postaları hariç tutulur
 * **Dışlanan Klasörler**: Eşitlememeyi seçtiğiniz klasörler (Ayarlar → Hesaplar → E-posta altında yapılandırılır)
 
-### Seçimli Klasör Senkronizasyonu (Lab Özelliği)
+### Selective Folder Sync
 
 Hangi e-posta klasörlerinin Twenty ile senkronize edileceğini kontrol edin:
 
-1. Ayarlarda `Mesaj Klasörü` etkinleştirin → Yayınlar → Lab
-2. Ayarlar → Hesaplar → E-posta altında klasörleri yapılandırın
+1. Go to **Settings → Accounts** and select your connected email account
+2. Configure folders under the Email section
 3. Belirli klasörleri dahil et veya hariç tut (Gelen Kutusu, Gönderilenler, Arşiv, özel klasörler)
 
 ## E-posta Senkronizasyonunu Sorun Giderme
