@@ -1,9 +1,13 @@
 import { defineFunction } from '../functions/define-function';
 
+// Mock handler for testing
+const mockHandler = async () => ({ success: true });
+
 describe('defineFunction', () => {
   const validRouteConfig = {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     name: 'Send Postcard',
+    handler: mockHandler,
     triggers: [
       {
         universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -25,6 +29,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Daily Report',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
@@ -43,6 +48,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
@@ -61,6 +67,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Multi-trigger Function',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -98,6 +105,7 @@ describe('defineFunction', () => {
   it('should throw error when universalIdentifier is missing', () => {
     const config = {
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: validRouteConfig.triggers,
     };
 
@@ -106,10 +114,36 @@ describe('defineFunction', () => {
     );
   });
 
+  it('should throw error when handler is missing', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Send Postcard',
+      triggers: validRouteConfig.triggers,
+    };
+
+    expect(() => defineFunction(config as any)).toThrow(
+      'Function must have a handler',
+    );
+  });
+
+  it('should throw error when handler is not a function', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Send Postcard',
+      handler: 'not-a-function',
+      triggers: validRouteConfig.triggers,
+    };
+
+    expect(() => defineFunction(config as any)).toThrow(
+      'Function must have a handler',
+    );
+  });
+
   it('should throw error when triggers is empty', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: [],
     };
 
@@ -122,6 +156,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
     };
 
     expect(() => defineFunction(config as any)).toThrow(
@@ -133,6 +168,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: [
         {
           type: 'route' as const,
@@ -152,6 +188,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -170,6 +207,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -189,6 +227,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
@@ -208,6 +247,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Daily Report',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
@@ -225,6 +265,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
@@ -242,6 +283,7 @@ describe('defineFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Unknown Trigger',
+      handler: mockHandler,
       triggers: [
         {
           universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',

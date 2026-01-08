@@ -107,10 +107,11 @@ const loadFunctions = async (
 
   for (const filepath of functionFiles) {
     try {
-      const { config, handlerName } = await loadFunctionModule(filepath);
+      const { config, handlerName, handlerPath } = await loadFunctionModule(
+        filepath,
+        appPath,
+      );
       const fnConfig = config as FunctionConfig;
-
-      const handlerPath = toPosixRelative(filepath, appPath);
 
       const manifest: ServerlessFunctionManifest = {
         universalIdentifier: fnConfig.universalIdentifier,

@@ -25,7 +25,7 @@ export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { Relation } from './fields/relation.decorator';
 export { defineFunction } from './functions/define-function';
-export type { FunctionConfig } from './functions/function-config';
+export type { FunctionConfig, FunctionHandler } from './functions/function-config';
 export type { CronPayload } from './functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,

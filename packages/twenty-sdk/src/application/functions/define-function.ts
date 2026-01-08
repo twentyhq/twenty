@@ -6,12 +6,14 @@ import { type FunctionConfig } from './function-config';
  * @example
  * ```typescript
  * import { defineFunction } from 'twenty-sdk';
+ * import { sendPostcard } from '../src/handlers/send-postcard';
  *
  * export const config = defineFunction({
  *   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
  *   name: 'Send Postcard',
  *   description: 'Send a postcard to a contact',
  *   timeoutSeconds: 30,
+ *   handler: sendPostcard,
  *   triggers: [
  *     {
  *       universalIdentifier: 'c9f84c8d-...',
@@ -22,16 +24,15 @@ import { type FunctionConfig } from './function-config';
  *     },
  *   ],
  * });
- *
- * export default async function handler(params: RouteParams) {
- *   // Function logic
- *   return { success: true };
- * }
  * ```
  */
 export const defineFunction = <T extends FunctionConfig>(config: T): T => {
   if (!config.universalIdentifier) {
     throw new Error('Function must have a universalIdentifier');
+  }
+
+  if (typeof config.handler !== 'function') {
+    throw new Error('Function must have a handler');
   }
 
   if (!config.triggers || config.triggers.length === 0) {

@@ -1,4 +1,6 @@
 import { createJiti } from 'jiti';
+import * as fs from 'fs-extra';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Create a jiti instance for loading TypeScript config files
@@ -50,54 +52,119 @@ export const loadConfig = async <T>(filepath: string): Promise<T> => {
 };
 
 /**
- * Load a function module that exports both config and handler.
+ * Extract the import path for a given identifier from source code.
+ * Returns null if the identifier is not imported (i.e., defined locally).
+ */
+const extractImportPath = (
+  source: string,
+  identifier: string,
+  filepath: string,
+  appPath: string,
+): string | null => {
+  // Match: import { identifier } from 'path'
+  // Match: import { original as identifier } from 'path'
+  // Match: import identifier from 'path' (default import)
+  const patterns = [
+    // Named import: import { foo } from 'path' or import { foo, bar } from 'path'
+    new RegExp(
+      `import\\s*\\{[^}]*\\b${identifier}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+    ),
+    // Aliased import: import { original as foo } from 'path'
+    new RegExp(
+      `import\\s*\\{[^}]*\\w+\\s+as\\s+${identifier}[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+    ),
+    // Default import: import foo from 'path'
+    new RegExp(`import\\s+${identifier}\\s+from\\s*['"]([^'"]+)['"]`),
+  ];
+
+  for (const pattern of patterns) {
+    const match = source.match(pattern);
+
+    if (match) {
+      const importPath = match[1];
+      // Resolve relative to the function file, then make relative to appPath
+      const fileDir = path.dirname(filepath);
+      const absolutePath = path.resolve(fileDir, importPath);
+      const relativePath = path.relative(appPath, absolutePath);
+
+      // Add .ts extension if not present
+      return relativePath.endsWith('.ts') ? relativePath : `${relativePath}.ts`;
+    }
+  }
+
+  // Handler is defined locally, not imported
+  return null;
+};
+
+/**
+ * Load a function module and extract handler info from config.handler property.
+ *
+ * The handler can be either:
+ * 1. Imported from another file:
+ *    ```typescript
+ *    import { myHandler } from '../src/handlers/my-handler';
+ *    export const config = { handler: myHandler, ... };
+ *    ```
+ *
+ * 2. Defined locally in the same file:
+ *    ```typescript
+ *    export const myHandler = async () => { ... };
+ *    export const config = { handler: myHandler, ... };
+ *    ```
  *
  * @example
  * ```typescript
- * const { config, handlerName } = await loadFunctionModule('/path/to/app/functions/my-function.function.ts');
+ * const { config, handlerName, handlerPath } = await loadFunctionModule(
+ *   '/path/to/app/functions/my-function.function.ts',
+ *   '/path/to/app'
+ * );
  * ```
  */
 export const loadFunctionModule = async (
   filepath: string,
+  appPath: string,
 ): Promise<{
   config: unknown;
   handlerName: string;
+  handlerPath: string;
 }> => {
   const jiti = createConfigLoader();
 
   try {
     const mod = (await jiti.import(filepath)) as Record<string, unknown>;
 
-    // Find the config export
-    const config = mod.config;
+    const config = mod.config as { handler?: Function } | undefined;
+
     if (!config) {
       throw new Error(
         `Function file ${filepath} must export a "config" object`,
       );
     }
 
-    // Find the handler (default export or any exported function that's not config)
-    let handlerName: string | undefined;
-
-    if (typeof mod.default === 'function') {
-      handlerName = 'default';
-    } else {
-      // Look for other exported functions
-      for (const [key, value] of Object.entries(mod)) {
-        if (key !== 'config' && typeof value === 'function') {
-          handlerName = key;
-          break;
-        }
-      }
-    }
-
-    if (!handlerName) {
+    if (typeof config.handler !== 'function') {
       throw new Error(
-        `Function file ${filepath} must export a handler function (either as default or named export)`,
+        `Function config in ${filepath} must have a "handler" property referencing a function`,
       );
     }
 
-    return { config, handlerName };
+    // Get handler name from the function's name property
+    const handlerName = config.handler.name;
+
+    if (!handlerName) {
+      throw new Error(
+        `Handler function in ${filepath} must be a named function`,
+      );
+    }
+
+    // Parse source to find where the handler is imported from
+    const source = await fs.readFile(filepath, 'utf8');
+    const importPath = extractImportPath(source, handlerName, filepath, appPath);
+
+    // If handler is imported, use the import path; otherwise use the function file itself
+    const handlerPath =
+      importPath ?? path.relative(appPath, filepath).replace(/\\/g, '/');
+
+    return { config, handlerName, handlerPath };
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(

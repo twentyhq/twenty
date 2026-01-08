@@ -83,6 +83,13 @@ export const TRIGGER_ID = 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6';
 export const ROLE_ID = 'b648f87b-1d26-4961-b974-0908fd991061';
 `;
 
+// Handler file that will be imported by function config
+const handlerMock = `
+export const sendPostcardHandler = async (params: any) => {
+  return { success: true };
+};
+`;
+
 // App config that imports from constants
 const appConfigMock = `
 import { APP_ID } from '../src/constants';
@@ -116,14 +123,16 @@ export default {
 };
 `;
 
-// Function config that imports from constants
+// Function config that imports handler from another file
 const functionConfigMock = `
 import { FUNCTION_ID, TRIGGER_ID } from '../../src/constants';
+import { sendPostcardHandler } from '../../src/handlers/send-postcard';
 
 export const config = {
   universalIdentifier: FUNCTION_ID,
   name: 'Send Postcard',
   timeoutSeconds: 30,
+  handler: sendPostcardHandler,
   triggers: [
     {
       universalIdentifier: TRIGGER_ID,
@@ -134,10 +143,6 @@ export const config = {
     },
   ],
 };
-
-export default async function handler(params: any) {
-  return { success: true };
-}
 `;
 
 // Role config that imports from constants
@@ -175,6 +180,9 @@ describe('loadManifestV2 (integration)', () => {
 
     // Shared constants
     write(appDirectory, 'src/constants.ts', constantsMock);
+
+    // Handler file
+    write(appDirectory, 'src/handlers/send-postcard.ts', handlerMock);
 
     // App config
     write(appDirectory, 'app/application.config.ts', appConfigMock);
@@ -226,7 +234,12 @@ describe('loadManifestV2 (integration)', () => {
       'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     );
     expect(manifest.serverlessFunctions[0].name).toBe('Send Postcard');
-    expect(manifest.serverlessFunctions[0].handlerName).toBe('default');
+    expect(manifest.serverlessFunctions[0].handlerName).toBe(
+      'sendPostcardHandler',
+    );
+    expect(manifest.serverlessFunctions[0].handlerPath).toBe(
+      'src/handlers/send-postcard.ts',
+    );
     expect(manifest.serverlessFunctions[0].triggers).toHaveLength(1);
     expect(
       manifest.serverlessFunctions[0].triggers[0].universalIdentifier,
@@ -278,10 +291,19 @@ export default {
   });
 
   it('should support nested function folders', async () => {
+    // Create handler file for nested function
+    const nestedHandlerMock = `
+export const dailyReportHandler = async () => ({ sent: true });
+`;
+    write(appDirectory, 'src/handlers/daily-report.ts', nestedHandlerMock);
+
     const nestedFunctionConfig = `
+import { dailyReportHandler } from '../../../src/handlers/daily-report';
+
 export const config = {
   universalIdentifier: 'nested-fn-id-1234',
   name: 'Daily Report',
+  handler: dailyReportHandler,
   triggers: [
     {
       universalIdentifier: 'nested-trigger-id-1234',
@@ -290,8 +312,6 @@ export const config = {
     },
   ],
 };
-
-export const handler = async () => ({ sent: true });
 `;
     write(
       appDirectory,
@@ -306,7 +326,87 @@ export const handler = async () => ({ sent: true });
       (f) => f.name === 'Daily Report',
     );
     expect(dailyReport).toBeDefined();
-    expect(dailyReport?.handlerName).toBe('handler');
+    expect(dailyReport?.handlerName).toBe('dailyReportHandler');
+    expect(dailyReport?.handlerPath).toBe('src/handlers/daily-report.ts');
+  });
+
+  it('should support handler defined locally in function file', async () => {
+    const localHandlerFunctionConfig = `
+export const localHandler = async (params: any) => {
+  return { processed: true, params };
+};
+
+export const config = {
+  universalIdentifier: 'local-handler-fn-id',
+  name: 'Local Handler Function',
+  handler: localHandler,
+  triggers: [
+    {
+      universalIdentifier: 'local-trigger-id',
+      type: 'route',
+      path: '/local',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+  ],
+};
+`;
+    write(
+      appDirectory,
+      'app/functions/local-handler.function.ts',
+      localHandlerFunctionConfig,
+    );
+
+    const { manifest } = await loadManifest(appDirectory);
+
+    const localFn = manifest.serverlessFunctions.find(
+      (f) => f.name === 'Local Handler Function',
+    );
+    expect(localFn).toBeDefined();
+    expect(localFn?.handlerName).toBe('localHandler');
+    expect(localFn?.handlerPath).toBe(
+      'app/functions/local-handler.function.ts',
+    );
+  });
+
+  it('should support multiple imports', async () => {
+    // Create handler file with multiple imports
+    const nestedHandlerMock = `
+export const dailyReportHandler = async () => ({ sent: true });
+`;
+    write(appDirectory, 'src/handlers/daily-report.ts', nestedHandlerMock);
+
+    const nestedFunctionConfig = `
+import { util1, dailyReportHandler, util2 } from '../../../src/handlers/daily-report';
+
+export const config = {
+  universalIdentifier: 'nested-fn-id-1234',
+  name: 'Daily Report',
+  handler: dailyReportHandler,
+  triggers: [
+    {
+      universalIdentifier: 'nested-trigger-id-1234',
+      type: 'cron',
+      pattern: '0 9 * * *',
+    },
+  ],
+};
+`;
+    write(
+      appDirectory,
+      'app/functions/jobs/daily-report.function.ts',
+      nestedFunctionConfig,
+    );
+
+    const { manifest } = await loadManifest(appDirectory);
+
+    expect(manifest.serverlessFunctions).toHaveLength(2);
+    const dailyReport = manifest.serverlessFunctions.find(
+      (f) => f.name === 'Daily Report',
+    );
+    expect(dailyReport).toBeDefined();
+    expect(dailyReport?.handlerName).toBe('dailyReportHandler');
+    expect(dailyReport?.handlerPath).toBe('src/handlers/daily-report.ts');
   });
 
   it('should throw error when app/ folder is missing', async () => {
