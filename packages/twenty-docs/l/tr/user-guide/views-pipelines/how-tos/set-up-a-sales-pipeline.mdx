@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: Bir Satış Boru Hattı Kurun
+description: Fırsatları aşamalar boyunca izlemek için satış boru hattınızı yapılandırın
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+Twenty'deki satış boru hattı, her sütunun satış sürecinizdeki bir aşamayı temsil ettiği Fırsatlar nesnenizin bir Kanban görünümüdür.
 
-## Step 1: Configure Your Stages
+## Adım 1: Aşamalarınızı yapılandırın
 
-Stages are defined in the Opportunities object's **Stage** field.
+Aşamalar, Fırsatlar nesnesinin **Aşama** alanında tanımlanır.
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. **Fırsatlar**'ı seçin
+3. **Aşama** alanını bulun ve tıklayın
+4. Sürecinize uyması için aşama ekleyin, kaldırın veya yeniden adlandırın
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Video gösterimi" />
 
-### Recommended Stages
+### Önerilen Aşamalar
 
-| Aşama           | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| Aşama          | Amaç                          |
+| -------------- | ----------------------------- |
+| **Yeni**       | Yeni belirlenen fırsatlar     |
+| **Nitelikli**  | Uygun olduğu doğrulandı       |
+| **Toplantı**   | Görüşmeler yapılıyor          |
+| **Teklif**     | Teklif gönderildi             |
+| **Müzakere**   | Koşullar üzerinde çalışılıyor |
+| **Kazanıldı**  | Anlaşma başarıyla sonuçlandı  |
+| **Kaybedildi** | Anlaşma olumsuz sonuçlandı    |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5-7 aşama idealdir.** Çok fazla aşama, boru hattının hızlı taranmasını zorlaştırır; çok az aşama ise anlaşma ilerleyişine ilişkin görünürlüğü azaltır.
 </Note>
 
-## Step 2: Create a Pipeline View
+## Adım 2: Boru Hattı Görünümü oluşturun
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. **Fırsatlar**'a gidin
+2. Görünüm açılır menüsüne tıklayın → **+ Görünüm ekle**
+3. Adını "Satış Boru Hattı" koyun
+4. **Oluştur**'a tıklayın
+5. **Seçenekler**'i açın ve düzen olarak **Kanban**'ı seçin
 
-The view automatically uses the Stage field for columns.
+Görünüm, sütunlar için otomatik olarak Aşama alanını kullanır.
 
-## Step 3: Configure Your View
+## Adım 3: Görünümünüzü yapılandırın
 
-### Show Key Fields
+### Önemli Alanları Göster
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. **Seçenekler → Alanlar**'a tıklayın
+2. "Gizli Alanlar" bölümünde alanlara bakın
+3. Görüntülemek için **göz simgesine** tıklayın: Şirket, Tutar, Kapanış Tarihi, Sahip
 
-### Enable Aggregations
+### Toplamaları Etkinleştir
 
-Show totals at the top of each column:
+Her sütunun üstünde toplamları gösterin:
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. Bir sütunun üst kısmında bir Aşama adının yanında gösterilen sayıya tıklayın
+2. Toplama türünü seçin (Adet, Toplam, Ortalama vb.)
+3. Toplanacak alanı seçin (ör. Tutar)
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**Örnek:** Tutar'ı Toplam ile toplayarak aşama başına toplam anlaşma değerini gösterin.
 
-### Use Compact View (Optional)
+### Kompakt Görünümü Kullanın (İsteğe bağlı)
 
-For a high-level overview with minimal card content:
+Kart içeriğini en aza indirerek genel bir görünüm için:
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. **Seçenekler**'e tıklayın
+2. **Kompakt görünüm** için anahtarı açın
 
-## Step 4: Create Personal and Team Views
+## Adım 4: Kişisel ve Ekip Görünümleri oluşturun
 
-### "My Pipeline"
+### "Boru Hattım"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **Filtre**: Sahip = Ben
+* **Görünürlük**: Liste dışı (kişisel görünüm)
 
-### "Team Pipeline"
+### "Ekip Boru Hattı"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **Filtre**: Yok (tümünü göster)
+* **Görünürlük**: Çalışma alanı (paylaşılan görünüm)
 
-### "Closing This Month"
+### "Bu Ay Kapanacaklar"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **Tür**: Tablo
+* **Filtre**: Kapanış Tarihi = Bu ay, Aşama ≠ Closed Won, Aşama ≠ Closed Lost
+* **Sırala**: Kapanış Tarihi artan
 
-## Working with Opportunities
+## Fırsatlarla Çalışma
 
-### Creating Opportunities
+### Fırsatlar Oluşturma
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* Fırsatlar görünümünde **+ Yeni**'ye tıklayın
+* Ya da belirli bir aşama sütununda **+**'a tıklayın
 
-### Moving Through Stages
+### Aşamalar Arasında İlerleme
 
-Drag and drop opportunity cards between columns to update their stage.
+Aşamalarını güncellemek için fırsat kartlarını sütunlar arasında sürükleyip bırakın.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Video gösterimi" />
 
 ## En İyi Uygulamalar
 
-### Pipeline Hygiene
+### Boru Hattı Hijyeni
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* Anlaşmaları ilerledikçe günlük olarak güncelleyin
+* Durağan anlaşmaları hızlıca taşıyın veya kapatın
+* Kapanış tarihlerini gerçekçi tutun
 
-### Stage Discipline
+### Aşama Disiplini
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* Her aşama için net kriterler tanımlayın
+* Kriterler karşılandığında anlaşmaları hızla taşıyın
+* Anlaşmaların aşamalarda çok uzun süre beklemesine izin vermeyin
 
-## Related
+## İlgili
 
-* [Kanban Views](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar ve kompakt görünüm
+* [Filtreler ve Sıralama](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — filtrelenmiş görünümler oluşturma
