@@ -1,4 +1,3 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
@@ -30,8 +29,6 @@ export const RecordCalendarAddNew = ({
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const theme = useTheme();
-
-  const { closeCommandMenu } = useCommandMenu();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -74,7 +71,6 @@ export const RecordCalendarAddNew = ({
   return (
     <StyledButton
       onClick={async () => {
-        closeCommandMenu();
         await createNewIndexRecord({
           [calendarFieldMetadataItem.name]: cardDate
             .toZonedDateTime(userTimezone)
