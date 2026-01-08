@@ -17,7 +17,6 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
@@ -26,17 +25,18 @@ import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migrati
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/builders/field/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/utils/serialize-default-value-v2.util';
 import {
-    WorkspaceMigrationRunnerException,
-    WorkspaceMigrationRunnerExceptionCode,
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
-    collectEnumOperationsForField,
-    EnumOperation,
-    executeBatchEnumOperations,
+  collectEnumOperationsForField,
+  EnumOperation,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 type UpdateFieldPropertyUpdateHandlerArgs<

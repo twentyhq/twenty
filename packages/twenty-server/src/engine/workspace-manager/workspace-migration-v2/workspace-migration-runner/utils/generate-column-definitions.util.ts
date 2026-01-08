@@ -3,8 +3,8 @@ import { type ColumnType } from 'typeorm';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import {
-    computeColumnName,
-    computeCompositeColumnName,
+  computeColumnName,
+  computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -12,14 +12,14 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-v2/utils/compute-postgres-enum-name.util';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder/utils/serialize-default-value-v2.util';
 import {
-    WorkspaceMigrationRunnerException,
-    WorkspaceMigrationRunnerExceptionCode,
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 export const generateCompositeColumnDefinition = ({

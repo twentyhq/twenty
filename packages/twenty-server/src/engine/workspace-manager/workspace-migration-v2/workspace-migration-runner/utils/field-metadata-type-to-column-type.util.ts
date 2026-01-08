@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { isTextColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/is-text-column-type.util';
 import {
-  WorkspaceMigrationException,
-  WorkspaceMigrationExceptionCode,
-} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { isTextColumnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/utils/is-text-column-type.util';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
@@ -40,9 +40,9 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.TS_VECTOR:
       return 'tsvector';
     default:
-      throw new WorkspaceMigrationException(
+      throw new WorkspaceMigrationRunnerException(
         `Cannot convert ${fieldMetadataType} to column type.`,
-        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
+        WorkspaceMigrationRunnerExceptionCode.UNSUPPORTED_FIELD_METADATA_TYPE,
       );
   }
 };

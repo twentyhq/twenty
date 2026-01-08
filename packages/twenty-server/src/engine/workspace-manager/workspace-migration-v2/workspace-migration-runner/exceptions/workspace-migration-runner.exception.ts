@@ -15,6 +15,7 @@ export const WorkspaceMigrationRunnerExceptionCode = appendCommonExceptionCode({
   NOT_SUPPORTED: 'NOT_SUPPORTED',
   INVALID_ACTION_TYPE: 'INVALID_ACTION_TYPE',
   FLAT_ENTITY_NOT_FOUND: 'FLAT_ENTITY_NOT_FOUND',
+  UNSUPPORTED_FIELD_METADATA_TYPE: 'UNSUPPORTED_FIELD_METADATA_TYPE',
 } as const);
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -37,6 +38,8 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`Entity not found.`;
     case WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       return msg`An unexpected error occurred.`;
+    case WorkspaceMigrationRunnerExceptionCode.UNSUPPORTED_FIELD_METADATA_TYPE:
+      return msg`Unsupported field metadata type.`;
     default:
       assertUnreachable(code);
   }
