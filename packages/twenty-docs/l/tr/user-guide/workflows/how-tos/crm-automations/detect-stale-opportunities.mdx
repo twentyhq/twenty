@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: Durağan Fırsatları Tespit Et
+description: Fırsatlar güncellenmediğinde yöneticileri otomatik olarak bilgilendirin.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+Fırsatlar durağanlaştığında yöneticileri uyararak satış boru hattınızı sağlıklı tutun. Bu iş akışı, belirli sayıda gündür güncellenmeyen fırsatları kontrol eder.
 
-## The Problem
+## Sorun
 
-Opportunities sitting without updates lead to:
+Güncellenmeden bekleyen fırsatlar şunlara yol açar:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* Anlaşmaların soğuması
+* Güvenilmez tahminler
+* Kaybedilen gelir
 
-## The Solution
+## Çözüm
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+Durağan fırsatları bulan ve yöneticilerine e-posta gönderen zamanlanmış bir iş akışı oluşturun.
 
-## Step-by-Step Setup
+## Adım adım kurulum
 
-### Step 1: Create the Workflow
+### Adım 1: İş akışını oluşturun
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Durağan Fırsat Uyarısı" koyun
 
-### Step 2: Configure the Trigger
+### Adım 2: Tetikleyiciyi yapılandırın
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. **Zamanlanmış Olarak** seçin
+2. Günlük çalışacak şekilde ayarlayın (ör. her gün saat 08:00'de)
 
-### Step 3: Search for Stale Opportunities
+### Adım 3: Durağan Fırsatları Ara
 
-1. Add **Search Records** action
+1. **Kayıt Ara** eylemini ekleyin
 2. Alanı Yapılandır:
 
-| Alan       | Değer                                           |
-| ---------- | ----------------------------------------------- |
-| **Object** | Fırsatlar                                       |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| Alan       | Değer                                            |
+| ---------- | ------------------------------------------------ |
+| **Nesne**  | Fırsatlar                                        |
+| **Filtre** | Updated At, (bugün - 7 gün) tarihinden önce      |
+| **Filtre** | Stage, "Closed Won" DEĞİL VE "Closed Lost" DEĞİL |
+| **Sınır**  | 100                                              |
 
-### Step 4: Check If Any Found
+### Adım 4: Bulunup Bulunmadığını Kontrol Edin
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{searchRecords.length}}` 0'dan büyüktür
+3. Durağan fırsat yoksa iş akışı burada durur
 
-### Step 5: Format the Alert (Code Action)
+### Adım 5: Uyarıyı Biçimlendirin (Kod Eylemi)
 
-Add a **Code** action to format the email:
+E-postayı biçimlendirmek için bir **Kod** eylemi ekleyin:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### Adım 6: Uyarı E-postası Gönderin
 
-Add **Send Email** action:
+**E-posta Gönder** eylemini ekleyin:
 
-| Alan        | Değer                                                       |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| Alan       | Değer                                                       |
+| ---------- | ----------------------------------------------------------- |
+| **Kime**   | sales-manager@yourcompany.com                               |
+| **Konu**   | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
+| **İçerik** | `{{code.summary}}`                                          |
 
-### Step 7: Test and Activate
+### Adım 7: Test Edin ve Etkinleştirin
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. İş akışını çalıştırmak için **Test**'e tıklayın
+2. E-postanın doğru verileri içerdiğini kontrol edin
+3. Hazır olduğunuzda etkinleştirin
 
-## Customization Options
+## Özelleştirme Seçenekleri
 
-### Change Staleness Threshold
+### Durağanlık Eşiğini Değiştirin
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+7 günü tercih ettiğiniz süreyle değiştirmek için Kayıt Ara filtresini düzenleyin:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* Hızlı tempolu satışlar için 3 gün
+* Kurumsal anlaşmalar için 14 gün
+* Uzun satış döngüleri için 30 gün
 
-### Alert Individual Reps
+### Bireysel Temsilcileri Uyarın
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+Tek bir yönetici e-postası yerine, her temsilciye kendi durağan anlaşmaları hakkında kişiselleştirilmiş e-postalar göndermek için **Iterator** kullanın.
 
-### Add Escalation
+### Eskalasyon Ekle
 
-Create multiple workflows with increasing severity:
+Artan ciddiyette birden fazla iş akışı oluşturun:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. Gün 7: Temsilciye e-posta
+2. Gün 14: Temsilciye + yöneticiye e-posta
+3. Gün 21: Müdahale etmesi için yöneticiye görev oluşturun
 
-### Include in Slack
+### Slack'e Dahil Edin
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+E-postaya ek olarak veya yerine, bir Slack webhook'una gönderi yapmak için **HTTP Request** kullanın.
 
-## Related
+## İlgili
 
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)

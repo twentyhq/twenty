@@ -47,6 +47,16 @@ Email conversations appear in three main objects:
 
 ## Поведение синхронизации электронной почты
 
+### Sync Rate
+
+Twenty imports emails at approximately **400 messages per minute**. This rate is currently limited by Gmail API rate limiting (and applies similarly to other providers).
+
+For reference:
+
+* 1,000 emails → ~2.5 minutes
+* 10,000 emails → ~25 minutes
+* 50,000 emails → ~2 hours
+
 ### Что синхронизируется
 
 * **Внешние письма**: все письма с контактами вне вашей организации
@@ -60,12 +70,12 @@ Email conversations appear in three main objects:
 * **Групповые письма**: списки рассылки и групповые письма исключены
 * **Исключенные папки**: папки, которые вы выбрали не синхронизировать (настроено в разделе Настройки → Аккаунты → Электронная почта)
 
-### Избирательная синхронизация папок (функция лаборатории)
+### Selective Folder Sync
 
 Управляйте, какие папки электронной почты синхронизируются с Twenty:
 
-1. Включите `Папку сообщений` в разделе Настройки → Релизы → Лаб
-2. Настройка папок в разделе Настройки → Аккаунты → Электронная почта
+1. Go to **Settings → Accounts** and select your connected email account
+2. Configure folders under the Email section
 3. Выберите конкретные папки для включения или исключения (Входящие, Отправленные, Архив, пользовательские папки)
 
 ## Устранение неполадок с синхронизацией электронной почты
