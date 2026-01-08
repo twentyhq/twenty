@@ -222,8 +222,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             }),
           );
 
-          const filterResult =
-            await performViewFilterAPICreate(createViewFilterInputs);
+          const filterResult = await performViewFilterAPICreate(
+            createViewFilterInputs,
+          );
 
           if (filterResult.status === 'failed') {
             return undefined;
