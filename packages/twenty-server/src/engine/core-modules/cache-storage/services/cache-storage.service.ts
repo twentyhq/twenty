@@ -143,39 +143,6 @@ export class CacheStorageService {
     });
   }
 
-  async setRemove(key: string, values: string[]): Promise<void> {
-    if (values.length === 0) {
-      return;
-    }
-
-    if (this.isRedisCache()) {
-      await (this.cache as RedisCache).store.client.sRem(
-        this.getKey(key),
-        values,
-      );
-
-      return;
-    }
-
-    this.get(key).then((res: string[]) => {
-      if (res) {
-        const filtered = res.filter((item) => !values.includes(item));
-
-        this.set(key, filtered);
-      }
-    });
-  }
-
-  async setMembers(key: string): Promise<string[]> {
-    if (this.isRedisCache()) {
-      return await (this.cache as RedisCache).store.client.sMembers(
-        this.getKey(key),
-      );
-    }
-
-    return (await this.get<string[]>(key)) || [];
-  }
-
   async flush() {
     return this.cache.reset();
   }

@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
+
+export type ObjectRecordSubscriptionEvent = ObjectRecordEvent & {
+  objectNameSingular: string;
+};
 
 @Injectable()
 export class EventStreamService {
@@ -21,12 +26,18 @@ export class EventStreamService {
     return `eventStream:${workspaceId}:${eventStreamId}`;
   }
 
-  async addQuery(
-    workspaceId: string,
-    eventStreamId: string,
-    queryId: string,
-    operationSignature: RecordGqlOperationSignature,
-  ): Promise<void> {
+  @WithLock('eventStreamId')
+  async addQuery({
+    workspaceId,
+    eventStreamId,
+    queryId,
+    operationSignature,
+  }: {
+    workspaceId: string;
+    eventStreamId: string;
+    queryId: string;
+    operationSignature: RecordGqlOperationSignature;
+  }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamId);
     const existing =
       (await this.cacheStorageService.get<
@@ -38,11 +49,16 @@ export class EventStreamService {
     await this.cacheStorageService.set(key, existing);
   }
 
-  async removeQuery(
-    workspaceId: string,
-    eventStreamId: string,
-    queryId: string,
-  ): Promise<void> {
+  @WithLock('eventStreamId')
+  async removeQuery({
+    workspaceId,
+    eventStreamId,
+    queryId,
+  }: {
+    workspaceId: string;
+    eventStreamId: string;
+    queryId: string;
+  }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamId);
     const existing =
       await this.cacheStorageService.get<
@@ -70,7 +86,7 @@ export class EventStreamService {
 
   async matchQueriesWithEvent(
     queries: Map<string, RecordGqlOperationSignature>,
-    event: OnDbEventDTO,
+    event: ObjectRecordSubscriptionEvent,
   ): Promise<string[]> {
     const matchedQueryIds: string[] = [];
 
@@ -85,7 +101,7 @@ export class EventStreamService {
 
   private isQueryMatchingEvent(
     operationSignature: RecordGqlOperationSignature,
-    event: OnDbEventDTO,
+    event: ObjectRecordSubscriptionEvent,
   ): boolean {
     // to be improved
     return operationSignature.objectNameSingular === event.objectNameSingular;

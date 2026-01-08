@@ -1,6 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import {
+  type OrderBy,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -10,7 +13,6 @@ import {
 } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { type OrderBy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, ViewSortDirection } from '~/generated/graphql';
 

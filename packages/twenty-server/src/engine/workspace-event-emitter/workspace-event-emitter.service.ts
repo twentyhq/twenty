@@ -43,9 +43,9 @@ export class WorkspaceEventEmitterService {
     }
 
     await this.subscriptionService.publish({
-      channel: SubscriptionChannel.DATABASE_BATCH_EVENTS_CHANNEL,
+      channel: SubscriptionChannel.WORKSPACE_EVENT_BATCH_CHANNEL,
       workspaceId: workspaceEventBatch.workspaceId,
-      payload: { onDbEvents: batchEvents },
+      payload: { workspaceEventBatch: workspaceEventBatch },
     });
   }
 }
