@@ -1,43 +1,43 @@
 ---
 title: Migrace z jiných CRM
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Podrobný průvodce krok za krokem pro migraci vašich dat z libovolného CRM do Twenty.
 ---
 
 ## Přehled
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Tento průvodce vás provede migrací vašich dat z libovolného CRM do Twenty. Proces zahrnuje audit vašich dat, přípravu vašeho pracovního prostoru Twenty, export z vašeho současného systému a import do Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Zobrazení, pracovní postupy a oprávnění je po migraci nutné vytvořit ručně. Naplánujte si čas na tuto konfigurační práci.</Note>
 
-## Step 1: Audit Your Current Data
+## Krok 1: Proveďte audit svých aktuálních dat
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Migrace je příležitostí k novému začátku. Nepřenášejte balast.
 
-**What to keep:**
+**Co ponechat:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Aktivní kontakty a společnosti
+* Otevřené obchodní příležitosti a obchody
+* Důležité poznámky a aktivity
+* Vlastní pole, která skutečně používáte
 
-**What to leave behind:**
+**Co nechat za sebou:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Zastaralé kontakty (bez aktivity 2 a více let)
+* Duplicitní záznamy
+* Testovací data
+* Nepoužívaná vlastní pole
 
-## Step 2: Map Your Data Model
+## Krok 2: Zmapujte svůj datový model
 
-Create a mapping document between your current CRM and Twenty:
+Vytvořte mapovací dokument mezi vaším současným CRM a Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| Vaše CRM             | Twenty               |
+| -------------------- | -------------------- |
+| Účet / organizace    | **Společnost**       |
+| Kontakt / osoba      | **Lidé**             |
+| Obchod / příležitost | **Příležitost**      |
+| Activity             | **Task** or **Note** |
+| Custom Object        | **Custom Object**    |
 
 **For each field, document:**
 

@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: Detectați oportunitățile stagnante
+description: Notificați automat managerii când oportunitățile nu au fost actualizate.
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+Mențineți pipeline-ul sănătos alertând managerii când oportunitățile devin stagnante. Acest flux de lucru verifică oportunitățile care nu au fost actualizate într-un număr specificat de zile.
 
-## The Problem
+## Problema
 
-Opportunities sitting without updates lead to:
+Oportunitățile lăsate fără actualizări duc la:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* Tranzacții care se răcesc
+* Previziuni nesigure
+* Venituri pierdute
 
-## The Solution
+## Soluția
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+Creați un flux de lucru programat care găsește oportunități stagnante și le trimite prin e-mail managerilor lor.
 
-## Step-by-Step Setup
+## Configurare pas cu pas
 
-### Step 1: Create the Workflow
+### Pasul 1: Creați fluxul de lucru
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. Accesați **Setări → Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Alertă pentru oportunități stagnante"
 
-### Step 2: Configure the Trigger
+### Pasul 2: Configurați declanșatorul
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. Selectați **On a Schedule**
+2. Setați să ruleze zilnic (de exemplu, în fiecare zi la 8 AM)
 
-### Step 3: Search for Stale Opportunities
+### Pasul 3: Căutați oportunități stagnante
 
-1. Add **Search Records** action
+1. Adăugați acțiunea **Search Records**
 2. Configurați:
 
-| Câmp       | Valoare                                         |
-| ---------- | ----------------------------------------------- |
-| **Object** | Oportunități                                    |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| Câmp       | Valoare                                             |
+| ---------- | --------------------------------------------------- |
+| **Obiect** | Oportunități                                        |
+| **Filtru** | Updated At este înainte de (astăzi - 7 zile)        |
+| **Filtru** | Stage nu este "Closed Won" ȘI nu este "Closed Lost" |
+| **Limită** | 100                                                 |
 
-### Step 4: Check If Any Found
+### Pasul 4: Verificați dacă s-au găsit rezultate
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. Adăugați acțiunea **Filter**
+2. Condiție: `{{searchRecords.length}}` este mai mare decât 0
+3. Dacă nu există oportunități stagnante, fluxul de lucru se oprește aici
 
-### Step 5: Format the Alert (Code Action)
+### Pasul 5: Formatați alerta (acțiune Code)
 
-Add a **Code** action to format the email:
+Adăugați o acțiune **Code** pentru a formata e-mailul:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### Pasul 6: Trimiteți e-mailul de alertă
 
-Add **Send Email** action:
+Adăugați acțiunea **Send Email**:
 
-| Câmp        | Valoare                                                     |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| Câmp        | Valoare                                                          |
+| ----------- | ---------------------------------------------------------------- |
+| **Către**   | sales-manager@yourcompany.com                                    |
+| **Subiect** | `🚨 {{code.totalCount}} oportunități stagnante necesită atenție` |
+| **Corp**    | `{{code.summary}}`                                               |
 
-### Step 7: Test and Activate
+### Pasul 7: Testați și activați
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. Faceți clic pe **Test** pentru a rula fluxul de lucru
+2. Verificați că e-mailul conține datele corecte
+3. Activați când sunteți gata
 
-## Customization Options
+## Opțiuni de personalizare
 
-### Change Staleness Threshold
+### Modificați pragul de stagnare
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+Modificați filtrul Search Records pentru a schimba de la 7 zile la perioada preferată:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 3 zile pentru vânzări cu ritm ridicat
+* 14 zile pentru tranzacții enterprise
+* 30 de zile pentru cicluri de vânzări lungi
 
-### Alert Individual Reps
+### Alerte pentru reprezentanți individuali
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+În loc de un singur e-mail către manager, folosiți **Iterator** pentru a trimite e-mailuri personalizate fiecărui reprezentant despre tranzacțiile lor stagnante.
 
-### Add Escalation
+### Adăugați escaladare
 
-Create multiple workflows with increasing severity:
+Creați mai multe fluxuri de lucru cu severitate în creștere:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. Ziua 7: E-mail către reprezentant
+2. Ziua 14: E-mail către reprezentant + manager
+3. Ziua 21: Creați o sarcină pentru ca managerul să intervină
 
-### Include in Slack
+### Includeți în Slack
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+Utilizați **HTTP Request** pentru a posta către un webhook Slack în locul sau pe lângă e-mail.
 
-## Related
+## Conexe
 
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)

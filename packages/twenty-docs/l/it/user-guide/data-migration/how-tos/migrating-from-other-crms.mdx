@@ -1,43 +1,43 @@
 ---
 title: Migrazione da altri CRM
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Guida passo-passo per migrare i tuoi dati da qualsiasi CRM a Twenty.
 ---
 
 ## Panoramica
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Questa guida ti accompagna nella migrazione dei tuoi dati da qualsiasi CRM a Twenty. Il processo prevede la revisione dei tuoi dati, la preparazione del tuo spazio di lavoro Twenty, l'esportazione dal sistema attuale e l'importazione in Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Le viste, i flussi di lavoro e le autorizzazioni devono essere ricreati manualmente dopo la migrazione. Pianifica il tempo per questo lavoro di configurazione.</Note>
 
-## Step 1: Audit Your Current Data
+## Passaggio 1: Verifica dei tuoi dati correnti
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+La migrazione è un'opportunità per un nuovo inizio. Non trasferire il superfluo.
 
-**What to keep:**
+**Cosa mantenere:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Contatti e aziende attivi
+* Opportunità e trattative aperte
+* Note e attività importanti
+* Campi personalizzati che utilizzi effettivamente
 
-**What to leave behind:**
+**Cosa lasciare indietro:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Contatti obsoleti (nessuna attività da 2 o più anni)
+* Record duplicati
+* Dati di test
+* Campi personalizzati inutilizzati
 
-## Step 2: Map Your Data Model
+## Passaggio 2: Mappa il tuo modello di dati
 
-Create a mapping document between your current CRM and Twenty:
+Crea un documento di mappatura tra il tuo CRM attuale e Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| Il tuo CRM               | Twenty               |
+| ------------------------ | -------------------- |
+| Account / Organizzazione | **Azienda**          |
+| Contatto / Persona       | **Persone**          |
+| Trattativa / Opportunità | **Opportunità**      |
+| Activity                 | **Task** or **Note** |
+| Custom Object            | **Custom Object**    |
 
 **For each field, document:**
 
