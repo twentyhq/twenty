@@ -1,43 +1,43 @@
 ---
 title: Migrating from Other CRMs
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: دليل خطوة بخطوة لترحيل بياناتك من أي نظام لإدارة علاقات العملاء إلى Twenty.
 ---
 
 ## نظرة عامة
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+يرشدك هذا الدليل خلال عملية ترحيل بياناتك من أي نظام لإدارة علاقات العملاء إلى Twenty. تشمل العملية تدقيق بياناتك، وإعداد مساحة العمل في Twenty، والتصدير من نظامك الحالي، والاستيراد إلى Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>يجب إعادة إنشاء العروض، وسير العمل، والأذونات يدويًا بعد الترحيل. خطط وقتًا لهذا العمل الخاص بالإعداد.</Note>
 
-## Step 1: Audit Your Current Data
+## الخطوة 1: تدقيق بياناتك الحالية
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+يُعد الترحيل فرصة لبداية جديدة. لا تنقل البيانات غير الضرورية.
 
-**What to keep:**
+**ما يجب الاحتفاظ به:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* جهات الاتصال والشركات النشطة
+* الفرص والصفقات المفتوحة
+* الملاحظات والأنشطة المهمة
+* الحقول المخصصة التي تستخدمها فعليًا
 
-**What to leave behind:**
+**ما يجب تركه:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* جهات الاتصال القديمة (لا نشاط خلال سنتين أو أكثر)
+* السجلات المكررة
+* بيانات الاختبار
+* الحقول المخصصة غير المستخدمة
 
-## Step 2: Map Your Data Model
+## الخطوة 2: مطابقة نموذج البيانات الخاص بك
 
-Create a mapping document between your current CRM and Twenty:
+أنشئ مستند مطابقة بين نظام إدارة علاقات العملاء الحالي لديك وTwenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| نظام إدارة علاقات العملاء الخاص بك | Twenty               |
+| ---------------------------------- | -------------------- |
+| حساب / مؤسسة                       | **الشركة**           |
+| جهة اتصال / شخص                    | **الأشخاص**          |
+| صفقة / فرصة                        | **الفرصة**           |
+| Activity                           | **Task** or **Note** |
+| Custom Object                      | **Custom Object**    |
 
 **For each field, document:**
 
