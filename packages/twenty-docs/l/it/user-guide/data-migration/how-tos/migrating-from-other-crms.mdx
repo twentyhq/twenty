@@ -31,103 +31,103 @@ La migrazione è un'opportunità per un nuovo inizio. Non trasferire il superflu
 
 Crea un documento di mappatura tra il tuo CRM attuale e Twenty:
 
-| Il tuo CRM               | Twenty               |
-| ------------------------ | -------------------- |
-| Account / Organizzazione | **Azienda**          |
-| Contatto / Persona       | **Persone**          |
-| Trattativa / Opportunità | **Opportunità**      |
-| Activity                 | **Task** or **Note** |
-| Custom Object            | **Custom Object**    |
+| Il tuo CRM               | Twenty                     |
+| ------------------------ | -------------------------- |
+| Account / Organizzazione | **Azienda**                |
+| Contatto / Persona       | **Persone**                |
+| Trattativa / Opportunità | **Opportunità**            |
+| Attività                 | **Attività** o **Nota**    |
+| Oggetto personalizzato   | **Oggetto personalizzato** |
 
-**For each field, document:**
+**Per ogni campo, documenta:**
 
-* The source field name
-* The target Twenty field
-* Any format transformations needed (dates, phone numbers, etc.)
+* Il nome del campo di origine
+* Il campo di destinazione di Twenty
+* Eventuali trasformazioni di formato necessarie (date, numeri di telefono, ecc.)
 
-<Note>Keep this mapping document handy during import—you'll reference it when mapping columns.</Note>
+<Note>Tieni a portata di mano questo documento di mappatura durante l'importazione—lo userai come riferimento quando mapperai le colonne.</Note>
 
-## Step 3: Set Up Your Twenty Workspace
+## Passaggio 3: Configura il tuo spazio di lavoro Twenty
 
-Before importing data, prepare your Twenty workspace:
+Prima di importare i dati, prepara il tuo spazio di lavoro Twenty:
 
-### Create Custom Objects and Fields
+### Crea oggetti e campi personalizzati
 
-1. Go to **Settings → Data Model**
-2. Create any custom objects you need
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, select options, etc.)
+1. Vai a **Impostazioni → Modello dati**
+2. Crea tutti gli oggetti personalizzati di cui hai bisogno
+3. Aggiungi campi personalizzati agli oggetti standard e personalizzati
+4. Configura le impostazioni dei campi (univoche, obbligatorie, opzioni dei campi di selezione, ecc.)
 
 <Warning>
-  **Fields must exist before import.**
+  **I campi devono esistere prima dell'importazione.**
 
-  The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
+  L'importazione CSV crea record, non campi. Crea tutti i campi personalizzati in Impostazioni → Modello dati prima dell'importazione.
 </Warning>
 
-### Invite Your Team
+### Invita il tuo team
 
 <Warning>
-  **Invite users BEFORE importing data.**
+  **Invita gli utenti PRIMA di importare i dati.**
 
-  If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
+  Se i tuoi dati includono riferimenti a utenti (Proprietario dell'account, Assegnatario, ecc.), tali utenti devono esistere in Twenty prima dell'importazione. In caso contrario, tali relazioni non possono essere mappate.
 </Warning>
 
 1. Vai a **Impostazioni → Membri**
-2. Invite all team members
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+2. Invita tutti i membri del team
+3. **Attendi che tutti accettino** il loro invito
+4. Verifica che tutti gli utenti compaiano nell'elenco Membri
 
-## Step 4: Export from Your Current CRM
+## Passaggio 4: Esporta dal tuo CRM attuale
 
-Export your data from your current CRM:
+Esporta i tuoi dati dal tuo CRM attuale:
 
-1. Look for an **Export** function (usually under Settings, Data Management, or Admin)
-2. Export to **CSV format** when possible
-3. Export each object type separately (Companies, Contacts, Deals, etc.)
-4. Include all fields you want to migrate
+1. Cerca una funzione di **Esportazione** (di solito in Impostazioni, Gestione dei dati o Amministrazione)
+2. Esporta in **formato CSV** quando possibile
+3. Esporta separatamente ogni tipo di oggetto (Aziende, Contatti, Trattative, ecc.)
+4. Includi tutti i campi che desideri migrare
 
-**Export these objects (in this order for reference):**
+**Esporta questi oggetti (in questo ordine come riferimento):**
 
-1. Companies / Accounts / Organizations
-2. Contacts / People
-3. Deals / Opportunities
-4. Notes and Activities
+1. Aziende / Account / Organizzazioni
+2. Contatti / Persone
+3. Trattative / Opportunità
+4. Note e Attività
 5. Oggetti personalizzati
 
-## Step 5: Clean and Format Your Data
+## Passaggio 5: Pulisci e formatta i tuoi dati
 
-Open each exported CSV in a spreadsheet application and prepare it for Twenty.
+Apri ogni file CSV esportato in un'applicazione di fogli di calcolo e preparalo per Twenty.
 
-### Remove Duplicates
+### Rimuovi i duplicati
 
-1. Sort by the unique field (email for People, domain for Companies)
-2. Remove or merge duplicate rows
-3. Verify no duplicates exist in Twenty already
+1. Ordina per il campo univoco (email per Persone, dominio per Aziende)
+2. Rimuovi o unisci le righe duplicate
+3. Verifica che non esistano già duplicati in Twenty
 
-### Format Fields Correctly
+### Formatta correttamente i campi
 
-| Field Type        | Required Format                                   |
-| ----------------- | ------------------------------------------------- |
-| **Domain**        | `https://domain.com`                              |
-| **Email**         | `name@domain.com` (must be unique)                |
-| **Date**          | `YYYY-MM-DD`                                      |
-| **Phone**         | Three columns: Number, Country Code, Calling Code |
-| **Boolean**       | `TRUE` or `FALSE` (uppercase)                     |
-| **Select fields** | Use API names, not display labels                 |
+| Tipo di campo          | Formato richiesto                                          |
+| ---------------------- | ---------------------------------------------------------- |
+| **Dominio**            | `https://domain.com`                                       |
+| **Email**              | `name@domain.com` (deve essere univoco)                    |
+| **Data**               | `YYYY-MM-DD`                                               |
+| **Telefono**           | Tre colonne: Numero, Codice paese, Prefisso internazionale |
+| **Booleano**           | `TRUE` o `FALSE` (maiuscolo)                               |
+| **Campi di selezione** | Usa i nomi API, non le etichette visualizzate              |
 
 <Warning>
-  **Domain format is critical.**
+  **Il formato del dominio è fondamentale.**
 
-  Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
+  Usa `https://domain.com` (non `domain.com` o `www.domain.com`). Questo corrisponde al formato di Twenty ed evita duplicati quando colleghi la sincronizzazione di email e calendario.
 </Warning>
 
-See [How to Prepare Your CSV Files](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
+Consulta [Come preparare i tuoi file CSV](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files) per i requisiti di formattazione completi per tutti i tipi di campo.
 
-### Add Relation Columns
+### Aggiungi colonne di relazione
 
-To link records (e.g., People to Companies), add a column with the parent's unique identifier.
+Per collegare i record (ad es., Persone ad Aziende), aggiungi una colonna con l'identificatore univoco del record padre.
 
-**Example: People CSV with Company link**
+**Esempio: CSV Persone con collegamento all'Azienda**
 
 ```csv
 firstName,lastName,email,companyDomain
@@ -135,159 +135,159 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-See [How to Import Relations](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions on linking records.
+Consulta [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per istruzioni dettagliate sul collegamento dei record.
 
-### Update User References
+### Aggiorna i riferimenti agli utenti
 
-If your data includes user assignments (Owner, Assignee):
+Se i tuoi dati includono assegnazioni utente (Proprietario, Assegnatario):
 
-1. Add a column with the **user's email** (not just their ID from the old system)
-2. Use the same email addresses that users used to join your Twenty workspace
+1. Aggiungi una colonna con l'**email dell'utente** (non solo il suo ID dal vecchio sistema)
+2. Usa gli stessi indirizzi email che gli utenti hanno utilizzato per unirsi al tuo spazio di lavoro Twenty
 
-See [How to Prepare Your CSV Files](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting guide.
+Consulta [Come preparare i tuoi file CSV](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files) per la guida completa alla formattazione.
 
-## Step 6: Import to Twenty
+## Passaggio 6: Importa in Twenty
 
 <Warning>
-  **Import Order Matters!**
+  **L'ordine di importazione è importante!**
 
-  Always import in this order:
+  Importa sempre in questo ordine:
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (link to Companies)
-  3. **Opportunities** third (link to Companies/People)
-  4. **Notes and Tasks** (link to records)
-  5. **Custom objects** following their dependencies
+  1. **Aziende** per prime (nessuna dipendenza)
+  2. **Persone** al secondo posto (collegate alle Aziende)
+  3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
+  4. **Note e Attività** (collegate ai record)
+  5. **Oggetti personalizzati** seguendo le relative dipendenze
 
-  The parent record must exist before you can reference it.
+  Il record padre deve esistere prima di potervi fare riferimento.
 </Warning>
 
-### Import Each Object
+### Importa ogni oggetto
 
-For each CSV file, in order:
+Per ogni file CSV, in ordine:
 
-1. Navigate to the object in Twenty
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map relation columns (like `companyDomain`) to relation fields
-5. Review and fix any errors in the UI
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Vai all'oggetto in Twenty
+2. Fai clic su **⋮ → Importa record**
+3. Carica il file CSV
+4. Mappa le colonne ai campi:
+   * Mappa le colonne delle email degli utenti ai campi relazione appropriati
+   * Mappa le colonne di relazione (come `companyDomain`) ai campi di relazione
+5. Controlla e correggi eventuali errori nell'interfaccia
+6. Conferma l'importazione
+7. Verifica alcuni record prima di passare al file successivo
 
-**Detailed guides:**
+**Guide dettagliate:**
 
-* [How to Import Companies](/l/it/user-guide/data-migration/how-tos/import-companies-via-csv)
-* [How to Import Contacts](/l/it/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [How to Import Relations](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Come importare le aziende](/l/it/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Come importare i contatti](/l/it/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
-## Step 7: Large Migrations (50,000+ Records)
+## Passaggio 7: Migrazioni di grandi dimensioni (oltre 50.000 record)
 
-For large migrations:
+Per migrazioni di grandi dimensioni:
 
-| Volume                  | Recommended Approach          |
-| ----------------------- | ----------------------------- |
-| Under 10,000 records    | Single CSV import             |
-| 10,000 - 50,000 records | Split into multiple CSV files |
-| 50,000+ records         | Use the API                   |
+| Volume                 | Approccio consigliato    |
+| ---------------------- | ------------------------ |
+| Meno di 10.000 record  | Importazione CSV singola |
+| 10.000 - 50.000 record | Dividi in più file CSV   |
+| Oltre 50.000 record    | Usa le API               |
 
-**For API imports:**
+**Per le importazioni tramite API:**
 
-* Faster and more reliable for large datasets
-* Supports batch operations (up to 60 records per call)
-* See [How to Import Data via API](/l/it/user-guide/data-migration/how-tos/import-data-via-api)
+* Più veloce e più affidabile per set di dati di grandi dimensioni
+* Supporta operazioni in batch (fino a 60 record per chiamata)
+* Consulta [Come importare i dati tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api)
 
-## Step 8: Post-Migration Setup
+## Passaggio 8: Configurazione post-migrazione
 
-After importing data, complete your workspace configuration:
+Dopo aver importato i dati, completa la configurazione del tuo spazio di lavoro:
 
-### Recreate Views
+### Ricrea le viste
 
-* Set up saved views with filters, sorts, and column configurations
-* Create any kanban or calendar views you need
+* Configura viste salvate con filtri, ordinamenti e configurazioni delle colonne
+* Crea eventuali viste kanban o calendario di cui hai bisogno
 
 ### Ricrea i Flussi di Lavoro
 
-* Rebuild your automations in **Settings → Workflows**
-* Start with the most critical workflows
-* Test each one before relying on it
+* Ricrea le automazioni in **Impostazioni → Flussi di lavoro**
+* Inizia dai flussi di lavoro più critici
+* Testa ciascuno prima di farci affidamento
 
-### Configure Roles and Permissions
+### Configura ruoli e permessi
 
-* Set up roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Configura i ruoli in **Impostazioni → Ruoli**
+* Assegna gli utenti ai ruoli appropriati
 
-### Connect Email and Calendar
+### Collega email e calendario
 
-* Each user connects their own account in **Settings → Accounts**
-* Twenty will start syncing emails to contact records
-* See [Email & Calendar](/l/it/user-guide/calendar-emails/overview)
+* Ogni utente collega il proprio account in **Impostazioni → Account**
+* Twenty inizierà a sincronizzare le email con i record dei contatti
+* Consulta [Email e Calendario](/l/it/user-guide/calendar-emails/overview)
 
-### Train Your Team
+### Forma il tuo team
 
-* Walk through the new interface together
-* Document any team-specific processes
+* Esamina insieme al team la nuova interfaccia
+* Documenta eventuali processi specifici del team
 
 ## Problemi comuni e soluzioni
 
-| Issue                   | Cause                       | Solution                                                                             |
-| ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| **Duplicate errors**    | Email/domain already exists | Remove duplicates from file, or include unique identifier to update existing records |
-| **Relation not found**  | Parent record doesn't exist | Import parent objects first (Companies before People)                                |
-| **Missing fields**      | Custom field doesn't exist  | Create field in Settings → Data Model before importing                               |
-| **Select field errors** | Using display labels        | Use API names (enable Advanced mode in Settings to find them)                        |
-| **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing                                 |
+| Problema                          | Causa                              | Soluzione                                                                                               |
+| --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Errori di duplicazione**        | Email/dominio già esistente        | Rimuovi i duplicati dal file oppure includi un identificatore univoco per aggiornare i record esistenti |
+| **Relazione non trovata**         | Il record padre non esiste         | Importa prima gli oggetti padre (Aziende prima delle Persone)                                           |
+| **Campi mancanti**                | Il campo personalizzato non esiste | Crea il campo in Impostazioni → Modello dati prima dell'importazione                                    |
+| **Errori nei campi di selezione** | Uso delle etichette visualizzate   | Usa i nomi API (attiva la modalità Avanzata in Impostazioni per trovarli)                               |
+| **Relazione utente vuota**        | L'utente non ha accettato l'invito | Assicurati che tutti gli utenti accettino gli inviti prima di importare                                 |
 
-See [How to Fix Import Errors](/l/it/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
+Consulta [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors) per passaggi dettagliati di risoluzione dei problemi.
 
 ## Lista di Verifica Post-Migrazione
 
-### Data Integrity
+### Integrità dei dati
 
-<Check>All records imported (compare counts with source system)</Check>
-<Check>Relations working correctly (People linked to Companies)</Check>
-<Check>User assignments mapped correctly (Owner, Assignee)</Check>
-<Check>Custom fields populated</Check>
-<Check>No unexpected duplicates</Check>
+<Check>Tutti i record importati (confronta i conteggi con il sistema di origine)</Check>
+<Check>Relazioni funzionanti correttamente (Persone collegate ad Aziende)</Check>
+<Check>Assegnazioni utente mappate correttamente (Proprietario, Assegnatario)</Check>
+<Check>Campi personalizzati compilati</Check>
+<Check>Nessun duplicato imprevisto</Check>
 
 ### Configurazione
 
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync connected</Check>
+<Check>Viste ricreate</Check>
+<Check>Flussi di lavoro ricreati e testati</Check>
+<Check>Ruoli e permessi configurati</Check>
+<Check>Sincronizzazione email/calendario connessa</Check>
 
-### Team Readiness
+### Preparazione del team
 
-<Check>Team trained on new system</Check>
-<Check>Old CRM access plan decided (keep for reference? When to disable?)</Check>
+<Check>Team formato sul nuovo sistema</Check>
+<Check>Piano di accesso al vecchio CRM deciso (mantenerlo come riferimento? Quando disattivarlo?)</Check>
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in Twenty.
+  <Accordion title="Posso migrare i flussi di lavoro automaticamente?">
+    Al momento no. I flussi di lavoro devono essere ricreati manualmente in Twenty.
   </Accordion>
 
-  <Accordion title="What about file attachments?">
-    File attachments are not included in CSV exports. You'll need to re-upload them manually, migrate via API, or contact our team for assistance.
+  <Accordion title="Che cosa succede agli allegati?">
+    Gli allegati non sono inclusi nelle esportazioni CSV. Dovrai ricaricarli manualmente, migrarli tramite API oppure contattare il nostro team per assistenza.
   </Accordion>
 
-  <Accordion title="Can I keep both systems running during migration?">
-    Yes, we recommend keeping your old CRM running until you've verified the migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Posso mantenere entrambi i sistemi attivi durante la migrazione?">
+    Sì, consigliamo di mantenere attivo il tuo vecchio CRM finché non avrai verificato che la migrazione sia completa. Fai solo attenzione a non creare nuovi dati in entrambi gli ambienti.
   </Accordion>
 
-  <Accordion title="How long does migration typically take?">
-    Depends on data volume and complexity. Small migrations (under 10,000 records) can be done in a few hours. Large migrations may take several days including data cleanup and testing.
+  <Accordion title="Quanto tempo richiede di solito la migrazione?">
+    Dipende dal volume e dalla complessità dei dati. Le migrazioni di piccole dimensioni (meno di 10.000 record) possono essere completate in poche ore. Le migrazioni di grandi dimensioni possono richiedere diversi giorni, compresi la pulizia dei dati e i test.
   </Accordion>
 </AccordionGroup>
 
 ## Hai Bisogno di Aiuto?
 
-For complex migrations or large datasets:
+Per migrazioni complesse o set di dati di grandi dimensioni:
 
-* **Guided setup:** Book a 4-hour onboarding pack
-* **Full migration service:** Our partners can handle the entire migration
+* **Configurazione guidata:** Prenota un pacchetto di onboarding di 4 ore
+* **Servizio di migrazione completo:** I nostri partner possono gestire l'intera migrazione
 
-Contact [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/it/user-guide/getting-started/capabilities/implementation-services).
+Contatta [contact@twenty.com](mailto:contact@twenty.com) oppure scopri i nostri [Servizi di implementazione](/l/it/user-guide/getting-started/capabilities/implementation-services).
