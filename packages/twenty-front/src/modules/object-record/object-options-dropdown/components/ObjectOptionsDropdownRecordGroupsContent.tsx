@@ -20,7 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronLeft,
@@ -76,9 +76,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility();
 
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping } =
+    useGetAvailableFieldsToGroupRecordsBy();
 
-  const hasOnlyOneGroupByOption = availableFieldsForKanban.length <= 1;
+  const hasOnlyOneGroupByOption = availableFieldsForGrouping.length <= 1;
 
   useEffect(() => {
     if (
@@ -123,7 +124,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <>
               <SelectableListItem
                 itemId="GroupBy"
-                onEnter={() => onContentChange('recordGroupFields')}
+                onEnter={() =>
+                  !hasOnlyOneGroupByOption &&
+                  onContentChange('recordGroupFields')
+                }
               >
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
