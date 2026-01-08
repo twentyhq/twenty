@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 
 export type StandardPageLayoutMetadataRelatedEntityIds = {
-  revenueOverview: {
+  myFirstDashboard: {
     id: string;
     tabs: {
       tab1: {
@@ -23,7 +23,7 @@ export type StandardPageLayoutMetadataRelatedEntityIds = {
 
 export const getStandardPageLayoutMetadataRelatedEntityIds =
   (): StandardPageLayoutMetadataRelatedEntityIds => {
-    const tab1Widgets: StandardPageLayoutMetadataRelatedEntityIds['revenueOverview']['tabs']['tab1']['widgets'] =
+    const tab1Widgets: StandardPageLayoutMetadataRelatedEntityIds['myFirstDashboard']['tabs']['tab1']['widgets'] =
       {
         welcomeRichText: { id: v4() },
         dealsByCompany: { id: v4() },
@@ -36,7 +36,7 @@ export const getStandardPageLayoutMetadataRelatedEntityIds =
       };
 
     return {
-      revenueOverview: {
+      myFirstDashboard: {
         id: v4(),
         tabs: {
           tab1: {

@@ -1,7 +1,7 @@
 export const STANDARD_PAGE_LAYOUTS = {
-  revenueOverview: {
+  myFirstDashboard: {
     universalIdentifier: '20202020-d001-4d01-8d01-da5ab0a00001',
-    name: 'Dashboard Layout',
+    name: 'My First Dashboard',
     tabs: {
       tab1: {
         universalIdentifier: '20202020-d011-4d11-8d11-da5ab0a01001',
@@ -44,4 +44,4 @@ export type StandardPageLayoutTabName<L extends StandardPageLayoutName> =
   keyof (typeof STANDARD_PAGE_LAYOUTS)[L]['tabs'];
 
 export type Tab1WidgetName =
-  keyof (typeof STANDARD_PAGE_LAYOUTS)['revenueOverview']['tabs']['tab1']['widgets'];
+  keyof (typeof STANDARD_PAGE_LAYOUTS)['myFirstDashboard']['tabs']['tab1']['widgets'];

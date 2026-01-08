@@ -7,23 +7,22 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 
-export const REVENUE_OVERVIEW_DASHBOARD_ID =
-  'f31ecf3b-87d3-4e8a-a84b-b6f0f3f8c7e2';
+export const MY_FIRST_DASHBOARD_ID = 'f31ecf3b-87d3-4e8a-a84b-b6f0f3f8c7e2';
 
 export const prefillDashboards = async (
   entityManager: EntityManager,
   schemaName: string,
   flatPageLayoutMaps: FlatEntityMaps<FlatPageLayout>,
 ) => {
-  const revenueOverviewPageLayout = findFlatEntityByUniversalIdentifier({
+  const myFirstDashboardPageLayout = findFlatEntityByUniversalIdentifier({
     flatEntityMaps: flatPageLayoutMaps,
     universalIdentifier:
-      STANDARD_PAGE_LAYOUTS.revenueOverview.universalIdentifier,
+      STANDARD_PAGE_LAYOUTS.myFirstDashboard.universalIdentifier,
   });
 
-  if (!isDefined(revenueOverviewPageLayout)) {
+  if (!isDefined(myFirstDashboardPageLayout)) {
     throw new Error(
-      `Page layout with universalIdentifier '${STANDARD_PAGE_LAYOUTS.revenueOverview.universalIdentifier}' not found`,
+      `Page layout with universalIdentifier '${STANDARD_PAGE_LAYOUTS.myFirstDashboard.universalIdentifier}' not found`,
     );
   }
 
@@ -46,9 +45,9 @@ export const prefillDashboards = async (
     .orIgnore()
     .values([
       {
-        id: REVENUE_OVERVIEW_DASHBOARD_ID,
-        title: 'Revenue Overview',
-        pageLayoutId: revenueOverviewPageLayout.id,
+        id: MY_FIRST_DASHBOARD_ID,
+        title: 'My First Dashboard',
+        pageLayoutId: myFirstDashboardPageLayout.id,
         position: 0,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,

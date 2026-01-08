@@ -78,8 +78,8 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
 }: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs): FlatEntityMaps<FlatPageLayoutWidget> => {
   let flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
-  const layoutIds = standardPageLayoutMetadataRelatedEntityIds.revenueOverview;
-  const layoutDef = STANDARD_PAGE_LAYOUTS.revenueOverview;
+  const layoutIds = standardPageLayoutMetadataRelatedEntityIds.myFirstDashboard;
+  const layoutDef = STANDARD_PAGE_LAYOUTS.myFirstDashboard;
 
   const opportunityObjectId =
     standardObjectMetadataRelatedEntityIds.opportunity.id;
