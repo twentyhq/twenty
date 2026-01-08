@@ -506,9 +506,15 @@ export const WorkflowDiagramCanvasBase = ({
     params: OnConnectStartParams,
   ) => {
     if (isDefined(params.nodeId) && isDefined(params.handleId)) {
-      const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0]?.clientX;
-      const clientY = event instanceof MouseEvent ? event.clientY : event.touches[0]?.clientY;
-      if (!isDefined(clientX) || !isDefined(clientY) || !isDefined(containerRef.current)) {
+      const clientX =
+        event instanceof MouseEvent ? event.clientX : event.touches[0]?.clientX;
+      const clientY =
+        event instanceof MouseEvent ? event.clientY : event.touches[0]?.clientY;
+      if (
+        !isDefined(clientX) ||
+        !isDefined(clientY) ||
+        !isDefined(containerRef.current)
+      ) {
         return;
       }
 
@@ -521,7 +527,6 @@ export const WorkflowDiagramCanvasBase = ({
           x: clientX - bounds.left,
           y: clientY - bounds.top,
         },
-      });
       });
     }
   };
