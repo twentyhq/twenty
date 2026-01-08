@@ -62,7 +62,11 @@ export const FieldsWidgetSectionContainer = ({
           stroke={theme.icon.stroke.sm}
         />
       </StyledHeader>
-      <AnimatedExpandableContainer isExpanded={isExpanded}>
+      <AnimatedExpandableContainer
+        isExpanded={isExpanded}
+        initial={false}
+        mode="fit-content"
+      >
         {children}
       </AnimatedExpandableContainer>
     </StyledFieldsWidgetSectionContainer>
