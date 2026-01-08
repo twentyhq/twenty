@@ -1,4 +1,4 @@
-import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export type RecordGqlOperationGroupByVariables = {

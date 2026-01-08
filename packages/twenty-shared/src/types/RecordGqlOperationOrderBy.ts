@@ -1,4 +1,4 @@
-import { type OrderBy } from '@/types/OrderBy';
+import { type OrderBy } from './OrderBy';
 
 // Recursive type for nested orderBy values
 // Supports: OrderBy | { field: OrderBy } | { field: { subField: OrderBy } } | ...

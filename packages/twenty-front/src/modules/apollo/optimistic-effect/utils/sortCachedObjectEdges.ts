@@ -3,8 +3,11 @@ import { type ReadFieldFunction } from '@apollo/client/cache/core/types/common';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
-import { type OrderBy } from '@/types/OrderBy';
+
+import {
+  type OrderBy,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 

@@ -2,13 +2,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 
-import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import {
   type FieldEmailsValue,
   type FieldLinksValue,
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type OrderBy } from '@/types/OrderBy';
+import { type OrderBy } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getOrderByForFieldMetadataType = (

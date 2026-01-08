@@ -17,8 +17,8 @@ import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabl
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
