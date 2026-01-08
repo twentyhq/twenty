@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  AllMetadataName,
-  WorkspaceMigrationV2ExceptionCode,
+    AllMetadataName,
+    WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,12 +17,12 @@ import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/w
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
-  FromToAllFlatEntityMaps,
-  WorkspaceMigrationOrchestratorBuildArgs,
-  WorkspaceMigrationOrchestratorFailedResult,
+    FromToAllFlatEntityMaps,
+    WorkspaceMigrationOrchestratorBuildArgs,
+    WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/infer-deletion-from-missing-entities.type';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/services/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner/services/workspace-migration-runner-v2.service';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
