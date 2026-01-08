@@ -1,11 +1,13 @@
 import { type OrderBy } from '@/types/OrderBy';
 
-// Supports up to 3 levels of nesting:
-// - Level 1: { field: OrderBy } - scalar fields
-// - Level 2: { field: { subField: OrderBy } } - composite fields
-// - Level 3: { relation: { compositeField: { subField: OrderBy } } } - relation + composite
-type OrderBySubField = OrderBy | { [subSubFieldName: string]: OrderBy };
+// Recursive type for nested orderBy values
+// Supports: OrderBy | { field: OrderBy } | { field: { subField: OrderBy } } | ...
+type OrderByValue = OrderBy | { [fieldName: string]: OrderByValue };
 
+// Supports nested ordering for:
+// - Scalar fields: { field: OrderBy }
+// - Composite fields: { field: { subField: OrderBy } }
+// - Relation + composite: { relation: { compositeLabel: { subField: OrderBy } } }
 export type RecordGqlOperationOrderBy = Array<{
-  [fieldName: string]: OrderBy | { [subFieldName: string]: OrderBySubField };
+  [fieldName: string]: OrderByValue;
 }>;

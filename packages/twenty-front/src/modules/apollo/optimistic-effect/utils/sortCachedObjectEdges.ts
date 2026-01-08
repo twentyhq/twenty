@@ -63,7 +63,7 @@ export const sortCachedObjectEdges = ({
       ) ?? null;
 
     // Handle 3-level nesting (relation.compositeField.subField)
-    if (isDefined(subFieldValue) && orderBySubSubFieldName) {
+    if (isDefined(subFieldValue) && isDefined(orderBySubSubFieldName)) {
       const subSubFieldValue =
         readCacheField<string | number | null>(
           orderBySubSubFieldName,

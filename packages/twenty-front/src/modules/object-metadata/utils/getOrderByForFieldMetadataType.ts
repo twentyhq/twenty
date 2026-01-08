@@ -87,21 +87,15 @@ export const getOrderByForRelationField = (
   );
 
   if (!labelIdentifierField) {
-    // Fallback: sort by FK (less useful but safe)
     return [{ [`${field.name}Id`]: direction }];
   }
 
-  // Get the orderBy structure for the label identifier field type
-  // This returns the full nested structure, e.g.:
-  // - TEXT field 'name': [{ name: 'AscNullsLast' }]
-  // - FULL_NAME field 'name': [{ name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } }]
+  // Reuse getOrderByForFieldMetadataType to get { labelField: value }
+  // Then wrap it: { relation: { labelField: value } }
   const labelFieldOrderBy = getOrderByForFieldMetadataType(
     labelIdentifierField,
     direction,
   );
 
-  // Wrap the entire label field orderBy in the relation field name
-  // Result: { company: { name: 'AscNullsLast' } }
-  // or: { company: { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } } }
   return [{ [field.name]: labelFieldOrderBy[0] }];
 };
