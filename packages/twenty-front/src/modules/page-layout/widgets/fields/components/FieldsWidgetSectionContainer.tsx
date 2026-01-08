@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
 
 const StyledFieldsWidgetSectionContainer = styled(Section)`
@@ -29,6 +29,14 @@ const StyledTitleLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const StyledChevronIcon = styled(IconChevronDown)<{ isExpanded: boolean }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  transform: ${({ isExpanded }) =>
+    isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transition: ${({ theme }) =>
+    `transform ${theme.animation.duration.normal}s ease`};
+`;
+
 type FieldsWidgetSectionContainerProps = {
   children: React.ReactNode;
   title: string;
@@ -48,19 +56,11 @@ export const FieldsWidgetSectionContainer = ({
     <StyledFieldsWidgetSectionContainer>
       <StyledHeader onClick={handleToggleSection}>
         <StyledTitleLabel>{title}</StyledTitleLabel>
-        {isExpanded ? (
-          <IconChevronUp
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        ) : (
-          <IconChevronDown
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        )}
+        <StyledChevronIcon
+          isExpanded={isExpanded}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
       </StyledHeader>
       <AnimatedExpandableContainer isExpanded={isExpanded}>
         {children}
