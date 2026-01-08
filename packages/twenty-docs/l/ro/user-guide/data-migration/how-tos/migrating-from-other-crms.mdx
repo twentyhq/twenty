@@ -1,43 +1,43 @@
 ---
 title: Migrarea de la alte CRM-uri
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+description: Ghid pas cu pas pentru migrarea datelor din orice CRM către Twenty.
 ---
 
 ## Prezentare generală
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+Acest ghid vă ghidează prin procesul de migrare a datelor din orice CRM către Twenty. Procesul implică auditarea datelor, pregătirea spațiului de lucru Twenty, exportul din sistemul curent și importul în Twenty.
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Vizualizările, fluxurile de lucru și permisiunile trebuie recreate manual după migrare. Planificați timp pentru această muncă de configurare.</Note>
 
-## Step 1: Audit Your Current Data
+## Pasul 1: Auditați datele curente
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+Migrarea este o oportunitate pentru un nou început. Nu transferați date inutile.
 
-**What to keep:**
+**Ce să păstrați:**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* Contacte și companii active
+* Oportunități și tranzacții deschise
+* Note și activități importante
+* Câmpuri personalizate pe care le utilizați efectiv
 
-**What to leave behind:**
+**Ce să lăsați în urmă:**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* Contacte învechite (fără activitate de peste 2 ani)
+* Înregistrări duplicate
+* Date de test
+* Câmpuri personalizate neutilizate
 
-## Step 2: Map Your Data Model
+## Pasul 2: Mapați modelul de date
 
-Create a mapping document between your current CRM and Twenty:
+Creați un document de mapare între CRM-ul curent și Twenty:
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| CRM-ul dvs.               | Twenty               |
+| ------------------------- | -------------------- |
+| Cont / Organizație        | **Companie**         |
+| Contact / Persoană        | **Persoane**         |
+| Tranzacție / Oportunitate | **Oportunitate**     |
+| Activity                  | **Task** or **Note** |
+| Custom Object             | **Custom Object**    |
 
 **For each field, document:**
 
