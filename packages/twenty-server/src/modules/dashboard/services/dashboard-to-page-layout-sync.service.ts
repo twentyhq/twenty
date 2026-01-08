@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { CrudOperationType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -13,8 +13,6 @@ import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-ob
 
 @Injectable()
 export class DashboardToPageLayoutSyncService {
-  private readonly logger = new Logger(DashboardToPageLayoutSyncService.name);
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly pageLayoutService: PageLayoutService,
@@ -87,20 +85,24 @@ export class DashboardToPageLayoutSyncService {
               await this.pageLayoutService.delete({
                 id: dashboard.pageLayoutId,
                 workspaceId,
-              });
-              break;
-            case CrudOperationType.RESTORE:
-              await this.pageLayoutService.restore({
-                id: dashboard.pageLayoutId,
-                workspaceId,
+                isLinkedDashboardAlreadyDeleted: true,
               });
               break;
             case CrudOperationType.DESTROY:
               await this.pageLayoutService.destroy({
                 id: dashboard.pageLayoutId,
                 workspaceId,
+                isLinkedDashboardAlreadyDestroyed: true,
               });
               break;
+            case CrudOperationType.RESTORE:
+              await this.pageLayoutService.restore({
+                id: dashboard.pageLayoutId,
+                workspaceId,
+                isLinkedDashboardAlreadyRestored: true,
+              });
+              break;
+
             default:
               assertUnreachable(operation);
           }
