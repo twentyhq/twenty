@@ -207,9 +207,6 @@ describe('WorkspaceEntityManager', () => {
         'test-entity': 'test-entity-id',
       },
       featureFlagsMap: {
-        IS_AIRTABLE_INTEGRATION_ENABLED: false,
-        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
-        IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
@@ -219,7 +216,6 @@ describe('WorkspaceEntityManager', () => {
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
-        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
@@ -237,9 +233,6 @@ describe('WorkspaceEntityManager', () => {
 
     mockDataSource = {
       featureFlagMap: {
-        IS_AIRTABLE_INTEGRATION_ENABLED: false,
-        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
-        IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
@@ -248,7 +241,6 @@ describe('WorkspaceEntityManager', () => {
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
-        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
       },

@@ -81,6 +81,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     flatEntityUpdates,
     buildOptions,
     workspaceId,
+    additionalCacheDataMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'update'> {
@@ -113,6 +114,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         workspaceId,
         flatEntityToValidate: flatEntity,
         remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+        additionalCacheDataMaps,
       });
 
     if (deletionValidationResult.errors.length > 0) {
@@ -152,6 +154,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
           flatIndexMaps: tempOptimisticFlatIndexMaps,
         },
         remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+        additionalCacheDataMaps,
       });
 
     if (creationValidationResult.errors.length > 0) {

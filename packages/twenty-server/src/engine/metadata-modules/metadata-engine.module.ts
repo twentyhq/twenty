@@ -9,7 +9,6 @@ import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
@@ -35,7 +34,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     ViewModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
-    RemoteServerModule,
     RoleModule,
     PermissionsModule,
     RouteTriggerModule,
@@ -53,7 +51,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     AiAgentModule,
     AiChatModule,
     ViewModule,
-    RemoteServerModule,
     RoleModule,
     PermissionsModule,
   ],

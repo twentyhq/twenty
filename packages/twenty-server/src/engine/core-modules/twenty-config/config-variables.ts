@@ -157,7 +157,7 @@ export class ConfigVariables {
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
-  IS_IMAP_SMTP_CALDAV_ENABLED = false;
+  IS_IMAP_SMTP_CALDAV_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,

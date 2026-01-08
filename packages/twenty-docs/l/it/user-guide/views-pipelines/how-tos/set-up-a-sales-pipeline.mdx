@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: Configura una pipeline di vendita
+description: Configura la tua pipeline di vendita per tracciare le opportunità attraverso le fasi.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+Una pipeline di vendita in Twenty è una vista Kanban del tuo oggetto Opportunità, in cui ogni colonna rappresenta una fase del tuo processo di vendita.
 
-## Step 1: Configure Your Stages
+## Passaggio 1: Configura le tue fasi
 
-Stages are defined in the Opportunities object's **Stage** field.
+Le fasi sono definite nel campo **Fase** dell'oggetto Opportunità.
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona **Opportunità**
+3. Trova e fai clic sul campo **Fase**
+4. Aggiungi, rimuovi o rinomina le fasi per allinearle al tuo processo
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Dimostrazione video" />
 
-### Recommended Stages
+### Fasi consigliate
 
-| Fase            | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| Fase               | Scopo                          |
+| ------------------ | ------------------------------ |
+| **Nuovo**          | Opportunità appena individuate |
+| **Qualificato**    | Confermate come idonee         |
+| **Incontro**       | In fase di discussione         |
+| **Proposta**       | Proposta inviata               |
+| **Negoziazione**   | Definizione dei termini        |
+| **Chiuso - Vinta** | Trattativa vinta               |
+| **Chiuso - Persa** | Trattativa persa               |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5-7 fasi sono ottimali.** Troppe fasi rendono la pipeline difficile da consultare; troppo poche riducono la visibilità sull'avanzamento delle trattative.
 </Note>
 
-## Step 2: Create a Pipeline View
+## Passaggio 2: Crea una vista pipeline
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. Vai a **Opportunità**
+2. Clicca sul menu a discesa della vista → **+ Aggiungi vista**
+3. Chiamala "Pipeline di vendita"
+4. Clicca **Crea**
+5. Apri **Opzioni** e seleziona **Kanban** come layout
 
-The view automatically uses the Stage field for columns.
+La vista utilizza automaticamente il campo Fase per le colonne.
 
-## Step 3: Configure Your View
+## Passaggio 3: Configura la tua vista
 
-### Show Key Fields
+### Mostra i campi chiave
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. Clicca su **Opzioni → Campi**
+2. Cerca i campi nella sezione "Campi nascosti"
+3. Clicca sull'**icona a forma di occhio** per visualizzare: Azienda, Importo, Data di chiusura, Proprietario
 
-### Enable Aggregations
+### Abilita le aggregazioni
 
-Show totals at the top of each column:
+Mostra i totali nella parte superiore di ogni colonna:
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. Clicca sul numero visualizzato accanto al nome di una fase nella parte superiore di una colonna
+2. Seleziona il tipo di aggregazione (Conteggio, Somma, Media, ecc.)
+3. Scegli il campo da aggregare (ad es., Importo)
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**Esempio:** Mostra il valore totale delle trattative per fase aggregando Importo con Somma.
 
-### Use Compact View (Optional)
+### Usa la vista compatta (opzionale)
 
-For a high-level overview with minimal card content:
+Per una panoramica di alto livello con contenuto della scheda minimo:
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. Clicca su **Opzioni**
+2. Attiva l'interruttore per **Vista compatta**
 
-## Step 4: Create Personal and Team Views
+## Passaggio 4: Crea viste personali e di team
 
-### "My Pipeline"
+### "La mia pipeline"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **Filtro**: Proprietario = Io
+* **Visibilità**: Non in elenco (vista personale)
 
-### "Team Pipeline"
+### "Pipeline del team"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **Filtro**: Nessuno (mostra tutto)
+* **Visibilità**: Spazio di lavoro (vista condivisa)
 
-### "Closing This Month"
+### "In chiusura questo mese"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **Tipo**: Tabella
+* **Filtro**: Data di chiusura = Questo mese, Fase ≠ Chiuso - Vinta, Fase ≠ Chiuso - Persa
+* **Ordina**: Data di chiusura crescente
 
-## Working with Opportunities
+## Lavorare con le opportunità
 
-### Creating Opportunities
+### Creazione di opportunità
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* Clicca su **+ Nuovo** nella vista Opportunità
+* Oppure clicca su **+** nella colonna di una specifica fase
 
-### Moving Through Stages
+### Passare tra le fasi
 
-Drag and drop opportunity cards between columns to update their stage.
+Trascina e rilascia le schede delle opportunità tra le colonne per aggiornarne la fase.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Dimostrazione video" />
 
 ## Migliori Pratiche
 
-### Pipeline Hygiene
+### Igiene della pipeline
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* Aggiorna quotidianamente le trattative man mano che avanzano
+* Sposta o chiudi tempestivamente le trattative stagnanti
+* Mantieni realistiche le date di chiusura
 
-### Stage Discipline
+### Disciplina delle fasi
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* Definisci criteri chiari per ogni fase
+* Sposta le trattative tempestivamente quando i criteri sono soddisfatti
+* Non lasciare le trattative troppo a lungo nelle fasi
 
-## Related
+## Correlati
 
-* [Kanban Views](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/it/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [Viste Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni e vista compatta
+* [Filtri e ordinamento](/l/it/user-guide/views-pipelines/capabilities/filters-and-sorting) — creazione di viste filtrate

@@ -36,8 +36,6 @@ import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
@@ -84,7 +82,6 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   ViewEntity,
   IndexMetadataEntity,
   PageLayoutTabEntity,
-  RemoteTableEntity,
   RouteTriggerEntity,
   CronTriggerEntity,
   DatabaseEventTriggerEntity,
@@ -99,7 +96,6 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   ObjectMetadataEntity,
   RoleEntity,
   AgentEntity,
-  RemoteServerEntity,
   UserWorkspaceEntity,
   ApiKeyEntity,
   ServerlessFunctionLayerEntity,
