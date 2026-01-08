@@ -36,15 +36,18 @@ describe('determineChartItemColor', () => {
       ).toBe('green');
     });
 
-    it('should use select option color when configurationColor is null/undefined', () => {
-      expect(
-        determineChartItemColor({
-          configurationColor: null,
-          selectOptions: mockOptions,
-          rawValue: 'INACTIVE',
-        }),
-      ).toBe('red');
-    });
+    it.each([null, undefined])(
+      'should use select option color when configurationColor is %s (null and undefined handled identically)',
+      (configurationColor) => {
+        expect(
+          determineChartItemColor({
+            configurationColor,
+            selectOptions: mockOptions,
+            rawValue: 'INACTIVE',
+          }),
+        ).toBe('red');
+      },
+    );
   });
 
   describe('priority 3: return undefined (no fallback)', () => {
