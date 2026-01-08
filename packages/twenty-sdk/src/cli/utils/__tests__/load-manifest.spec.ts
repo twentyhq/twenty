@@ -3,6 +3,7 @@ import {
   loadManifest,
   type LoadManifestResult,
 } from '@/cli/utils/load-manifest';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/app/default-function.role';
 
 const TEST_APP_PATH = join(__dirname, '../../__tests__/test-app');
 
@@ -71,9 +72,9 @@ describe('loadManifest with test-app', () => {
     expect(statusField?.type).toBe('SELECT');
     expect(statusField?.options).toHaveLength(4);
 
-    expect(manifest.serverlessFunctions).toHaveLength(1);
+    expect(manifest.serverlessFunctions).toHaveLength(2);
 
-    const testFunction = manifest.serverlessFunctions[0];
+    const testFunction = manifest.serverlessFunctions[1];
     expect(testFunction.universalIdentifier).toBe(
       'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     );
@@ -102,6 +103,16 @@ describe('loadManifest with test-app', () => {
     );
     expect(dbEventTrigger).toBeDefined();
     expect(dbEventTrigger?.eventName).toBe('person.created');
+
+    // Second function
+    const testFunction2 = manifest.serverlessFunctions[0];
+    expect(testFunction2.universalIdentifier).toBe(
+      'eb3ffc98-88ec-45d4-9b4a-56833b219ccb',
+    );
+    expect(testFunction2.name).toBe('test-function-2');
+    expect(testFunction2.timeoutSeconds).toBe(2);
+    expect(testFunction2.handlerName).toBe('testFunction2');
+    expect(testFunction2.handlerPath).toBe('src/utils/test-function-2.util.ts');
 
     expect(manifest.roles).toHaveLength(1);
 
@@ -144,7 +155,7 @@ describe('loadManifest with test-app', () => {
 
     expect(shouldGenerate).toBe(false);
 
-    const expectedRoleId = 'b648f87b-1d26-4961-b974-0908fd991061';
+    const expectedRoleId = DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER;
 
     expect(manifest.application.functionRoleUniversalIdentifier).toBe(
       expectedRoleId,
