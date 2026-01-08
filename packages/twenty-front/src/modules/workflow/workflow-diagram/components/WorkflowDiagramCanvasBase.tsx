@@ -208,6 +208,7 @@ export const WorkflowDiagramCanvasBase = ({
   const [connectionStartInfo, setConnectionStartInfo] = useState<{
     nodeId: string;
     handleId: string;
+    startPosition: { x: number; y: number };
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
@@ -501,13 +502,24 @@ export const WorkflowDiagramCanvasBase = ({
   }, [clearEdgeHover]);
 
   const handleConnectStart = (
-    _: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     params: OnConnectStartParams,
   ) => {
     if (isDefined(params.nodeId) && isDefined(params.handleId)) {
+      const mouseEvent = event instanceof MouseEvent ? event : null;
+      if (!isDefined(mouseEvent) || !isDefined(containerRef.current)) {
+        return;
+      }
+
+      const bounds = containerRef.current.getBoundingClientRect();
+
       setConnectionStartInfo({
         nodeId: params.nodeId,
         handleId: params.handleId,
+        startPosition: {
+          x: mouseEvent.clientX - bounds.left,
+          y: mouseEvent.clientY - bounds.top,
+        },
       });
     }
   };
@@ -541,6 +553,15 @@ export const WorkflowDiagramCanvasBase = ({
       x: event.clientX - bounds.left,
       y: event.clientY - bounds.top,
     };
+
+    const MIN_DRAG_DISTANCE = 5;
+    const deltaX = screenPosition.x - startInfo.startPosition.x;
+    const deltaY = screenPosition.y - startInfo.startPosition.y;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (distance < MIN_DRAG_DISTANCE) {
+      return;
+    }
 
     const flowPosition = workflowDiagramScreenToFlowPosition(screenPosition);
 
