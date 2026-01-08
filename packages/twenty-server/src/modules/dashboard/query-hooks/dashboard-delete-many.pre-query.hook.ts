@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type DeleteManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { DashboardPageLayoutService } from 'src/modules/dashboard/services/dashboard-page-layout.service';
-import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
-@WorkspaceQueryHook(`dashboard.createOne`)
-export class DashboardCreateOnePreQueryHook
+@WorkspaceQueryHook(`dashboard.deleteMany`)
+export class DashboardDeleteManyPreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
@@ -23,22 +22,17 @@ export class DashboardCreateOnePreQueryHook
   async execute(
     authContext: AuthContext,
     _objectName: string,
-    payload: CreateOneResolverArgs<DashboardWorkspaceEntity>,
-  ): Promise<CreateOneResolverArgs<DashboardWorkspaceEntity>> {
+    payload: DeleteManyResolverArgs<{ id: { in: string[] } }>,
+  ): Promise<DeleteManyResolverArgs<{ id: { in: string[] } }>> {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    if (isDefined(payload.data.pageLayoutId)) {
-      return payload;
-    }
-
-    const pageLayoutId =
-      await this.dashboardPageLayoutService.createPageLayoutForDashboard({
-        workspaceId: workspace.id,
-      });
-
-    payload.data.pageLayoutId = pageLayoutId;
+    await this.dashboardPageLayoutService.handlePageLayoutForDashboards({
+      dashboardIds: payload.filter.id.in,
+      workspaceId: workspace.id,
+      operation: 'delete',
+    });
 
     return payload;
   }
