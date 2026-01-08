@@ -476,7 +476,6 @@ msgstr "A apărut o eroare neașteptată de configurare."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "An unexpected error occurred."
 msgstr "A apărut o eroare neașteptată."
 
@@ -1827,11 +1826,6 @@ msgstr "Se aștepta ca aceleași câmpuri de constrângere să fie folosite în 
 msgid "External ID"
 msgstr "ID extern"
 
-#. js-lingui-id: AOxB/G
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Failed to connect to remote server."
-msgstr "Conectarea la serverul la distanță a eșuat."
-
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
@@ -2113,7 +2107,6 @@ msgstr "Metadatele câmpului nu au fost găsite"
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
 msgstr "Metadatele câmpului nu au fost găsite."
@@ -2640,11 +2633,6 @@ msgstr "Parametru de filtrare invalid."
 msgid "Invalid filter value: \"{value}\""
 msgstr ""
 
-#. js-lingui-id: oxZTCD
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "Invalid foreign table input."
-msgstr "Intrare invalidă pentru tabelul extern."
-
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -2789,16 +2777,6 @@ msgstr "Informații incorecte pentru crearea relației"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
-
-#. js-lingui-id: JQ+mZ6
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Invalid remote server input."
-msgstr "Intrare invalidă pentru serverul la distanță."
-
-#. js-lingui-id: exysLG
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Invalid remote table input."
-msgstr "Intrare invalidă pentru tabelul la distanță."
 
 #. js-lingui-id: lOyHVQ
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3695,11 +3673,6 @@ msgstr "Nu a fost găsit niciun abonament activ."
 msgid "No event name provided in database event trigger"
 msgstr "Niciun nume de eveniment nu a fost furnizat în declanșatorul evenimentului bazei de date"
 
-#. js-lingui-id: Xlzkd8
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "No foreign tables found."
-msgstr "Nu au fost găsite tabele externe."
-
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
@@ -3902,7 +3875,6 @@ msgstr "Metadatele obiectului nu au fost găsite"
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
 msgstr "Metadatele obiectului nu au fost găsite."
@@ -4593,35 +4565,10 @@ msgstr "Obiectele la distanță nu sunt încă pregătite pentru producție"
 msgid "Remote objects are not supported yet"
 msgstr "Obiectele la distanță nu sunt încă suportate"
 
-#. js-lingui-id: haIkpk
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server already exists."
-msgstr "Serverul la distanță există deja."
-
-#. js-lingui-id: kcB/qR
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server not found."
-msgstr "Serverul la distanță nu a fost găsit."
-
-#. js-lingui-id: QxXX+p
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table already exists."
-msgstr "Tabelul la distanță există deja."
-
-#. js-lingui-id: eaN14K
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table not found."
-msgstr "Tabelul la distanță nu a fost găsit."
-
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Cererea a expirat, vă rugăm să încercați din nou."
-
-#. js-lingui-id: sSkbaZ
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-msgid "Request timed out."
-msgstr "Timpul cererii a expirat."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -5588,11 +5535,6 @@ msgstr "Acest câmp nu poate fi modificat."
 msgid "This field name is not available."
 msgstr "Acest nume de câmp nu este disponibil."
 
-#. js-lingui-id: JwdaFV
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "This foreign table cannot be modified."
-msgstr "Acest tabel extern nu poate fi modificat."
-
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -5661,11 +5603,6 @@ msgstr ""
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr ""
-
-#. js-lingui-id: NxunhS
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "This remote server cannot be modified."
-msgstr "Acest server la distanță nu poate fi modificat."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts

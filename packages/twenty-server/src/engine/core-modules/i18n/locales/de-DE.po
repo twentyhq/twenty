@@ -476,7 +476,6 @@ msgstr "Es ist ein unerwarteter Konfigurationsfehler aufgetreten."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
@@ -1827,11 +1826,6 @@ msgstr "Es wird erwartet, dass die gleichen Einschränkungsfelder konsistent üb
 msgid "External ID"
 msgstr "Externe ID"
 
-#. js-lingui-id: AOxB/G
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Failed to connect to remote server."
-msgstr "Verbindung zum Remote-Server fehlgeschlagen."
-
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
@@ -2113,7 +2107,6 @@ msgstr "Feldmetadaten nicht gefunden"
 #. js-lingui-id: JrAl/I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
 msgstr "Feldmetadaten nicht gefunden."
@@ -2640,11 +2633,6 @@ msgstr "Ungültiger Filterparameter."
 msgid "Invalid filter value: \"{value}\""
 msgstr ""
 
-#. js-lingui-id: oxZTCD
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "Invalid foreign table input."
-msgstr "Ungültige Eingabe für Fremdtabelle."
-
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -2789,16 +2777,6 @@ msgstr "Ungültige Nutzlast zur Erstellung von Beziehungen"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr "Ungültiges Ziel für das Beziehungsfeld"
-
-#. js-lingui-id: JQ+mZ6
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Invalid remote server input."
-msgstr "Ungültige Eingabe für Remote-Server."
-
-#. js-lingui-id: exysLG
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Invalid remote table input."
-msgstr "Ungültige Eingabe für Remotetabelle."
 
 #. js-lingui-id: lOyHVQ
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -3695,11 +3673,6 @@ msgstr "Kein aktives Abonnement gefunden."
 msgid "No event name provided in database event trigger"
 msgstr "Kein Ereignisname im Datenbankereignis-Trigger bereitgestellt"
 
-#. js-lingui-id: Xlzkd8
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "No foreign tables found."
-msgstr "Keine Fremdtabellen gefunden."
-
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
@@ -3902,7 +3875,6 @@ msgstr "Objektmetadaten nicht gefunden"
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
 msgstr "Objektmetadaten nicht gefunden."
@@ -4593,35 +4565,10 @@ msgstr "Remote-Objekte sind noch nicht produktionsbereit"
 msgid "Remote objects are not supported yet"
 msgstr "Remote Objekte werden noch nicht unterstützt"
 
-#. js-lingui-id: haIkpk
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server already exists."
-msgstr "Remote-Server existiert bereits."
-
-#. js-lingui-id: kcB/qR
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Remote server not found."
-msgstr "Remote-Server nicht gefunden."
-
-#. js-lingui-id: QxXX+p
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table already exists."
-msgstr "Remotetabelle existiert bereits."
-
-#. js-lingui-id: eaN14K
-#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
-msgid "Remote table not found."
-msgstr "Remotetabelle nicht gefunden."
-
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Anfrage ist abgelaufen, bitte versuchen Sie es erneut."
-
-#. js-lingui-id: sSkbaZ
-#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
-msgid "Request timed out."
-msgstr "Zeitüberschreitung bei der Anfrage."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -5588,11 +5535,6 @@ msgstr "Dieses Feld kann nicht geändert werden."
 msgid "This field name is not available."
 msgstr "Dieser Feldname ist nicht verfügbar."
 
-#. js-lingui-id: JwdaFV
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "This foreign table cannot be modified."
-msgstr "Diese Fremdtabelle kann nicht geändert werden."
-
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -5661,11 +5603,6 @@ msgstr "Dieser Eintrag existiert bereits. Bitte überprüfen Sie Ihre Daten und 
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr ""
-
-#. js-lingui-id: NxunhS
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "This remote server cannot be modified."
-msgstr "Dieser Remote-Server kann nicht geändert werden."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
