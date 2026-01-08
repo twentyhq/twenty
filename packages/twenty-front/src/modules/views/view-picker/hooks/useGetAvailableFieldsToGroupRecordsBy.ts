@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const useGetAvailableFieldsForKanban = () => {
+export const useGetAvailableFieldsToGroupRecordsBy = () => {
   const viewObjectMetadataId = useRecoilComponentValue(
     viewObjectMetadataIdComponentState,
   );
@@ -25,7 +25,7 @@ export const useGetAvailableFieldsForKanban = () => {
     (objectMetadata) => objectMetadata.id === viewObjectMetadataId,
   );
 
-  const availableFieldsForKanban =
+  const availableFieldsForGrouping =
     objectMetadataItem?.readableFields.filter(
       (field) =>
         field.type === FieldMetadataType.SELECT && field.isActive === true,
@@ -58,7 +58,7 @@ export const useGetAvailableFieldsForKanban = () => {
   ]);
 
   return {
-    availableFieldsForKanban,
+    availableFieldsForGrouping,
     navigateToSelectSettings,
   };
 };

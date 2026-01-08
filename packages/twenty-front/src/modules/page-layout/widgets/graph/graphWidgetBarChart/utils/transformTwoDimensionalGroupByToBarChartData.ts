@@ -10,6 +10,7 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
 import { type BarDatum } from '@nivo/bar';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -81,6 +82,11 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       primaryAxisSelectFieldOptions: groupByFieldX.options,
       secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
       secondaryAxisSelectFieldOptions: groupByFieldY.options,
+      secondaryAxisFieldType: groupByFieldY.type,
+      secondaryAxisSubFieldName:
+        (configuration.secondaryAxisGroupBySubFieldName ?? undefined) as
+          | CompositeFieldSubFieldName
+          | undefined,
     });
 
   const { limitedData, limitedKeys, limitedSeries, hasTooManyGroups } =

@@ -20,7 +20,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -75,8 +75,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     : undefined;
 
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
-  const { availableFieldsForKanban, navigateToSelectSettings } =
-    useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping, navigateToSelectSettings } =
+    useGetAvailableFieldsToGroupRecordsBy();
   const { availableFieldsForCalendar, navigateToDateFieldSettings } =
     useGetAvailableFieldsForCalendar();
   const { closeDropdown } = useCloseDropdown();
@@ -85,7 +85,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     if (isDefaultView) {
       return;
     }
-    if (availableFieldsForKanban.length === 0) {
+    if (availableFieldsForGrouping.length === 0) {
       navigateToSelectSettings();
       closeDropdown(dropdownId);
       return;
@@ -200,7 +200,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                         text={t`Not available for default view`}
                       />
                     </>
-                  ) : availableFieldsForKanban.length === 0 ? (
+                  ) : availableFieldsForGrouping.length === 0 ? (
                     t`Create Select...`
                   ) : undefined
                 }

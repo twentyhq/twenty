@@ -19,7 +19,9 @@ type SortTwoDimensionalChartPrimaryAxisDataParams<T> = {
   selectFieldOptions?: FieldMetadataItemOption[] | null;
 };
 
-export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually = <T>({
+export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded = <
+  T,
+>({
   data,
   orderBy,
   manualSortOrder,
@@ -50,14 +52,8 @@ export const sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually = <T>({
     }
 
     case GraphOrderBy.FIELD_ASC:
-      return data.toSorted((a, b) =>
-        getFormattedValue(a).localeCompare(getFormattedValue(b)),
-      );
-
     case GraphOrderBy.FIELD_DESC:
-      return data.toSorted((a, b) =>
-        getFormattedValue(b).localeCompare(getFormattedValue(a)),
-      );
+      return data;
 
     case GraphOrderBy.FIELD_POSITION_ASC:
     case GraphOrderBy.FIELD_POSITION_DESC: {

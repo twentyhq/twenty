@@ -9,7 +9,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import {
   isFieldMetadataSelectKind,
   type FirstDayOfTheWeek,
@@ -65,7 +65,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     }),
   );
 
-  const sortedData = sortChartData({
+  const sortedData = sortChartDataIfNeeded({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
     manualSortOrder: configuration.primaryAxisManualSortOrder,
