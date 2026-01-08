@@ -1,7 +1,9 @@
 import { usePageLayoutHeaderInfo } from '@/command-menu/components/hooks/usePageLayoutHeaderInfo';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -23,7 +25,18 @@ export const CommandMenuPageLayoutInfo = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
+    useRecoilComponentState(
+      commandMenuShouldFocusTitleInputComponentState,
+      commandMenuPageInfo.instanceId,
+    );
+
+  const handleTitleInputOpen = () => {
+    setShouldFocusTitleInput(false);
+  };
 
   const draftPageLayout = useRecoilComponentValue(
     pageLayoutDraftComponentState,
@@ -121,6 +134,8 @@ export const CommandMenuPageLayoutInfo = () => {
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
+          shouldFocus={shouldFocusTitleInput}
+          onFocus={handleTitleInputOpen}
         />
       }
       label={headerType}
