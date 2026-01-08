@@ -4,20 +4,22 @@ import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/Re
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import {
+  getOrderByForFieldMetadataType,
+  getOrderByForRelationField,
+} from '@/object-metadata/utils/getOrderByForFieldMetadataType';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type OrderBy } from '@/types/OrderBy';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewSortDirection } from '~/generated/graphql';
+import { FieldMetadataType, ViewSortDirection } from '~/generated/graphql';
 
 export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,
   sorts: RecordSort[],
+  objectMetadataItems: ObjectMetadataItem[] = [],
 ): RecordGqlOperationOrderBy => {
-  const fields: Pick<FieldMetadataItem, 'id' | 'name' | 'type'>[] =
-    objectMetadataItem?.fields ?? [];
+  const fields = objectMetadataItem?.fields ?? [];
 
   const fieldsById = mapArrayToObject(fields, ({ id }) => id);
 
@@ -33,6 +35,25 @@ export const turnSortsIntoOrderBy = (
         sort.direction === ViewSortDirection.ASC
           ? 'AscNullsFirst'
           : 'DescNullsLast';
+
+      // Handle RELATION fields by looking up related object metadata
+      if (correspondingField.type === FieldMetadataType.RELATION) {
+        const relatedObjectName =
+          correspondingField.relation?.targetObjectMetadata?.nameSingular;
+        const relatedObjectMetadata = objectMetadataItems.find(
+          (item) => item.nameSingular === relatedObjectName,
+        );
+
+        if (isDefined(relatedObjectMetadata)) {
+          return getOrderByForRelationField(
+            correspondingField,
+            relatedObjectMetadata,
+            direction,
+          );
+        }
+        // Fallback if related object not found - sort by FK
+        return [{ [`${correspondingField.name}Id`]: direction }];
+      }
 
       return getOrderByForFieldMetadataType(correspondingField, direction);
     })

@@ -273,7 +273,11 @@ export const WorkflowEditActionFindRecords = ({
 
                   const gqlOperationOrderBy =
                     sorts.length > 0
-                      ? turnSortsIntoOrderBy(selectedObjectMetadataItem, sorts)
+                      ? turnSortsIntoOrderBy(
+                          selectedObjectMetadataItem,
+                          sorts,
+                          objectMetadataItems,
+                        )
                       : undefined;
 
                   const newFormData: FindRecordsFormData = {

@@ -111,7 +111,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    commonQueryParser.applyOrderToBuilder(
+    const parsedOrderBy = commonQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
       flatObjectMetadata.nameSingular,
@@ -140,12 +140,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       queryBuilder.skip(args.offset);
     }
 
-    const objectRecords = (await queryBuilder
-      .setFindOptions({
-        select: columnsToSelect,
-      })
-      .take(limit + 1)
-      .getMany()) as ObjectRecord[];
+    queryBuilder.setFindOptions({ select: columnsToSelect });
+    queryBuilder.take(limit + 1);
+
+    // Add relation order columns AFTER setFindOptions (setFindOptions clears addSelect)
+    commonQueryParser.addRelationOrderColumnsToBuilder(
+      queryBuilder,
+      parsedOrderBy,
+      flatObjectMetadata.nameSingular,
+    );
+
+    const objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];
 
     const pageInfo = getPageInfo(
       objectRecords,

@@ -48,6 +48,15 @@ export type OrderByCondition = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
+export type RelationJoinInfo = {
+  joinAlias: string;
+};
+
+export type ParseOrderByResult = {
+  orderBy: Record<string, OrderByCondition>;
+  relationJoins: RelationJoinInfo[];
+};
+
 export class GraphqlQueryOrderFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -77,56 +86,218 @@ export class GraphqlQueryOrderFieldParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, OrderByCondition> {
-    return orderBy.reduce(
-      (acc, item) => {
-        Object.entries(item).forEach(([fieldName, orderByDirection]) => {
-          const fieldMetadataId =
-            this.fieldIdByName[fieldName] ||
-            this.fieldIdByJoinColumnName[fieldName];
-          const fieldMetadata =
-            this.flatFieldMetadataMaps.byId[fieldMetadataId];
+  ): ParseOrderByResult {
+    const orderByConditions: Record<string, OrderByCondition> = {};
+    const relationJoins: RelationJoinInfo[] = [];
+    const addedJoinAliases = new Set<string>();
 
-          if (!fieldMetadata || orderByDirection === undefined) {
-            throw new GraphqlQueryRunnerException(
-              `Field "${fieldName}" does not exist or is not sortable`,
-              GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
-              { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-            );
+    for (const item of orderBy) {
+      for (const [fieldName, orderByDirection] of Object.entries(item)) {
+        const fieldMetadataId =
+          this.fieldIdByName[fieldName] ||
+          this.fieldIdByJoinColumnName[fieldName];
+        const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+
+        if (!fieldMetadata || orderByDirection === undefined) {
+          throw new GraphqlQueryRunnerException(
+            `Field "${fieldName}" does not exist or is not sortable`,
+            GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        // Handle nested relation ordering like { company: { name: 'AscNullsLast' } }
+        if (
+          isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+          isObject(orderByDirection) &&
+          !this.isOrderByDirection(orderByDirection)
+        ) {
+          const relationOrderResult = this.parseRelationFieldOrder({
+            fieldMetadata,
+            orderByDirection: orderByDirection as Record<string, unknown>,
+            isForwardPagination,
+          });
+
+          if (relationOrderResult) {
+            Object.assign(orderByConditions, relationOrderResult.orderBy);
+
+            // Add join if not already added
+            if (!addedJoinAliases.has(relationOrderResult.joinInfo.joinAlias)) {
+              relationJoins.push(relationOrderResult.joinInfo);
+              addedJoinAliases.add(relationOrderResult.joinInfo.joinAlias);
+            }
           }
+          continue;
+        }
 
-          if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-            const compositeOrder = parseCompositeFieldForOrder(
-              fieldMetadata,
-              orderByDirection,
-              objectNameSingular,
-              isForwardPagination,
-            );
+        if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+          const compositeOrder = parseCompositeFieldForOrder(
+            fieldMetadata,
+            orderByDirection,
+            objectNameSingular,
+            isForwardPagination,
+          );
 
-            Object.assign(acc, compositeOrder);
-          } else {
-            const orderByCasting =
-              this.getOptionalOrderByCasting(fieldMetadata);
+          Object.assign(orderByConditions, compositeOrder);
+        } else {
+          const orderByCasting = this.getOptionalOrderByCasting(fieldMetadata);
 
-            const columnName = isMorphOrRelationFlatFieldMetadata(fieldMetadata)
-              ? formatColumnNameForRelationField(
-                  fieldMetadata.name,
-                  fieldMetadata.settings,
-                )
-              : fieldName;
+          const columnName = isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+            ? formatColumnNameForRelationField(
+                fieldMetadata.name,
+                fieldMetadata.settings,
+              )
+            : fieldName;
 
-            acc[`"${objectNameSingular}"."${columnName}"${orderByCasting}`] =
-              convertOrderByToFindOptionsOrder(
-                orderByDirection as OrderByDirection,
-                isForwardPagination,
-              );
-          }
-        });
+          // Use unquoted property path for TypeORM's getMany() alias resolution
+          orderByConditions[
+            `${objectNameSingular}.${columnName}${orderByCasting}`
+          ] = convertOrderByToFindOptionsOrder(
+            orderByDirection as OrderByDirection,
+            isForwardPagination,
+          );
+        }
+      }
+    }
 
-        return acc;
-      },
-      {} as Record<string, OrderByCondition>,
+    return {
+      orderBy: orderByConditions,
+      relationJoins,
+    };
+  }
+
+  private isOrderByDirection(value: unknown): value is OrderByDirection {
+    return (
+      typeof value === 'string' &&
+      Object.values(OrderByDirection).includes(value as OrderByDirection)
     );
+  }
+
+  private parseRelationFieldOrder({
+    fieldMetadata,
+    orderByDirection,
+    isForwardPagination,
+  }: {
+    fieldMetadata: FlatFieldMetadata;
+    orderByDirection: Record<string, unknown>;
+    isForwardPagination: boolean;
+  }): {
+    orderBy: Record<string, OrderByCondition>;
+    joinInfo: RelationJoinInfo;
+  } | null {
+    if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
+      return null;
+    }
+
+    const targetObjectMetadata =
+      this.flatObjectMetadataMaps.byId[
+        fieldMetadata.relationTargetObjectMetadataId
+      ];
+
+    if (!isDefined(targetObjectMetadata)) {
+      return null;
+    }
+
+    const nestedFieldName = Object.keys(orderByDirection)[0];
+    const nestedFieldOrderByValue = orderByDirection[nestedFieldName];
+
+    if (!isDefined(nestedFieldOrderByValue)) {
+      return null;
+    }
+
+    const { fieldIdByName: targetFieldIdByName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        this.flatFieldMetadataMaps,
+        targetObjectMetadata,
+      );
+
+    const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName];
+
+    if (!isDefined(nestedFieldMetadataId)) {
+      throw new GraphqlQueryRunnerException(
+        `Nested field "${nestedFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
+        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    const nestedFieldMetadata =
+      this.flatFieldMetadataMaps.byId[nestedFieldMetadataId];
+
+    if (!isDefined(nestedFieldMetadata)) {
+      return null;
+    }
+
+    const joinAlias = fieldMetadata.name;
+
+    const joinInfo: RelationJoinInfo = {
+      joinAlias,
+    };
+
+    // Handle composite nested fields (like FULL_NAME)
+    if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
+      if (!isObject(nestedFieldOrderByValue)) {
+        throw new GraphqlQueryRunnerException(
+          `Composite field "${nestedFieldMetadata.name}" requires a subfield to be specified`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      const compositeSubFields = Object.keys(
+        nestedFieldOrderByValue as Record<string, unknown>,
+      );
+
+      if (compositeSubFields.length > 1) {
+        throw new GraphqlQueryRunnerException(
+          'Please provide composite subfield criteria one by one in orderBy array',
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      const nestedSubFieldName = compositeSubFields[0];
+      const direction = (
+        nestedFieldOrderByValue as Record<string, OrderByDirection>
+      )[nestedSubFieldName];
+
+      if (!isDefined(direction) || !this.isOrderByDirection(direction)) {
+        return null;
+      }
+
+      const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
+        nestedFieldMetadata.name,
+        [nestedSubFieldName],
+      )[0];
+
+      // Use unquoted property path for TypeORM's getMany() alias resolution
+      return {
+        orderBy: {
+          [`${joinAlias}.${nestedColumnName}`]:
+            convertOrderByToFindOptionsOrder(direction, isForwardPagination),
+        },
+        joinInfo,
+      };
+    }
+
+    // Handle regular scalar nested fields
+    if (this.isOrderByDirection(nestedFieldOrderByValue)) {
+      const nestedColumnName = nestedFieldMetadata.name;
+
+      // Use unquoted property path for TypeORM's getMany() alias resolution
+      return {
+        orderBy: {
+          [`${joinAlias}.${nestedColumnName}`]:
+            convertOrderByToFindOptionsOrder(
+              nestedFieldOrderByValue,
+              isForwardPagination,
+            ),
+        },
+        joinInfo,
+      };
+    }
+
+    return null;
   }
 
   parseForGroupBy({

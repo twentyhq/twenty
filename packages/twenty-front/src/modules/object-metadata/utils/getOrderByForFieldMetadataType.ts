@@ -1,4 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 
 import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import {
@@ -70,4 +72,40 @@ export const getOrderByForFieldMetadataType = (
         },
       ];
   }
+};
+
+export const getOrderByForRelationField = (
+  field: FieldMetadataItem,
+  relatedObjectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'labelIdentifierFieldMetadataId'
+  >,
+  direction: OrderBy,
+): RecordGqlOperationOrderBy => {
+  const labelIdentifierField = getLabelIdentifierFieldMetadataItem(
+    relatedObjectMetadataItem,
+  );
+
+  if (!labelIdentifierField) {
+    // Fallback: sort by FK (less useful but safe)
+    return [{ [`${field.name}Id`]: direction }];
+  }
+
+  // Get the orderBy structure for the label identifier field type
+  // This returns the full nested structure, e.g.:
+  // - TEXT field 'name': [{ name: 'AscNullsLast' }]
+  // - FULL_NAME field 'name': [{ name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } }]
+  const labelFieldOrderBy = getOrderByForFieldMetadataType(
+    labelIdentifierField,
+    direction,
+  );
+
+  // Wrap the entire label field orderBy in the relation field name
+  // Result: { company: { name: 'AscNullsLast' } }
+  // or: { company: { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } } }
+  // Type assertion needed because RecordGqlOperationOrderBy doesn't support 3-level nesting
+  // but GraphQL API does for relation + composite fields
+  return [
+    { [field.name]: labelFieldOrderBy[0] },
+  ] as unknown as RecordGqlOperationOrderBy;
 };
