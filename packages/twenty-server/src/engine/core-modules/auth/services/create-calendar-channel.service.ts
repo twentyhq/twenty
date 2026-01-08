@@ -57,7 +57,9 @@ export class CreateCalendarChannelService {
             handle,
             visibility:
               calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
+            syncStatus: skipMessageChannelConfiguration
+              ? CalendarChannelSyncStatus.ONGOING
+              : CalendarChannelSyncStatus.NOT_SYNCED,
             syncStage: skipMessageChannelConfiguration
               ? CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING
               : CalendarChannelSyncStage.PENDING_CONFIGURATION,

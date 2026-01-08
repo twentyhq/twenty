@@ -65,7 +65,9 @@ export class CreateMessageChannelService {
             handle,
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+            syncStatus: skipMessageChannelConfiguration
+              ? MessageChannelSyncStatus.ONGOING
+              : MessageChannelSyncStatus.NOT_SYNCED,
             syncStage: skipMessageChannelConfiguration
               ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
               : MessageChannelSyncStage.PENDING_CONFIGURATION,
