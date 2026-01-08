@@ -71,6 +71,11 @@ export class WorkspaceManagerService {
 
     const dataSourceMetadataCreationStart = performance.now();
 
+    await this.dataSourceService.createDataSourceMetadata(
+      workspaceId,
+      schemaName,
+    );
+
     await this.applicationService.createTwentyStandardApplication({
       workspaceId,
     });
