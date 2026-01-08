@@ -45,6 +45,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
@@ -255,6 +256,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
 
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
+
+    await this.workspaceManagerService.prefillCreatedWorkspaceRecords({
+      workspaceId: workspace.id,
+      schemaName: getWorkspaceSchemaName(workspace.id),
+    });
 
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 

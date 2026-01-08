@@ -18,6 +18,8 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
+import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
+import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-opportunities';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
@@ -86,11 +88,6 @@ export class WorkspaceManagerService {
       },
     );
 
-    await this.prefillCreatedWorkspaceRecords({
-      workspaceId,
-      schemaName,
-    });
-
     const dataSourceMetadataCreationEnd = performance.now();
 
     this.logger.log(
@@ -111,18 +108,26 @@ export class WorkspaceManagerService {
     });
   }
 
-  private async prefillCreatedWorkspaceRecords({
+  public async prefillCreatedWorkspaceRecords({
     workspaceId,
     schemaName,
   }: {
     workspaceId: string;
     schemaName: string;
   }): Promise<void> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatPageLayoutMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatPageLayoutMaps',
+          ],
         },
       );
 
@@ -142,6 +147,14 @@ export class WorkspaceManagerService {
         schemaName,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+      );
+
+      await prefillOpportunities(queryRunner.manager, schemaName);
+
+      await prefillDashboards(
+        queryRunner.manager,
+        schemaName,
+        flatPageLayoutMaps,
       );
 
       await queryRunner.commitTransaction();
