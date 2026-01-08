@@ -40,7 +40,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()

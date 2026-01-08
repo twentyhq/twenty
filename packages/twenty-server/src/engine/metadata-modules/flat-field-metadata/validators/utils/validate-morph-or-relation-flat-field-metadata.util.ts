@@ -1,4 +1,8 @@
 import { msg } from '@lingui/core/macro';
+import {
+  RelationType,
+  type FieldMetadataRelationSettings,
+} from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -120,14 +124,23 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     }
   }
 
-  if (
-    !isDefined(updates) ||
-    isDefined(
-      findFlatEntityPropertyUpdate({
+  const update = isDefined(updates)
+    ? findFlatEntityPropertyUpdate({
         flatEntityUpdates: updates,
         property: 'settings',
-      }),
-    )
+      })
+    : undefined;
+
+  const toSettings = update?.to as FieldMetadataRelationSettings | undefined;
+  const fromSettings = update?.from as
+    | FieldMetadataRelationSettings
+    | undefined;
+
+  if (
+    !isDefined(update) ||
+    (isDefined(toSettings) &&
+      isDefined(fromSettings) &&
+      toSettings.joinColumnName !== fromSettings.joinColumnName)
   )
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
@@ -139,6 +152,18 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
         },
       }),
     );
+
+  if (
+    isDefined(toSettings) &&
+    isDefined(fromSettings) &&
+    isDefined(toSettings.onDelete) &&
+    toSettings.relationType !== RelationType.MANY_TO_ONE
+  ) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: 'On delete action is only supported for many to one relations',
+    });
+  }
 
   return errors;
 };

@@ -19,7 +19,9 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/is-property-update.util';
@@ -220,6 +222,65 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           ...optimisticFlatFieldMetadata,
           settings: update.to,
         };
+      }
+
+      if (
+        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
+        isPropertyUpdate(update, 'settings') &&
+        isDefined(update.from?.onDelete) &&
+        isDefined(update.to?.onDelete) &&
+        update.to.onDelete !== update.from.onDelete
+      ) {
+        const foreignKeyName =
+          await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
+            queryRunner,
+            schemaName,
+            tableName,
+            update.from.joinColumnName,
+          );
+
+        if (!isDefined(foreignKeyName)) {
+          throw new WorkspaceMigrationRunnerException(
+            'Foreign key not found',
+            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
+          );
+        }
+
+        await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
+          {
+            queryRunner,
+            schemaName,
+            tableName,
+            foreignKeyName,
+          },
+        );
+
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId:
+              optimisticFlatFieldMetadata.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+
+        const referencedTableName = computeObjectTargetTable(
+          targetFlatObjectMetadata,
+        );
+
+        await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
+          {
+            queryRunner,
+            schemaName,
+            foreignKey: {
+              tableName,
+              columnName: update.to.joinColumnName,
+              referencedTableName,
+              referencedColumnName: 'id',
+              onDelete:
+                convertOnDeleteActionToOnDelete(update.to.onDelete) ??
+                'CASCADE',
+            },
+          },
+        );
       }
     }
   }
