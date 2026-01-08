@@ -38,6 +38,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  /** @deprecated */
   probability: string;
   searchVector: string;
 }

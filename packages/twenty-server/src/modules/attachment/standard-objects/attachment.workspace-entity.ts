@@ -15,10 +15,12 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   fullPath: string | null;
+  /** @deprecated Use `fileCategory` field instead */
   type: string | null;
   fileCategory: string;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
+  /** @deprecated */
   author: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   authorId: string | null;
   task: EntityRelation<TaskWorkspaceEntity> | null;
