@@ -914,14 +914,6 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
-export type CreateRemoteServerInput = {
-  foreignDataWrapperOptions: Scalars['JSON'];
-  foreignDataWrapperType: Scalars['String'];
-  label: Scalars['String'];
-  schema?: InputMaybe<Scalars['String']>;
-  userMappingOptions?: InputMaybe<UserMappingOptions>;
-};
-
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
@@ -1232,14 +1224,6 @@ export type DestroyViewGroupInput = {
   id: Scalars['UUID'];
 };
 
-/** Schema update on a table */
-export enum DistantTableUpdate {
-  COLUMNS_ADDED = 'COLUMNS_ADDED',
-  COLUMNS_DELETED = 'COLUMNS_DELETED',
-  COLUMNS_TYPE_CHANGED = 'COLUMNS_TYPE_CHANGED',
-  TABLE_DELETED = 'TABLE_DELETED'
-}
-
 export type DomainRecord = {
   __typename?: 'DomainRecord';
   key: Scalars['String'];
@@ -1350,7 +1334,6 @@ export type FeatureFlagDto = {
 };
 
 export enum FeatureFlagKey {
-  IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
@@ -1358,14 +1341,11 @@ export enum FeatureFlagKey {
   IS_IF_ELSE_ENABLED = 'IS_IF_ELSE_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
-  IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
-  IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
-  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKSPACE_CREATION_V2_ENABLED = 'IS_WORKSPACE_CREATION_V2_ENABLED'
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
 }
 
 export type Field = {
@@ -1501,13 +1481,6 @@ export type FindAvailableSsoidpOutput = {
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
-};
-
-export type FindManyRemoteTablesInput = {
-  /** The id of the remote server. */
-  id: Scalars['ID'];
-  /** Indicates if pending schema updates status should be computed. */
-  shouldFetchPendingSchemaUpdates?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type FullName = {
@@ -1859,7 +1832,6 @@ export type Mutation = {
   createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
-  createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneRouteTrigger: RouteTrigger;
   createOneServerlessFunction: ServerlessFunction;
@@ -1894,7 +1866,6 @@ export type Mutation = {
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
-  deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
   deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
@@ -1969,12 +1940,9 @@ export type Mutation = {
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Scalars['Boolean'];
-  syncRemoteTable: RemoteTable;
-  syncRemoteTableSchemaChanges: RemoteTable;
   testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
-  unsyncRemoteTable: RemoteTable;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -1990,7 +1958,6 @@ export type Mutation = {
   updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
-  updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
   updateOneRouteTrigger: RouteTrigger;
   updateOneServerlessFunction: ServerlessFunction;
@@ -2193,11 +2160,6 @@ export type MutationCreateOneObjectArgs = {
 };
 
 
-export type MutationCreateOneRemoteServerArgs = {
-  input: CreateRemoteServerInput;
-};
-
-
 export type MutationCreateOneRoleArgs = {
   createRoleInput: CreateRoleInput;
 };
@@ -2362,11 +2324,6 @@ export type MutationDeleteOneFieldArgs = {
 
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
-};
-
-
-export type MutationDeleteOneRemoteServerArgs = {
-  input: RemoteServerIdInput;
 };
 
 
@@ -2721,16 +2678,6 @@ export type MutationSyncApplicationArgs = {
 };
 
 
-export type MutationSyncRemoteTableArgs = {
-  input: RemoteTableInput;
-};
-
-
-export type MutationSyncRemoteTableSchemaChangesArgs = {
-  input: RemoteTableInput;
-};
-
-
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
 };
@@ -2746,11 +2693,6 @@ export type MutationTrackAnalyticsArgs = {
 
 export type MutationUninstallApplicationArgs = {
   universalIdentifier: Scalars['String'];
-};
-
-
-export type MutationUnsyncRemoteTableArgs = {
-  input: RemoteTableInput;
 };
 
 
@@ -2832,11 +2774,6 @@ export type MutationUpdateOneFieldArgs = {
 
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
-};
-
-
-export type MutationUpdateOneRemoteServerArgs = {
-  input: UpdateRemoteServerInput;
 };
 
 
@@ -3368,20 +3305,17 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
   findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
-  findManyRemoteServersByType: Array<RemoteServer>;
   findManyRouteTriggers: Array<RouteTrigger>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneApplication: Application;
   findOneCronTrigger: CronTrigger;
   findOneDatabaseEventTrigger: DatabaseEventTrigger;
-  findOneRemoteServerById: RemoteServer;
   findOneRouteTrigger: RouteTrigger;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
@@ -3494,16 +3428,6 @@ export type QueryFieldsArgs = {
 };
 
 
-export type QueryFindDistantTablesWithStatusArgs = {
-  input: FindManyRemoteTablesInput;
-};
-
-
-export type QueryFindManyRemoteServersByTypeArgs = {
-  input: RemoteServerTypeInput;
-};
-
-
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -3521,11 +3445,6 @@ export type QueryFindOneCronTriggerArgs = {
 
 export type QueryFindOneDatabaseEventTriggerArgs = {
   input: DatabaseEventTriggerIdInput;
-};
-
-
-export type QueryFindOneRemoteServerByIdArgs = {
-  input: RemoteServerIdInput;
 };
 
 
@@ -3877,48 +3796,6 @@ export type Relation = {
 export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY'
-}
-
-export type RemoteServer = {
-  __typename?: 'RemoteServer';
-  createdAt: Scalars['DateTime'];
-  foreignDataWrapperId: Scalars['UUID'];
-  foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
-  foreignDataWrapperType: Scalars['String'];
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  schema?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  userMappingOptions?: Maybe<UserMappingOptionsUser>;
-};
-
-export type RemoteServerIdInput = {
-  /** The id of the record. */
-  id: Scalars['ID'];
-};
-
-export type RemoteServerTypeInput = {
-  foreignDataWrapperType: Scalars['String'];
-};
-
-export type RemoteTable = {
-  __typename?: 'RemoteTable';
-  id?: Maybe<Scalars['UUID']>;
-  name: Scalars['String'];
-  schema?: Maybe<Scalars['String']>;
-  schemaPendingUpdates?: Maybe<Array<DistantTableUpdate>>;
-  status: RemoteTableStatus;
-};
-
-export type RemoteTableInput = {
-  name: Scalars['String'];
-  remoteServerId: Scalars['UUID'];
-};
-
-/** Status of the table */
-export enum RemoteTableStatus {
-  NOT_SYNCED = 'NOT_SYNCED',
-  SYNCED = 'SYNCED'
 }
 
 export type ResendEmailVerificationTokenOutput = {
@@ -4611,14 +4488,6 @@ export type UpdatePageLayoutWithTabsInput = {
   type: PageLayoutType;
 };
 
-export type UpdateRemoteServerInput = {
-  foreignDataWrapperOptions?: InputMaybe<Scalars['JSON']>;
-  id: Scalars['UUID'];
-  label?: InputMaybe<Scalars['String']>;
-  schema?: InputMaybe<Scalars['String']>;
-  userMappingOptions?: InputMaybe<UserMappingOptionsUpdateInput>;
-};
-
 export type UpdateRoleInput = {
   /** The id of the role to update */
   id: Scalars['UUID'];
@@ -4892,21 +4761,6 @@ export type UserLookup = {
   __typename?: 'UserLookup';
   user: UserInfo;
   workspaces: Array<WorkspaceInfo>;
-};
-
-export type UserMappingOptions = {
-  password?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Scalars['String']>;
-};
-
-export type UserMappingOptionsUpdateInput = {
-  password?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Scalars['String']>;
-};
-
-export type UserMappingOptionsUser = {
-  __typename?: 'UserMappingOptionsUser';
-  user?: Maybe<Scalars['String']>;
 };
 
 export type UserWorkspace = {
@@ -5783,73 +5637,6 @@ export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
-
-export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
-
-export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: string | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null };
-
-export type CreateServerMutationVariables = Exact<{
-  input: CreateRemoteServerInput;
-}>;
-
-
-export type CreateServerMutation = { __typename?: 'Mutation', createOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
-
-export type DeleteServerMutationVariables = Exact<{
-  input: RemoteServerIdInput;
-}>;
-
-
-export type DeleteServerMutation = { __typename?: 'Mutation', deleteOneRemoteServer: { __typename?: 'RemoteServer', id: string } };
-
-export type SyncRemoteTableMutationVariables = Exact<{
-  input: RemoteTableInput;
-}>;
-
-
-export type SyncRemoteTableMutation = { __typename?: 'Mutation', syncRemoteTable: { __typename?: 'RemoteTable', id?: string | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
-
-export type SyncRemoteTableSchemaChangesMutationVariables = Exact<{
-  input: RemoteTableInput;
-}>;
-
-
-export type SyncRemoteTableSchemaChangesMutation = { __typename?: 'Mutation', syncRemoteTableSchemaChanges: { __typename?: 'RemoteTable', id?: string | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
-
-export type UnsyncRemoteTableMutationVariables = Exact<{
-  input: RemoteTableInput;
-}>;
-
-
-export type UnsyncRemoteTableMutation = { __typename?: 'Mutation', unsyncRemoteTable: { __typename?: 'RemoteTable', id?: string | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
-
-export type UpdateServerMutationVariables = Exact<{
-  input: UpdateRemoteServerInput;
-}>;
-
-
-export type UpdateServerMutation = { __typename?: 'Mutation', updateOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
-
-export type GetManyDatabaseConnectionsQueryVariables = Exact<{
-  input: RemoteServerTypeInput;
-}>;
-
-
-export type GetManyDatabaseConnectionsQuery = { __typename?: 'Query', findManyRemoteServersByType: Array<{ __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null }> };
-
-export type GetManyRemoteTablesQueryVariables = Exact<{
-  input: FindManyRemoteTablesInput;
-}>;
-
-
-export type GetManyRemoteTablesQuery = { __typename?: 'Query', findDistantTablesWithStatus: Array<{ __typename?: 'RemoteTable', id?: string | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null }> };
-
-export type GetOneDatabaseConnectionQueryVariables = Exact<{
-  input: RemoteServerIdInput;
-}>;
-
-
-export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
 export type CreateFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -7158,30 +6945,6 @@ export const BillingPriceMeteredFragmentFragmentDoc = gql`
     unitAmount
     upTo
   }
-}
-    `;
-export const RemoteServerFieldsFragmentDoc = gql`
-    fragment RemoteServerFields on RemoteServer {
-  id
-  createdAt
-  foreignDataWrapperId
-  foreignDataWrapperOptions
-  foreignDataWrapperType
-  userMappingOptions {
-    user
-  }
-  updatedAt
-  schema
-  label
-}
-    `;
-export const RemoteTableFieldsFragmentDoc = gql`
-    fragment RemoteTableFields on RemoteTable {
-  id
-  name
-  schema
-  status
-  schemaPendingUpdates
 }
     `;
 export const ApiKeyFragmentFragmentDoc = gql`
@@ -10003,309 +9766,6 @@ export function useListPlansLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ListPlansQueryHookResult = ReturnType<typeof useListPlansQuery>;
 export type ListPlansLazyQueryHookResult = ReturnType<typeof useListPlansLazyQuery>;
 export type ListPlansQueryResult = Apollo.QueryResult<ListPlansQuery, ListPlansQueryVariables>;
-export const CreateServerDocument = gql`
-    mutation createServer($input: CreateRemoteServerInput!) {
-  createOneRemoteServer(input: $input) {
-    ...RemoteServerFields
-  }
-}
-    ${RemoteServerFieldsFragmentDoc}`;
-export type CreateServerMutationFn = Apollo.MutationFunction<CreateServerMutation, CreateServerMutationVariables>;
-
-/**
- * __useCreateServerMutation__
- *
- * To run a mutation, you first call `useCreateServerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateServerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createServerMutation, { data, loading, error }] = useCreateServerMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateServerMutation(baseOptions?: Apollo.MutationHookOptions<CreateServerMutation, CreateServerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateServerMutation, CreateServerMutationVariables>(CreateServerDocument, options);
-      }
-export type CreateServerMutationHookResult = ReturnType<typeof useCreateServerMutation>;
-export type CreateServerMutationResult = Apollo.MutationResult<CreateServerMutation>;
-export type CreateServerMutationOptions = Apollo.BaseMutationOptions<CreateServerMutation, CreateServerMutationVariables>;
-export const DeleteServerDocument = gql`
-    mutation deleteServer($input: RemoteServerIdInput!) {
-  deleteOneRemoteServer(input: $input) {
-    id
-  }
-}
-    `;
-export type DeleteServerMutationFn = Apollo.MutationFunction<DeleteServerMutation, DeleteServerMutationVariables>;
-
-/**
- * __useDeleteServerMutation__
- *
- * To run a mutation, you first call `useDeleteServerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteServerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteServerMutation, { data, loading, error }] = useDeleteServerMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteServerMutation(baseOptions?: Apollo.MutationHookOptions<DeleteServerMutation, DeleteServerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteServerMutation, DeleteServerMutationVariables>(DeleteServerDocument, options);
-      }
-export type DeleteServerMutationHookResult = ReturnType<typeof useDeleteServerMutation>;
-export type DeleteServerMutationResult = Apollo.MutationResult<DeleteServerMutation>;
-export type DeleteServerMutationOptions = Apollo.BaseMutationOptions<DeleteServerMutation, DeleteServerMutationVariables>;
-export const SyncRemoteTableDocument = gql`
-    mutation syncRemoteTable($input: RemoteTableInput!) {
-  syncRemoteTable(input: $input) {
-    ...RemoteTableFields
-  }
-}
-    ${RemoteTableFieldsFragmentDoc}`;
-export type SyncRemoteTableMutationFn = Apollo.MutationFunction<SyncRemoteTableMutation, SyncRemoteTableMutationVariables>;
-
-/**
- * __useSyncRemoteTableMutation__
- *
- * To run a mutation, you first call `useSyncRemoteTableMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSyncRemoteTableMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [syncRemoteTableMutation, { data, loading, error }] = useSyncRemoteTableMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSyncRemoteTableMutation(baseOptions?: Apollo.MutationHookOptions<SyncRemoteTableMutation, SyncRemoteTableMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SyncRemoteTableMutation, SyncRemoteTableMutationVariables>(SyncRemoteTableDocument, options);
-      }
-export type SyncRemoteTableMutationHookResult = ReturnType<typeof useSyncRemoteTableMutation>;
-export type SyncRemoteTableMutationResult = Apollo.MutationResult<SyncRemoteTableMutation>;
-export type SyncRemoteTableMutationOptions = Apollo.BaseMutationOptions<SyncRemoteTableMutation, SyncRemoteTableMutationVariables>;
-export const SyncRemoteTableSchemaChangesDocument = gql`
-    mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {
-  syncRemoteTableSchemaChanges(input: $input) {
-    ...RemoteTableFields
-  }
-}
-    ${RemoteTableFieldsFragmentDoc}`;
-export type SyncRemoteTableSchemaChangesMutationFn = Apollo.MutationFunction<SyncRemoteTableSchemaChangesMutation, SyncRemoteTableSchemaChangesMutationVariables>;
-
-/**
- * __useSyncRemoteTableSchemaChangesMutation__
- *
- * To run a mutation, you first call `useSyncRemoteTableSchemaChangesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSyncRemoteTableSchemaChangesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [syncRemoteTableSchemaChangesMutation, { data, loading, error }] = useSyncRemoteTableSchemaChangesMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSyncRemoteTableSchemaChangesMutation(baseOptions?: Apollo.MutationHookOptions<SyncRemoteTableSchemaChangesMutation, SyncRemoteTableSchemaChangesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SyncRemoteTableSchemaChangesMutation, SyncRemoteTableSchemaChangesMutationVariables>(SyncRemoteTableSchemaChangesDocument, options);
-      }
-export type SyncRemoteTableSchemaChangesMutationHookResult = ReturnType<typeof useSyncRemoteTableSchemaChangesMutation>;
-export type SyncRemoteTableSchemaChangesMutationResult = Apollo.MutationResult<SyncRemoteTableSchemaChangesMutation>;
-export type SyncRemoteTableSchemaChangesMutationOptions = Apollo.BaseMutationOptions<SyncRemoteTableSchemaChangesMutation, SyncRemoteTableSchemaChangesMutationVariables>;
-export const UnsyncRemoteTableDocument = gql`
-    mutation unsyncRemoteTable($input: RemoteTableInput!) {
-  unsyncRemoteTable(input: $input) {
-    ...RemoteTableFields
-  }
-}
-    ${RemoteTableFieldsFragmentDoc}`;
-export type UnsyncRemoteTableMutationFn = Apollo.MutationFunction<UnsyncRemoteTableMutation, UnsyncRemoteTableMutationVariables>;
-
-/**
- * __useUnsyncRemoteTableMutation__
- *
- * To run a mutation, you first call `useUnsyncRemoteTableMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnsyncRemoteTableMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [unsyncRemoteTableMutation, { data, loading, error }] = useUnsyncRemoteTableMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUnsyncRemoteTableMutation(baseOptions?: Apollo.MutationHookOptions<UnsyncRemoteTableMutation, UnsyncRemoteTableMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UnsyncRemoteTableMutation, UnsyncRemoteTableMutationVariables>(UnsyncRemoteTableDocument, options);
-      }
-export type UnsyncRemoteTableMutationHookResult = ReturnType<typeof useUnsyncRemoteTableMutation>;
-export type UnsyncRemoteTableMutationResult = Apollo.MutationResult<UnsyncRemoteTableMutation>;
-export type UnsyncRemoteTableMutationOptions = Apollo.BaseMutationOptions<UnsyncRemoteTableMutation, UnsyncRemoteTableMutationVariables>;
-export const UpdateServerDocument = gql`
-    mutation updateServer($input: UpdateRemoteServerInput!) {
-  updateOneRemoteServer(input: $input) {
-    ...RemoteServerFields
-  }
-}
-    ${RemoteServerFieldsFragmentDoc}`;
-export type UpdateServerMutationFn = Apollo.MutationFunction<UpdateServerMutation, UpdateServerMutationVariables>;
-
-/**
- * __useUpdateServerMutation__
- *
- * To run a mutation, you first call `useUpdateServerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateServerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateServerMutation, { data, loading, error }] = useUpdateServerMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateServerMutation(baseOptions?: Apollo.MutationHookOptions<UpdateServerMutation, UpdateServerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateServerMutation, UpdateServerMutationVariables>(UpdateServerDocument, options);
-      }
-export type UpdateServerMutationHookResult = ReturnType<typeof useUpdateServerMutation>;
-export type UpdateServerMutationResult = Apollo.MutationResult<UpdateServerMutation>;
-export type UpdateServerMutationOptions = Apollo.BaseMutationOptions<UpdateServerMutation, UpdateServerMutationVariables>;
-export const GetManyDatabaseConnectionsDocument = gql`
-    query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {
-  findManyRemoteServersByType(input: $input) {
-    ...RemoteServerFields
-  }
-}
-    ${RemoteServerFieldsFragmentDoc}`;
-
-/**
- * __useGetManyDatabaseConnectionsQuery__
- *
- * To run a query within a React component, call `useGetManyDatabaseConnectionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetManyDatabaseConnectionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetManyDatabaseConnectionsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGetManyDatabaseConnectionsQuery(baseOptions: Apollo.QueryHookOptions<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>(GetManyDatabaseConnectionsDocument, options);
-      }
-export function useGetManyDatabaseConnectionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>(GetManyDatabaseConnectionsDocument, options);
-        }
-export type GetManyDatabaseConnectionsQueryHookResult = ReturnType<typeof useGetManyDatabaseConnectionsQuery>;
-export type GetManyDatabaseConnectionsLazyQueryHookResult = ReturnType<typeof useGetManyDatabaseConnectionsLazyQuery>;
-export type GetManyDatabaseConnectionsQueryResult = Apollo.QueryResult<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>;
-export const GetManyRemoteTablesDocument = gql`
-    query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {
-  findDistantTablesWithStatus(input: $input) {
-    ...RemoteTableFields
-  }
-}
-    ${RemoteTableFieldsFragmentDoc}`;
-
-/**
- * __useGetManyRemoteTablesQuery__
- *
- * To run a query within a React component, call `useGetManyRemoteTablesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetManyRemoteTablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetManyRemoteTablesQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGetManyRemoteTablesQuery(baseOptions: Apollo.QueryHookOptions<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>(GetManyRemoteTablesDocument, options);
-      }
-export function useGetManyRemoteTablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>(GetManyRemoteTablesDocument, options);
-        }
-export type GetManyRemoteTablesQueryHookResult = ReturnType<typeof useGetManyRemoteTablesQuery>;
-export type GetManyRemoteTablesLazyQueryHookResult = ReturnType<typeof useGetManyRemoteTablesLazyQuery>;
-export type GetManyRemoteTablesQueryResult = Apollo.QueryResult<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>;
-export const GetOneDatabaseConnectionDocument = gql`
-    query GetOneDatabaseConnection($input: RemoteServerIdInput!) {
-  findOneRemoteServerById(input: $input) {
-    ...RemoteServerFields
-  }
-}
-    ${RemoteServerFieldsFragmentDoc}`;
-
-/**
- * __useGetOneDatabaseConnectionQuery__
- *
- * To run a query within a React component, call `useGetOneDatabaseConnectionQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOneDatabaseConnectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetOneDatabaseConnectionQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGetOneDatabaseConnectionQuery(baseOptions: Apollo.QueryHookOptions<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>(GetOneDatabaseConnectionDocument, options);
-      }
-export function useGetOneDatabaseConnectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>(GetOneDatabaseConnectionDocument, options);
-        }
-export type GetOneDatabaseConnectionQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionQuery>;
-export type GetOneDatabaseConnectionLazyQueryHookResult = ReturnType<typeof useGetOneDatabaseConnectionLazyQuery>;
-export type GetOneDatabaseConnectionQueryResult = Apollo.QueryResult<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
 export const CreateFileDocument = gql`
     mutation CreateFile($file: Upload!) {
   createFile(file: $file) {

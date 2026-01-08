@@ -11,6 +11,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processTwoDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processTwoDimensionalGroupByResults';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -72,6 +73,11 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     primaryAxisSelectFieldOptions: groupByFieldX.options,
     secondaryAxisFormattedToRawLookup: yFormattedToRawLookup,
     secondaryAxisSelectFieldOptions: groupByFieldY.options,
+    secondaryAxisFieldType: groupByFieldY.type,
+    secondaryAxisSubFieldName:
+      (configuration.secondaryAxisGroupBySubFieldName ?? undefined) as
+        | CompositeFieldSubFieldName
+        | undefined,
   });
 
   const { limitedSeries, hasTooManyGroups } = limitTwoDimensionalLineChartData({

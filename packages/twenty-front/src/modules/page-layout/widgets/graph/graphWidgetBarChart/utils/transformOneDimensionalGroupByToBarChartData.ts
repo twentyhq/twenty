@@ -11,7 +11,7 @@ import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/deter
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import { type BarDatum } from '@nivo/bar';
 import {
   isDefined,
@@ -94,7 +94,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     },
   );
 
-  const sortedData = sortChartData({
+  const sortedData = sortChartDataIfNeeded({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
     manualSortOrder: configuration.primaryAxisManualSortOrder,

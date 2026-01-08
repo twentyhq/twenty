@@ -5,118 +5,118 @@ description: CSV içe aktarma hatalarını çözmeye yönelik eksiksiz bir sorun
 
 ## Genel Bakış
 
-İçe aktarma çalışmıyor mu? This guide helps you identify and fix common import errors step by step.
+İçe aktarma çalışmıyor mu? Bu kılavuz, yaygın içe aktarma hatalarını adım adım belirlemenize ve düzeltmenize yardımcı olur.
 
-## How Import Validation Works
+## İçe Aktarma Doğrulaması Nasıl Çalışır
 
-After uploading your file and mapping columns, Twenty validates your data:
+Dosyanızı yükledikten ve sütunları eşledikten sonra, Twenty verilerinizi doğrular:
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **Doğrulama çalışır** — Twenty her satırı hatalar için kontrol eder
+2. **Hatalar vurgulanır** — sorunlu satırlar **sarı** görünür
+3. **Yerinde düzeltebilirsiniz** — hücreleri doğrudan içe aktarma arayüzünde düzenleyin
+4. **Veya satırları kaldırın** — sorunlu kayıtları tamamen atlayın
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**Hataları arayüzde düzeltin.** E-tablonuza geri dönmenize gerek yok. Zamandan tasarruf etmek için içe aktarma sırasında hücreleri doğrudan düzenleyin.</Note>
 
-## Step-by-Step Troubleshooting
+## Adım Adım Sorun Giderme
 
-### Step 1: Identify the Error Type
+### Adım 1: Hata Türünü Belirleyin
 
-Click on a highlighted row to see the specific error message. Common error types:
+Özel hata mesajını görmek için vurgulanmış bir satıra tıklayın. Yaygın hata türleri:
 
-| Hata Mesajı                                                           | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| Hata Mesajı                                                                    | Ne Anlama Gelir                                                |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Yinelenen değerler sarı renkle vurgulanır                                      | Değer Twenty'de zaten mevcut veya dosyanızda iki kez görünüyor |
+| `{field} is not a valid {type}` (sarı hücrenin üzerine gelin)                  | Veri beklenen biçimle eşleşmiyor                               |
+| Zorunlu alan vurgulanmış                                                       | Zorunlu bir alan boş                                           |
+| `Can't connect to {object}. No unique record found...` (içe aktarma başarısız) | Başvurulan kayıt mevcut değil                                  |
+| `Too many records. Up to 10000 allowed` (yükleme engellendi)                   | Dosyada 10.000'den fazla kayıt var                             |
 
-### Step 2: Fix the Error
+### Adım 2: Hatayı Düzeltin
 
-Follow the specific instructions below for each error type.
+Her hata türü için aşağıdaki özel talimatları izleyin.
 
 ---
 
-## Error: Duplicate Value
+## Hata: Yinelenen Değer
 
 ### Görecekleriniz
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+İçe aktarma başlamadan önce içe aktarma arayüzünde yinelenen değerlere sahip satırlar **sarı renkle vurgulanır**.
 
-### What It Means
+### Ne Anlama Gelir
 
-A unique field (email, domain) either:
+Benzersiz bir alan (e-posta, alan adı) ya:
 
-* Already exists in Twenty
-* Appears twice in your file
+* Twenty'de zaten mevcut
+* Dosyanızda iki kez görünüyor
 
-### How to Fix
+### Nasıl Düzeltilir
 
-**Option 1: Edit the duplicate value**
+**Seçenek 1: Yinelenen değeri düzenleyin**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. Hatanın bulunduğu hücreye tıklayın
+2. Benzersiz bir değere değiştirin
+3. İçe aktarmaya devam edin
 
-**Option 2: Remove the duplicate row**
+**Seçenek 2: Yinelenen satırı kaldırın**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. Satırın yanındaki X'e tıklayın
+2. Satır, içe aktarma sırasında atlanacaktır
 
-**Option 3: Let Twenty update the existing record**
+**Seçenek 3: Mevcut kaydı Twenty'nin güncellemesine izin verin**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. Dosyanızın benzersiz bir tanımlayıcı (`email`, `domain` veya `id`) içerdiğinden emin olun
+2. Benzersiz tanımlayıcı alanını eşleyin
+3. Twenty, yinelenen bir kayıt oluşturmak yerine mevcut kaydı güncelleyecektir
 
 <Note>
-  **You can update unique fields too.**
+  **Benzersiz alanları da güncelleyebilirsiniz.**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * `id`'yi korur ancak `email`'i değiştirirseniz → e-posta güncellenir
+  * `email`'i korur ancak `id`'yi değiştirirseniz → id güncellenir
 
-  As long as one unique identifier matches, Twenty updates the record.
+  Benzersiz tanımlayıcılardan biri eşleştiği sürece Twenty kaydı günceller.
 </Note>
 
-### How to Prevent This Error
+### Bu Hata Nasıl Önlenir
 
-Before importing:
+İçe aktarmadan önce:
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. E-tablonuzu benzersiz alana göre sıralayın
+2. Yinelenen satırları kaldırın
+3. Kayıtların Twenty'de zaten mevcut olup olmadığını kontrol edin
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  Komut Menüsünü kontrol edin → Silinen kayıtları görün. Oradaki kayıtlar benzersizliği yine de uygular. Onları kalıcı olarak silin ya da geri yükleyip güncelleyin.
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+Daha fazla ayrıntı için: [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## Hata: Geçersiz Biçim
 
 ### Görecekleriniz
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+Hücre değeri sarı renkle vurgulanır. Hata mesajını görmek için üzerine gelin:
 
 ```
 {field name} is not a valid {field type}
 ```
 
-### What It Means
+### Ne Anlama Gelir
 
-The data doesn't match the expected format for that field type.
+Veriler, o alan türü için beklenen biçimle eşleşmiyor.
 
-### How to Fix — By Field Type
+### Nasıl Düzeltilir — Alan Türüne Göre
 
 #### E-posta
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**Sorun:** Geçersiz e-posta biçimi
+**Çözüm:** `name@domain.com` biçimini kullanın
 
 ```
 ❌ john.smith@
@@ -126,8 +126,8 @@ The data doesn't match the expected format for that field type.
 
 #### Alan Adı
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
+**Sorun:** Tutarsız biçim yinelenmelere neden olabilir
+**Çözüm:** `https://domain.com` biçimini kullanın (önerilir)
 
 ```
 ⚠️ acme.com         (valid, but not recommended)
@@ -135,12 +135,12 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>Tüm biçimler geçerlidir, ancak e-posta/takvim senkronizasyonunun kullandığı biçimle eşleştiği için `https://domain.com` önerilir. Diğer biçimlerin kullanılması yinelenen şirketler oluşturabilir.</Note>
 
 #### Tarih
 
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**Sorun:** Tanınmayan tarih biçimi
+**Çözüm:** Dosya genelinde tutarlı bir biçim kullanın
 
 ```
 ✓ 2024-03-15        (YYYY-MM-DD - recommended)
@@ -150,10 +150,10 @@ The data doesn't match the expected format for that field type.
 
 #### Telefon
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**Sorun:** Gerekli sütunlar eksik
+**Çözüm:** Tüm telefon sütunlarını dahil edin
 
-| Column                                  | Örnek        |
+| Sütun                                   | Örnek        |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
@@ -161,8 +161,8 @@ The data doesn't match the expected format for that field type.
 
 #### Boolean
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**Sorun:** Hatalı boolean değeri
+**Çözüm:** Büyük harfle `TRUE` veya `FALSE` kullanın
 
 ```
 ❌ true
@@ -172,17 +172,17 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### Seçim / Çoklu Seçim
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**Sorun:** Değer mevcut seçeneklerle eşleşmiyor
+**Çözüm:** Görünen etiketler değil, **API adlarını** kullanın
 
-How to find API names:
+API adları nasıl bulunur:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi ve alanı seçin
+3. **Gelişmiş modu** etkinleştirin (sağ alttaki anahtarı kullanarak)
+4. API adını kullanın (ör. `OPTION_1`, "Option 1" değil)
 
 ```
 ❌ High Priority
@@ -191,18 +191,18 @@ How to find API names:
 
 #### Para Birimi
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**Sorun:** Tutar veya para birimi kodu eksik
+**Çözüm:** Her iki sütunu da doldurun
 
-| Column                | Örnek     |
+| Sütun                 | Örnek     |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
 #### Sayı
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**Sorun:** Sayısal olmayan karakterler
+**Çözüm:** Yalnızca sayılar, ondalıklar için nokta kullanın
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+Tam biçim başvurusu için: [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## Hata: Zorunlu Alan Eksik
 
 ### Görecekleriniz
 
-The row is highlighted in yellow with the required field cell marked.
+Satır, zorunlu alan hücresi işaretlenmiş şekilde sarı renkle vurgulanır.
 
-### What It Means
+### Ne Anlama Gelir
 
-A required field is empty for this row.
+Bu satır için zorunlu bir alan boş.
 
-### How to Fix
+### Nasıl Düzeltilir
 
-**Option 1: Enter a value**
+**Seçenek 1: Bir değer girin**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. Boş hücreye tıklayın
+2. Bir değer girin
+3. İçe aktarmaya devam edin
 
-**Option 2: Remove the row**
+**Seçenek 2: Satırı kaldırın**
 
-1. If you don't have the data, click X to skip the row
+1. Veri yoksa, satırı atlamak için X'e tıklayın
 
-### How to Prevent This Error
+### Bu Hata Nasıl Önlenir
 
-Before importing, identify required fields:
+İçe aktarmadan önce, zorunlu alanları belirleyin:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin
+3. Hangi alanların zorunlu olarak işaretlendiğini kontrol edin
 
 ---
 
-## Error: Relation Not Found
+## Hata: İlişki Bulunamadı
 
 ### Görecekleriniz
 
-This error appears **after the import starts** — the import fails with a message like:
+Bu hata **içe aktarma başladıktan sonra** görünür — içe aktarma şu tür bir mesajla başarısız olur:
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+Bu, Twenty'de o özel tanımlayıcıya sahip bir Şirket olmadığı anlamına gelir.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>Diğer hatalardan farklı olarak, bu hata veri inceleme adımında yakalanmaz. İçe aktarma başlar ve eksik ilişkiyle karşılaştığında başarısız olur.</Note>
 
-### What It Means
+### Ne Anlama Gelir
 
-You're trying to link to a record that doesn't exist in Twenty.
+Twenty'de mevcut olmayan bir kayda bağlanmaya çalışıyorsunuz.
 
-### How to Fix
+### Nasıl Düzeltilir
 
-**Option 1: Import parent records first**
+**Seçenek 1: Önce ana kayıtları içe aktarın**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. Geçerli içe aktarmayı iptal edin
+2. Ana kayıtları içe aktarın (ör. Şirketler)
+3. Ardından alt kayıtları içe aktarın (ör. Kişiler)
 
-**Option 2: Fix the reference value**
+**Seçenek 2: Referans değerini düzeltin**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. Dosyanızdaki referans değerini kontrol edin
+2. Mevcut bir kayıtla tam olarak eşleştiğinden emin olun
+3. Biçimi doğrulayın: alan adları `https://domain.com` olmalıdır
 
-**Option 3: Remove the relation**
+**Seçenek 3: İlişkiyi kaldırın**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. İlişki olmadan içe aktarmak için hücreyi temizleyin
+2. İlişkiyi daha sonra manuel olarak ekleyin
 
-### How to Prevent This Error
+### Bu Hata Nasıl Önlenir
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **Doğru sırayla içe aktarın:**
+   * Önce Şirketler
+   * İkinci olarak Kişiler (şirket referanslarıyla)
+   * Üçüncü olarak Fırsatlar
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+2. **Referans değerlerini doğrulayın:**
+   * Tam tanımlayıcıları almak için ana kayıtları dışa aktarın
+   * Alan adı biçimi `https://domain.com` kullanın
+   * Yazım hatalarını ve büyük/küçük harf duyarlılığını kontrol edin
 
 <Warning>
-  **Import will fail if a reference is made to a non-existent record.**
+  **Var olmayan bir kayda referans verilirse içe aktarma başarısız olur.**
 
-  Always import parent objects before child objects.
+  Her zaman alt nesnelerden önce ana nesneleri içe aktarın.
 </Warning>
 
-For more details: [Import Relations](/l/tr/user-guide/data-migration/capabilities/import-relations)
+Daha fazla ayrıntı için: [İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
 
 ---
 
-## Error: File Too Large
+## Hata: Dosya Çok Büyük
 
 ### Görecekleriniz
 
-This error appears **when uploading your file** — the upload is blocked entirely:
+Bu hata **dosyanızı yüklerken** görünür — yükleme tamamen engellenir:
 
 ```
 Too many records. Up to 10000 allowed
 ```
 
-You won't be able to proceed to the data review step until you reduce the file size.
+Dosya boyutunu küçültmeden veri inceleme adımına ilerleyemezsiniz.
 
-### What It Means
+### Ne Anlama Gelir
 
-Your file has more than 10,000 records.
+Dosyanızda 10.000'den fazla kayıt var.
 
-### How to Fix
+### Nasıl Düzeltilir
 
-**Option 1: Split into multiple files**
+**Seçenek 1: Birden çok dosyaya bölün**
 
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
+1. Verilerinizi 10.000 veya daha az kayıttan oluşan dosyalara bölün
+2. Her dosyayı ayrı ayrı içe aktarın
+3. İçe aktarma sırasını koruyun (Şirketler Kişilerden önce)
 
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+**Seçenek 2: API ile içe aktarmayı kullanın**
+Çok büyük veri kümeleri için, kayıt sınırı olmayan API'yi kullanın.
+Bkz.: [API ile Veri Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
 
 ---
 
-## Error: User Relation Empty
+## Hata: Alan Tanınmadı
 
-### What It Means
+### Ne Anlama Gelir
 
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+Dosyanızdaki bir sütun eşlenemiyor çünkü alan Twenty'de mevcut değil.
 
-### Common Causes
+### Nasıl Düzeltilir
 
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. İçe aktardığınız nesneyi seçin
+3. **+ Alan Ekle**'ye tıklayın
+4. Uygun türde özel alanı oluşturun
+5. Dosyanızı yeniden yükleyin
 
-### How to Fix
+<Note>CSV içe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce tüm alanlar mevcut olmalıdır.</Note>
 
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+---
+
+## Hata: Kullanıcı İlişkisi Boş
+
+### Ne Anlama Gelir
+
+Bir kaydı bir kullanıcıya (Sahip, Atanan) atamaya çalışıyorsunuz ancak ilişki eşlenmiyor.
+
+### Yaygın Nedenler
+
+1. **Kullanıcı davetini kabul etmedi** — kullanıcı henüz Twenty'de mevcut değil
+2. **Eski sistemdeki kullanıcı kimliğini kullanma** — Twenty başka bir sistemin kimliklerini eşleştiremez
+3. **Yanlış e-posta biçimi** — e-posta, kullanıcının Twenty hesabıyla eşleşmiyor
+
+### Nasıl Düzeltilir
+
+1. Tüm kullanıcıların Twenty çalışma alanınıza **davetlerini kabul ettiğinden** emin olun
+2. Kullanıcının **e-posta adresini** kullanın (adlarını veya eski sistem kimliğini değil)
+3. Twenty'ye katılmak için kullandıkları aynı e-postayı kullanın
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **Kullanıcılar, içe aktarmadan önce davetleri kabul etmelidir.**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  Bir kullanıcı davetini kabul etmediyse, onlara referans veren kayıtların kullanıcı ilişkileri boş olacaktır.
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## İçe Aktarma Öncesi Kontrol Listesi
 
-Avoid errors by checking these before importing:
+İçe aktarmadan önce bunları kontrol ederek hatalardan kaçının:
 
-### File Requirements
+### Dosya Gereksinimleri
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>Dosya CSV, XLSX veya XLS biçiminde</Check>
+<Check>Dosyada 10.000'den az kayıt var</Check>
+<Check>Dosya UTF-8 kodlaması kullanıyor</Check>
 
-### Data Quality
+### Veri Kalitesi
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>Yinelenen e-postalar yok (Kişiler için)</Check>
+<Check>Yinelenen alan adları yok (Şirketler için)</Check>
+<Check>Tüm tarihler tutarlı biçim kullanır</Check>
+<Check>Tüm alan adları `https://domain.com` biçimini kullanır</Check>
 
-### Field Formats
+### Alan Biçimleri
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>Boolean alanlar `TRUE` veya `FALSE` kullanır (büyük harf)</Check>
+<Check>Seçim alanları, görünen etiketler değil API adlarını kullanır</Check>
+<Check>Telefon alanlarında gerekli tüm sütunlar vardır</Check>
+<Check>Para birimi alanlarında hem Amount hem de Currency Code bulunur</Check>
 
 ### İlişkiler
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>Ana kayıtlar, alt kayıtlardan önce içe aktarılır</Check>
+<Check>İlişki sütunları mevcut kayıtlara referans verir</Check>
+<Check>Alan adı biçimi, Twenty'nin biçimiyle birebir eşleşir</Check>
 
 ### Veri modeli
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>Tüm özel alanlar Ayarlar → Veri Modeli'nde mevcut</Check>
+<Check>Seçim seçenekleri içe aktarmadan önce mevcut</Check>
 
 ---
 
-## Still Having Issues?
+## Hâlâ Sorun mu Yaşıyorsunuz?
 
-If you've tried the above solutions:
+Yukarıdaki çözümleri denediyseniz:
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/tr/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/tr/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/tr/user-guide/data-migration/capabilities/error-handling)
+1. **Örnek dosyayı indirin** — Twenty'nin beklediği tam biçimi görün
+2. **Mevcut kayıtları dışa aktarın** — dosyanızı çalışır durumdaki verilerle karşılaştırın
+3. **Küçük bir partiyle test edin** — önce 5-10 satırı deneyin
+4. **Referans makaleleri kontrol edin:**
+   * [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+   * [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
+   * [Hata İşleme](/l/tr/user-guide/data-migration/capabilities/error-handling)
