@@ -16,7 +16,7 @@ const formattedToRawLookup = new Map([
 const getFormattedValue = (item: TestItem) => item.label;
 
 describe('sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually', () => {
-  it('should sort by FIELD_ASC', () => {
+  it('should return data unchanged by FIELD_ASC, since it is already sorted by the backend', () => {
     const result = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
       data: testData,
       orderBy: GraphOrderBy.FIELD_ASC,
@@ -24,7 +24,7 @@ describe('sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually', () => {
       getFormattedValue,
     });
 
-    expect(result.map((i) => i.label)).toEqual(['Alpha', 'Beta', 'Gamma']);
+    expect(result.map((i) => i.label)).toEqual(['Beta', 'Alpha', 'Gamma']);
   });
 
   it('should sort by MANUAL order', () => {
