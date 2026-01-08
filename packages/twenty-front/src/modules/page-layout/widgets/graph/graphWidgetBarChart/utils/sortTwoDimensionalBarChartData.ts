@@ -77,14 +77,15 @@ export const sortTwoDimensionalBarChartData = ({
         orderBy: primaryAxisOrderBy,
       });
     } else {
-      sortedData = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
-        data,
-        orderBy: primaryAxisOrderBy,
-        manualSortOrder: primaryAxisManualSortOrder,
-        formattedToRawLookup: primaryAxisFormattedToRawLookup,
-        getFormattedValue: (datum) => datum[indexByKey] as string,
-        selectFieldOptions: primaryAxisSelectFieldOptions,
-      });
+      sortedData =
+        sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
+          data,
+          orderBy: primaryAxisOrderBy,
+          manualSortOrder: primaryAxisManualSortOrder,
+          formattedToRawLookup: primaryAxisFormattedToRawLookup,
+          getFormattedValue: (datum) => datum[indexByKey] as string,
+          selectFieldOptions: primaryAxisSelectFieldOptions,
+        });
     }
   }
 
