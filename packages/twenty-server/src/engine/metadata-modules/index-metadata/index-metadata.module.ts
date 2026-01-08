@@ -11,7 +11,6 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataResolver } from 'src/engine/metadata-modules/index-metadata/index-metadata.resolver';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
           IndexMetadataEntity,
           IndexFieldMetadataEntity,
         ]),
-        WorkspaceMigrationModule,
       ],
       resolvers: [
         {

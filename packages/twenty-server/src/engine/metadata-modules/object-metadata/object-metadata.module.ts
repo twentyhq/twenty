@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-    NestjsQueryGraphQLModule,
-    PagingStrategies,
+  NestjsQueryGraphQLModule,
+  PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
@@ -32,7 +32,6 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -51,7 +50,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         TypeOrmModule.forFeature([FeatureFlagEntity, ViewEntity]),
         ApplicationModule,
         DataSourceModule,
-        WorkspaceMigrationModule,
         WorkspaceMetadataVersionModule,
         IndexMetadataModule,
         PermissionsModule,

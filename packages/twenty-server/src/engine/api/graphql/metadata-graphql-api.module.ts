@@ -15,7 +15,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -38,7 +37,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
       ],
     }),
     MetadataEngineModule,
-    WorkspaceMigrationModule,
   ],
 })
 export class MetadataGraphQLApiModule {}

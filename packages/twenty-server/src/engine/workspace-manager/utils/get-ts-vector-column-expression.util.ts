@@ -9,10 +9,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
-  WorkspaceMigrationException,
-  WorkspaceMigrationExceptionCode,
-} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
-import {
   isSearchableFieldType,
   type SearchableFieldType,
 } from 'src/engine/workspace-manager/utils/is-searchable-field.util';
@@ -51,9 +47,8 @@ const getColumnExpressionsFromField = (
     );
 
     if (!compositeType) {
-      throw new WorkspaceMigrationException(
+      throw new Error(
         `Composite type not found for field metadata type: ${fieldMetadataTypeAndName.type}`,
-        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
       );
     }
 
