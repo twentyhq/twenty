@@ -3,6 +3,7 @@ import { Droppable } from '@hello-pangea/dnd';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
@@ -40,6 +41,12 @@ export const RecordBoardColumn = ({
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
+
+  const shouldHide = useShouldHideRecordGroup(recordBoardColumnId);
+
+  if (shouldHide) {
+    return null;
+  }
 
   if (!isDefined(recordGroupDefinition)) {
     return null;

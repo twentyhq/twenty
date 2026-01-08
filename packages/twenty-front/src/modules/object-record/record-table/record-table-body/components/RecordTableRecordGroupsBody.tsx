@@ -1,5 +1,5 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { filteredVisibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/filteredVisibleRecordGroupIdsComponentFamilySelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
@@ -23,8 +23,8 @@ export const RecordTableRecordGroupsBody = () => {
     isRecordTableInitialLoadingComponentState,
   );
 
-  const filteredGroupIds = useRecoilComponentFamilyValue(
-    filteredVisibleRecordGroupIdsComponentFamilySelector,
+  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+    visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Table,
   );
 
@@ -35,10 +35,10 @@ export const RecordTableRecordGroupsBody = () => {
   return (
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
-        {filteredGroupIds.map((recordGroupId, index) => (
+        {visibleRecordGroupIds.map((recordGroupId, index) => (
           <RecordTableRecordGroupBodyContextProvider
-            recordGroupId={recordGroupId}
             key={recordGroupId}
+            recordGroupId={recordGroupId}
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBodyRecordGroupDroppable

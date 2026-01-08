@@ -1,5 +1,6 @@
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
@@ -23,6 +24,12 @@ export const RecordBoardColumnHeaderWrapper = ({
     recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );
+
+  const shouldHide = useShouldHideRecordGroup(columnId);
+
+  if (shouldHide) {
+    return null;
+  }
 
   if (!isDefined(recordGroupDefinition)) {
     return null;
