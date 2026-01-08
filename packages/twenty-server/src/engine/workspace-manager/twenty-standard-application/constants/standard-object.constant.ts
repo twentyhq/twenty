@@ -1142,6 +1142,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
       },
       company: { universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.company },
+      owner: { universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.owner },
       favorites: {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
       },
@@ -1943,6 +1944,10 @@ export const STANDARD_OBJECTS = {
       },
       assignedTasks: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
+      },
+      ownedOpportunities: {
+        universalIdentifier:
+          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.ownedOpportunities,
       },
       favorites: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,

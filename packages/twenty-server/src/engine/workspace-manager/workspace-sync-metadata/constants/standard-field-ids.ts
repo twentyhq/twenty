@@ -309,6 +309,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   updatedBy: '3c8a6095-3f64-4e81-a59e-66c2bd181e11',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
+  owner: '20202020-be7e-4d1e-8e19-3d5c7c4b9f2a',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
@@ -504,6 +505,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   assignedTasks: '20202020-61dc-4a1c-99e8-38ebf8d2bbeb',
   favorites: '20202020-f3c1-4faf-b343-cf7681038757',
   accountOwnerForCompanies: '20202020-dc29-4bd4-a3c1-29eafa324bee',
+  ownedOpportunities: '20202020-9e4d-4b3a-8c1f-6d7e8f9a0b1c',
   authoredAttachments: '20202020-000f-4947-917f-1b09851024fe',
   authoredComments: '20202020-5536-4f59-b837-51c45ef43b05',
   connectedAccounts: '20202020-e322-4bde-a525-727079b4a100',

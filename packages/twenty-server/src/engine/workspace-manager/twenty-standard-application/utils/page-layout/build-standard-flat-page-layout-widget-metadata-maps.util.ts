@@ -1,6 +1,4 @@
-import { Temporal } from 'temporal-polyfill';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { getNextPeriodStart, getPeriodStart } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -28,44 +26,6 @@ export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = {
   standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
 };
 
-const formatDateForFilter = (
-  now: string,
-  period: 'YEAR' | 'QUARTER',
-): {
-  start: { value: string; display: string };
-  end: { value: string; display: string };
-} => {
-  const instant = Temporal.Instant.from(now);
-  const dateTime = instant.toZonedDateTimeISO('UTC');
-  const periodStart = getPeriodStart(dateTime, period);
-  const periodEnd = getNextPeriodStart(dateTime, period);
-
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  const formatDate = (dt: Temporal.ZonedDateTime) => ({
-    value: dt.toInstant().toString(),
-    display: `${monthNames[dt.month - 1]} ${dt.day}, ${dt.year}`,
-  });
-
-  return {
-    start: formatDate(periodStart),
-    end: formatDate(periodEnd),
-  };
-};
-
 type WidgetDefinition = {
   id: string;
   universalIdentifier: string;
@@ -76,38 +36,6 @@ type WidgetDefinition = {
   configuration: AllPageLayoutWidgetConfiguration;
   objectMetadataId: string | null;
 };
-
-const createRichTextConfiguration = (headingText: string) => ({
-  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
-  body: {
-    blocknote: JSON.stringify([
-      {
-        id: v4(),
-        type: 'heading',
-        props: {
-          textColor: 'default',
-          backgroundColor: 'default',
-          textAlignment: 'left',
-          level: 2,
-        },
-        content: [{ type: 'text', text: headingText, styles: {} }],
-        children: [],
-      },
-      {
-        id: v4(),
-        type: 'paragraph',
-        props: {
-          textColor: 'default',
-          backgroundColor: 'default',
-          textAlignment: 'left',
-        },
-        content: [],
-        children: [],
-      },
-    ]),
-    markdown: null,
-  },
-});
 
 const createFilterConfig = (
   filters: Array<{
@@ -157,647 +85,340 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = ({
     standardObjectMetadataRelatedEntityIds.opportunity.id;
   const opportunityFields =
     standardObjectMetadataRelatedEntityIds.opportunity.fields;
-  const personObjectId = standardObjectMetadataRelatedEntityIds.person.id;
-  const personFields = standardObjectMetadataRelatedEntityIds.person.fields;
-  const companyObjectId = standardObjectMetadataRelatedEntityIds.company.id;
-  const companyFields = standardObjectMetadataRelatedEntityIds.company.fields;
 
-  const revenueOverviewTabId = layoutIds.tabs.revenueOverview.id;
-  const revenueOverviewTabWidgets = layoutIds.tabs.revenueOverview.widgets;
-  const revenueOverviewTabDef = layoutDef.tabs.revenueOverview.widgets;
-
-  const leadExplorationTabId = layoutIds.tabs.leadExploration.id;
-  const leadExplorationTabWidgets = layoutIds.tabs.leadExploration.widgets;
-  const leadExplorationTabDef = layoutDef.tabs.leadExploration.widgets;
+  const tab1Id = layoutIds.tabs.tab1.id;
+  const tab1Widgets = layoutIds.tabs.tab1.widgets;
+  const tab1Def = layoutDef.tabs.tab1.widgets;
 
   const widgets: WidgetDefinition[] = [
     {
-      id: revenueOverviewTabWidgets.headerRevenueToDate.id,
-      universalIdentifier:
-        revenueOverviewTabDef.headerRevenueToDate.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Revenue to date header',
+      id: tab1Widgets.welcomeRichText.id,
+      universalIdentifier: tab1Def.welcomeRichText.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Untitled Rich Text',
       type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 12 },
-      configuration: createRichTextConfiguration('Revenue to date'),
-      objectMetadataId: null,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.amountClosedThisYear.id,
-      universalIdentifier:
-        revenueOverviewTabDef.amountClosedThisYear.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Amount Closed this year',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 4 },
+      gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
       configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.amount.id,
-        aggregateOperation: AggregateOperations.SUM,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').start.value,
-            displayValue: formatDateForFilter(now, 'YEAR').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').end.value,
-            displayValue: formatDateForFilter(now, 'YEAR').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.dealsWonThisYear.id,
-      universalIdentifier:
-        revenueOverviewTabDef.dealsWonThisYear.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Number of deals won this year',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 4, rowSpan: 4, columnSpan: 4 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').start.value,
-            displayValue: formatDateForFilter(now, 'YEAR').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').end.value,
-            displayValue: formatDateForFilter(now, 'YEAR').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.wonRateThisYear.id,
-      universalIdentifier:
-        revenueOverviewTabDef.wonRateThisYear.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Won rate this year',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 2, column: 8, rowSpan: 4, columnSpan: 4 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.stage.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        displayDataLabel: false,
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-        filter: createFilterConfig([
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').start.value,
-            displayValue: formatDateForFilter(now, 'YEAR').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'YEAR').end.value,
-            displayValue: formatDateForFilter(now, 'YEAR').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-        ratioAggregateConfig: {
-          fieldMetadataId: opportunityFields.stage.id,
-          optionValue: 'CUSTOMER',
+        configurationType:
+          WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
+        body: {
+          blocknote: JSON.stringify([
+            {
+              id: v4(),
+              type: 'heading',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+                level: 3,
+              },
+              content: [
+                { type: 'text', text: 'Welcome to your workspace', styles: {} },
+              ],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [
+                {
+                  type: 'text',
+                  text: 'You can edit this dashboard by clicking the ',
+                  styles: {},
+                },
+                { type: 'text', text: 'Edit', styles: { code: true } },
+                {
+                  type: 'text',
+                  text: ' button in the top-right corner to add your own charts or customize this one.',
+                  styles: {},
+                },
+              ],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [
+                {
+                  type: 'text',
+                  text: "Don't forget to replace the sample data with your own.",
+                  styles: {},
+                },
+              ],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [
+                {
+                  type: 'text',
+                  text: 'If you have any issues, you can check ',
+                  styles: {},
+                },
+                {
+                  type: 'link',
+                  href: 'https://docs.twenty.com/user-guide/introduction',
+                  content: [
+                    { type: 'text', text: 'our documentation', styles: {} },
+                  ],
+                },
+                {
+                  type: 'text',
+                  text: ' or contact us through the Support section in Settings.',
+                  styles: {},
+                },
+              ],
+              children: [],
+            },
+            {
+              id: v4(),
+              type: 'paragraph',
+              props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+              },
+              content: [],
+              children: [],
+            },
+          ]),
+          markdown: null,
         },
       },
-      objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.headerCurrentPipeline.id,
-      universalIdentifier:
-        revenueOverviewTabDef.headerCurrentPipeline.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Current Pipeline header',
-      type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 6, column: 0, rowSpan: 2, columnSpan: 12 },
-      configuration: createRichTextConfiguration('Current Pipeline'),
       objectMetadataId: null,
     },
 
     {
-      id: revenueOverviewTabWidgets.dealRevenueByStage.id,
-      universalIdentifier:
-        revenueOverviewTabDef.dealRevenueByStage.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Deal revenue by stage',
+      id: tab1Widgets.dealsByCompany.id,
+      universalIdentifier: tab1Def.dealsByCompany.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Deals by Company',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 8, column: 0, rowSpan: 5, columnSpan: 12 },
+      gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+      configuration: {
+        configurationType: WidgetConfigurationType.PIE_CHART,
+        groupByFieldMetadataId: opportunityFields.company.id,
+        groupBySubFieldName: 'name',
+        aggregateFieldMetadataId: opportunityFields.id.id,
+        aggregateOperation: AggregateOperations.COUNT,
+        orderBy: GraphOrderBy.FIELD_ASC,
+        displayDataLabel: false,
+        showCenterMetric: true,
+        displayLegend: true,
+        color: 'orange',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
+      objectMetadataId: opportunityObjectId,
+    },
+
+    {
+      id: tab1Widgets.pipelineValueByStage.id,
+      universalIdentifier: tab1Def.pipelineValueByStage.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Pipeline Value by Stage',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 6 },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisGroupByFieldMetadataId: opportunityFields.stage.id,
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
+        secondaryAxisGroupByFieldMetadataId: opportunityFields.company.id,
+        secondaryAxisGroupBySubFieldName: 'name',
+        secondaryAxisGroupByDateGranularity:
+          ObjectRecordGroupByDateGranularity.DAY,
+        secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
         displayDataLabel: true,
         displayLegend: true,
-        color: 'blue',
+        color: 'green',
         layout: BarChartLayout.VERTICAL,
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER","LOST"]',
-            displayValue: 'Customer, Lost',
-            operand: 'IS_NOT',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-        ]),
       },
       objectMetadataId: opportunityObjectId,
     },
 
     {
-      id: revenueOverviewTabWidgets.headerPerformanceThisQuarter.id,
-      universalIdentifier:
-        revenueOverviewTabDef.headerPerformanceThisQuarter.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Performance This Quarter header',
-      type: WidgetType.STANDALONE_RICH_TEXT,
-      gridPosition: { row: 13, column: 0, rowSpan: 2, columnSpan: 12 },
-      configuration: createRichTextConfiguration('Performance This Quarter'),
+      id: tab1Widgets.revenueTimeline.id,
+      universalIdentifier: tab1Def.revenueTimeline.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Revenue Timeline',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 6, column: 6, rowSpan: 6, columnSpan: 6 },
+      configuration: {
+        configurationType: WidgetConfigurationType.LINE_CHART,
+        aggregateFieldMetadataId: opportunityFields.amount.id,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisGroupByFieldMetadataId: opportunityFields.closeDate.id,
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        displayDataLabel: false,
+        displayLegend: true,
+        color: 'crimson',
+        isCumulative: false,
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
+      objectMetadataId: opportunityObjectId,
+    },
+
+    {
+      id: tab1Widgets.opportunitiesByOwner.id,
+      universalIdentifier: tab1Def.opportunitiesByOwner.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Opportunities by Owner',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 12, column: 0, rowSpan: 6, columnSpan: 6 },
+      configuration: {
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateFieldMetadataId: opportunityFields.id.id,
+        aggregateOperation: AggregateOperations.COUNT,
+        primaryAxisGroupByFieldMetadataId: opportunityFields.owner.id,
+        primaryAxisGroupBySubFieldName: 'name.firstName',
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        secondaryAxisGroupByFieldMetadataId: opportunityFields.owner.id,
+        secondaryAxisGroupBySubFieldName: 'name.firstName',
+        secondaryAxisGroupByDateGranularity:
+          ObjectRecordGroupByDateGranularity.DAY,
+        secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        displayDataLabel: false,
+        displayLegend: true,
+        color: 'blue',
+        layout: BarChartLayout.HORIZONTAL,
+        isCumulative: false,
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
+      objectMetadataId: opportunityObjectId,
+    },
+
+    {
+      id: tab1Widgets.stockMarketIframe.id,
+      universalIdentifier: tab1Def.stockMarketIframe.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Stock market (Iframe)',
+      type: WidgetType.IFRAME,
+      gridPosition: { row: 12, column: 6, rowSpan: 8, columnSpan: 6 },
+      configuration: {
+        configurationType: WidgetConfigurationType.IFRAME as const,
+        url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
+      },
       objectMetadataId: null,
     },
 
     {
-      id: revenueOverviewTabWidgets.leadsCreatedThisQuarter.id,
-      universalIdentifier:
-        revenueOverviewTabDef.leadsCreatedThisQuarter.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Leads created this quarter',
+      id: tab1Widgets.dealsCreatedThisMonth.id,
+      universalIdentifier: tab1Def.dealsCreatedThisMonth.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Deals created this month',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 0, rowSpan: 5, columnSpan: 2 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: personFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        filter: createFilterConfig([
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: personFields.createdAt.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: personFields.createdAt.id,
-          },
-        ]),
-      },
-      objectMetadataId: personObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.oppsCreatedThisQuarter.id,
-      universalIdentifier:
-        revenueOverviewTabDef.oppsCreatedThisQuarter.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Opps created this quarter',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 2, rowSpan: 5, columnSpan: 2 },
+      gridPosition: { row: 18, column: 0, rowSpan: 2, columnSpan: 3 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
         aggregateOperation: AggregateOperations.COUNT,
+        displayDataLabel: false,
         filter: createFilterConfig([
           {
             type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
+            label: 'Creation date',
+            value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+            displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+            operand: 'IS_RELATIVE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
+        prefix: '',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
     },
 
     {
-      id: revenueOverviewTabWidgets.wonOppsCreatedCount.id,
+      id: tab1Widgets.dealValueCreatedThisMonth.id,
       universalIdentifier:
-        revenueOverviewTabDef.wonOppsCreatedCount.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Won opps created count',
+        tab1Def.dealValueCreatedThisMonth.universalIdentifier,
+      pageLayoutTabId: tab1Id,
+      title: 'Deal value created this month',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 4, rowSpan: 5, columnSpan: 2 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.wonOppsCreatedAmount.id,
-      universalIdentifier:
-        revenueOverviewTabDef.wonOppsCreatedAmount.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Won opps created amount',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 6, rowSpan: 5, columnSpan: 2 },
+      gridPosition: { row: 18, column: 3, rowSpan: 2, columnSpan: 3 },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
         aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: false,
         filter: createFilterConfig([
           {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
             type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
+            label: 'Creation date',
+            value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+            displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+            operand: 'IS_RELATIVE',
             fieldMetadataId: opportunityFields.createdAt.id,
           },
         ]),
+        prefix: '$',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.oppsWonCount.id,
-      universalIdentifier:
-        revenueOverviewTabDef.oppsWonCount.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Opps won count',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 8, rowSpan: 5, columnSpan: 2 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-
-    {
-      id: revenueOverviewTabWidgets.oppsWonAmount.id,
-      universalIdentifier:
-        revenueOverviewTabDef.oppsWonAmount.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Opps won amount',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 15, column: 10, rowSpan: 5, columnSpan: 2 },
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: opportunityFields.amount.id,
-        aggregateOperation: AggregateOperations.SUM,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-    {
-      id: revenueOverviewTabWidgets.oppsBySeller.id,
-      universalIdentifier:
-        revenueOverviewTabDef.oppsBySeller.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Opps by seller',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 20, column: 0, rowSpan: 8, columnSpan: 7 },
-      configuration: {
-        configurationType: WidgetConfigurationType.BAR_CHART,
-        aggregateFieldMetadataId: opportunityFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: opportunityFields.pointOfContact.id,
-        primaryAxisGroupBySubFieldName: 'name.firstName',
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.NONE,
-        displayDataLabel: true,
-        displayLegend: true,
-        color: 'blue',
-        layout: BarChartLayout.HORIZONTAL,
-        isCumulative: false,
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-        filter: createFilterConfig([
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Created',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-    {
-      id: revenueOverviewTabWidgets.revenueBySeller.id,
-      universalIdentifier:
-        revenueOverviewTabDef.revenueBySeller.universalIdentifier,
-      pageLayoutTabId: revenueOverviewTabId,
-      title: 'Revenue by seller',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 20, column: 7, rowSpan: 8, columnSpan: 5 },
-      configuration: {
-        configurationType: WidgetConfigurationType.BAR_CHART,
-        aggregateFieldMetadataId: opportunityFields.amount.id,
-        aggregateOperation: AggregateOperations.SUM,
-        primaryAxisGroupByFieldMetadataId: opportunityFields.pointOfContact.id,
-        primaryAxisGroupBySubFieldName: 'name.firstName',
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.NONE,
-        displayDataLabel: true,
-        displayLegend: true,
-        color: 'blue',
-        layout: BarChartLayout.HORIZONTAL,
-        isCumulative: false,
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-        filter: createFilterConfig([
-          {
-            type: 'SELECT',
-            label: 'Stage',
-            value: '["CUSTOMER"]',
-            displayValue: 'Customer',
-            operand: 'IS',
-            fieldMetadataId: opportunityFields.stage.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').start.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').start.display,
-            operand: 'IS_AFTER',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-          {
-            type: 'DATE_TIME',
-            label: 'Close date',
-            value: formatDateForFilter(now, 'QUARTER').end.value,
-            displayValue: formatDateForFilter(now, 'QUARTER').end.display,
-            operand: 'IS_BEFORE',
-            fieldMetadataId: opportunityFields.closeDate.id,
-          },
-        ]),
-      },
-      objectMetadataId: opportunityObjectId,
-    },
-    {
-      id: leadExplorationTabWidgets.leadCreationOverTime.id,
-      universalIdentifier:
-        leadExplorationTabDef.leadCreationOverTime.universalIdentifier,
-      pageLayoutTabId: leadExplorationTabId,
-      title: 'Lead creation over time',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 0, rowSpan: 7, columnSpan: 6 },
-      configuration: {
-        configurationType: WidgetConfigurationType.LINE_CHART,
-        aggregateFieldMetadataId: personFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: personFields.createdAt.id,
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        omitNullValues: false,
-        axisNameDisplay: AxisNameDisplay.X,
-        displayDataLabel: false,
-        displayLegend: true,
-        color: 'blue',
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-      },
-      objectMetadataId: personObjectId,
-    },
-    {
-      id: leadExplorationTabWidgets.companyCreationOverTime.id,
-      universalIdentifier:
-        leadExplorationTabDef.companyCreationOverTime.universalIdentifier,
-      pageLayoutTabId: leadExplorationTabId,
-      title: 'Company creation over time',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 6, rowSpan: 7, columnSpan: 6 },
-      configuration: {
-        configurationType: WidgetConfigurationType.LINE_CHART,
-        aggregateFieldMetadataId: companyFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: companyFields.createdAt.id,
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        omitNullValues: false,
-        axisNameDisplay: AxisNameDisplay.X,
-        displayDataLabel: false,
-        displayLegend: true,
-        color: 'blue',
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-      },
-      objectMetadataId: companyObjectId,
-    },
-
-    {
-      id: leadExplorationTabWidgets.companiesBySize.id,
-      universalIdentifier:
-        leadExplorationTabDef.companiesBySize.universalIdentifier,
-      pageLayoutTabId: leadExplorationTabId,
-      title: 'Companies by size',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 7, column: 0, rowSpan: 7, columnSpan: 6 },
-      configuration: {
-        configurationType: WidgetConfigurationType.LINE_CHART,
-        aggregateFieldMetadataId: companyFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: companyFields.employees.id,
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.X,
-        displayDataLabel: false,
-        displayLegend: true,
-        color: 'blue',
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-      },
-      objectMetadataId: companyObjectId,
-    },
-
-    {
-      id: leadExplorationTabWidgets.companiesByIndustry.id,
-      universalIdentifier:
-        leadExplorationTabDef.companiesByIndustry.universalIdentifier,
-      pageLayoutTabId: leadExplorationTabId,
-      title: 'Companies by industry',
-      type: WidgetType.GRAPH,
-      gridPosition: { row: 7, column: 6, rowSpan: 7, columnSpan: 6 },
-      configuration: {
-        configurationType: WidgetConfigurationType.PIE_CHART,
-        groupByFieldMetadataId: companyFields.idealCustomerProfile.id,
-        aggregateFieldMetadataId: companyFields.id.id,
-        aggregateOperation: AggregateOperations.COUNT,
-        orderBy: GraphOrderBy.VALUE_DESC,
-        displayDataLabel: false,
-        showCenterMetric: false,
-        displayLegend: true,
-        color: 'auto',
-        timezone: 'UTC',
-        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
-      },
-      objectMetadataId: companyObjectId,
     },
   ];
 

@@ -45,6 +45,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
@@ -263,7 +264,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspace,
       userId: user.id,
     });
+
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
+
+    if (isV2SyncEnabled) {
+      await this.workspaceManagerService.prefillCreatedWorkspaceRecords({
+        workspaceId: workspace.id,
+        schemaName: getWorkspaceSchemaName(workspace.id),
+      });
+    }
 
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 

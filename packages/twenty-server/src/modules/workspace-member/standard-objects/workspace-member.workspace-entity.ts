@@ -4,10 +4,10 @@ import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
-  FieldMetadataType,
-  FullNameMetadata,
-  NumberDataType,
-  RelationOnDeleteAction,
+    FieldMetadataType,
+    FullNameMetadata,
+    NumberDataType,
+    RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -28,8 +28,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import {
-  type FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    type FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -38,6 +38,7 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -291,6 +292,19 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsFieldUIReadOnly()
   assignedTasks: Relation<TaskWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.ownedOpportunities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Owned opportunities`,
+    description: msg`Opportunities owned by the workspace member`,
+    icon: 'IconTargetArrow',
+    inverseSideTarget: () => OpportunityWorkspaceEntity,
+    inverseSideFieldKey: 'owner',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,

@@ -36,6 +36,7 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -171,6 +172,22 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.owner,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Owner`,
+    description: msg`Opportunity owner`,
+    icon: 'IconUserCircle',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    inverseSideFieldKey: 'ownedOpportunities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  owner: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('owner')
+  ownerId: string | null;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
