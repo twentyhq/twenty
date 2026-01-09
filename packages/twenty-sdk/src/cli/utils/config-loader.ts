@@ -87,6 +87,13 @@ export const loadConfig = async <T>(filepath: string): Promise<T> => {
 };
 
 /**
+ * Escape special regex characters in a string.
+ */
+const escapeRegExp = (string: string): string => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+/**
  * Extract the import path for a given identifier from source code.
  * Returns null if the identifier is not imported (i.e., defined locally).
  */
@@ -96,20 +103,23 @@ const extractImportPath = (
   filepath: string,
   appPath: string,
 ): string | null => {
+  // Escape special regex characters in the identifier (e.g., $ in function names like $handler)
+  const escapedIdentifier = escapeRegExp(identifier);
+
   // Match: import { identifier } from 'path'
   // Match: import { original as identifier } from 'path'
   // Match: import identifier from 'path' (default import)
   const patterns = [
     // Named import: import { foo } from 'path' or import { foo, bar } from 'path'
     new RegExp(
-      `import\\s*\\{[^}]*\\b${identifier}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+      `import\\s*\\{[^}]*\\b${escapedIdentifier}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
     ),
     // Aliased import: import { original as foo } from 'path'
     new RegExp(
-      `import\\s*\\{[^}]*\\w+\\s+as\\s+${identifier}[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
+      `import\\s*\\{[^}]*\\w+\\s+as\\s+${escapedIdentifier}[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`,
     ),
     // Default import: import foo from 'path'
-    new RegExp(`import\\s+${identifier}\\s+from\\s*['"]([^'"]+)['"]`),
+    new RegExp(`import\\s+${escapedIdentifier}\\s+from\\s*['"]([^'"]+)['"]`),
   ];
 
   for (const pattern of patterns) {
@@ -123,7 +133,11 @@ const extractImportPath = (
       const relativePath = path.relative(appPath, absolutePath);
 
       // Add .ts extension if not present
-      return relativePath.endsWith('.ts') ? relativePath : `${relativePath}.ts`;
+      const resultPath = relativePath.endsWith('.ts')
+        ? relativePath
+        : `${relativePath}.ts`;
+
+      return resultPath.replace(/\\/g, '/');
     }
   }
 

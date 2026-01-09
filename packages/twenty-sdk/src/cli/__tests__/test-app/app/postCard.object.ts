@@ -14,7 +14,7 @@ export default defineObject({
   namePlural: 'postCards',
   labelSingular: 'Post card',
   labelPlural: 'Post cards',
-  description: ' A post card object',
+  description: 'A post card object',
   icon: 'IconMail',
   fields: [
     {

@@ -47,14 +47,22 @@ const toPosixRelative = (filepath: string, appPath: string): string => {
   return rel.split(sep).join(posix.sep);
 };
 
+const loadFiles = async (
+  patterns: string[],
+  cwd: string,
+): Promise<string[]> => {
+  return glob(patterns, {
+    cwd,
+    absolute: true,
+    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
+  });
+};
+
 /**
  * Load all object definitions from app/ (any *.object.ts file).
  */
 const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
-  const objectFiles = await glob('app/**/*.object.ts', {
-    cwd: appPath,
-    absolute: true,
-  });
+  const objectFiles = await loadFiles(['app/**/*.object.ts'], appPath);
 
   const objects: ObjectManifest[] = [];
 
@@ -80,10 +88,7 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
 const loadFunctions = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
-  const functionFiles = await glob('app/**/*.function.ts', {
-    cwd: appPath,
-    absolute: true,
-  });
+  const functionFiles = await loadFiles(['app/**/*.function.ts'], appPath);
 
   const functions: ServerlessFunctionManifest[] = [];
 
@@ -121,10 +126,7 @@ const loadFunctions = async (
  * Load all role definitions from app/ (any *.role.ts file).
  */
 const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
-  const roleFiles = await glob('app/**/*.role.ts', {
-    cwd: appPath,
-    absolute: true,
-  });
+  const roleFiles = await loadFiles(['app/**/*.role.ts'], appPath);
 
   const roles: RoleManifest[] = [];
 
@@ -150,11 +152,7 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
   // Get all TypeScript files in app/ and src/ folders
-  const tsFiles = await glob(['app/**/*.ts', 'src/**/*.ts'], {
-    cwd: appPath,
-    absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**'],
-  });
+  const tsFiles = await loadFiles(['app/**/*.ts', 'src/**/*.ts'], appPath);
 
   for (const filepath of tsFiles) {
     const relPath = relative(appPath, filepath);
@@ -182,11 +180,7 @@ const loadSources = async (appPath: string): Promise<Sources> => {
  * Detects any `import ... from '...generated'` or `import ... from '...generated/...'` pattern.
  */
 const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
-  const tsFiles = await glob(['app/**/*.ts', 'src/**/*.ts'], {
-    cwd: appPath,
-    absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts'],
-  });
+  const tsFiles = await loadFiles(['app/**/*.ts', 'src/**/*.ts'], appPath);
 
   // Matches: import ... from 'generated' or from '.../generated' or from '.../generated/...'
   const generatedImportPattern =
