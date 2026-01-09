@@ -89,15 +89,15 @@ export class PageLayoutController {
 
   @Delete(':id')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async delete(
+  async destroy(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutDTO> {
-    const deletedPageLayout = await this.pageLayoutService.delete({
+  ): Promise<boolean> {
+    const destroyedPageLayout = await this.pageLayoutService.destroy({
       id,
       workspaceId: workspace.id,
     });
 
-    return deletedPageLayout;
+    return isDefined(destroyedPageLayout);
   }
 }

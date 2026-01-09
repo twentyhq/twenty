@@ -12,12 +12,10 @@ import 'react-resizable/css/styles.css';
 
 type PageLayoutRendererProps = {
   pageLayoutId: string;
-  withSoftDeleted?: boolean;
 };
 
 export const PageLayoutRenderer = ({
   pageLayoutId,
-  withSoftDeleted = false,
 }: PageLayoutRendererProps) => {
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -44,7 +42,6 @@ export const PageLayoutRenderer = ({
         <PageLayoutInitializationQueryEffect
           pageLayoutId={pageLayoutId}
           onInitialized={onInitialized}
-          withSoftDeleted={withSoftDeleted}
         />
         <PageLayoutRendererContent />
       </TabListComponentInstanceContext.Provider>

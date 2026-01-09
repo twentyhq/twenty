@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { CrudOperationType } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
@@ -44,17 +43,12 @@ export class DashboardToPageLayoutSyncService {
     return pageLayout.id;
   }
 
-  public async syncPageLayoutsWithDashboards({
+  public async destroyPageLayoutsForDashboards({
     dashboardIds,
     workspaceId,
-    operation,
   }: {
     dashboardIds: string[];
     workspaceId: string;
-    operation:
-      | CrudOperationType.DELETE
-      | CrudOperationType.RESTORE
-      | CrudOperationType.DESTROY;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -80,32 +74,11 @@ export class DashboardToPageLayoutSyncService {
             continue;
           }
 
-          switch (operation) {
-            case CrudOperationType.DELETE:
-              await this.pageLayoutService.delete({
-                id: dashboard.pageLayoutId,
-                workspaceId,
-                isLinkedDashboardAlreadyDeleted: true,
-              });
-              break;
-            case CrudOperationType.DESTROY:
-              await this.pageLayoutService.destroy({
-                id: dashboard.pageLayoutId,
-                workspaceId,
-                isLinkedDashboardAlreadyDestroyed: true,
-              });
-              break;
-            case CrudOperationType.RESTORE:
-              await this.pageLayoutService.restore({
-                id: dashboard.pageLayoutId,
-                workspaceId,
-                isLinkedDashboardAlreadyRestored: true,
-              });
-              break;
-
-            default:
-              assertUnreachable(operation);
-          }
+          await this.pageLayoutService.destroy({
+            id: dashboard.pageLayoutId,
+            workspaceId,
+            isLinkedDashboardAlreadyDestroyed: true,
+          });
         }
       },
     );

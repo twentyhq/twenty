@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { CrudOperationType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -29,11 +28,12 @@ export class DashboardDestroyManyPreQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.dashboardToPageLayoutSyncService.syncPageLayoutsWithDashboards({
-      dashboardIds: payload.filter.id.in,
-      workspaceId: workspace.id,
-      operation: CrudOperationType.DESTROY,
-    });
+    await this.dashboardToPageLayoutSyncService.destroyPageLayoutsForDashboards(
+      {
+        dashboardIds: payload.filter.id.in,
+        workspaceId: workspace.id,
+      },
+    );
 
     return payload;
   }

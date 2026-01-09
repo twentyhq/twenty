@@ -56,14 +56,11 @@ export class PageLayoutResolver {
   @UseGuards(NoPermissionGuard)
   async getPageLayout(
     @Args('id', { type: () => String }) id: string,
-    @Args('withSoftDeleted', { type: () => Boolean, nullable: true })
-    withSoftDeleted?: boolean,
-    @AuthWorkspace() workspace?: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
     return this.pageLayoutService.findByIdOrThrow({
       id,
-      workspaceId: workspace!.id,
-      withSoftDeleted: withSoftDeleted ?? false,
+      workspaceId: workspace.id,
     });
   }
 
@@ -93,20 +90,6 @@ export class PageLayoutResolver {
     });
   }
 
-  @Mutation(() => PageLayoutDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async deletePageLayout(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutDTO> {
-    const deletedPageLayout = await this.pageLayoutService.delete({
-      id,
-      workspaceId: workspace.id,
-    });
-
-    return deletedPageLayout;
-  }
-
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayout(
@@ -119,18 +102,6 @@ export class PageLayoutResolver {
     });
 
     return isDefined(deletedPageLayout);
-  }
-
-  @Mutation(() => PageLayoutDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async restorePageLayout(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.restore({
-      id,
-      workspaceId: workspace.id,
-    });
   }
 
   @Mutation(() => PageLayoutDTO)

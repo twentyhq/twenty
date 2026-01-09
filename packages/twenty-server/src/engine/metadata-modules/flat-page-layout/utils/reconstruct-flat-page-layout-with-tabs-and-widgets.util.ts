@@ -18,19 +18,15 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
   layout,
   flatPageLayoutTabMaps,
   flatPageLayoutWidgetMaps,
-  withSoftDeleted = false,
 }: {
   layout: FlatPageLayout;
   flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
   flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
-  withSoftDeleted?: boolean;
 }): FlatPageLayoutWithTabsAndWidgets => {
   const tabs = Object.values(flatPageLayoutTabMaps.byId)
     .filter(isDefined)
     .filter(
-      (tab) =>
-        tab.pageLayoutId === layout.id &&
-        (withSoftDeleted || !isDefined(tab.deletedAt)),
+      (tab) => tab.pageLayoutId === layout.id && !isDefined(tab.deletedAt),
     )
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 
@@ -39,8 +35,7 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
       .filter(isDefined)
       .filter(
         (widget) =>
-          widget.pageLayoutTabId === tab.id &&
-          (withSoftDeleted || !isDefined(widget.deletedAt)),
+          widget.pageLayoutTabId === tab.id && !isDefined(widget.deletedAt),
       );
 
     return {

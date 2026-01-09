@@ -1849,9 +1849,6 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneRouteTrigger: RouteTrigger;
   deleteOneServerlessFunction: ServerlessFunction;
-  deletePageLayout: PageLayout;
-  deletePageLayoutTab: Scalars['Boolean'];
-  deletePageLayoutWidget: PageLayoutWidget;
   deletePublicDomain: Scalars['Boolean'];
   deleteRowLevelPermissionPredicate: RowLevelPermissionPredicate;
   deleteRowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup;
@@ -1896,9 +1893,6 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
-  restorePageLayout: PageLayout;
-  restorePageLayoutTab: PageLayoutTab;
-  restorePageLayoutWidget: PageLayoutWidget;
   retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: RunWorkflowVersionOutput;
@@ -2298,21 +2292,6 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
-export type MutationDeletePageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeletePageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeletePageLayoutWidgetArgs = {
-  id: Scalars['String'];
-};
-
-
 export type MutationDeletePublicDomainArgs = {
   domain: Scalars['String'];
 };
@@ -2514,21 +2493,6 @@ export type MutationResendEmailVerificationTokenArgs = {
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
-};
-
-
-export type MutationRestorePageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationRestorePageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationRestorePageLayoutWidgetArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -3462,7 +3426,6 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
-  withSoftDeleted?: InputMaybe<Scalars['Boolean']>;
 };
 
 
