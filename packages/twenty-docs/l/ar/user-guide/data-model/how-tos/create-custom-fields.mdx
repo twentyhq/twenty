@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: إنشاء حقول مخصصة
+description: دليل خطوة بخطوة لإضافة حقول مخصصة إلى أي كائن.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+تمكّنك الحقول المخصصة من جمع المعلومات الخاصة بنشاطك التجاري. أضفها إلى أي كائن—قياسي أو مخصص.
 
-## Steps
+## الخطوات
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/ar/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. حدد الكائن الذي تريد إضافة حقل إليه
+3. انقر **+ إضافة حقل**
+4. اختر **نوع الحقل** (راجع [الحقول](/l/ar/user-guide/data-model/capabilities/fields) للاطلاع على جميع الأنواع)
+5. أدخل **اسم الحقل** ووصفًا اختياريًا
+6. قم بتهيئة الإعدادات الخاصة بالحقل (انظر أدناه)
 7. انقر على **حفظ**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**طريقة سريعة:** انقر **+** في نهاية عناوين الأعمدة في أي عرض جدولي → **تخصيص الحقول**.
 
-## Show the Field in Views
+## إظهار الحقل في العروض
 
-New fields aren't automatically visible. To display:
+لا تظهر الحقول الجديدة تلقائيًا. للعرض:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. افتح العرض الجدولي للكائن
+2. انقر على **الخيارات → الحقول**
+3. انقر على **أيقونة العين** بجانب الحقل لإظهاره
+4. اسحب لإعادة الترتيب
 
-## Configuration Options
+## خيارات التهيئة
 
-### For Select / Multi-Select
+### لحقول الاختيار/الاختيار المتعدد
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/ar/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. انقر **+ إضافة خيار** لإنشاء خيارات
+2. عيّن **الخيار الافتراضي** إذا رغبت
+3. اسحب لإعادة ترتيب الخيارات
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **استخدم أسماء واجهة برمجة التطبيقات (API) لعمليات الاستيراد.** فعّل **الوضع المتقدم** في الإعدادات لعرض أسماء واجهة برمجة التطبيقات. راجع [تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### لحقول العملة
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+عيّن **العملة الافتراضية** (USD وEUR وما إلى ذلك) للسجلات الجديدة.
 
-## Deactivating a Field
+### لحقول الهاتف
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+عيّن **رمز البلد الافتراضي** ليتم ملؤه مسبقًا للأرقام الهاتفية الجديدة.
 
-Data is preserved. You can reactivate or permanently delete later.
+### جعل الحقل فريدًا
 
-## Related
+فعّل **فريد** لمنع تكرار القيم عبر السجلات.
 
-* [Fields](/l/ar/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/ar/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  إذا وُجدت قيم مكررة (بما في ذلك في السجلات المحذوفة)، ستظهر رسالة خطأ. أزل التكرارات أولًا.
+</Note>
+
+### تعيين القيم الافتراضية
+
+في حقول الاختيار، يمكنك تحديد الخيار الذي سيتم اختياره مسبقًا للسجلات الجديدة. في حقول خانة الاختيار، حدّد ما إذا كانت محددة أم غير محددة افتراضيًا.
+
+## إلغاء تنشيط حقل
+
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اعثر على الحقل
+3. انقر **⋮ → إلغاء التنشيط**
+
+تظل البيانات محفوظة. يمكنك إعادة التنشيط أو الحذف نهائيًا لاحقًا.
+
+## ذات صلة
+
+* [الحقول](/l/ar/user-guide/data-model/capabilities/fields) — شرح جميع أنواع الحقول
+* [الأسئلة الشائعة حول نموذج البيانات](/l/ar/user-guide/data-model/how-tos/data-model-faq) — أسئلة شائعة

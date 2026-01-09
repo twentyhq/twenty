@@ -4,14 +4,6 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -44,38 +36,22 @@ export const FieldWidgetMorphRelationField = ({
       morphRelations: fieldMetadata.morphRelations,
     });
 
-  if (recordsWithObjectNameSingular.length > 0) {
-    return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
-        <StyledContainer>
-          <StyledRelationChipsContainer>
-            {recordsWithObjectNameSingular.map((morphItem, index) => (
-              <RecordChip
-                key={morphItem.value?.id ?? index}
-                objectNameSingular={morphItem.objectNameSingular}
-                record={morphItem.value}
-              />
-            ))}
-          </StyledRelationChipsContainer>
-        </StyledContainer>
-      </RightDrawerProvider>
-    );
+  if (recordsWithObjectNameSingular.length === 0) {
+    return null;
   }
 
   return (
     <RightDrawerProvider value={{ isInRightDrawer }}>
       <StyledContainer>
-        <AnimatedPlaceholderEmptyContainer
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-        >
-          <AnimatedPlaceholder type="noRecord" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              {t`No related records`}
-            </AnimatedPlaceholderEmptyTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-        </AnimatedPlaceholderEmptyContainer>
+        <StyledRelationChipsContainer>
+          {recordsWithObjectNameSingular.map((morphItem, index) => (
+            <RecordChip
+              key={morphItem.value?.id ?? index}
+              objectNameSingular={morphItem.objectNameSingular}
+              record={morphItem.value}
+            />
+          ))}
+        </StyledRelationChipsContainer>
       </StyledContainer>
     </RightDrawerProvider>
   );
