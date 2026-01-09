@@ -153,7 +153,10 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
   // Get all TypeScript files in src/ folder
-  const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
+  const tsFiles = await loadFiles(
+    ['src/**/*.ts', 'generated/**/*.ts'],
+    appPath,
+  );
 
   for (const filepath of tsFiles) {
     const relPath = relative(appPath, filepath);
