@@ -1,9 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, type StepIfElseBranch } from 'twenty-shared/workflow';
 
+import { isWorkflowEmptyAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/guards/is-workflow-empty-action.guard';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import {
-  type WorkflowAction,
   WorkflowActionType,
+  type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -29,6 +31,22 @@ const computeUpdatedNextStepIds = ({
   ];
 };
 
+export const getEmptyChildStepIdsForIfElse = ({
+  branches,
+  allSteps,
+}: {
+  branches: StepIfElseBranch[];
+  allSteps: WorkflowAction[];
+}): string[] => {
+  const childStepIds = branches.flatMap((branch) => branch.nextStepIds);
+
+  return childStepIds.filter((childStepId) => {
+    const childStep = allSteps.find((step) => step.id === childStepId);
+
+    return isDefined(childStep) && isWorkflowEmptyAction(childStep);
+  });
+};
+
 export const removeStep = ({
   existingTrigger,
   existingSteps,
@@ -48,17 +66,71 @@ export const removeStep = ({
     };
   }
 
+  const stepToDelete = existingSteps?.find(
+    (step) => step.id === stepIdToDelete,
+  );
+
+  let emptyChildStepIds: string[] = [];
+
+  if (
+    isDefined(stepToDelete) &&
+    isWorkflowIfElseAction(stepToDelete) &&
+    isDefined(existingSteps)
+  ) {
+    emptyChildStepIds = getEmptyChildStepIdsForIfElse({
+      branches: stepToDelete.settings.input.branches,
+      allSteps: existingSteps,
+    });
+  }
+
+  const allRemovedStepIds = [stepIdToDelete, ...emptyChildStepIds];
+
   const updatedSteps =
     existingSteps
-      ?.filter((step) => step.id !== stepIdToDelete)
+      ?.filter((step) => !allRemovedStepIds.includes(step.id))
       .map((step) => {
+        if (
+          step.type === WorkflowActionType.IF_ELSE &&
+          isWorkflowIfElseAction(step)
+        ) {
+          const updatedBranches = step.settings.input.branches.map((branch) => {
+            let updatedNextStepIds = branch.nextStepIds;
+
+            if (branch.nextStepIds.includes(stepIdToDelete)) {
+              updatedNextStepIds = computeUpdatedNextStepIds({
+                existingNextStepIds: branch.nextStepIds,
+                stepIdToRemove: stepIdToDelete,
+                stepToDeleteChildrenIds,
+              });
+            }
+
+            return {
+              ...branch,
+              nextStepIds: updatedNextStepIds.filter(
+                (id) => !allRemovedStepIds.includes(id),
+              ),
+            };
+          });
+
+          return {
+            ...step,
+            settings: {
+              ...step.settings,
+              input: {
+                ...step.settings.input,
+                branches: updatedBranches,
+              },
+            },
+          };
+        }
+
         if (step.nextStepIds?.includes(stepIdToDelete)) {
           return {
             ...step,
             nextStepIds: computeUpdatedNextStepIds({
               existingNextStepIds: step.nextStepIds,
               stepIdToRemove: stepIdToDelete,
-              stepToDeleteChildrenIds: stepToDeleteChildrenIds,
+              stepToDeleteChildrenIds,
             }),
           };
         }
@@ -77,7 +149,7 @@ export const removeStep = ({
                 initialLoopStepIds: computeUpdatedNextStepIds({
                   existingNextStepIds: step.settings.input.initialLoopStepIds,
                   stepIdToRemove: stepIdToDelete,
-                  stepToDeleteChildrenIds: stepToDeleteChildrenIds,
+                  stepToDeleteChildrenIds,
                 }),
               },
             },
@@ -105,6 +177,6 @@ export const removeStep = ({
   return {
     updatedSteps,
     updatedTrigger,
-    removedStepIds: [stepIdToDelete],
+    removedStepIds: allRemovedStepIds,
   };
 };
