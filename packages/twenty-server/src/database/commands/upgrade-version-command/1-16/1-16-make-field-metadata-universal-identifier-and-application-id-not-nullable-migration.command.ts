@@ -11,7 +11,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:1-15:make-field-metadata-universal-identifier-and-application-id-not-nullable-migration',
+  name: 'upgrade:1-16:make-field-metadata-universal-identifier-and-application-id-not-nullable-migration',
   description:
     'Make universalIdentifier and applicationId columns NOT NULL on fieldMetadata table',
 })
