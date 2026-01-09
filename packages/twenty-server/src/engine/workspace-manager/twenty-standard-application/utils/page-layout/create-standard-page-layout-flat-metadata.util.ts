@@ -43,20 +43,3 @@ export const createStandardPageLayoutFlatMetadata = ({
     deletedAt: null,
   };
 };
-
-export const STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME = {
-  myFirstDashboard: (args: Omit<CreateStandardPageLayoutArgs, 'context'>) =>
-    createStandardPageLayoutFlatMetadata({
-      ...args,
-      context: {
-        layoutName: 'myFirstDashboard',
-        name: STANDARD_PAGE_LAYOUTS.myFirstDashboard.name,
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: null,
-      },
-    }),
-} satisfies {
-  [P in AllStandardPageLayoutName]: (
-    args: Omit<CreateStandardPageLayoutArgs, 'context'>,
-  ) => FlatPageLayout;
-};

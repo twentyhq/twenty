@@ -1,104 +1,17 @@
-import { isDefined } from 'class-validator';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import {
-  STANDARD_PAGE_LAYOUTS,
-  type StandardPageLayoutName,
-  type StandardPageLayoutTabName,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
-import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
-
-export type CreateStandardPageLayoutWidgetContext<
-  L extends StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L>,
-> = {
-  layoutName: L;
-  tabName: T;
-  widgetName: string;
-  title: string;
-  type: WidgetType;
-  gridPosition: GridPosition;
-  configuration: AllPageLayoutWidgetConfiguration;
-  objectMetadataId: string | null;
-};
-
-export type CreateStandardPageLayoutWidgetArgs<
-  L extends StandardPageLayoutName = StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L> = StandardPageLayoutTabName<L>,
-> = {
-  now: string;
-  workspaceId: string;
-  twentyStandardApplicationId: string;
-  standardObjectMetadataRelatedEntityIds: StandardObjectMetadataRelatedEntityIds;
-  standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
-  context: CreateStandardPageLayoutWidgetContext<L, T>;
-};
-
-export const createStandardPageLayoutWidgetFlatMetadata = <
-  L extends StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L>,
->({
-  context: {
-    layoutName,
-    tabName,
-    widgetName,
-    title,
-    type,
-    gridPosition,
-    configuration,
-    objectMetadataId,
-  },
-  workspaceId,
-  twentyStandardApplicationId,
-  standardPageLayoutMetadataRelatedEntityIds,
-  now,
-}: CreateStandardPageLayoutWidgetArgs<L, T>): FlatPageLayoutWidget => {
-  const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
-  // @ts-expect-error ignore
-  const widgetDef = STANDARD_PAGE_LAYOUTS[layoutName].tabs[tabName].widgets[
-    widgetName
-  ] as {
-    universalIdentifier: string;
-  };
-
-  if (!isDefined(widgetDef)) {
-    throw new Error(
-      `Invalid configuration ${layoutName} ${tabName.toString()} ${widgetName.toString()}`,
-    );
-  }
-
-  // @ts-expect-error ignore
-  const tabIds = layoutIds.tabs[tabName];
-  const widgetIds = tabIds.widgets[widgetName] ?? {};
-
-  return {
-    id: widgetIds.id,
-    universalIdentifier: widgetDef.universalIdentifier,
-    applicationId: twentyStandardApplicationId,
-    workspaceId,
-    pageLayoutTabId: tabIds.id,
-    title,
-    type,
-    gridPosition,
-    configuration,
-    objectMetadataId,
-    createdAt: now,
-    updatedAt: now,
-    deletedAt: null,
-  };
-};
+  type CreateStandardPageLayoutWidgetArgs,
+  createStandardPageLayoutWidgetFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/create-standard-page-layout-widget-flat-metadata.util';
 
 const createFilterConfig = (
   filters: Array<{
@@ -547,3 +460,4 @@ export const STANDARD_FLAT_PAGE_LAYOUT_WIDGET_BUILDERS = {
     },
   },
 };
+

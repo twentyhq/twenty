@@ -69,26 +69,3 @@ export const createStandardPageLayoutTabFlatMetadata = <
     deletedAt: null,
   };
 };
-
-type TabBuilderArgs = Omit<CreateStandardPageLayoutTabArgs, 'context'>;
-
-export const STANDARD_FLAT_PAGE_LAYOUT_TAB_BUILDERS_BY_LAYOUT_NAME = {
-  myFirstDashboard: {
-    tab1: (args: TabBuilderArgs) =>
-      createStandardPageLayoutTabFlatMetadata({
-        ...args,
-        context: {
-          layoutName: 'myFirstDashboard',
-          tabName: 'tab1',
-          title: STANDARD_PAGE_LAYOUTS.myFirstDashboard.tabs.tab1.title,
-          position: STANDARD_PAGE_LAYOUTS.myFirstDashboard.tabs.tab1.position,
-        },
-      }),
-  },
-} satisfies {
-  [L in StandardPageLayoutName]: {
-    [T in StandardPageLayoutTabName<L>]: (
-      args: TabBuilderArgs,
-    ) => FlatPageLayoutTab;
-  };
-};
