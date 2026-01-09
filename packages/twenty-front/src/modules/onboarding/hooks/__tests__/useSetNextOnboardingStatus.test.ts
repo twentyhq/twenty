@@ -69,7 +69,7 @@ describe('useSetNextOnboardingStatus', () => {
       false,
       false,
     );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
