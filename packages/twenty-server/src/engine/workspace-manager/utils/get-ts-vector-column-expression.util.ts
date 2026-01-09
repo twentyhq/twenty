@@ -35,6 +35,7 @@ export const getTsVectorColumnExpressionFromFields = (
   );
   const concatenatedExpression = columnExpressions.join(" || ' ' || ");
 
+  // Note: changing this expression requires reindexing/backfilling existing searchVector values.
   return `to_tsvector('simple', ${concatenatedExpression})`;
 };
 
@@ -68,6 +69,7 @@ const getColumnExpressionsFromField = (
     if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
       const phoneNumberColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneNumber"`;
       const callingCodeColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode"`;
+      const additionalPhonesColumn = `"${fieldMetadataTypeAndName.name}AdditionalPhones"`;
 
       const internationalFormats = [
         `COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
@@ -75,7 +77,39 @@ const getColumnExpressionsFromField = (
         `COALESCE('0' || ${phoneNumberColumn}, '')`,
       ];
 
-      return [...baseExpressions, ...internationalFormats];
+      // Convert JSONB array of additional phones to searchable text
+      // additionalPhones contains objects like: [{"number":"5551234","countryCode":"US","callingCode":"+1"}]
+      // Strip keys before TRANSLATE to avoid indexing key names.
+      // TODO(perf): If this becomes hot, consider jsonb_path_query_array with benchmarks.
+      const additionalPhonesExpression = `COALESCE(TRANSLATE(regexp_replace(${additionalPhonesColumn}::text, '"(number|countryCode|callingCode)"\\s*:\\s*', '', 'g'), '[]{}",:', '        '), '')`;
+
+      return [
+        ...baseExpressions,
+        ...internationalFormats,
+        additionalPhonesExpression,
+      ];
+    }
+
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.LINKS) {
+      const secondaryLinksColumn = `"${fieldMetadataTypeAndName.name}SecondaryLinks"`;
+
+      // Convert JSONB array of secondary links to searchable text
+      // secondaryLinks contains objects like: [{"label":"Work","url":"https://example.com"}]
+      // Strip keys before TRANSLATE to avoid indexing key names.
+      // TODO(perf): If this becomes hot, consider jsonb_path_query_array with benchmarks.
+      const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
+
+      return [...baseExpressions, secondaryLinksExpression];
+    }
+
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.EMAILS) {
+      const additionalEmailsColumn = `"${fieldMetadataTypeAndName.name}AdditionalEmails"`;
+
+      // Convert JSONB array of additional emails to searchable text
+      // Example: ["email1@example.com","email2@example.com"] -> "email1@example.com email2@example.com"
+      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]"', '   ')), '')`;
+
+      return [...baseExpressions, additionalEmailsExpression];
     }
 
     return baseExpressions;

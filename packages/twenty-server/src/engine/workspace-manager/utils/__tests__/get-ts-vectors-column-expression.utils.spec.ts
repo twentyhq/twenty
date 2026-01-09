@@ -13,6 +13,7 @@ const nameFullNameField = {
 const jobTitleTextField = { name: 'jobTitle', type: FieldMetadataType.TEXT };
 const emailsEmailsField = { name: 'emails', type: FieldMetadataType.EMAILS };
 const phonesPhonesField = { name: 'phones', type: FieldMetadataType.PHONES };
+const linksLinksField = { name: 'domainName', type: FieldMetadataType.LINKS };
 
 describe('getTsVectorColumnExpressionFromFields', () => {
   it('should generate correct expression for simple text field', () => {
@@ -101,12 +102,130 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     );
   });
 
-  it('should properly index phone subfields', () => {
+  it('should properly index phone subfields including additional phones', () => {
     const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
     expect(result).toContain('phonesPrimaryPhoneNumber');
     expect(result).toContain('phonesPrimaryPhoneCallingCode');
-    expect(result).not.toContain('phonesAdditionalPhones');
+    // Should include additional phones converted from JSON array
+    expect(result).toContain('phonesAdditionalPhones');
+    expect(result).toContain(
+      "COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+    );
+  });
+
+  it('should strip additional phone key names before indexing', () => {
+    const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain(
+      "regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g')",
+    );
+  });
+
+  it('should include additional emails in search expression', () => {
+    const fields = [emailsEmailsField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    // Should include primary email
+    expect(result).toContain('emailsPrimaryEmail');
+    // Should include additional emails converted from JSON array
+    expect(result).toContain('emailsAdditionalEmails');
+    expect(result).toContain(
+      "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\"', '   ')), '')",
+    );
+  });
+
+  it('should include secondary links in search expression for LINKS type', () => {
+    const fields = [linksLinksField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    // Should include primary link fields
+    expect(result).toContain('domainNamePrimaryLinkLabel');
+    expect(result).toContain('domainNamePrimaryLinkUrl');
+    // Should include secondary links converted from JSON array
+    expect(result).toContain('domainNameSecondaryLinks');
+    expect(result).toContain(
+      "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+    );
+  });
+
+  it('should strip secondary link key names before indexing', () => {
+    const fields = [linksLinksField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain(
+      "regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g')",
+    );
+  });
+
+  describe('NULL/empty JSON column handling', () => {
+    it('should wrap additionalEmails JSON column with COALESCE for NULL safety', () => {
+      const fields = [emailsEmailsField] as FieldTypeAndNameMetadata[];
+      const result = getTsVectorColumnExpressionFromFields(fields);
+
+      // Verify COALESCE wrapping exists for NULL safety on additionalEmails
+      expect(result).toContain(
+        'COALESCE(public.unaccent_immutable(TRANSLATE("emailsAdditionalEmails"::text',
+      );
+      // Verify empty string fallback when column is NULL
+      expect(result).toMatch(
+        /COALESCE\(public\.unaccent_immutable\(TRANSLATE\("emailsAdditionalEmails"::text.*\), ''\)/,
+      );
+    });
+
+    it('should wrap additionalPhones JSON column with COALESCE for NULL safety', () => {
+      const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+      const result = getTsVectorColumnExpressionFromFields(fields);
+
+      // Verify COALESCE wrapping exists for NULL safety on additionalPhones
+      expect(result).toContain(
+        'COALESCE(TRANSLATE(regexp_replace("phonesAdditionalPhones"::text',
+      );
+      // Verify empty string fallback when column is NULL
+      expect(result).toMatch(
+        /COALESCE\(TRANSLATE\(regexp_replace\("phonesAdditionalPhones"::text.*\), ''\)/,
+      );
+    });
+
+    it('should wrap secondaryLinks JSON column with COALESCE for NULL safety', () => {
+      const fields = [linksLinksField] as FieldTypeAndNameMetadata[];
+      const result = getTsVectorColumnExpressionFromFields(fields);
+
+      // Verify COALESCE wrapping exists for NULL safety on secondaryLinks
+      expect(result).toContain(
+        'COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace("domainNameSecondaryLinks"::text',
+      );
+      // Verify empty string fallback when column is NULL
+      expect(result).toMatch(
+        /COALESCE\(public\.unaccent_immutable\(TRANSLATE\(regexp_replace\("domainNameSecondaryLinks"::text.*\), ''\)/,
+      );
+    });
+
+    it('should use empty string fallback for all JSON array columns', () => {
+      const fields = [
+        emailsEmailsField,
+        phonesPhonesField,
+        linksLinksField,
+      ] as FieldTypeAndNameMetadata[];
+      const result = getTsVectorColumnExpressionFromFields(fields);
+
+      // Count COALESCE with empty string fallback patterns for JSON columns
+      // Each JSON column should have a COALESCE(..., '') pattern
+      const additionalEmailsCoalesce = result.includes(
+        "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\"', '   ')), '')",
+      );
+      const additionalPhonesCoalesce = result.includes(
+        "COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+      );
+      const secondaryLinksCoalesce = result.includes(
+        "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+      );
+
+      expect(additionalEmailsCoalesce).toBe(true);
+      expect(additionalPhonesCoalesce).toBe(true);
+      expect(secondaryLinksCoalesce).toBe(true);
+    });
   });
 });
