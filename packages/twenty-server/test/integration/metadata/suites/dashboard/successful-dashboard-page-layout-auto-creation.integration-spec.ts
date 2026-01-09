@@ -6,7 +6,6 @@ import {
   destroyManyDashboardsWithGraphQL,
 } from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
 import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
-import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -14,23 +13,15 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 describe('Dashboard page layout auto-creation should succeed', () => {
   describe('createOne dashboard without pageLayoutId', () => {
     let createdDashboardId: string;
-    let createdPageLayoutId: string;
 
     beforeEach(() => {
       createdDashboardId = '';
-      createdPageLayoutId = '';
     });
 
     afterEach(async () => {
+      // Destroying dashboard automatically destroys associated page layout via DashboardDestroyOnePreQueryHook
       if (isNonEmptyString(createdDashboardId)) {
         await destroyDashboardWithGraphQL(createdDashboardId);
-      }
-
-      if (isNonEmptyString(createdPageLayoutId)) {
-        await destroyOnePageLayout({
-          expectToFail: false,
-          input: { id: createdPageLayoutId },
-        });
       }
     });
 
@@ -39,7 +30,6 @@ describe('Dashboard page layout auto-creation should succeed', () => {
       const dashboard = await createTestDashboardWithGraphQL({ title });
 
       createdDashboardId = dashboard.id;
-      createdPageLayoutId = dashboard.pageLayoutId ?? '';
 
       expect(dashboard.id).toBeDefined();
       expect(dashboard.title).toBe(title);
@@ -67,11 +57,9 @@ describe('Dashboard page layout auto-creation should succeed', () => {
 
   describe('createMany dashboards without pageLayoutId', () => {
     let createdDashboardIds: string[] = [];
-    let createdPageLayoutIds: string[] = [];
 
     beforeEach(() => {
       createdDashboardIds = [];
-      createdPageLayoutIds = [];
     });
 
     afterEach(async () => {
@@ -79,15 +67,6 @@ describe('Dashboard page layout auto-creation should succeed', () => {
         await destroyManyDashboardsWithGraphQL({
           id: { in: createdDashboardIds },
         });
-      }
-
-      for (const pageLayoutId of createdPageLayoutIds) {
-        if (isNonEmptyString(pageLayoutId)) {
-          await destroyOnePageLayout({
-            expectToFail: false,
-            input: { id: pageLayoutId },
-          });
-        }
       }
     });
 
@@ -101,13 +80,12 @@ describe('Dashboard page layout auto-creation should succeed', () => {
       const dashboards = await createManyDashboardsWithGraphQL(dashboardsData);
 
       createdDashboardIds = dashboards.map((d) => d.id);
-      createdPageLayoutIds = dashboards
-        .map((d) => d.pageLayoutId)
-        .filter(isNonEmptyString);
 
       expect(dashboards.length).toBe(dashboardsData.length);
 
-      const pageLayoutIds = new Set(createdPageLayoutIds);
+      const pageLayoutIds = new Set(
+        dashboards.map((d) => d.pageLayoutId).filter(isNonEmptyString),
+      );
 
       expect(pageLayoutIds.size).toBe(dashboardsData.length);
 
@@ -141,7 +119,6 @@ describe('Dashboard page layout auto-creation should succeed', () => {
       });
 
       createdDashboardIds.push(existingDashboard.id);
-      createdPageLayoutIds.push(existingDashboard.pageLayoutId ?? '');
 
       const existingPageLayoutId = existingDashboard.pageLayoutId;
 
@@ -159,15 +136,6 @@ describe('Dashboard page layout auto-creation should succeed', () => {
       const dashboards = await createManyDashboardsWithGraphQL(dashboardsData);
 
       createdDashboardIds.push(...dashboards.map((d) => d.id));
-
-      const newPageLayoutIds = dashboards
-        .map((d) => d.pageLayoutId)
-        .filter(
-          (id): id is string =>
-            isNonEmptyString(id) && id !== existingPageLayoutId,
-        );
-
-      createdPageLayoutIds.push(...newPageLayoutIds);
 
       expect(dashboards.length).toBe(3);
 
