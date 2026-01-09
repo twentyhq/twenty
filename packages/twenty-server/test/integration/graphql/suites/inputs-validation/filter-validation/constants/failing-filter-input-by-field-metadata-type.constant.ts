@@ -403,38 +403,29 @@ export const failingFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.ARRAY]: [
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: {} } },
-    //   gqlErrorMessage: 'cannot represent a non string value',
-    //   // TODO - fix this ? containsIlike not existing for rest
-    //   // restFilterInput: 'arrayField[containsIlike]:"{}"',
-    //   // restErrorMessage: '',
-    // },
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: [] } },
-    //   gqlErrorMessage: 'cannot represent a non string value',
-    //   // TODO - fix this ? containsIlike not existing for rest
-    //   // restFilterInput: 'arrayField[containsIlike]:"[]"',
-    //   // restErrorMessage: '',
-    // },
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: true } },
-    //   gqlErrorMessage: 'cannot represent a non string value',
-    //   // TODO - fix this ? containsIlike not existing for rest
-    //   // restFilterInput: 'arrayField[containsIlike]:"true"',
-    //   // restErrorMessage: '',
-    // },
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: 2 } },
-    //   gqlErrorMessage: 'cannot represent a non string value',
-    //   // TODO - fix this ? containsIlike not existing for rest
-    //   // restFilterInput: 'arrayField[containsIlike]:2',
-    //   // restErrorMessage: '',
-    // },
-    // TODO - ensure it should throw
-    // {
-    //   gqlFilterInput: { arrayField: { containsIlike: null } },
-    //   gqlErrorMessage: 'cannot represent a non string value',
-    // },
+    {
+      gqlFilterInput: { arrayField: { containsIlike: {} } },
+      gqlErrorMessage: 'cannot represent a non string value',
+      restFilterInput: 'arrayField[containsAny]:"{}"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { arrayField: { containsIlike: [] } },
+      gqlErrorMessage: 'cannot represent a non string value',
+      restFilterInput: 'arrayField[containsAny]:"[]"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { arrayField: { containsIlike: true } },
+      gqlErrorMessage: 'cannot represent a non string value',
+      restFilterInput: 'arrayField[containsAny]:"true"',
+      restErrorMessage: 'array value expected',
+    },
+    {
+      gqlFilterInput: { arrayField: { containsIlike: 2 } },
+      gqlErrorMessage: 'cannot represent a non string value',
+      restFilterInput: 'arrayField[containsAny]:2',
+      restErrorMessage: 'array value expected',
+    },
   ],
 };
