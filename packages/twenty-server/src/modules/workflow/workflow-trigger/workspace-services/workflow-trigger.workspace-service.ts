@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -193,7 +194,7 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    await this.enableTrigger(workflowVersion, workspaceId);
+    await this.enableTrigger(workflowVersion, workflow, workspaceId);
   }
 
   private async performDeactivationSteps(
@@ -309,6 +310,7 @@ export class WorkflowTriggerWorkspaceService {
 
   private async enableTrigger(
     workflowVersion: WorkflowVersionWorkspaceEntity,
+    workflow: WorkflowWorkspaceEntity,
     workspaceId: string,
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
@@ -317,10 +319,21 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.MANUAL: {
         const settings = workflowVersion.trigger.settings;
 
+        const workflowName = workflow.name;
+
+        assertIsDefinedOrThrow(
+          workflowName,
+          new WorkflowTriggerException(
+            'Workflow name is required for manual trigger',
+            WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+          ),
+        );
+
         await this.manualTriggerWorkspaceService.addManualTrigger({
           workflowId: workflowVersion.workflowId,
           workflowVersionId: workflowVersion.id,
           settings,
+          workflowName,
           workspaceId,
         });
 

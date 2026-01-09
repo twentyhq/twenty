@@ -445,6 +445,7 @@ export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
 export const WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS = {
   workflowVersion: '20202020-3319-4234-a34c-9a1b2c3d4e5f',
   workflow: '20202020-3319-4234-a34c-0b1c2d3e4f5a',
+  workflowName: '20202020-3319-4234-a34c-2d3e4f5a6b7c',
   settings: '20202020-3319-4234-a34c-1c2d3e4f5a6b',
 } as const;
 

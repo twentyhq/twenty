@@ -1779,6 +1779,10 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflow,
       },
+      workflowName: {
+        universalIdentifier:
+          WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
+      },
       settings: {
         universalIdentifier:
           WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,

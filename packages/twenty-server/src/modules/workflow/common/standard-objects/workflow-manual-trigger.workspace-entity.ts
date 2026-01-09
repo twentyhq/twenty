@@ -36,7 +36,8 @@ export class WorkflowManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workflow version this manual trigger belongs to`,
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
-    inverseSideFieldKey: 'manualTriggers',
+    inverseSideFieldKey:
+      'manualTriggers' as keyof WorkflowVersionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsFieldUIReadOnly()
@@ -52,7 +53,7 @@ export class WorkflowManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workflow this manual trigger belongs to`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
-    inverseSideFieldKey: 'manualTriggers',
+    inverseSideFieldKey: 'manualTriggers' as keyof WorkflowWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsFieldUIReadOnly()
@@ -60,6 +61,16 @@ export class WorkflowManualTriggerWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflow')
   workflowId: string;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.workflowName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Workflow Name`,
+    description: msg`The name of the workflow this manual trigger belongs to`,
+    icon: 'IconSettingsAutomation',
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  workflowName: string;
 
   @WorkspaceField({
     standardId: WORKFLOW_MANUAL_TRIGGER_STANDARD_FIELD_IDS.settings,

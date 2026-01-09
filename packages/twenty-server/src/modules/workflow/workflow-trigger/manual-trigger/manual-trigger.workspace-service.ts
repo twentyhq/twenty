@@ -15,11 +15,13 @@ export class ManualTriggerWorkspaceService {
     workflowId,
     workflowVersionId,
     settings,
+    workflowName,
     workspaceId,
   }: {
     workflowId: string;
     workflowVersionId: string;
     settings: ManualTriggerSettings;
+    workflowName: string;
     workspaceId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -37,6 +39,7 @@ export class ManualTriggerWorkspaceService {
           workflowId,
           workflowVersionId,
           settings,
+          workflowName,
         });
       },
     );

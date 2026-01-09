@@ -65,6 +65,7 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
               () => `"workflowVersion"."trigger"->>'type' = 'MANUAL'`,
             ),
           },
+          relations: ['workflow'],
         });
 
         this.logger.log(
@@ -136,10 +137,19 @@ export class BackfillWorkflowManualTriggersCommand extends ActiveOrSuspendedWork
           (workflowVersion) => {
             assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
+            const workflowName = workflowVersion.workflow?.name;
+
+            if (!workflowName) {
+              throw new Error(
+                `Workflow name not found for workflow version ${workflowVersion.id}`,
+              );
+            }
+
             return {
               workflowId: workflowVersion.workflowId,
               workflowVersionId: workflowVersion.id,
               settings: workflowVersion.trigger.settings,
+              workflowName,
             };
           },
         );

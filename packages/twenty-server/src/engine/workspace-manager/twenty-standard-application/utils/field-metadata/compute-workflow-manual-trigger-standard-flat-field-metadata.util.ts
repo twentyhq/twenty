@@ -152,6 +152,23 @@ export const buildWorkflowManualTriggerStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  workflowName: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'workflowName',
+      type: FieldMetadataType.TEXT,
+      label: 'Workflow Name',
+      description: 'The name of the workflow this manual trigger belongs to',
+      icon: 'IconSettingsAutomation',
+      isNullable: false,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   settings: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
