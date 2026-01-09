@@ -70,25 +70,34 @@ export class CleanerWorkspaceService {
       );
   }
 
-  async computeWorkspaceBillingInactivity(
+  async computeDaysSinceSubscriptionUnpaid(
     workspace: WorkspaceEntity,
   ): Promise<number> {
     try {
       const lastSubscription =
         await this.billingSubscriptionRepository.findOneOrFail({
-          where: { workspaceId: workspace.id },
+          where: {
+            workspaceId: workspace.id,
+          },
           order: { updatedAt: 'DESC' },
         });
 
-      const daysSinceBillingInactivity = differenceInDays(
+      if (
+        lastSubscription.status !== SubscriptionStatus.Unpaid &&
+        lastSubscription.status !== SubscriptionStatus.Canceled
+      ) {
+        throw new Error();
+      }
+
+      const daysSinceSubscriptionUnpaid = differenceInDays(
         new Date(),
-        lastSubscription.updatedAt,
+        lastSubscription.currentPeriodStart,
       );
 
-      return daysSinceBillingInactivity;
+      return daysSinceSubscriptionUnpaid;
     } catch {
       throw new WorkspaceCleanerException(
-        `No billing subscription found for workspace ${workspace.id} ${workspace.displayName}`,
+        `No cancelled or unpaid billing subscription found for workspace ${workspace.id} ${workspace.displayName}`,
         WorkspaceCleanerExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
     }
@@ -374,7 +383,7 @@ export class CleanerWorkspaceService {
         }
 
         const workspaceInactivity =
-          await this.computeWorkspaceBillingInactivity(workspace);
+          await this.computeDaysSinceSubscriptionUnpaid(workspace);
 
         if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
