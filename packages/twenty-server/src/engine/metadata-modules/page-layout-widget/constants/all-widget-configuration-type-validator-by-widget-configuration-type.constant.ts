@@ -1,10 +1,23 @@
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { CalendarConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-configuration.dto';
+import { EmailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/emails-configuration.dto';
+import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
+import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-rich-text-configuration.dto';
+import { FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
+import { FilesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/files-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
+import { NotesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/notes-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
+import { TasksConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/tasks-configuration.dto';
+import { TimelineConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/timeline-configuration.dto';
+import { ViewConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/view-configuration.dto';
+import { WorkflowConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/workflow-configuration.dto';
+import { WorkflowRunConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/workflow-run-configuration.dto';
+import { WorkflowVersionConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/workflow-version-configuration.dto';
 import { type WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
@@ -17,45 +30,19 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     IFRAME: IframeConfigurationDTO,
     GAUGE_CHART: GaugeChartConfigurationDTO,
     BAR_CHART: BarChartConfigurationDTO,
-    CALENDAR: class {
-      configurationType: WidgetConfigurationType.CALENDAR;
-    },
-    EMAILS: class {
-      configurationType: WidgetConfigurationType.EMAILS;
-    },
-    FIELD: class {
-      configurationType: WidgetConfigurationType.FIELD;
-    },
-    FIELD_RICH_TEXT: class {
-      configurationType: WidgetConfigurationType.FIELD_RICH_TEXT;
-    },
-    FIELDS: class {
-      configurationType: WidgetConfigurationType.FIELDS;
-    },
-    FILES: class {
-      configurationType: WidgetConfigurationType.FILES;
-    },
-    NOTES: class {
-      configurationType: WidgetConfigurationType.NOTES;
-    },
-    TASKS: class {
-      configurationType: WidgetConfigurationType.TASKS;
-    },
-    TIMELINE: class {
-      configurationType: WidgetConfigurationType.TIMELINE;
-    },
-    VIEW: class {
-      configurationType: WidgetConfigurationType.VIEW;
-    },
-    WORKFLOW: class {
-      configurationType: WidgetConfigurationType.WORKFLOW;
-    },
-    WORKFLOW_RUN: class {
-      configurationType: WidgetConfigurationType.WORKFLOW_RUN;
-    },
-    WORKFLOW_VERSION: class {
-      configurationType: WidgetConfigurationType.WORKFLOW_VERSION;
-    },
+    CALENDAR: CalendarConfigurationDTO,
+    EMAILS: EmailsConfigurationDTO,
+    FIELD: FieldConfigurationDTO,
+    FIELD_RICH_TEXT: FieldRichTextConfigurationDTO,
+    FIELDS: FieldsConfigurationDTO,
+    FILES: FilesConfigurationDTO,
+    NOTES: NotesConfigurationDTO,
+    TASKS: TasksConfigurationDTO,
+    TIMELINE: TimelineConfigurationDTO,
+    VIEW: ViewConfigurationDTO,
+    WORKFLOW: WorkflowConfigurationDTO,
+    WORKFLOW_RUN: WorkflowRunConfigurationDTO,
+    WORKFLOW_VERSION: WorkflowVersionConfigurationDTO,
   } as const satisfies {
     [P in WidgetConfigurationType]: new () => PageLayoutWidgetConfigurationBase;
   };
