@@ -49,8 +49,8 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'depth',
     in: 'query',
-    description: `Determines the level of nested related objects to include in the response.  
-    - 0: Primary object only  
+    description: `Determines the level of nested related objects to include in the response.
+    - 0: Primary object only
     - 1: Primary object + direct relations`,
     required: false,
     schema: {
@@ -93,7 +93,7 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'filter',
     in: 'query',
-    description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2  
+    description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2
     Refer to the filter section at the top of the page for more details.`,
     required: false,
     schema: {
@@ -157,3 +157,98 @@ export const computeIdPathParameter = (): OpenAPIV3_1.ParameterObject => {
     },
   };
 };
+
+export const computeGroupByParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'group_by',
+    in: 'query',
+    description: `Array of fields to group by. Each element can specify a field and optionally a subfield or granularity for date fields.`,
+    required: true,
+    schema: {
+      type: 'string',
+    },
+    examples: {
+      simple: {
+        value: '[{"updatedAt": true}]',
+        summary: 'Group by a single field',
+      },
+      subfield: {
+        value: '[{"assignee": {"name": true}}]',
+        summary: 'Group by a relation field subfield',
+      },
+      dateGranularity: {
+        value: '[{"createdAt": {"granularity": "MONTH"}}]',
+        summary: 'Group by date with granularity (DAY, WEEK, MONTH, YEAR)',
+      },
+    },
+  };
+};
+
+export const computeViewIdParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'view_id',
+    in: 'query',
+    description: 'View ID to apply filters from.',
+    required: false,
+    schema: {
+      type: 'string',
+      format: 'uuid',
+    },
+  };
+};
+
+export const computeIncludeRecordsSampleParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'include_records_sample',
+      in: 'query',
+      description:
+        'If true, includes a sample of records for each group in the response.',
+      required: false,
+      schema: {
+        type: 'boolean',
+        default: false,
+      },
+    };
+  };
+
+export const computeAggregateParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'aggregate',
+    in: 'query',
+    description: `Array of aggregate operations to compute for each group.`,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+    examples: {
+      count: {
+        value: '["countNotEmptyId"]',
+        summary: 'Count non-empty IDs in each group',
+      },
+      multiple: {
+        value: '["countNotEmptyId", "sumAmount"]',
+        summary: 'Multiple aggregate operations',
+      },
+    },
+  };
+};
+
+export const computeOrderByForRecordsParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'order_by_for_records',
+      in: 'query',
+      description: `Order by clause for records within each group. Only applicable when include_records is true.`,
+      required: false,
+      schema: {
+        type: 'string',
+      },
+      examples: {
+        simple: {
+          value: 'createdAt',
+          summary: 'Order records by createdAt',
+        },
+      },
+    };
+  };
