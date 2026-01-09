@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -26,7 +27,6 @@ import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-a
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Command({
   name: 'upgrade:1-16:backfill-standard-page-layouts',

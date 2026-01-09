@@ -29,7 +29,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   { where: '"deletedAt" IS NULL' },
 )
 export class PageLayoutWidgetEntity<
-    TWidgetConfigurationType extends WidgetConfigurationType = WidgetConfigurationType,
+    TWidgetConfigurationType extends
+      WidgetConfigurationType = WidgetConfigurationType,
   >
   extends SyncableEntity
   implements Required<PageLayoutWidgetEntity>
