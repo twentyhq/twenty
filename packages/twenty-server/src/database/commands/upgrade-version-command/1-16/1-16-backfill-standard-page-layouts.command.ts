@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -11,18 +13,13 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import {
-  MY_FIRST_DASHBOARD_ID,
-  prefillDashboards,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
+import { MY_FIRST_DASHBOARD_ID } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { isDefined } from 'twenty-shared/utils';
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Command({
   name: 'upgrade:1-16:backfill-standard-page-layouts',
@@ -40,7 +37,6 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
@@ -54,6 +50,19 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       `Starting backfill of standard page layouts for workspace ${workspaceId}`,
     );
 
+    await this.backfillStandardPageLayoutMetadata({ workspaceId });
+    await this.backfillDashboardRecord({ workspaceId, options });
+
+    this.logger.log(
+      `Successfully backfilled standard page layouts for workspace ${workspaceId}`,
+    );
+  }
+
+  private async backfillStandardPageLayoutMetadata({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
     const {
       flatPageLayoutMaps: fromFlatPageLayoutMaps,
       flatPageLayoutTabMaps: fromFlatPageLayoutTabMaps,
@@ -78,8 +87,9 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
 
     if (isDefined(flatPageLayout)) {
       this.logger.log(
-        `Skipping command standard page layout already exists in workspace ${workspaceId}`,
+        `Standard page layout already exists in workspace ${workspaceId}, skipping metadata backfill`,
       );
+
       return;
     }
 
@@ -146,58 +156,83 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       );
     }
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-    const globalDataSource =
-      this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-    const queryRunner = globalDataSource.createQueryRunner();
+    this.logger.log(
+      `Successfully backfilled standard page layout metadata for workspace ${workspaceId}`,
+    );
+  }
 
-    await queryRunner.connect();
-    try {
-      const existingDashboard = await queryRunner.manager
-        .createQueryBuilder()
-        .select('id')
-        .from(`${schemaName}.dashboard`, 'dashboard')
-        .where('id = :id', { id: MY_FIRST_DASHBOARD_ID })
-        .getRawOne();
-
-      if (existingDashboard) {
-        this.logger.log(
-          `Dashboard already exists for workspace ${workspaceId}, skipping`,
-        );
-
-        return;
-      }
-
-      if (options.dryRun) {
-        this.logger.log(
-          `[DRY RUN] Would create dashboard record for workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      const { flatPageLayoutMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatPageLayoutMaps',
-        ]);
-
-      await prefillDashboards(
-        queryRunner.manager,
-        schemaName,
-        flatPageLayoutMaps,
+  private async backfillDashboardRecord({
+    workspaceId,
+    options,
+  }: {
+    workspaceId: string;
+    options: RunOnWorkspaceArgs['options'];
+  }): Promise<void> {
+    const dashboardRepository =
+      await this.twentyORMGlobalManager.getRepository<DashboardWorkspaceEntity>(
+        workspaceId,
+        'dashboard',
+        { shouldBypassPermissionChecks: true },
       );
 
+    const existingDashboard = await dashboardRepository.findOne({
+      where: { id: MY_FIRST_DASHBOARD_ID },
+    });
+
+    if (isDefined(existingDashboard)) {
       this.logger.log(
-        `Successfully backfilled standard page layouts for workspace ${workspaceId}`,
+        `Dashboard already exists for workspace ${workspaceId}, skipping dashboard backfill`,
       );
-    } catch (error) {
-      this.logger.error(
-        `Failed to backfill standard page layouts for workspace ${workspaceId}`,
-        error,
-      );
-      throw error;
-    } finally {
-      await queryRunner.release();
+
+      return;
     }
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would create dashboard record for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { flatPageLayoutMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatPageLayoutMaps',
+      ]);
+
+    const myFirstDashboardPageLayout = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatPageLayoutMaps,
+      universalIdentifier:
+        STANDARD_PAGE_LAYOUTS.myFirstDashboard.universalIdentifier,
+    });
+
+    if (!isDefined(myFirstDashboardPageLayout)) {
+      throw new Error(
+        `Page layout with universalIdentifier '${STANDARD_PAGE_LAYOUTS.myFirstDashboard.universalIdentifier}' not found`,
+      );
+    }
+
+    await dashboardRepository.insert({
+      id: MY_FIRST_DASHBOARD_ID,
+      title: 'My First Dashboard',
+      pageLayoutId: myFirstDashboardPageLayout.id,
+      position: 0,
+      createdBy: {
+        source: FieldActorSource.SYSTEM,
+        workspaceMemberId: null,
+        name: 'System',
+        context: {},
+      },
+      updatedBy: {
+        source: FieldActorSource.SYSTEM,
+        workspaceMemberId: null,
+        name: 'System',
+        context: {},
+      },
+    });
+
+    this.logger.log(
+      `Successfully backfilled dashboard record for workspace ${workspaceId}`,
+    );
   }
 }
