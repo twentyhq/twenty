@@ -1,34 +1,65 @@
 import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
 
 describe('getFunctionBaseFile', () => {
-  it('should render proper file', () => {
-    expect(
-      getFunctionBaseFile({
-        name: 'serverless-function-name',
-        universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
-      }),
-    ).toBe(`import { type FunctionConfig } from 'twenty-sdk';
+  it('should render proper file using defineFunction', () => {
+    const result = getFunctionBaseFile({
+      name: 'my-function',
+      universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
+    });
 
-export const main = async (params: {
-  a: string;
-  b: number;
-}): Promise<{ message: string }> => {
-  const { a, b } = params;
+    // Verify it uses defineFunction
+    expect(result).toContain("import { defineFunction } from 'twenty-sdk'");
+    expect(result).toContain('export default defineFunction({');
 
-  // Rename the parameters and code below with your own logic
-  // This is just an example
-  const message = \`Hello, input: \${a} and \${b}\`;
+    // Verify function properties
+    expect(result).toContain(
+      "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
+    );
+    expect(result).toContain("name: 'my-function'");
+    expect(result).toContain('timeoutSeconds: 5');
+    expect(result).toContain('handler,');
+    expect(result).toContain('triggers: [');
 
-  return { message };
-};
+    // Verify handler is exported
+    expect(result).toContain('export const handler = async');
 
-export const config: FunctionConfig = {
-  universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
-  name: 'serverless-function-name',
-  timeoutSeconds: 5,
-  triggers: [],
-};
+    // Verify description is included
+    expect(result).toContain(
+      "description: 'Add a description for your function'",
+    );
+  });
 
-`);
+  it('should generate unique UUID when not provided', () => {
+    const result = getFunctionBaseFile({
+      name: 'auto-uuid-function',
+    });
+
+    // Verify it has a universalIdentifier (UUID format)
+    expect(result).toMatch(
+      /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+    );
+  });
+
+  it('should use kebab-case for function name', () => {
+    const result = getFunctionBaseFile({
+      name: 'my-awesome-function',
+    });
+
+    expect(result).toContain("name: 'my-awesome-function'");
+    expect(result).toContain("path: '/my-awesome-function'");
+  });
+
+  it('should include trigger examples as comments', () => {
+    const result = getFunctionBaseFile({
+      name: 'example-function',
+    });
+
+    // Verify trigger examples are included as comments
+    expect(result).toContain("type: 'route'");
+    expect(result).toContain("type: 'cron'");
+    expect(result).toContain("type: 'databaseEvent'");
+    expect(result).toContain("httpMethod: 'POST'");
+    expect(result).toContain("pattern: '0 0 * * *'");
+    expect(result).toContain("eventName: 'objectName.created'");
   });
 });
