@@ -15,9 +15,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = (
 ): FlatEntityMaps<FlatPageLayoutWidget> => {
   const allWidgetMetadatas: FlatPageLayoutWidget[] = Object.values(
     STANDARD_FLAT_PAGE_LAYOUT_WIDGET_BUILDERS,
-  ).flatMap((layoutTabs) =>
-      builder(args)
-  );
+  ).flatMap((builder) => builder(args));
 
   let flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
