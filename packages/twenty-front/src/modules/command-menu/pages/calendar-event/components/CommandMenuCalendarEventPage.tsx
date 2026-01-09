@@ -1,11 +1,13 @@
 import { CalendarEventDetails } from '@/activities/calendar/components/CalendarEventDetails';
 import { CalendarEventDetailsEffect } from '@/activities/calendar/components/CalendarEventDetailsEffect';
-import { FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE } from '@/activities/calendar/graphql/operation-signatures/FindOneCalendarEventOperationSignature';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useMemo } from 'react';
 
 export const CommandMenuCalendarEventPage = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -13,11 +15,34 @@ export const CommandMenuCalendarEventPage = () => {
     viewableRecordIdComponentState,
   );
 
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    depth: 1,
+  });
+
+  const calendarEventRecordGqlFields = useMemo(
+    () => ({
+      ...recordGqlFields,
+      calendarEventParticipants: {
+        id: true,
+        person: true,
+        workspaceMember: true,
+        isOrganizer: true,
+        responseStatus: true,
+        handle: true,
+        createdAt: true,
+        calendarEventId: true,
+        updatedAt: true,
+        displayName: true,
+      },
+    }),
+    [recordGqlFields],
+  );
+
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
-    objectNameSingular:
-      FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.objectNameSingular,
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     objectRecordId: viewableRecordId ?? '',
-    recordGqlFields: FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.fields,
+    recordGqlFields: calendarEventRecordGqlFields,
     // TODO: this is not executed on sub-sequent runs, make sure that it is intended
     onCompleted: (record) => {
       upsertRecordsInStore({ partialRecords: [record] });

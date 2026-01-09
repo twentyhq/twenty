@@ -8,13 +8,20 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
+import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
@@ -98,6 +105,7 @@ export const CalendarEventDetails = ({
     'location',
     'description',
   ];
+  const standardFieldNames = new Set(standardFieldOrder);
 
   const standardFields = standardFieldOrder
     .map((fieldName) =>
@@ -113,10 +121,40 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
-  const isRecordReadOnly = useIsRecordReadOnly({
-    recordId: calendarEvent.id,
-    objectMetadataId: objectMetadataItem.id,
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
+
+  const useUpdateOneCalendarEventRecordMutation: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
+  const objectPermissions = useObjectPermissionsForObject(objectMetadataItem.id);
+  const isRecordDeleted = useIsRecordDeleted({ recordId: calendarEvent.id });
+
+  const isFieldReadOnly = (fieldMetadataItem: FieldMetadataItem) => {
+    if (standardFieldNames.has(fieldMetadataItem.name)) {
+      return true;
+    }
+
+    const fieldReadOnlyByPermissions = isFieldMetadataReadOnlyByPermissions({
+      objectPermissions,
+      fieldMetadataId: fieldMetadataItem.id,
+    });
+
+    return (
+      isRecordDeleted ||
+      fieldMetadataItem.isUIReadOnly ||
+      fieldReadOnlyByPermissions
+    );
+  };
 
   const renderField = (fieldMetadataItem: FieldMetadataItem) => (
     <StyledPropertyBox key={fieldMetadataItem.id}>
@@ -130,9 +168,9 @@ export const CalendarEventDetails = ({
             showLabel: true,
             labelWidth: 72,
           }),
-          useUpdateRecord: () => [() => undefined, { loading: false }],
+          useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
           maxWidth: 300,
-          isRecordFieldReadOnly: isRecordReadOnly,
+          isRecordFieldReadOnly: isFieldReadOnly(fieldMetadataItem),
         }}
       >
         <RecordFieldComponentInstanceContext.Provider
