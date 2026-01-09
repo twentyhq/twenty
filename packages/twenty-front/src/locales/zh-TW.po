@@ -8184,14 +8184,6 @@ msgstr "未找到記錄"
 msgid "No records matching the filter criteria were found."
 msgstr "找不到符合篩選條件的記錄。"
 
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
-msgid "No related records"
-msgstr "沒有相關記錄"
-
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
