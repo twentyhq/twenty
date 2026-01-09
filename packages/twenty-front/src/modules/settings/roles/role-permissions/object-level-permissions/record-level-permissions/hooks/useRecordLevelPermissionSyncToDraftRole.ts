@@ -63,7 +63,11 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
       );
 
       const newPredicateGroups = currentRecordFilterGroups.map((group) =>
-        convertRecordFilterGroupToPredicateGroup(group, roleId),
+        convertRecordFilterGroupToPredicateGroup(
+          group,
+          roleId,
+          objectMetadataItem.id,
+        ),
       );
 
       return {

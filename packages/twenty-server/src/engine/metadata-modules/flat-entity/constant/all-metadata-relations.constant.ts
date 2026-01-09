@@ -378,7 +378,11 @@ export const ALL_METADATA_RELATIONS = {
   },
   rowLevelPermissionPredicateGroup: {
     manyToOne: {
-      workspace: null,
+      objectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'objectMetadataId',
+      },
       role: {
         metadataName: 'role',
         foreignKey: 'roleId',
@@ -390,6 +394,7 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator:
           'childRowLevelPermissionPredicateGroupIds',
       },
+      workspace: null,
       application: null,
     },
     oneToMany: {

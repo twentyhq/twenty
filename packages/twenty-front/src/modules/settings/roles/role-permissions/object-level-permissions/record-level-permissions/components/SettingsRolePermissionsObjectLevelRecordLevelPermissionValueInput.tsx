@@ -13,13 +13,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldType';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
@@ -117,7 +117,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       });
 
-    const { upsertRecordFilter } = useUpsertRecordFilter();
+    const { upsertObjectFilterDropdownCurrentFilter } =
+      useUpsertObjectFilterDropdownCurrentFilter();
 
     const { applyObjectFilterDropdownFilterValue } =
       useApplyObjectFilterDropdownFilterValue();
@@ -174,14 +175,16 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         return;
       }
 
-      upsertRecordFilter({
+      const updatedFilter = {
         ...recordFilter,
         value: '',
         rlsDynamicValue: {
           workspaceMemberFieldMetadataId,
           workspaceMemberSubFieldName: workspaceMemberSubFieldName ?? null,
         },
-      });
+      };
+
+      upsertObjectFilterDropdownCurrentFilter(updatedFilter);
     };
 
     const handleResetToStaticValue = () => {
@@ -189,10 +192,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         return;
       }
 
-      upsertRecordFilter({
+      const updatedFilter = {
         ...recordFilter,
         rlsDynamicValue: null,
-      });
+      };
+
+      upsertObjectFilterDropdownCurrentFilter(updatedFilter);
     };
 
     if (isDynamicMode) {

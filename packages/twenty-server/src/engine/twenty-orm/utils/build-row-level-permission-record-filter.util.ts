@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
 import {
+  FieldMetadataType,
   RecordFilterGroupLogicalOperator,
   type CompositeFieldSubFieldName,
   type PartialFieldMetadataItemOption,
   type RecordGqlOperationFilter,
-  FieldMetadataType,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -119,6 +119,17 @@ export const buildRowLevelPermissionRecordFilter = ({
         if (!isDefined(predicateValue)) {
           return null;
         }
+
+        // When workspace member field is SELECT or MULTI_SELECT and value is a string,
+        // wrap it in an array to match the frontend format (which uses multi-select UI)
+        if (
+          (workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
+            workspaceMemberFieldMetadata.type ===
+              FieldMetadataType.MULTI_SELECT) &&
+          typeof predicateValue === 'string'
+        ) {
+          predicateValue = [predicateValue];
+        }
       }
 
       const effectiveSubFieldName = predicate.subFieldName as
@@ -126,14 +137,6 @@ export const buildRowLevelPermissionRecordFilter = ({
         | undefined;
 
       let filterValue = convertViewFilterValueToString(predicateValue);
-
-      if (
-        (fieldMetadata.type === FieldMetadataType.SELECT ||
-          fieldMetadata.type === FieldMetadataType.MULTI_SELECT) &&
-        typeof predicateValue === 'string'
-      ) {
-        filterValue = JSON.stringify([predicateValue]);
-      }
 
       return {
         id: predicate.id,

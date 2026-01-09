@@ -121,6 +121,7 @@ export const convertPredicateGroupToRecordFilterGroup = (
 export const convertRecordFilterGroupToPredicateGroup = (
   filterGroup: RecordFilterGroup,
   roleId: string,
+  objectMetadataId: string,
 ): RowLevelPermissionPredicateGroup => {
   return {
     __typename: 'RowLevelPermissionPredicateGroup',
@@ -134,5 +135,6 @@ export const convertRecordFilterGroupToPredicateGroup = (
     positionInRowLevelPermissionPredicateGroup:
       filterGroup.positionInRecordFilterGroup ?? null,
     roleId,
+    objectMetadataId,
   };
 };
