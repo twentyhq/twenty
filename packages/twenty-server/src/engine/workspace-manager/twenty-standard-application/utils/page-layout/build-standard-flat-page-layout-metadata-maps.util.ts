@@ -2,50 +2,28 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  STANDARD_PAGE_LAYOUTS,
-  type StandardPageLayoutName,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
+  type CreateStandardPageLayoutArgs,
+  STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/create-standard-page-layout-flat-metadata.util';
 
-export type BuildStandardFlatPageLayoutMetadataMapsArgs = {
-  now: string;
-  workspaceId: string;
-  twentyStandardApplicationId: string;
-  standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
-};
+export type BuildStandardFlatPageLayoutMetadataMapsArgs = Omit<
+  CreateStandardPageLayoutArgs,
+  'context'
+>;
 
-export const buildStandardFlatPageLayoutMetadataMaps = ({
-  now,
-  workspaceId,
-  twentyStandardApplicationId,
-  standardPageLayoutMetadataRelatedEntityIds,
-}: BuildStandardFlatPageLayoutMetadataMapsArgs): FlatEntityMaps<FlatPageLayout> => {
+export const buildStandardFlatPageLayoutMetadataMaps = (
+  args: BuildStandardFlatPageLayoutMetadataMapsArgs,
+): FlatEntityMaps<FlatPageLayout> => {
+  const allPageLayoutMetadatas: FlatPageLayout[] = Object.values(
+    STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME,
+  ).map((builder) => builder(args));
+
   let flatPageLayoutMaps = createEmptyFlatEntityMaps();
 
-  for (const layoutName of Object.keys(
-    STANDARD_PAGE_LAYOUTS,
-  ) as StandardPageLayoutName[]) {
-    const layoutDefinition = STANDARD_PAGE_LAYOUTS[layoutName];
-    const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
-
-    const flatPageLayout: FlatPageLayout = {
-      id: layoutIds.id,
-      universalIdentifier: layoutDefinition.universalIdentifier,
-      applicationId: twentyStandardApplicationId,
-      workspaceId,
-      name: layoutDefinition.name,
-      type: PageLayoutType.DASHBOARD,
-      objectMetadataId: null,
-      tabIds: [],
-      createdAt: now,
-      updatedAt: now,
-      deletedAt: null,
-    };
-
+  for (const pageLayoutMetadata of allPageLayoutMetadatas) {
     flatPageLayoutMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatPageLayout,
+      flatEntity: pageLayoutMetadata,
       flatEntityMaps: flatPageLayoutMaps,
     });
   }
