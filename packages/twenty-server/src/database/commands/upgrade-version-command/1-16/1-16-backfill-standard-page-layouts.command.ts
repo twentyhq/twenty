@@ -10,6 +10,7 @@ import { updateStandardPageLayoutWidgetsWithWorkspaceFieldIds } from 'src/databa
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -18,8 +19,10 @@ import {
   MY_FIRST_DASHBOARD_ID,
   prefillDashboards,
 } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
+import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Command({
   name: 'upgrade:1-16:backfill-standard-page-layouts',
@@ -67,12 +70,26 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       'flatFieldMetadataMaps',
     ]);
 
+    const flatPageLayout = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: fromFlatPageLayoutMaps,
+      universalIdentifier:
+        STANDARD_PAGE_LAYOUTS.myFirstDashboard.universalIdentifier,
+    });
+
+    if (isDefined(flatPageLayout)) {
+      this.logger.log(
+        `Skipping command standard page layout already exists in workspace ${workspaceId}`,
+      );
+      return;
+    }
+
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
         },
       );
+
     const {
       flatPageLayoutMaps: toFlatPageLayoutMaps,
       flatPageLayoutTabMaps: toFlatPageLayoutTabMaps,
@@ -83,40 +100,51 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
     });
 
-    const toFlatPageLayoutWidgetMaps = updateStandardPageLayoutWidgetsWithWorkspaceFieldIds({
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      flatPageLayoutWidgetMaps: rawToFlatPageLayoutWidgetMaps,
-    });
+    const toFlatPageLayoutWidgetMaps =
+      updateStandardPageLayoutWidgetsWithWorkspaceFieldIds({
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        flatPageLayoutWidgetMaps: rawToFlatPageLayoutWidgetMaps,
+      });
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
-      {
-        additionalCacheDataMaps: {
-          featureFlagsMap,
-        },
-        buildOptions: {
-          isSystemBuild: true,
-        },
-        fromToAllFlatEntityMaps: {
-          flatPageLayoutMaps: {
-            from: fromFlatPageLayoutMaps,
-            to: toFlatPageLayoutMaps,
+    const validateAndbuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+        {
+          additionalCacheDataMaps: {
+            featureFlagsMap,
           },
-          flatPageLayoutTabMaps: {
-            from: fromFlatPageLayoutTabMaps,
-            to: toFlatPageLayoutTabMaps,
+          buildOptions: {
+            isSystemBuild: true,
           },
-          flatPageLayoutWidgetMaps: {
-            from: fromFlatPageLayoutWidgetMaps,
-            to: toFlatPageLayoutWidgetMaps,
+          fromToAllFlatEntityMaps: {
+            flatPageLayoutMaps: {
+              from: fromFlatPageLayoutMaps,
+              to: toFlatPageLayoutMaps,
+            },
+            flatPageLayoutTabMaps: {
+              from: fromFlatPageLayoutTabMaps,
+              to: toFlatPageLayoutTabMaps,
+            },
+            flatPageLayoutWidgetMaps: {
+              from: fromFlatPageLayoutWidgetMaps,
+              to: toFlatPageLayoutWidgetMaps,
+            },
+          },
+          workspaceId,
+          dependencyAllFlatEntityMaps: {
+            flatObjectMetadataMaps,
           },
         },
-        workspaceId,
-        dependencyAllFlatEntityMaps: {
-          flatObjectMetadataMaps,
-        },
-      },
-    );
+      );
+
+    if (isDefined(validateAndbuildResult)) {
+      this.logger.error(
+        `Failed to create many fields \n ${JSON.stringify(validateAndbuildResult, null, 2)}`,
+      );
+      throw new Error(
+        `Failed to create standard page layout/tab/widgets on workspace ${workspaceId}`,
+      );
+    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const globalDataSource =
@@ -124,7 +152,6 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
     const queryRunner = globalDataSource.createQueryRunner();
 
     await queryRunner.connect();
-
     try {
       const existingDashboard = await queryRunner.manager
         .createQueryBuilder()
