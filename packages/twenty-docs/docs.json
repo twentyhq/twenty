@@ -259,13 +259,15 @@
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/dashboards/capabilities/dashboards",
-                      "user-guide/dashboards/capabilities/widgets"
+                      "user-guide/dashboards/capabilities/widgets",
+                      "user-guide/dashboards/capabilities/chart-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/dashboards/how-tos/dashboards-faq"
+                      "user-guide/dashboards/how-tos/dashboards-faq",
+                      "user-guide/dashboards/how-tos/widget-faq"
                     ]
                   }
                 ]

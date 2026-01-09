@@ -257,14 +257,16 @@
               "label": "Capabilities",
               "pages": [
                 "user-guide/dashboards/capabilities/dashboards",
-                "user-guide/dashboards/capabilities/widgets"
+                "user-guide/dashboards/capabilities/widgets",
+                "user-guide/dashboards/capabilities/chart-settings"
               ]
             },
             {
               "key": "dashboardsHowTos",
               "label": "How-Tos",
               "pages": [
-                "user-guide/dashboards/how-tos/dashboards-faq"
+                "user-guide/dashboards/how-tos/dashboards-faq",
+                "user-guide/dashboards/how-tos/widget-faq"
               ]
             }
           ]
