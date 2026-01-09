@@ -3,18 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { updateStandardPageLayoutWidgetsWithWorkspaceFieldIds } from 'src/database/commands/upgrade-version-command/1-16/utils/update-standard-page-layout-widgets-with-workspace-field-ids.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,8 +18,6 @@ import {
   MY_FIRST_DASHBOARD_ID,
   prefillDashboards,
 } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -82,63 +75,19 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       );
     const {
       flatPageLayoutMaps: toFlatPageLayoutMaps,
-      flatPageLayoutWidgetMaps: toFlatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps: toFlatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps: rawToFlatPageLayoutWidgetMaps,
     } = computeTwentyStandardApplicationAllFlatEntityMaps({
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
     });
 
-    // Fetching the workspace required field id
-    const opportunityOwnerUniversalIdentifier =
-      STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier;
-    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier: opportunityOwnerUniversalIdentifier,
+    const toFlatPageLayoutWidgetMaps = updateStandardPageLayoutWidgetsWithWorkspaceFieldIds({
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatPageLayoutWidgetMaps: rawToFlatPageLayoutWidgetMaps,
     });
-
-    if (!isDefined(flatFieldMetadata)) {
-      throw new Error(
-        `Could not find opportunity owner field ${opportunityOwnerUniversalIdentifier}`,
-      );
-    }
-
-    const opportunitiesByOwnerWidgetUniversalIdentifier =
-      STANDARD_PAGE_LAYOUTS.myFirstDashboard.tabs.tab1.widgets
-        .opportunitiesByOwner.universalIdentifier;
-    const flatPageLayoutWidget = findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: toFlatPageLayoutWidgetMaps,
-      universalIdentifier: opportunitiesByOwnerWidgetUniversalIdentifier,
-    });
-
-    if (
-      !isDefined(flatPageLayoutWidget) ||
-      !isFlatPageLayoutWidgetConfigurationOfType(
-        flatPageLayoutWidget,
-        WidgetConfigurationType.BAR_CHART,
-      )
-    ) {
-      throw new Error(
-        `Could not find opportunity owner widget ${opportunitiesByOwnerWidgetUniversalIdentifier}`,
-      );
-    }
-
-    const updatedFlatPageLayoutWidget: FlatPageLayoutWidget<WidgetConfigurationType.BAR_CHART> =
-      {
-        ...flatPageLayoutWidget,
-        configuration: {
-          ...flatPageLayoutWidget.configuration,
-          primaryAxisGroupByFieldMetadataId: flatFieldMetadata.id,
-          secondaryAxisGroupByFieldMetadataId: flatFieldMetadata.id,
-        },
-      };
-    const tmp = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: updatedFlatPageLayoutWidget,
-      flatEntityMaps: toFlatPageLayoutWidgetMaps,
-    });
-
-    // Mutate the related flat maps
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
       {
