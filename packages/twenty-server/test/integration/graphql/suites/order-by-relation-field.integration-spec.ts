@@ -1,12 +1,71 @@
 import gql from 'graphql-tag';
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
+const TEST_COMPANY_IDS = {
+  ALPHA: '20202020-aaaa-4000-8000-000000000001',
+  BETA: '20202020-aaaa-4000-8000-000000000002',
+  GAMMA: '20202020-aaaa-4000-8000-000000000003',
+};
+
+const TEST_PERSON_IDS = [
+  '20202020-bbbb-4000-8000-000000000001',
+  '20202020-bbbb-4000-8000-000000000002',
+  '20202020-bbbb-4000-8000-000000000003',
+  '20202020-bbbb-4000-8000-000000000004',
+  '20202020-bbbb-4000-8000-000000000005',
+  '20202020-bbbb-4000-8000-000000000006',
+  '20202020-bbbb-4000-8000-000000000007',
+  '20202020-bbbb-4000-8000-000000000008',
+  '20202020-bbbb-4000-8000-000000000009',
+  '20202020-bbbb-4000-8000-000000000010',
+];
+
 describe('Order by relation field (e2e)', () => {
+  beforeAll(async () => {
+    // Create test companies with distinct names for sorting verification
+    const createCompanies = createManyOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: 'id name',
+      data: [
+        { id: TEST_COMPANY_IDS.ALPHA, name: 'Alpha Corp' },
+        { id: TEST_COMPANY_IDS.BETA, name: 'Beta Inc' },
+        { id: TEST_COMPANY_IDS.GAMMA, name: 'Gamma LLC' },
+      ],
+      upsert: true,
+    });
+    await makeGraphqlAPIRequest(createCompanies);
+
+    // Create test people with company relations and some without (for null testing)
+    const createPeople = createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: 'id',
+      data: [
+        // People with companies (for testing sorting)
+        { id: TEST_PERSON_IDS[0], companyId: TEST_COMPANY_IDS.ALPHA },
+        { id: TEST_PERSON_IDS[1], companyId: TEST_COMPANY_IDS.ALPHA },
+        { id: TEST_PERSON_IDS[2], companyId: TEST_COMPANY_IDS.BETA },
+        { id: TEST_PERSON_IDS[3], companyId: TEST_COMPANY_IDS.BETA },
+        { id: TEST_PERSON_IDS[4], companyId: TEST_COMPANY_IDS.GAMMA },
+        { id: TEST_PERSON_IDS[5], companyId: TEST_COMPANY_IDS.GAMMA },
+        // People without companies (for testing NULLS LAST)
+        { id: TEST_PERSON_IDS[6], companyId: null },
+        { id: TEST_PERSON_IDS[7], companyId: null },
+        { id: TEST_PERSON_IDS[8], companyId: null },
+        { id: TEST_PERSON_IDS[9], companyId: null },
+      ],
+      upsert: true,
+    });
+    await makeGraphqlAPIRequest(createPeople);
+  });
+
   it('should sort people by company name ascending', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput]) {
-          people(orderBy: $orderBy, first: 10) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
                 id
@@ -24,6 +83,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
       },
     };
 
@@ -55,8 +115,8 @@ describe('Order by relation field (e2e)', () => {
   it('should sort people by company name descending', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput]) {
-          people(orderBy: $orderBy, first: 10) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
                 id
@@ -74,6 +134,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'DescNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
       },
     };
 
@@ -105,8 +166,8 @@ describe('Order by relation field (e2e)', () => {
   it('should handle null relations with NULLS LAST', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput]) {
-          people(orderBy: $orderBy, first: 50) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+          people(orderBy: $orderBy, filter: $filter, first: 50) {
             edges {
               node {
                 id
@@ -124,6 +185,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
       },
     };
 
@@ -154,8 +216,12 @@ describe('Order by relation field (e2e)', () => {
     // First request to get initial data
     const firstQueryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $limit: Int) {
-          people(orderBy: $orderBy, first: $limit) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+          $limit: Int
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: $limit) {
             edges {
               node {
                 id
@@ -170,6 +236,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
         limit: 3,
       },
     };
@@ -187,63 +254,68 @@ describe('Order by relation field (e2e)', () => {
     expect(totalCount).toBeGreaterThan(3);
 
     // Second request using offset (matching frontend behavior)
-    {
-      const secondQueryData = {
-        query: gql`
-          query People(
-            $orderBy: [PersonOrderByInput]
-            $limit: Int
-            $offset: Int
+    const secondQueryData = {
+      query: gql`
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+          $limit: Int
+          $offset: Int
+        ) {
+          people(
+            orderBy: $orderBy
+            filter: $filter
+            first: $limit
+            offset: $offset
           ) {
-            people(orderBy: $orderBy, first: $limit, offset: $offset) {
-              edges {
-                node {
-                  id
-                  company {
-                    name
-                  }
+            edges {
+              node {
+                id
+                company {
+                  name
                 }
               }
             }
           }
-        `,
-        variables: {
-          orderBy: [{ company: { name: 'AscNullsLast' } }],
-          limit: 3,
-          offset: 3,
-        },
-      };
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
+        limit: 3,
+        offset: 3,
+      },
+    };
 
-      const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
+    const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
 
-      expect(secondResponse.body.data).toBeDefined();
-      expect(secondResponse.body.errors).toBeUndefined();
+    expect(secondResponse.body.data).toBeDefined();
+    expect(secondResponse.body.errors).toBeUndefined();
 
-      const secondPageEdges = secondResponse.body.data.people.edges;
+    const secondPageEdges = secondResponse.body.data.people.edges;
 
-      expect(Array.isArray(secondPageEdges)).toBe(true);
+    expect(Array.isArray(secondPageEdges)).toBe(true);
 
-      // Verify different records are returned (no overlap)
-      const firstPageIds = firstPageEdges.map(
-        (edge: { node: { id: string } }) => edge.node.id,
-      );
-      const secondPageIds = secondPageEdges.map(
-        (edge: { node: { id: string } }) => edge.node.id,
-      );
-      const overlap = firstPageIds.filter((id: string) =>
-        secondPageIds.includes(id),
-      );
+    // Verify different records are returned (no overlap)
+    const firstPageIds = firstPageEdges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+    const secondPageIds = secondPageEdges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+    const overlap = firstPageIds.filter((id: string) =>
+      secondPageIds.includes(id),
+    );
 
-      expect(overlap.length).toBe(0);
-    }
+    expect(overlap.length).toBe(0);
   });
 
   it('should return clear error when using cursor pagination with relation orderBy', async () => {
     // First get a cursor by fetching records
     const firstQueryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput]) {
-          people(orderBy: $orderBy, first: 3) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+          people(orderBy: $orderBy, filter: $filter, first: 3) {
             edges {
               node {
                 id
@@ -259,6 +331,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
       },
     };
 
@@ -276,8 +349,12 @@ describe('Order by relation field (e2e)', () => {
     // Try to use cursor with relation orderBy - should fail with clear error
     const secondQueryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $after: String) {
-          people(orderBy: $orderBy, first: 3, after: $after) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+          $after: String
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: 3, after: $after) {
             edges {
               node {
                 id
@@ -288,6 +365,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
         after: pageInfo.endCursor,
       },
     };
@@ -303,8 +381,8 @@ describe('Order by relation field (e2e)', () => {
   it('should allow sorting by relation FK (backward compatibility)', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput]) {
-          people(orderBy: $orderBy, first: 10) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
                 id
@@ -316,6 +394,7 @@ describe('Order by relation field (e2e)', () => {
       `,
       variables: {
         orderBy: [{ companyId: 'AscNullsLast' }],
+        filter: { id: { in: TEST_PERSON_IDS } },
       },
     };
 
@@ -327,5 +406,6 @@ describe('Order by relation field (e2e)', () => {
     const edges = response.body.data.people.edges;
 
     expect(Array.isArray(edges)).toBe(true);
+    expect(edges.length).toBeGreaterThan(0);
   });
 });
