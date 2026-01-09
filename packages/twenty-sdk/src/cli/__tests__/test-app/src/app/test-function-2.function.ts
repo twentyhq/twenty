@@ -1,5 +1,5 @@
 import { defineFunction } from '@/application/functions/define-function';
-import { testFunction2 } from '../src/utils/test-function-2.util';
+import { testFunction2 } from '../utils/test-function-2.util';
 
 export const config = defineFunction({
   universalIdentifier: 'eb3ffc98-88ec-45d4-9b4a-56833b219ccb',

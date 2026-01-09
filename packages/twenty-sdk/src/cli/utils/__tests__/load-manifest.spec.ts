@@ -3,7 +3,7 @@ import {
   loadManifest,
   type LoadManifestResult,
 } from '@/cli/utils/load-manifest';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/app/default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
 
 const TEST_APP_PATH = join(__dirname, '../../__tests__/test-app');
 
@@ -81,7 +81,7 @@ describe('loadManifest with test-app', () => {
     expect(testFunction.name).toBe('test-function');
     expect(testFunction.timeoutSeconds).toBe(2);
     expect(testFunction.handlerName).toBe('handler');
-    expect(testFunction.handlerPath).toBe('app/test-function.function.ts');
+    expect(testFunction.handlerPath).toBe('src/app/test-function.function.ts');
 
     // Check triggers
     expect(testFunction.triggers).toHaveLength(3);
@@ -138,10 +138,11 @@ describe('loadManifest with test-app', () => {
     expect(role.fieldPermissions![0].canReadFieldValue).toBe(false);
 
     expect(manifest.sources).toBeDefined();
-    expect(manifest.sources['app']).toBeDefined();
+    expect(manifest.sources['src']).toBeDefined();
 
     // Check that the source files are loaded
-    const appSources = manifest.sources['app'] as Record<string, string>;
+    const srcSources = manifest.sources['src'] as Record<string, unknown>;
+    const appSources = srcSources['app'] as Record<string, string>;
     expect(appSources['application.config.ts']).toBeDefined();
     expect(appSources['postCard.object.ts']).toBeDefined();
     expect(appSources['test-function.function.ts']).toBeDefined();

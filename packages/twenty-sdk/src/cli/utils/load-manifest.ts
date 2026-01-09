@@ -25,17 +25,18 @@ import {
  * Validate that the required folder structure exists.
  */
 const validateFolderStructure = async (appPath: string): Promise<void> => {
-  const appFolder = path.join(appPath, 'app');
+  const appFolder = path.join(appPath, 'src', 'app');
 
   if (!(await fs.pathExists(appFolder))) {
     throw new Error(
-      `Missing app/ folder in ${appPath}.\n` + 'Create it with: mkdir app',
+      `Missing src/app/ folder in ${appPath}.\n` +
+        'Create it with: mkdir -p src/app',
     );
   }
 
-  const configFile = path.join(appPath, 'app', 'application.config.ts');
+  const configFile = path.join(appPath, 'src', 'app', 'application.config.ts');
   if (!(await fs.pathExists(configFile))) {
-    throw new Error('Missing app/application.config.ts');
+    throw new Error('Missing src/app/application.config.ts');
   }
 };
 
@@ -59,10 +60,10 @@ const loadFiles = async (
 };
 
 /**
- * Load all object definitions from app/ (any *.object.ts file).
+ * Load all object definitions from src/app/ (any *.object.ts file).
  */
 const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
-  const objectFiles = await loadFiles(['app/**/*.object.ts'], appPath);
+  const objectFiles = await loadFiles(['src/app/**/*.object.ts'], appPath);
 
   const objects: ObjectManifest[] = [];
 
@@ -83,12 +84,12 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
 };
 
 /**
- * Load all function definitions from app/ (any *.function.ts file).
+ * Load all function definitions from src/app/ (any *.function.ts file).
  */
 const loadFunctions = async (
   appPath: string,
 ): Promise<ServerlessFunctionManifest[]> => {
-  const functionFiles = await loadFiles(['app/**/*.function.ts'], appPath);
+  const functionFiles = await loadFiles(['src/app/**/*.function.ts'], appPath);
 
   const functions: ServerlessFunctionManifest[] = [];
 
@@ -123,10 +124,10 @@ const loadFunctions = async (
 };
 
 /**
- * Load all role definitions from app/ (any *.role.ts file).
+ * Load all role definitions from src/app/ (any *.role.ts file).
  */
 const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
-  const roleFiles = await loadFiles(['app/**/*.role.ts'], appPath);
+  const roleFiles = await loadFiles(['src/app/**/*.role.ts'], appPath);
 
   const roles: RoleManifest[] = [];
 
@@ -151,8 +152,8 @@ const loadRoles = async (appPath: string): Promise<RoleManifest[]> => {
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
-  // Get all TypeScript files in app/ and src/ folders
-  const tsFiles = await loadFiles(['app/**/*.ts', 'src/**/*.ts'], appPath);
+  // Get all TypeScript files in src/ folder
+  const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
 
   for (const filepath of tsFiles) {
     const relPath = relative(appPath, filepath);
@@ -180,7 +181,7 @@ const loadSources = async (appPath: string): Promise<Sources> => {
  * Detects any `import ... from '...generated'` or `import ... from '...generated/...'` pattern.
  */
 const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
-  const tsFiles = await loadFiles(['app/**/*.ts', 'src/**/*.ts'], appPath);
+  const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
 
   // Matches: import ... from 'generated' or from '.../generated' or from '.../generated/...'
   const generatedImportPattern =
@@ -209,29 +210,31 @@ export type LoadManifestResult = {
  * Load an application manifest using the folder structure with jiti runtime evaluation.
  *
  * Files are detected by their suffix (*.object.ts, *.function.ts, *.role.ts)
- * and can be placed anywhere within app/.
+ * and can be placed anywhere within src/app/.
  *
  * Example structures:
  * ```
  * # Traditional (by type)
  * my-app/
- * ├── app/
- * │   ├── application.config.ts
- * │   ├── objects/
- * │   │   └── postCard.object.ts
- * │   ├── functions/
- * │   │   └── createPostCard.function.ts
- * │   └── roles/
- * │       └── admin.role.ts
+ * ├── src/
+ * │   └── app/
+ * │       ├── application.config.ts
+ * │       ├── objects/
+ * │       │   └── postCard.object.ts
+ * │       ├── functions/
+ * │       │   └── createPostCard.function.ts
+ * │       └── roles/
+ * │           └── admin.role.ts
  *
  * # Feature-based
  * my-app/
- * ├── app/
- * │   ├── application.config.ts
- * │   └── post-card/
- * │       ├── postCard.object.ts
- * │       ├── createPostCard.function.ts
- * │       └── postCardAdmin.role.ts
+ * ├── src/
+ * │   └── app/
+ * │       ├── application.config.ts
+ * │       └── post-card/
+ * │           ├── postCard.object.ts
+ * │           ├── createPostCard.function.ts
+ * │           └── postCardAdmin.role.ts
  * ```
  */
 export const loadManifest = async (
@@ -252,6 +255,7 @@ export const loadManifest = async (
   // Load application config
   const applicationConfigPath = path.join(
     appPath,
+    'src',
     'app',
     'application.config.ts',
   );

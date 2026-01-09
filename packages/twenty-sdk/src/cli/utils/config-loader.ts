@@ -58,7 +58,7 @@ const findConfigExport = <T>(
  *
  * @example
  * ```typescript
- * const config = await loadConfig<AppDefinition>('/path/to/app/application.config.ts');
+ * const config = await loadConfig<AppDefinition>('/path/to/src/app/application.config.ts');
  * ```
  */
 export const loadConfig = async <T>(filepath: string): Promise<T> => {
@@ -164,7 +164,7 @@ const extractImportPath = (
  * @example
  * ```typescript
  * const { config, handlerName, handlerPath } = await loadFunctionModule(
- *   '/path/to/app/functions/my-function.function.ts',
+ *   '/path/to/src/app/functions/my-function.function.ts',
  *   '/path/to/app'
  * );
  * ```

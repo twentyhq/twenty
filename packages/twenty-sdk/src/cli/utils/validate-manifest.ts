@@ -366,13 +366,13 @@ export const validateManifest = (
   // Warnings
   if (!manifest.objects || manifest.objects.length === 0) {
     warnings.push({
-      message: 'No objects defined in app/objects/',
+      message: 'No objects defined in src/app/objects/',
     });
   }
 
   if (!manifest.serverlessFunctions || manifest.serverlessFunctions.length === 0) {
     warnings.push({
-      message: 'No functions defined in app/functions/',
+      message: 'No functions defined in src/app/functions/',
     });
   }
 
