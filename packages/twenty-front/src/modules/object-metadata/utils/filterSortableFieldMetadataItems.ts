@@ -1,9 +1,15 @@
 import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/SortableFieldMetadataTypes';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
+type SortableFieldInput = {
+  isSystem: boolean;
+  isActive: boolean;
+  type: FieldMetadataType;
+  relation?: { type: RelationType } | null;
+};
+
 export const filterSortableFieldMetadataItems = (
-  field: Pick<FieldMetadataItem, 'isSystem' | 'isActive' | 'type' | 'relation'>,
+  field: SortableFieldInput,
 ) => {
   const isSystemField = field.isSystem;
   const isFieldActive = field.isActive;

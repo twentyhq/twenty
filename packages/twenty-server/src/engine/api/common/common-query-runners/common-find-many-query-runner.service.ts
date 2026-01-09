@@ -111,10 +111,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         throw new GraphqlQueryRunnerException(
           'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
           GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-          {
-            userFriendlyMessage:
-              'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
-          },
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
 

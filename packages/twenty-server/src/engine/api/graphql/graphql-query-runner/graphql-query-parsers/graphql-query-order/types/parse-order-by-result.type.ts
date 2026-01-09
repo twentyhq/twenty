@@ -5,4 +5,3 @@ export type ParseOrderByResult = {
   orderBy: Record<string, OrderByCondition>;
   relationJoins: RelationJoinInfo[];
 };
-
