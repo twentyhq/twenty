@@ -1,5 +1,4 @@
 import { isObject } from 'class-validator';
-import { OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -11,6 +10,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
+import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -18,7 +18,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 import { type OrderByCondition } from './types/order-by-condition.type';
 import { type ParseOrderByResult } from './types/parse-order-by-result.type';
@@ -116,14 +115,14 @@ export class GraphqlQueryOrderFieldParser {
 
           const compositeOrder = parseCompositeFieldForOrder(
             fieldMetadata,
-            orderByDirection,
+            orderByDirection as Record<string, unknown>,
             objectNameSingular,
             isForwardPagination,
           );
 
           Object.assign(orderByConditions, compositeOrder);
         } else {
-          if (!this.isOrderByDirection(orderByDirection)) {
+          if (!isOrderByDirection(orderByDirection)) {
             throw new GraphqlQueryRunnerException(
               `Scalar field "${fieldName}" requires a direction value (AscNullsFirst, AscNullsLast, DescNullsFirst, DescNullsLast)`,
               GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
@@ -147,13 +146,6 @@ export class GraphqlQueryOrderFieldParser {
       orderBy: orderByConditions,
       relationJoins,
     };
-  }
-
-  private isOrderByDirection(value: unknown): value is OrderByDirection {
-    return (
-      typeof value === 'string' &&
-      Object.values(OrderByDirection).includes(value as OrderByDirection)
-    );
   }
 
   private parseRelationFieldOrder({
@@ -226,38 +218,24 @@ export class GraphqlQueryOrderFieldParser {
         );
       }
 
-      const compositeSubFields = Object.entries(
-        nestedFieldOrderByValue as Record<string, OrderByDirection>,
+      const compositeOrder = parseCompositeFieldForOrder(
+        nestedFieldMetadata,
+        nestedFieldOrderByValue as Record<string, unknown>,
+        joinAlias,
+        isForwardPagination,
       );
 
-      const orderByConditions: Record<string, OrderByCondition> = {};
-
-      for (const [subFieldName, direction] of compositeSubFields) {
-        if (!this.isOrderByDirection(direction)) {
-          continue;
-        }
-
-        const nestedColumnName =
-          formatColumnNamesFromCompositeFieldAndSubfields(
-            nestedFieldMetadata.name,
-            [subFieldName],
-          )[0];
-
-        orderByConditions[`${joinAlias}.${nestedColumnName}`] =
-          convertOrderByToFindOptionsOrder(direction, isForwardPagination);
-      }
-
-      if (Object.keys(orderByConditions).length === 0) {
+      if (Object.keys(compositeOrder).length === 0) {
         return null;
       }
 
       return {
-        orderBy: orderByConditions,
+        orderBy: compositeOrder,
         joinInfo,
       };
     }
 
-    if (this.isOrderByDirection(nestedFieldOrderByValue)) {
+    if (isOrderByDirection(nestedFieldOrderByValue)) {
       const nestedColumnName = nestedFieldMetadata.name;
       const orderByCasting = getOptionalOrderByCasting(nestedFieldMetadata);
 
