@@ -17,7 +17,7 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 @Command({
   name: 'upgrade:1-16:backfill-opportunity-owner-field',
@@ -97,8 +97,11 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    const ownerUniversalIdentifier =
+      STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier;
+
     const ownerField = flatFieldMetadatas.find(
-      (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.owner,
+      (field) => field.universalIdentifier === ownerUniversalIdentifier,
     );
 
     if (isDefined(ownerField)) {
@@ -129,8 +132,8 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       isCustom: false,
       isSystem: false,
       isActive: true,
-      standardId: OPPORTUNITY_STANDARD_FIELD_IDS.owner,
-      universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.owner,
+      standardId: ownerUniversalIdentifier,
+      universalIdentifier: ownerUniversalIdentifier,
       applicationId: twentyStandardFlatApplication.id,
       relationCreationPayload: {
         type: RelationType.MANY_TO_ONE,

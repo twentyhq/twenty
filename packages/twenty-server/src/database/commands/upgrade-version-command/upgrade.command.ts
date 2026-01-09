@@ -23,6 +23,7 @@ import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-ver
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
+import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -63,6 +64,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.16 Commands
     protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
+    protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
   ) {
     super(
       workspaceRepository,
@@ -98,6 +100,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1160: VersionCommands = [
       this.backfillOpportunityOwnerFieldCommand,
+      this.backfillStandardPageLayoutsCommand,
     ];
 
     this.allCommands = {

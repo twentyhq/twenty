@@ -30,8 +30,6 @@ export const buildStandardFlatPageLayoutMetadataMaps = ({
     const layoutDefinition = STANDARD_PAGE_LAYOUTS[layoutName];
     const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
 
-    const tabIds = Object.values(layoutIds.tabs).map((tab) => tab.id);
-
     const flatPageLayout: FlatPageLayout = {
       id: layoutIds.id,
       universalIdentifier: layoutDefinition.universalIdentifier,
@@ -40,7 +38,7 @@ export const buildStandardFlatPageLayoutMetadataMaps = ({
       name: layoutDefinition.name,
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,
-      tabIds,
+      tabIds: [],
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

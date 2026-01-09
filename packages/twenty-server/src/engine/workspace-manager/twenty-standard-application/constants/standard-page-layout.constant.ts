@@ -42,6 +42,3 @@ export type StandardPageLayoutName = keyof typeof STANDARD_PAGE_LAYOUTS;
 
 export type StandardPageLayoutTabName<L extends StandardPageLayoutName> =
   keyof (typeof STANDARD_PAGE_LAYOUTS)[L]['tabs'];
-
-export type Tab1WidgetName =
-  keyof (typeof STANDARD_PAGE_LAYOUTS)['myFirstDashboard']['tabs']['tab1']['widgets'];

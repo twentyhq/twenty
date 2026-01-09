@@ -1,25 +1,28 @@
 import { v4 } from 'uuid';
 
-export type StandardPageLayoutMetadataRelatedEntityIds = {
-  myFirstDashboard: {
+import type { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+
+type InferWidgetIds<W> = {
+  [K in keyof W]: { id: string };
+};
+
+type InferTabIds<T> = {
+  [K in keyof T]: {
     id: string;
-    tabs: {
-      tab1: {
-        id: string;
-        widgets: {
-          welcomeRichText: { id: string };
-          dealsByCompany: { id: string };
-          pipelineValueByStage: { id: string };
-          revenueTimeline: { id: string };
-          opportunitiesByOwner: { id: string };
-          stockMarketIframe: { id: string };
-          dealsCreatedThisMonth: { id: string };
-          dealValueCreatedThisMonth: { id: string };
-        };
-      };
-    };
+    widgets: T[K] extends { widgets: infer W } ? InferWidgetIds<W> : never;
   };
 };
+
+type InferLayoutIds<L> = {
+  [K in keyof L]: {
+    id: string;
+    tabs: L[K] extends { tabs: infer T } ? InferTabIds<T> : never;
+  };
+};
+
+export type StandardPageLayoutMetadataRelatedEntityIds = InferLayoutIds<
+  typeof STANDARD_PAGE_LAYOUTS
+>;
 
 export const getStandardPageLayoutMetadataRelatedEntityIds =
   (): StandardPageLayoutMetadataRelatedEntityIds => {
