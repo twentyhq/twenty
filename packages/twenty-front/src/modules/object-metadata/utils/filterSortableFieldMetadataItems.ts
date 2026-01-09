@@ -2,8 +2,8 @@ import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/Sorta
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type SortableFieldInput = {
-  isSystem: boolean;
-  isActive: boolean;
+  isSystem?: boolean | null;
+  isActive?: boolean | null;
   type: FieldMetadataType;
   relation?: { type: RelationType } | null;
 };

@@ -108,3 +108,17 @@ export const hasRelationFieldInOrderBy = (
     return fieldMetadata?.type === FieldMetadataType.RELATION;
   });
 };
+
+export const countRelationFieldsInOrderBy = (
+  orderBy: ObjectRecordOrderBy,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldIdByName: Record<string, string>,
+): number => {
+  return orderBy.filter((orderByItem) => {
+    const fieldName = Object.keys(orderByItem)[0];
+    const fieldMetadataId = fieldIdByName[fieldName];
+    const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+
+    return fieldMetadata?.type === FieldMetadataType.RELATION;
+  }).length;
+};

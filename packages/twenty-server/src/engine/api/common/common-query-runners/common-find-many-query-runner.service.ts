@@ -29,6 +29,7 @@ import {
   CommonQueryNames,
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import {
   GraphqlQueryRunnerException,
@@ -38,7 +39,10 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { hasRelationFieldInOrderBy } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import {
+  countRelationFieldsInOrderBy,
+  hasRelationFieldInOrderBy,
+} from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -304,5 +308,32 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  protected override computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<FindManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const baseComplexity = super.computeQueryComplexity(
+      selectedFieldsResult,
+      args,
+      queryRunnerContext,
+    );
+
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
+    const orderByRelationCount = countRelationFieldsInOrderBy(
+      args.orderBy ?? [],
+      flatFieldMetadataMaps,
+      fieldIdByName,
+    );
+
+    return baseComplexity + orderByRelationCount;
   }
 }

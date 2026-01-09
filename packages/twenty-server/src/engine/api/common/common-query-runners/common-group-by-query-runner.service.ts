@@ -410,6 +410,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   protected override computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonInput<GroupByQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const groupByQueryComplexity = 1;
     const simpleFieldsComplexity = 1;
