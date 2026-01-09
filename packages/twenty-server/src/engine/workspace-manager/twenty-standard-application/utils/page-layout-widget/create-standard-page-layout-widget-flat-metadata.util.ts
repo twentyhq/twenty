@@ -4,21 +4,20 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
-import {
-  STANDARD_PAGE_LAYOUTS,
-  type StandardPageLayoutName,
-  type StandardPageLayoutTabName,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import { AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
+import { AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
+import { AllStandardPageLayoutWidgetName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-widget-name.type';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 
 export type CreateStandardPageLayoutWidgetContext<
-  L extends StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L>,
+  L extends AllStandardPageLayoutName,
+  T extends AllStandardPageLayoutTabName<L>,
 > = {
   layoutName: L;
   tabName: T;
-  widgetName: string;
+  widgetName: AllStandardPageLayoutWidgetName<L, T>;
   title: string;
   type: WidgetType;
   gridPosition: GridPosition;
@@ -27,8 +26,8 @@ export type CreateStandardPageLayoutWidgetContext<
 };
 
 export type CreateStandardPageLayoutWidgetArgs<
-  L extends StandardPageLayoutName = StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L> = StandardPageLayoutTabName<L>,
+  L extends AllStandardPageLayoutName = AllStandardPageLayoutName,
+  T extends AllStandardPageLayoutTabName<L> = AllStandardPageLayoutTabName<L>,
 > = {
   now: string;
   workspaceId: string;
@@ -39,8 +38,8 @@ export type CreateStandardPageLayoutWidgetArgs<
 };
 
 export const createStandardPageLayoutWidgetFlatMetadata = <
-  L extends StandardPageLayoutName,
-  T extends StandardPageLayoutTabName<L>,
+  L extends AllStandardPageLayoutName,
+  T extends AllStandardPageLayoutTabName<L>,
 >({
   context: {
     layoutName,
@@ -67,7 +66,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = <
 
   if (!isDefined(widgetDef)) {
     throw new Error(
-      `Invalid configuration ${layoutName} ${tabName.toString()} ${widgetName.toString()}`,
+      `Invalid configuration ${layoutName} ${tabName.toString()} ${widgetName}`,
     );
   }
 

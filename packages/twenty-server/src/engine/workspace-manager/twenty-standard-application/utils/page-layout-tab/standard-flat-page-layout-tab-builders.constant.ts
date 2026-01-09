@@ -1,9 +1,7 @@
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import {
-  STANDARD_PAGE_LAYOUTS,
-  type StandardPageLayoutName,
-  type StandardPageLayoutTabName,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import { } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import { AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
+import { AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
 import {
   type CreateStandardPageLayoutTabArgs,
   createStandardPageLayoutTabFlatMetadata,
@@ -19,16 +17,15 @@ export const STANDARD_FLAT_PAGE_LAYOUT_TAB_BUILDERS_BY_LAYOUT_NAME = {
         context: {
           layoutName: 'myFirstDashboard',
           tabName: 'tab1',
-          title: STANDARD_PAGE_LAYOUTS.myFirstDashboard.tabs.tab1.title,
-          position: STANDARD_PAGE_LAYOUTS.myFirstDashboard.tabs.tab1.position,
+          title: 'Tab 1', // TODO: ask Thomas to provide the appropriate title
+          position: 0,
         },
       }),
   },
 } satisfies {
-  [L in StandardPageLayoutName]: {
-    [T in StandardPageLayoutTabName<L>]: (
+  [L in AllStandardPageLayoutName]: {
+    [T in AllStandardPageLayoutTabName<L>]: (
       args: TabBuilderArgs,
     ) => FlatPageLayoutTab;
   };
 };
-
