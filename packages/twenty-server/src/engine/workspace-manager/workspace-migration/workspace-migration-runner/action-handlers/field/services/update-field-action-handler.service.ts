@@ -18,11 +18,13 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
+import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/is-property-update.util';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
   WorkspaceMigrationRunnerException,
@@ -220,6 +222,68 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           ...optimisticFlatFieldMetadata,
           settings: update.to,
         };
+      }
+
+      if (
+        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
+        isDefined(optimisticFlatFieldMetadata.settings.joinColumnName) &&
+        isPropertyUpdate(update, 'settings') &&
+        isDefined(update.from?.onDelete) &&
+        isDefined(update.to?.onDelete) &&
+        update.to.onDelete !== update.from.onDelete
+      ) {
+        const foreignKeyName =
+          await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
+            {
+              queryRunner,
+              schemaName,
+              tableName,
+              columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+            },
+          );
+
+        if (!isDefined(foreignKeyName)) {
+          throw new WorkspaceMigrationRunnerException(
+            'Foreign key not found',
+            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
+          );
+        }
+
+        await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
+          {
+            queryRunner,
+            schemaName,
+            tableName,
+            foreignKeyName,
+          },
+        );
+
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId:
+              optimisticFlatFieldMetadata.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+
+        const referencedTableName = computeObjectTargetTable(
+          targetFlatObjectMetadata,
+        );
+
+        await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
+          {
+            queryRunner,
+            schemaName,
+            foreignKey: {
+              tableName,
+              columnName: update.to.joinColumnName,
+              referencedTableName,
+              referencedColumnName: 'id',
+              onDelete:
+                convertOnDeleteActionToOnDelete(update.to.onDelete) ??
+                'CASCADE',
+            },
+          },
+        );
       }
     }
   }
