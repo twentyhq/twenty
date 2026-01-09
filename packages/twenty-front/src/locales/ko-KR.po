@@ -8184,14 +8184,6 @@ msgstr "기록을 찾을 수 없습니다"
 msgid "No records matching the filter criteria were found."
 msgstr "필터 기준에 맞는 레코드를 찾을 수 없습니다."
 
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
-msgid "No related records"
-msgstr "관련된 레코드가 없습니다"
-
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
