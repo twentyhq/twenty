@@ -70,9 +70,8 @@ export const createStandardPageLayoutWidgetFlatMetadata = <
     );
   }
 
-  // @ts-expect-error ignore
   const tabIds = layoutIds.tabs[tabName];
-  const widgetIds = tabIds.widgets[widgetName] ?? {};
+  const widgetIds = tabIds.widgets[widgetName];
 
   return {
     id: widgetIds.id,

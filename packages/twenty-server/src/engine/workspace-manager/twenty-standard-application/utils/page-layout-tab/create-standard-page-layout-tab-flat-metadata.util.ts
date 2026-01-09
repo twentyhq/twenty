@@ -46,7 +46,6 @@ export const createStandardPageLayoutTabFlatMetadata = <
     );
   }
 
-  // @ts-expect-error ignore
   const tabIds = layoutIds.tabs[tabName];
 
   const widgetIds = Object.values(tabIds.widgets).map(
