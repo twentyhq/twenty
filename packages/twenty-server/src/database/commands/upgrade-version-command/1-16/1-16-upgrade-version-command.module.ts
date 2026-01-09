@@ -6,6 +6,7 @@ import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrad
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -13,7 +14,7 @@ import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/tw
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, FieldMetadataEntity]),
     DataSourceModule,
     WorkspaceCacheModule,
     FieldMetadataModule,
