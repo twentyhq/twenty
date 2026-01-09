@@ -40,6 +40,7 @@ export default defineFunction({
     //   type: 'route',
     //   path: '/${kebabCaseName}',
     //   httpMethod: 'POST',
+    //   isAuthRequired: true,
     // },
     // Cron trigger example:
     // {

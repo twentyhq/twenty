@@ -4162,6 +4162,7 @@ msgid "Downgrade"
 msgstr "다운그레이드"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
 msgstr "다운로드"
@@ -11587,6 +11588,11 @@ msgstr "이 작업을 수행하면 이 즐겨찾기 폴더와 내부의 즐겨�
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "이 데이터베이스 값은 환경 설정을 덮어씁니다."
+
+#. js-lingui-id: own57K
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file cannot be previewed because it is hosted locally."
+msgstr ""
 
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx

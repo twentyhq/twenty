@@ -242,13 +242,6 @@ const validateFunctions = (
       });
     }
 
-    if (!fn.triggers || fn.triggers.length === 0) {
-      errors.push({
-        path: fnPath,
-        message: 'Function must have at least one trigger',
-      });
-    }
-
     // Validate triggers
     for (const trigger of fn.triggers ?? []) {
       const triggerPath = `${fnPath}.triggers.${trigger.type ?? 'unknown'}`;
