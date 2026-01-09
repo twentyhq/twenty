@@ -3,7 +3,9 @@ import { useCallback } from 'react';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated/graphql';
@@ -24,6 +26,10 @@ export const useHandleToggleColumnSort = ({
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
+  const currentRecordSorts = useRecoilComponentValue(
+    currentRecordSortsComponentState,
+  );
+
   const handleToggleColumnSort = useCallback(
     async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
@@ -33,15 +39,23 @@ export const useHandleToggleColumnSort = ({
 
       if (!isDefined(correspondingColumnDefinition)) return;
 
+      const existingSort = currentRecordSorts.find(
+        (sort) => sort.fieldMetadataId === fieldMetadataId,
+      );
+
       const newSort: RecordSort = {
-        id: v4(),
+        id: existingSort?.id ?? v4(),
         fieldMetadataId,
-        direction: ViewSortDirection.ASC,
+        direction: existingSort
+          ? existingSort.direction === ViewSortDirection.ASC
+            ? ViewSortDirection.DESC
+            : ViewSortDirection.ASC
+          : ViewSortDirection.ASC,
       };
 
       upsertRecordSort(newSort);
     },
-    [columnDefinitions, upsertRecordSort],
+    [columnDefinitions, currentRecordSorts, upsertRecordSort],
   );
 
   return handleToggleColumnSort;
