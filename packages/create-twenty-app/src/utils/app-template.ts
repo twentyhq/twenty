@@ -168,7 +168,7 @@ const createPackageJson = async ({
       'lint-fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.3.0-beta',
+      'twenty-sdk': '0.3.0',
     },
     devDependencies: {
       typescript: '^5.9.3',
