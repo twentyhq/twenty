@@ -11,7 +11,7 @@ import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { type SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/types/syncable-entity.interface';
+import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 type ManyToOneRelationValue<
   TSourceMetadataName extends AllMetadataName,

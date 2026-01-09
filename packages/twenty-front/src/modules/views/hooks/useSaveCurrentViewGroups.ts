@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
+import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
@@ -12,7 +12,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { updateViewGroups } = usePersistViewGroupRecords();
+  const { performViewGroupAPIUpdate } = usePerformViewGroupAPIPersist();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
@@ -67,7 +67,7 @@ export const useSaveCurrentViewGroups = () => {
           return;
         }
 
-        await updateViewGroups([
+        await performViewGroupAPIUpdate([
           {
             input: {
               id: existingField.id,
@@ -84,7 +84,7 @@ export const useSaveCurrentViewGroups = () => {
       canPersistChanges,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
-      updateViewGroups,
+      performViewGroupAPIUpdate,
     ],
   );
 
@@ -154,13 +154,13 @@ export const useSaveCurrentViewGroups = () => {
           throw new Error('mainGroupByFieldMetadataId is required');
         }
 
-        await updateViewGroups(viewGroupsToUpdate);
+        await performViewGroupAPIUpdate(viewGroupsToUpdate);
       },
     [
       canPersistChanges,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
-      updateViewGroups,
+      performViewGroupAPIUpdate,
     ],
   );
 

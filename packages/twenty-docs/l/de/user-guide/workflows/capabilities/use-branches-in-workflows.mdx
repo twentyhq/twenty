@@ -1,90 +1,90 @@
 ---
-title: Use Branches in Workflows
-description: Understand how branches work and how to control which path is executed.
+title: Verzweigungen in Workflows verwenden
+description: Verstehen Sie, wie Verzweigungen funktionieren und wie Sie steuern, welcher Pfad ausgeführt wird.
 ---
 
-## How Branches Work
+## Wie Verzweigungen funktionieren
 
-In the workflow editor, you can create multiple paths (branches) going out from a single node. This allows you to build complex automations with different outcomes.
+Im Workflow-Editor können Sie mehrere Pfade (Verzweigungen) erstellen, die von einem einzelnen Knoten ausgehen. So können Sie komplexe Automatisierungen mit unterschiedlichen Ergebnissen erstellen.
 
-**Important**: When a workflow runs, **all branches execute in parallel by default**. There is no built-in "if/else" logic to choose one branch over another—every path will run simultaneously.
+**Wichtig**: Wenn ein Workflow ausgeführt wird, **werden standardmäßig alle Verzweigungen parallel ausgeführt**. Es gibt keine integrierte "if/else"-Logik, um eine Verzweigung gegenüber einer anderen auszuwählen—jeder Pfad wird gleichzeitig ausgeführt.
 
-## Controlling Which Branch Runs
+## Steuern, welche Verzweigung ausgeführt wird
 
-To execute only one branch based on specific conditions, **add a Filter node at the beginning of each branch**.
+Um basierend auf bestimmten Bedingungen nur eine Verzweigung auszuführen, **fügen Sie am Anfang jeder Verzweigung einen Filter-Knoten hinzu**.
 
-### Example Setup
+### Beispiel-Setup
 
-1. Create your workflow with multiple branches from a single node
-2. Add a **Filter** node as the first step in each branch
-3. Set conditions on each Filter to determine when that branch should continue
-4. Only the branch(es) whose Filter conditions are met will proceed
+1. Erstellen Sie Ihren Workflow mit mehreren Verzweigungen, die von einem einzelnen Knoten ausgehen
+2. Fügen Sie in jeder Verzweigung als ersten Schritt einen **Filter**-Knoten hinzu
+3. Legen Sie für jeden Filter Bedingungen fest, um zu bestimmen, wann diese Verzweigung fortgesetzt werden soll
+4. Nur die Verzweigung(en), deren Filterbedingungen erfüllt sind, wird/werden weiter ausgeführt
 
 <img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
 
-### How Filters Work
+### Wie Filter funktionieren
 
-* If the Filter condition is **met**: The branch continues executing
-* If the Filter condition is **not met**: The branch stops at the Filter node
+* Wenn die Filterbedingung **erfüllt** ist: Die Verzweigung wird weiter ausgeführt
+* Wenn die Filterbedingung **nicht erfüllt** ist: Die Verzweigung stoppt am Filter-Knoten
 
-This effectively creates conditional logic where only the appropriate branch runs based on your data.
+Dadurch entsteht effektiv eine bedingte Logik, bei der basierend auf Ihren Daten nur die passende Verzweigung ausgeführt wird.
 
-## Example: Route by Deal Size
+## Beispiel: Routing nach Dealgröße
 
-**Scenario**: When a deal is closed, send different notifications based on deal size.
+**Szenario**: Wenn ein Deal abgeschlossen wird, senden Sie je nach Dealgröße unterschiedliche Benachrichtigungen.
 
-1. **Trigger**: Opportunity updated (Stage = Closed Won)
-2. **Branch 1**: Filter for Amount > $10,000 → Send Slack message to #big-deals
-3. **Branch 2**: Filter for Amount ≤ $10,000 → Send email to sales manager
+1. **Auslöser**: Verkaufschance aktualisiert (Phase = Closed Won)
+2. **Verzweigung 1**: Filter für Betrag > $10.000 → Slack-Nachricht an #big-deals senden
+3. **Verzweigung 2**: Filter für Betrag ≤ $10.000 → E-Mail an den Vertriebsleiter senden
 
-Both branches start, but only the one matching the deal amount will continue past its Filter.
+Beide Verzweigungen starten, aber nur diejenige, die dem Dealbetrag entspricht, wird über ihren Filter hinaus fortgesetzt.
 
-## Creating Branches
+## Verzweigungen erstellen
 
 <Note>
-  To create a new branch from an existing step, click the **+** button on the step and add your action. You can add multiple branches by clicking **+** multiple times.
+  Um aus einem bestehenden Schritt eine neue Verzweigung zu erstellen, klicken Sie im Schritt auf die Schaltfläche **+** und fügen Sie Ihre Aktion hinzu. Sie können mehrere Verzweigungen hinzufügen, indem Sie **+** mehrmals klicken.
 </Note>
 
-1. In the workflow editor, select the step you want to branch from
-2. Click the **+** button to add an action
-3. This creates one branch
-4. Click **+** again on the same step to create additional branches
-5. Each branch can have its own sequence of actions
+1. Wählen Sie im Workflow-Editor den Schritt aus, von dem Sie verzweigen möchten
+2. Klicken Sie auf **+**, um eine Aktion hinzuzufügen
+3. Dadurch wird eine Verzweigung erstellt
+4. Klicken Sie im selben Schritt erneut auf **+**, um weitere Verzweigungen zu erstellen
+5. Jede Verzweigung kann ihre eigene Abfolge von Aktionen haben
 
-## Merging Branches Back Together
+## Verzweigungen wieder zusammenführen
 
-After parallel branches complete their work, you can merge them back into a single path:
+Nachdem parallele Verzweigungen ihre Arbeit abgeschlossen haben, können Sie sie wieder zu einem einzelnen Pfad zusammenführen:
 
-1. Complete your branched actions
-2. Add a new step that should run after all branches
-3. Drag a connection from the last step of each branch to this new step
-4. The merged step waits for all connected branches to complete before executing
+1. Schließen Sie Ihre verzweigten Aktionen ab
+2. Fügen Sie einen neuen Schritt hinzu, der nach allen Verzweigungen ausgeführt werden soll
+3. Ziehen Sie eine Verbindung vom letzten Schritt jeder Verzweigung zu diesem neuen Schritt
+4. Der zusammengeführte Schritt wartet, bis alle verbundenen Verzweigungen abgeschlossen sind, bevor er ausgeführt wird
 
-### Example: Process Then Notify
+### Beispiel: Erst verarbeiten, dann benachrichtigen
 
 ```
-Trigger
+Auslöser
    │
-   ├── Branch A: Update Customer Record
+   ├── Verzweigung A: Kundendatensatz aktualisieren
    │
-   └── Branch B: Create Support Ticket
+   └── Verzweigung B: Support-Ticket erstellen
 
        ↘  ↙
 
-   Merged Step: Send Confirmation Email
+   Zusammengeführter Schritt: Bestätigungs-E-Mail senden
 ```
 
-The confirmation email sends only after both the customer update and ticket creation are done.
+Die Bestätigungs-E-Mail wird erst gesendet, nachdem sowohl die Aktualisierung des Kundendatensatzes als auch die Erstellung des Tickets abgeschlossen sind.
 
 ## Beste Praktiken
 
-* Always use **Filter nodes** at the start of branches when you want conditional execution
-* Keep branch conditions **mutually exclusive** to avoid duplicate actions
-* Test your workflows with different data to ensure the correct branches run
-* **Rename branch steps** descriptively so it's clear what each path does
-* **Merge branches** when you need a final action after parallel processing
+* Verwenden Sie am Anfang von Verzweigungen immer **Filter-Knoten**, wenn Sie eine bedingte Ausführung möchten
+* Halten Sie Verzweigungsbedingungen **gegenseitig ausschließend**, um doppelte Aktionen zu vermeiden
+* Testen Sie Ihre Workflows mit unterschiedlichen Daten, um sicherzustellen, dass die richtigen Verzweigungen ausgeführt werden
+* **Benennen Sie Verzweigungsschritte um** und verwenden Sie aussagekräftige Bezeichnungen, damit klar ist, was jeder Pfad tut
+* **Verzweigungen zusammenführen**, wenn Sie nach paralleler Verarbeitung eine abschließende Aktion benötigen
 
-## Related
+## Verwandt
 
-* [Workflows FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq) — answers about parallel execution
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions) — available actions for branches
+* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq) — Antworten zur parallelen Ausführung
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) — verfügbare Aktionen für Verzweigungen
