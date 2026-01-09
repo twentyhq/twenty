@@ -9,28 +9,51 @@ export const getFunctionBaseFile = ({
   universalIdentifier?: string;
 }) => {
   const kebabCaseName = kebabCase(name);
+  const triggerUniversalIdentifier = v4();
 
-  return `import { type FunctionConfig } from 'twenty-sdk';
+  return `import { defineFunction } from 'twenty-sdk';
 
-export const main = async (params: {
+// Handler function - rename and implement your logic
+export const handler = async (params: {
   a: string;
   b: number;
 }): Promise<{ message: string }> => {
   const { a, b } = params;
 
-  // Rename the parameters and code below with your own logic
-  // This is just an example
-  const message = \`Hello, input: $\{a} and $\{b}\`;
+  // Replace with your own logic
+  const message = \`Hello, input: \${a} and \${b}\`;
 
   return { message };
 };
 
-export const config: FunctionConfig = {
+export default defineFunction({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
+  description: 'Add a description for your function',
   timeoutSeconds: 5,
-  triggers: [],
-};
-
+  handler,
+  triggers: [
+    // Add your triggers here
+    // Route trigger example:
+    // {
+    //   universalIdentifier: '${triggerUniversalIdentifier}',
+    //   type: 'route',
+    //   path: '/${kebabCaseName}',
+    //   httpMethod: 'POST',
+    // },
+    // Cron trigger example:
+    // {
+    //   universalIdentifier: '...',
+    //   type: 'cron',
+    //   pattern: '0 0 * * *', // Daily at midnight
+    // },
+    // Database event trigger example:
+    // {
+    //   universalIdentifier: '...',
+    //   type: 'databaseEvent',
+    //   eventName: 'objectName.created',
+    // },
+  ],
+});
 `;
 };
