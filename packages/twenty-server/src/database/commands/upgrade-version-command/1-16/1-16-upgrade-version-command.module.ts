@@ -11,6 +11,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/tw
     ApplicationModule,
     GlobalWorkspaceDataSourceModule,
     TwentyStandardApplicationModule,
+    WorkspaceMigrationModule,
   ],
   providers: [
     BackfillOpportunityOwnerFieldCommand,
