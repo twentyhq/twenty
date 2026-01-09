@@ -1,11 +1,11 @@
-# README
+# Kubernetes for Twenty CRM (Helm)
 DISCLAIMER: The k8s and podman deployments are not maintained by the core team.
 These files are provided and maintained by the community. Twenty core team
 maintains support for docker deployment.
 
 ## Overview
 
-This repository contains Kubernetes manifests and Terraform files to help you deploy and manage the TwentyCRM application. The files are located in the `packages/twenty-docker/k8s` directory.
+This repository contains a world-class Helm chart and (legacy) raw Kubernetes manifests plus Terraform files to help you deploy and manage the Twenty CRM application. The chart is located at `packages/twenty-docker/helm/twenty` and supersedes the manifests in `packages/twenty-docker/k8s/manifests`.
 
 ## Prerequisites
 
@@ -13,8 +13,24 @@ Before using these files, ensure you have the following installed and configured
 
 - Kubernetes cluster (e.g., Minikube, EKS, GKE)
 - kubectl
+- Helm 3
 - Terraform
 - Docker
+
+## Helm Chart (Recommended)
+
+**Quick install:**
+```bash
+export DOMAIN=your-domain.com
+helm install my-twenty packages/twenty-docker/helm/twenty \
+  --namespace twentycrm --create-namespace --wait \
+  --set server.ingress.hosts[0].host=$DOMAIN \
+  --set server.ingress.hosts[0].paths[0].path=/ \
+  --set server.ingress.hosts[0].paths[0].pathType=Prefix \
+  --set server.ingress.tls[0].hosts[0]=$DOMAIN
+```
+
+See [QUICKSTART](../helm/twenty/QUICKSTART.md) and [chart README](../helm/twenty/README.md) for details.
 
 ## Setup Instructions
 
@@ -24,7 +40,7 @@ Clone the repository to your local machine:
 
 ``` bash
 git clone https://github.com/twentyhq/twenty.git
-cd twentycrm/packages/twenty-docker/k8s
+cd twenty/packages/twenty-docker/k8s
 ```
 
 ### Step 2: Customize the Manifests and Terraform Files
@@ -59,7 +75,7 @@ cd twentycrm/packages/twenty-docker/k8s
 
 ## OR
 
-### Step 3: Deploy with Kubernetes Manifests
+### Step 3 (Alternative): Deploy with Kubernetes Manifests
 
 1. Navigate to the Kubernetes manifests directory:
 

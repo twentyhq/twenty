@@ -8,5 +8,5 @@ export type ObjectManifest = SyncableEntityOptions & {
   labelPlural: string;
   description?: string;
   icon?: string;
-  fields?: FieldManifest[];
+  fields: FieldManifest[];
 };

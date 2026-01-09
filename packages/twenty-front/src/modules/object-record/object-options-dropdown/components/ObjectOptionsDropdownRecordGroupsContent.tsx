@@ -20,6 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconChevronLeft,
@@ -75,6 +76,11 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility();
 
+  const { availableFieldsForGrouping } =
+    useGetAvailableFieldsToGroupRecordsBy();
+
+  const hasOnlyOneGroupByOption = availableFieldsForGrouping.length <= 1;
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -116,10 +122,17 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         >
           {currentView?.key !== 'INDEX' && (
             <>
-              <SelectableListItem itemId="GroupBy">
+              <SelectableListItem
+                itemId="GroupBy"
+                onEnter={() =>
+                  !hasOnlyOneGroupByOption &&
+                  onContentChange('recordGroupFields')
+                }
+              >
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  disabled
+                  disabled={hasOnlyOneGroupByOption}
+                  onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}

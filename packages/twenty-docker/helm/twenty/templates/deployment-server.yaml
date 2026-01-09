@@ -1,0 +1,196 @@
+{{- if .Values.server.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "twenty.fullname" . }}-server
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+spec:
+  replicas: {{ .Values.server.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "twenty.name" . }}
+      app.kubernetes.io/component: server
+  strategy:
+    {{- if or .Values.server.dockerDataPersistence.enabled .Values.server.persistence.enabled }}
+    type: Recreate
+    {{- else }}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    {{- end }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: server
+    spec:
+      securityContext:
+{{- toYaml .Values.securityContext | nindent 8 }}
+      volumes:
+        {{- if .Values.server.dockerDataPersistence.enabled }}
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.server.dockerDataPersistence.existingClaim }}{{ .Values.server.dockerDataPersistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-docker-data{{ end }}
+        {{- end }}
+        {{- if .Values.server.persistence.enabled }}
+        - name: server-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.server.persistence.existingClaim }}{{ .Values.server.persistence.existingClaim }}{{ else }}{{ include "twenty.fullname" . }}-server{{ end }}
+        {{- end }}
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ if .Values.db.enabled }}{{ include "twenty.fullname" . }}-db{{ else }}{{ .Values.db.external.host }}{{ end }} \
+                               -p {{ if .Values.db.enabled }}5432{{ else }}{{ .Values.db.external.port | default 5432 }}{{ end }} \
+                               -U postgres; do
+                echo "Waiting for database socket..."
+                sleep 2
+              done
+              echo "Database socket is ready!"
+        {{- if .Values.db.enabled }}
+        - name: ensure-database-exists
+          image: postgres:16-alpine
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: appPassword
+          command:
+            - sh
+            - -c
+            - |
+              DBNAME={{ .Values.db.internal.database | default "twenty" }}
+              APP_USER={{ .Values.db.internal.appUser | default "twenty_app_user" }}
+              export PGPASSWORD
+              export APP_PASSWORD
+              echo "Creating database ${DBNAME} if it doesn't exist..."
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -Atc "SELECT 1 FROM pg_database WHERE datname = :'db'" | grep -q 1 || \
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -c 'CREATE DATABASE :"db";'
+              echo "Creating app user ${APP_USER} if it doesn't exist..."
+                psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
+  DO
+  $do$
+  BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
+      EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
+    END IF;
+  END
+  $do$;
+  EOSQL
+              echo "Creating core schema and granting permissions..."
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'CREATE SCHEMA IF NOT EXISTS core'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v db="${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON DATABASE :"db" TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON SCHEMA core TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON SCHEMA public TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA core TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON TABLES TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA core GRANT ALL ON SEQUENCES TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO :"app_user";'
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO :"app_user";'
+              echo "Database ${DBNAME} is ready."
+        {{- end }}
+        - name: run-migrations
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command:
+            - sh
+            - -c
+            - >-
+              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
+          env:
+            - name: PG_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
+      containers:
+        - name: server
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          env:
+            - name: SERVER_URL
+              value: {{ include "twenty.serverUrl" . | quote }}
+            - name: PG_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
+            - name: REDIS_URL
+              value: {{ include "twenty.redisUrl" . | quote }}
+            - name: SIGN_IN_PREFILLED
+              value: {{ .Values.server.env.SIGN_IN_PREFILLED | quote }}
+            - name: STORAGE_TYPE
+              value: {{ include "twenty.storageType" . | quote }}
+            - name: ACCESS_TOKEN_EXPIRES_IN
+              value: {{ .Values.server.env.ACCESS_TOKEN_EXPIRES_IN | quote }}
+            - name: LOGIN_TOKEN_EXPIRES_IN
+              value: {{ .Values.server.env.LOGIN_TOKEN_EXPIRES_IN | quote }}
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.secret.tokens.name" . }}
+                  key: accessToken
+            {{- $storageEnv := (include "twenty.storageEnv" .) }}
+            {{- if $storageEnv }}
+            {{ $storageEnv | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http-tcp
+              containerPort: {{ include "twenty.server.containerPort" . }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ include "twenty.server.containerPort" . }}
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ include "twenty.server.containerPort" . }}
+            initialDelaySeconds: 40
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.server.dockerDataPersistence.enabled }}
+            - name: docker-data
+              mountPath: /app/docker-data
+            {{- end }}
+            {{- if .Values.server.persistence.enabled }}
+            - name: server-data
+              mountPath: /app/packages/twenty-server/.local-storage
+            {{- end }}
+            {{- with .Values.server.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.server.stdin }}
+          stdin: {{ .Values.server.stdin }}
+          {{- end }}
+          {{- if .Values.server.tty }}
+          tty: {{ .Values.server.tty }}
+          {{- end }}
+{{- end }}
