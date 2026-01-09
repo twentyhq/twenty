@@ -4162,6 +4162,7 @@ msgid "Downgrade"
 msgstr "Nedgrader"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
 msgstr "Last ned"
@@ -11587,6 +11588,11 @@ msgstr "Denne handlingen vil slette denne favorittmappen og favoritten inni. Vil
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "Denne databaseverdien overstyrer miljøinnstillinger."
+
+#. js-lingui-id: own57K
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file cannot be previewed because it is hosted locally."
+msgstr ""
 
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx
