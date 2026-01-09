@@ -187,6 +187,10 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
         await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
           'flatFieldMetadataMaps',
         ]);
+      } else {
+        throw new Error(
+          `Should never occur could not find the created ownedOpportunities field`,
+        );
       }
 
       this.logger.log(
