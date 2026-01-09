@@ -50,7 +50,7 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       `Starting backfill of standard page layouts for workspace ${workspaceId}`,
     );
 
-    await this.backfillStandardPageLayoutMetadata({ workspaceId });
+    await this.backfillStandardPageLayoutMetadata({ workspaceId, options });
     await this.backfillDashboardRecord({ workspaceId, options });
 
     this.logger.log(
@@ -60,8 +60,10 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
 
   private async backfillStandardPageLayoutMetadata({
     workspaceId,
+    options,
   }: {
     workspaceId: string;
+    options: RunOnWorkspaceArgs['options'];
   }): Promise<void> {
     const {
       flatPageLayoutMaps: fromFlatPageLayoutMaps,
@@ -116,6 +118,14 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
         flatObjectMetadataMaps,
         flatPageLayoutWidgetMaps: rawToFlatPageLayoutWidgetMaps,
       });
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would create standard page layout entities ${workspaceId}`,
+      );
+
+      return;
+    }
 
     const validateAndbuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(

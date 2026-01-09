@@ -13,7 +13,6 @@ export type FindFlatEntityByUniversalIdentifierOrThrowArgs<
 > = {
   flatEntityMaps: FlatEntityMaps<T>;
   universalIdentifier: string;
-  entityDescription?: string;
 };
 
 export const findFlatEntityByUniversalIdentifierOrThrow = <
@@ -21,7 +20,6 @@ export const findFlatEntityByUniversalIdentifierOrThrow = <
 >({
   flatEntityMaps,
   universalIdentifier,
-  entityDescription,
 }: FindFlatEntityByUniversalIdentifierOrThrowArgs<T>): T => {
   const flatEntity = findFlatEntityByUniversalIdentifier({
     flatEntityMaps,
@@ -29,12 +27,8 @@ export const findFlatEntityByUniversalIdentifierOrThrow = <
   });
 
   if (!isDefined(flatEntity)) {
-    const descriptionPart = isDefined(entityDescription)
-      ? ` (${entityDescription})`
-      : '';
-
     throw new FlatEntityMapsException(
-      `Could not find flat entity${descriptionPart} with universal identifier ${universalIdentifier}`,
+      `Could not find flat entity with universal identifier ${universalIdentifier}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
