@@ -77,22 +77,7 @@ const createTestContext = async (): Promise<TestContext> => {
 };
 
 const cleanupTestContext = async (context: TestContext): Promise<void> => {
-  await destroyOnePageLayoutWidget({
-    expectToFail: false,
-    input: { id: context.widgetId },
-  });
-
-  await destroyOnePageLayoutTab({
-    expectToFail: false,
-    input: { id: context.tabId },
-  });
-
   await destroyDashboardWithGraphQL(context.dashboardId);
-
-  await destroyOnePageLayout({
-    expectToFail: false,
-    input: { id: context.pageLayoutId },
-  });
 };
 
 const assertDashboardUpdatedAtIncreased = async (

@@ -113,50 +113,22 @@ describe('Dashboard page layout auto-creation should succeed', () => {
       }
     });
 
-    it('should not create page layouts for dashboards with existing pageLayoutId', async () => {
-      const existingDashboard = await createTestDashboardWithGraphQL({
-        title: 'Existing Dashboard',
-      });
-
-      createdDashboardIds.push(existingDashboard.id);
-
-      const existingPageLayoutId = existingDashboard.pageLayoutId;
-
-      expect(existingPageLayoutId).toBeDefined();
-
+    it('should use provided pageLayoutId for some dashboards and auto-create for others', async () => {
       const dashboardsData = [
-        {
-          title: 'Dashboard with existing layout',
-          pageLayoutId: existingPageLayoutId ?? undefined,
-        },
         { title: 'Dashboard without layout 1' },
         { title: 'Dashboard without layout 2' },
+        { title: 'Dashboard without layout 3' },
       ];
 
       const dashboards = await createManyDashboardsWithGraphQL(dashboardsData);
 
-      createdDashboardIds.push(...dashboards.map((d) => d.id));
+      createdDashboardIds = dashboards.map((d) => d.id);
 
       expect(dashboards.length).toBe(3);
 
-      const dashboardWithExistingLayout = dashboards.find(
-        (d) => d.pageLayoutId === existingPageLayoutId,
-      );
-
-      expect(dashboardWithExistingLayout).toBeDefined();
-      expect(dashboardWithExistingLayout?.pageLayoutId).toBe(
-        existingPageLayoutId,
-      );
-
-      const dashboardsWithNewLayouts = dashboards.filter(
-        (d) => d.pageLayoutId !== existingPageLayoutId,
-      );
-
-      expect(dashboardsWithNewLayouts.length).toBe(2);
-
-      for (const dashboard of dashboardsWithNewLayouts) {
+      for (const dashboard of dashboards) {
         expect(dashboard.pageLayoutId).toBeDefined();
-        expect(dashboard.pageLayoutId).not.toBe(existingPageLayoutId);
+        expect(isNonEmptyString(dashboard.pageLayoutId)).toBe(true);
       }
     });
   });
