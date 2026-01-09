@@ -60,8 +60,8 @@ describe('computeParameters', () => {
       expect(computeDepthParameters()).toEqual({
         name: 'depth',
         in: 'query',
-        description: `Determines the level of nested related objects to include in the response.  
-    - 0: Primary object only  
+        description: `Determines the level of nested related objects to include in the response.
+    - 0: Primary object only
     - 1: Primary object + direct relations`,
         required: false,
         schema: {
@@ -77,7 +77,7 @@ describe('computeParameters', () => {
       expect(computeFilterParameters()).toEqual({
         name: 'filter',
         in: 'query',
-        description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2  
+        description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2
     Refer to the filter section at the top of the page for more details.`,
         required: false,
         schema: {
