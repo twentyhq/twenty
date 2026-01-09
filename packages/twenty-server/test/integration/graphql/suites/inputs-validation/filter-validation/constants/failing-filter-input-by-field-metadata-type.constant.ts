@@ -197,33 +197,25 @@ export const failingFilterInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.BOOLEAN]: [
-    // {
-    //   gqlFilterInput: { booleanField: { eq: 'not-a-boolean' } },
-    //   gqlErrorMessage:
-    //     'Boolean cannot represent a non boolean value: "not-a-boolean"',
-    //   // TODO - fix this, should throw an error
-    //   // restFilterInput: 'booleanField[eq]:"not-a-boolean"',
-    //   // restErrorMessage: 'invalid input syntax for type boolean',
-    // },
-    // {
-    //   gqlFilterInput: { booleanField: { eq: [] } },
-    //   gqlErrorMessage: 'Boolean cannot represent a non boolean value: []',
-    //   // TODO - fix this, should throw an error
-    //   // restFilterInput: 'booleanField[eq]:"[]"',
-    //   // restErrorMessage: 'invalid input syntax for type boolean',
-    // },
-    // {
-    //   gqlFilterInput: { booleanField: { eq: 2 } },
-    //   gqlErrorMessage: 'Boolean cannot represent a non boolean value: 2',
-    //   // TODO - fix this, should throw an error
-    //   // restFilterInput: 'booleanField[eq]:2',
-    //   // restErrorMessage: 'invalid input syntax for type boolean',
-    // },
-    // TODO - fix this, should throw an error
-    // {
-    //   gqlFilterInput: { booleanField: { eq: null } },
-    //   gqlErrorMessage: 'Boolean cannot represent a non boolean value: null',
-    // },
+    {
+      gqlFilterInput: { booleanField: { eq: 'not-a-boolean' } },
+      gqlErrorMessage:
+        'Boolean cannot represent a non boolean value: "not-a-boolean"',
+      restFilterInput: 'booleanField[eq]:"not-a-boolean"',
+      restErrorMessage: 'invalid input syntax for type boolean',
+    },
+    {
+      gqlFilterInput: { booleanField: { eq: [] } },
+      gqlErrorMessage: 'Boolean cannot represent a non boolean value: []',
+      restFilterInput: 'booleanField[eq]:"[]"',
+      restErrorMessage: 'invalid input syntax for type boolean',
+    },
+    {
+      gqlFilterInput: { booleanField: { eq: 2 } },
+      gqlErrorMessage: 'Boolean cannot represent a non boolean value: 2',
+      restFilterInput: 'booleanField[eq]:2',
+      restErrorMessage: 'invalid input syntax for type boolean',
+    },
   ],
   [FieldMetadataType.NUMBER]: [
     // {
