@@ -7,7 +7,6 @@ import {
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -82,37 +81,11 @@ export class PageLayoutTabResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async deletePageLayoutTab(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    const deletedPageLayoutTab = await this.pageLayoutTabService.delete({
-      id,
-      workspaceId: workspace.id,
-    });
-
-    return isDefined(deletedPageLayoutTab);
-  }
-
-  @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayoutTab(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     return this.pageLayoutTabService.destroy({
-      id,
-      workspaceId: workspace.id,
-    });
-  }
-
-  @Mutation(() => PageLayoutTabDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async restorePageLayoutTab(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.restore({
       id,
       workspaceId: workspace.id,
     });

@@ -70,7 +70,7 @@ export class PageLayoutWidgetResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
     return this.pageLayoutWidgetService.create({
-      createPageLayoutWidgetInput: input,
+      input,
       workspaceId: workspace.id,
     });
   }
@@ -89,18 +89,6 @@ export class PageLayoutWidgetResolver {
     });
   }
 
-  @Mutation(() => PageLayoutWidgetDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async deletePageLayoutWidget(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete({
-      id,
-      workspaceId: workspace.id,
-    });
-  }
-
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayoutWidget(
@@ -108,18 +96,6 @@ export class PageLayoutWidgetResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     return this.pageLayoutWidgetService.destroy({
-      id,
-      workspaceId: workspace.id,
-    });
-  }
-
-  @Mutation(() => PageLayoutWidgetDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async restorePageLayoutWidget(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.restore({
       id,
       workspaceId: workspace.id,
     });

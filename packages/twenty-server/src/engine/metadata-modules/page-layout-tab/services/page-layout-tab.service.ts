@@ -6,10 +6,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
+import { FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
-import { fromDeletePageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
 import { fromDestroyPageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
-import { fromRestorePageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
 import {
   fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow,
   type UpdatePageLayoutTabInputWithId,
@@ -30,6 +29,12 @@ import { fromFlatPageLayoutTabWithWidgetsToPageLayoutTabDto } from 'src/engine/m
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
+
+type TabMigrationOperations = {
+  flatEntityToCreate: FlatPageLayoutTab[];
+  flatEntityToUpdate: FlatPageLayoutTab[];
+  flatEntityToDelete: FlatPageLayoutTab[];
+};
 
 @Injectable()
 export class PageLayoutTabService {
@@ -261,71 +266,6 @@ export class PageLayoutTabService {
     return fromFlatPageLayoutTabToPageLayoutTabDto(updatedTab);
   }
 
-  async delete({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
-    const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
-
-    const flatPageLayoutTabToDelete =
-      fromDeletePageLayoutTabInputToFlatPageLayoutTabOrThrow({
-        deletePageLayoutTabInput: { id },
-        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            pageLayoutTab: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [flatPageLayoutTabToDelete],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting page layout tab',
-      );
-    }
-
-    const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
-
-    const deletedTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
-
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: id,
-      workspaceId,
-      updatedAt: new Date(deletedTab.updatedAt),
-    });
-
-    return fromFlatPageLayoutTabToPageLayoutTabDto(deletedTab);
-  }
-
   async destroy({
     id,
     workspaceId,
@@ -378,71 +318,6 @@ export class PageLayoutTabService {
     return true;
   }
 
-  async restore({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
-    const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
-
-    const flatPageLayoutTabToRestore =
-      fromRestorePageLayoutTabInputToFlatPageLayoutTabOrThrow({
-        restorePageLayoutTabInput: { id },
-        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            pageLayoutTab: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [flatPageLayoutTabToRestore],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while restoring page layout tab',
-      );
-    }
-
-    const { flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
-
-    const restoredTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
-
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: id,
-      workspaceId,
-      updatedAt: new Date(restoredTab.updatedAt),
-    });
-
-    return fromFlatPageLayoutTabToPageLayoutTabDto(restoredTab);
-  }
-
   async deleteByPageLayoutId({
     pageLayoutId,
     workspaceId,
@@ -474,27 +349,16 @@ export class PageLayoutTabService {
       return [];
     }
 
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            pageLayoutTab: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: tabsToDelete,
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
-        validateAndBuildResult,
+    await this.validateAndRunTabMigration({
+      workspaceId,
+      operations: {
+        flatEntityToCreate: [],
+        flatEntityToDelete: [],
+        flatEntityToUpdate: tabsToDelete,
+      },
+      errorMessage:
         'Multiple validation errors occurred while deleting page layout tabs by page layout id',
-      );
-    }
+    });
 
     return tabsToDelete.map((tab) => tab.id);
   }
@@ -528,15 +392,34 @@ export class PageLayoutTabService {
       return [];
     }
 
+    await this.validateAndRunTabMigration({
+      workspaceId,
+      operations: {
+        flatEntityToCreate: [],
+        flatEntityToDelete: [],
+        flatEntityToUpdate: tabsToRestore,
+      },
+      errorMessage:
+        'Multiple validation errors occurred while restoring page layout tabs by page layout id',
+    });
+
+    return tabsToRestore.map((tab) => tab.id);
+  }
+
+  private async validateAndRunTabMigration({
+    workspaceId,
+    operations,
+    errorMessage,
+  }: {
+    workspaceId: string;
+    operations: TabMigrationOperations;
+    errorMessage: string;
+  }): Promise<void> {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            pageLayoutTab: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: tabsToRestore,
-            },
+            pageLayoutTab: operations,
           },
           workspaceId,
           isSystemBuild: false,
@@ -546,10 +429,8 @@ export class PageLayoutTabService {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while restoring page layout tabs by page layout id',
+        errorMessage,
       );
     }
-
-    return tabsToRestore.map((tab) => tab.id);
   }
 }

@@ -8,9 +8,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-create-page-layout-widget-input-to-flat-page-layout-widget-to-create.util';
-import { fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util';
 import { fromDestroyPageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util';
-import { fromRestorePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util';
 import {
   fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow,
   type UpdatePageLayoutWidgetInputWithId,
@@ -265,49 +263,6 @@ export class PageLayoutWidgetService {
     return existingWidget;
   }
 
-  async delete({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<PageLayoutWidgetDTO> {
-    const existingFlatPageLayoutWidgetMaps =
-      await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    const flatPageLayoutWidgetToDelete =
-      fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow({
-        deletePageLayoutWidgetInput: { id },
-        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-      });
-
-    await this.validateAndRunWidgetMigration({
-      workspaceId,
-      operations: {
-        flatEntityToCreate: [],
-        flatEntityToUpdate: [flatPageLayoutWidgetToDelete],
-        flatEntityToDelete: [],
-      },
-      errorMessage:
-        'Multiple validation errors occurred while deleting page layout widget',
-    });
-
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    const deletedWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedMaps,
-    });
-
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
-      widgetId: id,
-      workspaceId,
-      updatedAt: new Date(deletedWidget.updatedAt),
-    });
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(deletedWidget);
-  }
-
   async destroy({
     id,
     workspaceId,
@@ -342,49 +297,6 @@ export class PageLayoutWidgetService {
     });
 
     return true;
-  }
-
-  async restore({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<PageLayoutWidgetDTO> {
-    const existingFlatPageLayoutWidgetMaps =
-      await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    const flatPageLayoutWidgetToRestore =
-      fromRestorePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow({
-        restorePageLayoutWidgetInput: { id },
-        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-      });
-
-    await this.validateAndRunWidgetMigration({
-      workspaceId,
-      operations: {
-        flatEntityToCreate: [],
-        flatEntityToUpdate: [flatPageLayoutWidgetToRestore],
-        flatEntityToDelete: [],
-      },
-      errorMessage:
-        'Multiple validation errors occurred while restoring page layout widget',
-    });
-
-    const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
-
-    const restoredWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedMaps,
-    });
-
-    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
-      widgetId: id,
-      workspaceId,
-      updatedAt: new Date(restoredWidget.updatedAt),
-    });
-
-    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(restoredWidget);
   }
 
   async deleteByTabIds({
