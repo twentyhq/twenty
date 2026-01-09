@@ -14,4 +14,3 @@ export class WorkflowConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.WORKFLOW;
 }
-

@@ -14,4 +14,3 @@ export class FieldRichTextConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.FIELD_RICH_TEXT;
 }
-

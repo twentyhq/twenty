@@ -14,4 +14,3 @@ export class TimelineConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.TIMELINE;
 }
-

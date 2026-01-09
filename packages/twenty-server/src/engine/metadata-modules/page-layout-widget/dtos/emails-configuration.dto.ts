@@ -14,4 +14,3 @@ export class EmailsConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.EMAILS;
 }
-

@@ -14,4 +14,3 @@ export class FieldsConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.FIELDS;
 }
-

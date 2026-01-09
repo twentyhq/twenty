@@ -14,4 +14,3 @@ export class CalendarConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.CALENDAR;
 }
-

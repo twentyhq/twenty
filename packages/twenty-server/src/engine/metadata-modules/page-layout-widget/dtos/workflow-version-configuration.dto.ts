@@ -14,4 +14,3 @@ export class WorkflowVersionConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.WORKFLOW_VERSION;
 }
-

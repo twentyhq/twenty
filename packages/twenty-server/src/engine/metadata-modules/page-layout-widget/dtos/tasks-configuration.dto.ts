@@ -14,4 +14,3 @@ export class TasksConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.TASKS;
 }
-

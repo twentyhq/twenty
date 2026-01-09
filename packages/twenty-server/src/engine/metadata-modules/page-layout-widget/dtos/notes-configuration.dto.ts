@@ -14,4 +14,3 @@ export class NotesConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.NOTES;
 }
-

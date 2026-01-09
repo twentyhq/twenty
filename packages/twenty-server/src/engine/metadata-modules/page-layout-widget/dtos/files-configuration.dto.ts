@@ -14,4 +14,3 @@ export class FilesConfigurationDTO
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.FILES;
 }
-
