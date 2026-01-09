@@ -1,1 +1,5 @@
-export const testFunction2 = () => 'testFunction2';
+export const testFunction2 = () => {
+  const Twenty = require('../../generated').default;
+
+  return 'testFunction2';
+};
