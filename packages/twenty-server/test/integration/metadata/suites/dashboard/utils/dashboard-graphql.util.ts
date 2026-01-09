@@ -111,14 +111,14 @@ export const destroyDashboardWithGraphQL = async (
 ): Promise<void> => {
   const operation = {
     query: gql`
-      mutation DestroyDashboard($filter: DashboardFilterInput!) {
-        destroyDashboard(filter: $filter) {
+      mutation DestroyDashboard($dashboardId: UUID!) {
+        destroyDashboard(id: $dashboardId) {
           id
         }
       }
     `,
     variables: {
-      filter: { id: { eq: dashboardId } },
+      dashboardId,
     },
   };
 
