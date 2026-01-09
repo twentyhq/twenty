@@ -7,6 +7,7 @@ import {
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
+  type workflowDelayActionSchema,
   type workflowDeleteRecordActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
@@ -25,7 +26,6 @@ import {
   type workflowUpdateRecordActionSchema,
   type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
-  type workflowDelayActionSchema,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
@@ -84,13 +84,16 @@ export type WorkflowStep = WorkflowAction;
 export type WorkflowDatabaseEventTrigger = z.infer<
   typeof workflowDatabaseEventTriggerSchema
 >;
-export type WorkflowManualTrigger = z.infer<typeof workflowManualTriggerSchema>;
+export type WorkflowManualTriggerSchema = z.infer<
+  typeof workflowManualTriggerSchema
+>;
 export type WorkflowCronTrigger = z.infer<typeof workflowCronTriggerSchema>;
 export type WorkflowWebhookTrigger = z.infer<
   typeof workflowWebhookTriggerSchema
 >;
 
-export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
+export type WorkflowManualTriggerSettings =
+  WorkflowManualTriggerSchema['settings'];
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';
@@ -124,7 +127,7 @@ export type WorkflowVersion = {
 };
 
 export type ManualTriggerWorkflowVersion = WorkflowVersion & {
-  trigger: WorkflowManualTrigger | null;
+  trigger: WorkflowManualTriggerSchema | null;
 };
 
 export type WorkflowRunStatus = z.infer<typeof workflowRunStatusSchema>;
@@ -150,4 +153,13 @@ export type Workflow = {
 
 export type WorkflowWithCurrentVersion = Workflow & {
   currentVersion: WorkflowVersion;
+};
+
+export type WorkflowManualTriggerEntity = {
+  id: string;
+  settings: WorkflowManualTriggerSettings;
+  workflowVersionId: string;
+  workflowId: string;
+  workflowName: string;
+  __typename: 'WorkflowManualTrigger';
 };

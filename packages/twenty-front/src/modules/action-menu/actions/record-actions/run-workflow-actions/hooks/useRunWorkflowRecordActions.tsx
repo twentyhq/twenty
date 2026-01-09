@@ -7,16 +7,23 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { useWorkflowManualTriggers } from '@/workflow/hooks/useWorkflowManualTriggers';
+import { type WorkflowManualTriggerEntity } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+
+const isBulkTrigger = (manualTrigger: WorkflowManualTriggerEntity): boolean => {
+  const trigger = {
+    type: 'MANUAL' as const,
+    settings: manualTrigger.settings,
+  };
+  return isBulkRecordsManualTrigger(trigger);
+};
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -36,11 +43,10 @@ export const useRunWorkflowRecordActions = ({
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
 
-  const { records: activeWorkflowVersions } =
-    useActiveWorkflowVersionsWithManualTrigger({
-      objectMetadataItem,
-      skip,
-    });
+  const { records: manualTriggers } = useWorkflowManualTriggers({
+    objectMetadataItem,
+    skip,
+  });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
@@ -48,10 +54,7 @@ export const useRunWorkflowRecordActions = ({
     ({ snapshot }) =>
       async (
         selectedRecordIds: string[],
-        activeWorkflowVersion: Pick<
-          WorkflowVersion,
-          'id' | 'workflowId' | 'trigger'
-        >,
+        manualTrigger: WorkflowManualTriggerEntity,
       ) => {
         if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
           const selectedCountFormatted =
@@ -71,11 +74,7 @@ export const useRunWorkflowRecordActions = ({
           QUERY_MAX_RECORDS,
         );
 
-        if (
-          isDefined(activeWorkflowVersion?.trigger) &&
-          isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
-        ) {
-          const objectNamePlural = objectMetadataItem.namePlural;
+        if (isBulkTrigger(manualTrigger)) {
           const selectedRecords = limitedSelectedRecordIds
             .map((recordId) =>
               snapshot.getLoadable(recordStoreFamilyState(recordId)).getValue(),
@@ -83,10 +82,10 @@ export const useRunWorkflowRecordActions = ({
             .filter(isDefined);
 
           await runWorkflowVersion({
-            workflowId: activeWorkflowVersion.workflowId,
-            workflowVersionId: activeWorkflowVersion.id,
+            workflowId: manualTrigger.workflowId,
+            workflowVersionId: manualTrigger.workflowVersionId,
             payload: {
-              [objectNamePlural]: selectedRecords,
+              [objectMetadataItem.namePlural]: selectedRecords,
             },
           });
         } else {
@@ -100,8 +99,8 @@ export const useRunWorkflowRecordActions = ({
             }
 
             await runWorkflowVersion({
-              workflowId: activeWorkflowVersion.workflowId,
-              workflowVersionId: activeWorkflowVersion.id,
+              workflowId: manualTrigger.workflowId,
+              workflowVersionId: manualTrigger.workflowVersionId,
               payload: selectedRecord,
             });
           }
@@ -110,43 +109,39 @@ export const useRunWorkflowRecordActions = ({
     [runWorkflowVersion, objectMetadataItem, enqueueWarningSnackBar],
   );
 
-  return activeWorkflowVersions
-    .filter((activeWorkflowVersion) =>
-      isDefined(activeWorkflowVersion.workflow),
-    )
-    .map((activeWorkflowVersion, index) => {
-      const name = capitalize(activeWorkflowVersion.workflow.name);
+  return manualTriggers.map((manualTrigger, index) => {
+    const name = capitalize(manualTrigger.workflowName);
 
-      const Icon = getIcon(
-        activeWorkflowVersion.trigger?.settings.icon,
-        COMMAND_MENU_DEFAULT_ICON,
-      );
+    const Icon = getIcon(
+      manualTrigger.settings?.icon,
+      COMMAND_MENU_DEFAULT_ICON,
+    );
 
-      return {
-        type: ActionType.WorkflowRun,
-        key: `workflow-run-${activeWorkflowVersion.id}`,
-        scope: ActionScope.RecordSelection,
-        label: name,
-        shortLabel: name,
-        position: index,
-        Icon,
-        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
-        shouldBeRegistered: () => true,
-        component: (
-          <Action
-            onClick={async () => {
-              if (!isDefined(selectedRecordIds)) {
-                return;
-              }
+    return {
+      type: ActionType.WorkflowRun,
+      key: `workflow-run-${manualTrigger.workflowVersionId}`,
+      scope: ActionScope.RecordSelection,
+      label: name,
+      shortLabel: name,
+      position: index,
+      Icon,
+      isPinned: manualTrigger.settings?.isPinned,
+      shouldBeRegistered: () => true,
+      component: (
+        <Action
+          onClick={async () => {
+            if (!isDefined(selectedRecordIds)) {
+              return;
+            }
 
-              await runWorkflowVersionOnSelectedRecords(
-                selectedRecordIds,
-                activeWorkflowVersion,
-              );
-            }}
-            closeSidePanelOnCommandMenuListActionExecution={false}
-          />
-        ),
-      };
-    });
+            await runWorkflowVersionOnSelectedRecords(
+              selectedRecordIds,
+              manualTrigger,
+            );
+          }}
+          closeSidePanelOnCommandMenuListActionExecution={false}
+        />
+      ),
+    };
+  });
 };
