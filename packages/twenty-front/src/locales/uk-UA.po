@@ -8691,6 +8691,7 @@ msgstr "Організація"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
 msgid "Other"
 msgstr "Інший"
 

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -25,10 +26,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
   ],
   exports: [
+    UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
   ],
