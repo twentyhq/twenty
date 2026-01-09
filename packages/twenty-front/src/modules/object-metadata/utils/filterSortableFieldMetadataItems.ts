@@ -8,9 +8,7 @@ type SortableFieldInput = {
   relation?: { type: RelationType } | null;
 };
 
-export const filterSortableFieldMetadataItems = (
-  field: SortableFieldInput,
-) => {
+export const filterSortableFieldMetadataItems = (field: SortableFieldInput) => {
   const isSystemField = field.isSystem;
   const isFieldActive = field.isActive;
 
