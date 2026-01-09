@@ -35,6 +35,7 @@ describe('Order by relation field (e2e)', () => {
       ],
       upsert: true,
     });
+
     await makeGraphqlAPIRequest(createCompanies);
 
     // Create test people with company relations and some without (for null testing)
@@ -58,13 +59,17 @@ describe('Order by relation field (e2e)', () => {
       ],
       upsert: true,
     });
+
     await makeGraphqlAPIRequest(createPeople);
   });
 
   it('should sort people by company name ascending', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
@@ -115,7 +120,10 @@ describe('Order by relation field (e2e)', () => {
   it('should sort people by company name descending', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
@@ -166,7 +174,10 @@ describe('Order by relation field (e2e)', () => {
   it('should handle null relations with NULLS LAST', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 50) {
             edges {
               node {
@@ -314,7 +325,10 @@ describe('Order by relation field (e2e)', () => {
     // First get a cursor by fetching records
     const firstQueryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 3) {
             edges {
               node {
@@ -381,7 +395,10 @@ describe('Order by relation field (e2e)', () => {
   it('should allow sorting by relation FK (backward compatibility)', async () => {
     const queryData = {
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 10) {
             edges {
               node {
