@@ -1,6 +1,6 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: طرق عرض لوحة كانبان
+description: تعرّف على كيفية استخدام طرق عرض كانبان لتصوّر وإدارة سير العمل لديك.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
@@ -10,13 +10,13 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 توضح عروض كانبان التدفقات العملية بشكل مرئي، حيث يرمز كل عمود إلى مرحلة محددة وكل بطاقة تمثل سجل.
 
-## Move Cards between Stages
+## انقل البطاقات بين المراحل
 
 يمكنك نقل كل بطاقة بين المراحل بينما تتقدم عبر سير العمل الخاص بك عن طريق السحب والإفلات. للمتابعة، اضغط باستمرار على البطاقة وانقلها إلى المرحلة التالية.‏
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="عرض توضيحي بالفيديو" />
 
-## Add and Delete Stages
+## إضافة المراحل وحذفها
 
 يمكنك تخصيص سير العمل لديك ليتناسب مع احتياجاتك باستخدام المراحل، والتي تمثل قيمة في حقل التحديد:
 
@@ -24,15 +24,15 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 لإضافة مرحلة، انتقل إلى إعدادات حقل الاختيار عن طريق الانتقال إلى الإعدادات > نموذج البيانات، وتحديد الكائن، ثم الحقل الذي يعتمد عليه لوحة كانبان الخاصة بك.‏
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="عرض توضيحي بالفيديو" />
 
 ### إزالة مراحل
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+لإزالة مرحلة، مرّر مؤشر الفأرة فوق اسم المرحلة أو أيقونة `⋮`، وانقر على `تحرير من الإعدادات` في إعدادات حقل التحديد، ثم انقر على **حذف** بجوار المرحلة ذات الصلة.
 
-## Display Fields
+## حقول العرض
 
-يمكنك تكوين لوحة عرض كانبان لإظهار بعض الحقول وإخفاء الأخرى. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+يمكنك تكوين لوحة عرض كانبان لإظهار بعض الحقول وإخفاء الأخرى. لإخفاء أحد الحقول، انقر على **الخيارات** في أعلى اليمين، ثم على **الحقول** لإظهار قائمة الخيارات. ابحث عن الحقل المطلوب في قسم الحقول المخفية وانقر على زر العين لعرض الحقل.
 
 يمكنك أيضًا إعادة ترتيب ترتيب الحقول عن طريق الضغط باستمرار على اسم الحقل وسحبه إلى المكان الذي تريده.
 
@@ -40,60 +40,60 @@ To remove a stage, hover the stage name or the `⋮` icon, click `Edit from sett
 
 ## عرض مضغوط
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+يمكنك إخفاء جميع الحقول والحصول على لمحة عامة عن جميع السجلات. للتفعيل:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. انقر على **الخيارات** في أعلى اليمين
+2. فعِّل مفتاح التبديل لخيار **العرض المضغوط**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## تجميعات الأعمدة
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+يمكن لكل عمود في طريقة عرض كانبان عرض قيم مُجمَّعة في الأعلى، مما يساعدك على فهم بياناتك بنظرة سريعة.
 
-### Available Aggregations
+### التجميعات المتاحة
 
-| Aggregation | الوصف                                         |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| التجميع     | الوصف                               |
+| ----------- | ----------------------------------- |
+| **العدد**   | عدد السجلات في العمود               |
+| **المجموع** | إجمالي حقل رقمي (مثل مبالغ الصفقات) |
+| **المتوسط** | القيمة المتوسطة لحقل رقمي           |
+| **الأدنى**  | أقل قيمة                            |
+| **الأقصى**  | أعلى قيمة                           |
 
-### Configuring Aggregations
+### تكوين التجميعات
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. انقر على الرقم المعروض بجوار قيمة المرحلة، في أعلى العمود
+2. اختر نوع التجميع
+3. اختر الحقل المراد تجميعه
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**مثال:** اعرض إجمالي قيمة الصفقات لكل مرحلة من خلال تجميع حقل Amount باستخدام المجموع.
 
-## When to Use Kanban Views
+## متى يجب استخدام طرق عرض كانبان
 
-Kanban views are ideal for:
+طرق عرض كانبان مثالية لـ:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **مسارات المبيعات**: تتبّع الصفقات عبر المراحل من العميل المحتمل حتى الإغلاق
+* **إدارة المشاريع**: راقِب المهام عبر حالات سير العمل
+* **التوظيف**: تتبّع المرشحين عبر مراحل التوظيف
+* **أي عملية مرحلية**: تصوّر أي سير عمل بمراحل محدّدة
 
 ## أفضل الممارسات
 
-### Organize Your Stages
+### نظّم مراحلَك
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **حدّد عدد المراحل**: من 5 إلى 7 مراحل مناسب للرؤية الواضحة
+* **تسمية واضحة**: استخدم أسماء مراحل وصفية
+* **ترتيب منطقي**: رتّب المراحل وفق ترتيب العملية
 
-### Optimize Card Display
+### حسّن عرض البطاقات
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **أظهر الحقول الرئيسية**: اعرض المعلومات الأهم فقط
+* **استخدم العرض المضغوط**: للحصول على لمحات عامة عالية المستوى
+* **الترميز اللوني**: استخدم ألوان المراحل للتعرّف السريع على الحالة
 
-### Maintain Data Quality
+### حافظ على جودة البيانات
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **حدّث بانتظام**: أبقِ البطاقات تتحرك عبر المراحل
+* **أرشِف العناصر المكتملة**: انقل العناصر المغلقة خارج طريقة العرض النشطة
+* **راجع البطاقات الراكدة**: تابِع البطاقات العالقة في المراحل

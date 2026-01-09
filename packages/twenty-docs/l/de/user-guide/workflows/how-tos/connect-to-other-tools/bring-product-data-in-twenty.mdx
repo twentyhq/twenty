@@ -1,31 +1,31 @@
 ---
-title: Bring Product Data into Twenty
-description: Sync product catalog data from a data warehouse into your CRM on a schedule.
+title: Produktdaten in Twenty importieren
+description: Synchronisieren Sie Produktkatalogdaten nach Zeitplan aus einem Data Warehouse in Ihr CRM.
 ---
 
-Use this pattern to keep Twenty in sync with product data from your data warehouse (e.g., Snowflake, BigQuery, PostgreSQL).
+Verwenden Sie dieses Muster, um Twenty mit Produktdaten aus Ihrem Data Warehouse (z. B. Snowflake, BigQuery, PostgreSQL) synchron zu halten.
 
-## Workflow Structure
+## Workflow-Struktur
 
-1. **Trigger**: On a Schedule
-2. **Code**: Query your data warehouse
-3. **Code** (optional): Format data as array
-4. **Iterator**: Loop through each product
-5. **Upsert Record**: Create or update in Twenty
+1. **Auslöser**: Nach Zeitplan
+2. **Code**: Ihr Data Warehouse abfragen
+3. **Code** (optional): Daten als Array formatieren
+4. **Iterator**: Jedes Produkt durchlaufen
+5. **Upsert Record**: In Twenty erstellen oder aktualisieren
 
 <img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
 
-## Step 1: Schedule the Trigger
+## Schritt 1: Auslöser planen
 
-Set the workflow to run at a frequency matching your data freshness needs:
+Stellen Sie den Workflow so ein, dass er mit einer Häufigkeit läuft, die Ihren Anforderungen an die Datenaktualität entspricht:
 
-* Every 5 minutes for near real-time sync
-* Every hour for less critical data
-* Daily for batch updates
+* Alle 5 Minuten für eine nahezu Echtzeit-Synchronisierung
+* Stündlich für weniger kritische Daten
+* Täglich für Batch-Updates
 
-## Step 2: Query Your Data Warehouse
+## Schritt 2: Ihr Data Warehouse abfragen
 
-Add a **Code** action to fetch recent data:
+Fügen Sie eine **Code**-Aktion hinzu, um aktuelle Daten abzurufen:
 
 ```javascript
 export const main = async () => {
@@ -54,14 +54,14 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filter by `updated_at >= last X minutes` to retrieve only recently changed records. This keeps the sync efficient.
+  Filtern Sie nach `updated_at >= last X minutes`, um nur kürzlich geänderte Datensätze abzurufen. So bleibt die Synchronisierung effizient.
 </Tip>
 
-## Step 3: Format Data (Optional)
+## Schritt 3: Daten formatieren (optional)
 
-If your warehouse returns data in a format that needs transformation, add another **Code** action. Common transformations include type conversions, field renaming, and data cleanup.
+Wenn Ihr Data Warehouse Daten in einem Format zurückgibt, das transformiert werden muss, fügen Sie eine weitere **Code**-Aktion hinzu. Häufige Transformationen umfassen Typkonvertierungen, Feldumbenennungen und Datenbereinigung.
 
-### Example: User Data with Boolean and Status Fields
+### Beispiel: Benutzerdaten mit booleschen und Statusfeldern
 
 ```javascript
 export const main = async (params: {
@@ -86,7 +86,7 @@ export const main = async (params: {
 };
 ```
 
-### Example: Product Data with Type Conversions
+### Beispiel: Produktdaten mit Typkonvertierungen
 
 ```javascript
 export const main = async (params: { products: any }) => {
@@ -107,7 +107,7 @@ export const main = async (params: { products: any }) => {
 };
 ```
 
-### Example: Date and Currency Formatting
+### Beispiel: Datums- und Währungsformatierung
 
 ```javascript
 export const main = async (params: { deals: any }) => {
@@ -131,52 +131,52 @@ export const main = async (params: { deals: any }) => {
 };
 ```
 
-### Common Transformations
+### Häufige Transformationen
 
-| Source Format        | Target Format    | Code                                     |
+| Quellformat          | Zielformat       | Code                                     |
 | -------------------- | ---------------- | ---------------------------------------- |
 | `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
 | `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
 | `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
-| `1704067200` (Unix)  | ISO date         | `new Date(v * 1000).toISOString()`       |
+| `1704067200` (Unix)  | ISO-Datum        | `new Date(v * 1000).toISOString()`       |
 | `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
 | `null` / `undefined` | `""`             | `value \|\| ""`                          |
 
-## Step 4: Iterate Through Products
+## Schritt 4: Durch die Produkte iterieren
 
-Add an **Iterator** action:
+Fügen Sie eine **Iterator**-Aktion hinzu:
 
-* Input: `{{code.products}}`
+* Eingabe: `{{code.products}}`
 
-This loops through each product in the array.
+Dies durchläuft jedes Produkt im Array.
 
-## Step 5: Upsert Each Record
+## Schritt 5: Jeden Datensatz upserten
 
-Inside the iterator, add an **Upsert Record** action:
+Fügen Sie innerhalb des Iterators eine **Upsert Record**-Aktion hinzu:
 
-| Setting      | Wert                                   |
-| ------------ | -------------------------------------- |
-| **Object**   | Your custom Product object             |
-| **Match by** | External ID or SKU (unique identifier) |
-| **Name**     | `{{iterator.item.name}}`               |
-| **SKU**      | `{{iterator.item.sku}}`                |
-| **Price**    | `{{iterator.item.price}}`              |
+| Einstellung           | Wert                                         |
+| --------------------- | -------------------------------------------- |
+| **Objekt**            | Ihr benutzerdefiniertes Produktobjekt        |
+| **Abgleichen anhand** | Externe ID oder SKU (eindeutiger Bezeichner) |
+| **Name**              | `{{iterator.item.name}}`                     |
+| **SKU**               | `{{iterator.item.sku}}`                      |
+| **Preis**             | `{{iterator.item.price}}`                    |
 
 <Tip>
-  Use **Upsert** (update or create) instead of building separate branches for create vs. update. It's faster to build and easier to debug.
+  Verwenden Sie **Upsert** (aktualisieren oder erstellen), anstatt separate Verzweigungen für Erstellen vs. Aktualisieren zu bauen. Das ist schneller aufzubauen und leichter zu debuggen.
 </Tip>
 
-## Example Use Cases
+## Beispielanwendungsfälle
 
-| Quelle                  | Daten                               |
-| ----------------------- | ----------------------------------- |
-| **ERP system**          | Product catalog, pricing, inventory |
-| **E-commerce platform** | Orders, customers, product updates  |
-| **Data warehouse**      | Aggregated metrics, enriched data   |
-| **Inventory system**    | Stock levels, reorder alerts        |
+| Quelle                        | Daten                                         |
+| ----------------------------- | --------------------------------------------- |
+| **ERP-System**                | Produktkatalog, Preise, Bestand               |
+| **E-Commerce-Plattform**      | Bestellungen, Kunden, Produktaktualisierungen |
+| **Data Warehouse**            | Aggregierte Metriken, angereicherte Daten     |
+| **Bestandsverwaltungssystem** | Bestandsmengen, Nachbestellwarnungen          |
 
-## Related
+## Verwandt
 
-* [Workflow Triggers](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [Handle Arrays in Code Actions](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
