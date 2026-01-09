@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: Import relací mezi objekty pomocí CSV
+description: Kompletní podrobný průvodce propojením záznamů během importu CSV.
 ---
 
 ## Přehled
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+Tento průvodce vás provede importem relací mezi objekty — například propojením lidí se společnostmi nebo příležitostí s lidmi.
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**Co lze importovat:** Pouze relace „jeden ku mnoha“ směřující k jednomu typu objektu. Relace směřující k více typům objektů (např. poznámky propojené s lidmi a společnostmi) zatím nejsou pro import podporovány.</Note>
 
-## Understanding Relations
+## Porozumění relacím
 
-### What is a "One-to-Many" Relation?
+### Co je to relace „jeden ku mnoha“?
 
-In a one-to-many relation:
+V relaci jeden ku mnoha:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **Jedna** společnost má **mnoho** lidí (zaměstnanců)
+* **Jedna** společnost má **mnoho** příležitostí
+* **Jedna** osoba má **mnoho** úkolů
 
-The "one" side is the **parent**. The "many" side is the **child**.
+Strana „jedna“ je **nadřazená**. Strana „mnoho“ je **podřízená**.
 
-### Common Relations in Twenty
+### Běžné relace v Twenty
 
-| Vztah                     | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Společnost          | Osoby               |
-| Companies → Opportunities | Společnost          | Příležitosti        |
-| People → Tasks            | Osoba               | Úkoly               |
-| People → Notes            | Osoba               | Poznámky            |
+| Vztah                      | Strana „jedna“ (nadřazený) | Strana „mnoho“ (podřízený) |
+| -------------------------- | -------------------------- | -------------------------- |
+| Společnosti → Lidé         | Společnost                 | Osoby                      |
+| Společnosti → Příležitosti | Společnost                 | Příležitosti               |
+| Lidé → Úkoly               | Osoba                      | Úkoly                      |
+| Lidé → Poznámky            | Osoba                      | Poznámky                   |
 
-## Step 1: Identify the "One" and "Many" Sides
+## Krok 1: Určete strany „jedna“ a „mnoho“
 
-Before importing, determine which object is the parent and which is the child.
+Před importem určete, který objekt je nadřazený a který podřízený.
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**Zeptejte se sami sebe:** "Má JEDEN [Objekt A] MNOHO [Objekt B]?"
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* Jedna společnost → Mnoho lidí ✓ (společnost je nadřazená)
+* Jedna osoba → Mnoho společností ✗ (To je špatně — osoba patří k jedné společnosti)
 
-## Step 2: Import the Parent Records First
+## Krok 2: Nejprve importujte nadřazené záznamy
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+Nadřazený („jedna“ strana) musí v Twenty existovat, než na něj budete moci odkazovat.
 
-**Import order:**
+**Pořadí importu:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. **Společnosti** jako první (bez závislostí)
+2. **Lidé** jako druzí (propojení se společnostmi)
+3. **Příležitosti** jako třetí (propojené se společnostmi a/nebo lidmi)
+4. **Úkoly/Poznámky** (propojené s jakýmkoli z výše uvedených)
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **Pokud nadřazený záznam neexistuje, import selže.**
 
-  Always verify that Companies are imported before importing People with company references.
+  Vždy ověřte, že společnosti jsou importovány dříve, než budete importovat lidi s odkazy na společnost.
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## Krok 3: Poznamenejte si jedinečný identifikátor nadřazeného objektu
 
-You need to reference the parent record using a **unique identifier**. Available options:
+Na nadřazený záznam musíte odkazovat pomocí **jedinečného identifikátoru**. Dostupné možnosti:
 
-| Parent Object                   | Available Unique Identifiers                                    |
-| ------------------------------- | --------------------------------------------------------------- |
-| **Společnosti**                 | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**                      | `id` (UUID), `email`, or any custom unique field                |
-| **Členové pracovního prostoru** | `id` (UUID), `email` (not name)                                 |
-| **Vlastní objekty**             | `id` (UUID), or any field marked as unique                      |
+| Nadřazený objekt                | Dostupné jedinečné identifikátory                                       |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| **Společnosti**                 | `id` (UUID), `domain` (doporučeno) nebo jakékoli vlastní jedinečné pole |
+| **Lidé**                        | `id` (UUID), `email` nebo jakékoli vlastní jedinečné pole               |
+| **Členové pracovního prostoru** | `id` (UUID), `email` (ne jméno)                                         |
+| **Vlastní objekty**             | `id` (UUID) nebo jakékoli pole označené jako jedinečné                  |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**Doporučeno:** Pro společnosti použijte `domain` a pro lidi `email`. Jsou čitelné pro člověka a snadno ověřitelné ve vaší tabulce.</Note>
 
-### Finding the Identifier
+### Jak zjistit identifikátor
 
-If you need the `id`:
+Pokud potřebujete `id`:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. Exportujte nadřazené záznamy z Twenty
+2. Export obsahuje sloupec `id`
+3. Použijte tato ID v souboru s podřízenými záznamy
 
-## Step 4: Verify the Relation Field Exists
+## Krok 4: Ověřte, že existuje relační pole
 
-Before importing, ensure the relation field exists between your objects.
+Před importem se ujistěte, že mezi vašimi objekty existuje relační pole.
 
-**To check or create:**
+**Jak ověřit nebo vytvořit:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte svůj podřízený objekt (např. Lidé)
+3. Vyhledejte relační pole směřující na nadřazený objekt (např. Společnost)
+4. Pokud neexistuje, vytvořte jej:
+   * Klikněte na **+ Add field**
+   * Vyberte typ **Relation**
+   * Vyberte nadřazený objekt
 
-## Step 5: Prepare Your CSV File
+## Krok 5: Připravte svůj soubor CSV
 
-Add a column to your child CSV that references the parent using its unique identifier.
+Do podřízeného CSV přidejte sloupec, který odkazuje na nadřazený objekt pomocí jeho jedinečného identifikátoru.
 
-### Example: People Linking to Companies
+### Příklad: Propojení lidí se společnostmi
 
-**Your People CSV:**
+**Vaše CSV s lidmi:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+Sloupec `companyDomain` odkazuje na doménu společnosti.
 
-### Format Requirements
+### Požadavky na formát
 
-| Identifikátor | Formát         | Příklad                                |
-| ------------- | -------------- | -------------------------------------- |
-| Doména        | URL format     | `https://acme.com`                     |
-| Email         | Standard email | `john@acme.com`                        |
-| ID            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Identifikátor | Formát            | Příklad                                |
+| ------------- | ----------------- | -------------------------------------- |
+| Doména        | Formát URL        | `https://acme.com`                     |
+| Email         | Standardní e-mail | `john@acme.com`                        |
+| ID            | UUID              | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **Na formátu domény záleží!**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  Použijte `https://domain.com` (ne pouze `domain.com`). To odpovídá způsobu, jak Twenty ukládá domény společností, a předchází chybám při párování.
 </Warning>
 
-### Important Rules
+### Důležitá pravidla
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **Je vyžadována přesná shoda** — hodnota se musí přesně shodovat s nadřazeným záznamem
+2. **Mapujte pouze JEDEN jedinečný identifikátor** — nezahrnujte současně `companyId` A `companyDomain`
+3. **Rozlišuje se velikost písmen** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## Krok 6: Nahrajte a namapujte relaci
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. Přejděte k podřízenému objektu (např. Lidé)
+2. Klikněte na **⋮** → **Import records**
+3. Nahrajte svůj soubor CSV
+4. V kroku mapování polí:
+   * Najděte svůj relační sloupec (např. `companyDomain`)
+   * Namapujte jej na relační pole **Společnost**
+5. Dokončete zbývající mapování
+6. Zkontrolujte chyby a potvrďte
 
-Twenty will automatically link each child record to the matching parent.
+Twenty automaticky propojí každý podřízený záznam s odpovídajícím nadřazeným.
 
-## Step 7: Verify the Import
+## Krok 7: Ověřte import
 
-After importing:
+Po importu:
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. Otevřete několik podřízených záznamů (např. Lidé)
+2. Ověřte, že relační pole zobrazuje správný nadřazený objekt (např. Společnost)
+3. Otevřete nadřazený záznam a zkontrolujte sekci souvisejících záznamů
 
-## Common Mistakes to Avoid
+## Časté chyby, kterým se vyhnout
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| Chyba                        | Problém                                         | Řešení                                                          |
+| ---------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| **Chybné pořadí importu**    | Importujete lidi před společnostmi              | Vždy nejprve importujte nadřazené, poté podřízené               |
+| **Chybný formát domény**     | Použití `acme.com` místo `https://acme.com`     | Použijte plný formát URL s `https://`                           |
+| **Více jedinečných polí**    | Mapujete současně `companyId` A `companyDomain` | Mapujte pouze JEDEN jedinečný identifikátor                     |
+| **Chybí relační pole**       | Relační pole v datovém modelu neexistuje        | Vytvořte jej v **Nastavení → Datový model** před importem       |
+| **Neexistující záznamy**     | Nadřazený záznam v Twenty neexistuje            | Nejprve importujte nadřazené záznamy nebo zkontrolujte překlepy |
+| **Rozdílná velikost písmen** | `Acme.com` v souboru, ale v Twenty `acme.com`   | Zajistěte přesnou shodu velikosti písmen                        |
 
-## Linking to Workspace Members
+## Propojování s členy pracovního prostoru
 
-When linking to Workspace Members (your team):
+Při propojování s členy pracovního prostoru (vaším týmem):
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* Použijte jejich **e-mailovou adresu**, ne jméno
+* Příklad: `owner@yourcompany.com`, ne "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -173,56 +173,56 @@ Follow up with client,john@yourcompany.com
 Review proposal,jane@yourcompany.com
 ```
 
-## FAQ
+## Časté dotazy
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="Co když můj nadřazený záznam nemá doménu ani e-mail?">
+    Máte dvě možnosti:
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Použijte Twenty `id` (exportujte nadřazené záznamy, abyste získali jejich ID)
+    2. Vytvořte ve svém datovém modelu vlastní jedinečné pole pro uložení externího ID z vašeho předchozího systému
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Ano! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="Mohu aktualizovat relace u existujících záznamů?">
+    Ano! Zahrňte jedinečný identifikátor podřízeného záznamu (např. `email` u lidí) a novou hodnotu relace. Import relaci aktualizuje.
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="Mohu importovat vztahy mnoho k mnoha?">
+    Vztahy mnoho k mnoha zatím nejsou pro import podporovány. To je plánováno na 1. pololetí 2026.
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="Mohu propojovat s více typy objektů (například poznámky s lidmi A společnostmi)?">
+    Relace směřující k více typům objektů zatím nejsou pro import/export podporovány. Je to v našem plánu.
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. Můžete buď:
+  <Accordion title="Co se stane, když nadřazený záznam neexistuje?">
+    Import u daného řádku zobrazí chybu. Můžete buď:
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * Nejprve importujte nadřazený záznam, poté znovu importujte
+    * Opravte referenční hodnotu
+    * Odstraňte řádek z importu
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="Proč se moje relace nepropojuje správně?">
+    Časté příčiny:
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * Nesprávný formát (pro domény použijte `https://domain.com`)
+    * Nesoulad ve velikosti písmen (zkontrolujte přesný zápis)
+    * Nadřazený neexistuje (nejprve importujte nadřazené)
+    * Mapujete více identifikátorů (použijte pouze jeden)
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **Pamatujte: Záznamy „soft-deleted“ se započítávají do jedinečnosti.**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  Pokud dostáváte chyby "not found", ale záznam se zdá existovat, zkontrolujte Command Menu → See deleted records. Nadřazený mohl být „soft-deleted“.
 </Warning>
 
 ## Řešení potíží
 
-Having issues? Check:
+Máte potíže? Podívejte se na:
 
-* [How to Fix Import Errors](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/cs/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Možnosti importu relací](/l/cs/user-guide/data-migration/capabilities/import-relations)
+* [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)

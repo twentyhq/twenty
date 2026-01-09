@@ -1,19 +1,22 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/applyCumulativeTransformToBarChartData';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { processOneDimensionalGroupByResults } from '@/page-layout/widgets/graph/utils/processOneDimensionalGroupByResults';
-import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { sortChartDataIfNeeded } from '@/page-layout/widgets/graph/utils/sortChartDataIfNeeded';
 import { type BarDatum } from '@nivo/bar';
 import {
-  type FirstDayOfTheWeek,
+  isDefined,
   isFieldMetadataSelectKind,
+  type FirstDayOfTheWeek,
 } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -36,6 +39,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -73,13 +77,24 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     });
 
   const unsortedData: BarDatum[] = processedDataPoints.map(
-    ({ xValue, aggregateValue }) => ({
-      [indexByKey]: xValue,
-      [aggregateValueKey]: aggregateValue,
-    }),
+    ({ xValue, rawXValue, aggregateValue }) => {
+      const color = determineChartItemColor({
+        configurationColor: parseGraphColor(configuration.color),
+        selectOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+          ? groupByFieldX.options
+          : undefined,
+        rawValue: isDefined(rawXValue) ? String(rawXValue) : null,
+      });
+
+      return {
+        [indexByKey]: xValue,
+        [aggregateValueKey]: aggregateValue,
+        ...(isDefined(color) && { color }),
+      };
+    },
   );
 
-  const sortedData = sortChartData({
+  const sortedData = sortChartDataIfNeeded({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
     manualSortOrder: configuration.primaryAxisManualSortOrder,
@@ -100,7 +115,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     {
       key: aggregateValueKey,
       label: aggregateField.label,
-      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     },
   ];
 
@@ -113,6 +127,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       })
     : limitedSortedData;
 
+  const colorMode = determineGraphColorMode({
+    configurationColor: configuration.color,
+    selectFieldOptions: isFieldMetadataSelectKind(groupByFieldX.type)
+      ? groupByFieldX.options
+      : undefined,
+  });
+
   return {
     data: finalData,
     indexBy: indexByKey,
@@ -121,5 +142,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups:
       rawResults.length > BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     formattedToRawLookup,
+    colorMode,
   };
 };

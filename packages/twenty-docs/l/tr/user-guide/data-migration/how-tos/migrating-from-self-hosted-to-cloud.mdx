@@ -1,73 +1,73 @@
 ---
 title: Kendi Barındırma'dan Bulut'a Geçiş
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+description: Twenty kendi barındırmalı örneğinizi Twenty Cloud’a taşımak için adım adım kılavuz.
 ---
 
 ## Genel Bakış
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+Bu kılavuz, verilerinizi Twenty kendi barındırmalı örneğinizden Twenty Cloud’a taşıma sürecinde size adım adım yol gösterir. Süreç; bulut çalışma alanınızı kurmayı, verilerinizi dışa aktarmayı ve yeniden içe aktarmayı içerir.
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>Görünümler, iş akışları ve roller geçişten sonra manuel olarak yeniden oluşturulmalıdır. Bu yapılandırma çalışması için zaman planlayın.</Note>
 
-## Step 1: Create Your Cloud Workspace
+## Adım 1: Bulut Çalışma Alanınızı Oluşturun
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. [app.twenty.com](https://app.twenty.com) adresine gidin ve yeni bir çalışma alanı oluşturun
+2. İlk kurulum sihirbazını tamamlayın
+3. Yeni çalışma alanı URL’nizi not edin
 
-## Step 2: Recreate Your Data Model
+## Adım 2: Veri Modelinizi Yeniden Oluşturun
 
-Before importing data, recreate your custom objects and fields:
+Verileri içe aktarmadan önce özel nesnelerinizi ve alanlarınızı yeniden oluşturun:
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. Bulut örneğinizde **Ayarlar → Veri Modeli**’ne gidin
+2. Kendi barındırmalı kurulumunuzla eşleşen özel nesneler oluşturun
+3. Standart ve özel nesnelere özel alanlar ekleyin
+4. Alan ayarlarını yapılandırın (benzersiz, zorunlu vb.)
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>Referans için kendi barındırmalı veri modelinizin ekran görüntülerini alın veya her iki örneği yan yana açık tutun.</Note>
 
-## Step 3: Invite All Users
+## Adım 3: Tüm Kullanıcıları Davet Edin
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **Kritik: Kullanıcıları verileri içe aktarmadan ÖNCE davet edin.**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  Kullanıcılar, onları referans alan (ör. Hesap Sahibi alanları) herhangi bir kaydı içe aktarmadan önce davetlerini kabul etmelidir. Eğer kullanıcılar henüz mevcut değilse bu ilişkiler eşleştirilemez.
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. Bulut örneğinizde **Ayarlar → Üyeler**’e gidin
+2. Kendi barındırmalı sistemde hesabı olan tüm ekip üyelerini davet edin
+3. **Herkesin daveti kabul etmesini bekleyin**
+4. Tüm kullanıcıların Üyeler listenizde göründüğünü doğrulayın
 
-## Step 4: Export Data from Self-Hosted
+## Adım 4: Verileri Kendi Barındırmalı Sistemden Dışa Aktarın
 
-Export each object from your self-hosted instance:
+Kendi barındırmalı örneğinizden her bir nesneyi dışa aktarın:
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. Her bir nesneye gidin (Şirketler, Kişiler, Fırsatlar vb.)
+2. Görünümü, taşımak istediğiniz **tüm sütunları** gösterecek şekilde yapılandırın
+3. **⋮ → Görünümü Dışa Aktar**’a tıklayın
+4. Her CSV dosyasını anlaşılır bir adla kaydedin (ör. `companies-export.csv`)
 
-**Export in this order** (for reference when importing):
+**Bu sırayla dışa aktarın** (içe aktarım sırasında referans için):
 
 1. Şirketler
 2. İnsanlar
 3. Fırsatlar
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+4. Özel nesneler (bağımlılıklarına uyarak)
+5. Görevler, Notlar
 
-## Step 5: Update Workspace Member References
+## Adım 5: Çalışma Alanı Üyesi Referanslarını Güncelleyin
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+Dışa aktarılan CSV’ler, kendi barındırmalı örneğinizden kullanıcı kimliklerini (ID) içerir. Bu kimlikler bulut örneğinizle eşleşmeyeceğinden, bunları e-postalarla değiştirmeniz gerekir.
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**Kullanıcı referansları (Sahip, Atanan vb.) içeren her CSV dosyası için:**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. CSV’yi bir elektronik tablo uygulamasında açın
+2. Her kullanıcı ID sütununun yanına yeni bir sütun ekleyin (ör. `accountOwnerId` yanına `accountOwnerEmail`)
+3. Her kullanıcının **e-posta adresini** doldurun
+4. Eski ID sütununu silebilir veya bırakabilirsiniz (içe aktarma sırasında atlanacaktır)
 
-**Example:**
+**Örnek:**
 
 Önce:
 
@@ -83,89 +83,89 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>Kullanıcıların bulut çalışma alanı davetini kabul etmek için kullandıklarıyla aynı e-posta adreslerini kullanın.</Note>
 
-## Step 6: Plan Your Import Order
+## Adım 6: İçe Aktarma Sıralamanızı Planlayın
 
-Import files in the correct order to maintain relationships:
+İlişkileri korumak için dosyaları doğru sırayla içe aktarın:
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlı)
+3. Üçüncü olarak **Fırsatlar** (Şirketler ve Kişilere bağlı)
+4. **Özel nesneler** (bağımlılıklarına uyarak)
+5. Son olarak **Görevler ve Notlar** (diğer kayıtlara bağlı)
 
-See [How to Import Relations](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+İlişkileri korumaya ilişkin ayrıntılar için [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bölümüne bakın.
 
-## Step 7: Import to Cloud
+## Adım 7: Buluta İçe Aktarın
 
-For each CSV file, in order:
+Her CSV dosyası için, sırayla:
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. Bulut örneğinizde ilgili nesneye gidin
+2. **⋮ → Kayıtları içe aktar**’ı tıklayın
+3. CSV dosyasını yükleyin
+4. Sütunları alanlarla eşleyin:
+   * Kullanıcı e-posta sütunlarını uygun ilişki alanlarına eşleyin
+   * Diğer sütunları her zamanki gibi eşleyin
+5. Herhangi bir hatayı gözden geçirin ve düzeltin
+6. İçe aktarmayı onaylayın
+7. Sonraki dosyaya geçmeden önce birkaç kaydı doğrulayın
 
-## Step 8: Recreate Configuration
+## Adım 8: Yapılandırmayı Yeniden Oluşturun
 
-After importing data, manually recreate:
+Verileri içe aktardıktan sonra, aşağıdakileri manuel olarak yeniden oluşturun:
 
 ### Görünümler
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* Kaydedilmiş görünümleri filtreler, sıralamalar ve sütun yapılandırmalarıyla yeniden oluşturun
+* Herhangi bir kanban veya takvim görünümünü ayarlayın
 
 ### İş Akışları
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* **Ayarlar → İş Akışları** içinde otomasyonları yeniden oluşturun
+* Her iş akışını kullanmadan önce test edin
 
-### Roles and Permissions
+### Roller ve İzinler
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* Rolleri **Ayarlar → Roller** bölümünde yapılandırın
+* Kullanıcıları uygun rollere atayın
 
 ### Entegrasyonlar
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* Her kullanıcı için e-posta ve takvim eşzamanlamasını yeniden bağlayın
+* Herhangi bir API entegrasyonunu yeni API anahtarlarıyla yeniden yapılandırın
 
 ## Taşındıktan Sonra Kontrol Listesi
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>Tüm veriler başarıyla içe aktarıldı</Check>
+<Check>Nesneler arasındaki ilişkiler doğru çalışıyor</Check>
+<Check>Kullanıcı atamaları (Sahip, Atanan) doğru şekilde eşlendi</Check>
+<Check>Görünümler yeniden oluşturuldu</Check>
+<Check>İş akışları yeniden oluşturuldu ve test edildi</Check>
+<Check>Roller ve izinler yapılandırıldı</Check>
+<Check>E-posta/takvim eşzamanlaması yeniden bağlandı</Check>
+<Check>API entegrasyonları yeni anahtarlarla güncellendi</Check>
 
-## FAQ
+## SSS
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="İş akışlarını otomatik olarak taşıyabilir miyim?">
+    Şu anda mümkün değil. İş akışları bulut örneğinizde manuel olarak yeniden oluşturulmalıdır.
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="Dosya ekleri ve görseller ne olacak?">
+    Dosya ekleri CSV dışa aktarmalarına dahil edilmez. Herhangi bir eki manuel olarak yeniden yüklemeniz, API aracılığıyla taşımanız ya da büyük geçişlerde yardım için ekibimizle iletişime geçmeniz gerekecek.
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="Geçiş sırasında her iki örneği de çalışır halde tutabilir miyim?">
+    Evet, buluta geçişin tamamlandığını doğrulayana kadar kendi barındırmalı örneğinizi çalışır durumda tutmanızı öneririz. Sadece her iki yerde de yeni veriler oluşturmamaya dikkat edin.
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="Bir kullanıcı davetini henüz kabul etmediyse ne olur?">
+    O kullanıcıya referans veren kayıtların içe aktarımı başarısız olur veya ilişki boş kalır. Verileri içe aktarmadan önce tüm kullanıcıların davetleri kabul ettiğinden emin olun.
   </Accordion>
 </AccordionGroup>
 
 ## Yardıma mı ihtiyacınız var?
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/tr/user-guide/getting-started/capabilities/implementation-services).
+Karmaşık geçişler veya büyük veri kümeleri için [contact@twenty.com](mailto:contact@twenty.com) adresinden bize ulaşın veya [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) inceleyin.

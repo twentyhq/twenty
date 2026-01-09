@@ -48,8 +48,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
@@ -127,20 +125,7 @@ export class OpenApiService {
       return schema;
     }
 
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    const filteredObjectMetadataItems = flatObjectMetadataArray.filter(
-      (item) => {
-        return !shouldExcludeFromWorkspaceApi(
-          item,
-          standardObjectMetadataDefinitions,
-          workspaceFeatureFlagsMap,
-        );
-      },
-    );
-
-    schema.paths = filteredObjectMetadataItems.reduce((paths, item) => {
+    schema.paths = flatObjectMetadataArray.reduce((paths, item) => {
       paths[`/${item.namePlural}`] = computeManyResultPath(
         item,
         flatObjectMetadataMaps,
@@ -204,7 +189,7 @@ export class OpenApiService {
       },
     } as OpenAPIV3_1.PathItemObject;
 
-    schema.webhooks = filteredObjectMetadataItems.reduce(
+    schema.webhooks = flatObjectMetadataArray.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
@@ -251,7 +236,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(
-        filteredObjectMetadataItems,
+        flatObjectMetadataArray,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       ),
@@ -262,7 +247,7 @@ export class OpenApiService {
       },
     };
 
-    schema.tags = computeSchemaTags(filteredObjectMetadataItems);
+    schema.tags = computeSchemaTags(flatObjectMetadataArray);
 
     return schema;
   }
