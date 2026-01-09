@@ -259,10 +259,11 @@ export class GraphqlQueryOrderFieldParser {
 
     if (this.isOrderByDirection(nestedFieldOrderByValue)) {
       const nestedColumnName = nestedFieldMetadata.name;
+      const orderByCasting = getOptionalOrderByCasting(nestedFieldMetadata);
 
       return {
         orderBy: {
-          [`${joinAlias}.${nestedColumnName}`]:
+          [`${joinAlias}.${nestedColumnName}${orderByCasting}`]:
             convertOrderByToFindOptionsOrder(
               nestedFieldOrderByValue,
               isForwardPagination,

@@ -95,20 +95,6 @@ export const validateAndGetOrderByForCompositeField = (
   return keyOrderBy;
 };
 
-export const hasRelationFieldInOrderBy = (
-  orderBy: ObjectRecordOrderBy,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  fieldIdByName: Record<string, string>,
-): boolean => {
-  return orderBy.some((orderByItem) => {
-    const fieldName = Object.keys(orderByItem)[0];
-    const fieldMetadataId = fieldIdByName[fieldName];
-    const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
-
-    return fieldMetadata?.type === FieldMetadataType.RELATION;
-  });
-};
-
 export const countRelationFieldsInOrderBy = (
   orderBy: ObjectRecordOrderBy,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -121,4 +107,18 @@ export const countRelationFieldsInOrderBy = (
 
     return fieldMetadata?.type === FieldMetadataType.RELATION;
   }).length;
+};
+
+export const hasRelationFieldInOrderBy = (
+  orderBy: ObjectRecordOrderBy,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldIdByName: Record<string, string>,
+): boolean => {
+  return (
+    countRelationFieldsInOrderBy(
+      orderBy,
+      flatFieldMetadataMaps,
+      fieldIdByName,
+    ) > 0
+  );
 };

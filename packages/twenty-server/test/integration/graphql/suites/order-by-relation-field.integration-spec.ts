@@ -2,31 +2,6 @@ import gql from 'graphql-tag';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('Order by relation field (e2e)', () => {
-  let peopleExist = false;
-
-  beforeAll(async () => {
-    // Verify test data exists - query people without nested sort
-    const checkData = {
-      query: gql`
-        query CheckPeopleExist {
-          people(first: 1) {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-        }
-      `,
-    };
-
-    const response = await makeGraphqlAPIRequest(checkData);
-
-    peopleExist =
-      response.body.data?.people?.edges?.length > 0 &&
-      response.body.errors === undefined;
-  });
-
   it('should sort people by company name ascending', async () => {
     const queryData = {
       query: gql`
@@ -60,11 +35,7 @@ describe('Order by relation field (e2e)', () => {
     const edges = response.body.data.people.edges;
 
     expect(Array.isArray(edges)).toBe(true);
-
-    // Verify we have data to test with
-    if (peopleExist) {
-      expect(edges.length).toBeGreaterThan(0);
-    }
+    expect(edges.length).toBeGreaterThan(0);
 
     // Verify company names are in ascending order (excluding nulls at the end)
     const companyNames = edges
@@ -114,11 +85,7 @@ describe('Order by relation field (e2e)', () => {
     const edges = response.body.data.people.edges;
 
     expect(Array.isArray(edges)).toBe(true);
-
-    // Verify we have data to test with
-    if (peopleExist) {
-      expect(edges.length).toBeGreaterThan(0);
-    }
+    expect(edges.length).toBeGreaterThan(0);
 
     // Verify company names are in descending order (excluding nulls at the end)
     const companyNames = edges
@@ -168,11 +135,7 @@ describe('Order by relation field (e2e)', () => {
     const edges = response.body.data.people.edges;
 
     expect(Array.isArray(edges)).toBe(true);
-
-    // Verify we have data to test with
-    if (peopleExist) {
-      expect(edges.length).toBeGreaterThan(0);
-    }
+    expect(edges.length).toBeGreaterThan(0);
 
     // Check that null companies appear at the end
     let seenNull = false;
@@ -220,14 +183,11 @@ describe('Order by relation field (e2e)', () => {
     const totalCount = firstResponse.body.data.people.totalCount;
 
     expect(Array.isArray(firstPageEdges)).toBe(true);
-
-    // Verify data exists if test environment should have seeded data
-    if (peopleExist) {
-      expect(firstPageEdges.length).toBeGreaterThan(0);
-    }
+    expect(firstPageEdges.length).toBeGreaterThan(0);
+    expect(totalCount).toBeGreaterThan(3);
 
     // Second request using offset (matching frontend behavior)
-    if (totalCount > 3) {
+    {
       const secondQueryData = {
         query: gql`
           query People(
@@ -305,36 +265,39 @@ describe('Order by relation field (e2e)', () => {
     const firstResponse = await makeGraphqlAPIRequest(firstQueryData);
 
     expect(firstResponse.body.data).toBeDefined();
+    expect(firstResponse.body.errors).toBeUndefined();
 
     const pageInfo = firstResponse.body.data.people.pageInfo;
 
+    // Assert we have enough data for pagination test
+    expect(pageInfo.hasNextPage).toBe(true);
+    expect(pageInfo.endCursor).toBeDefined();
+
     // Try to use cursor with relation orderBy - should fail with clear error
-    if (pageInfo.hasNextPage && pageInfo.endCursor) {
-      const secondQueryData = {
-        query: gql`
-          query People($orderBy: [PersonOrderByInput], $after: String) {
-            people(orderBy: $orderBy, first: 3, after: $after) {
-              edges {
-                node {
-                  id
-                }
+    const secondQueryData = {
+      query: gql`
+        query People($orderBy: [PersonOrderByInput], $after: String) {
+          people(orderBy: $orderBy, first: 3, after: $after) {
+            edges {
+              node {
+                id
               }
             }
           }
-        `,
-        variables: {
-          orderBy: [{ company: { name: 'AscNullsLast' } }],
-          after: pageInfo.endCursor,
-        },
-      };
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+        after: pageInfo.endCursor,
+      },
+    };
 
-      const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
+    const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
 
-      expect(secondResponse.body.errors).toBeDefined();
-      expect(secondResponse.body.errors[0].message).toContain(
-        'Cursor-based pagination is not supported with relation field ordering',
-      );
-    }
+    expect(secondResponse.body.errors).toBeDefined();
+    expect(secondResponse.body.errors[0].message).toContain(
+      'Cursor-based pagination is not supported with relation field ordering',
+    );
   });
 
   it('should allow sorting by relation FK (backward compatibility)', async () => {
