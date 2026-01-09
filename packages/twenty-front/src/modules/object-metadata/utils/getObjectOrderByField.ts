@@ -2,8 +2,10 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
-import { type OrderBy } from 'twenty-shared/types';
+import {
+  type OrderBy,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getOrderByFieldForObjectMetadataItem = (
