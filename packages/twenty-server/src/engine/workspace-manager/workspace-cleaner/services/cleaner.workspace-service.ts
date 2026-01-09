@@ -86,7 +86,9 @@ export class CleanerWorkspaceService {
         lastSubscription.status !== SubscriptionStatus.Unpaid &&
         lastSubscription.status !== SubscriptionStatus.Canceled
       ) {
-        throw new Error();
+        throw new Error(
+          'No cancelled or unpaid billing subscription found for workspace',
+        );
       }
 
       const daysSinceSubscriptionUnpaid = differenceInDays(
