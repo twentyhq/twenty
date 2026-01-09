@@ -142,7 +142,7 @@ describe('Order by relation field (e2e)', () => {
         seenNull = true;
       } else if (seenNull) {
         // If we already saw a null, subsequent non-nulls mean order is wrong
-        fail('Records with null company should appear at the end');
+        throw new Error('Records with null company should appear at the end');
       }
     }
   });

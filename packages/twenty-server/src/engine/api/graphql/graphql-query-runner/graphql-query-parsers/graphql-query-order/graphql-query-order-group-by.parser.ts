@@ -36,7 +36,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-import { type OrderByCondition } from './types/order-by.types';
+import { type OrderByCondition } from './types/order-by-condition.type';
 
 export class GraphqlQueryOrderGroupByParser {
   private flatObjectMetadata: FlatObjectMetadata;

@@ -20,11 +20,9 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-import {
-  type OrderByCondition,
-  type ParseOrderByResult,
-  type RelationJoinInfo,
-} from './types/order-by.types';
+import { type OrderByCondition } from './types/order-by-condition.type';
+import { type ParseOrderByResult } from './types/parse-order-by-result.type';
+import { type RelationJoinInfo } from './types/relation-join-info.type';
 
 // Re-export types for backward compatibility
 export { OrderByCondition, ParseOrderByResult, RelationJoinInfo };
