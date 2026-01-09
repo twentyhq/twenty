@@ -8184,14 +8184,6 @@ msgstr "Nenhum registro encontrado"
 msgid "No records matching the filter criteria were found."
 msgstr "Não foram encontrados registos que correspondam aos critérios do filtro."
 
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
-msgid "No related records"
-msgstr "Sem registos relacionados"
-
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
