@@ -101,8 +101,8 @@ export class PageLayoutTabController {
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutTabDTO> {
-    return this.pageLayoutTabService.delete({
+  ): Promise<boolean> {
+    return this.pageLayoutTabService.destroy({
       id,
       workspaceId: workspace.id,
     });

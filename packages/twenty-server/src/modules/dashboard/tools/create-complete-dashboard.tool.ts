@@ -124,7 +124,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
       for (const widget of widgets) {
         try {
           const createdWidget = await deps.pageLayoutWidgetService.create({
-            createPageLayoutWidgetInput: {
+            input: {
               ...widget,
               pageLayoutTabId: pageLayoutTab.id,
             } as CreatePageLayoutWidgetInput,

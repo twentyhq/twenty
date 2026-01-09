@@ -103,8 +103,8 @@ export class PageLayoutWidgetController {
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete({
+  ): Promise<boolean> {
+    return this.pageLayoutWidgetService.destroy({
       id,
       workspaceId: workspace.id,
     });

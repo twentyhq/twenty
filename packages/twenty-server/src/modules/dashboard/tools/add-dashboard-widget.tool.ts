@@ -53,7 +53,7 @@ See create_complete_dashboard for configuration examples.`,
   }) => {
     try {
       const widget = await deps.pageLayoutWidgetService.create({
-        createPageLayoutWidgetInput: parameters as CreatePageLayoutWidgetInput,
+        input: parameters as CreatePageLayoutWidgetInput,
         workspaceId: context.workspaceId,
       });
 
