@@ -7,7 +7,6 @@ import {
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -96,12 +95,10 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedPageLayout = await this.pageLayoutService.destroy({
+    return this.pageLayoutService.destroy({
       id,
       workspaceId: workspace.id,
     });
-
-    return isDefined(deletedPageLayout);
   }
 
   @Mutation(() => PageLayoutDTO)

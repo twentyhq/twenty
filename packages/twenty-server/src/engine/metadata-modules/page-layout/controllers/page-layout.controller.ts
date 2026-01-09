@@ -93,11 +93,9 @@ export class PageLayoutController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const destroyedPageLayout = await this.pageLayoutService.destroy({
+    return this.pageLayoutService.destroy({
       id,
       workspaceId: workspace.id,
     });
-
-    return isDefined(destroyedPageLayout);
   }
 }

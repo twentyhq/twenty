@@ -300,7 +300,7 @@ export class PageLayoutService {
     id: string;
     workspaceId: string;
     isLinkedDashboardAlreadyDestroyed?: boolean;
-  }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+  }): Promise<boolean> {
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -347,7 +347,7 @@ export class PageLayoutService {
       });
     }
 
-    return fromFlatPageLayoutToPageLayoutDto(flatPageLayoutToDestroy);
+    return true;
   }
 
   private async destroyAssociatedDashboards({
