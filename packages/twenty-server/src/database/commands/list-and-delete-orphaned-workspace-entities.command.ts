@@ -51,7 +51,6 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
 type DeletionResult = {
   entityName: string;
@@ -113,7 +112,6 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   PostgresCredentialsEntity,
   PublicDomainEntity,
   WebhookEntity,
-  WorkspaceMigrationEntity,
   WorkspaceSSOIdentityProviderEntity,
 ];
 

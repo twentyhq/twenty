@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 
 @Injectable()
 export class AppHealthIndicator {
@@ -19,21 +18,13 @@ export class AppHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
+  // TODO refactor, a workspace health should be based on its app versioning
   async isHealthy(): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check('app');
 
     try {
-      const totalErroredWorkspacesCount =
-        await this.workspaceMigrationService.countWorkspacesWithPendingMigrations();
-
-      const sampledErroredWorkspaces =
-        await this.workspaceMigrationService.getWorkspacesWithPendingMigrations(
-          500,
-        );
-
       const totalWorkspaceCount = await this.workspaceRepository.count();
 
       const details = {
@@ -43,29 +34,14 @@ export class AppHealthIndicator {
         },
         overview: {
           totalWorkspacesCount: totalWorkspaceCount,
-          erroredWorkspaceCount: totalErroredWorkspacesCount,
+          erroredWorkspaceCount: 0,
         },
-        erroredWorkspace:
-          totalErroredWorkspacesCount > 0
-            ? sampledErroredWorkspaces.map((workspace) => ({
-                workspaceId: workspace.workspaceId,
-                pendingMigrations: workspace.pendingMigrations,
-              }))
-            : null,
+        erroredWorkspace: 0,
       };
-
-      if (totalErroredWorkspacesCount === 0) {
-        this.stateManager.updateState(details);
-
-        return indicator.up({ details });
-      }
 
       this.stateManager.updateState(details);
 
-      return indicator.down({
-        message: `Found ${totalErroredWorkspacesCount} workspaces with pending migrations`,
-        details,
-      });
+      return indicator.up({ details });
     } catch (error) {
       const stateWithAge = this.stateManager.getStateWithAge();
 

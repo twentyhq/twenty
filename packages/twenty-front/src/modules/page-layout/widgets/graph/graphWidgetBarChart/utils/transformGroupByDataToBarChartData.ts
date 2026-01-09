@@ -8,6 +8,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
@@ -47,6 +48,7 @@ type TransformGroupByDataToBarChartDataResult = {
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 const EMPTY_BAR_CHART_RESULT: Omit<
@@ -62,6 +64,7 @@ const EMPTY_BAR_CHART_RESULT: Omit<
   layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
+  colorMode: 'automaticPalette',
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -95,34 +98,35 @@ export const transformGroupByDataToBarChartData = ({
   const queryResultGqlFieldName =
     getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData?.[queryResultGqlFieldName];
-  const hasNoData =
-    !isDefined(groupByData) ||
-    !isDefined(rawResults) ||
-    !Array.isArray(rawResults) ||
-    rawResults.length === 0;
-
-  const showXAxis =
-    hasNoData ||
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    hasNoData ||
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel =
-    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
-
-  const yAxisLabel =
-    showYAxis && isDefined(aggregateField)
-      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-      : undefined;
 
   const layout =
     configuration.layout === BarChartLayout.HORIZONTAL
       ? BarChartLayout.HORIZONTAL
       : BarChartLayout.VERTICAL;
+
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
+
+  const showCategoryLabel = isHorizontal
+    ? configuration.axisNameDisplay === AxisNameDisplay.Y ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH
+    : configuration.axisNameDisplay === AxisNameDisplay.X ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showValueLabel = isHorizontal
+    ? configuration.axisNameDisplay === AxisNameDisplay.X ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH
+    : configuration.axisNameDisplay === AxisNameDisplay.Y ||
+      configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showCategoryLabel && isDefined(groupByFieldX)
+      ? groupByFieldX.label
+      : undefined;
+
+  const yAxisLabel =
+    showValueLabel && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
 
   if (!isDefined(groupByData)) {
     return {
