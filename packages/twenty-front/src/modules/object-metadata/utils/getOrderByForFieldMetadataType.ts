@@ -90,8 +90,6 @@ export const getOrderByForRelationField = (
     return [{ [`${field.name}Id`]: direction }];
   }
 
-  // Reuse getOrderByForFieldMetadataType to get { labelField: value }
-  // Then wrap it: { relation: { labelField: value } }
   const labelFieldOrderBy = getOrderByForFieldMetadataType(
     labelIdentifierField,
     direction,

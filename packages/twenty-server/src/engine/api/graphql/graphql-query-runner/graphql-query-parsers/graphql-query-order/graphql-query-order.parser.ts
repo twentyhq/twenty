@@ -83,7 +83,6 @@ export class GraphqlQueryOrderFieldParser {
           isAccessedByRelationName &&
           isMorphOrRelationFlatFieldMetadata(fieldMetadata)
         ) {
-          // For relation fields, input must be an object with nested field ordering
           if (!isObject(orderByDirection)) {
             throw new GraphqlQueryRunnerException(
               `Relation field "${fieldName}" requires nested field ordering (e.g., { ${fieldName}: { fieldName: 'AscNullsFirst' } })`,
@@ -107,7 +106,6 @@ export class GraphqlQueryOrderFieldParser {
             }
           }
         } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-          // For composite fields, input must be an object with subfield ordering
           if (!isObject(orderByDirection)) {
             throw new GraphqlQueryRunnerException(
               `Composite field "${fieldName}" requires subfield ordering (e.g., { ${fieldName}: { subFieldName: 'AscNullsFirst' } })`,
@@ -125,7 +123,6 @@ export class GraphqlQueryOrderFieldParser {
 
           Object.assign(orderByConditions, compositeOrder);
         } else {
-          // For scalar fields, input must be an OrderByDirection
           if (!this.isOrderByDirection(orderByDirection)) {
             throw new GraphqlQueryRunnerException(
               `Scalar field "${fieldName}" requires a direction value (AscNullsFirst, AscNullsLast, DescNullsFirst, DescNullsLast)`,
@@ -136,7 +133,6 @@ export class GraphqlQueryOrderFieldParser {
 
           const orderByCasting = getOptionalOrderByCasting(fieldMetadata);
 
-          // Use unquoted property path for TypeORM's getMany() alias resolution
           orderByConditions[
             `${objectNameSingular}.${fieldName}${orderByCasting}`
           ] = convertOrderByToFindOptionsOrder(
@@ -221,7 +217,6 @@ export class GraphqlQueryOrderFieldParser {
       joinAlias,
     };
 
-    // Handle composite nested fields (like FULL_NAME)
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
       if (!isObject(nestedFieldOrderByValue)) {
         throw new GraphqlQueryRunnerException(
@@ -248,7 +243,6 @@ export class GraphqlQueryOrderFieldParser {
             [subFieldName],
           )[0];
 
-        // Use unquoted property path for TypeORM's getMany() alias resolution
         orderByConditions[`${joinAlias}.${nestedColumnName}`] =
           convertOrderByToFindOptionsOrder(direction, isForwardPagination);
       }
@@ -263,11 +257,9 @@ export class GraphqlQueryOrderFieldParser {
       };
     }
 
-    // Handle regular scalar nested fields
     if (this.isOrderByDirection(nestedFieldOrderByValue)) {
       const nestedColumnName = nestedFieldMetadata.name;
 
-      // Use unquoted property path for TypeORM's getMany() alias resolution
       return {
         orderBy: {
           [`${joinAlias}.${nestedColumnName}`]:
