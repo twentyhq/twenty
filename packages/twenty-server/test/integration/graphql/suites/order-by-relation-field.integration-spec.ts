@@ -234,10 +234,64 @@ describe('Order by relation field (e2e)', () => {
     }
   });
 
-  // TODO: Cursor-based pagination with relation field ordering is not yet supported.
-  // The cursor contains the related object values, but building WHERE conditions
-  // for nested fields (e.g., company.name > 'X') requires JOINs in the cursor filter,
-  // which is not currently implemented. The frontend uses offset pagination instead.
+  it('should return clear error when using cursor pagination with relation orderBy', async () => {
+    // First get a cursor by fetching records
+    const firstQueryData = {
+      query: gql`
+        query People($orderBy: [PersonOrderByInput]) {
+          people(orderBy: $orderBy, first: 3) {
+            edges {
+              node {
+                id
+              }
+              cursor
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+          }
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+      },
+    };
+
+    const firstResponse = await makeGraphqlAPIRequest(firstQueryData);
+
+    expect(firstResponse.body.data).toBeDefined();
+
+    const pageInfo = firstResponse.body.data.people.pageInfo;
+
+    // Try to use cursor with relation orderBy - should fail with clear error
+    if (pageInfo.hasNextPage && pageInfo.endCursor) {
+      const secondQueryData = {
+        query: gql`
+          query People($orderBy: [PersonOrderByInput], $after: String) {
+            people(orderBy: $orderBy, first: 3, after: $after) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          orderBy: [{ company: { name: 'AscNullsLast' } }],
+          after: pageInfo.endCursor,
+        },
+      };
+
+      const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
+
+      expect(secondResponse.body.errors).toBeDefined();
+      expect(secondResponse.body.errors[0].message).toContain(
+        'Cursor-based pagination is not supported with relation field ordering',
+      );
+    }
+  });
 
   it('should allow sorting by relation FK (backward compatibility)', async () => {
     const queryData = {

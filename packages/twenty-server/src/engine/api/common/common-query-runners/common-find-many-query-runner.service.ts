@@ -32,9 +32,15 @@ import {
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { hasRelationFieldInOrderBy } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -90,6 +96,28 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const cursor = getCursor(args);
 
     if (cursor) {
+      const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+      if (
+        hasRelationFieldInOrderBy(
+          args.orderBy ?? [],
+          flatFieldMetadataMaps,
+          fieldIdByName,
+        )
+      ) {
+        throw new GraphqlQueryRunnerException(
+          'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
+          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+          {
+            userFriendlyMessage:
+              'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
+          },
+        );
+      }
+
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
