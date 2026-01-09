@@ -1,3 +1,4 @@
+import { isDefined } from 'class-validator';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 
@@ -11,11 +12,20 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
-import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import {
+  STANDARD_PAGE_LAYOUTS,
+  type StandardPageLayoutName,
+  type StandardPageLayoutTabName,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 
-export type CreateStandardPageLayoutWidgetContext = {
+export type CreateStandardPageLayoutWidgetContext<
+  L extends StandardPageLayoutName,
+  T extends StandardPageLayoutTabName<L>,
+> = {
+  layoutName: L;
+  tabName: T;
   widgetName: string;
   title: string;
   type: WidgetType;
@@ -24,19 +34,22 @@ export type CreateStandardPageLayoutWidgetContext = {
   objectMetadataId: string | null;
 };
 
-export type CreateStandardPageLayoutWidgetArgs = {
+export type CreateStandardPageLayoutWidgetArgs<
+  L extends StandardPageLayoutName = StandardPageLayoutName,
+  T extends StandardPageLayoutTabName<L> = StandardPageLayoutTabName<L>,
+> = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   standardObjectMetadataRelatedEntityIds: StandardObjectMetadataRelatedEntityIds;
   standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
-  context: CreateStandardPageLayoutWidgetContext & {
-    layoutName: 'myFirstDashboard';
-    tabName: 'tab1';
-  };
+  context: CreateStandardPageLayoutWidgetContext<L, T>;
 };
 
-export const createStandardPageLayoutWidgetFlatMetadata = ({
+export const createStandardPageLayoutWidgetFlatMetadata = <
+  L extends StandardPageLayoutName,
+  T extends StandardPageLayoutTabName<L>,
+>({
   context: {
     layoutName,
     tabName,
@@ -51,15 +64,24 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   twentyStandardApplicationId,
   standardPageLayoutMetadataRelatedEntityIds,
   now,
-}: CreateStandardPageLayoutWidgetArgs): FlatPageLayoutWidget => {
+}: CreateStandardPageLayoutWidgetArgs<L, T>): FlatPageLayoutWidget => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
+  // @ts-expect-error ignore
+  const widgetDef = STANDARD_PAGE_LAYOUTS[layoutName].tabs[tabName].widgets[
+    widgetName
+  ] as {
+    universalIdentifier: string;
+  };
+
+  if (!isDefined(widgetDef)) {
+    throw new Error(
+      `Invalid configuration ${layoutName} ${tabName.toString()} ${widgetName.toString()}`,
+    );
+  }
+
+  // @ts-expect-error ignore
   const tabIds = layoutIds.tabs[tabName];
-  const widgetIds =
-    tabIds.widgets[widgetName as keyof typeof tabIds.widgets] ?? {};
-  const widgetDef =
-    STANDARD_PAGE_LAYOUTS[layoutName].tabs[tabName].widgets[
-      widgetName as keyof (typeof STANDARD_PAGE_LAYOUTS)[typeof layoutName]['tabs'][typeof tabName]['widgets']
-    ];
+  const widgetIds = tabIds.widgets[widgetName] ?? {};
 
   return {
     id: widgetIds.id,
