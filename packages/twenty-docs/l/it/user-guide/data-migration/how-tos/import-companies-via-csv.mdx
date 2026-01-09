@@ -31,7 +31,7 @@ Questa guida ti accompagna nell'importazione delle tue aziende in Twenty. **Le a
   Hai bisogno di importare più di 10.000 aziende? Suddividi in più file oppure usa l'[importazione tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
-## Passaggio 1: Prepara i dati delle tue Aziende
+## Passo 1: Prepara i dati delle tue Aziende
 
 ### Campi obbligatori e consigliati
 
@@ -58,7 +58,7 @@ Questa guida ti accompagna nell'importazione delle tue aziende in Twenty. **Le a
 
 ### Formato dell'indirizzo
 
-Indirizzo è un campo annidato con più colonne:
+L'indirizzo è un campo annidato con più colonne:
 
 ```
 Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
@@ -77,7 +77,7 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
   **Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante l'importazione per vedere i nomi di colonna esatti che Twenty si aspetta.
 </Note>
 
-## Passaggio 2: Accedi alla funzione di importazione
+## Passo 2: Accedi alla funzione di importazione
 
 **Opzione 1: dalla vista Aziende**
 
@@ -92,13 +92,13 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 3. Seleziona **Importa record**
 4. Scegli **Aziende**
 
-## Passaggio 3: Carica il tuo file
+## Passo 3: Carica il tuo file
 
 1. Fai clic su **Seleziona file**
 2. Scegli il tuo file CSV, XLSX o XLS
 3. Attendi che Twenty analizzi il tuo file
 
-## Passaggio 4: Mappa le tue colonne
+## Passo 4: Mappa le tue colonne
 
 Twenty tenta automaticamente di associare le tue colonne ai campi. Verifica e regola:
 
@@ -114,7 +114,7 @@ Twenty tenta automaticamente di associare le tue colonne ai campi. Verifica e re
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-## Passaggio 5: Mappa i valori dei campi Selezione
+## Passo 5: Mappa i valori dei campi Selezione
 
 Se hai campi Selezione o Multiselezione:
 
@@ -126,7 +126,7 @@ Se hai campi Selezione o Multiselezione:
   Le opzioni dei campi Selezione usano i **nomi API**, non le etichette visualizzate. Controlla **Impostazioni → Modello dati** → Abilita la **Modalità avanzata** per vedere i nomi API.
 </Note>
 
-## Passaggio 6: Rivedi e correggi gli errori
+## Passo 6: Rivedi e correggi gli errori
 
 Prima di completare l'importazione, Twenty convalida i tuoi dati:
 
@@ -143,7 +143,7 @@ Prima di completare l'importazione, Twenty convalida i tuoi dati:
 | **Formato del dominio non valido** | Formato errato                  | Usa `https://domain.com`                             |
 | **Campo obbligatorio mancante**    | Il campo obbligatorio è vuoto   | Compila il valore oppure rimuovi la riga             |
 
-## Passaggio 7: Completa l'importazione
+## Passo 7: Completa l'importazione
 
 1. Rivedi il riepilogo dell'importazione
 2. Fai clic su **Conferma** per importare
