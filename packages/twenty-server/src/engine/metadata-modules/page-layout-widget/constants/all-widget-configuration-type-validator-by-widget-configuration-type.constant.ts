@@ -10,15 +10,52 @@ import { type PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modu
 
 export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYPE =
   {
-    [WidgetConfigurationType.AGGREGATE_CHART]: AggregateChartConfigurationDTO,
-    [WidgetConfigurationType.BAR_CHART]: BarChartConfigurationDTO,
-    [WidgetConfigurationType.GAUGE_CHART]: GaugeChartConfigurationDTO,
-    [WidgetConfigurationType.IFRAME]: IframeConfigurationDTO,
-    [WidgetConfigurationType.LINE_CHART]: LineChartConfigurationDTO,
-    [WidgetConfigurationType.PIE_CHART]: PieChartConfigurationDTO,
-    [WidgetConfigurationType.STANDALONE_RICH_TEXT]:
-      StandaloneRichTextConfigurationDTO,
-    // TODO: Remove the partial when we have all the widget configuration types in the backend
-  } as const satisfies Partial<{
+    AGGREGATE_CHART: AggregateChartConfigurationDTO,
+    STANDALONE_RICH_TEXT: StandaloneRichTextConfigurationDTO,
+    PIE_CHART: PieChartConfigurationDTO,
+    LINE_CHART: LineChartConfigurationDTO,
+    IFRAME: IframeConfigurationDTO,
+    GAUGE_CHART: GaugeChartConfigurationDTO,
+    BAR_CHART: BarChartConfigurationDTO,
+    CALENDAR: class {
+      configurationType: WidgetConfigurationType.CALENDAR;
+    },
+    EMAILS: class {
+      configurationType: WidgetConfigurationType.EMAILS;
+    },
+    FIELD: class {
+      configurationType: WidgetConfigurationType.FIELD;
+    },
+    FIELD_RICH_TEXT: class {
+      configurationType: WidgetConfigurationType.FIELD_RICH_TEXT;
+    },
+    FIELDS: class {
+      configurationType: WidgetConfigurationType.FIELDS;
+    },
+    FILES: class {
+      configurationType: WidgetConfigurationType.FILES;
+    },
+    NOTES: class {
+      configurationType: WidgetConfigurationType.NOTES;
+    },
+    TASKS: class {
+      configurationType: WidgetConfigurationType.TASKS;
+    },
+    TIMELINE: class {
+      configurationType: WidgetConfigurationType.TIMELINE;
+    },
+    VIEW: class {
+      configurationType: WidgetConfigurationType.VIEW;
+    },
+    WORKFLOW: class {
+      configurationType: WidgetConfigurationType.WORKFLOW;
+    },
+    WORKFLOW_RUN: class {
+      configurationType: WidgetConfigurationType.WORKFLOW_RUN;
+    },
+    WORKFLOW_VERSION: class {
+      configurationType: WidgetConfigurationType.WORKFLOW_VERSION;
+    },
+  } as const satisfies {
     [P in WidgetConfigurationType]: new () => PageLayoutWidgetConfigurationBase;
-  }>;
+  };
