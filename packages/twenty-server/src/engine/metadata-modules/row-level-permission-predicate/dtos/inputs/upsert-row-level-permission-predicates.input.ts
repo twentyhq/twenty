@@ -2,7 +2,14 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsArray, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -78,11 +85,14 @@ export class UpsertRowLevelPermissionPredicatesInput {
   objectMetadataId: string;
 
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionPredicateInput)
   @Field(() => [RowLevelPermissionPredicateInput])
   predicates: RowLevelPermissionPredicateInput[];
 
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionPredicateGroupInput)
   @Field(() => [RowLevelPermissionPredicateGroupInput])
   predicateGroups: RowLevelPermissionPredicateGroupInput[];
 }
-

@@ -169,6 +169,17 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       }),
     };
 
+    if (updatedPredicateGroup.roleId !== existingPredicateGroup.roleId) {
+      const existingRoleId = existingPredicateGroup.roleId;
+      const updatedRoleId = updatedPredicateGroup.roleId;
+
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateGroupExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
+        message: t`Cannot modify predicate group to change its role from ${existingRoleId} to ${updatedRoleId}`,
+        userFriendlyMessage: msg`Cannot modify predicate group to change its role`,
+      });
+    }
+
     if (
       isDefined(
         updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId,

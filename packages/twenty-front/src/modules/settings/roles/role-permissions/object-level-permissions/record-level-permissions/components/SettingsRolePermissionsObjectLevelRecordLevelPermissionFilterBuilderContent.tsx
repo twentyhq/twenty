@@ -7,21 +7,22 @@ import { Button } from 'twenty-ui/input';
 
 import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
-import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
+import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions';
 import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterInitialization';
 import { useRecordLevelPermissionSyncToDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionSyncToDraftRole';
-import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -116,17 +117,19 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
         {isDefined(rootRecordFilterGroup) ? (
           <StyledContainer>
             <StyledFiltersContainer>
-              {childRecordFiltersAndRecordFilterGroups.map(
-                (child, index) =>
-                  !isRecordFilterGroupChildARecordFilterGroup(child) && (
-                    <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
-                      key={child.id}
-                      recordFilter={child}
-                      index={index}
-                      recordFilterGroup={rootRecordFilterGroup}
-                    />
-                  ),
-              )}
+              {childRecordFiltersAndRecordFilterGroups
+                .filter(
+                  (child): child is RecordFilter =>
+                    !isRecordFilterGroupChildARecordFilterGroup(child),
+                )
+                .map((child, index) => (
+                  <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
+                    key={child.id}
+                    recordFilter={child}
+                    index={index}
+                    recordFilterGroup={rootRecordFilterGroup}
+                  />
+                ))}
             </StyledFiltersContainer>
             <StyledActionButtonWrapper>
               <ActionButton

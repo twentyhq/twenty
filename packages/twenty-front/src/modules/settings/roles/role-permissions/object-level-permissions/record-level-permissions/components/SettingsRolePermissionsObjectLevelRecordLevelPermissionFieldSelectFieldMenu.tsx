@@ -114,10 +114,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         >
           <DropdownMenuSectionLabel label={t`Fields`} />
           <DropdownMenuItemsContainer>
-            {filteredFieldMetadataItems.map((fieldMetadataItem, index) => (
+            {filteredFieldMetadataItems.map((fieldMetadataItem) => (
               <SelectableListItem
                 itemId={fieldMetadataItem.id}
-                key={`select-filter-${index}`}
+                key={fieldMetadataItem.id}
                 onEnter={() => {
                   handleFieldSelect(fieldMetadataItem);
                 }}
