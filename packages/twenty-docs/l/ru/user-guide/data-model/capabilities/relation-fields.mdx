@@ -1,92 +1,92 @@
 ---
 title: Поля связи
-description: Connect records across different objects using relation fields.
+description: Связывайте записи между разными объектами с помощью полей связи.
 ---
 
-## Types of Relations
+## Типы связей
 
-### One-to-Many
+### Один-ко-многим
 
-One record in Object A can be linked to many records in Object B.
+Одна запись в объекте A может быть связана со многими записями в объекте B.
 
-**Example:** One Company can have many People (employees).
+**Пример:** Одна Компания может иметь много Людей (сотрудников).
 
-### Many-to-One
+### Многие-к-одному
 
-Many records in Object A can be linked to one record in Object B.
+Много записей в объекте A могут быть связаны с одной записью в объекте B.
 
-**Example:** Many People can belong to one Company.
+**Пример:** Многие Люди могут принадлежать одной Компании.
 
-### Relations to Multiple Object Types
+### Связи с несколькими типами объектов
 
-Some objects can link to multiple object types on one side of the relation.
+Некоторые объекты могут быть связаны с несколькими типами объектов на одной стороне связи.
 
-**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+**Пример:** Заметка может одновременно быть прикреплена к одному Человеку И одной Компании И одной Сделке. Заметка — на стороне «многие», связываясь с несколькими сторонами «один».
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+Аналогично, Проект (на стороне «один») может получать связи от нескольких Людей, нескольких Компаний и нескольких Заметок.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+  **Ограничение импорта/экспорта**: Связи, указывающие на несколько типов объектов, пока не поддерживаются для импорта/экспорта CSV. Это запланировано в нашей дорожной карте.
 </Warning>
 
-### Many-to-Many
+### Многие-ко-многим
 
-Many records in Object A can be linked to many records in Object B.
+Много записей в объекте A могут быть связаны с множеством записей в объекте B.
 
-**Example:** Many People can be linked to many Projects, and vice versa.
+**Пример:** Многие Люди могут быть связаны со многими Проектами, и наоборот.
 
 <Warning>
-  **Many-to-Many is not yet supported.**
+  **Связи многие-ко-многим пока не поддерживаются.**
 
-  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+  Этот тип связи запланирован на первое полугодие 2026 года. В качестве обходного решения создайте промежуточный "соединительный" объект (например, "Назначения проектов"), который имеет связи типа многие-к-одному с обоими объектами.
 </Warning>
 
-## Creating a Relation Field
+## Создание поля связи
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want to add the relation
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the target object(s) to relate to
-6. Configure the relation settings:
-   * **Field name on source object**: The name of the relation field on the object you're editing
-   * **Field name on destination object**: The name of the relation field that will appear on the target object
-   * Relation type (one-to-many, many-to-one)
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект, в который вы хотите добавить связь
+3. Нажмите **+ Добавить поле**
+4. Выберите **Связь** как тип поля
+5. Выберите целевые объекты, с которыми нужно установить связь
+6. Настройте параметры связи:
+   * **Имя поля на исходном объекте**: Название поля связи на объекте, который вы редактируете
+   * **Имя поля на целевом объекте**: Название поля связи, которое будет отображаться на целевом объекте
+   * Тип связи (один-ко-многим, многие-к-одному)
 7. Нажмите **Сохранить**
 
-## Standard Relations
+## Стандартные связи
 
-Twenty comes with pre-built relations between standard objects:
+В Twenty есть предустановленные связи между стандартными объектами:
 
-| From Object | To Object | Relation Type |
-| ----------- | --------- | ------------- |
-| Люди        | Компании  | Many-to-One   |
-| Возможности | Компании  | Many-to-One   |
-| Возможности | Люди      | Many-to-One   |
+| Исходный объект | Целевой объект | Тип связи       |
+| --------------- | -------------- | --------------- |
+| Люди            | Компании       | Многие-к-одному |
+| Возможности     | Компании       | Многие-к-одному |
+| Возможности     | Люди           | Многие-к-одному |
 
 ## Лучшие практики
 
-### Planning Relations
+### Планирование связей
 
-* **Map your data model**: Plan relations before creating them
-* **Consider direction**: Think about which object "owns" the relationship
-* **Avoid circular dependencies**: Keep your data model clean
+* **Составьте карту модели данных**: Планируйте связи перед их созданием
+* **Учитывайте направление**: Подумайте, какой объект «владеет» связью
+* **Избегайте циклических зависимостей**: Поддерживайте модель данных в чистоте
 
-### Naming Relations
+### Именование связей
 
-* **Use clear names**: Make it obvious what the relation represents
-* **Be consistent**: Use similar naming patterns across relations
-* **Consider both sides**: Name both sides of the relation appropriately
+* **Используйте понятные названия**: Сделайте так, чтобы было ясно, что представляет собой связь
+* **Соблюдайте последовательность**: Используйте единые шаблоны именования для всех связей
+* **Учитывайте обе стороны**: Корректно назовите обе стороны связи
 
-### Performance
+### Производительность
 
-* **Don't over-relate**: Too many relations can slow down your workspace
+* **Не злоупотребляйте связями**: Слишком много связей может замедлить ваше рабочее пространство
 
-## Limitations
+## Ограничения
 
-* **Deleting relations** removes the link but not the related records
-* **Circular relations** should be avoided for data integrity
+* **Удаление связей** удаляет связи, но не связанные записи
+* **Циклических связей** следует избегать для обеспечения целостности данных
