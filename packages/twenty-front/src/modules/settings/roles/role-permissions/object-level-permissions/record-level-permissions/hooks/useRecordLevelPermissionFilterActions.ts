@@ -34,6 +34,12 @@ export const useRecordLevelPermissionFilterActions = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
   const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -41,6 +47,21 @@ export const useRecordLevelPermissionFilterActions = ({
   const { lastChildPosition } = useChildRecordFiltersAndRecordFilterGroups({
     recordFilterGroupId: rootRecordFilterGroup?.id,
   });
+
+  const getDefaultFieldMetadataItemForRLS = () => {
+    const fieldMetadataItemForId = availableFieldMetadataItemsForFilter.find(
+      (fieldMetadataItem) => fieldMetadataItem.name === 'id',
+    );
+
+    if (isDefined(fieldMetadataItemForId)) {
+      return fieldMetadataItemForId;
+    }
+
+    const { defaultFieldMetadataItemForFilter } =
+      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+
+    return defaultFieldMetadataItemForFilter;
+  };
 
   const handleCreateFirstFilter = () => {
     if (isDefined(rootRecordFilterGroup)) {
@@ -54,15 +75,14 @@ export const useRecordLevelPermissionFilterActions = ({
 
     upsertRecordFilterGroup(newRecordFilterGroup);
 
-    const { defaultFieldMetadataItemForFilter } =
-      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+    const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
-    if (!isDefined(defaultFieldMetadataItemForFilter)) {
+    if (!isDefined(defaultFieldMetadataItemForRLS)) {
       throw new Error('Missing default filter definition');
     }
 
     const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-      defaultFieldMetadataItemForFilter,
+      defaultFieldMetadataItemForRLS,
     );
 
     newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
@@ -72,15 +92,14 @@ export const useRecordLevelPermissionFilterActions = ({
   };
 
   const handleAddFilter = (recordFilterGroup: RecordFilterGroup) => {
-    const { defaultFieldMetadataItemForFilter } =
-      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+    const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
-    if (!isDefined(defaultFieldMetadataItemForFilter)) {
+    if (!isDefined(defaultFieldMetadataItemForRLS)) {
       throw new Error('Missing default field metadata item for filter');
     }
 
     const filterType = getFilterTypeFromFieldType(
-      defaultFieldMetadataItemForFilter.type,
+      defaultFieldMetadataItemForRLS.type,
     );
 
     const defaultSubFieldName =
@@ -88,14 +107,14 @@ export const useRecordLevelPermissionFilterActions = ({
 
     const newRecordFilter: RecordFilter = {
       id: v4(),
-      fieldMetadataId: defaultFieldMetadataItemForFilter.id,
+      fieldMetadataId: defaultFieldMetadataItemForRLS.id,
       type: filterType,
       operand: getRecordFilterOperands({ filterType })[0],
       value: '',
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,
       positionInRecordFilterGroup: lastChildPosition + 1,
-      label: defaultFieldMetadataItemForFilter.label,
+      label: defaultFieldMetadataItemForRLS.label,
       subFieldName: defaultSubFieldName,
     };
 

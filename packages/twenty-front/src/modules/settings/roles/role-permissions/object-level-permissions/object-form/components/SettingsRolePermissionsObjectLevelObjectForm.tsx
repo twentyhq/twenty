@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
@@ -29,6 +30,9 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
 
+
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const hasValidEnterpriseKey = currentWorkspace?.hasValidEnterpriseKey === true;
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -44,7 +48,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const featureFlagsMap = useFeatureFlagsMap();
   const isRowLevelPermissionPredicatesEnabled =
-    featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
+    featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED] && hasValidEnterpriseKey;
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
