@@ -4,10 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-add-workspace-foreign-keys-migration.command';
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
-import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-identify-field-metadata.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -35,14 +33,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     FieldMetadataModule,
     ViewFieldModule,
-    ApplicationModule,
   ],
   providers: [
     MigratePageLayoutWidgetConfigurationCommand,
     FixNanPositionValuesInNotesCommand,
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
-    IdentifyFieldMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
@@ -50,7 +46,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FixNanPositionValuesInNotesCommand,
     BackfillUpdatedByFieldCommand,
     AddWorkspaceForeignKeysMigrationCommand,
-    IdentifyFieldMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
