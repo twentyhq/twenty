@@ -135,6 +135,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     expect(result).toContain(
       "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '')",
     );
+    expect(result).toContain(
+      "COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(\"emailsAdditionalEmails\"::text, '@', ' '), '[]\",', '    ')), '')",
+    );
   });
 
   it('should include secondary links in search expression for LINKS type', () => {

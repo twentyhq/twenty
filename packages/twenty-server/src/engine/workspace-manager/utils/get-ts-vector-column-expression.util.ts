@@ -97,7 +97,7 @@ const getColumnExpressionsFromField = (
     if (fieldMetadataTypeAndName.type === FieldMetadataType.EMAILS) {
       const additionalEmailsColumn = `"${fieldMetadataTypeAndName.name}AdditionalEmails"`;
 
-      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '')`;
+      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(${additionalEmailsColumn}::text, '@', ' '), '[]",', '    ')), '')`;
 
       return [...baseExpressions, additionalEmailsExpression];
     }

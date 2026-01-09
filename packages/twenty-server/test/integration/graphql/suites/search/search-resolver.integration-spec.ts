@@ -690,9 +690,9 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
+            naiveCorp.id,
             francoisPerson.id,
             francoisPersonNoAccent.id,
-            naiveCorp.id,
             naivePet.id,
           ],
           pageInfo: {
