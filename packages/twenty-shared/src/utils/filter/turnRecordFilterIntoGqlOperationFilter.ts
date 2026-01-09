@@ -168,7 +168,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           );
       }
     case 'DATE': {
-      if (recordFilter.operand === RecordFilterOperand.IS_RELATIVE) {
+      const itsARelativeDateFilter =
+        recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
+
+      if (itsARelativeDateFilter) {
         const relativeDateFilterValue = resolveRelativeDateFilterStringified(
           recordFilter.value,
         );
@@ -204,62 +207,75 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         };
       }
 
-      const nowAsPlainDate = Temporal.Now.plainDateISO(
-        filterValueDependencies.timeZone,
-      ).toString();
+      const operandIsTakingNowAsReference =
+        recordFilter.operand === RecordFilterOperand.IS_TODAY ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_PAST ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_FUTURE;
 
-      const plainDateFilter = recordFilter.value;
+      if (operandIsTakingNowAsReference) {
+        const nowAsPlainDate = Temporal.Now.plainDateISO(
+          filterValueDependencies.timeZone,
+        ).toString();
 
-      switch (recordFilter.operand) {
-        case RecordFilterOperand.IS_AFTER: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gte: plainDateFilter,
-            } as DateFilter,
-          };
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_IN_PAST:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: nowAsPlainDate,
+              } as DateFilter,
+            };
+          case RecordFilterOperand.IS_IN_FUTURE:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: nowAsPlainDate,
+              } as DateFilter,
+            };
+          case RecordFilterOperand.IS_TODAY: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: nowAsPlainDate,
+              } as DateFilter,
+            };
+          }
         }
-        case RecordFilterOperand.IS_BEFORE: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: plainDateFilter,
-            } as DateFilter,
-          };
-        }
+      } else {
+        const plainDateFilter = recordFilter.value;
 
-        case RecordFilterOperand.IS: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              eq: plainDateFilter,
-            } as DateFilter,
-          };
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_AFTER: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: plainDateFilter,
+              } as DateFilter,
+            };
+          }
+          case RecordFilterOperand.IS_BEFORE: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: plainDateFilter,
+              } as DateFilter,
+            };
+          }
+
+          case RecordFilterOperand.IS: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: plainDateFilter,
+              } as DateFilter,
+            };
+          }
         }
-        case RecordFilterOperand.IS_IN_PAST:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: nowAsPlainDate,
-            } as DateFilter,
-          };
-        case RecordFilterOperand.IS_IN_FUTURE:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gte: nowAsPlainDate,
-            } as DateFilter,
-          };
-        case RecordFilterOperand.IS_TODAY: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              eq: nowAsPlainDate,
-            } as DateFilter,
-          };
-        }
-        default:
-          throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-          );
       }
+
+      throw new Error(
+        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+      );
     }
     case 'DATE_TIME': {
-      if (recordFilter.operand === RecordFilterOperand.IS_RELATIVE) {
+      const itsARelativeDateTimeFilter =
+        recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
+
+      if (itsARelativeDateTimeFilter) {
         const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
 
         const parsedRelativeDateFilterValue =
@@ -307,81 +323,96 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         };
       }
 
-      if (!isNonEmptyString(recordFilter.value)) {
-        throw new Error(`Date filter is empty`);
-      }
+      const operandIsTakingNowAsReference =
+        recordFilter.operand === RecordFilterOperand.IS_TODAY ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_PAST ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_FUTURE;
 
-      const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
+      if (operandIsTakingNowAsReference) {
+        const now = Temporal.Now.zonedDateTimeISO(
+          filterValueDependencies.timeZone,
+        );
 
-      const now = Temporal.Now.zonedDateTimeISO(
-        filterValueDependencies.timeZone,
-      );
-
-      switch (recordFilter.operand) {
-        case RecordFilterOperand.IS_AFTER: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gte: resolvedDateTime.toString(),
-            } as DateTimeFilter,
-          };
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_IN_PAST:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: now.toInstant().round('minute').toString(),
+              } as DateTimeFilter,
+            };
+          case RecordFilterOperand.IS_IN_FUTURE:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gt: now.toInstant().round('minute').toString(),
+              } as DateTimeFilter,
+            };
+          case RecordFilterOperand.IS_TODAY: {
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: getPeriodStart(now, 'DAY').toInstant().toString(),
+                  } as DateTimeFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lt: getNextPeriodStart(now, 'DAY').toInstant().toString(),
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          }
         }
-        case RecordFilterOperand.IS_BEFORE: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: resolvedDateTime.toString(),
-            } as DateTimeFilter,
-          };
+      } else {
+        if (!isNonEmptyString(recordFilter.value)) {
+          throw new Error(`Date filter is empty`);
         }
-        case RecordFilterOperand.IS: {
-          const start = resolvedDateTime
-            .toZonedDateTimeISO('UTC')
-            .with({ second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 })
-            .toInstant();
 
-          const end = start.add({ minutes: 1 });
+        const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
 
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lt: end.toString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: start.toString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
-        }
-        case RecordFilterOperand.IS_IN_PAST:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: now.toInstant().round('minute').toString(),
-            } as DateTimeFilter,
-          };
-        case RecordFilterOperand.IS_IN_FUTURE:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gt: now.toInstant().round('minute').toString(),
-            } as DateTimeFilter,
-          };
-        case RecordFilterOperand.IS_TODAY: {
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: getPeriodStart(now, 'DAY').toInstant().toString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lt: getNextPeriodStart(now, 'DAY').toInstant().toString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_AFTER: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: resolvedDateTime.toString(),
+              } as DateTimeFilter,
+            };
+          }
+          case RecordFilterOperand.IS_BEFORE: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: resolvedDateTime.toString(),
+              } as DateTimeFilter,
+            };
+          }
+          case RecordFilterOperand.IS: {
+            const start = resolvedDateTime
+              .toZonedDateTimeISO('UTC')
+              .with({
+                second: 0,
+                millisecond: 0,
+                microsecond: 0,
+                nanosecond: 0,
+              })
+              .toInstant();
+
+            const end = start.add({ minutes: 1 });
+
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lt: end.toString(),
+                  } as DateTimeFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: start.toString(),
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          }
         }
       }
 

@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: Nesneler Arasındaki İlişkileri İçe Aktarma
+description: Kayıtlar arasındaki ilişkileri CSV ile içe aktarın.
 ---
 
 ## Genel Bakış
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty, CSV içe aktarma sırasında nesneler arasındaki ilişkilerin içe aktarılmasını destekler. Bu, veri geçişinizin bir parçası olarak kayıtları birbirine bağlamanıza olanak tanır (ör. Kişileri Şirketlere iliştirme).
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**Şu anda içe aktarma için desteklenenler**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler (ör. Kişiler → Şirketler). Birden fazla nesne türüne işaret eden ilişkiler henüz içe/dışa aktarma için desteklenmiyor.</Note>
 
-## How Relations Work in Twenty
+## Twenty'de İlişkiler Nasıl Çalışır
 
-### One to Many / Many to One
+### Bire-Çok / Çoktan-Bire
 
-Twenty supports standard relations where one record links to many others:
+Twenty, bir kaydın birden çok başka kayda bağlandığı standart ilişkileri destekler:
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **Bir Şirket → Birçok Kişi**: Bir şirketin birden fazla çalışanı olabilir, ancak her kişi bir şirkete aittir
+* **Bir Şirket → Birçok Fırsat**: Bir şirketin birden fazla fırsatı olabilir, ancak her fırsat bir şirkete aittir
 
-### Relations That Can Point to Multiple Object Types
+### Birden Fazla Nesne Türüne İşaret Edebilen İlişkiler
 
-Some relations can connect to different types of objects. This works in two ways:
+Bazı ilişkiler farklı türdeki nesnelere bağlanabilir. Bu iki şekilde çalışır:
 
-**Pattern 1: Many records linking to one record each from different object types**
+**Kalıp 1: Farklı nesne türlerinden birçok kayıt, her biri bir kayda bağlanır**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+Birden çok Not, Görev veya Aktivitenin her biri aynı anda birden fazla nesne türüne iliştirilebilir:
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **Notlar** aynı anda bir Kişiye, bir Şirkete ve bir Fırsata bağlanabilir
+* **Görevler** aynı anda bir Kişiye, bir Şirkete ve bir Fırsata bağlanabilir
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+Burada, Notlar/Görevler "çok" tarafındadır. Her biri, her nesne türü için bir kayda bağlanır.
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**Kalıp 2: Farklı nesne türlerinden çok sayıda kayıttan bağlantı alan tek bir kayıt**
 
-A Project can receive links from multiple records across different object types:
+Bir Proje, farklı nesne türleri genelinde birden fazla kayıttan bağlantı alabilir:
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **Bir Proje** kendisine bağlı birçok Kişi, kendisine bağlı birçok Şirket ve kendisine iliştirilmiş birçok Not barındırabilir
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+Burada Proje, "bir" tarafındadır. Farklı nesnelerden birden çok kayıt aynı Projeye bağlanabilir.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **İçe/Dışa Aktarma sınırlaması**: Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) CSV içe aktarma veya dışa aktarmada **henüz desteklenmiyor**.
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **İçe aktarma**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir
+  * **Dışa aktarma**: Birden fazla nesne türüne işaret eden ilişkilere ait sütunlar şu anda boş bırakılır
 
-  This is on our roadmap.
+  Bu özellik yol haritamızda.
 </Warning>
 
-### What's Not Supported Today
+### Bugün Neler Desteklenmiyor
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**Çoktan-Çoka ilişkiler** henüz mevcut değil. Örneğin, şu anda aşağıdaki gibi bir ilişki oluşturamazsınız:
 
-* Many People are linked to many Projects
+* Birçok Kişi birçok Projeye bağlıdır
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>Çoktan-Çoka ilişkiler 2026 H1 için planlanıyor.</Note>
 
-## Linking Records During Import
+## İçe Aktarma Sırasında Kayıtları Bağlama
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**Hatırlatma**: Yalnızca her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir (ör. Kişiler → Şirketler). Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) henüz desteklenmiyor.</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### Adım 1: "Bir" ve "Çok" Tarafları Belirleyin
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+Önce, ilişkinin "bir" tarafında hangi nesnenin, "çok" tarafında hangi nesnenin olduğunu belirleyin.
 
-**Example**:
+**Örnek**:
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **Şirket** "bir" tarafıdır (bir şirketin birçok çalışanı vardır)
+* **Kişiler** "çok" tarafıdır (her kişi bir şirkete aittir)
 
-### Step 2: Ensure the "One" Side Records Exist
+### Adım 2: "Bir" Tarafındaki Kayıtların Mevcut Olduğundan Emin Olun
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+"Çok" tarafını içe aktarmadan önce, "bir" tarafındaki kayıtlar Twenty'de zaten mevcut olmalıdır.
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* Önce "bir" tarafındaki kayıtları içe aktarın veya oluşturun (ör. Şirketler)
+* Benzersiz tanımlayıcılarını doğrulayın. Bu şu olabilir:
+  * `id` (Twenty'nin UUID'si)
+  * Benzersiz olarak ayarlanmış bir alan (ör. Şirketler için `domain` veya önceki sisteminizden bir dış kimlik)
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>Var olmayan bir kayda referans verilirse içe aktarma başarısız olur.</Warning>
 
-### Step 3: Prepare Your CSV File
+### Adım 3: CSV Dosyanızı Hazırlayın
 
-Add a column in your "many" side CSV file that references the "one" side record.
+"Çok" tarafındaki CSV dosyanıza, "bir" tarafındaki kayda referans veren bir sütun ekleyin.
 
-**Example**: For a People CSV file linking to Companies:
+**Örnek**: Şirketlere bağlanan bir Kişiler CSV dosyası için:
 
 ```
 firstName,lastName,email,companyDomain
@@ -96,53 +96,53 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important**:
+**Önemli**:
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* Değer, Şirket kaydındaki benzersiz alanla **tam olarak eşleşmelidir**
+* Alan adları için **Alan Adı URL'si**ni (ör. `https://acme.com`) kullanın, Alan Adı Etiketini değil
+* Her ilişki için yalnızca **bir** benzersiz tanımlayıcıyı eşleyin: bu, daha sorunsuz bir içe aktarma sağlar
 
-### Step 4: Ensure the Relation Field Exists
+### Adım 4: İlişki Alanının Mevcut Olduğundan Emin Olun
 
-Before uploading your file, make sure the relation field exists between your objects.
+Dosyanızı yüklemeden önce, nesneleriniz arasında ilişki alanının mevcut olduğundan emin olun.
 
-If it doesn't exist:
+Eğer mevcut değilse:
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin (ör. Kişiler)
+3. Hedef nesneyi işaret eden bir ilişki alanı oluşturun (ör. Şirket)
 
-### Step 5: Upload and Map the Relation
+### Adım 5: İlişkiyi Yükleyin ve Eşleyin
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. CSV dosyanızı içe aktarma arayüzü üzerinden yükleyin
+2. Alan eşleme adımında, ilişki sütununuzu bulun (ör. `companyDomain`)
+3. Bunu ilişki alanına eşleyin (ör. Şirket)
+4. Twenty, her kaydı otomatik olarak eşleşen ana kayda bağlar
 
-### Available Unique Fields for Relations
+### İlişkiler İçin Kullanılabilir Benzersiz Alanlar
 
-| Nesne                                 | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Şirketler**                         | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **İş Alanı Üyeleri**                  | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| Nesne                               | Kullanılabilir Benzersiz Alanlar                      |
+| ----------------------------------- | ----------------------------------------------------- |
+| **Şirketler**                       | `id`, `domain`, herhangi bir özel benzersiz alan      |
+| **Kişiler**                         | `id`, `email`, herhangi bir özel benzersiz alan       |
+| **İş Alanı Üyeleri**                | `id`, `email` (isim değil)                            |
+| **Diğer standart ve özel nesneler** | `id`, benzersiz olarak işaretlenmiş herhangi bir alan |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**Çalışma Alanı Üyelerine Bağlama**: İlişki Çalışma Alanı Üyelerini işaret ediyorsa (Twenty'ye giriş yapan ekibiniz), onlara adlarıyla değil, **e-posta adresleriyle** referans verin.</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>Tablolarda okunabilir ve bakımı kolay olduğundan, Şirketler için `domain` ve Kişiler için `email` kullanmanızı öneririz.</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**Hatırlatma**: Yumuşak silinmiş kayıtlar (Komut Menüsü → Silinen kayıtları görüntüle altında görünür) benzersizlik ölçütlerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt geri yüklenir. Daha fazla bilgi için [Benzersizlik Kısıtları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints) bölümüne bakın.</Note>
 
-## Import Order Rule
+## İçe Aktarma Sırası Kuralı
 
 <Warning>
-  **Always import the "one" side first!**
+  **Her zaman önce "bir" tarafı içe aktarın!**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. Önce **Şirketler** (bağımlılık yok)
+  2. İkinci olarak **Kişiler** (Şirketlere bağlı)
+  3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlı)
+  4. **Özel nesneler** (bağımlılıklarına uyarak)
 
-  The parent record must exist before you can reference it.
+  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
 </Warning>

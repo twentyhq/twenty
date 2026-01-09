@@ -30,6 +30,7 @@ type AnimatedExpandableContainerProps = {
   animationDurations?: AnimationDurations;
   mode?: AnimationMode;
   containAnimation?: boolean;
+  initial?: boolean;
 };
 
 export const AnimatedExpandableContainer = ({
@@ -39,6 +40,7 @@ export const AnimatedExpandableContainer = ({
   animationDurations = 'default',
   mode = 'scroll-height',
   containAnimation = true,
+  initial = true,
 }: AnimatedExpandableContainerProps) => {
   const theme = useTheme();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,7 @@ export const AnimatedExpandableContainer = ({
   );
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={initial}>
       {isExpanded && (
         <StyledMotionContainer
           containAnimation={containAnimation}

@@ -2,7 +2,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
@@ -11,8 +11,8 @@ import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 
 export const ViewPickerEditButton = () => {
-  const { availableFieldsForKanban, navigateToSelectSettings } =
-    useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping, navigateToSelectSettings } =
+    useGetAvailableFieldsToGroupRecordsBy();
 
   const { viewPickerMode } = useViewPickerMode();
   const viewPickerType = useRecoilComponentValue(viewPickerTypeComponentState);
@@ -44,7 +44,7 @@ export const ViewPickerEditButton = () => {
 
   if (
     viewPickerType === ViewType.Kanban &&
-    availableFieldsForKanban.length === 0
+    availableFieldsForGrouping.length === 0
   ) {
     return (
       <Button

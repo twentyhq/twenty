@@ -25,8 +25,8 @@ type InputProps = {
 
 export type TitleInputProps = {
   disabled?: boolean;
-  shouldOpen?: boolean;
-  onOpen?: () => void;
+  shouldFocus?: boolean;
+  onFocus?: () => void;
 } & InputProps;
 
 const StyledDiv = styled.div<{
@@ -145,8 +145,8 @@ export const TitleInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-  shouldOpen,
-  onOpen,
+  shouldFocus,
+  onFocus,
 }: TitleInputProps) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -155,11 +155,11 @@ export const TitleInput = ({
   return (
     <>
       <TitleInputAutoOpenEffect
-        shouldOpen={shouldOpen}
+        shouldFocus={shouldFocus}
         isOpened={isOpened}
         disabled={disabled}
         instanceId={instanceId}
-        onOpen={onOpen}
+        onFocus={onFocus}
         setIsOpened={setIsOpened}
       />
       {isOpened ? (

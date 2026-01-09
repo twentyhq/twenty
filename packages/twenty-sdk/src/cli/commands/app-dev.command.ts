@@ -2,7 +2,11 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
 import { ApiService } from '@/cli/services/api.service';
+import { ManifestValidationError } from '@/cli/utils/validate-manifest';
+import { displayEntitySummary } from '@/cli/utils/display-entity-summary';
 import { loadManifest } from '@/cli/utils/load-manifest';
+import { displayWarnings } from '@/cli/utils/display-warnings';
+import { displayErrors } from '@/cli/utils/display-errors';
 
 export class AppDevCommand {
   private apiService = new ApiService();
@@ -33,13 +37,28 @@ export class AppDevCommand {
   }
 
   private async synchronize(appPath: string) {
-    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+    try {
+      const { manifest, packageJson, yarnLock, warnings } =
+        await loadManifest(appPath);
 
-    await this.apiService.syncApplication({
-      manifest,
-      packageJson,
-      yarnLock,
-    });
+      displayEntitySummary(manifest);
+
+      displayWarnings(warnings);
+
+      await this.apiService.syncApplication({
+        manifest,
+        packageJson,
+        yarnLock,
+      });
+
+      console.log(chalk.green('  ✓ Synced with server'));
+    } catch (error) {
+      if (error instanceof ManifestValidationError) {
+        displayErrors(error);
+        throw error;
+      }
+      throw error;
+    }
   }
 
   private logStartupInfo(appPath: string, debounceMs: number): void {

@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: Invia avvisi via email per le attività in scadenza
+description: Notifica automaticamente ai membri del team le attività imminenti o in ritardo.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+Invia promemoria email quotidiani a ciascun membro del team sulle attività in scadenza oggi.
 
 ## Panoramica
 
-This workflow runs on a schedule and:
+Questo flusso di lavoro viene eseguito secondo una pianificazione e:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. Recupera tutti i membri dello spazio di lavoro
+2. Scorre ciascun membro
+3. Trova le loro attività in scadenza oggi
+4. Formatta e invia un'email personalizzata
 
-## Step-by-Step Setup
+## Configurazione passo-passo
 
-<VimeoEmbed videoId="1147463514" title="Video demonstration" />
+<VimeoEmbed videoId="1147463514" title="Dimostrazione video" />
 
-### Step 1: Configure the Trigger
+### Passaggio 1: Configura il trigger
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. Vai su **Impostazioni → Flussi di lavoro** e crea un nuovo flusso di lavoro
+2. Seleziona **On a Schedule** come trigger
+3. Usa un'espressione cron per ogni giorno alle 8:00: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### Passaggio 2: Cerca tutti i membri dello spazio di lavoro
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. Aggiungi un'azione **Search Records**
+2. Seleziona **Workspace Members** (nella sezione Oggetti avanzati)
+3. Non sono necessari filtri — questo restituisce tutti i membri
 
-### Step 3: Add an Iterator
+### Passaggio 3: Aggiungi un Iterator
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. Aggiungi un'azione **Iterator**
+2. Imposta l'array di input con i membri dello spazio di lavoro del passaggio precedente
+3. Tutte le azioni all'interno dell'Iterator verranno eseguite una volta per membro
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### Passaggio 4: Cerca le attività in scadenza oggi (all'interno dell'Iterator)
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. All'interno dell'Iterator, aggiungi un'azione **Search Records**
+2. Seleziona **Tasks** come oggetto
+3. Aggiungi filtri:
+   * **Assignee** = membro corrente dello spazio di lavoro (dall'Iterator)
+   * **Due Date** = oggi
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### Passaggio 5: Formatta le attività nel corpo dell'email (all'interno dell'Iterator)
 
-Add a **Code** action to format the tasks into a readable list with links:
+Aggiungi un'azione **Code** per formattare le attività in un elenco leggibile con link:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Sostituisci `yourSubDomain` con il tuo effettivo sottodominio dello spazio di lavoro Twenty.
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### Passaggio 6: Invia email (all'interno dell'Iterator)
 
-1. Add a **Send Email** action (still inside the iterator)
+1. Aggiungi un'azione **Send Email** (sempre all'interno dell'Iterator)
 2. Configura:
 
-| Campo       | Valore                                                          |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| Campo       | Valore                                                                         |
+| ----------- | ------------------------------------------------------------------------------ |
+| **A**       | `{{iterator.currentItem.userEmail}}` (email del membro dello spazio di lavoro) |
+| **Oggetto** | Le tue attività in scadenza oggi                                               |
+| **Corpo**   | `{{code.formattedTasks}}`                                                      |
 
-### Step 7: Test and Activate
+### Passaggio 7: Testa e attiva
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. Fai clic su **Test** per eseguire manualmente il flusso di lavoro
+2. Controlla le caselle di posta per le email
+3. Attiva il flusso di lavoro
 
-## Related
+## Correlati
 
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
