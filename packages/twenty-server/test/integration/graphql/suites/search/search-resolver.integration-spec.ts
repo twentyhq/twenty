@@ -13,6 +13,8 @@ import {
   TEST_PERSON_5_ID,
   TEST_PERSON_6_ID,
   TEST_PERSON_7_ID,
+  TEST_PERSON_8_ID,
+  TEST_PERSON_9_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PET_ID_1,
@@ -88,7 +90,7 @@ describe('SearchResolver', () => {
       emails: { primaryEmail: 'francois@naive.com' },
     },
     {
-      id: '20202020-0000-0000-0000-000000000008',
+      id: TEST_PERSON_8_ID,
       name: { firstName: 'MultiEmail', lastName: 'Person' },
       emails: {
         primaryEmail: 'primary@example.com',
@@ -96,7 +98,7 @@ describe('SearchResolver', () => {
       },
     },
     {
-      id: '20202020-0000-0000-0000-000000000009',
+      id: TEST_PERSON_9_ID,
       name: { firstName: 'MultiPhone', lastName: 'Person' },
       emails: {
         primaryEmail: 'empty@arrays.com',
