@@ -77,16 +77,6 @@ const injectRelationWidgetsIntoLayout = (
   };
 };
 
-const computePageLayoutWithRelationWidgets = (
-  basePageLayout: PageLayout,
-  boxedRelationFieldMetadataItems: FieldMetadataItem[],
-): PageLayout => {
-  return injectRelationWidgetsIntoLayout(
-    basePageLayout,
-    boxedRelationFieldMetadataItems,
-  );
-};
-
 export const usePageLayoutWithRelationWidgets = (
   basePageLayout: PageLayout | undefined,
 ): PageLayout | undefined => {
@@ -106,7 +96,7 @@ export const usePageLayoutWithRelationWidgets = (
     return basePageLayout;
   }
 
-  return computePageLayoutWithRelationWidgets(
+  return injectRelationWidgetsIntoLayout(
     basePageLayout,
     boxedRelationFieldMetadataItems,
   );
