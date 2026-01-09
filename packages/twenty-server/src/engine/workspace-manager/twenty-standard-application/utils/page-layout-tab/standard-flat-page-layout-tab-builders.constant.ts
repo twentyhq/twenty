@@ -10,22 +10,18 @@ import {
 type TabBuilderArgs = Omit<CreateStandardPageLayoutTabArgs, 'context'>;
 
 export const STANDARD_FLAT_PAGE_LAYOUT_TAB_BUILDERS_BY_LAYOUT_NAME = {
-  myFirstDashboard: {
-    tab1: (args: TabBuilderArgs) =>
-      createStandardPageLayoutTabFlatMetadata({
-        ...args,
-        context: {
-          layoutName: 'myFirstDashboard',
-          tabName: 'tab1',
-          title: 'Tab 1', // TODO: ask Thomas to provide the appropriate title
-          position: 0,
-        },
-      }),
-  },
+  tab1: (args: TabBuilderArgs) =>
+    createStandardPageLayoutTabFlatMetadata({
+      ...args,
+      context: {
+        layoutName: 'myFirstDashboard',
+        tabName: 'tab1',
+        title: 'Tab 1', // TODO: ask Thomas to provide the appropriate title
+        position: 0,
+      },
+    }),
 } satisfies {
-  [L in AllStandardPageLayoutName]: {
-    [T in AllStandardPageLayoutTabName<L>]: (
-      args: TabBuilderArgs,
-    ) => FlatPageLayoutTab;
-  };
+  [T in AllStandardPageLayoutTabName<AllStandardPageLayoutName>]: (
+    args: TabBuilderArgs,
+  ) => FlatPageLayoutTab;
 };
