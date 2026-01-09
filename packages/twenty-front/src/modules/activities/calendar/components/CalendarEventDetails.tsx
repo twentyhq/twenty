@@ -1,6 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -126,14 +127,19 @@ export const CalendarEventDetails = ({
   });
 
   const useUpdateOneCalendarEventRecordMutation: RecordUpdateHook = () => {
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      if (!updateOneRecord) return;
+
+      setIsUpdating(true);
+      void updateOneRecord({
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
-      });
+      }).finally(() => setIsUpdating(false));
     };
 
-    return [updateEntity, { loading: false }];
+    return [updateEntity, { loading: isUpdating }];
   };
 
   const objectPermissions = useObjectPermissionsForObject(
