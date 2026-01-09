@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -10,8 +13,10 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldType';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -72,6 +77,34 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
+    const currentRecordFilters = useRecoilComponentValue(
+      currentRecordFiltersComponentState,
+    );
+
+    const recordFilter = currentRecordFilters.find(
+      (filter) => filter.id === recordFilterId,
+    );
+
+    const selectedFieldType = selectedFieldMetadataItem?.type;
+    const selectedSubFieldName = recordFilter?.subFieldName;
+
+    let targetFieldType: FieldMetadataType | null = null;
+
+    if (isDefined(selectedFieldType)) {
+      if (
+        isCompositeFieldType(selectedFieldType) &&
+        isDefined(selectedFieldMetadataItem) &&
+        isDefined(selectedSubFieldName)
+      ) {
+        targetFieldType = getCompositeSubFieldType(
+          selectedFieldMetadataItem,
+          selectedSubFieldName,
+        );
+      } else {
+        targetFieldType = selectedFieldType;
+      }
+    }
+
     const compatibleWorkspaceMemberFields = !workspaceMemberMetadataItem
       ? []
       : workspaceMemberMetadataItem.fields.filter((field) => {
@@ -84,17 +117,29 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
             return false;
           }
 
-          const selectedFieldType = selectedFieldMetadataItem?.type;
-
-          if (!selectedFieldType) {
+          if (!targetFieldType) {
             return true;
           }
 
-          if (selectedFieldType === FieldMetadataType.RELATION) {
+          if (targetFieldType === FieldMetadataType.RELATION) {
             return false;
           }
 
-          return field.type === selectedFieldType;
+          if (field.type === targetFieldType) {
+            return true;
+          }
+
+          if (isCompositeFieldType(field.type)) {
+            const fieldCompositeType = compositeTypeDefinitions.get(field.type);
+
+            if (isDefined(fieldCompositeType)) {
+              return fieldCompositeType.properties.some(
+                (property) => property.type === targetFieldType,
+              );
+            }
+          }
+
+          return false;
         });
 
     const handleSelectField = (
@@ -140,11 +185,34 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           ];
 
         if (isDefined(compositeConfig)) {
+          const compositeType = compositeTypeDefinitions.get(field.type);
+
           const filterableSubFields = compositeConfig.subFields.filter(
-            (subField) => subField.isFilterable === true,
+            (subField) => {
+              if (!subField.isFilterable) {
+                return false;
+              }
+
+              const subFieldProperty = compositeType?.properties.find(
+                (property) => property.name === subField.subFieldName,
+              );
+
+              return subFieldProperty?.type !== FieldMetadataType.RAW_JSON;
+            },
           );
 
           for (const subField of filterableSubFields) {
+            if (isDefined(targetFieldType)) {
+              const subFieldType = getCompositeSubFieldType(
+                field,
+                subField.subFieldName,
+              );
+
+              if (subFieldType !== targetFieldType) {
+                continue;
+              }
+            }
+
             menuItems.push({
               id: `${field.id}-${subField.subFieldName}`,
               label: `${field.label} / ${getCompositeSubFieldLabel(
@@ -174,8 +242,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           item.label.toLowerCase().includes(searchInput.toLowerCase()),
         );
 
-    const fieldTypeLabel = selectedFieldMetadataItem?.type
-      ? getFieldMetadataTypeLabel(selectedFieldMetadataItem.type)
+    const fieldTypeLabel = targetFieldType
+      ? getFieldMetadataTypeLabel(targetFieldType)
       : '';
 
     const fieldTypeLabelLowercase = fieldTypeLabel?.toLowerCase() ?? '';

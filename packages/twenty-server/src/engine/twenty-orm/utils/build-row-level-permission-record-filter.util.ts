@@ -5,6 +5,7 @@ import {
   type CompositeFieldSubFieldName,
   type PartialFieldMetadataItemOption,
   type RecordGqlOperationFilter,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -116,10 +117,7 @@ export const buildRowLevelPermissionRecordFilter = ({
         }
 
         if (!isDefined(predicateValue)) {
-          throw new PermissionsException(
-            `Workspace member data missing for field ${workspaceMemberFieldMetadata.name}`,
-            PermissionsExceptionCode.INVALID_ARG,
-          );
+          return null;
         }
       }
 
@@ -127,10 +125,20 @@ export const buildRowLevelPermissionRecordFilter = ({
         | CompositeFieldSubFieldName
         | undefined;
 
+      let filterValue = convertViewFilterValueToString(predicateValue);
+
+      if (
+        (fieldMetadata.type === FieldMetadataType.SELECT ||
+          fieldMetadata.type === FieldMetadataType.MULTI_SELECT) &&
+        typeof predicateValue === 'string'
+      ) {
+        filterValue = JSON.stringify([predicateValue]);
+      }
+
       return {
         id: predicate.id,
         fieldMetadataId: predicate.fieldMetadataId,
-        value: convertViewFilterValueToString(predicateValue),
+        value: filterValue,
         type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: predicate.operand as unknown as RecordFilter['operand'],
         recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,

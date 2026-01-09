@@ -46,6 +46,7 @@ export class GraphqlQueryFilterFieldParser {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filterValue: any,
     isFirst = false,
+    useDirectTableReference = false,
   ): void {
     const fieldMetadataId =
       this.fieldIdByName[`${key}`] || this.fieldIdByJoinColumnName[`${key}`];
@@ -63,6 +64,7 @@ export class GraphqlQueryFilterFieldParser {
         objectNameSingular,
         filterValue,
         isFirst,
+        useDirectTableReference,
       );
     }
     const [[operator, value]] = Object.entries(filterValue);
@@ -83,6 +85,7 @@ export class GraphqlQueryFilterFieldParser {
       key,
       value,
       fieldMetadataType: fieldMetadata.type,
+      useDirectTableReference,
     });
 
     if (isFirst) {
@@ -99,6 +102,7 @@ export class GraphqlQueryFilterFieldParser {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
     isFirst = false,
+    useDirectTableReference = false,
   ): void {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
@@ -146,6 +150,7 @@ export class GraphqlQueryFilterFieldParser {
         subFieldKey,
         value,
         fieldMetadataType: fieldMetadata.type,
+        useDirectTableReference,
       });
 
       if (isFirst && index === 0) {

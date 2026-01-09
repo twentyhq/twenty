@@ -57,26 +57,24 @@ export const createRecordLevelPermissionVariablePicker = (
     const theme = useTheme();
 
     return (
-      <StyledRecordLevelPermissionPickerContainer
-        multiline={multiline}
-        readonly={disabled}
-      >
-        <Dropdown
-          dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
-          clickableComponent={
-            <div>
-              <IconVariablePlus size={theme.icon.size.sm} />
-            </div>
-          }
-          dropdownComponents={
-            <SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect
-              onSelect={onMeSelect}
-              recordFilterId={recordFilterId}
-            />
-          }
-          dropdownPlacement="bottom-end"
-        />
-      </StyledRecordLevelPermissionPickerContainer>
+      <Dropdown
+        dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
+        clickableComponent={
+          <StyledRecordLevelPermissionPickerContainer
+            multiline={multiline}
+            readonly={disabled}
+          >
+            <IconVariablePlus size={theme.icon.size.sm} />
+          </StyledRecordLevelPermissionPickerContainer>
+        }
+        dropdownComponents={
+          <SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect
+            onSelect={onMeSelect}
+            recordFilterId={recordFilterId}
+          />
+        }
+        dropdownPlacement="bottom-end"
+      />
     );
   };
 

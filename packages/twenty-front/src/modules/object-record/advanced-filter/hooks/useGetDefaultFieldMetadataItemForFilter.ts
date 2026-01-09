@@ -15,6 +15,10 @@ export const useGetDefaultFieldMetadataItemForFilter = () => {
           }),
         );
 
+        const fieldMetadataItemForId = availableFieldMetadataItemsForFilter.find(
+          (fieldMetadataItem) => fieldMetadataItem.name === 'id',
+        );
+
         const fieldMetadataItemForLabelIdentifier =
           availableFieldMetadataItemsForFilter.find(
             (fieldMetadataItem) =>
@@ -28,7 +32,9 @@ export const useGetDefaultFieldMetadataItemForFilter = () => {
             | undefined;
 
         const defaultFieldMetadataItemForFilter =
-          fieldMetadataItemForLabelIdentifier ?? firstFieldMetadataItem;
+          fieldMetadataItemForId ??
+          fieldMetadataItemForLabelIdentifier ??
+          firstFieldMetadataItem;
 
         return { defaultFieldMetadataItemForFilter };
       },

@@ -25,32 +25,25 @@ export const SettingsRolesQueryEffect = () => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
         roles.forEach((role) => {
-          // Normalize null values to empty arrays for RLS fields
-          const normalizedRole: RoleWithPartialMembers = {
-            ...role,
-            rowLevelPermissionPredicates:
-              role.rowLevelPermissionPredicates ?? [],
-            rowLevelPermissionPredicateGroups:
-              role.rowLevelPermissionPredicateGroups ?? [],
-          };
-
           const persistedRole = getSnapshotValue(
             snapshot,
-            settingsPersistedRoleFamilyState(normalizedRole.id),
+            settingsPersistedRoleFamilyState(role.id),
           );
 
-          if (isDeeplyEqual(normalizedRole, persistedRole)) {
+          const currentDraftRole = getSnapshotValue(
+            snapshot,
+            settingsDraftRoleFamilyState(role.id),
+          );
+
+          if (isDeeplyEqual(role, persistedRole)) {
             return;
           }
 
-          set(
-            settingsPersistedRoleFamilyState(normalizedRole.id),
-            normalizedRole,
-          );
+          set(settingsPersistedRoleFamilyState(role.id), role);
 
-          // Always sync draft to server state when persisted state changes
-          // This ensures draft matches server after saves and prevents stale isDirty checks
-          set(settingsDraftRoleFamilyState(normalizedRole.id), normalizedRole);
+          if (!isDeeplyEqual(currentDraftRole, role)) {
+            set(settingsDraftRoleFamilyState(role.id), role);
+          }
         });
       },
     [],

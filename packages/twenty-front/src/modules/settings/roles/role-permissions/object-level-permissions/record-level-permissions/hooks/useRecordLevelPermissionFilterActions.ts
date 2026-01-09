@@ -34,12 +34,6 @@ export const useRecordLevelPermissionFilterActions = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
-  );
-
   const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -47,13 +41,6 @@ export const useRecordLevelPermissionFilterActions = ({
   const { lastChildPosition } = useChildRecordFiltersAndRecordFilterGroups({
     recordFilterGroupId: rootRecordFilterGroup?.id,
   });
-
-  const defaultFieldMetadataItem =
-    availableFieldMetadataItemsForFilter.find(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.id ===
-        objectMetadataItem?.labelIdentifierFieldMetadataId,
-    ) ?? availableFieldMetadataItemsForFilter[0];
 
   const handleCreateFirstFilter = () => {
     if (isDefined(rootRecordFilterGroup)) {
@@ -67,12 +54,15 @@ export const useRecordLevelPermissionFilterActions = ({
 
     upsertRecordFilterGroup(newRecordFilterGroup);
 
-    if (!isDefined(defaultFieldMetadataItem)) {
+    const { defaultFieldMetadataItemForFilter } =
+      getDefaultFieldMetadataItemForFilter(objectMetadataItem);
+
+    if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default filter definition');
     }
 
     const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-      defaultFieldMetadataItem,
+      defaultFieldMetadataItemForFilter,
     );
 
     newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;

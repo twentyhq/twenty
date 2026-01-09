@@ -294,7 +294,6 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    // Get existing predicates and groups for this role and object
     const existingPredicates = Object.values(
       flatRowLevelPermissionPredicateMaps.byId,
     )
@@ -312,7 +311,6 @@ export class RowLevelPermissionPredicateService {
       .filter(isDefined)
       .filter((group) => group.deletedAt === null && group.roleId === roleId);
 
-    // Compute operations for predicate groups
     const { groupsToCreate, groupsToUpdate, groupsToDelete } =
       this.computePredicateGroupOperations({
         existingGroups,
@@ -322,7 +320,6 @@ export class RowLevelPermissionPredicateService {
         flatRowLevelPermissionPredicateGroupMaps,
       });
 
-    // Compute operations for predicates
     const { predicatesToCreate, predicatesToUpdate, predicatesToDelete } =
       this.computePredicateOperations({
         existingPredicates,
@@ -333,7 +330,6 @@ export class RowLevelPermissionPredicateService {
         flatRowLevelPermissionPredicateMaps,
       });
 
-    // Run migrations for groups and predicates
     await this.runUpsertMigration({
       workspaceId,
       predicatesToCreate,
@@ -344,7 +340,6 @@ export class RowLevelPermissionPredicateService {
       groupsToDelete,
     });
 
-    // Fetch and return updated data
     const {
       flatRowLevelPermissionPredicateMaps: updatedPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps: updatedGroupMaps,
@@ -412,7 +407,6 @@ export class RowLevelPermissionPredicateService {
         flatRowLevelPermissionPredicateGroupMaps.byId[groupId];
 
       if (isDefined(existingGroup) && existingGroup.deletedAt === null) {
-        // Update existing group
         groupsToUpdate.push({
           ...existingGroup,
           logicalOperator: inputGroup.logicalOperator,
@@ -423,7 +417,6 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
         });
       } else {
-        // Create new group (either no ID provided or ID not found in DB)
         groupsToCreate.push({
           id: groupId,
           workspaceId,
@@ -444,7 +437,6 @@ export class RowLevelPermissionPredicateService {
       }
     }
 
-    // Mark groups for deletion (soft delete)
     const groupsToDelete = existingGroups
       .filter((group) => !inputGroupIds.has(group.id))
       .map((group) => ({
@@ -497,7 +489,6 @@ export class RowLevelPermissionPredicateService {
         isDefined(existingPredicate) &&
         existingPredicate.deletedAt === null
       ) {
-        // Update existing predicate
         predicatesToUpdate.push({
           ...existingPredicate,
           fieldMetadataId: inputPredicate.fieldMetadataId,
@@ -515,7 +506,6 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
         });
       } else {
-        // Create new predicate (either no ID provided or ID not found in DB)
         predicatesToCreate.push({
           id: predicateId,
           workspaceId,
@@ -542,7 +532,6 @@ export class RowLevelPermissionPredicateService {
       }
     }
 
-    // Mark predicates for deletion (soft delete)
     const predicatesToDelete = existingPredicates
       .filter((predicate) => !inputPredicateIds.has(predicate.id))
       .map((predicate) => ({

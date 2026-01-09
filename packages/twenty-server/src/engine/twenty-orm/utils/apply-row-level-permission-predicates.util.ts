@@ -59,6 +59,11 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
     return;
   }
 
+  const isUpdateOrDeleteQuery =
+    queryBuilder.expressionMap.queryType === 'update' ||
+    queryBuilder.expressionMap.queryType === 'soft-delete' ||
+    queryBuilder.expressionMap.queryType === 'delete';
+
   applyObjectRecordFilterToQueryBuilder({
     queryBuilder,
     objectNameSingular: objectMetadata.nameSingular,
@@ -67,6 +72,7 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
       objectMetadata,
       internalContext.flatFieldMetadataMaps,
     ),
+    useDirectTableReference: isUpdateOrDeleteQuery,
   });
 };
 
@@ -75,11 +81,13 @@ const applyObjectRecordFilterToQueryBuilder = <T extends ObjectLiteral>({
   objectNameSingular,
   recordFilter,
   fieldParser,
+  useDirectTableReference = false,
 }: {
   queryBuilder: WorkspaceSelectQueryBuilder<T>;
   objectNameSingular: string;
   recordFilter: Record<string, unknown>;
   fieldParser: GraphqlQueryFilterFieldParser;
+  useDirectTableReference?: boolean;
 }): void => {
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
     return;
@@ -94,6 +102,7 @@ const applyObjectRecordFilterToQueryBuilder = <T extends ObjectLiteral>({
         value,
         isFirst: index === 0,
         fieldParser,
+        useDirectTableReference,
       });
     });
   });
@@ -112,6 +121,7 @@ const parseKeyFilter = ({
   value,
   isFirst,
   fieldParser,
+  useDirectTableReference = false,
 }: {
   queryBuilder: WhereExpressionBuilder;
   objectNameSingular: string;
@@ -120,6 +130,7 @@ const parseKeyFilter = ({
   value: any;
   isFirst: boolean;
   fieldParser: GraphqlQueryFilterFieldParser;
+  useDirectTableReference?: boolean;
 }): void => {
   switch (key) {
     case 'and': {
@@ -135,6 +146,7 @@ const parseKeyFilter = ({
                   value: subFilterValue,
                   isFirst: subIndex === 0,
                   fieldParser,
+                  useDirectTableReference,
                 });
               },
             );
@@ -168,6 +180,7 @@ const parseKeyFilter = ({
                   value: subFilterValue,
                   isFirst: subIndex === 0,
                   fieldParser,
+                  useDirectTableReference,
                 });
               },
             );
@@ -200,6 +213,7 @@ const parseKeyFilter = ({
               value: subFilterValue,
               isFirst: subIndex === 0,
               fieldParser,
+              useDirectTableReference,
             });
           },
         );
@@ -214,7 +228,14 @@ const parseKeyFilter = ({
       break;
     }
     default:
-      fieldParser.parse(queryBuilder, objectNameSingular, key, value, isFirst);
+      fieldParser.parse(
+        queryBuilder,
+        objectNameSingular,
+        key,
+        value,
+        isFirst,
+        useDirectTableReference,
+      );
       break;
   }
 };

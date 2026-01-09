@@ -1,6 +1,10 @@
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -91,10 +95,24 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
       return null;
     }
 
+    const compositeType = compositeTypeDefinitions.get(
+      objectFilterDropdownSubMenuFieldType as FieldMetadataType,
+    );
+
     const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
       objectFilterDropdownSubMenuFieldType
     ].subFields
-      .filter((subField) => subField.isFilterable === true)
+      .filter((subField) => {
+        if (!subField.isFilterable) {
+          return false;
+        }
+
+        const subFieldProperty = compositeType?.properties.find(
+          (property) => property.name === subField.subFieldName,
+        );
+
+        return subFieldProperty?.type !== FieldMetadataType.RAW_JSON;
+      })
       .map((subField) => subField.subFieldName);
 
     const subFieldsAreFilterable =

@@ -1048,7 +1048,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
           ///
 
-          // Row level permission predicate groups (must be created before predicates due to FK constraint)
+          // Row level permission predicate groups
           ...aggregatedOrchestratorActionsReport
             .rowLevelPermissionPredicateGroup.delete,
           ...aggregatedOrchestratorActionsReport
@@ -1057,7 +1057,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .rowLevelPermissionPredicateGroup.update,
           ///
 
-          // Row level permission predicates (depends on groups)
+          // Row level permission predicates
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
             .delete,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
