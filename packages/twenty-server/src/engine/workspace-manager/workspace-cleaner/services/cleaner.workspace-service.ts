@@ -70,7 +70,7 @@ export class CleanerWorkspaceService {
       );
   }
 
-  async computeDaysSinceSubscriptionUnpaid(
+  async computeDaysSinceSubscriptionUnpaidOrThrow(
     workspace: WorkspaceEntity,
   ): Promise<number> {
     try {
@@ -383,7 +383,7 @@ export class CleanerWorkspaceService {
         }
 
         const workspaceInactivity =
-          await this.computeDaysSinceSubscriptionUnpaid(workspace);
+          await this.computeDaysSinceSubscriptionUnpaidOrThrow(workspace);
 
         if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
