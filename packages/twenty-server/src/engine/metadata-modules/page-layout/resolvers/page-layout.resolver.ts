@@ -56,11 +56,14 @@ export class PageLayoutResolver {
   @UseGuards(NoPermissionGuard)
   async getPageLayout(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('withSoftDeleted', { type: () => Boolean, nullable: true })
+    withSoftDeleted?: boolean,
+    @AuthWorkspace() workspace?: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
     return this.pageLayoutService.findByIdOrThrow({
       id,
-      workspaceId: workspace.id,
+      workspaceId: workspace!.id,
+      withSoftDeleted: withSoftDeleted ?? false,
     });
   }
 

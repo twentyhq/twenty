@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,6 +18,8 @@ import {
   type UpdatePageLayoutInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
+import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
+import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
@@ -38,14 +40,14 @@ import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashbo
 
 @Injectable()
 export class PageLayoutService {
-  private readonly logger = new Logger(PageLayoutService.name);
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly dashboardSyncService: DashboardSyncService,
+    private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly pageLayoutWidgetService: PageLayoutWidgetService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<PageLayoutDTO[]> {
@@ -105,9 +107,11 @@ export class PageLayoutService {
   async findByIdOrThrow({
     id,
     workspaceId,
+    withSoftDeleted = false,
   }: {
     id: string;
     workspaceId: string;
+    withSoftDeleted?: boolean;
   }): Promise<PageLayoutDTO> {
     const {
       flatPageLayoutMaps,
@@ -117,7 +121,11 @@ export class PageLayoutService {
 
     const flatLayout = flatPageLayoutMaps.byId[id];
 
-    if (!isDefined(flatLayout) || isDefined(flatLayout.deletedAt)) {
+    const isLayoutNotFound =
+      !isDefined(flatLayout) ||
+      (!withSoftDeleted && isDefined(flatLayout.deletedAt));
+
+    if (isLayoutNotFound) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(
           PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
@@ -132,6 +140,7 @@ export class PageLayoutService {
         layout: flatLayout,
         flatPageLayoutTabMaps,
         flatPageLayoutWidgetMaps,
+        withSoftDeleted,
       }),
     );
   }
@@ -351,17 +360,24 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    if (
-      deletedLayout.type === PageLayoutType.DASHBOARD &&
-      !isLinkedDashboardAlreadyDeleted
-    ) {
-      await this.deleteAssociatedDashboards({
+    if (deletedLayout.type === PageLayoutType.DASHBOARD) {
+      const deletedAt = isDefined(deletedLayout.deletedAt)
+        ? new Date(deletedLayout.deletedAt)
+        : new Date();
+
+      await this.deleteAssociatedTabsAndWidgets({
         pageLayoutId: id,
         workspaceId,
-        deletedAt: isDefined(deletedLayout.deletedAt)
-          ? new Date(deletedLayout.deletedAt)
-          : new Date(),
+        deletedAt,
       });
+
+      if (!isLinkedDashboardAlreadyDeleted) {
+        await this.deleteAssociatedDashboards({
+          pageLayoutId: id,
+          workspaceId,
+          deletedAt,
+        });
+      }
     }
 
     return fromFlatPageLayoutToPageLayoutDto(deletedLayout);
@@ -483,14 +499,18 @@ export class PageLayoutService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    if (
-      restoredLayout.type === PageLayoutType.DASHBOARD &&
-      !isLinkedDashboardAlreadyRestored
-    ) {
-      await this.restoreAssociatedDashboards({
+    if (restoredLayout.type === PageLayoutType.DASHBOARD) {
+      await this.restoreAssociatedTabsAndWidgets({
         pageLayoutId: id,
         workspaceId,
       });
+
+      if (!isLinkedDashboardAlreadyRestored) {
+        await this.restoreAssociatedDashboards({
+          pageLayoutId: id,
+          workspaceId,
+        });
+      }
     }
 
     return fromFlatPageLayoutToPageLayoutDto(restoredLayout);
@@ -526,6 +546,28 @@ export class PageLayoutService {
         }
       },
     );
+  }
+
+  private async deleteAssociatedTabsAndWidgets({
+    pageLayoutId,
+    workspaceId,
+    deletedAt,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+    deletedAt: Date;
+  }): Promise<void> {
+    const deletedTabIds = await this.pageLayoutTabService.deleteByPageLayoutId({
+      pageLayoutId,
+      workspaceId,
+      deletedAt,
+    });
+
+    await this.pageLayoutWidgetService.deleteByTabIds({
+      tabIds: deletedTabIds,
+      workspaceId,
+      deletedAt,
+    });
   }
 
   private async deleteAssociatedDashboards({
@@ -576,5 +618,24 @@ export class PageLayoutService {
         await dashboardRepository.update({ pageLayoutId }, { deletedAt: null });
       },
     );
+  }
+
+  private async restoreAssociatedTabsAndWidgets({
+    pageLayoutId,
+    workspaceId,
+  }: {
+    pageLayoutId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const restoredTabIds =
+      await this.pageLayoutTabService.restoreByPageLayoutId({
+        pageLayoutId,
+        workspaceId,
+      });
+
+    await this.pageLayoutWidgetService.restoreByTabIds({
+      tabIds: restoredTabIds,
+      workspaceId,
+    });
   }
 }

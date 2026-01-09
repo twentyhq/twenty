@@ -58,11 +58,13 @@ const getDefaultLayoutById = (layoutId: string): PageLayout => {
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
   onInitialized?: (pageLayout: PageLayout) => void;
+  withSoftDeleted?: boolean;
 };
 
 export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
   onInitialized,
+  withSoftDeleted = false,
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -80,6 +82,7 @@ export const PageLayoutInitializationQueryEffect = ({
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {
       id: pageLayoutId,
+      withSoftDeleted,
     },
     skip: isDefaultLayout,
   });

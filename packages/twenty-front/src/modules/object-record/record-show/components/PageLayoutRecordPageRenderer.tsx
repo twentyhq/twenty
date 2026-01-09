@@ -93,7 +93,10 @@ export const PageLayoutRecordPageRenderer = ({
             }}
           >
             {isDefined(pageLayoutId) && (
-              <PageLayoutRenderer pageLayoutId={pageLayoutId} />
+              <PageLayoutRenderer
+                pageLayoutId={pageLayoutId}
+                withSoftDeleted={isDefined(recordDeletedAt)}
+              />
             )}
           </LayoutRenderingProvider>
         </StyledContentContainer>

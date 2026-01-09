@@ -3462,6 +3462,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
+  withSoftDeleted?: InputMaybe<Scalars['Boolean']>;
 };
 
 
