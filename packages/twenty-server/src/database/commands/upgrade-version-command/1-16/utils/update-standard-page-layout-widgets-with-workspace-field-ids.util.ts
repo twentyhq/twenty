@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type RecordFilter } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -286,7 +286,7 @@ const updateDealsCreatedThisMonthWidget = ({
   });
 
   const updatedRecordFilters = widget.configuration.filter?.recordFilters?.map(
-    (filter: any) => ({
+    (filter: RecordFilter) => ({
       ...filter,
       fieldMetadataId: opportunityCreatedAtField.id,
     }),
@@ -347,7 +347,7 @@ const updateDealValueCreatedThisMonthWidget = ({
   });
 
   const updatedRecordFilters = widget.configuration.filter?.recordFilters?.map(
-    (filter: any) => ({
+    (filter: RecordFilter) => ({
       ...filter,
       fieldMetadataId: opportunityCreatedAtField.id,
     }),
