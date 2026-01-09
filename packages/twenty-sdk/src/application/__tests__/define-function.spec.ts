@@ -139,7 +139,7 @@ describe('defineFunction', () => {
     );
   });
 
-  it('should throw error when triggers is empty', () => {
+  it('should accept empty triggers array', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
@@ -147,21 +147,21 @@ describe('defineFunction', () => {
       triggers: [],
     };
 
-    expect(() => defineFunction(config as any)).toThrow(
-      'Function must have at least one trigger',
-    );
+    const result = defineFunction(config as any);
+
+    expect(result.triggers).toEqual([]);
   });
 
-  it('should throw error when triggers is missing', () => {
+  it('should accept missing triggers', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
       handler: mockHandler,
     };
 
-    expect(() => defineFunction(config as any)).toThrow(
-      'Function must have at least one trigger',
-    );
+    const result = defineFunction(config as any);
+
+    expect(result.triggers).toBeUndefined();
   });
 
   it('should throw error when trigger is missing universalIdentifier', () => {
