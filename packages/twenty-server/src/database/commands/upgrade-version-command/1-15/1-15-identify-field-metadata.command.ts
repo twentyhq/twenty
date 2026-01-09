@@ -17,15 +17,7 @@ import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standar
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import {
-  ATTACHMENT_STANDARD_FIELD_IDS,
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  COMPANY_STANDARD_FIELD_IDS,
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  OPPORTUNITY_STANDARD_FIELD_IDS,
-  PERSON_STANDARD_FIELD_IDS,
-  WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { ATTACHMENT_STANDARD_FIELD_IDS, BASE_OBJECT_STANDARD_FIELD_IDS, COMPANY_STANDARD_FIELD_IDS, CUSTOM_OBJECT_STANDARD_FIELD_IDS, OPPORTUNITY_STANDARD_FIELD_IDS, PERSON_STANDARD_FIELD_IDS, WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type CustomFieldMetadata = {
   fieldMetadataEntity: FieldMetadataEntity;
