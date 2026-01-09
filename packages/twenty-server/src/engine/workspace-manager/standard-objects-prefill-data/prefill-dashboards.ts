@@ -41,6 +41,7 @@ export const prefillDashboards = async (
       'updatedBySource',
       'updatedByWorkspaceMemberId',
       'updatedByName',
+      'updatedByContext',
     ])
     .orIgnore()
     .values([
@@ -56,6 +57,7 @@ export const prefillDashboards = async (
         updatedBySource: FieldActorSource.SYSTEM,
         updatedByWorkspaceMemberId: null,
         updatedByName: 'System',
+        updatedByContext: {},
       },
     ])
     .returning('*')
