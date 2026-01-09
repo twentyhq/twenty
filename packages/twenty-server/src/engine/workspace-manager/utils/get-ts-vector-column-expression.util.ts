@@ -107,7 +107,7 @@ const getColumnExpressionsFromField = (
 
       // Convert JSONB array of additional emails to searchable text
       // Example: ["email1@example.com","email2@example.com"] -> "email1@example.com email2@example.com"
-      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]"', '   ')), '')`;
+      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '')`;
 
       return [...baseExpressions, additionalEmailsExpression];
     }

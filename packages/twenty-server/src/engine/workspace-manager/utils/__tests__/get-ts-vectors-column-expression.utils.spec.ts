@@ -133,7 +133,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     // Should include additional emails converted from JSON array
     expect(result).toContain('emailsAdditionalEmails');
     expect(result).toContain(
-      "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\"', '   ')), '')",
+      "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '')",
     );
   });
 
@@ -214,7 +214,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       // Count COALESCE with empty string fallback patterns for JSON columns
       // Each JSON column should have a COALESCE(..., '') pattern
       const additionalEmailsCoalesce = result.includes(
-        "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\"', '   ')), '')",
+        "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '')",
       );
       const additionalPhonesCoalesce = result.includes(
         "COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
