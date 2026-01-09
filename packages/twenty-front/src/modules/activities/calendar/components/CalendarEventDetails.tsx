@@ -136,7 +136,9 @@ export const CalendarEventDetails = ({
     return [updateEntity, { loading: false }];
   };
 
-  const objectPermissions = useObjectPermissionsForObject(objectMetadataItem.id);
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
   const isRecordDeleted = useIsRecordDeleted({ recordId: calendarEvent.id });
 
   const isFieldReadOnly = (fieldMetadataItem: FieldMetadataItem) => {
