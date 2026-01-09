@@ -157,7 +157,7 @@ export class ConfigVariables {
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
-  IS_IMAP_SMTP_CALDAV_ENABLED = false;
+  IS_IMAP_SMTP_CALDAV_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
@@ -1392,16 +1392,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
-    description:
-      'Enable or disable workspace creation through v2 workspaceMigration',
-    type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  IS_WORKSPACE_CREATION_V2_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,

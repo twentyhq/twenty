@@ -4,12 +4,13 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
+import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
-import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
-import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
 import {
   type FirstDayOfTheWeek,
   isDefined,
@@ -38,6 +39,7 @@ type TransformGroupByDataToLineChartDataResult = {
   showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
 };
 
 const EMPTY_LINE_CHART_RESULT: Omit<
@@ -49,6 +51,7 @@ const EMPTY_LINE_CHART_RESULT: Omit<
   showLegend: true,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
+  colorMode: 'automaticPalette',
 };
 
 export const transformGroupByDataToLineChartData = ({
@@ -82,19 +85,12 @@ export const transformGroupByDataToLineChartData = ({
   const queryResultGqlFieldName =
     getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData?.[queryResultGqlFieldName];
-  const hasNoData =
-    !isDefined(groupByData) ||
-    !isDefined(rawResults) ||
-    !Array.isArray(rawResults) ||
-    rawResults.length === 0;
 
   const showXAxis =
-    hasNoData ||
     configuration.axisNameDisplay === AxisNameDisplay.X ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
 
   const showYAxis =
-    hasNoData ||
     configuration.axisNameDisplay === AxisNameDisplay.Y ||
     configuration.axisNameDisplay === AxisNameDisplay.BOTH;
 

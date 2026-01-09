@@ -1,8 +1,9 @@
+import { isDefined } from 'class-validator';
 import { type DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
+import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 import { getPageLayoutWidgetDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds.util';
 
 export const seedPageLayoutWidgets = async ({
@@ -26,26 +27,22 @@ export const seedPageLayoutWidgets = async ({
     isDashboardV2Enabled,
   );
 
-  const pageLayoutWidgets = await Promise.all(
-    widgetSeeds.map(async (widget) => {
-      const validatedConfiguration = widget.configuration
-        ? await validateAndTransformWidgetConfiguration({
-            type: widget.type,
-            configuration: widget.configuration,
-            isDashboardV2Enabled,
-          })
-        : null;
+  const pageLayoutWidgets = widgetSeeds.map((widget) => {
+    if (isDefined(widget.configuration)) {
+      validateWidgetConfigurationInput({
+        configuration: widget.configuration,
+      });
+    }
 
-      return {
-        ...widget,
-        workspaceId,
-        gridPosition: widget.gridPosition,
-        configuration: validatedConfiguration,
-        universalIdentifier: v4(),
-        applicationId: workspaceCustomApplicationId,
-      };
-    }),
-  );
+    return {
+      ...widget,
+      workspaceId,
+      gridPosition: widget.gridPosition,
+      configuration: widget.configuration,
+      universalIdentifier: v4(),
+      applicationId: workspaceCustomApplicationId,
+    };
+  });
 
   if (pageLayoutWidgets.length > 0) {
     await dataSource

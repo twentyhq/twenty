@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -10,6 +11,7 @@ import { DashboardDuplicationService } from 'src/modules/dashboard/services/dash
 
 @Module({
   imports: [
+    ActorModule,
     AuthModule,
     PageLayoutModule,
     TwentyORMModule,

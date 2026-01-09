@@ -18,10 +18,11 @@ import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-co
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-delete-removed-agents.command';
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
+import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-add-workspace-foreign-keys-migration.command';
+import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
-import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-add-workspace-foreign-keys-migration.command';
-import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-updated-by-field.command';
+import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -57,10 +58,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.15 Commands
     protected readonly migratePageLayoutWidgetConfigurationCommand: MigratePageLayoutWidgetConfigurationCommand,
     protected readonly fixNanPositionValuesInNotesCommand: FixNanPositionValuesInNotesCommand,
-
-    // 1.16 Commands
     protected readonly backfillUpdatedByFieldCommand: BackfillUpdatedByFieldCommand,
     protected readonly addWorkspaceForeignKeysMigrationCommand: AddWorkspaceForeignKeysMigrationCommand,
+
+    // 1.16 Commands
+    protected readonly updateTaskOnDeleteActionCommand: UpdateTaskOnDeleteActionCommand,
   ) {
     super(
       workspaceRepository,
@@ -90,11 +92,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1150: VersionCommands = [
       this.migratePageLayoutWidgetConfigurationCommand,
       this.fixNanPositionValuesInNotesCommand,
+      this.backfillUpdatedByFieldCommand,
+      this.addWorkspaceForeignKeysMigrationCommand,
     ];
 
     const commands_1160: VersionCommands = [
-      this.backfillUpdatedByFieldCommand,
-      this.addWorkspaceForeignKeysMigrationCommand,
+      this.updateTaskOnDeleteActionCommand,
     ];
 
     this.allCommands = {
