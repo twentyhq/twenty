@@ -15,9 +15,7 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = (
 ): FlatEntityMaps<FlatPageLayoutTab> => {
   const allPageLayoutTabMetadatas: FlatPageLayoutTab[] = Object.values(
     STANDARD_FLAT_PAGE_LAYOUT_TAB_BUILDERS_BY_LAYOUT_NAME,
-  ).flatMap((layoutTabs) =>
-    Object.values(layoutTabs).map((builder) => builder(args)),
-  );
+  ).flatMap((builder) => builder(args));
 
   let flatPageLayoutTabMaps = createEmptyFlatEntityMaps();
 
