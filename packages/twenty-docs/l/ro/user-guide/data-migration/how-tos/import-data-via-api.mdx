@@ -1,176 +1,176 @@
 ---
-title: Import Data via API
-description: When and how to use Twenty's APIs for large-scale data imports.
+title: Importați date prin API
+description: Când și cum să utilizați API-urile Twenty pentru importuri de date la scară mare.
 ---
 
 ## Prezentare generală
 
-Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+Twenty oferă atât **GraphQL**, cât și **API-uri REST** pentru importul programatic de date. Utilizați API-ul când importul CSV nu este practic pentru volumul dvs. de date sau când aveți nevoie de importuri automate, recurente.
 
-## When to Use API Import
+## Când să utilizați importul prin API
 
-| Scenario                           | Recommended Method            |
-| ---------------------------------- | ----------------------------- |
-| Under 10,000 records               | CSV Import                    |
-| 10,000 - 50,000 records            | CSV Import (split into files) |
-| **50,000+ records**                | **API Import**                |
-| One-time migration                 | Either (based on volume)      |
-| **Recurring imports**              | **API Import**                |
-| **Real-time sync**                 | **API Import**                |
-| **Integration with other systems** | **API Import**                |
+| Scenariu                         | Metodă recomandată               |
+| -------------------------------- | -------------------------------- |
+| Sub 10.000 de înregistrări       | Import CSV                       |
+| 10.000 - 50.000 de înregistrări  | Import CSV (împărțit în fișiere) |
+| **Peste 50.000 de înregistrări** | **Import prin API**              |
+| Migrare unică                    | Oricare (în funcție de volum)    |
+| **Importuri recurente**          | **Import prin API**              |
+| **Sincronizare în timp real**    | **Import prin API**              |
+| **Integrare cu alte sisteme**    | **Import prin API**              |
 
-<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+<Note>Pentru seturi de date de ordinul sutelor de mii, API-ul este semnificativ mai rapid și mai fiabil decât importurile CSV multiple.</Note>
 
-## API Rate Limits
+## Limitări de rată API
 
-Twenty enforces rate limits to ensure system stability:
+Twenty impune limitări de rată pentru a asigura stabilitatea sistemului:
 
-| Limit                      | Valoare               |
-| -------------------------- | --------------------- |
-| **Requests per minute**    | 100                   |
-| **Records per batch call** | 60                    |
-| **Maximum throughput**     | ~6,000 records/minute |
-
-<Warning>
-  **Plan your import around these limits.**
-
-  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
-</Warning>
-
-## Getting Started
-
-### Step 1: Get Your API Key
-
-1. Go to **Settings → Developers**
-2. Click **+ Create API key**
-3. Give your key a descriptive name
-4. Copy the API key immediately (it won't be shown again)
-5. Store it securely
+| Limită                           | Valoare                   |
+| -------------------------------- | ------------------------- |
+| **Cereri pe minut**              | 100                       |
+| **Înregistrări per apel de lot** | 60                        |
+| **Debit maxim**                  | ~6.000 înregistrări/minut |
 
 <Warning>
-  **Keep your API key secret.**
+  **Planificați importul în jurul acestor limite.**
 
-  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+  Pentru 100.000 de înregistrări la debit maxim, așteptați-vă la aproximativ 17 minute de timp de import. Adăugați timp tampon pentru gestionarea erorilor și reîncercări.
 </Warning>
 
-### Step 2: Choose Your API
+## Începeți
 
-Twenty supports two API types:
+### Pasul 1: Obțineți cheia API
 
-| API         | Best For                                                    | Documentație                                     |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/ro/developers/extend/capabilities/apis) |
-| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/ro/developers/extend/capabilities/apis) |
+1. Accesați **Setări → Dezvoltatori**
+2. Faceți clic pe **+ Creați cheie API**
+3. Dați cheii un nume descriptiv
+4. Copiați imediat cheia API (nu va mai fi afișată).
+5. Stocați-o în siguranță
 
-Both APIs support:
+<Warning>
+  **Păstrați cheia API secretă.**
 
-* Creating, reading, updating, and deleting records
-* **Batch operations** — create or update up to 60 records per call
+  Oricine are cheia dvs. API poate accesa și modifica datele din spațiul dvs. de lucru. Nu o includeți niciodată în repozitoare de cod și nu o distribuiți public.
+</Warning>
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+### Pasul 2: Alegeți API-ul
 
-### Step 3: Plan Your Import Order
+Twenty acceptă două tipuri de API:
 
-Just like CSV imports, **order matters** for relations:
+| API         | Cel mai potrivit pentru                                               | Documentație                                             |
+| ----------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
+| **GraphQL** | Interogări flexibile, preluarea datelor asociate, operațiuni complexe | [Documentație API](/l/ro/developers/extend/capabilities/apis) |
+| **REST**    | Operațiuni CRUD simple, tipare REST familiare                         | [Documentație API](/l/ro/developers/extend/capabilities/apis) |
 
-1. **Companies** first (no dependencies)
-2. **People** second (can link to Companies)
-3. **Opportunities** third (can link to Companies and People)
-4. **Tasks/Notes** (can link to any of the above)
-5. **Custom objects** (following their dependencies)
+Ambele API-uri acceptă:
+
+* Crearea, citirea, actualizarea și ștergerea înregistrărilor
+* **Operațiuni în lot** — creați sau actualizați până la 60 de înregistrări per apel
+
+**Pentru importuri, utilizați operațiuni în lot** pentru a maximiza debitul în limitele de rată.
+
+### Pasul 3: Planificați ordinea de import
+
+La fel ca la importurile CSV, **ordinea contează** pentru relații:
+
+1. **Companii** mai întâi (fără dependențe)
+2. **Persoane** în al doilea rând (pot fi legate de Companii)
+3. **Oportunități** în al treilea rând (pot fi legate de Companii și Persoane)
+4. **Sarcini/Note** (pot fi legate de oricare dintre cele de mai sus)
+5. **Obiecte personalizate** (respectând dependențele lor)
 
 ## Cele mai bune practici
 
-### Batch Your Requests
+### Grupați cererile în loturi
 
-* Don't send records one at a time
-* Group up to **60 records per API call**
-* This maximizes throughput within rate limits
+* Nu trimiteți înregistrările una câte una
+* Grupați până la **60 de înregistrări per apel API**
+* Aceasta maximizează debitul în limitele de rată
 
-### Handle Rate Limits
+### Gestionați limitările de rată
 
-* Implement delays between requests (600ms minimum for sustained imports)
-* Use exponential backoff when you hit limits
-* Monitor for 429 (Too Many Requests) responses
+* Implementați întârzieri între cereri (minim 600 ms pentru importuri susținute)
+* Utilizați backoff exponențial când atingeți limitele
+* Monitorizați răspunsurile 429 (Too Many Requests)
 
-### Validate Data First
+### Validați datele mai întâi
 
-* Clean and validate your data before importing
-* Check required fields are populated
-* Verify formats match Twenty's requirements (see [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping))
+* Curățați și validați datele înainte de import
+* Verificați ca câmpurile obligatorii să fie completate
+* Verificați că formatele corespund cerințelor Twenty (consultați [Maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping))
 
-### Log Everything
+### Jurnalizați totul
 
-* Log every record imported (including IDs)
-* Log errors with full context
-* This helps debug issues and verify completion
+* Jurnalizați fiecare înregistrare importată (inclusiv ID-urile)
+* Jurnalizați erorile cu tot contextul
+* Acest lucru ajută la depanarea problemelor și la verificarea finalizării
 
-### Test First
+### Testați mai întâi
 
-* Test with a small batch (10-20 records)
-* Verify data appears correctly in Twenty
-* Then run the full import
+* Testați cu un lot mic (10-20 de înregistrări)
+* Verificați că datele apar corect în Twenty
+* Apoi rulați importul complet
 
-### Upsert to Avoid Duplicates
+### Upsert pentru a evita duplicatele
 
-The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+API-ul GraphQL acceptă **upsert în lot** — actualizați dacă înregistrarea există, creați dacă nu. Acest lucru previne duplicatele când rulați din nou importurile.
 
-## Finding Object and Field Names
+## Găsirea numelor de obiecte și câmpuri
 
-To see available objects and fields:
+Pentru a vedea obiectele și câmpurile disponibile:
 
-1. Go to **Settings → API and Webhooks**
-2. Browse the **Metadata API**
-3. View all standard and custom objects with their fields
+1. Accesați **Setări → API și Webhooks**
+2. Explorați **Metadata API**
+3. Vizualizați toate obiectele standard și personalizate cu câmpurile lor
 
-The documentation shows all standard and custom objects, their fields, and the expected data types.
+Documentația prezintă toate obiectele standard și personalizate, câmpurile acestora și tipurile de date așteptate.
 
 ## Servicii Profesionale
 
-For complex API migrations, our partners can help:
+Pentru migrații API complexe, partenerii noștri vă pot ajuta:
 
-| Service                 | What's Included                    |
-| ----------------------- | ---------------------------------- |
-| **Data Model Design**   | design your optimal data structure |
-| **Migration Scripts**   | write and run the import scripts   |
-| **Data Transformation** | handle complex mapping and cleanup |
-| **Validation & QA**     | verify the migration is complete   |
+| Serviciu                          | Ce este inclus                           |
+| --------------------------------- | ---------------------------------------- |
+| **Proiectarea modelului de date** | proiectați structura optimă a datelor    |
+| **Scripturi de migrare**          | scrieți și rulați scripturile de import  |
+| **Transformare de date**          | gestionați maparea complexă și curățarea |
+| **Validare și QA**                | verificați că migrarea este completă     |
 
-**Best for:**
+**Cel mai potrivit pentru:**
 
-* Migrations of 100,000+ records
-* Complex data transformations
-* Tight timelines
-* Teams without developer resources
+* Migrări de peste 100.000 de înregistrări
+* Transformări complexe ale datelor
+* Termene strânse
+* Echipe fără resurse de dezvoltare
 
-Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ro/user-guide/getting-started/capabilities/implementation-services).
+Contactați-ne la [contact@twenty.com](mailto:contact@twenty.com) sau explorați [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services).
 
-## FAQ
+## Întrebări frecvente
 
 <AccordionGroup>
-  <Accordion title="What's the difference between GraphQL and REST?">
-    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  <Accordion title="Care este diferența dintre GraphQL și REST?">
+    GraphQL vă permite să solicitați exact datele de care aveți nevoie într-o singură interogare și este mai potrivit pentru operațiuni complexe. REST folosește metode HTTP standard (GET, POST, PUT, DELETE) și poate fi mai familiar dacă ați lucrat cu API-uri tradiționale.
   </Accordion>
 
-  <Accordion title="Can I update existing records via API?">
-    Da! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  <Accordion title="Pot actualiza înregistrările existente prin API?">
+    Da! Utilizați mutații de tip update (GraphQL) sau cereri PUT/PATCH (REST) cu `id`-ul înregistrării.
   </Accordion>
 
-  <Accordion title="How do I handle duplicates?">
-    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  <Accordion title="Cum gestionez duplicatele?">
+    Interogați mai întâi înregistrările existente folosind identificatori unici (email, domeniu). Actualizați dacă există, creați dacă nu.
   </Accordion>
 
-  <Accordion title="Can I delete records via API?">
-    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  <Accordion title="Pot șterge înregistrări prin API?">
+    Da, utilizați mutații de tip delete (GraphQL) sau cereri DELETE (REST).
   </Accordion>
 
-  <Accordion title="Is there a Python or Node.js SDK?">
-    Not currently, but both APIs work with any HTTP client in any language.
+  <Accordion title="Există un SDK pentru Python sau Node.js?">
+    În prezent nu, dar ambele API-uri funcționează cu orice client HTTP, în orice limbaj.
   </Accordion>
 </AccordionGroup>
 
-## API Documentation
+## Documentație API
 
-For full implementation details, code examples, and schema reference:
+Pentru detalii complete de implementare, exemple de cod și referință de schemă:
 
-* [API Documentation](/l/ro/developers/extend/capabilities/apis)
+* [Documentație API](/l/ro/developers/extend/capabilities/apis)
