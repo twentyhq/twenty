@@ -9,7 +9,11 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
-import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
+import {
+  GraphqlQueryOrderFieldParser,
+  type OrderByCondition,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
@@ -26,6 +30,7 @@ export class GraphqlQueryParser {
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
+  private orderGroupByParser: GraphqlQueryOrderGroupByParser;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
@@ -41,6 +46,11 @@ export class GraphqlQueryParser {
       this.flatFieldMetadataMaps,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
+      this.flatObjectMetadata,
+      this.flatObjectMetadataMaps,
+      this.flatFieldMetadataMaps,
+    );
+    this.orderGroupByParser = new GraphqlQueryOrderGroupByParser(
       this.flatObjectMetadata,
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
@@ -106,15 +116,50 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
     objectNameSingular: string,
     isForwardPagination = true,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): WorkspaceSelectQueryBuilder<any> {
-    const parsedOrderBys = this.orderFieldParser.parse(
+  ): Record<string, OrderByCondition> {
+    const parseResult = this.orderFieldParser.parse(
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
     );
 
-    return queryBuilder.orderBy(parsedOrderBys);
+    // Add LEFT JOINs for relation ordering
+    for (const joinInfo of parseResult.relationJoins) {
+      queryBuilder.leftJoin(
+        `${objectNameSingular}.${joinInfo.joinAlias}`,
+        joinInfo.joinAlias,
+      );
+    }
+
+    queryBuilder.orderBy(parseResult.orderBy);
+
+    // Return parsed orderBy so caller can add relation columns after setFindOptions
+    return parseResult.orderBy;
+  }
+
+  public addRelationOrderColumnsToBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
+    parsedOrderBy: Record<string, OrderByCondition>,
+    objectNameSingular: string,
+  ): void {
+    // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility
+    // This must be called AFTER setFindOptions because setFindOptions clears addSelect
+    for (const orderByKey of Object.keys(parsedOrderBy)) {
+      const parts = orderByKey.split('.');
+
+      if (parts.length === 2) {
+        const [alias, column] = parts;
+
+        // Only add select for joined relation columns, not main entity columns
+        if (alias !== objectNameSingular) {
+          queryBuilder.addSelect(
+            `"${alias}"."${column}"`,
+            `${alias}_${column}`,
+          );
+        }
+      }
+    }
   }
 
   public getOrderByRawSQL(
@@ -122,13 +167,13 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): string {
-    const parsedOrderBys = this.orderFieldParser.parse(
+    const parseResult = this.orderFieldParser.parse(
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
     );
 
-    const orderByRawSQLClauseArray = Object.entries(parsedOrderBys).map(
+    const orderByRawSQLClauseArray = Object.entries(parseResult.orderBy).map(
       ([orderByField, orderByCondition]) => {
         const nullsCondition = isDefined(orderByCondition.nulls)
           ? ` ${orderByCondition.nulls}`
@@ -154,7 +199,7 @@ export class GraphqlQueryParser {
     groupByFields: GroupByField[],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
-    const parsedOrderBys = this.orderFieldParser.parseForGroupBy({
+    const parsedOrderBys = this.orderGroupByParser.parse({
       orderBy,
       groupByFields,
     });
