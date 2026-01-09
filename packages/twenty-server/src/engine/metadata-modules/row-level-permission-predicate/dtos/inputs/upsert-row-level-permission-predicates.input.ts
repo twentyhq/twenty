@@ -61,6 +61,11 @@ export class RowLevelPermissionPredicateGroupInput {
   id?: string;
 
   @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  objectMetadataId: string;
+
+  @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   parentRowLevelPermissionPredicateGroupId?: string | null;

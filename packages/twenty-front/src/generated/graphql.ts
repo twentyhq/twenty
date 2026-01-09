@@ -930,6 +930,7 @@ export type CreateRouteTriggerInput = {
 
 export type CreateRowLevelPermissionPredicateGroupInput = {
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -3802,6 +3803,7 @@ export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
   id: Scalars['String'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -3810,6 +3812,7 @@ export type RowLevelPermissionPredicateGroup = {
 export type RowLevelPermissionPredicateGroupInput = {
   id?: InputMaybe<Scalars['UUID']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['UUID'];
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
 };

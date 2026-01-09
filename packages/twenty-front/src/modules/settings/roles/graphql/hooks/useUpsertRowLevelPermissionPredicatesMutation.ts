@@ -24,6 +24,7 @@ export type UpsertRowLevelPermissionPredicatesInput = {
   }>;
   predicateGroups: Array<{
     id?: string;
+    objectMetadataId: string;
     parentRowLevelPermissionPredicateGroupId?: string | null;
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
     positionInRowLevelPermissionPredicateGroup?: number | null;

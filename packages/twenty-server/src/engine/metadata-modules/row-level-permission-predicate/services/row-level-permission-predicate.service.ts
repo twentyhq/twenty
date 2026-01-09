@@ -309,13 +309,19 @@ export class RowLevelPermissionPredicateService {
       flatRowLevelPermissionPredicateGroupMaps.byId,
     )
       .filter(isDefined)
-      .filter((group) => group.deletedAt === null && group.roleId === roleId);
+      .filter(
+        (group) =>
+          group.deletedAt === null &&
+          group.roleId === roleId &&
+          group.objectMetadataId === objectMetadataId,
+      );
 
     const { groupsToCreate, groupsToUpdate, groupsToDelete } =
       this.computePredicateGroupOperations({
         existingGroups,
         inputGroups: predicateGroups,
         roleId,
+        objectMetadataId,
         workspaceId,
         flatRowLevelPermissionPredicateGroupMaps,
       });
@@ -379,12 +385,14 @@ export class RowLevelPermissionPredicateService {
     existingGroups,
     inputGroups,
     roleId,
+    objectMetadataId,
     workspaceId,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     inputGroups: RowLevelPermissionPredicateGroupInput[];
     roleId: string;
+    objectMetadataId: string;
     workspaceId: string;
     flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
   }): {
@@ -421,6 +429,7 @@ export class RowLevelPermissionPredicateService {
           id: groupId,
           workspaceId,
           roleId,
+          objectMetadataId,
           logicalOperator: inputGroup.logicalOperator,
           parentRowLevelPermissionPredicateGroupId:
             inputGroup.parentRowLevelPermissionPredicateGroupId ?? null,

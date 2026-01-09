@@ -304,13 +304,23 @@ export const useSaveDraftRoleToDB = ({
       includeParentGroups(groupId);
     }
 
-    const activePredicateGroups = predicateGroups.filter((group) =>
-      usedGroupIds.has(group.id),
-    );
-
     for (const [objectMetadataId, objectPredicates] of Object.entries(
       predicatesByObject,
     )) {
+      const objectUsedGroupIds = new Set(
+        objectPredicates
+          .map((p) => p.rowLevelPermissionPredicateGroupId)
+          .filter(isDefined),
+      );
+
+      for (const groupId of objectUsedGroupIds) {
+        includeParentGroups(groupId);
+      }
+
+      const objectPredicateGroups = predicateGroups.filter((group) =>
+        objectUsedGroupIds.has(group.id),
+      );
+
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
@@ -331,8 +341,9 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
-            predicateGroups: activePredicateGroups.map((group) => ({
+            predicateGroups: objectPredicateGroups.map((group) => ({
               id: group.id,
+              objectMetadataId,
               parentRowLevelPermissionPredicateGroupId:
                 group.parentRowLevelPermissionPredicateGroupId,
               logicalOperator:

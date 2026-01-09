@@ -947,6 +947,7 @@ export type CreateRouteTriggerInput = {
 
 export type CreateRowLevelPermissionPredicateGroupInput = {
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -4010,6 +4011,7 @@ export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
   id: Scalars['String'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -4018,6 +4020,7 @@ export type RowLevelPermissionPredicateGroup = {
 export type RowLevelPermissionPredicateGroupInput = {
   id?: InputMaybe<Scalars['UUID']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['UUID'];
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
 };
@@ -6265,7 +6268,7 @@ export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: str
 
 export type RowLevelPermissionPredicateFragmentFragment = { __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null };
 
-export type RowLevelPermissionPredicateGroupFragmentFragment = { __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string };
+export type RowLevelPermissionPredicateGroupFragmentFragment = { __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string };
 
 export type CreateOneRoleMutationVariables = Exact<{
   createRoleInput: CreateRoleInput;
@@ -6322,12 +6325,12 @@ export type UpsertRowLevelPermissionPredicatesMutationVariables = Exact<{
 }>;
 
 
-export type UpsertRowLevelPermissionPredicatesMutation = { __typename?: 'Mutation', upsertRowLevelPermissionPredicates: { __typename?: 'UpsertRowLevelPermissionPredicatesResult', predicates: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }>, predicateGroups: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string }> } };
+export type UpsertRowLevelPermissionPredicatesMutation = { __typename?: 'Mutation', upsertRowLevelPermissionPredicates: { __typename?: 'UpsertRowLevelPermissionPredicatesResult', predicates: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }>, predicateGroups: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> } };
 
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -7305,6 +7308,7 @@ export const RowLevelPermissionPredicateGroupFragmentFragmentDoc = gql`
   logicalOperator
   positionInRowLevelPermissionPredicateGroup
   roleId
+  objectMetadataId
 }
     `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
