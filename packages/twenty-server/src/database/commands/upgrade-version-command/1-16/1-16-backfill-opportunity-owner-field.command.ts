@@ -13,6 +13,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -31,6 +32,8 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly fieldMetadataService: FieldMetadataService,
@@ -143,12 +146,48 @@ export class BackfillOpportunityOwnerFieldCommand extends ActiveOrSuspendedWorks
       },
     };
 
+    const ownedOpportunitiesUniversalIdentifier =
+      STANDARD_OBJECTS.workspaceMember.fields.ownedOpportunities
+        .universalIdentifier;
+
     try {
       await this.fieldMetadataService.createManyFields({
         createFieldInputs: [createFieldInput],
         workspaceId,
         isSystemBuild: true,
       });
+
+      this.logger.log(
+        `Created owner field for opportunity in workspace ${workspaceId}`,
+      );
+
+      const ownedOpportunitiesField =
+        await this.fieldMetadataRepository.findOne({
+          where: {
+            workspaceId,
+            objectMetadataId: workspaceMemberObjectMetadata.id,
+            name: 'ownedOpportunities',
+          },
+        });
+
+      if (isDefined(ownedOpportunitiesField)) {
+        await this.fieldMetadataRepository.update(
+          { id: ownedOpportunitiesField.id },
+          {
+            universalIdentifier: ownedOpportunitiesUniversalIdentifier,
+            standardId: ownedOpportunitiesUniversalIdentifier,
+            applicationId: twentyStandardFlatApplication.id,
+          },
+        );
+
+        this.logger.log(
+          `Updated ownedOpportunities field universalIdentifier in workspace ${workspaceId}`,
+        );
+
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatFieldMetadataMaps',
+        ]);
+      }
 
       this.logger.log(
         `Successfully backfilled owner field for opportunity in workspace ${workspaceId}`,
