@@ -1,7 +1,7 @@
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
-import { AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
+import {} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
+import { type AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
+import { type AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
 import {
   type CreateStandardPageLayoutTabArgs,
   createStandardPageLayoutTabFlatMetadata,

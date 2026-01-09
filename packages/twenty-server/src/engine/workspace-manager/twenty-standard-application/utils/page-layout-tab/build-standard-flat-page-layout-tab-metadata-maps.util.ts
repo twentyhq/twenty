@@ -30,4 +30,3 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = (
 
   return flatPageLayoutTabMaps;
 };
-

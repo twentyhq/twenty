@@ -22,4 +22,3 @@ export const STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME = {
     args: Omit<CreateStandardPageLayoutArgs, 'context'>,
   ) => FlatPageLayout;
 };
-
