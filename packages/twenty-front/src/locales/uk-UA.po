@@ -4162,6 +4162,7 @@ msgid "Downgrade"
 msgstr "Понижити"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
 msgstr "Завантажити"
@@ -8183,14 +8184,6 @@ msgstr "Записів не знайдено"
 msgid "No records matching the filter criteria were found."
 msgstr "Не знайдено записів, що відповідають критеріям фільтра."
 
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
-msgid "No related records"
-msgstr "Немає пов’язаних записів"
-
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
@@ -11589,6 +11582,11 @@ msgstr "Ця дія видалить цю папку обраного та ел�
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "Це значення з бази даних перевизначає параметри середовища."
+
+#. js-lingui-id: own57K
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file cannot be previewed because it is hosted locally."
+msgstr ""
 
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx

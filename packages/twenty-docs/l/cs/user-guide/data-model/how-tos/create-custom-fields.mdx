@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Vytváření vlastních polí
+description: Návod krok za krokem k přidání vlastních polí k libovolnému objektu.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Vlastní pole vám umožňují zachytit informace specifické pro vaše podnikání. Přidejte je k libovolnému objektu—standardnímu i vlastnímu.
 
-## Steps
+## Postup
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/cs/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt, ke kterému chcete přidat pole
+3. Klikněte na **+ Add Field**
+4. Zvolte **typ pole** (všechny typy viz [Pole](/l/cs/user-guide/data-model/capabilities/fields))
+5. Zadejte **název pole** a volitelný popis
+6. Nakonfigurujte nastavení specifická pro dané pole (viz níže)
 7. Klikněte na **Uložit**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Rychlá metoda:** Klikněte na **+** na konci záhlaví sloupců v libovolném tabulkovém zobrazení → **Customize fields**.
 
-## Show the Field in Views
+## Zobrazit pole v zobrazeních
 
-New fields aren't automatically visible. To display:
+Nová pole nejsou automaticky viditelná. Pro zobrazení:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Otevřete tabulkové zobrazení objektu
+2. Klikněte na **Možnosti → Pole**
+3. Klikněte na **ikonu oka** vedle svého pole a zobrazte jej
+4. Přetažením změňte pořadí
 
-## Configuration Options
+## Možnosti konfigurace
 
-### For Select / Multi-Select
+### Pro výběr / vícevýběr
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/cs/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Klikněte na **+ Add option** a vytvořte možnosti
+2. Nastavte **výchozí možnost**, pokud chcete
+3. Přetažením změňte pořadí možností
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **Pro importy používejte názvy API.** V Nastavení povolte **Advanced mode**, abyste viděli názvy API. Viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Pro měnová pole
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+Nastavte **výchozí měnu** (USD, EUR apod.) pro nové záznamy.
 
-## Deactivating a Field
+### Pro telefonní pole
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Nastavte **výchozí kód země**, který se předvyplní pro nová telefonní čísla.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Nastavení jedinečnosti pole
 
-## Related
+Přepněte **Unique**, abyste zabránili duplicitním hodnotám napříč záznamy.
 
-* [Fields](/l/cs/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/cs/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  Pokud existují duplicity (včetně těch ve smazaných záznamech), zobrazí se chyba. Nejprve odstraňte duplicity.
+</Note>
+
+### Nastavení výchozích hodnot
+
+U výběrových polí můžete zvolit, která možnost bude u nových záznamů předvybraná. U zaškrtávacích polí nastavte, zda bude ve výchozím stavu zaškrtnuto, nebo ne.
+
+## Deaktivace pole
+
+1. Přejděte do **Nastavení → Datový model**
+2. Najděte pole
+3. Klikněte na **⋮ → Deactivate**
+
+Data jsou zachována. Později můžete znovu aktivovat nebo trvale smazat.
+
+## Související
+
+* [Pole](/l/cs/user-guide/data-model/capabilities/fields) — vysvětlení všech typů polí
+* [FAQ k datovému modelu](/l/cs/user-guide/data-model/how-tos/data-model-faq) — časté otázky

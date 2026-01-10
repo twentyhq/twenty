@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
-import { loadManifest } from '@/cli/utils/load-manifest';
 import { ApiService } from '@/cli/services/api.service';
+import { loadManifest } from '@/cli/utils/load-manifest';
 
 export class AppLogsCommand {
   private apiService = new ApiService();
