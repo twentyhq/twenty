@@ -10,6 +10,7 @@ import { MessageParticipantRole } from 'twenty-shared/types';
 import { ImapDriver } from '../drivers/imap/imap.driver';
 import { ImapConfig } from '../drivers/imap/interfaces/imap-config.interface';
 import { ImapMessage } from '../drivers/imap/interfaces/imap-message.interface';
+import { computeMessageDirection } from 'src/modules/messaging/common/utils/compute-message-direction.util';
 
 @Injectable()
 export class ImapService {
@@ -132,11 +133,10 @@ export class ImapService {
         });
 
         // Determine Direction
-        // If the sender is the connected account, it's OUTGOING.
-        // We check against config.user (email) or connectedAccount.handle
-        // config.user is usually the email.
-        const isFromMe = participants.some(p => p.role === MessageParticipantRole.FROM && p.handle === config.user);
-        const direction = isFromMe ? MessageDirection.OUTGOING : MessageDirection.INCOMING;
+        const fromParticipant = participants.find((p) => p.role === MessageParticipantRole.FROM);
+        const direction = fromParticipant 
+          ? computeMessageDirection(fromParticipant.handle, connectedAccount) 
+          : MessageDirection.INCOMING;
 
         // Threading
         // Use references[0] as thread ID or fall back to own messageId
@@ -147,7 +147,7 @@ export class ImapService {
         return {
             headerMessageId: msg.messageId,
             subject: msg.subject,
-            receivedAt: msg.date.toISOString(),
+            receivedAt: msg.date,
             text: msg.textBody,
             attachments: [], // TODO: Handle attachments mapping
             externalId: msg.uid.toString(),
