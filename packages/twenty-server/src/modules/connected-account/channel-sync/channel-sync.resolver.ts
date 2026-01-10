@@ -12,6 +12,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ChannelSyncSuccessDTO } from 'src/modules/connected-account/channel-sync/dtos/channel-sync-success.dto';
 import { DryRunImportResultDTO } from 'src/modules/connected-account/channel-sync/dtos/dry-run-import-result.dto';
+import { ImportProgressResultDTO } from 'src/modules/connected-account/channel-sync/dtos/import-progress-result.dto';
+import { SyncStatisticsResultDTO } from 'src/modules/connected-account/channel-sync/dtos/sync-statistics-result.dto';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 
 @Resolver()
@@ -60,6 +62,32 @@ export class ChannelSyncResolver {
   ): Promise<DryRunImportResultDTO> {
     return await this.channelSyncService.dryRunMessageFolderSync({
       messageFolderId,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Query(() => ImportProgressResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  async getImportProgress(
+    @Args('messageChannelId', { type: () => UUIDScalarType })
+    messageChannelId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ImportProgressResultDTO> {
+    return await this.channelSyncService.getImportProgress({
+      messageChannelId,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Query(() => SyncStatisticsResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  async getSyncStatistics(
+    @Args('messageChannelId', { type: () => UUIDScalarType })
+    messageChannelId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<SyncStatisticsResultDTO> {
+    return await this.channelSyncService.getSyncStatistics({
+      messageChannelId,
       workspaceId: workspace.id,
     });
   }

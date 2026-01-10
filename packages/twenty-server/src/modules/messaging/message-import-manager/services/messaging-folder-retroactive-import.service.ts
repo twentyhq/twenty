@@ -36,6 +36,10 @@ export type DryRunImportResult = {
   alreadyImported: number;
 };
 
+export type ImportProgressResult = {
+  remainingMessages: number;
+};
+
 @Injectable()
 export class MessagingFolderRetroactiveImportService {
   private readonly logger = new Logger(
@@ -279,6 +283,19 @@ export class MessagingFolderRetroactiveImportService {
     } while (pageToken);
 
     return messageIds;
+  }
+
+  async getImportProgress(
+    workspaceId: string,
+    messageChannelId: string,
+  ): Promise<ImportProgressResult> {
+    const remainingMessages = await this.cacheStorage.getSetLength(
+      `messages-to-import:${workspaceId}:${messageChannelId}`,
+    );
+
+    return {
+      remainingMessages: remainingMessages ?? 0,
+    };
   }
 
   private async filterAlreadyImportedMessages(

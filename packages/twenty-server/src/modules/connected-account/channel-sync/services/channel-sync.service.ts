@@ -26,6 +26,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-folder-retroactive-import.job';
 import {
   type DryRunImportResult,
+  type ImportProgressResult,
   MessagingFolderRetroactiveImportService,
 } from 'src/modules/messaging/message-import-manager/services/messaging-folder-retroactive-import.service';
 import {
@@ -41,6 +42,25 @@ export type StartChannelSyncInput = {
 export type TriggerMessageFolderSyncInput = {
   messageFolderId: string;
   workspaceId: string;
+};
+
+export type GetImportProgressInput = {
+  messageChannelId: string;
+  workspaceId: string;
+};
+
+export type GetSyncStatisticsInput = {
+  messageChannelId: string;
+  workspaceId: string;
+};
+
+export type SyncStatisticsResult = {
+  syncStatus: string;
+  syncStage: string;
+  importedMessages: number;
+  pendingMessages: number;
+  contactsCreated: number;
+  companiesCreated: number;
 };
 
 @Injectable()
@@ -212,5 +232,85 @@ export class ChannelSyncService {
         });
       },
     );
+  }
+
+  async getImportProgress(
+    input: GetImportProgressInput,
+  ): Promise<ImportProgressResult> {
+    const { messageChannelId, workspaceId } = input;
+
+    return await this.messagingFolderRetroactiveImportService.getImportProgress(
+      workspaceId,
+      messageChannelId,
+    );
+  }
+
+  async getSyncStatistics(
+    input: GetSyncStatisticsInput,
+  ): Promise<SyncStatisticsResult> {
+    const { messageChannelId, workspaceId } = input;
+
+    // Get message channel info
+    const messageChannelRepository =
+      await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    const messageChannel = await messageChannelRepository.findOne({
+      where: { id: messageChannelId },
+    });
+
+    if (!messageChannel) {
+      throw new Error(`Message channel ${messageChannelId} not found`);
+    }
+
+    // Get imported messages count using repository
+    const messageChannelMessageAssociationRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'messageChannelMessageAssociation',
+      );
+
+    const importedMessages = await messageChannelMessageAssociationRepository.count({
+      where: { messageChannelId },
+    });
+
+    // Get pending messages from Redis cache
+    const pendingResult =
+      await this.messagingFolderRetroactiveImportService.getImportProgress(
+        workspaceId,
+        messageChannelId,
+      );
+    const pendingMessages = pendingResult.remainingMessages;
+
+    // Get contacts created from email using repository
+    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      'person',
+    );
+
+    const contactsCreated = await personRepository.count({
+      where: { createdBySource: 'EMAIL' },
+    });
+
+    // Get companies created from email using repository
+    const companyRepository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      'company',
+    );
+
+    const companiesCreated = await companyRepository.count({
+      where: { createdBySource: 'EMAIL' },
+    });
+
+    return {
+      syncStatus: messageChannel.syncStatus || 'UNKNOWN',
+      syncStage: messageChannel.syncStage || 'UNKNOWN',
+      importedMessages,
+      pendingMessages,
+      contactsCreated,
+      companiesCreated,
+    };
   }
 }

@@ -1609,6 +1609,11 @@ export type ImpersonateOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type ImportProgressResultDto = {
+  __typename?: 'ImportProgressResultDTO';
+  remainingMessages: Scalars['Int'];
+};
+
 export type Index = {
   __typename?: 'Index';
   createdAt: Scalars['DateTime'];
@@ -3331,6 +3336,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
+  getImportProgress: ImportProgressResultDto;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
@@ -3349,6 +3355,7 @@ export type Query = {
   getRowLevelPermissionPredicates: Array<RowLevelPermissionPredicate>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getSyncStatistics: SyncStatisticsResultDto;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
@@ -3520,6 +3527,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 };
 
 
+export type QueryGetImportProgressArgs = {
+  messageChannelId: Scalars['UUID'];
+};
+
+
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
 };
@@ -3592,6 +3604,11 @@ export type QueryGetRowLevelPermissionPredicatesArgs = {
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
+};
+
+
+export type QueryGetSyncStatisticsArgs = {
+  messageChannelId: Scalars['UUID'];
 };
 
 
@@ -4150,6 +4167,16 @@ export enum SupportDriver {
   FRONT = 'FRONT',
   NONE = 'NONE'
 }
+
+export type SyncStatisticsResultDto = {
+  __typename?: 'SyncStatisticsResultDTO';
+  companiesCreated: Scalars['Int'];
+  contactsCreated: Scalars['Int'];
+  importedMessages: Scalars['Int'];
+  pendingMessages: Scalars['Int'];
+  syncStage: Scalars['String'];
+  syncStatus: Scalars['String'];
+};
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';

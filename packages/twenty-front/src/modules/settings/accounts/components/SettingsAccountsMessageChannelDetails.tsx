@@ -10,6 +10,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
+import { SettingsAccountsSyncStatusCard } from '@/settings/accounts/components/SettingsAccountsSyncStatusCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
@@ -92,6 +93,13 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
+      <Section>
+        <H2Title
+          title={t`Sync Status`}
+          description={t`Current synchronization status and statistics for this email account.`}
+        />
+        <SettingsAccountsSyncStatusCard messageChannelId={messageChannel.id} />
+      </Section>
       <Section>
         <H2Title
           title={t`Import`}
