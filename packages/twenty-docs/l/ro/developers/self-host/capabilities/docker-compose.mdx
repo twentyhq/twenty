@@ -3,7 +3,7 @@ title: 1-Click cu Docker Compose
 ---
 
 <Warning>
-  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/ro/developers/contribute/capabilities/local-setup).
+  Containerele Docker sunt pentru găzduire în producție sau auto-găzduire; pentru a contribui, consultați [Configurare locală](/l/ro/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Prezentare generală
@@ -21,7 +21,7 @@ Consultați documentația [Setup Environment Variables](/l/ro/developers/self-ho
 
 ## Opțiunea 1: Script într-o singură linie
 
-Install the latest stable version of Twenty with a single command:
+Instalați cea mai recentă versiune stabilă a Twenty cu o singură comandă:
 
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
@@ -86,7 +86,7 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/ref
 
 ### Pasul 3: Lansați Aplicația
 
-Start the Docker containers:
+Porniți containerele Docker:
 
 ```bash
 docker compose up -d
@@ -96,7 +96,7 @@ docker compose up -d
 
 Dacă găzduiți twentyCRM pe propriul computer, deschideți browserul și navigați la [http://localhost:3000](http://localhost:3000).
 
-If you host it on a server, check that the server is running and that everything is ok with
+Dacă îl găzduiți pe un server, verificați că serverul rulează și că totul este în regulă cu
 
 ```bash
 curl http://localhost:3000
@@ -203,50 +203,50 @@ Recomandăm cu tărie configurarea Twenty din spatele unui proxy revers cu termi
 
   Dacă se utilizează un mediu fără stare (de ex., anumite servicii de cloud), configurați stocarea externă pentru a persista datele.
 
-## Backup and Restore
+## Copiere de rezervă și restaurare
 
-Regular backups protect your CRM data from loss.
+Copiile de rezervă regulate vă protejează datele CRM împotriva pierderii.
 
-### Create a Database Backup
+### Creați o copie de rezervă a bazei de date
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Automatizați copiile de rezervă zilnice
 
-Add to your crontab (`crontab -e`):
+Adăugați în crontab-ul dvs. (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Restaurare din copie de rezervă
 
-1. Stop the application:
+1. Opriți aplicația:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Restaurați baza de date:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Reporniți serviciile:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Cele mai bune practici pentru copiile de rezervă
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Testați restaurările în mod regulat** — verificați că copiile de rezervă chiar funcționează
+* **Stocați copiile de rezervă în afara sediului** — utilizați stocarea în cloud (S3, GCS, etc.)
+* **Criptați datele sensibile** — protejați copiile de rezervă cu criptare
+* **Păstrați mai multe copii** — mențineți copii de rezervă zilnice, săptămânale și lunare
 
 ## Depanare
 
