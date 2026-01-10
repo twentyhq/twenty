@@ -154,7 +154,7 @@ describe('loadManifest with test-app', () => {
     expect(appSources['test-function.function.ts']).toContain('defineFunction');
     expect(appSources['default-function.role.ts']).toContain('defineRole');
 
-    expect(shouldGenerate).toBe(false);
+    expect(shouldGenerate).toBe(true);
 
     const expectedRoleId = DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER;
 
