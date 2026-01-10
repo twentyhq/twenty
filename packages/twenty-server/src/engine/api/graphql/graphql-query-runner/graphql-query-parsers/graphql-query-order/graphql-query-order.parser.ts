@@ -8,8 +8,12 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import {
+  buildOrderByColumnExpression,
+  shouldCastToText,
+  shouldUseCaseInsensitiveOrder,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -130,14 +134,19 @@ export class GraphqlQueryOrderFieldParser {
             );
           }
 
-          const orderByCasting = getOptionalOrderByCasting(fieldMetadata);
-
-          orderByConditions[
-            `${objectNameSingular}.${fieldName}${orderByCasting}`
-          ] = convertOrderByToFindOptionsOrder(
-            orderByDirection,
-            isForwardPagination,
+          const columnExpression = buildOrderByColumnExpression(
+            objectNameSingular,
+            fieldName,
           );
+
+          orderByConditions[columnExpression] = {
+            ...convertOrderByToFindOptionsOrder(
+              orderByDirection,
+              isForwardPagination,
+            ),
+            useLower: shouldUseCaseInsensitiveOrder(fieldMetadata.type),
+            castToText: shouldCastToText(fieldMetadata.type),
+          };
         }
       }
     }
@@ -236,16 +245,21 @@ export class GraphqlQueryOrderFieldParser {
     }
 
     if (isOrderByDirection(nestedFieldOrderByValue)) {
-      const nestedColumnName = nestedFieldMetadata.name;
-      const orderByCasting = getOptionalOrderByCasting(nestedFieldMetadata);
+      const columnExpression = buildOrderByColumnExpression(
+        joinAlias,
+        nestedFieldMetadata.name,
+      );
 
       return {
         orderBy: {
-          [`${joinAlias}.${nestedColumnName}${orderByCasting}`]:
-            convertOrderByToFindOptionsOrder(
+          [columnExpression]: {
+            ...convertOrderByToFindOptionsOrder(
               nestedFieldOrderByValue,
               isForwardPagination,
             ),
+            useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
+            castToText: shouldCastToText(nestedFieldMetadata.type),
+          },
         },
         joinInfo,
       };
