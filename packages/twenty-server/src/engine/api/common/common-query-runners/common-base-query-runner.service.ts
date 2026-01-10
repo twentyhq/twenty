@@ -123,6 +123,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      authContext.workspace.id,
     );
 
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(

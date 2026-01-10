@@ -95,6 +95,7 @@ export class GroupByWithRecordsService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       offsetForRecords,
+      workspaceId: authContext.workspace.id,
     });
 
     const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
@@ -153,6 +154,7 @@ export class GroupByWithRecordsService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     offsetForRecords = 0,
+    workspaceId,
   }: {
     queryBuilderForSubQuery: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     columnsToSelect: Record<string, boolean>;
@@ -164,6 +166,7 @@ export class GroupByWithRecordsService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     offsetForRecords?: number;
+    workspaceId: string;
   }): WorkspaceSelectQueryBuilder<ObjectLiteral> {
     const groupByAliases = groupByDefinitions
       .map((def) => `"${def.alias}"`)
@@ -197,6 +200,7 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
       orderByForRecords,
       queryBuilder: subQuery,
+      workspaceId,
     });
 
     if (!isEmpty(orderByForRecords)) {
@@ -204,6 +208,7 @@ export class GroupByWithRecordsService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        workspaceId,
       );
 
       graphqlQueryParser.applyOrderToBuilder(
@@ -257,6 +262,7 @@ export class GroupByWithRecordsService {
     flatFieldMetadataMaps,
     orderByForRecords,
     queryBuilder,
+    workspaceId,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
@@ -264,6 +270,7 @@ export class GroupByWithRecordsService {
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
   }) {
     const groupByExpressions = groupByDefinitions
       .map((def) => def.expression)
@@ -276,6 +283,7 @@ export class GroupByWithRecordsService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        workspaceId,
       );
 
       const orderByRawSQL = graphqlQueryParser.getOrderByRawSQL(

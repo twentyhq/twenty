@@ -25,6 +25,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 import { type OrderByClause } from './types/order-by-condition.type';
 import { type ParseOrderByResult } from './types/parse-order-by-result.type';
@@ -39,15 +40,20 @@ export class GraphqlQueryOrderFieldParser {
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
+  private workspaceSchemaName: string | undefined;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    workspaceId?: string,
   ) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
+    this.workspaceSchemaName = workspaceId
+      ? getWorkspaceSchemaName(workspaceId)
+      : undefined;
 
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
@@ -229,7 +235,15 @@ export class GraphqlQueryOrderFieldParser {
       return null;
     }
 
-    const targetTableName = targetObjectMetadata.nameSingular;
+    // Build schema-qualified table name for the subquery
+    const targetTableName = this.workspaceSchemaName
+      ? `"${this.workspaceSchemaName}"."${targetObjectMetadata.nameSingular}"`
+      : `"${targetObjectMetadata.nameSingular}"`;
+
+    // Build schema-qualified source table name
+    const sourceTableName = this.workspaceSchemaName
+      ? `"${this.workspaceSchemaName}"."${objectNameSingular}"`
+      : `"${objectNameSingular}"`;
 
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
       if (!isObject(nestedFieldOrderByValue)) {
@@ -247,15 +261,17 @@ export class GraphqlQueryOrderFieldParser {
           unknown
         >,
         targetTableName,
+        sourceTableName,
         joinColumnName,
-        objectNameSingular,
         isForwardPagination,
       });
     }
 
     if (isOrderByDirection(nestedFieldOrderByValue)) {
-      // Build subquery: (SELECT "columnName" FROM "targetTable" WHERE "id" = "sourceTable"."joinColumnName")
-      const subquery = `(SELECT "${nestedFieldMetadata.name}" FROM "${targetTableName}" WHERE "id" = "${objectNameSingular}"."${joinColumnName}")`;
+      // Build subquery with schema-qualified table names
+      // targetTableName is already quoted (e.g., "schema"."table" or "table")
+      // sourceTableName is already quoted
+      const subquery = `(SELECT "${nestedFieldMetadata.name}" FROM ${targetTableName} WHERE "id" = ${sourceTableName}."${joinColumnName}")`;
 
       return {
         [subquery]: {
@@ -276,15 +292,15 @@ export class GraphqlQueryOrderFieldParser {
     nestedFieldMetadata,
     nestedFieldOrderByValue,
     targetTableName,
+    sourceTableName,
     joinColumnName,
-    objectNameSingular,
     isForwardPagination,
   }: {
     nestedFieldMetadata: FlatFieldMetadata;
     nestedFieldOrderByValue: Record<string, unknown>;
     targetTableName: string;
+    sourceTableName: string;
     joinColumnName: string;
-    objectNameSingular: string;
     isForwardPagination: boolean;
   }): Record<string, OrderByClause> | null {
     const compositeType = compositeTypeDefinitions.get(
@@ -321,7 +337,8 @@ export class GraphqlQueryOrderFieldParser {
       }
 
       const columnName = `${nestedFieldMetadata.name}${capitalize(subFieldKey)}`;
-      const subquery = `(SELECT "${columnName}" FROM "${targetTableName}" WHERE "id" = "${objectNameSingular}"."${joinColumnName}")`;
+      // targetTableName and sourceTableName are already quoted
+      const subquery = `(SELECT "${columnName}" FROM ${targetTableName} WHERE "id" = ${sourceTableName}."${joinColumnName}")`;
 
       result[subquery] = {
         ...convertOrderByToFindOptionsOrder(subFieldValue, isForwardPagination),

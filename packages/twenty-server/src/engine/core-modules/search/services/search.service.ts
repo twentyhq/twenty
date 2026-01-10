@@ -171,12 +171,14 @@ export class SearchService {
   }) {
     const queryBuilder = entityManager.createQueryBuilder();
 
-    const { flatObjectMetadataMaps } = entityManager.internalContext;
+    const { flatObjectMetadataMaps, workspaceId } =
+      entityManager.internalContext;
 
     const queryParser = new GraphqlQueryParser(
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      workspaceId,
     );
 
     queryParser.applyFilterToBuilder(

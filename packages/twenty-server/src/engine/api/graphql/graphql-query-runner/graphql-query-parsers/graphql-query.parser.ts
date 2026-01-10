@@ -36,6 +36,7 @@ export class GraphqlQueryParser {
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    workspaceId?: string,
   ) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
@@ -49,6 +50,7 @@ export class GraphqlQueryParser {
       this.flatObjectMetadata,
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
+      workspaceId,
     );
     this.orderGroupByParser = new GraphqlQueryOrderGroupByParser(
       this.flatObjectMetadata,
