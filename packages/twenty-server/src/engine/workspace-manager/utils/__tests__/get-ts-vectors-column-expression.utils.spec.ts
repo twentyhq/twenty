@@ -108,7 +108,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
 
     expect(result).toContain('phonesPrimaryPhoneNumber');
     expect(result).toContain('phonesPrimaryPhoneCallingCode');
-    // Should include additional phones converted from JSON array
+
     expect(result).toContain('phonesAdditionalPhones');
     expect(result).toContain(
       "COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
@@ -128,9 +128,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const fields = [emailsEmailsField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    // Should include primary email
     expect(result).toContain('emailsPrimaryEmail');
-    // Should include additional emails converted from JSON array
     expect(result).toContain('emailsAdditionalEmails');
     expect(result).toContain(
       "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '')",
@@ -144,10 +142,8 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const fields = [linksLinksField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    // Should include primary link fields
     expect(result).toContain('domainNamePrimaryLinkLabel');
     expect(result).toContain('domainNamePrimaryLinkUrl');
-    // Should include secondary links converted from JSON array
     expect(result).toContain('domainNameSecondaryLinks');
     expect(result).toContain(
       "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
@@ -168,11 +164,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       const fields = [emailsEmailsField] as FieldTypeAndNameMetadata[];
       const result = getTsVectorColumnExpressionFromFields(fields);
 
-      // Verify COALESCE wrapping exists for NULL safety on additionalEmails
       expect(result).toContain(
         'COALESCE(public.unaccent_immutable(TRANSLATE("emailsAdditionalEmails"::text',
       );
-      // Verify empty string fallback when column is NULL
       expect(result).toMatch(
         /COALESCE\(public\.unaccent_immutable\(TRANSLATE\("emailsAdditionalEmails"::text.*\), ''\)/,
       );
@@ -182,11 +176,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
       const result = getTsVectorColumnExpressionFromFields(fields);
 
-      // Verify COALESCE wrapping exists for NULL safety on additionalPhones
       expect(result).toContain(
         'COALESCE(TRANSLATE(regexp_replace("phonesAdditionalPhones"::text',
       );
-      // Verify empty string fallback when column is NULL
       expect(result).toMatch(
         /COALESCE\(TRANSLATE\(regexp_replace\("phonesAdditionalPhones"::text.*\), ''\)/,
       );
@@ -196,11 +188,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       const fields = [linksLinksField] as FieldTypeAndNameMetadata[];
       const result = getTsVectorColumnExpressionFromFields(fields);
 
-      // Verify COALESCE wrapping exists for NULL safety on secondaryLinks
       expect(result).toContain(
         'COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace("domainNameSecondaryLinks"::text',
       );
-      // Verify empty string fallback when column is NULL
       expect(result).toMatch(
         /COALESCE\(public\.unaccent_immutable\(TRANSLATE\(regexp_replace\("domainNameSecondaryLinks"::text.*\), ''\)/,
       );
@@ -214,8 +204,6 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       ] as FieldTypeAndNameMetadata[];
       const result = getTsVectorColumnExpressionFromFields(fields);
 
-      // Count COALESCE with empty string fallback patterns for JSON columns
-      // Each JSON column should have a COALESCE(..., '') pattern
       const additionalEmailsCoalesce = result.includes(
         "COALESCE(public.unaccent_immutable(TRANSLATE(\"emailsAdditionalEmails\"::text, '[]\",', '    ')), '')",
       );
