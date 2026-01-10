@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
-const SOURCE_FOLDER = 'src';
+const APP_FOLDER = 'src/app';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -23,23 +23,19 @@ export const copyBaseApplicationProject = async ({
 
   await createYarnLock(appDirectory);
 
-  const sourceFolderPath = join(appDirectory, SOURCE_FOLDER);
+  const appFolderPath = join(appDirectory, APP_FOLDER);
 
-  await fs.ensureDir(sourceFolderPath);
-
-  const defaultServerlessFunctionRoleUniversalIdentifier = v4();
+  await fs.ensureDir(appFolderPath);
 
   await createDefaultServerlessFunctionRoleConfig({
     displayName: appDisplayName,
-    appDirectory: sourceFolderPath,
-    defaultServerlessFunctionRoleUniversalIdentifier,
+    appDirectory: appFolderPath,
   });
 
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
-    appDirectory: sourceFolderPath,
-    defaultServerlessFunctionRoleUniversalIdentifier,
+    appDirectory: appFolderPath,
   });
 };
 
@@ -94,49 +90,49 @@ yarn-error.log*
 const createDefaultServerlessFunctionRoleConfig = async ({
   displayName,
   appDirectory,
-  defaultServerlessFunctionRoleUniversalIdentifier,
 }: {
   displayName: string;
   appDirectory: string;
-  defaultServerlessFunctionRoleUniversalIdentifier: string;
 }) => {
-  const content = `import { type RoleConfig } from 'twenty-sdk';
+  const universalIdentifier = v4();
 
-export const functionRole: RoleConfig = {
-  universalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
+  const content = `import { defineRole } from 'twenty-sdk';
+
+export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
   label: '${displayName} default function role',
   description: '${displayName} default function role',
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: false,
-};
+});
 `;
 
-  await fs.writeFile(join(appDirectory, 'role.config.ts'), content);
+  await fs.writeFile(join(appDirectory, 'default-function.role.ts'), content);
 };
 
 const createApplicationConfig = async ({
   displayName,
   description,
   appDirectory,
-  defaultServerlessFunctionRoleUniversalIdentifier,
 }: {
   displayName: string;
   description?: string;
   appDirectory: string;
-  defaultServerlessFunctionRoleUniversalIdentifier: string;
 }) => {
-  const content = `import { type ApplicationConfig } from 'twenty-sdk';
+  const content = `import { defineApp } from 'twenty-sdk';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-const config: ApplicationConfig = {
+export default defineApp({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
-  functionRoleUniversalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
-};
-
-export default config;
+  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+});
 `;
 
   await fs.writeFile(join(appDirectory, 'application.config.ts'), content);
@@ -172,7 +168,7 @@ const createPackageJson = async ({
       'lint-fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.2.4',
+      'twenty-sdk': '0.3.0',
     },
     devDependencies: {
       typescript: '^5.9.3',

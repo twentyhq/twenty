@@ -1,131 +1,131 @@
 ---
 title: Widgety
-description: Explore the widget types and visualization options in Twenty.
+description: Prozkoumejte typy widgetů a možnosti vizualizace v Twenty.
 ---
 
-## Available Widgets
+## Dostupné widgety
 
-Twenty provides various widget types to visualize your CRM data.
+Twenty nabízí různé typy widgetů pro vizualizaci vašich CRM dat.
 
-### Bar Charts
+### Sloupcové grafy
 
-Display data as horizontal or vertical bars.
+Zobrazují data jako vodorovné nebo svislé sloupce.
 
-**Best for:**
+**Vhodné pro:**
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+* Porovnávání hodnot napříč kategoriemi
+* Zobrazování pořadí
+* Sledování metrik podle časového období
 
-**Example uses:**
+**Příklady použití:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
-
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
-
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* Obchody podle fáze
+* Tržby podle obchodního zástupce
+* Počet kontaktů přidaných za měsíc
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Limity zobrazení**: Sloupcové grafy mohou zobrazit maximálně 100 sloupců (vodorovně) nebo 50 sloupců (svisle). Pokud uvidíte upozornění "Nezobrazená data: max X sloupců na graf", přidejte filtry, abyste zúžili svá data, nebo změňte seskupení (např. seskupujte podle týdnů místo dnů).
 </Note>
 
-## Configuring Widgets
+### Koláčové grafy
 
-### Data Source
+Zobrazují podíly z celku.
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+**Vhodné pro:**
 
-### Grouping
+* Zobrazování složení nebo rozložení
+* Porovnávání částí s celkem
+* Zvýraznění hlavních segmentů
 
-Group data by:
+**Příklady použití:**
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+* Rozložení obchodů podle zdroje
+* Rozdělení kontaktů podle odvětví
+* Složení pipeline podle vlastníka
+
+### Liniové grafy
+
+Zobrazují trendy v čase.
+
+**Vhodné pro:**
+
+* Sledování změn v čase
+* Identifikace trendů
+* Porovnávání více metrik
+
+**Příklady použití:**
+
+* Trend měsíčního počtu obchodů
+* Růst tržeb mezi čtvrtletími
+* Úroveň aktivity v čase
+
+### Číselné metriky
+
+Výrazně zobrazují jednotlivé klíčové hodnoty.
+
+**Vhodné pro:**
+
+* Zvýraznění KPI
+* Zobrazení součtů nebo průměrů
+* Rychlé kontroly stavu
+
+**Příklady použití:**
+
+* Celková hodnota pipeline
+* Počet otevřených příležitostí
+* Míra konverze
+
+**Pokročilé možnosti:**
+
+* **Poměr**: U polí typu Select lze vypočítat poměry mezi hodnotami. Přejděte do **Zobrazovaná data** → vyberte své pole → povolte možnost **Poměr**.
+* **Prefix a sufix**: Přidejte vlastní text před nebo za číslo (např. prefix "$" nebo sufix "%") pro lepší čitelnost.
+
+### iFramy
+
+Vkládejte externí nástroje a obsah přímo do svého řídicího panelu.
+
+**Vhodné pro:**
+
+* Zobrazení externích reportů nebo řídicích panelů
+* Integrace prodejních nástrojů třetích stran
+* Zobrazení živého obsahu z jiných systémů
+
+**Příklady použití:**
+
+* Metriky z vašeho nástroje podpory
+* Metriky z vašeho dialeru
+* Živý obsah z vašeho nástroje pro prodejní sekvence
+
+<Note>
+  **Již brzy**: Měřicí grafy (gauge) a tabulky zatím nejsou k dispozici, ale máme je v plánu.
+</Note>
+
+## Konfigurace widgetů
+
+### Zdroj dat
+
+1. Vyberte objekt, který chcete vizualizovat (Příležitosti, Lidé apod.)
+2. Zvolte metriku k zobrazení (počet, součet, průměr)
+3. Použijte filtry, abyste se zaměřili na konkrétní data
+
+### Seskupení
+
+Seskupte data podle:
+
+* Polí (fáze, vlastník, odvětví)
+* Časových období (den, týden, měsíc, čtvrtletí)
+* Vlastních segmentů
 
 ### Styling
 
-Customize your charts with:
+Přizpůsobte si své grafy pomocí:
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+* Barev a motivů
+* Popisků a legend
+* Velikosti a umístění
 
-### Duplicating Widgets
+### Duplikování widgetů
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+1. Klikněte na widget
+2. Otevřete **Možnosti**
+3. Klikněte na **Duplikovat widget**
