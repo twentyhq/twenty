@@ -1,5 +1,4 @@
 import { isObject } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -9,8 +8,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { buildOrderByColumnExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -26,31 +25,6 @@ import { type RelationJoinInfo } from './types/relation-join-info.type';
 
 // Re-export types for backward compatibility
 export { OrderByClause, ParseOrderByResult, RelationJoinInfo };
-
-const shouldUseCaseInsensitiveOrder = (
-  fieldMetadata: Pick<FlatFieldMetadata, 'type'>,
-): boolean => {
-  return (
-    fieldMetadata.type === FieldMetadataType.TEXT ||
-    fieldMetadata.type === FieldMetadataType.SELECT ||
-    fieldMetadata.type === FieldMetadataType.MULTI_SELECT
-  );
-};
-
-const buildOrderByKey = (
-  prefix: string,
-  columnName: string,
-  fieldMetadata: Pick<FlatFieldMetadata, 'type'>,
-): string => {
-  const casting = getOptionalOrderByCasting(fieldMetadata);
-  const columnExpr = `${prefix}.${columnName}${casting}`;
-
-  if (shouldUseCaseInsensitiveOrder(fieldMetadata)) {
-    return `LOWER(${columnExpr})`;
-  }
-
-  return columnExpr;
-};
 
 export class GraphqlQueryOrderFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -156,16 +130,17 @@ export class GraphqlQueryOrderFieldParser {
             );
           }
 
-          const orderByKey = buildOrderByKey(
+          const columnExpression = buildOrderByColumnExpression(
             objectNameSingular,
             fieldName,
             fieldMetadata,
           );
 
-          orderByConditions[orderByKey] = convertOrderByToFindOptionsOrder(
-            orderByDirection,
-            isForwardPagination,
-          );
+          orderByConditions[columnExpression] =
+            convertOrderByToFindOptionsOrder(
+              orderByDirection,
+              isForwardPagination,
+            );
         }
       }
     }
@@ -264,7 +239,7 @@ export class GraphqlQueryOrderFieldParser {
     }
 
     if (isOrderByDirection(nestedFieldOrderByValue)) {
-      const orderByKey = buildOrderByKey(
+      const columnExpression = buildOrderByColumnExpression(
         joinAlias,
         nestedFieldMetadata.name,
         nestedFieldMetadata,
@@ -272,7 +247,7 @@ export class GraphqlQueryOrderFieldParser {
 
       return {
         orderBy: {
-          [orderByKey]: convertOrderByToFindOptionsOrder(
+          [columnExpression]: convertOrderByToFindOptionsOrder(
             nestedFieldOrderByValue,
             isForwardPagination,
           ),

@@ -1,18 +1,12 @@
-import {
-  compositeTypeDefinitions,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { wrapWithLowerIfNeeded } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-const shouldUseCaseInsensitiveOrder = (type: FieldMetadataType): boolean => {
-  return type === FieldMetadataType.TEXT;
-};
 
 export const parseCompositeFieldForOrder = (
   fieldMetadata: FlatFieldMetadata,
@@ -43,9 +37,10 @@ export const parseCompositeFieldForOrder = (
       }
 
       const columnExpr = `${prefix}.${fieldMetadata.name}${capitalize(subFieldKey)}`;
-      const fullFieldName = shouldUseCaseInsensitiveOrder(subFieldMetadata.type)
-        ? `LOWER(${columnExpr})`
-        : columnExpr;
+      const fullFieldName = wrapWithLowerIfNeeded(
+        columnExpr,
+        subFieldMetadata.type,
+      );
 
       if (!isOrderByDirection(subFieldValue)) {
         throw new Error(

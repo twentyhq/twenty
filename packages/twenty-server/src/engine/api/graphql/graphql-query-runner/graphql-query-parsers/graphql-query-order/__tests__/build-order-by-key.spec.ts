@@ -1,36 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
+import {
+  buildOrderByColumnExpression,
+  shouldUseCaseInsensitiveOrder,
+  wrapWithLowerIfNeeded,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 
-const shouldUseCaseInsensitiveOrder = (fieldMetadata: {
-  type: FieldMetadataType;
-}): boolean => {
-  return (
-    fieldMetadata.type === FieldMetadataType.TEXT ||
-    fieldMetadata.type === FieldMetadataType.SELECT ||
-    fieldMetadata.type === FieldMetadataType.MULTI_SELECT
-  );
-};
-
-const buildOrderByKey = (
-  prefix: string,
-  columnName: string,
-  fieldMetadata: { type: FieldMetadataType },
-): string => {
-  const casting = getOptionalOrderByCasting(fieldMetadata);
-  const columnExpr = `${prefix}.${columnName}${casting}`;
-
-  if (shouldUseCaseInsensitiveOrder(fieldMetadata)) {
-    return `LOWER(${columnExpr})`;
-  }
-
-  return columnExpr;
-};
-
-describe('buildOrderByKey', () => {
+describe('buildOrderByColumnExpression', () => {
   describe('case-insensitive sorting', () => {
     it('should wrap TEXT fields with LOWER()', () => {
-      const result = buildOrderByKey('company', 'name', {
+      const result = buildOrderByColumnExpression('company', 'name', {
         type: FieldMetadataType.TEXT,
       });
 
@@ -38,7 +17,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should wrap SELECT fields with LOWER() and ::text cast', () => {
-      const result = buildOrderByKey('company', 'status', {
+      const result = buildOrderByColumnExpression('company', 'status', {
         type: FieldMetadataType.SELECT,
       });
 
@@ -46,7 +25,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should wrap MULTI_SELECT fields with LOWER() and ::text cast', () => {
-      const result = buildOrderByKey('company', 'tags', {
+      const result = buildOrderByColumnExpression('company', 'tags', {
         type: FieldMetadataType.MULTI_SELECT,
       });
 
@@ -56,7 +35,7 @@ describe('buildOrderByKey', () => {
 
   describe('case-sensitive sorting', () => {
     it('should not wrap NUMBER fields with LOWER()', () => {
-      const result = buildOrderByKey('company', 'employees', {
+      const result = buildOrderByColumnExpression('company', 'employees', {
         type: FieldMetadataType.NUMBER,
       });
 
@@ -64,7 +43,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should not wrap DATE_TIME fields with LOWER()', () => {
-      const result = buildOrderByKey('company', 'createdAt', {
+      const result = buildOrderByColumnExpression('company', 'createdAt', {
         type: FieldMetadataType.DATE_TIME,
       });
 
@@ -72,7 +51,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should not wrap UUID fields with LOWER()', () => {
-      const result = buildOrderByKey('company', 'id', {
+      const result = buildOrderByColumnExpression('company', 'id', {
         type: FieldMetadataType.UUID,
       });
 
@@ -80,7 +59,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should not wrap BOOLEAN fields with LOWER()', () => {
-      const result = buildOrderByKey('company', 'isActive', {
+      const result = buildOrderByColumnExpression('company', 'isActive', {
         type: FieldMetadataType.BOOLEAN,
       });
 
@@ -90,7 +69,7 @@ describe('buildOrderByKey', () => {
 
   describe('with relation prefixes', () => {
     it('should use join alias as prefix for nested TEXT fields', () => {
-      const result = buildOrderByKey('company', 'name', {
+      const result = buildOrderByColumnExpression('company', 'name', {
         type: FieldMetadataType.TEXT,
       });
 
@@ -98,7 +77,7 @@ describe('buildOrderByKey', () => {
     });
 
     it('should use join alias as prefix for nested SELECT fields', () => {
-      const result = buildOrderByKey('assignee', 'role', {
+      const result = buildOrderByColumnExpression('assignee', 'role', {
         type: FieldMetadataType.SELECT,
       });
 
@@ -107,36 +86,57 @@ describe('buildOrderByKey', () => {
   });
 });
 
-describe('getOptionalOrderByCasting', () => {
-  it('should return ::text for SELECT fields', () => {
-    const result = getOptionalOrderByCasting({
-      type: FieldMetadataType.SELECT,
-    });
-
-    expect(result).toBe('::text');
+describe('shouldUseCaseInsensitiveOrder', () => {
+  it('should return true for TEXT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.TEXT)).toBe(true);
   });
 
-  it('should return ::text for MULTI_SELECT fields', () => {
-    const result = getOptionalOrderByCasting({
-      type: FieldMetadataType.MULTI_SELECT,
-    });
-
-    expect(result).toBe('::text');
+  it('should return true for SELECT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.SELECT)).toBe(true);
   });
 
-  it('should return empty string for TEXT fields', () => {
-    const result = getOptionalOrderByCasting({
-      type: FieldMetadataType.TEXT,
-    });
-
-    expect(result).toBe('');
+  it('should return true for MULTI_SELECT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.MULTI_SELECT)).toBe(
+      true,
+    );
   });
 
-  it('should return empty string for NUMBER fields', () => {
-    const result = getOptionalOrderByCasting({
-      type: FieldMetadataType.NUMBER,
-    });
+  it('should return false for NUMBER fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.NUMBER)).toBe(false);
+  });
 
-    expect(result).toBe('');
+  it('should return false for DATE_TIME fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.DATE_TIME)).toBe(
+      false,
+    );
+  });
+});
+
+describe('wrapWithLowerIfNeeded', () => {
+  it('should wrap TEXT fields with LOWER()', () => {
+    const result = wrapWithLowerIfNeeded(
+      'company.name',
+      FieldMetadataType.TEXT,
+    );
+
+    expect(result).toBe('LOWER(company.name)');
+  });
+
+  it('should wrap SELECT fields with LOWER()', () => {
+    const result = wrapWithLowerIfNeeded(
+      'company.status::text',
+      FieldMetadataType.SELECT,
+    );
+
+    expect(result).toBe('LOWER(company.status::text)');
+  });
+
+  it('should not wrap NUMBER fields', () => {
+    const result = wrapWithLowerIfNeeded(
+      'company.count',
+      FieldMetadataType.NUMBER,
+    );
+
+    expect(result).toBe('company.count');
   });
 });
