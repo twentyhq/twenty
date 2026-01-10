@@ -1,7 +1,9 @@
 import { isObject } from 'class-validator';
-import { isDefined } from 'twenty-shared/utils';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -16,6 +18,7 @@ import {
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -61,8 +64,8 @@ export class GraphqlQueryOrderFieldParser {
     isForwardPagination = true,
   ): ParseOrderByResult {
     const orderByConditions: Record<string, OrderByClause> = {};
+    // Keep relationJoins for backward compatibility, but we won't use it for ordering
     const relationJoins: RelationJoinInfo[] = [];
-    const addedJoinAliases = new Set<string>();
 
     for (const item of orderBy) {
       for (const [fieldName, orderByDirection] of Object.entries(item)) {
@@ -94,19 +97,16 @@ export class GraphqlQueryOrderFieldParser {
             );
           }
 
-          const relationOrderResult = this.parseRelationFieldOrder({
+          // Use subquery approach instead of JOINs to avoid TypeORM DISTINCT issues
+          const relationOrderResult = this.parseRelationFieldOrderWithSubquery({
             fieldMetadata,
             orderByDirection: orderByDirection as Record<string, unknown>,
+            objectNameSingular,
             isForwardPagination,
           });
 
           if (relationOrderResult) {
-            Object.assign(orderByConditions, relationOrderResult.orderBy);
-
-            if (!addedJoinAliases.has(relationOrderResult.joinInfo.joinAlias)) {
-              relationJoins.push(relationOrderResult.joinInfo);
-              addedJoinAliases.add(relationOrderResult.joinInfo.joinAlias);
-            }
+            Object.assign(orderByConditions, relationOrderResult);
           }
         } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
           if (!isObject(orderByDirection)) {
@@ -153,22 +153,24 @@ export class GraphqlQueryOrderFieldParser {
 
     return {
       orderBy: orderByConditions,
-      relationJoins,
+      relationJoins, // Empty - we use subqueries instead of JOINs for ordering
     };
   }
 
-  private parseRelationFieldOrder({
+  // Uses scalar subqueries for relation ordering to avoid TypeORM DISTINCT issues
+  // Instead of: LEFT JOIN company ON ... ORDER BY company.name
+  // We use: ORDER BY (SELECT name FROM company WHERE id = person.companyId)
+  private parseRelationFieldOrderWithSubquery({
     fieldMetadata,
     orderByDirection,
+    objectNameSingular,
     isForwardPagination,
   }: {
     fieldMetadata: FlatFieldMetadata;
     orderByDirection: Record<string, unknown>;
+    objectNameSingular: string;
     isForwardPagination: boolean;
-  }): {
-    orderBy: Record<string, OrderByClause>;
-    joinInfo: RelationJoinInfo;
-  } | null {
+  }): Record<string, OrderByClause> | null {
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
       return null;
     }
@@ -179,6 +181,21 @@ export class GraphqlQueryOrderFieldParser {
       ];
 
     if (!isDefined(targetObjectMetadata)) {
+      return null;
+    }
+
+    // Get the join column name (e.g., "companyId" for person.company relation)
+    // Type assertion needed because settings type varies by field type
+    const settings = fieldMetadata.settings as
+      | { joinColumnName?: string; relationType?: RelationType }
+      | undefined;
+    const joinColumnName = settings?.joinColumnName;
+
+    if (
+      !isDefined(joinColumnName) ||
+      settings?.relationType !== RelationType.MANY_TO_ONE
+    ) {
+      // Only MANY_TO_ONE relations have join columns on this side
       return null;
     }
 
@@ -212,11 +229,7 @@ export class GraphqlQueryOrderFieldParser {
       return null;
     }
 
-    const joinAlias = fieldMetadata.name;
-
-    const joinInfo: RelationJoinInfo = {
-      joinAlias,
-    };
+    const targetTableName = targetObjectMetadata.nameSingular;
 
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
       if (!isObject(nestedFieldOrderByValue)) {
@@ -227,44 +240,96 @@ export class GraphqlQueryOrderFieldParser {
         );
       }
 
-      const compositeOrder = parseCompositeFieldForOrder(
+      return this.buildCompositeSubqueryOrder({
         nestedFieldMetadata,
-        nestedFieldOrderByValue as Record<string, unknown>,
-        joinAlias,
+        nestedFieldOrderByValue: nestedFieldOrderByValue as Record<
+          string,
+          unknown
+        >,
+        targetTableName,
+        joinColumnName,
+        objectNameSingular,
         isForwardPagination,
-      );
-
-      if (Object.keys(compositeOrder).length === 0) {
-        return null;
-      }
-
-      return {
-        orderBy: compositeOrder,
-        joinInfo,
-      };
+      });
     }
 
     if (isOrderByDirection(nestedFieldOrderByValue)) {
-      const columnExpression = buildOrderByColumnExpression(
-        joinAlias,
-        nestedFieldMetadata.name,
-      );
+      // Build subquery: (SELECT "columnName" FROM "targetTable" WHERE "id" = "sourceTable"."joinColumnName")
+      const subquery = `(SELECT "${nestedFieldMetadata.name}" FROM "${targetTableName}" WHERE "id" = "${objectNameSingular}"."${joinColumnName}")`;
 
       return {
-        orderBy: {
-          [columnExpression]: {
-            ...convertOrderByToFindOptionsOrder(
-              nestedFieldOrderByValue,
-              isForwardPagination,
-            ),
-            useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
-            castToText: shouldCastToText(nestedFieldMetadata.type),
-          },
+        [subquery]: {
+          ...convertOrderByToFindOptionsOrder(
+            nestedFieldOrderByValue,
+            isForwardPagination,
+          ),
+          useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
+          castToText: shouldCastToText(nestedFieldMetadata.type),
         },
-        joinInfo,
       };
     }
 
     return null;
+  }
+
+  private buildCompositeSubqueryOrder({
+    nestedFieldMetadata,
+    nestedFieldOrderByValue,
+    targetTableName,
+    joinColumnName,
+    objectNameSingular,
+    isForwardPagination,
+  }: {
+    nestedFieldMetadata: FlatFieldMetadata;
+    nestedFieldOrderByValue: Record<string, unknown>;
+    targetTableName: string;
+    joinColumnName: string;
+    objectNameSingular: string;
+    isForwardPagination: boolean;
+  }): Record<string, OrderByClause> | null {
+    const compositeType = compositeTypeDefinitions.get(
+      nestedFieldMetadata.type as CompositeFieldMetadataType,
+    );
+
+    if (!compositeType) {
+      return null;
+    }
+
+    const result: Record<string, OrderByClause> = {};
+
+    for (const [subFieldKey, subFieldValue] of Object.entries(
+      nestedFieldOrderByValue,
+    )) {
+      const subFieldMetadata = compositeType.properties.find(
+        (property) => property.name === subFieldKey,
+      );
+
+      if (!subFieldMetadata) {
+        throw new GraphqlQueryRunnerException(
+          `Sub field "${subFieldKey}" not found in composite type`,
+          GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      if (!isOrderByDirection(subFieldValue)) {
+        throw new GraphqlQueryRunnerException(
+          `Sub field order by value must be of type OrderByDirection`,
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      const columnName = `${nestedFieldMetadata.name}${capitalize(subFieldKey)}`;
+      const subquery = `(SELECT "${columnName}" FROM "${targetTableName}" WHERE "id" = "${objectNameSingular}"."${joinColumnName}")`;
+
+      result[subquery] = {
+        ...convertOrderByToFindOptionsOrder(subFieldValue, isForwardPagination),
+        useLower: shouldUseCaseInsensitiveOrder(subFieldMetadata.type),
+        castToText: shouldCastToText(subFieldMetadata.type),
+      };
+    }
+
+    return Object.keys(result).length > 0 ? result : null;
   }
 }

@@ -123,45 +123,24 @@ export class GraphqlQueryParser {
       isForwardPagination,
     );
 
-    // Add LEFT JOINs for relation ordering
-    for (const joinInfo of parseResult.relationJoins) {
-      queryBuilder.leftJoin(
-        `${objectNameSingular}.${joinInfo.joinAlias}`,
-        joinInfo.joinAlias,
-      );
-    }
+    // Note: We use subqueries for relation ordering instead of JOINs
+    // This avoids TypeORM's DISTINCT subquery issues with mixed ordering
+    // relationJoins is kept for backward compatibility but will be empty
 
     queryBuilder.orderBy(parseResult.orderBy);
 
-    // Return parsed orderBy so caller can add relation columns after setFindOptions
     return parseResult.orderBy;
   }
 
+  // Kept for backward compatibility - no longer needed with subquery approach
   public addRelationOrderColumnsToBuilder(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder<any>,
-    parsedOrderBy: Record<string, OrderByClause>,
-    objectNameSingular: string,
+    _queryBuilder: WorkspaceSelectQueryBuilder<any>,
+    _parsedOrderBy: Record<string, OrderByClause>,
+    _objectNameSingular: string,
   ): void {
-    // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility
-    // This must be called AFTER setFindOptions because setFindOptions clears addSelect
-    // Only relation columns need explicit addSelect - main entity columns are handled by TypeORM
-    for (const orderByKey of Object.keys(parsedOrderBy)) {
-      const parts = orderByKey.split('.');
-
-      if (parts.length === 2) {
-        const [alias, column] = parts;
-
-        // Only add select for joined relation columns, not main entity columns
-        // Main entity columns cause ambiguity when added via addSelect
-        if (alias !== objectNameSingular) {
-          queryBuilder.addSelect(
-            `"${alias}"."${column}"`,
-            `${alias}_${column}`,
-          );
-        }
-      }
-    }
+    // No-op: With subquery approach, we don't need to add relation columns
+    // Subqueries are self-contained and don't require JOINs or extra SELECTs
   }
 
   public getOrderByRawSQL(
@@ -181,21 +160,35 @@ export class GraphqlQueryParser {
           ? ` ${orderByCondition.nulls}`
           : '';
 
-        // Convert "alias.column" to quoted SQL identifier "alias"."column"
-        const parts = orderByField.split('.');
-        const quotedColumn =
-          parts.length === 2
-            ? `"${parts[0]}"."${parts[1]}"`
-            : `"${orderByField}"`;
+        let columnExpr: string;
 
-        // Build column expression with optional ::text cast and LOWER()
-        let columnExpr = quotedColumn;
+        // Check if it's a subquery (starts with '(')
+        if (orderByField.startsWith('(')) {
+          // Subquery - use as-is, but apply LOWER if needed
+          columnExpr = orderByField;
+          if (orderByCondition.castToText) {
+            // Wrap subquery result with ::text
+            columnExpr = `(${columnExpr})::text`;
+          }
+          if (orderByCondition.useLower) {
+            columnExpr = `LOWER(${columnExpr})`;
+          }
+        } else {
+          // Regular column - convert "alias.column" to quoted SQL identifier
+          const parts = orderByField.split('.');
+          const quotedColumn =
+            parts.length === 2
+              ? `"${parts[0]}"."${parts[1]}"`
+              : `"${orderByField}"`;
 
-        if (orderByCondition.castToText) {
-          columnExpr = `${columnExpr}::text`;
-        }
-        if (orderByCondition.useLower) {
-          columnExpr = `LOWER(${columnExpr})`;
+          columnExpr = quotedColumn;
+
+          if (orderByCondition.castToText) {
+            columnExpr = `${columnExpr}::text`;
+          }
+          if (orderByCondition.useLower) {
+            columnExpr = `LOWER(${columnExpr})`;
+          }
         }
 
         return `${columnExpr} ${orderByCondition.order}${nullsCondition}`;
