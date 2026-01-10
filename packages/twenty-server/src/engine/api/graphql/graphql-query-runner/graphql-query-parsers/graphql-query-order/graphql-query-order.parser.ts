@@ -10,6 +10,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
   buildOrderByColumnExpression,
+  shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
@@ -136,7 +137,6 @@ export class GraphqlQueryOrderFieldParser {
           const columnExpression = buildOrderByColumnExpression(
             objectNameSingular,
             fieldName,
-            fieldMetadata.type,
           );
 
           orderByConditions[columnExpression] = {
@@ -145,6 +145,7 @@ export class GraphqlQueryOrderFieldParser {
               isForwardPagination,
             ),
             useLower: shouldUseCaseInsensitiveOrder(fieldMetadata.type),
+            castToText: shouldCastToText(fieldMetadata.type),
           };
         }
       }
@@ -247,7 +248,6 @@ export class GraphqlQueryOrderFieldParser {
       const columnExpression = buildOrderByColumnExpression(
         joinAlias,
         nestedFieldMetadata.name,
-        nestedFieldMetadata.type,
       );
 
       return {
@@ -258,6 +258,7 @@ export class GraphqlQueryOrderFieldParser {
               isForwardPagination,
             ),
             useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
+            castToText: shouldCastToText(nestedFieldMetadata.type),
           },
         },
         joinInfo,

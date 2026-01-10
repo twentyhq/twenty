@@ -2,83 +2,28 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   buildOrderByColumnExpression,
+  shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 
 describe('buildOrderByColumnExpression', () => {
-  describe('column expression with quoted identifiers', () => {
-    it('should quote TEXT field identifiers', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'name',
-        FieldMetadataType.TEXT,
-      );
+  describe('returns unquoted column expressions for TypeORM', () => {
+    it('should return unquoted alias.column format', () => {
+      const result = buildOrderByColumnExpression('company', 'name');
 
-      expect(result).toBe('"company"."name"');
+      expect(result).toBe('company.name');
     });
 
-    it('should quote and cast SELECT fields to ::text', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'status',
-        FieldMetadataType.SELECT,
-      );
+    it('should work with different prefixes', () => {
+      const result = buildOrderByColumnExpression('assignee', 'email');
 
-      expect(result).toBe('"company"."status"::text');
+      expect(result).toBe('assignee.email');
     });
 
-    it('should quote and cast MULTI_SELECT fields to ::text', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'tags',
-        FieldMetadataType.MULTI_SELECT,
-      );
-
-      expect(result).toBe('"company"."tags"::text');
-    });
-
-    it('should quote NUMBER fields without cast', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'employees',
-        FieldMetadataType.NUMBER,
-      );
-
-      expect(result).toBe('"company"."employees"');
-    });
-
-    it('should quote DATE_TIME fields without cast', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'createdAt',
-        FieldMetadataType.DATE_TIME,
-      );
-
-      expect(result).toBe('"company"."createdAt"');
-    });
-  });
-
-  describe('with relation join aliases', () => {
-    it('should use join alias as prefix for nested fields', () => {
-      const result = buildOrderByColumnExpression(
-        'assignee',
-        'name',
-        FieldMetadataType.TEXT,
-      );
-
-      expect(result).toBe('"assignee"."name"');
-    });
-  });
-
-  describe('composite field column names', () => {
     it('should handle composite column names (e.g., nameFirstName)', () => {
-      const result = buildOrderByColumnExpression(
-        'person',
-        'nameFirstName',
-        FieldMetadataType.TEXT,
-      );
+      const result = buildOrderByColumnExpression('person', 'nameFirstName');
 
-      expect(result).toBe('"person"."nameFirstName"');
+      expect(result).toBe('person.nameFirstName');
     });
   });
 });
@@ -116,5 +61,27 @@ describe('shouldUseCaseInsensitiveOrder', () => {
     expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.BOOLEAN)).toBe(
       false,
     );
+  });
+});
+
+describe('shouldCastToText', () => {
+  it('should return true for SELECT fields', () => {
+    expect(shouldCastToText(FieldMetadataType.SELECT)).toBe(true);
+  });
+
+  it('should return true for MULTI_SELECT fields', () => {
+    expect(shouldCastToText(FieldMetadataType.MULTI_SELECT)).toBe(true);
+  });
+
+  it('should return false for TEXT fields', () => {
+    expect(shouldCastToText(FieldMetadataType.TEXT)).toBe(false);
+  });
+
+  it('should return false for NUMBER fields', () => {
+    expect(shouldCastToText(FieldMetadataType.NUMBER)).toBe(false);
+  });
+
+  it('should return false for DATE_TIME fields', () => {
+    expect(shouldCastToText(FieldMetadataType.DATE_TIME)).toBe(false);
   });
 });

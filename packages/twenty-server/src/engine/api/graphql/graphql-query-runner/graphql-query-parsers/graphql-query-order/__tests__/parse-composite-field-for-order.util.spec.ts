@@ -19,10 +19,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"person"."nameFirstName"': {
+        'person.nameFirstName': {
           order: 'ASC',
           nulls: 'NULLS FIRST',
           useLower: true,
+          castToText: false,
         },
       });
     });
@@ -41,10 +42,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"company"."linkedinLinkPrimaryLinkLabel"': {
+        'company.linkedinLinkPrimaryLinkLabel': {
           order: 'DESC',
           nulls: 'NULLS LAST',
           useLower: true,
+          castToText: false,
         },
       });
     });
@@ -63,10 +65,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"company"."addressAddressCity"': {
+        'company.addressAddressCity': {
           order: 'ASC',
           nulls: 'NULLS LAST',
           useLower: true,
+          castToText: false,
         },
       });
     });
@@ -87,10 +90,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"company"."annualRevenueAmountMicros"': {
+        'company.annualRevenueAmountMicros': {
           order: 'DESC',
           nulls: 'NULLS FIRST',
           useLower: false,
+          castToText: false,
         },
       });
     });
@@ -109,10 +113,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"company"."addressAddressLat"': {
+        'company.addressAddressLat': {
           order: 'ASC',
           nulls: 'NULLS FIRST',
           useLower: false,
+          castToText: false,
         },
       });
     });
@@ -133,10 +138,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        '"person"."nameFirstName"': {
+        'person.nameFirstName': {
           order: 'DESC',
           nulls: 'NULLS FIRST',
           useLower: true,
+          castToText: false,
         },
       });
     });

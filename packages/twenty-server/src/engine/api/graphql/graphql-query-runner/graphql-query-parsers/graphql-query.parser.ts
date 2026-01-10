@@ -178,9 +178,23 @@ export class GraphqlQueryParser {
         const nullsCondition = isDefined(orderByCondition.nulls)
           ? ` ${orderByCondition.nulls}`
           : '';
-        const columnExpr = orderByCondition.useLower
-          ? `LOWER(${orderByField})`
-          : orderByField;
+
+        // Convert "alias.column" to quoted SQL identifier "alias"."column"
+        const parts = orderByField.split('.');
+        const quotedColumn =
+          parts.length === 2
+            ? `"${parts[0]}"."${parts[1]}"`
+            : `"${orderByField}"`;
+
+        // Build column expression with optional ::text cast and LOWER()
+        let columnExpr = quotedColumn;
+
+        if (orderByCondition.castToText) {
+          columnExpr = `${columnExpr}::text`;
+        }
+        if (orderByCondition.useLower) {
+          columnExpr = `LOWER(${columnExpr})`;
+        }
 
         return `${columnExpr} ${orderByCondition.order}${nullsCondition}`;
       },

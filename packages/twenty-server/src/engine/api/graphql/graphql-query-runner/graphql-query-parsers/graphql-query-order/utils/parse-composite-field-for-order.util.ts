@@ -4,6 +4,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
   buildOrderByColumnExpression,
+  shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
@@ -42,7 +43,6 @@ export const parseCompositeFieldForOrder = (
       const orderByKey = buildOrderByColumnExpression(
         prefix,
         `${fieldMetadata.name}${capitalize(subFieldKey)}`,
-        subFieldMetadata.type,
       );
 
       if (!isOrderByDirection(subFieldValue)) {
@@ -54,6 +54,7 @@ export const parseCompositeFieldForOrder = (
       acc[orderByKey] = {
         ...convertOrderByToFindOptionsOrder(subFieldValue, isForwardPagination),
         useLower: shouldUseCaseInsensitiveOrder(subFieldMetadata.type),
+        castToText: shouldCastToText(subFieldMetadata.type),
       };
 
       return acc;
