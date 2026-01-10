@@ -1,4 +1,7 @@
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import {
+  type MessageChannel,
+  MessageChannelSyncStatus,
+} from '@/accounts/types/MessageChannel';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -8,6 +11,8 @@ import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/compon
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { useDryRunMessageFolderSync } from '@/settings/accounts/hooks/useDryRunMessageFolderSync';
+import { useTriggerMessageFolderSync } from '@/settings/accounts/hooks/useTriggerMessageFolderSync';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,7 +22,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Label } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
@@ -69,8 +74,15 @@ const StyledLabel = styled(Label)`
 export const SettingsAccountsMessageFoldersCard = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
+  const [syncingFolderIds, setSyncingFolderIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [dryRunningFolderIds, setDryRunningFolderIds] = useState<Set<string>>(
+    new Set(),
+  );
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar, enqueueInfoSnackBar } =
+    useSnackBar();
 
   const settingsAccountsSelectedMessageChannel = useRecoilValue(
     settingsAccountsSelectedMessageChannelState,
@@ -78,6 +90,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const { updateMessageFoldersSyncStatus } =
     useUpdateMessageFoldersSyncStatus();
+
+  const [triggerMessageFolderSync] = useTriggerMessageFolderSync();
+  const [dryRunMessageFolderSync] = useDryRunMessageFolderSync();
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
@@ -91,7 +106,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
     recordGqlFields,
   });
 
-  const { messageFolders = [] } = messageChannel ?? {};
+  const { messageFolders = [], syncStatus } = messageChannel ?? {};
+
+  const isChannelImporting = syncStatus === MessageChannelSyncStatus.ONGOING;
 
   const filteredMessageFolders = useMemo(() => {
     return messageFolders.filter((folder) =>
@@ -147,6 +164,80 @@ export const SettingsAccountsMessageFoldersCard = () => {
     }
   };
 
+  const handleSyncFolder = async (folderToSync: MessageFolder) => {
+    setSyncingFolderIds((prev) => new Set(prev).add(folderToSync.id));
+
+    const folderName = folderToSync.name;
+
+    try {
+      await triggerMessageFolderSync({
+        variables: {
+          messageFolderId: folderToSync.id,
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Sync started for folder "${folderName}"`,
+      });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+      });
+    } finally {
+      setSyncingFolderIds((prev) => {
+        const next = new Set(prev);
+        next.delete(folderToSync.id);
+
+        return next;
+      });
+    }
+  };
+
+  const isSyncingFolder = useCallback(
+    (folderId: string) => syncingFolderIds.has(folderId),
+    [syncingFolderIds],
+  );
+
+  const handleDryRunFolder = async (folderToDryRun: MessageFolder) => {
+    setDryRunningFolderIds((prev) => new Set(prev).add(folderToDryRun.id));
+
+    const folderName = folderToDryRun.name;
+
+    try {
+      const result = await dryRunMessageFolderSync({
+        variables: {
+          messageFolderId: folderToDryRun.id,
+        },
+      });
+
+      const data = result.data?.dryRunMessageFolderSync;
+
+      if (data !== undefined) {
+        const messagesToImport = data.messagesToImport;
+        const alreadyImported = data.alreadyImported;
+
+        enqueueInfoSnackBar({
+          message: t`${folderName}: ${messagesToImport} emails to import, ${alreadyImported} already imported`,
+        });
+      }
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+      });
+    } finally {
+      setDryRunningFolderIds((prev) => {
+        const next = new Set(prev);
+        next.delete(folderToDryRun.id);
+
+        return next;
+      });
+    }
+  };
+
+  const isDryRunningFolder = useCallback(
+    (folderId: string) => dryRunningFolderIds.has(folderId),
+    [dryRunningFolderIds],
+  );
+
   if (loading) {
     return (
       <Section>
@@ -190,6 +281,11 @@ export const SettingsAccountsMessageFoldersCard = () => {
                 key={rootFolder.folder.id}
                 folderTreeNode={rootFolder}
                 onToggleFolder={handleToggleFolder}
+                onSyncFolder={handleSyncFolder}
+                onDryRunFolder={handleDryRunFolder}
+                isSyncingFolder={isSyncingFolder}
+                isDryRunningFolder={isDryRunningFolder}
+                isChannelImporting={isChannelImporting}
               />
             ))}
           </StyledTreeList>

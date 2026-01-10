@@ -8,7 +8,8 @@ import { In } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -25,6 +26,12 @@ export type RetroactiveImportParams = {
   folderExternalId: string | null;
 };
 
+export type DryRunImportResult = {
+  totalMessagesInFolder: number;
+  messagesToImport: number;
+  alreadyImported: number;
+};
+
 @Injectable()
 export class MessagingFolderRetroactiveImportService {
   private readonly logger = new Logger(
@@ -34,7 +41,7 @@ export class MessagingFolderRetroactiveImportService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
@@ -52,73 +59,159 @@ export class MessagingFolderRetroactiveImportService {
       return;
     }
 
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: messageChannelId },
-      relations: ['connectedAccount'],
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-    if (!messageChannel) {
-      this.logger.warn(
-        `Message channel ${messageChannelId} not found, skipping retroactive import`,
-      );
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: messageChannelId },
+          relations: ['connectedAccount'],
+        });
 
-      return;
+        if (!messageChannel) {
+          this.logger.warn(
+            `Message channel ${messageChannelId} not found, skipping retroactive import`,
+          );
+
+          return;
+        }
+
+        const { connectedAccount } = messageChannel;
+
+        if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
+          this.logger.log(
+            `Retroactive import is only supported for Google accounts, skipping for provider ${connectedAccount.provider}`,
+          );
+
+          return;
+        }
+
+        const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
+          connectedAccount,
+          folderExternalId,
+        );
+
+        this.logger.log(
+          `Found ${messageExternalIds.length} messages in folder ${folderExternalId}`,
+        );
+
+        if (messageExternalIds.length === 0) {
+          return;
+        }
+
+        const newMessageIds = await this.filterAlreadyImportedMessages(
+          workspaceId,
+          messageChannelId,
+          messageExternalIds,
+        );
+
+        this.logger.log(
+          `${newMessageIds.length} new messages to import from folder ${folderExternalId}`,
+        );
+
+        if (newMessageIds.length === 0) {
+          return;
+        }
+
+        await this.cacheStorage.setAdd(
+          `messages-to-import:${workspaceId}:${messageChannelId}`,
+          newMessageIds,
+          ONE_WEEK_IN_MILLISECONDS,
+        );
+
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+          [messageChannelId],
+          workspaceId,
+        );
+
+        this.logger.log(
+          `Scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}`,
+        );
+      },
+    );
+  }
+
+  async dryRunImport(
+    params: RetroactiveImportParams,
+  ): Promise<DryRunImportResult> {
+    const { workspaceId, messageChannelId, folderExternalId } = params;
+
+    if (!isDefined(folderExternalId)) {
+      return {
+        totalMessagesInFolder: 0,
+        messagesToImport: 0,
+        alreadyImported: 0,
+      };
     }
 
-    const { connectedAccount } = messageChannel;
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
-      this.logger.log(
-        `Retroactive import is only supported for Google accounts, skipping for provider ${connectedAccount.provider}`,
-      );
+    return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-      return;
-    }
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: messageChannelId },
+          relations: ['connectedAccount'],
+        });
 
-    const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
-      connectedAccount,
-      folderExternalId,
-    );
+        if (!messageChannel) {
+          return {
+            totalMessagesInFolder: 0,
+            messagesToImport: 0,
+            alreadyImported: 0,
+          };
+        }
 
-    this.logger.log(
-      `Found ${messageExternalIds.length} messages in folder ${folderExternalId}`,
-    );
+        const { connectedAccount } = messageChannel;
 
-    if (messageExternalIds.length === 0) {
-      return;
-    }
+        if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
+          return {
+            totalMessagesInFolder: 0,
+            messagesToImport: 0,
+            alreadyImported: 0,
+          };
+        }
 
-    const newMessageIds = await this.filterAlreadyImportedMessages(
-      messageChannelId,
-      messageExternalIds,
-    );
+        const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
+          connectedAccount,
+          folderExternalId,
+        );
 
-    this.logger.log(
-      `${newMessageIds.length} new messages to import from folder ${folderExternalId}`,
-    );
+        const totalMessagesInFolder = messageExternalIds.length;
 
-    if (newMessageIds.length === 0) {
-      return;
-    }
+        if (totalMessagesInFolder === 0) {
+          return {
+            totalMessagesInFolder: 0,
+            messagesToImport: 0,
+            alreadyImported: 0,
+          };
+        }
 
-    await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:${messageChannelId}`,
-      newMessageIds,
-      ONE_WEEK_IN_MILLISECONDS,
-    );
+        const newMessageIds = await this.filterAlreadyImportedMessages(
+          workspaceId,
+          messageChannelId,
+          messageExternalIds,
+        );
 
-    await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-      [messageChannelId],
-      workspaceId,
-    );
-
-    this.logger.log(
-      `Scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}`,
+        return {
+          totalMessagesInFolder,
+          messagesToImport: newMessageIds.length,
+          alreadyImported: totalMessagesInFolder - newMessageIds.length,
+        };
+      },
     );
   }
 
@@ -172,11 +265,13 @@ export class MessagingFolderRetroactiveImportService {
   }
 
   private async filterAlreadyImportedMessages(
+    workspaceId: string,
     messageChannelId: string,
     messageExternalIds: string[],
   ): Promise<string[]> {
     const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
         'messageChannelMessageAssociation',
       );
 

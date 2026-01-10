@@ -8,14 +8,25 @@ import { isFolderTreePartiallySelected } from '@/settings/accounts/components/me
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
+import {
+  AppTooltip,
+  IconChevronDown,
+  IconChevronUp,
+  IconDownload,
+  IconEye,
+} from 'twenty-ui/display';
+import { Checkbox, CheckboxSize, IconButton } from 'twenty-ui/input';
 
 type SettingsMessageFoldersTreeItemProps = {
   depth?: number;
   folderTreeNode: MessageFolderTreeNode;
   isLast?: boolean;
   onToggleFolder: (folder: MessageFolder) => void;
+  onSyncFolder?: (folder: MessageFolder) => void;
+  onDryRunFolder?: (folder: MessageFolder) => void;
+  isSyncingFolder?: (folderId: string) => boolean;
+  isDryRunningFolder?: (folderId: string) => boolean;
+  isChannelImporting?: boolean;
   parentsIsLastList?: boolean[];
 };
 
@@ -126,6 +137,11 @@ export const SettingsMessageFoldersTreeItem = ({
   folderTreeNode,
   isLast = false,
   onToggleFolder,
+  onSyncFolder,
+  onDryRunFolder,
+  isSyncingFolder,
+  isDryRunningFolder,
+  isChannelImporting = false,
   parentsIsLastList = [],
 }: SettingsMessageFoldersTreeItemProps) => {
   const { t } = useLingui();
@@ -150,6 +166,19 @@ export const SettingsMessageFoldersTreeItem = ({
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+
+  const handleSyncClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSyncFolder?.(folder);
+  };
+
+  const handleDryRunClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDryRunFolder?.(folder);
+  };
+
+  const isSyncing = isSyncingFolder?.(folder.id) ?? false;
+  const isDryRunning = isDryRunningFolder?.(folder.id) ?? false;
 
   const childParentsIsLastList =
     depth > 0 ? [...parentsIsLastList, isLast] : parentsIsLastList;
@@ -193,6 +222,42 @@ export const SettingsMessageFoldersTreeItem = ({
               </>
             )}
 
+            {folder.isSynced && (
+              <>
+                <div id={`preview-folder-${folder.id}`}>
+                  <IconButton
+                    Icon={IconEye}
+                    onClick={handleDryRunClick}
+                    disabled={isDryRunning || isChannelImporting}
+                    ariaLabel={t`Preview import`}
+                    size="small"
+                    variant="tertiary"
+                  />
+                </div>
+                <AppTooltip
+                  anchorSelect={`#preview-folder-${folder.id}`}
+                  content={t`Preview how many emails will be imported`}
+                  place="left"
+                />
+                <div id={`import-folder-${folder.id}`}>
+                  <IconButton
+                    Icon={IconDownload}
+                    onClick={handleSyncClick}
+                    disabled={isSyncing || isChannelImporting}
+                    ariaLabel={t`Import existing emails`}
+                    size="small"
+                    variant="tertiary"
+                    accent={isChannelImporting ? 'blue' : 'default'}
+                  />
+                </div>
+                <AppTooltip
+                  anchorSelect={`#import-folder-${folder.id}`}
+                  content={t`Import all existing emails from this folder. New emails are synced automatically.`}
+                  place="left"
+                />
+              </>
+            )}
+
             <StyledCheckboxWrapper onClick={handleCheckboxClick}>
               <Checkbox
                 checked={folder.isSynced}
@@ -216,6 +281,11 @@ export const SettingsMessageFoldersTreeItem = ({
                   folderTreeNode={child}
                   isLast={index === children.length - 1}
                   onToggleFolder={onToggleFolder}
+                  onSyncFolder={onSyncFolder}
+                  onDryRunFolder={onDryRunFolder}
+                  isSyncingFolder={isSyncingFolder}
+                  isDryRunningFolder={isDryRunningFolder}
+                  isChannelImporting={isChannelImporting}
                   parentsIsLastList={childParentsIsLastList}
                 />
               ))}

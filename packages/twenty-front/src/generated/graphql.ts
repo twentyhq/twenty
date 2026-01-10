@@ -1229,6 +1229,13 @@ export type DomainValidRecords = {
   records: Array<DomainRecord>;
 };
 
+export type DryRunImportResult = {
+  __typename?: 'DryRunImportResult';
+  alreadyImported: Scalars['Int'];
+  messagesToImport: Scalars['Int'];
+  totalMessagesInFolder: Scalars['Int'];
+};
+
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
   workflowIdToDuplicate: Scalars['UUID'];
@@ -1938,6 +1945,7 @@ export type Mutation = {
   syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
+  triggerMessageFolderSync: ChannelSyncSuccess;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
@@ -2660,6 +2668,11 @@ export type MutationTrackAnalyticsArgs = {
 };
 
 
+export type MutationTriggerMessageFolderSyncArgs = {
+  messageFolderId: Scalars['UUID'];
+};
+
+
 export type MutationUninstallApplicationArgs = {
   universalIdentifier: Scalars['String'];
 };
@@ -3280,6 +3293,7 @@ export type Query = {
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
+  dryRunMessageFolderSync: DryRunImportResult;
   field: Field;
   fields: FieldConnection;
   findManyAgents: Array<Agent>;
@@ -3374,6 +3388,11 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryDryRunMessageFolderSyncArgs = {
+  messageFolderId: Scalars['UUID'];
 };
 
 

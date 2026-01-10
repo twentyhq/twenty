@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -11,6 +11,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ChannelSyncSuccessDTO } from 'src/modules/connected-account/channel-sync/dtos/channel-sync-success.dto';
+import { DryRunImportResultDTO } from 'src/modules/connected-account/channel-sync/dtos/dry-run-import-result.dto';
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 
 @Resolver()
@@ -33,5 +34,33 @@ export class ChannelSyncResolver {
     });
 
     return { success: true };
+  }
+
+  @Mutation(() => ChannelSyncSuccessDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  async triggerMessageFolderSync(
+    @Args('messageFolderId', { type: () => UUIDScalarType })
+    messageFolderId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ChannelSyncSuccessDTO> {
+    await this.channelSyncService.triggerMessageFolderSync({
+      messageFolderId,
+      workspaceId: workspace.id,
+    });
+
+    return { success: true };
+  }
+
+  @Query(() => DryRunImportResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  async dryRunMessageFolderSync(
+    @Args('messageFolderId', { type: () => UUIDScalarType })
+    messageFolderId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<DryRunImportResultDTO> {
+    return await this.channelSyncService.dryRunMessageFolderSync({
+      messageFolderId,
+      workspaceId: workspace.id,
+    });
   }
 }

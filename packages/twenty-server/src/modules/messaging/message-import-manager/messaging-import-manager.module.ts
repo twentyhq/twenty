@@ -121,6 +121,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingOngoingStaleCronCommand,
     MessagingRelaunchFailedMessageChannelsCronCommand,
     MessagingProcessGroupEmailActionsService,
+    MessagingFolderRetroactiveImportService,
   ],
 })
 export class MessagingImportManagerModule {}

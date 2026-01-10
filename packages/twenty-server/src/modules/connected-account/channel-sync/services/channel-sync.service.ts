@@ -19,6 +19,15 @@ import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessagingFolderRetroactiveImportJob,
+  type MessagingFolderRetroactiveImportJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-folder-retroactive-import.job';
+import {
+  type DryRunImportResult,
+  MessagingFolderRetroactiveImportService,
+} from 'src/modules/messaging/message-import-manager/services/messaging-folder-retroactive-import.service';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -26,6 +35,11 @@ import {
 
 export type StartChannelSyncInput = {
   connectedAccountId: string;
+  workspaceId: string;
+};
+
+export type TriggerMessageFolderSyncInput = {
+  messageFolderId: string;
   workspaceId: string;
 };
 
@@ -38,6 +52,7 @@ export class ChannelSyncService {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly messagingFolderRetroactiveImportService: MessagingFolderRetroactiveImportService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -124,6 +139,77 @@ export class ChannelSyncService {
             },
           );
         }
+      },
+    );
+  }
+
+  async triggerMessageFolderSync(
+    input: TriggerMessageFolderSyncInput,
+  ): Promise<void> {
+    const { messageFolderId, workspaceId } = input;
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageFolderRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
+            workspaceId,
+            'messageFolder',
+          );
+
+        const messageFolder = await messageFolderRepository.findOne({
+          where: { id: messageFolderId },
+        });
+
+        if (!messageFolder) {
+          throw new Error(`Message folder ${messageFolderId} not found`);
+        }
+
+        await this.messageQueueService.add<MessagingFolderRetroactiveImportJobData>(
+          MessagingFolderRetroactiveImportJob.name,
+          {
+            workspaceId,
+            messageChannelId: messageFolder.messageChannelId,
+            messageFolderId: messageFolder.id,
+            folderExternalId: messageFolder.externalId,
+          },
+        );
+      },
+    );
+  }
+
+  async dryRunMessageFolderSync(
+    input: TriggerMessageFolderSyncInput,
+  ): Promise<DryRunImportResult> {
+    const { messageFolderId, workspaceId } = input;
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageFolderRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
+            workspaceId,
+            'messageFolder',
+          );
+
+        const messageFolder = await messageFolderRepository.findOne({
+          where: { id: messageFolderId },
+        });
+
+        if (!messageFolder) {
+          throw new Error(`Message folder ${messageFolderId} not found`);
+        }
+
+        return await this.messagingFolderRetroactiveImportService.dryRunImport({
+          workspaceId,
+          messageChannelId: messageFolder.messageChannelId,
+          messageFolderId: messageFolder.id,
+          folderExternalId: messageFolder.externalId,
+        });
       },
     );
   }

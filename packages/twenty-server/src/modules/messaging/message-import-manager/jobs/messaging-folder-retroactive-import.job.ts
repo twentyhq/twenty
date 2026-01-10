@@ -3,8 +3,12 @@ import { Logger, Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingFolderRetroactiveImportService } from 'src/modules/messaging/message-import-manager/services/messaging-folder-retroactive-import.service';
 
 export type MessagingFolderRetroactiveImportJobData = {
@@ -24,7 +28,7 @@ export class MessagingFolderRetroactiveImportJob {
   );
 
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingFolderRetroactiveImportService: MessagingFolderRetroactiveImportService,
   ) {}
 
@@ -37,38 +41,58 @@ export class MessagingFolderRetroactiveImportJob {
       `Processing retroactive import for folder ${folderExternalId} in message channel ${messageChannelId}`,
     );
 
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: messageChannelId },
-      relations: ['connectedAccount'],
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-    if (!messageChannel) {
-      this.logger.warn(
-        `Message channel ${messageChannelId} not found, skipping retroactive import`,
-      );
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: messageChannelId },
+          relations: ['connectedAccount'],
+        });
 
-      return;
-    }
+        if (!messageChannel) {
+          this.logger.warn(
+            `Message channel ${messageChannelId} not found, skipping retroactive import`,
+          );
 
-    if (!messageChannel.isSyncEnabled) {
-      this.logger.log(
-        `Sync is disabled for message channel ${messageChannelId}, skipping retroactive import`,
-      );
+          return;
+        }
 
-      return;
-    }
+        if (!messageChannel.isSyncEnabled) {
+          this.logger.log(
+            `Sync is disabled for message channel ${messageChannelId}, skipping retroactive import`,
+          );
 
-    await this.messagingFolderRetroactiveImportService.processRetroactiveImport(
-      {
-        workspaceId,
-        messageChannelId,
-        messageFolderId,
-        folderExternalId,
+          return;
+        }
+
+        // Only run retroactive import for SELECTED_FOLDERS policy
+        if (
+          messageChannel.messageFolderImportPolicy !==
+          MessageFolderImportPolicy.SELECTED_FOLDERS
+        ) {
+          this.logger.log(
+            `Message channel ${messageChannelId} uses ${messageChannel.messageFolderImportPolicy} policy, skipping retroactive import`,
+          );
+
+          return;
+        }
+
+        await this.messagingFolderRetroactiveImportService.processRetroactiveImport(
+          {
+            workspaceId,
+            messageChannelId,
+            messageFolderId,
+            folderExternalId,
+          },
+        );
       },
     );
   }
