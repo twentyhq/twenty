@@ -178,8 +178,11 @@ export class GraphqlQueryParser {
         const nullsCondition = isDefined(orderByCondition.nulls)
           ? ` ${orderByCondition.nulls}`
           : '';
+        const columnExpr = orderByCondition.useLower
+          ? `LOWER(${orderByField})`
+          : orderByField;
 
-        return `${orderByField} ${orderByCondition.order}${nullsCondition}`;
+        return `${columnExpr} ${orderByCondition.order}${nullsCondition}`;
       },
     );
 

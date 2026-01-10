@@ -1,101 +1,72 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { buildOrderByColumnExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
+import {
+  buildOrderByColumnExpression,
+  shouldUseCaseInsensitiveOrder,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 
 describe('buildOrderByColumnExpression', () => {
-  describe('case-insensitive sorting with LOWER()', () => {
-    it('should wrap TEXT fields with LOWER()', () => {
+  describe('column expression with quoted identifiers', () => {
+    it('should quote TEXT field identifiers', () => {
       const result = buildOrderByColumnExpression(
         'company',
         'name',
         FieldMetadataType.TEXT,
       );
 
-      expect(result).toBe('LOWER(company.name)');
+      expect(result).toBe('"company"."name"');
     });
 
-    it('should wrap SELECT fields with LOWER() and ::text cast', () => {
+    it('should quote and cast SELECT fields to ::text', () => {
       const result = buildOrderByColumnExpression(
         'company',
         'status',
         FieldMetadataType.SELECT,
       );
 
-      expect(result).toBe('LOWER(company.status::text)');
+      expect(result).toBe('"company"."status"::text');
     });
 
-    it('should wrap MULTI_SELECT fields with LOWER() and ::text cast', () => {
+    it('should quote and cast MULTI_SELECT fields to ::text', () => {
       const result = buildOrderByColumnExpression(
         'company',
         'tags',
         FieldMetadataType.MULTI_SELECT,
       );
 
-      expect(result).toBe('LOWER(company.tags::text)');
+      expect(result).toBe('"company"."tags"::text');
     });
-  });
 
-  describe('case-sensitive sorting (no LOWER)', () => {
-    it('should not wrap NUMBER fields with LOWER()', () => {
+    it('should quote NUMBER fields without cast', () => {
       const result = buildOrderByColumnExpression(
         'company',
         'employees',
         FieldMetadataType.NUMBER,
       );
 
-      expect(result).toBe('company.employees');
+      expect(result).toBe('"company"."employees"');
     });
 
-    it('should not wrap DATE_TIME fields with LOWER()', () => {
+    it('should quote DATE_TIME fields without cast', () => {
       const result = buildOrderByColumnExpression(
         'company',
         'createdAt',
         FieldMetadataType.DATE_TIME,
       );
 
-      expect(result).toBe('company.createdAt');
-    });
-
-    it('should not wrap UUID fields with LOWER()', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'id',
-        FieldMetadataType.UUID,
-      );
-
-      expect(result).toBe('company.id');
-    });
-
-    it('should not wrap BOOLEAN fields with LOWER()', () => {
-      const result = buildOrderByColumnExpression(
-        'company',
-        'isActive',
-        FieldMetadataType.BOOLEAN,
-      );
-
-      expect(result).toBe('company.isActive');
+      expect(result).toBe('"company"."createdAt"');
     });
   });
 
   describe('with relation join aliases', () => {
-    it('should use join alias as prefix for nested TEXT fields', () => {
+    it('should use join alias as prefix for nested fields', () => {
       const result = buildOrderByColumnExpression(
         'assignee',
         'name',
         FieldMetadataType.TEXT,
       );
 
-      expect(result).toBe('LOWER(assignee.name)');
-    });
-
-    it('should use join alias as prefix for nested SELECT fields', () => {
-      const result = buildOrderByColumnExpression(
-        'assignee',
-        'role',
-        FieldMetadataType.SELECT,
-      );
-
-      expect(result).toBe('LOWER(assignee.role::text)');
+      expect(result).toBe('"assignee"."name"');
     });
   });
 
@@ -107,7 +78,43 @@ describe('buildOrderByColumnExpression', () => {
         FieldMetadataType.TEXT,
       );
 
-      expect(result).toBe('LOWER(person.nameFirstName)');
+      expect(result).toBe('"person"."nameFirstName"');
     });
+  });
+});
+
+describe('shouldUseCaseInsensitiveOrder', () => {
+  it('should return true for TEXT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.TEXT)).toBe(true);
+  });
+
+  it('should return true for SELECT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.SELECT)).toBe(true);
+  });
+
+  it('should return true for MULTI_SELECT fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.MULTI_SELECT)).toBe(
+      true,
+    );
+  });
+
+  it('should return false for NUMBER fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.NUMBER)).toBe(false);
+  });
+
+  it('should return false for DATE_TIME fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.DATE_TIME)).toBe(
+      false,
+    );
+  });
+
+  it('should return false for UUID fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.UUID)).toBe(false);
+  });
+
+  it('should return false for BOOLEAN fields', () => {
+    expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.BOOLEAN)).toBe(
+      false,
+    );
   });
 });

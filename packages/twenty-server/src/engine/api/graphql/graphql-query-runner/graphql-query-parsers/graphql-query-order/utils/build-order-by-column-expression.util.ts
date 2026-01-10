@@ -1,5 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+export const shouldUseCaseInsensitiveOrder = (
+  fieldType: FieldMetadataType,
+): boolean => {
+  return (
+    fieldType === FieldMetadataType.TEXT ||
+    fieldType === FieldMetadataType.SELECT ||
+    fieldType === FieldMetadataType.MULTI_SELECT
+  );
+};
+
 export const buildOrderByColumnExpression = (
   prefix: string,
   columnName: string,
@@ -8,10 +18,8 @@ export const buildOrderByColumnExpression = (
   const isEnumType =
     fieldType === FieldMetadataType.SELECT ||
     fieldType === FieldMetadataType.MULTI_SELECT;
-  const isTextBased = fieldType === FieldMetadataType.TEXT || isEnumType;
 
   const casting = isEnumType ? '::text' : '';
-  const columnExpr = `${prefix}.${columnName}${casting}`;
 
-  return isTextBased ? `LOWER(${columnExpr})` : columnExpr;
+  return `"${prefix}"."${columnName}"${casting}`;
 };

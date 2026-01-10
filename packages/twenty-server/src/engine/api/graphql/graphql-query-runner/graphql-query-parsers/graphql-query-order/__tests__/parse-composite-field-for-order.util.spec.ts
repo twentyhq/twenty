@@ -5,7 +5,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 
 describe('parseCompositeFieldForOrder', () => {
   describe('case-insensitive sorting for composite subfields', () => {
-    it('should wrap TEXT subfields with LOWER() for FULL_NAME composite', () => {
+    it('should set useLower: true for TEXT subfields in FULL_NAME composite', () => {
       const fieldMetadata = {
         type: FieldMetadataType.FULL_NAME,
         name: 'name',
@@ -19,11 +19,15 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'LOWER(person.nameFirstName)': { order: 'ASC', nulls: 'NULLS FIRST' },
+        '"person"."nameFirstName"': {
+          order: 'ASC',
+          nulls: 'NULLS FIRST',
+          useLower: true,
+        },
       });
     });
 
-    it('should wrap TEXT subfields with LOWER() for LINKS composite', () => {
+    it('should set useLower: true for TEXT subfields in LINKS composite', () => {
       const fieldMetadata = {
         type: FieldMetadataType.LINKS,
         name: 'linkedinLink',
@@ -37,14 +41,15 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'LOWER(company.linkedinLinkPrimaryLinkLabel)': {
+        '"company"."linkedinLinkPrimaryLinkLabel"': {
           order: 'DESC',
           nulls: 'NULLS LAST',
+          useLower: true,
         },
       });
     });
 
-    it('should wrap TEXT subfields with LOWER() for ADDRESS composite', () => {
+    it('should set useLower: true for TEXT subfields in ADDRESS composite', () => {
       const fieldMetadata = {
         type: FieldMetadataType.ADDRESS,
         name: 'address',
@@ -58,16 +63,17 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'LOWER(company.addressAddressCity)': {
+        '"company"."addressAddressCity"': {
           order: 'ASC',
           nulls: 'NULLS LAST',
+          useLower: true,
         },
       });
     });
   });
 
   describe('case-sensitive sorting for non-text composite subfields', () => {
-    it('should not wrap non-TEXT subfields with LOWER() for CURRENCY composite', () => {
+    it('should set useLower: false for non-TEXT subfields in CURRENCY composite', () => {
       const fieldMetadata = {
         type: FieldMetadataType.CURRENCY,
         name: 'annualRevenue',
@@ -81,14 +87,15 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'company.annualRevenueAmountMicros': {
+        '"company"."annualRevenueAmountMicros"': {
           order: 'DESC',
           nulls: 'NULLS FIRST',
+          useLower: false,
         },
       });
     });
 
-    it('should not wrap non-TEXT subfields with LOWER() for ADDRESS lat/lng', () => {
+    it('should set useLower: false for non-TEXT subfields in ADDRESS lat/lng', () => {
       const fieldMetadata = {
         type: FieldMetadataType.ADDRESS,
         name: 'address',
@@ -102,9 +109,10 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'company.addressAddressLat': {
+        '"company"."addressAddressLat"': {
           order: 'ASC',
           nulls: 'NULLS FIRST',
+          useLower: false,
         },
       });
     });
@@ -125,7 +133,11 @@ describe('parseCompositeFieldForOrder', () => {
       );
 
       expect(result).toEqual({
-        'LOWER(person.nameFirstName)': { order: 'DESC', nulls: 'NULLS FIRST' },
+        '"person"."nameFirstName"': {
+          order: 'DESC',
+          nulls: 'NULLS FIRST',
+          useLower: true,
+        },
       });
     });
   });

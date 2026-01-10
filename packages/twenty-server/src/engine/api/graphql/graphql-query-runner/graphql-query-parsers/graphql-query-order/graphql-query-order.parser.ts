@@ -8,7 +8,10 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { buildOrderByColumnExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
+import {
+  buildOrderByColumnExpression,
+  shouldUseCaseInsensitiveOrder,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
@@ -136,11 +139,13 @@ export class GraphqlQueryOrderFieldParser {
             fieldMetadata.type,
           );
 
-          orderByConditions[columnExpression] =
-            convertOrderByToFindOptionsOrder(
+          orderByConditions[columnExpression] = {
+            ...convertOrderByToFindOptionsOrder(
               orderByDirection,
               isForwardPagination,
-            );
+            ),
+            useLower: shouldUseCaseInsensitiveOrder(fieldMetadata.type),
+          };
         }
       }
     }
@@ -247,10 +252,13 @@ export class GraphqlQueryOrderFieldParser {
 
       return {
         orderBy: {
-          [columnExpression]: convertOrderByToFindOptionsOrder(
-            nestedFieldOrderByValue,
-            isForwardPagination,
-          ),
+          [columnExpression]: {
+            ...convertOrderByToFindOptionsOrder(
+              nestedFieldOrderByValue,
+              isForwardPagination,
+            ),
+            useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
+          },
         },
         joinInfo,
       };
