@@ -91,6 +91,7 @@ export class MessagingFolderRetroactiveImportJob {
             messageChannelId,
             messageFolderId,
             folderExternalId,
+            connectedAccount: messageChannel.connectedAccount,
           },
         );
       },

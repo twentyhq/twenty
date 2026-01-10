@@ -24,6 +24,10 @@ export type RetroactiveImportParams = {
   messageChannelId: string;
   messageFolderId: string;
   folderExternalId: string | null;
+  connectedAccount?: Pick<
+    ConnectedAccountWorkspaceEntity,
+    'provider' | 'refreshToken'
+  >;
 };
 
 export type DryRunImportResult = {
@@ -49,7 +53,12 @@ export class MessagingFolderRetroactiveImportService {
   async processRetroactiveImport(
     params: RetroactiveImportParams,
   ): Promise<void> {
-    const { workspaceId, messageChannelId, folderExternalId } = params;
+    const {
+      workspaceId,
+      messageChannelId,
+      folderExternalId,
+      connectedAccount: passedConnectedAccount,
+    } = params;
 
     if (!isDefined(folderExternalId)) {
       this.logger.warn(
@@ -59,82 +68,90 @@ export class MessagingFolderRetroactiveImportService {
       return;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
+    // Use passed connectedAccount if available (from job), otherwise fetch from DB
+    let connectedAccount = passedConnectedAccount;
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
+    if (!connectedAccount) {
+      const authContext = buildSystemAuthContext(workspaceId);
 
-        const messageChannel = await messageChannelRepository.findOne({
-          where: { id: messageChannelId },
-          relations: ['connectedAccount'],
-        });
+      connectedAccount = await this.globalWorkspaceOrmManager
+        .executeInWorkspaceContext(authContext, async () => {
+          const messageChannelRepository =
+            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+              workspaceId,
+              'messageChannel',
+            );
 
-        if (!messageChannel) {
-          this.logger.warn(
-            `Message channel ${messageChannelId} not found, skipping retroactive import`,
-          );
+          const messageChannel = await messageChannelRepository.findOne({
+            where: { id: messageChannelId },
+            relations: ['connectedAccount'],
+          });
 
-          return;
-        }
+          if (!messageChannel) {
+            this.logger.warn(
+              `Message channel ${messageChannelId} not found, skipping retroactive import`,
+            );
 
-        const { connectedAccount } = messageChannel;
+            return undefined;
+          }
 
-        if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
-          this.logger.log(
-            `Retroactive import is only supported for Google accounts, skipping for provider ${connectedAccount.provider}`,
-          );
+          return messageChannel.connectedAccount;
+        })
+        .catch(() => undefined);
 
-          return;
-        }
+      if (!connectedAccount) {
+        return;
+      }
+    }
 
-        const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
-          connectedAccount,
-          folderExternalId,
-        );
+    if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
+      this.logger.log(
+        `Retroactive import is only supported for Google accounts, skipping for provider ${connectedAccount.provider}`,
+      );
 
-        this.logger.log(
-          `Found ${messageExternalIds.length} messages in folder ${folderExternalId}`,
-        );
+      return;
+    }
 
-        if (messageExternalIds.length === 0) {
-          return;
-        }
+    const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
+      connectedAccount,
+      folderExternalId,
+    );
 
-        const newMessageIds = await this.filterAlreadyImportedMessages(
-          workspaceId,
-          messageChannelId,
-          messageExternalIds,
-        );
+    this.logger.log(
+      `Found ${messageExternalIds.length} messages in folder ${folderExternalId}`,
+    );
 
-        this.logger.log(
-          `${newMessageIds.length} new messages to import from folder ${folderExternalId}`,
-        );
+    if (messageExternalIds.length === 0) {
+      return;
+    }
 
-        if (newMessageIds.length === 0) {
-          return;
-        }
+    const newMessageIds = await this.filterAlreadyImportedMessages(
+      workspaceId,
+      messageChannelId,
+      messageExternalIds,
+    );
 
-        await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:${messageChannelId}`,
-          newMessageIds,
-          ONE_WEEK_IN_MILLISECONDS,
-        );
+    this.logger.log(
+      `${newMessageIds.length} new messages to import from folder ${folderExternalId}`,
+    );
 
-        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-          [messageChannelId],
-          workspaceId,
-        );
+    if (newMessageIds.length === 0) {
+      return;
+    }
 
-        this.logger.log(
-          `Scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}`,
-        );
-      },
+    await this.cacheStorage.setAdd(
+      `messages-to-import:${workspaceId}:${messageChannelId}`,
+      newMessageIds,
+      ONE_WEEK_IN_MILLISECONDS,
+    );
+
+    await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+      [messageChannelId],
+      workspaceId,
+    );
+
+    this.logger.log(
+      `Scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}`,
     );
   }
 
@@ -237,20 +254,12 @@ export class MessagingFolderRetroactiveImportService {
     let pageToken: string | undefined;
 
     do {
-      const response = await gmailClient.users.messages
-        .list({
-          userId: 'me',
-          labelIds: [labelId],
-          maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
-          pageToken,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `Error fetching messages from folder ${labelId}: ${error.message}`,
-          );
-
-          return { data: { messages: [], nextPageToken: undefined } };
-        });
+      const response = await gmailClient.users.messages.list({
+        userId: 'me',
+        labelIds: [labelId],
+        maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
+        pageToken,
+      });
 
       const messages = response.data.messages || [];
 
