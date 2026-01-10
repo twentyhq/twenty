@@ -1,5 +1,5 @@
 import { ImapFlow } from 'imapflow';
-import { simpleParser, AddressObject } from 'mailparser';
+import { simpleParser, AddressObject, ParsedMail } from 'mailparser';
 import { Logger } from '@nestjs/common';
 import { ImapConfig } from './interfaces/imap-config.interface';
 import { ImapMessage } from './interfaces/imap-message.interface';
@@ -25,7 +25,7 @@ export class ImapDriver {
   }
 
   async connect(timeoutMs = 10000): Promise<void> {
-    let timer: NodeJS.Timeout;
+    let timer: NodeJS.Timeout | undefined;
     try {
       await Promise.race([
         this.client.connect(),
@@ -79,6 +79,8 @@ export class ImapDriver {
 
         for await (const message of msgGenerator) {
           try {
+            if (!message.source) continue;
+
             const parsed = await simpleParser(message.source);
 
             // Extract From
