@@ -19,12 +19,12 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-import { type OrderByCondition } from './types/order-by-condition.type';
+import { type OrderByClause } from './types/order-by-condition.type';
 import { type ParseOrderByResult } from './types/parse-order-by-result.type';
 import { type RelationJoinInfo } from './types/relation-join-info.type';
 
 // Re-export types for backward compatibility
-export { OrderByCondition, ParseOrderByResult, RelationJoinInfo };
+export { OrderByClause, ParseOrderByResult, RelationJoinInfo };
 
 export class GraphqlQueryOrderFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -56,7 +56,7 @@ export class GraphqlQueryOrderFieldParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): ParseOrderByResult {
-    const orderByConditions: Record<string, OrderByCondition> = {};
+    const orderByConditions: Record<string, OrderByClause> = {};
     const relationJoins: RelationJoinInfo[] = [];
     const addedJoinAliases = new Set<string>();
 
@@ -157,7 +157,7 @@ export class GraphqlQueryOrderFieldParser {
     orderByDirection: Record<string, unknown>;
     isForwardPagination: boolean;
   }): {
-    orderBy: Record<string, OrderByCondition>;
+    orderBy: Record<string, OrderByClause>;
     joinInfo: RelationJoinInfo;
   } | null {
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {

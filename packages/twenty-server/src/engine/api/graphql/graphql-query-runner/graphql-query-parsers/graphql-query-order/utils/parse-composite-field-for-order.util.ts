@@ -1,7 +1,7 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type OrderByCondition } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -12,7 +12,7 @@ export const parseCompositeFieldForOrder = (
   value: Record<string, unknown>,
   prefix: string,
   isForwardPagination = true,
-): Record<string, OrderByCondition> => {
+): Record<string, OrderByClause> => {
   const compositeType = compositeTypeDefinitions.get(
     fieldMetadata.type as CompositeFieldMetadataType,
   );
@@ -49,6 +49,6 @@ export const parseCompositeFieldForOrder = (
 
       return acc;
     },
-    {} as Record<string, OrderByCondition>,
+    {} as Record<string, OrderByClause>,
   );
 };

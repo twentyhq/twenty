@@ -36,7 +36,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-import { type OrderByCondition } from './types/order-by-condition.type';
+import { type OrderByClause } from './types/order-by-condition.type';
 
 export class GraphqlQueryOrderGroupByParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -67,8 +67,8 @@ export class GraphqlQueryOrderGroupByParser {
   }: {
     orderBy: OrderByWithGroupBy;
     groupByFields: GroupByField[];
-  }): Record<string, OrderByCondition>[] {
-    const parsedOrderBy: Record<string, OrderByCondition>[] = [];
+  }): Record<string, OrderByClause>[] {
+    const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
     const fields = this.flatObjectMetadata.fieldMetadataIds
       .map((id) => this.flatFieldMetadataMaps.byId[id])
@@ -334,7 +334,7 @@ export class GraphqlQueryOrderGroupByParser {
     availableAggregations: Record<string, AggregationField>,
     orderByArg: AggregateOrderByWithGroupByField,
     flatObjectMetadata: FlatObjectMetadata,
-  ): Record<string, OrderByCondition> => {
+  ): Record<string, OrderByClause> => {
     const aggregate = orderByArg.aggregate;
 
     if (Object.keys(aggregate).length > 1) {
@@ -380,7 +380,7 @@ export class GraphqlQueryOrderGroupByParser {
     orderByArg: ObjectRecordOrderByForScalarField;
     flatObjectMetadata: FlatObjectMetadata;
     fieldMetadata: FlatFieldMetadata;
-  }): Record<string, OrderByCondition> | null => {
+  }): Record<string, OrderByClause> | null => {
     const fieldIsInGroupBy = groupByFields.some(
       (groupByField) => groupByField.fieldMetadata.id === fieldMetadata.id,
     );
@@ -414,7 +414,7 @@ export class GraphqlQueryOrderGroupByParser {
     orderByArg: ObjectRecordOrderByForCompositeField;
     flatObjectMetadata: FlatObjectMetadata;
     fieldMetadata: FlatFieldMetadata;
-  }): Record<string, OrderByCondition> | null => {
+  }): Record<string, OrderByClause> | null => {
     const fieldName = Object.keys(orderByArg)[0];
     const orderBySubField = orderByArg[fieldName];
 
@@ -457,7 +457,7 @@ export class GraphqlQueryOrderGroupByParser {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByWithGroupByDateField;
     fieldMetadataId: string;
-  }): Record<string, OrderByCondition> | null => {
+  }): Record<string, OrderByClause> | null => {
     const orderByDirection = Object.values(orderByArg)[0]?.orderBy;
 
     if (!isDefined(orderByDirection)) {
@@ -511,7 +511,7 @@ export class GraphqlQueryOrderGroupByParser {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByForRelationField;
     fieldMetadata: FlatFieldMetadata;
-  }): Record<string, OrderByCondition> | null => {
+  }): Record<string, OrderByClause> | null => {
     const {
       associatedGroupByField,
       nestedFieldMetadata,

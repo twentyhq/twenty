@@ -1,5 +1,6 @@
 import { type Reference, type StoreObject } from '@apollo/client';
 import { type ReadFieldFunction } from '@apollo/client/cache/core/types/common';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
@@ -10,7 +11,7 @@ import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 // Extracts the OrderBy direction from a nested orderBy structure
 // Handles up to 3 levels: field, field.subField, or relation.compositeField.subField
 const extractOrderByDirection = (value: unknown): OrderBy | null => {
-  if (typeof value === 'string') {
+  if (isNonEmptyString(value)) {
     return value as OrderBy;
   }
   if (typeof value === 'object' && value !== null) {
@@ -31,17 +32,20 @@ export const sortCachedObjectEdges = ({
   orderBy: RecordGqlOperationOrderBy;
   readCacheField: ReadFieldFunction;
 }) => {
-  const [orderByFieldName, orderByFieldValue] = Object.entries(orderBy[0])[0];
-  const [orderBySubFieldName, orderBySubFieldValue] =
-    typeof orderByFieldValue === 'string'
+  const [orderByFieldName, orderByFieldValueOrDirection] = Object.entries(
+    orderBy[0],
+  )[0];
+  const [orderBySubFieldName, orderBySubFieldValueOrDirection] =
+    isNonEmptyString(orderByFieldValueOrDirection)
       ? []
-      : Object.entries(orderByFieldValue)[0];
+      : Object.entries(orderByFieldValueOrDirection)[0];
 
   // For relation fields with composite nested fields (e.g., accountOwner.name.firstName)
-  const [orderBySubSubFieldName] =
-    typeof orderBySubFieldValue === 'string' || !isDefined(orderBySubFieldValue)
+  const [orderBySubSubFieldNameOrDirection] =
+    isNonEmptyString(orderBySubFieldValueOrDirection) ||
+    !isDefined(orderBySubFieldValueOrDirection)
       ? []
-      : Object.entries(orderBySubFieldValue)[0];
+      : Object.entries(orderBySubFieldValueOrDirection)[0];
 
   const readFieldValueToSort = (
     edge: RecordGqlRefEdge,
@@ -62,11 +66,16 @@ export const sortCachedObjectEdges = ({
         fieldValue as Reference | StoreObject,
       ) ?? null;
 
-    // Handle 3-level nesting (relation.compositeField.subField)
-    if (isDefined(subFieldValue) && isDefined(orderBySubSubFieldName)) {
+    // Handle 3-level nesting: relation -> composite field -> sub-field
+    // e.g., accountOwner (relation) -> name (composite FULL_NAME) -> firstName
+    if (
+      isDefined(subFieldValue) &&
+      isDefined(orderBySubSubFieldNameOrDirection)
+    ) {
       const subSubFieldValue =
         readCacheField<string | number | null>(
-          orderBySubSubFieldName,
+          orderBySubSubFieldNameOrDirection,
+          // At this level, subFieldValue is the composite object (not a Reference)
           subFieldValue as Reference | StoreObject,
         ) ?? null;
       return subSubFieldValue;
@@ -75,16 +84,16 @@ export const sortCachedObjectEdges = ({
     return subFieldValue as string | number | null;
   };
 
-  const orderByValue =
-    extractOrderByDirection(orderBySubFieldValue) ||
-    extractOrderByDirection(orderByFieldValue);
+  const orderByDirection =
+    extractOrderByDirection(orderBySubFieldValueOrDirection) ||
+    extractOrderByDirection(orderByFieldValueOrDirection);
 
-  if (!orderByValue) {
+  if (!orderByDirection) {
     return edges;
   }
 
-  const isAsc = orderByValue.startsWith('Asc');
-  const isNullsFirst = orderByValue.endsWith('NullsFirst');
+  const isAsc = orderByDirection.startsWith('Asc');
+  const isNullsFirst = orderByDirection.endsWith('NullsFirst');
 
   return [...edges].sort((edgeA, edgeB) => {
     const fieldValueA = readFieldValueToSort(edgeA);

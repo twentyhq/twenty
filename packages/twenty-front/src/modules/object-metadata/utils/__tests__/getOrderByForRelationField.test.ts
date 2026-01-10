@@ -1,29 +1,31 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('getOrderByForRelationField', () => {
   it('should generate nested orderBy for relation with TEXT label identifier', () => {
-    const field = {
-      id: 'company-field',
+    const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'company',
-      type: FieldMetadataType.RELATION,
     };
 
-    const relatedObjectMetadataItem = {
+    const relatedObjectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'labelIdentifierFieldMetadataId'
+    > = {
       labelIdentifierFieldMetadataId: 'name-field-id',
       fields: [
         {
           id: 'name-field-id',
           name: 'name',
           type: FieldMetadataType.TEXT,
-          isActive: true,
-        },
+        } as FieldMetadataItem,
       ],
     };
 
     const result = getOrderByForRelationField(
-      field as any,
-      relatedObjectMetadataItem as any,
+      field,
+      relatedObjectMetadataItem,
       'AscNullsLast',
     );
 
@@ -32,27 +34,27 @@ describe('getOrderByForRelationField', () => {
   });
 
   it('should generate nested orderBy for relation with FULL_NAME label identifier', () => {
-    const field = {
-      id: 'person-field',
+    const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'person',
-      type: FieldMetadataType.RELATION,
     };
 
-    const relatedObjectMetadataItem = {
+    const relatedObjectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'labelIdentifierFieldMetadataId'
+    > = {
       labelIdentifierFieldMetadataId: 'name-field-id',
       fields: [
         {
           id: 'name-field-id',
           name: 'name',
           type: FieldMetadataType.FULL_NAME,
-          isActive: true,
-        },
+        } as FieldMetadataItem,
       ],
     };
 
     const result = getOrderByForRelationField(
-      field as any,
-      relatedObjectMetadataItem as any,
+      field,
+      relatedObjectMetadataItem,
       'DescNullsLast',
     );
 
@@ -70,20 +72,21 @@ describe('getOrderByForRelationField', () => {
   });
 
   it('should fallback to FK when no label identifier field is found', () => {
-    const field = {
-      id: 'company-field',
+    const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'company',
-      type: FieldMetadataType.RELATION,
     };
 
-    const relatedObjectMetadataItem = {
+    const relatedObjectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'labelIdentifierFieldMetadataId'
+    > = {
       labelIdentifierFieldMetadataId: 'non-existent-field-id',
       fields: [],
     };
 
     const result = getOrderByForRelationField(
-      field as any,
-      relatedObjectMetadataItem as any,
+      field,
+      relatedObjectMetadataItem,
       'AscNullsLast',
     );
 
@@ -91,27 +94,27 @@ describe('getOrderByForRelationField', () => {
   });
 
   it('should use default "name" field when labelIdentifierFieldMetadataId is not set', () => {
-    const field = {
-      id: 'company-field',
+    const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'company',
-      type: FieldMetadataType.RELATION,
     };
 
-    const relatedObjectMetadataItem = {
-      labelIdentifierFieldMetadataId: undefined,
+    const relatedObjectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'labelIdentifierFieldMetadataId'
+    > = {
+      labelIdentifierFieldMetadataId: undefined as unknown as string,
       fields: [
         {
           id: 'name-field-id',
           name: 'name',
           type: FieldMetadataType.TEXT,
-          isActive: true,
-        },
+        } as FieldMetadataItem,
       ],
     };
 
     const result = getOrderByForRelationField(
-      field as any,
-      relatedObjectMetadataItem as any,
+      field,
+      relatedObjectMetadataItem,
       'AscNullsLast',
     );
 
@@ -121,27 +124,27 @@ describe('getOrderByForRelationField', () => {
   });
 
   it('should handle descending direction', () => {
-    const field = {
-      id: 'company-field',
+    const field: Pick<FieldMetadataItem, 'name'> = {
       name: 'company',
-      type: FieldMetadataType.RELATION,
     };
 
-    const relatedObjectMetadataItem = {
+    const relatedObjectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'labelIdentifierFieldMetadataId'
+    > = {
       labelIdentifierFieldMetadataId: 'name-field-id',
       fields: [
         {
           id: 'name-field-id',
           name: 'name',
           type: FieldMetadataType.TEXT,
-          isActive: true,
-        },
+        } as FieldMetadataItem,
       ],
     };
 
     const result = getOrderByForRelationField(
-      field as any,
-      relatedObjectMetadataItem as any,
+      field,
+      relatedObjectMetadataItem,
       'DescNullsLast',
     );
 

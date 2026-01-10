@@ -12,7 +12,7 @@ import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphq
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
 import {
   GraphqlQueryOrderFieldParser,
-  type OrderByCondition,
+  type OrderByClause,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
   GraphqlQuerySelectedFieldsParser,
@@ -116,7 +116,7 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, OrderByCondition> {
+  ): Record<string, OrderByClause> {
     const parseResult = this.orderFieldParser.parse(
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
@@ -140,7 +140,7 @@ export class GraphqlQueryParser {
   public addRelationOrderColumnsToBuilder(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder<any>,
-    parsedOrderBy: Record<string, OrderByCondition>,
+    parsedOrderBy: Record<string, OrderByClause>,
     objectNameSingular: string,
   ): void {
     // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility

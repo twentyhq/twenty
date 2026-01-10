@@ -75,7 +75,7 @@ export const getOrderByForFieldMetadataType = (
 };
 
 export const getOrderByForRelationField = (
-  field: FieldMetadataItem,
+  field: Pick<FieldMetadataItem, 'name'>,
   relatedObjectMetadataItem: Pick<
     ObjectMetadataItem,
     'fields' | 'labelIdentifierFieldMetadataId'
