@@ -8,7 +8,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity, MessageChannelType, MessageChannelSyncStage, MessageChannelContactAutoCreationPolicy, MessageFolderImportPolicy, MessageChannelPendingGroupEmailsAction, MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 @Command({ name: 'test:imap', description: 'Test IMAP sync' })
 export class TestImapCommand extends CommandRunner {
@@ -25,10 +25,15 @@ export class TestImapCommand extends CommandRunner {
     this.logger.log('Starting IMAP Test...');
 
     const workspaceId = '202401010000000000000000'; // Default Dev Workspace
-    const accountEmail = process.env.IMAP_TEST_USER || 'jaren.wilkinson@ethereal.email';
-    const accountPassword = process.env.IMAP_TEST_PASSWORD || 'BJqeAncRHa5tNpknFG';
+    const accountEmail = process.env.IMAP_TEST_USER ?? '';
+    const accountPassword = process.env.IMAP_TEST_PASSWORD ?? '';
     const imapHost = 'imap.ethereal.email';
     const imapPort = 993;
+    
+    if (!accountEmail || !accountPassword) {
+        this.logger.error('IMAP_TEST_USER and IMAP_TEST_PASSWORD must be set in environment variables.');
+        process.exit(1);
+    }
 
     try {
         // 1. Ensure Workspace Exists (Check Metadata)
@@ -55,7 +60,7 @@ export class TestImapCommand extends CommandRunner {
                     const inserted = await connectedAccountRepo.insert({
                         id: v4(),
                         handle: accountEmail,
-                        provider: 'IMAP',
+                        provider: ConnectedAccountProvider.IMAP,
                         accessToken: 'mock-token', // Not used for IMAP password auth usually, but required
                         refreshToken: 'mock-refresh',
                         email: accountEmail,
