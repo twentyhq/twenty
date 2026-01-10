@@ -1,34 +1,34 @@
 ---
-title: Twenty Apps
-description: Build and manage Twenty customizations as code.
+title: Aplicații Twenty
+description: Construiți și gestionați personalizările Twenty sub formă de cod.
 ---
 
 <Warning>
-  Apps are currently in alpha testing. The feature is functional but still evolving.
+  Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
 
-## What Are Apps?
+## Ce sunt aplicațiile?
 
-Apps let you build and manage Twenty customizations **as code**. Instead of configuring everything through the UI, you define your data model and serverless functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+Aplicațiile vă permit să construiți și să gestionați personalizările Twenty **sub formă de cod**. În loc să configurați totul prin interfața de utilizator (UI), vă definiți modelul de date și funcțiile serverless în cod — făcând mai rapidă construirea, mentenanța și implementarea în mai multe spații de lucru.
 
-**What you can do today:**
+**Ce puteți face astăzi:**
 
-* Define custom objects and fields as code (managed data model)
-* Build serverless functions with custom triggers
-* Deploy the same app across multiple workspaces
+* Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
+* Creați funcții serverless cu declanșatoare personalizate
+* Implementați aceeași aplicație în mai multe spații de lucru
 
-**Coming soon:**
+**În curând:**
 
-* Custom UI layouts and components
+* Dispuneri și componente UI personalizate
 
 ## Cerințe
 
-* Node.js 24+ and Yarn 4
-* A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+* Node.js 24+ și Yarn 4
+* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
 
-## Getting Started
+## Începeți
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
 
 ```bash filename="Terminal"
 # Scaffold a new app
@@ -64,18 +64,18 @@ yarn uninstall
 yarn help
 ```
 
-See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) and [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
 
-## Project structure (scaffolded)
+## Structura proiectului (generată)
 
-When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
+Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
 
-* Copies a minimal base application into `my-twenty-app/`
-* Adds a local `twenty-sdk` dependency and Yarn 4 configuration
-* Creates config files and scripts wired to the `twenty` CLI
-* Generates a default application config and a default function role
+* Copiază o aplicație de bază minimală în `my-twenty-app/`
+* Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
+* Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
+* Generează o configurație implicită a aplicației și un rol implicit pentru funcții
 
-A freshly scaffolded app looks like this:
+O aplicație nou generată arată astfel:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -99,21 +99,21 @@ my-twenty-app/
     utils/                      # Optional - handler implementations & utilities
 ```
 
-### Convention-over-configuration
+### Convenție în locul configurării
 
-Applications use a **convention-over-configuration** approach where entities are detected by their file suffix. This allows flexible organization within the `src/app/` folder:
+Aplicațiile folosesc o abordare bazată pe convenție în locul configurării, în care entitățile sunt detectate după sufixul fișierului. Aceasta permite o organizare flexibilă în folderul `src/app/`:
 
-| File suffix     | Entity type                     |
-| --------------- | ------------------------------- |
-| `*.object.ts`   | Custom object definitions       |
-| `*.function.ts` | Serverless function definitions |
-| `*.role.ts`     | Role definitions                |
+| Sufixul fișierului | Tipul entității                    |
+| ------------------ | ---------------------------------- |
+| `*.object.ts`      | Definiții de obiecte personalizate |
+| `*.function.ts`    | Definiții de funcții serverless    |
+| `*.role.ts`        | Definiții de rol                   |
 
-### Supported folder organizations
+### Structuri de foldere acceptate
 
-You can organize your entities in any of these patterns:
+Vă puteți organiza entitățile în oricare dintre aceste modele:
 
-**Traditional (by type):**
+**Tradițional (după tip):**
 
 ```text
 src/app/
@@ -126,7 +126,7 @@ src/app/
     └── admin.role.ts
 ```
 
-**Feature-based:**
+**Bazat pe funcționalități:**
 
 ```text
 src/app/
@@ -137,7 +137,7 @@ src/app/
     └── postCardAdmin.role.ts
 ```
 
-**Flat:**
+**Plat:**
 
 ```text
 src/app/
@@ -147,34 +147,34 @@ src/app/
 └── admin.role.ts
 ```
 
-At a high level:
+Pe scurt:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
-* **.nvmrc**: Pins the Node.js version expected by the project.
-* **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
-* **README.md**: A short README in the app root with basic instructions.
-* **src/app/**: The main place where you define your application-as-code:
-  * `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
-  * `*.role.ts`: Role definitions used by your serverless functions. See "Default function role" below.
-  * `*.object.ts`: Custom object definitions.
-  * `*.function.ts`: Serverless function definitions.
-* **src/utils/**: Optional folder for handler implementations and utilities.
+* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` și `auth` care deleagă către CLI-ul local `twenty`.
+* **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
+* **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
+* **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
+* **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
+* **src/app/**: Locul principal unde vă definiți aplicația sub formă de cod:
+  * `application.config.ts`: Configurație globală pentru aplicație (metadate și conectare la runtime). Vezi "Configurația aplicației" mai jos.
+  * `*.role.ts`: Definiții de rol folosite de funcțiile dvs. serverless. Vezi "Rol implicit pentru funcții" mai jos.
+  * `*.object.ts`: Definiții de obiecte personalizate.
+  * `*.function.ts`: Definiții de funcții serverless.
+* **src/utils/**: Folder opțional pentru implementări de handleri și utilitare.
 
-Later commands will add more files and folders:
+Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn create-entity` will add entity definition files under `src/app/` for your custom objects, functions, or roles.
+* `yarn generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
+* `yarn create-entity` va adăuga fișiere de definire a entităților în `src/app/` pentru obiectele, funcțiile sau rolurile personalizate.
 
 ## Autentificare
 
-The first time you run `yarn auth`, you'll be prompted for:
+Prima dată când rulați `yarn auth`, vi se vor solicita:
 
-* API URL (defaults to http://localhost:3000 or your current workspace profile)
-* API key
+* URL-ul API (implicit http://localhost:3000 sau profilul spațiului de lucru curent)
+* Cheie API
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
+Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. Puteți menține mai multe profiluri și comuta folosind `--workspace <name>`.
 
 Exemple:
 
@@ -186,26 +186,26 @@ yarn auth
 yarn auth --workspace my-custom-workspace
 ```
 
-## Use the SDK resources (types & config)
+## Utilizați resursele SDK (tipuri și configurare)
 
-The twenty-sdk provides typed building blocks and helper functions you use inside your app. Below are the key pieces you'll touch most often.
+Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare pe care le utilizați în aplicația dvs. Mai jos sunt elementele cheie cu care veți interacționa cel mai des.
 
-### Helper functions
+### Funcții ajutătoare
 
-The SDK provides four helper functions with built-in validation for defining your app entities:
+SDK-ul oferă patru funcții ajutătoare cu validare încorporată pentru definirea entităților aplicației:
 
-| Function           | Scop                                         |
-| ------------------ | -------------------------------------------- |
-| `defineApp()`      | Configure application metadata               |
-| `defineObject()`   | Define custom objects with fields            |
-| `defineFunction()` | Define serverless functions with handlers    |
-| `defineRole()`     | Configure role permissions and object access |
+| Funcție            | Scop                                                     |
+| ------------------ | -------------------------------------------------------- |
+| `defineApp()`      | Configurați metadatele aplicației                        |
+| `defineObject()`   | Definiți obiecte personalizate cu câmpuri                |
+| `defineFunction()` | Definiți funcții serverless cu handleri                  |
+| `defineRole()`     | Configurați permisiunile rolurilor și accesul la obiecte |
 
-These functions validate your configuration at runtime and provide better IDE autocompletion and type safety.
+Aceste funcții validează configurația în timpul execuției și oferă o completare automată mai bună în IDE și siguranța tipurilor.
 
-### Defining objects
+### Definirea obiectelor
 
-Custom objects describe both schema and behavior for records in your workspace. Use `defineObject()` to define objects with built-in validation:
+Obiectele personalizate descriu atât schema, cât și comportamentul înregistrărilor din spațiul dvs. de lucru. Utilizați `defineObject()` pentru a defini obiecte cu validare încorporată:
 
 ```typescript
 // src/app/postCard.object.ts
@@ -276,16 +276,16 @@ export default defineObject({
 });
 ```
 
-Key points:
+Puncte cheie:
 
-* Use `defineObject()` for built-in validation and better IDE support.
-* The `universalIdentifier` must be unique and stable across deployments.
-* Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
-* The `fields` array is optional — you can define objects without custom fields.
-* You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships.
+* Folosiți `defineObject()` pentru validare încorporată și suport mai bun în IDE.
+* `universalIdentifier` trebuie să fie unic și stabil între implementări.
+* Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
+* Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
+* Puteți genera obiecte noi folosind `yarn create-entity`, care vă ghidează prin denumire, câmpuri și relații.
 
-<Accordion title="Alternative: Decorator-based syntax">
-  You can also define objects using TypeScript decorators. This approach uses class-based syntax with `@Object`, `@Field`, and `@Relation` decorators:
+<Accordion title="Alternativă: Sintaxă bazată pe decoratori">
+  Puteți defini obiecte și folosind decoratori TypeScript. Această abordare folosește o sintaxă bazată pe clase cu decoratorii `@Object`, `@Field` și `@Relation`:
 
   ```typescript
   import {
@@ -332,18 +332,18 @@ Key points:
   }
   ```
 
-  Note: The decorator approach requires `experimentalDecorators` in your TypeScript config.
+  Notă: Abordarea cu decoratori necesită `experimentalDecorators` în configurația TypeScript.
 </Accordion>
 
-### Application config (application.config.ts)
+### Configurația aplicației (application.config.ts)
 
-Every app has a single `application.config.ts` file that describes:
+Fiecare aplicație are un singur fișier `application.config.ts` care descrie:
 
-* **Who the app is**: identifiers, display name, and description.
-* **How its functions run**: which role they use for permissions.
-* **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+* **Cine este aplicația**: identificatori, nume de afișare și descriere.
+* **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
+* **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
 
-Use `defineApp()` to define your application configuration:
+Folosiți `defineApp()` pentru a defini configurația aplicației:
 
 ```typescript
 // src/app/application.config.ts
@@ -367,23 +367,23 @@ export default defineApp({
 });
 ```
 
-Notes:
+Notițe:
 
-* `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
+* `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
+* `functionRoleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
 
-#### Roles and permissions
+#### Roluri și permisiuni
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's serverless functions.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `functionRoleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile serverless ale aplicației.
 
-* The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
-* The typed client will be restricted to the permissions granted to that role.
-* Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
+* Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
+* Respectați principiul celui mai mic privilegiu: creați un rol dedicat doar cu permisiunile de care au nevoie funcțiile, apoi referiți identificatorul său universal.
 
-##### Default function role (\*.role.ts)
+##### Rol implicit pentru funcții (\*.role.ts)
 
-When you scaffold a new app, the CLI also creates a default role file. Use `defineRole()` to define roles with built-in validation:
+Când generați o aplicație nouă, CLI creează și un fișier de rol implicit. Folosiți `defineRole()` pentru a defini roluri cu validare încorporată:
 
 ```typescript
 // src/app/default-function.role.ts
@@ -425,21 +425,21 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `functionRoleUniversalIdentifier`. Cu alte cuvinte:
 
-* **\*.role.ts** defines what the default function role can do.
-* **application.config.ts** points to that role so your functions inherit its permissions.
+* **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
+* **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
 
-Notes:
+Notițe:
 
-* Start from the scaffolded role, then progressively restrict it following least‑privilege.
-* Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
-* See a working example in the Hello World app: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Porniți de la rolul generat, apoi restrângeți-l progresiv urmând principiul celui mai mic privilegiu.
+* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele/câmpurile de care au nevoie funcțiile.
+* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum; adăugați doar ceea ce aveți nevoie.
+* Vedeți un exemplu funcțional în aplicația Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Serverless function config and entrypoint
+### Configurația funcției serverless și punctul de intrare
 
-Each function file uses `defineFunction()` to export a configuration with a handler and optional triggers. Use the `*.function.ts` file suffix for automatic detection.
+Fiecare fișier de funcție folosește `defineFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale. Folosiți sufixul de fișier `*.function.ts` pentru detectare automată.
 
 ```typescript
 // src/app/createPostCard.function.ts
@@ -498,30 +498,30 @@ export default defineFunction({
 });
 ```
 
-Common trigger types:
+Tipuri comune de declanșatoare:
 
-* **route**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+* **route**: Expune funcția pe o rută și metodă HTTP **sub endpoint-ul `/s/`**:
 
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
+> de ex. `path: '/post-card/create',` -> apel pe `<APP_URL>/s/post-card/create`
 
-* **cron**: Runs your function on a schedule using a CRON expression.
-* **databaseEvent**: Runs on workspace object lifecycle events
+* **cron**: Rulează funcția pe un program folosind o expresie CRON.
+* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru
 
-> e.g. `person.created`
+> de ex. `person.created`
 
-Notes:
+Notițe:
 
-* The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
-* You can mix multiple trigger types in a single function.
+* Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
+* Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
 
-You can create new functions in two ways:
+Puteți crea funcții noi în două moduri:
 
-* **Scaffolded**: Run `yarn create-entity` and choose the option to add a new function. This generates a starter file with a handler and config.
-* **Manual**: Create a new `*.function.ts` file and use `defineFunction()`, following the same pattern.
+* **Generat**: Rulați `yarn create-entity` și alegeți opțiunea de a adăuga o funcție nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Manual**: Creați un fișier nou `*.function.ts` și folosiți `defineFunction()`, urmând același model.
 
-### Generated typed client
+### Client tipizat generat
 
-Run yarn generate to create a local typed client in generated/ based on your workspace schema. Use it in your functions:
+Rulați yarn generate pentru a crea un client tipizat local în generated/, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
 
 ```typescript
 import Twenty from './generated';
@@ -530,34 +530,34 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn generate`. Re-run after changing your objects and `yarn sync` or when onboarding to a new workspace.
+Clientul este regenerat de `yarn generate`. Rulați din nou după ce vă modificați obiectele și rulați `yarn sync` sau când vă integrați într-un spațiu de lucru nou.
 
-#### Runtime credentials in serverless functions
+#### Acreditări la runtime în funcțiile serverless
 
-When your function runs on Twenty, the platform injects credentials as environment variables before your code executes:
+Când funcția rulează pe Twenty, platforma injectează acreditări ca variabile de mediu înainte de execuția codului:
 
-* `TWENTY_API_URL`: Base URL of the Twenty API your app targets.
-* `TWENTY_API_KEY`: Short‑lived key scoped to your application's default function role.
+* `TWENTY_API_URL`: URL-ul de bază al API-ului Twenty către care țintește aplicația.
+* `TWENTY_API_KEY`: Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației.
 
 Notițe:
 
-* You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by serverless functions of your application.
-* Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role's universal identifier.
+* Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `functionRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile serverless ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `functionRoleUniversalIdentifier` la identificatorul universal al acelui rol.
 
-### Hello World example
+### Exemplu Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Explorați un exemplu minim, cap‑la‑cap, care demonstrează obiecte, funcții și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Manual setup (without the scaffolder)
+## Configurare manuală (fără generator)
 
-While we recommend using `create-twenty-app` for the best getting-started experience, you can also set up a project manually. Do not install the CLI globally. Instead, add `twenty-sdk` as a local dependency and wire scripts in your package.json:
+Deși recomandăm utilizarea `create-twenty-app` pentru cea mai bună experiență de început, puteți configura și un proiect manual. Nu instalați CLI-ul global. În schimb, adăugați `twenty-sdk` ca dependență locală și conectați scripturile în package.json-ul dvs.:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add scripts like these:
+Apoi adăugați scripturi ca acestea:
 
 ```json filename="package.json"
 {
@@ -574,13 +574,13 @@ Then add scripts like these:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn dev`, `yarn sync`, etc.
+Acum puteți rula aceleași comenzi prin Yarn, de ex. `yarn dev`, `yarn sync`, etc.
 
 ## Depanare
 
-* Authentication errors: run `yarn auth` and ensure your API key has the required permissions.
-* Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-* Types or client missing/outdated: run `yarn generate` and then `yarn dev`.
-* Dev mode not syncing: ensure `yarn dev` is running and that changes are not ignored by your environment.
+* Erori de autentificare: rulați `yarn auth` și asigurați-vă că cheia API are permisiunile necesare.
+* Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
+* Tipuri sau client lipsă/învechite: rulați `yarn generate` și apoi `yarn dev`.
+* Modul dev nu sincronizează: asigurați-vă că `yarn dev` rulează și că modificările nu sunt ignorate de mediul dvs.
 
-Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322
+Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
