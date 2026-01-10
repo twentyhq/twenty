@@ -453,6 +453,46 @@ describe('Order by relation field (e2e)', () => {
     expect(edges.length).toBeGreaterThan(0);
   });
 
+  it('should support mixed ordering (relation field + regular field)', async () => {
+    const queryData = {
+      query: gql`
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+                position
+                company {
+                  name
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        orderBy: [
+          { company: { name: 'DescNullsLast' } },
+          { position: 'AscNullsFirst' },
+        ],
+        filter: { id: { in: TEST_PERSON_IDS } },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.data).toBeDefined();
+    expect(response.body.errors).toBeUndefined();
+
+    const edges = response.body.data.people.edges;
+
+    expect(Array.isArray(edges)).toBe(true);
+    expect(edges.length).toBeGreaterThan(0);
+  });
+
   it('should sort case-insensitively (acme and ACME should sort together before Zebra)', async () => {
     const queryData = {
       query: gql`

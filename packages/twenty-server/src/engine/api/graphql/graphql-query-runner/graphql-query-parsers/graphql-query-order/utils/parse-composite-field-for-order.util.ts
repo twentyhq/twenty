@@ -40,10 +40,8 @@ export const parseCompositeFieldForOrder = (
         );
       }
 
-      const orderByKey = buildOrderByColumnExpression(
-        prefix,
-        `${fieldMetadata.name}${capitalize(subFieldKey)}`,
-      );
+      const columnName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
+      const orderByKey = buildOrderByColumnExpression(prefix, columnName);
 
       if (!isOrderByDirection(subFieldValue)) {
         throw new Error(

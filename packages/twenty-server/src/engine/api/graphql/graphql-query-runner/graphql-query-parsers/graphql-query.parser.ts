@@ -145,6 +145,7 @@ export class GraphqlQueryParser {
   ): void {
     // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility
     // This must be called AFTER setFindOptions because setFindOptions clears addSelect
+    // Only relation columns need explicit addSelect - main entity columns are handled by TypeORM
     for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
 
@@ -152,11 +153,9 @@ export class GraphqlQueryParser {
         const [alias, column] = parts;
 
         // Only add select for joined relation columns, not main entity columns
+        // Main entity columns cause ambiguity when added via addSelect
         if (alias !== objectNameSingular) {
-          queryBuilder.addSelect(
-            `"${alias}"."${column}"`,
-            `${alias}_${column}`,
-          );
+          queryBuilder.addSelect(`"${alias}"."${column}"`, `${alias}_${column}`);
         }
       }
     }
