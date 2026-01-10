@@ -139,10 +139,18 @@ export class MessagingFolderRetroactiveImportService {
       return;
     }
 
+    this.logger.log(
+      `Adding ${newMessageIds.length} message IDs to cache for import...`,
+    );
+
     await this.cacheStorage.setAdd(
       `messages-to-import:${workspaceId}:${messageChannelId}`,
       newMessageIds,
       ONE_WEEK_IN_MILLISECONDS,
+    );
+
+    this.logger.log(
+      `Marking channel ${messageChannelId} as MESSAGES_IMPORT_PENDING...`,
     );
 
     await this.messageChannelSyncStatusService.markAsMessagesImportPending(
@@ -151,7 +159,7 @@ export class MessagingFolderRetroactiveImportService {
     );
 
     this.logger.log(
-      `Scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}`,
+      `Successfully scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}. Import will start within 1 minute via cron job.`,
     );
   }
 

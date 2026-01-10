@@ -38,7 +38,7 @@ export class MessagingFolderRetroactiveImportJob {
       data;
 
     this.logger.log(
-      `Processing retroactive import for folder ${folderExternalId} in message channel ${messageChannelId}`,
+      `[START] Processing retroactive import for folder ${folderExternalId} in message channel ${messageChannelId} (workspace: ${workspaceId})`,
     );
 
     const authContext = buildSystemAuthContext(workspaceId);
@@ -93,6 +93,10 @@ export class MessagingFolderRetroactiveImportJob {
             folderExternalId,
             connectedAccount: messageChannel.connectedAccount,
           },
+        );
+
+        this.logger.log(
+          `[DONE] Completed retroactive import processing for folder ${folderExternalId}`,
         );
       },
     );

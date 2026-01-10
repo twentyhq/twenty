@@ -108,6 +108,10 @@ export class MessagingMessagesImportService {
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
           );
 
+          this.logger.log(
+            `Fetched ${messageIdsToFetch?.length ?? 0} message IDs from cache for channel ${messageChannel.id}`,
+          );
+
           if (!messageIdsToFetch?.length) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
               [messageChannel.id],
@@ -157,11 +161,19 @@ export class MessagingMessagesImportService {
           );
 
           if (messagesToSave.length > 0) {
+            this.logger.log(
+              `Saving ${messagesToSave.length} messages for channel ${messageChannel.id}`,
+            );
+
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
               messagesToSave,
               messageChannel,
               connectedAccountWithFreshTokens,
               workspaceId,
+            );
+
+            this.logger.log(
+              `Successfully saved ${messagesToSave.length} messages for channel ${messageChannel.id}`,
             );
           }
 

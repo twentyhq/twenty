@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +28,8 @@ export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
+  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
+
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -60,7 +63,17 @@ export class MessagingMessagesImportCronJob {
           WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}' RETURNING *`,
         );
 
+        if (messageChannels.length > 0) {
+          this.logger.log(
+            `Found ${messageChannels.length} message channels with pending imports in workspace ${activeWorkspace.id}`,
+          );
+        }
+
         for (const messageChannel of messageChannels) {
+          this.logger.log(
+            `Scheduling import job for message channel ${messageChannel.id}`,
+          );
+
           await this.messageQueueService.add<MessagingMessagesImportJobData>(
             MessagingMessagesImportJob.name,
             {
