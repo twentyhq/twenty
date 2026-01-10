@@ -2,7 +2,7 @@ import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import { wrapWithLowerIfNeeded } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
+import { buildOrderByColumnExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -36,9 +36,9 @@ export const parseCompositeFieldForOrder = (
         );
       }
 
-      const columnExpr = `${prefix}.${fieldMetadata.name}${capitalize(subFieldKey)}`;
-      const fullFieldName = wrapWithLowerIfNeeded(
-        columnExpr,
+      const orderByKey = buildOrderByColumnExpression(
+        prefix,
+        `${fieldMetadata.name}${capitalize(subFieldKey)}`,
         subFieldMetadata.type,
       );
 
@@ -47,7 +47,7 @@ export const parseCompositeFieldForOrder = (
           `Sub field order by value must be of type OrderByDirection, but got: ${subFieldValue}`,
         );
       }
-      acc[fullFieldName] = convertOrderByToFindOptionsOrder(
+      acc[orderByKey] = convertOrderByToFindOptionsOrder(
         subFieldValue,
         isForwardPagination,
       );

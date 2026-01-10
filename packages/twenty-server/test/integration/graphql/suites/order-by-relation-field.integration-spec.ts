@@ -6,6 +6,10 @@ const TEST_COMPANY_IDS = {
   ALPHA: '20202020-aaaa-4000-8000-000000000001',
   BETA: '20202020-aaaa-4000-8000-000000000002',
   GAMMA: '20202020-aaaa-4000-8000-000000000003',
+  // Companies for case-insensitive sorting tests
+  ACME_LOWER: '20202020-aaaa-4000-8000-000000000004',
+  ACME_UPPER: '20202020-aaaa-4000-8000-000000000005',
+  ZEBRA: '20202020-aaaa-4000-8000-000000000006',
 };
 
 const TEST_PERSON_IDS = [
@@ -21,6 +25,12 @@ const TEST_PERSON_IDS = [
   '20202020-bbbb-4000-8000-000000000010',
 ];
 
+const CASE_INSENSITIVE_TEST_PERSON_IDS = [
+  '20202020-bbbb-4000-8000-000000000011',
+  '20202020-bbbb-4000-8000-000000000012',
+  '20202020-bbbb-4000-8000-000000000013',
+];
+
 describe('Order by relation field (e2e)', () => {
   beforeAll(async () => {
     // Create test companies with distinct names for sorting verification
@@ -32,6 +42,10 @@ describe('Order by relation field (e2e)', () => {
         { id: TEST_COMPANY_IDS.ALPHA, name: 'Alpha Corp' },
         { id: TEST_COMPANY_IDS.BETA, name: 'Beta Inc' },
         { id: TEST_COMPANY_IDS.GAMMA, name: 'Gamma LLC' },
+        // Companies for case-insensitive sorting tests (lowercase vs uppercase)
+        { id: TEST_COMPANY_IDS.ACME_LOWER, name: 'acme' },
+        { id: TEST_COMPANY_IDS.ACME_UPPER, name: 'ACME' },
+        { id: TEST_COMPANY_IDS.ZEBRA, name: 'Zebra' },
       ],
       upsert: true,
     });
@@ -56,6 +70,19 @@ describe('Order by relation field (e2e)', () => {
         { id: TEST_PERSON_IDS[7], companyId: null },
         { id: TEST_PERSON_IDS[8], companyId: null },
         { id: TEST_PERSON_IDS[9], companyId: null },
+        // People for case-insensitive sorting tests
+        {
+          id: CASE_INSENSITIVE_TEST_PERSON_IDS[0],
+          companyId: TEST_COMPANY_IDS.ACME_LOWER,
+        },
+        {
+          id: CASE_INSENSITIVE_TEST_PERSON_IDS[1],
+          companyId: TEST_COMPANY_IDS.ACME_UPPER,
+        },
+        {
+          id: CASE_INSENSITIVE_TEST_PERSON_IDS[2],
+          companyId: TEST_COMPANY_IDS.ZEBRA,
+        },
       ],
       upsert: true,
     });
@@ -424,5 +451,113 @@ describe('Order by relation field (e2e)', () => {
 
     expect(Array.isArray(edges)).toBe(true);
     expect(edges.length).toBeGreaterThan(0);
+  });
+
+  it('should sort case-insensitively (acme and ACME should sort together before Zebra)', async () => {
+    const queryData = {
+      query: gql`
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+                company {
+                  name
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: CASE_INSENSITIVE_TEST_PERSON_IDS } },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.data).toBeDefined();
+    expect(response.body.errors).toBeUndefined();
+
+    const edges = response.body.data.people.edges;
+    const companyNames = edges.map(
+      (edge: { node: { company?: { name: string } } }) =>
+        edge.node.company?.name,
+    );
+
+    expect(companyNames.length).toBe(3);
+
+    // Both "acme" and "ACME" should come before "Zebra" in case-insensitive sort
+    const zebraIndex = companyNames.findIndex(
+      (name: string) => name.toLowerCase() === 'zebra',
+    );
+    const acmeIndices = companyNames
+      .map((name: string, index: number) =>
+        name.toLowerCase() === 'acme' ? index : -1,
+      )
+      .filter((index: number) => index !== -1);
+
+    // All ACME variants should appear before Zebra
+    for (const acmeIndex of acmeIndices) {
+      expect(acmeIndex).toBeLessThan(zebraIndex);
+    }
+  });
+
+  it('should sort case-insensitively in descending order', async () => {
+    const queryData = {
+      query: gql`
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+                company {
+                  name
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'DescNullsLast' } }],
+        filter: { id: { in: CASE_INSENSITIVE_TEST_PERSON_IDS } },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.data).toBeDefined();
+    expect(response.body.errors).toBeUndefined();
+
+    const edges = response.body.data.people.edges;
+    const companyNames = edges.map(
+      (edge: { node: { company?: { name: string } } }) =>
+        edge.node.company?.name,
+    );
+
+    expect(companyNames.length).toBe(3);
+
+    // In descending case-insensitive order, "Zebra" should come first
+    const zebraIndex = companyNames.findIndex(
+      (name: string) => name.toLowerCase() === 'zebra',
+    );
+    const acmeIndices = companyNames
+      .map((name: string, index: number) =>
+        name.toLowerCase() === 'acme' ? index : -1,
+      )
+      .filter((index: number) => index !== -1);
+
+    // Zebra should appear before all ACME variants in descending order
+    for (const acmeIndex of acmeIndices) {
+      expect(zebraIndex).toBeLessThan(acmeIndex);
+    }
   });
 });

@@ -133,7 +133,7 @@ export class GraphqlQueryOrderFieldParser {
           const columnExpression = buildOrderByColumnExpression(
             objectNameSingular,
             fieldName,
-            fieldMetadata,
+            fieldMetadata.type,
           );
 
           orderByConditions[columnExpression] =
@@ -242,7 +242,7 @@ export class GraphqlQueryOrderFieldParser {
       const columnExpression = buildOrderByColumnExpression(
         joinAlias,
         nestedFieldMetadata.name,
-        nestedFieldMetadata,
+        nestedFieldMetadata.type,
       );
 
       return {
