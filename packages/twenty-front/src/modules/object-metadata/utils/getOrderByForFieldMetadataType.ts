@@ -1,4 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 
 import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import {
@@ -70,4 +72,28 @@ export const getOrderByForFieldMetadataType = (
         },
       ];
   }
+};
+
+export const getOrderByForRelationField = (
+  field: Pick<FieldMetadataItem, 'name'>,
+  relatedObjectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'labelIdentifierFieldMetadataId'
+  >,
+  direction: OrderBy,
+): RecordGqlOperationOrderBy => {
+  const labelIdentifierField = getLabelIdentifierFieldMetadataItem(
+    relatedObjectMetadataItem,
+  );
+
+  if (!labelIdentifierField) {
+    return [{ [`${field.name}Id`]: direction }];
+  }
+
+  const labelFieldOrderBy = getOrderByForFieldMetadataType(
+    labelIdentifierField,
+    direction,
+  );
+
+  return [{ [field.name]: labelFieldOrderBy[0] }];
 };

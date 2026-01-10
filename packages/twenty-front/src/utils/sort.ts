@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type Maybe } from '~/generated/graphql';
 
 export const sortNullsFirst = (
@@ -21,11 +23,12 @@ export const sortAsc = (
   fieldValueA: string | number,
   fieldValueB: string | number,
 ) => {
-  // Case-insensitive comparison for strings
-  const valueA =
-    typeof fieldValueA === 'string' ? fieldValueA.toLowerCase() : fieldValueA;
-  const valueB =
-    typeof fieldValueB === 'string' ? fieldValueB.toLowerCase() : fieldValueB;
+  const valueA = isNonEmptyString(fieldValueA)
+    ? fieldValueA.toLowerCase()
+    : fieldValueA;
+  const valueB = isNonEmptyString(fieldValueB)
+    ? fieldValueB.toLowerCase()
+    : fieldValueB;
 
   return valueA === valueB ? 0 : valueA < valueB ? -1 : 1;
 };

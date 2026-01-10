@@ -1,12 +1,12 @@
 import {
-  FieldMetadataType,
-  OrderByDirection,
   compositeTypeDefinitions,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type OrderByCondition } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
+import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
+import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -16,11 +16,10 @@ const shouldUseCaseInsensitiveOrder = (type: FieldMetadataType): boolean => {
 
 export const parseCompositeFieldForOrder = (
   fieldMetadata: FlatFieldMetadata,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-  objectNameSingular: string,
+  value: Record<string, unknown>,
+  prefix: string,
   isForwardPagination = true,
-): Record<string, OrderByCondition> => {
+): Record<string, OrderByClause> => {
   const compositeType = compositeTypeDefinitions.get(
     fieldMetadata.type as CompositeFieldMetadataType,
   );
@@ -43,7 +42,7 @@ export const parseCompositeFieldForOrder = (
         );
       }
 
-      const columnExpr = `"${objectNameSingular}"."${fieldMetadata.name}${capitalize(subFieldKey)}"`;
+      const columnExpr = `${prefix}.${fieldMetadata.name}${capitalize(subFieldKey)}`;
       const fullFieldName = shouldUseCaseInsensitiveOrder(subFieldMetadata.type)
         ? `LOWER(${columnExpr})`
         : columnExpr;
@@ -60,10 +59,6 @@ export const parseCompositeFieldForOrder = (
 
       return acc;
     },
-    {} as Record<string, OrderByCondition>,
+    {} as Record<string, OrderByClause>,
   );
-};
-
-const isOrderByDirection = (value: unknown): value is OrderByDirection => {
-  return Object.values(OrderByDirection).includes(value as OrderByDirection);
 };
