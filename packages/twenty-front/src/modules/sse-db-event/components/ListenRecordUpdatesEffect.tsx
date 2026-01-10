@@ -11,7 +11,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
+import { useOnDbEvent } from '@/sse-db-event/hooks/useOnDbEvent';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from '~/generated/graphql';
