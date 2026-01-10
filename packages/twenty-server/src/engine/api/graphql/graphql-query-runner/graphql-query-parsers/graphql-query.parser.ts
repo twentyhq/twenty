@@ -155,7 +155,10 @@ export class GraphqlQueryParser {
         // Only add select for joined relation columns, not main entity columns
         // Main entity columns cause ambiguity when added via addSelect
         if (alias !== objectNameSingular) {
-          queryBuilder.addSelect(`"${alias}"."${column}"`, `${alias}_${column}`);
+          queryBuilder.addSelect(
+            `"${alias}"."${column}"`,
+            `${alias}_${column}`,
+          );
         }
       }
     }
