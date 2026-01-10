@@ -2,11 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { batchFetchImplementation } from '@jrmdayn/googleapis-batcher';
 import { isNonEmptyString } from '@sniptt/guards';
-import { google } from 'googleapis';
+import { google, type gmail_v1 as gmailV1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -16,6 +17,7 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/mess
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
+import { computeGmailIncludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-include-search-filter.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 import { assertNotNull } from 'src/utils/assert';
@@ -40,6 +42,7 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
+    messageFolderImportPolicy: MessageFolderImportPolicy,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -55,8 +58,27 @@ export class GmailGetMessageListService {
 
     const messageExternalIds: string[] = [];
 
-    const excludedSearchFilter =
-      computeGmailExcludeSearchFilter(messageFolders);
+    const searchFilter =
+      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? computeGmailIncludeSearchFilter(messageFolders)
+        : computeGmailExcludeSearchFilter(messageFolders);
+
+    // For SELECTED_FOLDERS with no synced folders, return empty result
+    if (
+      messageFolderImportPolicy ===
+        MessageFolderImportPolicy.SELECTED_FOLDERS &&
+      !searchFilter
+    ) {
+      return [
+        {
+          messageExternalIds: [],
+          nextSyncCursor: '',
+          previousSyncCursor: '',
+          messageExternalIdsToDelete: [],
+          folderId: undefined,
+        },
+      ];
+    }
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -64,7 +86,7 @@ export class GmailGetMessageListService {
           userId: 'me',
           maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
-          q: excludedSearchFilter,
+          q: searchFilter,
         })
         .catch((error) => {
           this.logger.error(
@@ -144,6 +166,7 @@ export class GmailGetMessageListService {
     messageChannel,
     connectedAccount,
     messageFolders,
+    messageFolderImportPolicy,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -155,7 +178,11 @@ export class GmailGetMessageListService {
     });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
-      return this.getMessageListWithoutCursor(connectedAccount, messageFolders);
+      return this.getMessageListWithoutCursor(
+        connectedAccount,
+        messageFolders,
+        messageFolderImportPolicy,
+      );
     }
 
     const { history, historyId: nextSyncCursor } =
@@ -167,15 +194,34 @@ export class GmailGetMessageListService {
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
-    const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
-      connectedAccount,
-      messageChannel.syncCursor,
-      messageFolders,
-    );
+    let messagesAddedFiltered: string[];
 
-    const messagesAddedFiltered = messagesAdded.filter(
-      (messageId) => !messageIdsToFilter.includes(messageId),
-    );
+    if (
+      messageFolderImportPolicy === MessageFolderImportPolicy.SELECTED_FOLDERS
+    ) {
+      // For SELECTED_FOLDERS: only include messages from synced folders
+      const messageIdsFromSyncedFolders =
+        await this.getEmailIdsFromSyncedFolders(
+          gmailClient,
+          messageChannel.syncCursor,
+          messageFolders,
+        );
+
+      messagesAddedFiltered = messagesAdded.filter((messageId) =>
+        messageIdsFromSyncedFolders.includes(messageId),
+      );
+    } else {
+      // For ALL_FOLDERS: exclude messages from non-synced folders
+      const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
+        connectedAccount,
+        messageChannel.syncCursor,
+        messageFolders,
+      );
+
+      messagesAddedFiltered = messagesAdded.filter(
+        (messageId) => !messageIdsToFilter.includes(messageId),
+      );
+    }
 
     if (!nextSyncCursor) {
       throw new MessageImportDriverException(
@@ -253,5 +299,42 @@ export class GmailGetMessageListService {
     }
 
     return emailIds;
+  }
+
+  private async getEmailIdsFromSyncedFolders(
+    gmailClient: gmailV1.Gmail,
+    lastSyncHistoryId: string,
+    messageFolders: Pick<
+      MessageFolderWorkspaceEntity,
+      'name' | 'externalId' | 'isSynced'
+    >[],
+  ): Promise<string[]> {
+    const emailIds: string[] = [];
+
+    const syncedFolders = messageFolders.filter((folder) => folder.isSynced);
+
+    for (const folder of syncedFolders) {
+      if (!isDefined(folder.externalId)) {
+        continue;
+      }
+
+      const { history } = await this.gmailGetHistoryService.getHistory(
+        gmailClient,
+        lastSyncHistoryId,
+        ['messageAdded'],
+        folder.externalId,
+      );
+
+      const emailIdsFromFolder = history
+        .map((historyItem) => historyItem.messagesAdded)
+        .flat()
+        .map((message) => message?.message?.id)
+        .filter((id) => id)
+        .filter(assertNotNull);
+
+      emailIds.push(...emailIdsFromFolder);
+    }
+
+    return [...new Set(emailIds)];
   }
 }

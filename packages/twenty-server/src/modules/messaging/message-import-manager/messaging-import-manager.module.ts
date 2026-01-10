@@ -30,12 +30,15 @@ import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-im
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
 import { MessagingAddSingleMessageToCacheForImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
 import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
+import { MessagingFolderRetroactiveImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-folder-retroactive-import.job';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
+import { MessagingFolderRetroactiveImportService } from 'src/modules/messaging/message-import-manager/services/messaging-folder-retroactive-import.service';
+import { MessagingMessageFolderListener } from 'src/modules/messaging/message-folder-manager/listeners/messaging-message-folder.listener';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
@@ -91,7 +94,9 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingOngoingStaleCronJob,
     MessagingRelaunchFailedMessageChannelsCronJob,
     MessagingAddSingleMessageToCacheForImportJob,
+    MessagingFolderRetroactiveImportJob,
     MessagingMessageImportManagerMessageChannelListener,
+    MessagingMessageFolderListener,
     MessagingCleanCacheJob,
     MessagingMessageService,
     MessagingMessageListFetchService,
@@ -107,6 +112,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingProcessGroupEmailActionsService,
     MessagingDeleteFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
+    MessagingFolderRetroactiveImportService,
   ],
   exports: [
     MessagingSendMessageService,

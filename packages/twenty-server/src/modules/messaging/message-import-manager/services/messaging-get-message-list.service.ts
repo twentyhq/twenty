@@ -32,18 +32,21 @@ export class MessagingGetMessageListService {
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
           messageFolders,
+          messageFolderImportPolicy: messageChannel.messageFolderImportPolicy,
         });
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
           messageFolders,
+          messageFolderImportPolicy: messageChannel.messageFolderImportPolicy,
         });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         return await this.imapGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
           messageFolders,
+          messageFolderImportPolicy: messageChannel.messageFolderImportPolicy,
         });
       }
       default:
