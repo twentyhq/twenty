@@ -1,7 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -126,10 +126,9 @@ export const CalendarEventDetails = ({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
-  const useUpdateOneCalendarEventRecordMutation: RecordUpdateHook = () => {
-    const [isUpdating, setIsUpdating] = useState(false);
-
-    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const updateEntity = useCallback(
+    ({ variables }: RecordUpdateHookParams) => {
       if (!updateOneRecord) return;
 
       setIsUpdating(true);
@@ -137,10 +136,14 @@ export const CalendarEventDetails = ({
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       }).finally(() => setIsUpdating(false));
-    };
+    },
+    [updateOneRecord],
+  );
 
-    return [updateEntity, { loading: isUpdating }];
-  };
+  const useUpdateOneCalendarEventRecordMutation: RecordUpdateHook = useCallback(
+    () => [updateEntity, { loading: isUpdating }],
+    [isUpdating, updateEntity],
+  );
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
