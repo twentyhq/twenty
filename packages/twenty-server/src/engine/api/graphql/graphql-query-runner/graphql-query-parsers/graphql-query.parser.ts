@@ -143,35 +143,19 @@ export class GraphqlQueryParser {
     parsedOrderBy: Record<string, OrderByClause>,
     objectNameSingular: string,
   ): void {
-    // Add ORDER BY columns with underscore alias for DISTINCT compatibility
+    // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility
     // This must be called AFTER setFindOptions because setFindOptions clears addSelect
-    const orderByKeys = Object.keys(parsedOrderBy);
-
-    // Check if there are any relation columns (different alias than main entity)
-    const hasRelationOrderBy = orderByKeys.some((key) => {
-      const parts = key.split('.');
-
-      return parts.length === 2 && parts[0] !== objectNameSingular;
-    });
-
-    for (const orderByKey of orderByKeys) {
+    for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
 
       if (parts.length === 2) {
         const [alias, column] = parts;
 
-        // Add relation columns always, and main entity columns only when
-        // there are relation columns (to support DISTINCT subquery compatibility)
+        // Only add select for joined relation columns, not main entity columns
         if (alias !== objectNameSingular) {
           queryBuilder.addSelect(
             `"${alias}"."${column}"`,
             `${alias}_${column}`,
-          );
-        } else if (hasRelationOrderBy) {
-          // Main entity columns need underscore alias when DISTINCT is used
-          queryBuilder.addSelect(
-            `"${objectNameSingular}"."${column}"`,
-            `${objectNameSingular}_${column}`,
           );
         }
       }
