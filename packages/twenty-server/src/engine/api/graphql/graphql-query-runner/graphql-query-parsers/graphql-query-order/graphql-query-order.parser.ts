@@ -235,15 +235,14 @@ export class GraphqlQueryOrderFieldParser {
       return null;
     }
 
-    // Build schema-qualified table name for the subquery
+    // Build schema-qualified table name for the subquery's FROM clause
     const targetTableName = this.workspaceSchemaName
       ? `"${this.workspaceSchemaName}"."${targetObjectMetadata.nameSingular}"`
       : `"${targetObjectMetadata.nameSingular}"`;
 
-    // Build schema-qualified source table name
-    const sourceTableName = this.workspaceSchemaName
-      ? `"${this.workspaceSchemaName}"."${objectNameSingular}"`
-      : `"${objectNameSingular}"`;
+    // For correlated subquery, reference the main table by its alias (not schema-qualified)
+    // PostgreSQL requires this for correlated subqueries
+    const sourceTableAlias = `"${objectNameSingular}"`;
 
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
       if (!isObject(nestedFieldOrderByValue)) {
@@ -261,17 +260,17 @@ export class GraphqlQueryOrderFieldParser {
           unknown
         >,
         targetTableName,
-        sourceTableName,
+        sourceTableAlias,
         joinColumnName,
         isForwardPagination,
       });
     }
 
     if (isOrderByDirection(nestedFieldOrderByValue)) {
-      // Build subquery with schema-qualified table names
-      // targetTableName is already quoted (e.g., "schema"."table" or "table")
-      // sourceTableName is already quoted
-      const subquery = `(SELECT "${nestedFieldMetadata.name}" FROM ${targetTableName} WHERE "id" = ${sourceTableName}."${joinColumnName}")`;
+      // Build correlated subquery
+      // targetTableName is schema-qualified (e.g., "schema"."table" or "table")
+      // sourceTableAlias references the main query's table alias (not schema-qualified)
+      const subquery = `(SELECT "${nestedFieldMetadata.name}" FROM ${targetTableName} WHERE "id" = ${sourceTableAlias}."${joinColumnName}")`;
 
       return {
         [subquery]: {
@@ -292,14 +291,14 @@ export class GraphqlQueryOrderFieldParser {
     nestedFieldMetadata,
     nestedFieldOrderByValue,
     targetTableName,
-    sourceTableName,
+    sourceTableAlias,
     joinColumnName,
     isForwardPagination,
   }: {
     nestedFieldMetadata: FlatFieldMetadata;
     nestedFieldOrderByValue: Record<string, unknown>;
     targetTableName: string;
-    sourceTableName: string;
+    sourceTableAlias: string;
     joinColumnName: string;
     isForwardPagination: boolean;
   }): Record<string, OrderByClause> | null {
@@ -337,8 +336,8 @@ export class GraphqlQueryOrderFieldParser {
       }
 
       const columnName = `${nestedFieldMetadata.name}${capitalize(subFieldKey)}`;
-      // targetTableName and sourceTableName are already quoted
-      const subquery = `(SELECT "${columnName}" FROM ${targetTableName} WHERE "id" = ${sourceTableName}."${joinColumnName}")`;
+      // targetTableName is schema-qualified, sourceTableAlias references the main query's table
+      const subquery = `(SELECT "${columnName}" FROM ${targetTableName} WHERE "id" = ${sourceTableAlias}."${joinColumnName}")`;
 
       result[subquery] = {
         ...convertOrderByToFindOptionsOrder(subFieldValue, isForwardPagination),
