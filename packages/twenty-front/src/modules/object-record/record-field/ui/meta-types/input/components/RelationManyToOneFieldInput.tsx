@@ -110,7 +110,7 @@ export const RelationManyToOneFieldInput = () => {
       EmptyIcon={IconForbid}
       emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
-      onCreate={handleCreateNew}
+      onCreate={createNewRecordAndOpenRightDrawer ? handleCreateNew : undefined}
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={[
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
