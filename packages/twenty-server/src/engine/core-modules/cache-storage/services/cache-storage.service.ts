@@ -143,6 +143,18 @@ export class CacheStorageService {
     });
   }
 
+  async getSetMembers(key: string): Promise<string[]> {
+    if (this.isRedisCache()) {
+      return await (this.cache as RedisCache).store.client.sMembers(
+        this.getKey(key),
+      );
+    }
+
+    const res = await this.get<string[]>(key);
+
+    return res ?? [];
+  }
+
   async flush() {
     return this.cache.reset();
   }

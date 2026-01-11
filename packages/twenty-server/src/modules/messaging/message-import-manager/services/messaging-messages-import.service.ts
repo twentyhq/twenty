@@ -103,14 +103,26 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
+          const cacheKey = `messages-to-import:${workspaceId}:${messageChannel.id}`;
+
+          this.logger.log(
+            `[DEBUG] Attempting to pop messages from cache key: ${cacheKey}`,
+          );
+
           messageIdsToFetch = await this.cacheStorage.setPop(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            cacheKey,
             MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
           );
 
           this.logger.log(
-            `Fetched ${messageIdsToFetch?.length ?? 0} message IDs from cache for channel ${messageChannel.id}`,
+            `[DEBUG] Fetched ${messageIdsToFetch?.length ?? 0} message IDs from cache for channel ${messageChannel.id}`,
           );
+
+          if (messageIdsToFetch?.length) {
+            this.logger.log(
+              `[DEBUG] First few message IDs: ${messageIdsToFetch.slice(0, 3).join(', ')}`,
+            );
+          }
 
           if (!messageIdsToFetch?.length) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
@@ -124,17 +136,29 @@ export class MessagingMessagesImportService {
             );
           }
 
+          this.logger.log(
+            `[DEBUG] Fetching ${messageIdsToFetch.length} messages from Gmail API...`,
+          );
+
           const allMessages =
             await this.messagingGetMessagesService.getMessages(
               messageIdsToFetch,
               connectedAccountWithFreshTokens,
             );
 
+          this.logger.log(
+            `[DEBUG] Got ${allMessages.length} messages from Gmail API`,
+          );
+
           const blocklist =
             await this.blocklistRepository.getByWorkspaceMemberId(
               connectedAccountWithFreshTokens.accountOwnerId,
               workspaceId,
             );
+
+          this.logger.log(
+            `[DEBUG] Blocklist has ${blocklist.length} entries`,
+          );
 
           if (!isDefined(messageChannel.handle)) {
             throw new MessageImportDriverException(
@@ -150,6 +174,10 @@ export class MessagingMessagesImportService {
             );
           }
 
+          this.logger.log(
+            `[DEBUG] Filtering emails with handle: ${messageChannel.handle}, aliases: ${connectedAccountWithFreshTokens.handleAliases}, excludeGroupEmails: ${messageChannel.excludeGroupEmails}`,
+          );
+
           const messagesToSave = filterEmails(
             messageChannel.handle,
             [...connectedAccountWithFreshTokens.handleAliases.split(',')],
@@ -160,9 +188,13 @@ export class MessagingMessagesImportService {
             messageChannel.excludeGroupEmails,
           );
 
+          this.logger.log(
+            `[DEBUG] After filtering: ${messagesToSave.length} messages to save (from ${allMessages.length} total)`,
+          );
+
           if (messagesToSave.length > 0) {
             this.logger.log(
-              `Saving ${messagesToSave.length} messages for channel ${messageChannel.id}`,
+              `[DEBUG] Saving ${messagesToSave.length} messages for channel ${messageChannel.id}`,
             );
 
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
@@ -173,7 +205,11 @@ export class MessagingMessagesImportService {
             );
 
             this.logger.log(
-              `Successfully saved ${messagesToSave.length} messages for channel ${messageChannel.id}`,
+              `[DEBUG] Successfully saved ${messagesToSave.length} messages for channel ${messageChannel.id}`,
+            );
+          } else {
+            this.logger.log(
+              `[DEBUG] No messages to save after filtering`,
             );
           }
 

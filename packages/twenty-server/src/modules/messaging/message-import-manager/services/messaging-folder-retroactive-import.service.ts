@@ -116,42 +116,65 @@ export class MessagingFolderRetroactiveImportService {
       return;
     }
 
+    console.log(`[RETROACTIVE IMPORT] Provider check passed: ${connectedAccount.provider}`);
+    console.log(`[RETROACTIVE IMPORT] Fetching messages from folder: ${folderExternalId}`);
+
     const messageExternalIds = await this.fetchAllMessageIdsFromFolder(
       connectedAccount,
       folderExternalId,
     );
 
+    console.log(`[RETROACTIVE IMPORT] Found ${messageExternalIds.length} messages in folder ${folderExternalId}`);
     this.logger.log(
       `Found ${messageExternalIds.length} messages in folder ${folderExternalId}`,
     );
 
     if (messageExternalIds.length === 0) {
+      console.log(`[RETROACTIVE IMPORT] No messages found in folder, exiting early`);
       return;
     }
 
+    console.log(`[RETROACTIVE IMPORT] Filtering already imported messages...`);
     const newMessageIds = await this.filterAlreadyImportedMessages(
       workspaceId,
       messageChannelId,
       messageExternalIds,
     );
 
+    console.log(`[RETROACTIVE IMPORT] ${newMessageIds.length} new messages to import (${messageExternalIds.length - newMessageIds.length} already imported)`);
     this.logger.log(
       `${newMessageIds.length} new messages to import from folder ${folderExternalId}`,
     );
 
     if (newMessageIds.length === 0) {
+      console.log(`[RETROACTIVE IMPORT] All messages already imported, exiting`);
       return;
     }
 
+    const cacheKey = `messages-to-import:${workspaceId}:${messageChannelId}`;
+    console.log(`[RETROACTIVE IMPORT] Adding ${newMessageIds.length} message IDs to cache key: ${cacheKey}`);
+    console.log(`[RETROACTIVE IMPORT] First 3 message IDs: ${newMessageIds.slice(0, 3).join(', ')}`);
     this.logger.log(
       `Adding ${newMessageIds.length} message IDs to cache for import...`,
     );
 
-    await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:${messageChannelId}`,
-      newMessageIds,
-      ONE_WEEK_IN_MILLISECONDS,
-    );
+    try {
+      await this.cacheStorage.setAdd(
+        cacheKey,
+        newMessageIds,
+        ONE_WEEK_IN_MILLISECONDS,
+      );
+      console.log(`[RETROACTIVE IMPORT] setAdd completed without error`);
+
+      // Verify the messages were actually added
+      const verifyCount = await this.cacheStorage.getSetLength(cacheKey);
+      console.log(`[RETROACTIVE IMPORT] Verification: ${verifyCount} messages now in cache`);
+    } catch (error) {
+      console.error(`[RETROACTIVE IMPORT] ERROR in setAdd:`, error);
+      throw error;
+    }
+
+    console.log(`[RETROACTIVE IMPORT] Messages added to cache successfully`);
 
     this.logger.log(
       `Marking channel ${messageChannelId} as MESSAGES_IMPORT_PENDING...`,
@@ -162,6 +185,7 @@ export class MessagingFolderRetroactiveImportService {
       workspaceId,
     );
 
+    console.log(`[RETROACTIVE IMPORT] Channel marked as MESSAGES_IMPORT_PENDING`);
     this.logger.log(
       `Successfully scheduled import for ${newMessageIds.length} messages from folder ${folderExternalId}. Import will start within 1 minute via cron job.`,
     );
@@ -235,11 +259,36 @@ export class MessagingFolderRetroactiveImportService {
           messageExternalIds,
         );
 
-        return {
+        console.log(`[DRY RUN] Total in folder: ${totalMessagesInFolder}, Not in DB: ${newMessageIds.length}`);
+
+        // Also check how many are queued for import in Redis
+        const queuedMessageIds = await this.cacheStorage.getSetMembers(
+          `messages-to-import:${workspaceId}:${messageChannelId}`,
+        );
+
+        console.log(`[DRY RUN] Queued in Redis: ${queuedMessageIds?.length ?? 0}`);
+
+        // Filter out messages that are already queued for import
+        const queuedSet = new Set(queuedMessageIds ?? []);
+        const actuallyNewMessageIds = newMessageIds.filter(
+          (id) => !queuedSet.has(id),
+        );
+
+        // Messages that are queued count as "already imported" for UX purposes
+        const queuedCount = newMessageIds.length - actuallyNewMessageIds.length;
+
+        const result = {
           totalMessagesInFolder,
-          messagesToImport: newMessageIds.length,
-          alreadyImported: totalMessagesInFolder - newMessageIds.length,
+          messagesToImport: actuallyNewMessageIds.length,
+          alreadyImported:
+            totalMessagesInFolder -
+            newMessageIds.length +
+            queuedCount,
         };
+
+        console.log(`[DRY RUN] Result: messagesToImport=${result.messagesToImport}, alreadyImported=${result.alreadyImported}`);
+
+        return result;
       },
     );
   }

@@ -152,7 +152,13 @@ const StyledTotalLabel = styled.span`
   text-align: center;
 `;
 
-const formatLastSynced = (lastSyncedAt: string | null): string => {
+const formatLastSynced = (
+  lastSyncedAt: string | null,
+  syncStatus: string,
+): string => {
+  if (syncStatus === 'ONGOING') {
+    return t`Syncing now...`;
+  }
   if (!lastSyncedAt) {
     return t`Never synced`;
   }
@@ -222,7 +228,7 @@ export const SettingsAccountsSyncStatusCard = ({
           />
         </StyledHeaderLeft>
         <StyledLastSynced>
-          {formatLastSynced(stats.lastSyncedAt)}
+          {formatLastSynced(stats.lastSyncedAt, stats.syncStatus)}
         </StyledLastSynced>
       </StyledHeader>
 

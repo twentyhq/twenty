@@ -145,9 +145,9 @@ export class MessagingMessageListFetchService {
               messageFoldersToSync,
             );
 
-          await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-          );
+          // Note: We no longer clear the cache here to preserve messages added by
+          // retroactive folder imports. The setAdd below handles duplicates automatically
+          // since it uses a Redis set.
 
           const messageExternalIds = messageLists.flatMap(
             (messageList) => messageList.messageExternalIds,

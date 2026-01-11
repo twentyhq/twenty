@@ -58,6 +58,17 @@ export class MessagingMessagesImportCronJob {
 
         const now = new Date().toISOString();
 
+        // First check how many channels are pending before updating
+        const [pendingChannels] = await this.coreDataSource.query(
+          `SELECT id, "syncStage", "syncStageStartedAt" FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
+        );
+
+        if (pendingChannels?.length > 0) {
+          this.logger.log(
+            `[DEBUG] Found ${pendingChannels.length} pending channels in workspace ${activeWorkspace.id}: ${pendingChannels.map((c: { id: string }) => c.id).join(', ')}`,
+          );
+        }
+
         const [messageChannels] = await this.coreDataSource.query(
           `UPDATE ${schemaName}."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
           WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}' RETURNING *`,
@@ -65,7 +76,7 @@ export class MessagingMessagesImportCronJob {
 
         if (messageChannels.length > 0) {
           this.logger.log(
-            `Found ${messageChannels.length} message channels with pending imports in workspace ${activeWorkspace.id}`,
+            `[DEBUG] Scheduled ${messageChannels.length} message channels for import in workspace ${activeWorkspace.id}`,
           );
         }
 

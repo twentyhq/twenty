@@ -37,6 +37,15 @@ export class MessagingFolderRetroactiveImportJob {
     const { workspaceId, messageChannelId, messageFolderId, folderExternalId } =
       data;
 
+    console.log(
+      `\n\n========== RETROACTIVE IMPORT JOB STARTED ==========`,
+    );
+    console.log(`Workspace ID: ${workspaceId}`);
+    console.log(`Message Channel ID: ${messageChannelId}`);
+    console.log(`Message Folder ID: ${messageFolderId}`);
+    console.log(`Folder External ID: ${folderExternalId}`);
+    console.log(`===================================================\n`);
+
     this.logger.log(
       `[START] Processing retroactive import for folder ${folderExternalId} in message channel ${messageChannelId} (workspace: ${workspaceId})`,
     );
@@ -73,13 +82,18 @@ export class MessagingFolderRetroactiveImportJob {
           return;
         }
 
+        // Log the current policy for debugging
+        this.logger.log(
+          `Message channel ${messageChannelId} has import policy: ${messageChannel.messageFolderImportPolicy}`,
+        );
+
         // Only run retroactive import for SELECTED_FOLDERS policy
         if (
           messageChannel.messageFolderImportPolicy !==
           MessageFolderImportPolicy.SELECTED_FOLDERS
         ) {
-          this.logger.log(
-            `Message channel ${messageChannelId} uses ${messageChannel.messageFolderImportPolicy} policy, skipping retroactive import`,
+          this.logger.warn(
+            `Message channel ${messageChannelId} uses ${messageChannel.messageFolderImportPolicy} policy, skipping retroactive import. Change to SELECTED_FOLDERS to enable folder import.`,
           );
 
           return;

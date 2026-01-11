@@ -27,6 +27,7 @@ export const useGetSyncStatistics = (messageChannelId: string) => {
       variables: { messageChannelId },
       skip: !messageChannelId,
       pollInterval: 5000,
+      fetchPolicy: 'network-only',
     },
   );
 };
