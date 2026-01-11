@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { UndecoratedLink } from '@ui/navigation/link/components/UndecoratedLink';
 import { ComponentWithRouterDecorator } from '@ui/testing';
+import { expect, userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof UndecoratedLink> = {
   title: 'UI/navigation/link/UndecoratedLink',

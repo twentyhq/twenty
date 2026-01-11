@@ -1,4 +1,4 @@
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';

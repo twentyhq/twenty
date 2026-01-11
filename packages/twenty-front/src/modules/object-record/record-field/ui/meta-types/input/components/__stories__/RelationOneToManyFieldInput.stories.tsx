@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -9,8 +9,8 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockCurrentWorkspace,
-  mockedWorkspaceMemberData,
+    mockCurrentWorkspace,
+    mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

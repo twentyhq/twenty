@@ -1,12 +1,12 @@
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { IconBell, IconMinus } from '@ui/display';
 import {
-  CatalogDecorator,
-  type CatalogDimension,
-  type CatalogOptions,
-  ComponentDecorator,
+    CatalogDecorator,
+    type CatalogDimension,
+    type CatalogOptions,
+    ComponentDecorator,
 } from '@ui/testing';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItemDraggable } from '../MenuItemDraggable';

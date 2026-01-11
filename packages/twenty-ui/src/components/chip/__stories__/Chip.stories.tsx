@@ -1,9 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-  CatalogDecorator,
-  type CatalogStory,
-  ComponentDecorator,
+    CatalogDecorator,
+    type CatalogStory,
+    ComponentDecorator,
 } from '@ui/testing';
 
 import { Chip, ChipAccent, ChipSize, ChipVariant } from '../Chip';

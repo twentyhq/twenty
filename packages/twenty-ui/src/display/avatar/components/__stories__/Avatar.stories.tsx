@@ -1,9 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-  AVATAR_URL_MOCK,
-  ComponentDecorator,
-  RecoilRootDecorator,
+    AVATAR_URL_MOCK,
+    ComponentDecorator,
+    RecoilRootDecorator,
 } from '@ui/testing';
 
 import { Avatar } from '../Avatar';

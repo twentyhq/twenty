@@ -1,11 +1,11 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  allMockPersonRecords,
-  peopleQueryResult,
+    allMockPersonRecords,
+    peopleQueryResult,
 } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 

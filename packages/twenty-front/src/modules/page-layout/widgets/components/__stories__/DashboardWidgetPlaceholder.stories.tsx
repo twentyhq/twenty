@@ -2,14 +2,14 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
-  PAGE_LAYOUT_TEST_INSTANCE_ID,
-  PageLayoutTestWrapper,
+    PAGE_LAYOUT_TEST_INSTANCE_ID,
+    PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type MutableSnapshot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated/graphql';

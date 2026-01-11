@@ -1,11 +1,11 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { Logo } from '@/auth/components/Logo';
 import {
   ComponentDecorator,
   RecoilRootDecorator,
   RouterDecorator,
 } from 'twenty-ui/testing';
-import { Logo } from '@/auth/components/Logo';
 
 const logoUrl = 'https://picsum.photos/192/192';
 

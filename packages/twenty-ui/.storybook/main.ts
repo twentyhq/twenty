@@ -3,25 +3,22 @@ import * as path from 'path';
 import { dirname, join } from 'path';
 import checker from 'vite-plugin-checker';
 
-
 const getAbsolutePath = (value: string): any => {
-  return dirname(require.resolve(join(value, "package.json")));
+  return dirname(require.resolve(join(value, 'package.json')));
 };
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
 
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-interactions"),
-    getAbsolutePath("@storybook/addon-coverage"),
-    getAbsolutePath("storybook-addon-cookie"),
-    getAbsolutePath("storybook-addon-pseudo-states"),
+    getAbsolutePath('@storybook/addon-links'),
+    getAbsolutePath('@storybook/addon-coverage'),
+    // getAbsolutePath('storybook-addon-cookie'),
+    getAbsolutePath('storybook-addon-pseudo-states'),
   ],
 
   framework: {
-    name: getAbsolutePath("@storybook/react-vite"),
+    name: getAbsolutePath('@storybook/react-vite'),
     options: {},
   },
 
@@ -38,10 +35,6 @@ const config: StorybookConfig = {
       ],
     };
   },
-
-  docs: {
-    autodocs: true
-  }
 };
 
 export default config;

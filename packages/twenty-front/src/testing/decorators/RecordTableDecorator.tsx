@@ -1,4 +1,4 @@
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -16,8 +16,8 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import {
-  RecordTableContextProvider,
-  useRecordTableContextOrThrow,
+    RecordTableContextProvider,
+    useRecordTableContextOrThrow,
 } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';

@@ -1,8 +1,8 @@
-import { type Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react-vite';
 
 import {
-  headerSelectionTableFields,
-  mockRsiValues,
+    headerSelectionTableFields,
+    mockRsiValues,
 } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';

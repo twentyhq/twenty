@@ -9,12 +9,12 @@ import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
-  getWorkflowMock,
-  getWorkflowNodeIdMock,
+    getWorkflowMock,
+    getWorkflowNodeIdMock,
 } from '~/testing/mock-data/workflow';
 
 export const WorkflowStepDecorator: Decorator = (Story) => {

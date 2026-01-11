@@ -1,16 +1,16 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconReload, IconSearch } from '@ui/display';
 import {
-  CatalogDecorator,
-  type CatalogStory,
-  ComponentDecorator,
+    CatalogDecorator,
+    type CatalogStory,
+    ComponentDecorator,
 } from '@ui/testing';
 import {
-  Button,
-  type ButtonAccent,
-  type ButtonPosition,
-  type ButtonSize,
-  type ButtonVariant,
+    Button,
+    type ButtonAccent,
+    type ButtonPosition,
+    type ButtonSize,
+    type ButtonVariant,
 } from '../Button/Button';
 
 const meta: Meta<typeof Button> = {

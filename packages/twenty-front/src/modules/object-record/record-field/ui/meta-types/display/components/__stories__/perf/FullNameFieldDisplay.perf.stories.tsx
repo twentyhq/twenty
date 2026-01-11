@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { FullNameFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/FullNameFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';

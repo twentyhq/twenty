@@ -1,14 +1,14 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  IconCheckbox,
-  IconList,
-  IconSearch,
-  IconSettings,
+    IconCheckbox,
+    IconList,
+    IconSearch,
+    IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof NavigationBar> = {
   title: 'UI/Navigation/NavigationBar/NavigationBar',

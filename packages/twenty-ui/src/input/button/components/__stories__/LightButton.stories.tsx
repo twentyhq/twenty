@@ -1,9 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/display';
 import {
-  CatalogDecorator,
-  type CatalogStory,
-  ComponentDecorator,
+    CatalogDecorator,
+    type CatalogStory,
+    ComponentDecorator,
 } from '@ui/testing';
 import { LightButton, type LightButtonAccent } from '../LightButton';
 

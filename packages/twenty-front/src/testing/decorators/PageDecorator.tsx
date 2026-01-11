@@ -1,13 +1,13 @@
 import { ApolloProvider } from '@apollo/client';
 import { loadDevMessages } from '@apollo/client/dev';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { HelmetProvider } from 'react-helmet-async';
 import {
-  createMemoryRouter,
-  createRoutesFromElements,
-  Outlet,
-  Route,
-  RouterProvider,
+    createMemoryRouter,
+    createRoutesFromElements,
+    Outlet,
+    Route,
+    RouterProvider,
 } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
@@ -32,8 +32,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconsProvider } from 'twenty-ui/display';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export type PageDecoratorArgs = {
   routePath: string;

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -9,13 +9,13 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import {
+    AppNavigationDrawer,
+    type AppNavigationDrawerProps,
+} from '@/navigation/components/AppNavigationDrawer';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { AppPath } from 'twenty-shared/types';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import {
-  AppNavigationDrawer,
-  type AppNavigationDrawerProps,
-} from '@/navigation/components/AppNavigationDrawer';
 
 const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer = 'main',

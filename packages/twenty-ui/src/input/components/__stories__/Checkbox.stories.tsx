@@ -1,16 +1,16 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-  CatalogDecorator,
-  type CatalogStory,
-  ComponentDecorator,
+    CatalogDecorator,
+    type CatalogStory,
+    ComponentDecorator,
 } from '@ui/testing';
 
 import {
-  Checkbox,
-  CheckboxAccent,
-  CheckboxShape,
-  CheckboxSize,
-  CheckboxVariant,
+    Checkbox,
+    CheckboxAccent,
+    CheckboxShape,
+    CheckboxSize,
+    CheckboxVariant,
 } from '../Checkbox';
 
 const meta: Meta<typeof Checkbox> = {

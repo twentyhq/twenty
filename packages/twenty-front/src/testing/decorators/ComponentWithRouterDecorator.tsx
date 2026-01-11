@@ -1,15 +1,15 @@
+import { type Decorator } from '@storybook/react-vite';
 import {
-  createMemoryRouter,
-  createRoutesFromElements,
-  Outlet,
-  Route,
-  RouterProvider,
+    createMemoryRouter,
+    createRoutesFromElements,
+    Outlet,
+    Route,
+    RouterProvider,
 } from 'react-router-dom';
-import { type Decorator } from '@storybook/react';
 
 import {
-  computeLocation,
-  isRouteParams,
+    computeLocation,
+    isRouteParams,
 } from '~/testing/decorators/PageDecorator';
 
 import { ComponentStorybookLayout } from '~/testing/ComponentStorybookLayout';

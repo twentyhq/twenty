@@ -1,20 +1,20 @@
-import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { TextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/TextFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
+import { type Decorator, type Meta, type StoryObj } from '@storybook/react-vite';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
-import { TextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/TextFieldInput';
 
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();

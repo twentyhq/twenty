@@ -1,10 +1,10 @@
 import {
-  useApolloClient,
-  type ApolloClient,
-  type NormalizedCacheObject,
+    useApolloClient,
+    type ApolloClient,
+    type NormalizedCacheObject,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
@@ -23,8 +23,8 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import {
-  PAGE_LAYOUT_TEST_INSTANCE_ID,
-  PageLayoutTestWrapper,
+    PAGE_LAYOUT_TEST_INSTANCE_ID,
+    PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -38,11 +38,11 @@ import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVa
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
-  AggregateOperations,
-  AxisNameDisplay,
-  BarChartLayout,
-  PageLayoutType,
-  WidgetConfigurationType,
+    AggregateOperations,
+    AxisNameDisplay,
+    BarChartLayout,
+    PageLayoutType,
+    WidgetConfigurationType,
 } from '~/generated/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

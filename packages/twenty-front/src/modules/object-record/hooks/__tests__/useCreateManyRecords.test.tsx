@@ -1,5 +1,5 @@
-import { mocked } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
+import { mocked } from 'storybook/test';
 import { v4 } from 'uuid';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

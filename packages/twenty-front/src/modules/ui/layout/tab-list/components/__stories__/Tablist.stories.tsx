@@ -1,16 +1,16 @@
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-  IconCalendar,
-  IconCheckbox,
-  IconHeart,
-  IconHome,
-  IconMail,
-  IconPhone,
-  IconUser,
+    IconCalendar,
+    IconCheckbox,
+    IconHeart,
+    IconHome,
+    IconMail,
+    IconPhone,
+    IconUser,
 } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 
 const tabs = [
   { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },
