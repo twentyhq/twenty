@@ -14,13 +14,14 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { CommentWorkspaceEntity } from 'src/modules/comment/standard-objects/comment.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 
-type ActivityType = 'note' | 'task';
+type ActivityType = 'note' | 'task' | 'comment';
 
 @Injectable()
 export class TimelineActivityService {
@@ -35,6 +36,7 @@ export class TimelineActivityService {
   private targetObjects: Record<ActivityType, string> = {
     note: 'noteTarget',
     task: 'taskTarget',
+    comment: 'commentTarget',
   };
 
   async upsertEvents({
@@ -149,6 +151,27 @@ export class TimelineActivityService {
       ];
     }
 
+    if (objectSingularName === 'comment') {
+      const commentEventsTimelineActivities =
+        await this.computeTimelineActivityPayloadsForComments({
+          events: events as ObjectRecordBaseEvent<CommentWorkspaceEntity>[],
+          workspaceId,
+          objectMetadata,
+          name,
+        });
+
+      return [
+        ...commentEventsTimelineActivities,
+        ...(events.map((event) => ({
+          name,
+          objectSingularName,
+          recordId: event.recordId,
+          workspaceMemberId: event.workspaceMemberId,
+          properties: event.properties,
+        })) satisfies TimelineActivityPayload[]),
+      ];
+    }
+
     if (
       objectSingularName === 'noteTarget' ||
       objectSingularName === 'taskTarget'
@@ -156,6 +179,15 @@ export class TimelineActivityService {
       return await this.computeTimelineActivityPayloadsForActivityTargets({
         events,
         activityType: objectSingularName === 'noteTarget' ? 'note' : 'task',
+        workspaceId,
+        objectMetadata,
+        name,
+      });
+    }
+
+    if (objectSingularName === 'commentTarget') {
+      return await this.computeTimelineActivityPayloadsForCommentTargets({
+        events,
         workspaceId,
         objectMetadata,
         name,
@@ -384,5 +416,211 @@ export class TimelineActivityService {
     ];
 
     return activityId;
+  }
+
+  private async computeTimelineActivityPayloadsForComments({
+    events,
+    name,
+    workspaceId,
+    objectMetadata,
+  }: WorkspaceEventBatch<
+    ObjectRecordBaseEvent<CommentWorkspaceEntity>
+  >): Promise<TimelineActivityPayload[]> {
+    if (!isDefined(workspaceId)) {
+      return [];
+    }
+
+    const { action } = parseEventNameOrThrow(name);
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const commentTargets =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const commentTargetRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              this.targetObjects['comment'],
+              {
+                shouldBypassPermissionChecks: true,
+              },
+            );
+
+          return commentTargetRepository.find({
+            where: {
+              commentId: In(events.map((event) => event.recordId)),
+            },
+          });
+        },
+      );
+
+    if (commentTargets.length === 0) {
+      return [];
+    }
+
+    return events
+      .flatMap((event) => {
+        const correspondingCommentTargets = commentTargets.filter(
+          (commentTarget) => commentTarget.commentId === event.recordId,
+        );
+
+        if (correspondingCommentTargets.length === 0) {
+          return;
+        }
+
+        return correspondingCommentTargets.map((commentTarget) => {
+          const targetColumn: string | undefined = Object.entries(
+            commentTarget,
+          ).find(
+            ([columnName, columnValue]: [string, string]) =>
+              columnName !== 'commentId' &&
+              columnName.endsWith('Id') &&
+              columnValue !== null,
+          )?.[0];
+
+          if (!isDefined(targetColumn)) {
+            return;
+          }
+
+          // Extract a preview from the comment body for the cached name
+          const bodyMarkdown = event.properties.diff?.body?.after?.markdown;
+          const commentPreview =
+            typeof bodyMarkdown === 'string'
+              ? bodyMarkdown.slice(0, 100)
+              : 'Comment';
+
+          return {
+            name: `linked-comment.${action}`,
+            workspaceMemberId: event.workspaceMemberId,
+            recordId: commentTarget[targetColumn.replace(/Id$/, '')],
+            linkedRecordCachedName: commentPreview,
+            linkedRecordId: event.recordId,
+            linkedObjectMetadataId: objectMetadata.id,
+            properties: event.properties,
+            overrideObjectSingularName: objectMetadata.nameSingular,
+          } satisfies TimelineActivityPayload;
+        });
+      })
+      .filter(isDefined);
+  }
+
+  private async computeTimelineActivityPayloadsForCommentTargets({
+    events,
+    name,
+    objectMetadata,
+    workspaceId,
+  }: WorkspaceEventBatch<ObjectRecordBaseEvent>): Promise<
+    TimelineActivityPayload[]
+  > {
+    const { action } = parseEventNameOrThrow(name);
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const comments =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const commentRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'comment',
+              {
+                shouldBypassPermissionChecks: true,
+              },
+            );
+
+          return commentRepository.find({
+            where: {
+              id: In(
+                events
+                  .map((event) =>
+                    this.extractActivityIdFromActivityTargetEvent(
+                      event,
+                      'comment',
+                    ),
+                  )
+                  .filter(isDefined),
+              ),
+            },
+          });
+        },
+      );
+
+    if (comments.length === 0) {
+      return [];
+    }
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const fields = getFlatFieldsFromFlatObjectMetadata(
+      objectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const commentObjectMetadataId = fields.find(
+      (field) => field.name === 'comment',
+    )?.relationTargetObjectMetadataId;
+
+    return events
+      .map((event) => {
+        const comment = comments.find(
+          (comment) =>
+            comment.id ===
+            this.extractActivityIdFromActivityTargetEvent(event, 'comment'),
+        );
+
+        if (!isDefined(comment)) {
+          return;
+        }
+
+        if (!isDefined(commentObjectMetadataId)) {
+          return;
+        }
+
+        if (!isDefined(event.properties.after)) {
+          return;
+        }
+
+        const targetColumnName = Object.entries(event.properties.after).find(
+          ([columnName, columnValue]: [string, string]) =>
+            columnName !== 'commentId' &&
+            columnName.endsWith('Id') &&
+            columnValue !== null,
+        )?.[0];
+
+        if (!isDefined(targetColumnName)) {
+          return;
+        }
+
+        const recordId = (event.properties.after as ObjectRecord)[
+          targetColumnName
+        ];
+
+        // Extract a preview from the comment body for the cached name
+        const bodyMarkdown = comment.body?.markdown;
+        const commentPreview =
+          typeof bodyMarkdown === 'string'
+            ? bodyMarkdown.slice(0, 100)
+            : 'Comment';
+
+        return {
+          name: `linked-comment.${action}`,
+          overrideObjectSingularName: targetColumnName.replace(/Id$/, ''),
+          recordId,
+          linkedRecordCachedName: commentPreview,
+          linkedRecordId: comment.id,
+          linkedObjectMetadataId: commentObjectMetadataId,
+          workspaceMemberId: event.workspaceMemberId,
+          properties: {},
+        } satisfies TimelineActivityPayload;
+      })
+      .filter(isDefined);
   }
 }

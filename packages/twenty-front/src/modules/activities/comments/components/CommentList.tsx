@@ -20,13 +20,13 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitleBar = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
   place-items: center;
   width: 100%;
-  box-sizing: border-box;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledTitle = styled.span`

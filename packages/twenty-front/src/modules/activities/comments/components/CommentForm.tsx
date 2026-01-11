@@ -11,17 +11,17 @@ import { Avatar } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledFormContainer = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(4)};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledInputRow = styled.div`
+  align-items: flex-start;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
-  align-items: flex-start;
 `;
 
 const StyledTextAreaContainer = styled.div`

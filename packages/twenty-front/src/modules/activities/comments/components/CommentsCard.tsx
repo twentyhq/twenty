@@ -9,25 +9,10 @@ import { useComments } from '@/activities/comments/hooks/useComments';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
 
 const StyledCommentsContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  height: 100%;
-  overflow: auto;
-`;
-
-const StyledFormWrapper = styled.div`
-  margin-top: auto;
 `;
 
 export const CommentsCard = () => {
@@ -65,24 +50,8 @@ export const CommentsCard = () => {
   if (isCommentsEmpty) {
     return (
       <StyledCommentsContainer>
-        <AnimatedPlaceholderEmptyContainer
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-        >
-          <AnimatedPlaceholder type="noNote" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              {t`No comments`}
-            </AnimatedPlaceholderEmptyTitle>
-            <AnimatedPlaceholderEmptySubTitle>
-              {t`There are no comments on this record yet.`}
-            </AnimatedPlaceholderEmptySubTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-        </AnimatedPlaceholderEmptyContainer>
         {hasObjectUpdatePermissions && (
-          <StyledFormWrapper>
-            <CommentForm targetableObject={targetRecord} />
-          </StyledFormWrapper>
+          <CommentForm targetableObject={targetRecord} />
         )}
       </StyledCommentsContainer>
     );
@@ -100,9 +69,7 @@ export const CommentsCard = () => {
         onLastRowVisible={handleLastRowVisible}
       />
       {hasObjectUpdatePermissions && (
-        <StyledFormWrapper>
-          <CommentForm targetableObject={targetRecord} />
-        </StyledFormWrapper>
+        <CommentForm targetableObject={targetRecord} />
       )}
     </StyledCommentsContainer>
   );

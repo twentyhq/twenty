@@ -48,11 +48,10 @@ export const useCreateComment = () => {
       objectNameSingular: CoreObjectNameSingular.CommentTarget,
     });
 
-  const { objectMetadataItem: objectMetadataItemComment } = useObjectMetadataItem(
-    {
+  const { objectMetadataItem: objectMetadataItemComment } =
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Comment,
-    },
-  );
+    });
 
   const cache = useApolloCoreClient().cache;
 

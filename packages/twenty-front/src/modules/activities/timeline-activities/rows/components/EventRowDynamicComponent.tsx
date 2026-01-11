@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { EventRowActivity } from '@/activities/timeline-activities/rows/activity/components/EventRowActivity';
 import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent';
+import { EventRowComment } from '@/activities/timeline-activities/rows/comment/components/EventRowComment';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
@@ -79,6 +80,17 @@ export const EventRowDynamicComponent = ({
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
           objectNameSingular={CoreObjectNameSingular.Note}
+          createdAt={createdAt}
+        />
+      );
+    case 'comment':
+      return (
+        <EventRowComment
+          labelIdentifierValue={labelIdentifierValue}
+          event={event}
+          mainObjectMetadataItem={mainObjectMetadataItem}
+          linkedObjectMetadataItem={linkedObjectMetadataItem}
+          authorFullName={authorFullName}
           createdAt={createdAt}
         />
       );

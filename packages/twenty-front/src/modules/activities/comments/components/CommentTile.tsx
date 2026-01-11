@@ -115,7 +115,9 @@ export const CommentTile = ({ comment, onDelete }: CommentTileProps) => {
                 <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
               }
               dropdownComponents={
-                <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+                <DropdownContent
+                  widthInPixels={GenericDropdownContentWidth.Narrow}
+                >
                   <DropdownMenuItemsContainer>
                     <MenuItem
                       LeftIcon={IconTrash}

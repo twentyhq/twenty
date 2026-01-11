@@ -4,14 +4,14 @@ import { type RecordLayout } from '@/object-record/record-show/types/RecordLayou
 
 export const BASE_RECORD_LAYOUT: RecordLayout = {
   tabs: {
-    fields: {
-      title: 'Fields',
-      icon: 'IconList',
+    home: {
+      title: 'Home',
+      icon: 'IconHome',
       position: 100,
-      cards: [{ type: CardType.FieldCard }],
+      cards: [{ type: CardType.FieldCard }, { type: CardType.CommentCard }],
       hide: {
         ifMobile: false,
-        ifDesktop: true,
+        ifDesktop: false,
         ifInRightDrawer: false,
         ifFeaturesDisabled: [],
         ifRequiredObjectsInactive: [],
