@@ -187,7 +187,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.9.2",
   "resolutions": {
     "graphql": "16.8.1",
     "type-fest": "4.10.1",
@@ -201,7 +201,7 @@
   "scripts": {
     "docs:generate": "tsx packages/twenty-docs/scripts/generate-docs-json.ts",
     "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
-    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker' 'npx wait-on tcp:3000 && npx nx run twenty-server:command -- cron:register:all && echo All crons registered && tail -f /dev/null'"
+    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {
     "packages": [
