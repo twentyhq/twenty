@@ -1,4 +1,6 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
+import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
 import {
   expect,
   fn,
@@ -6,9 +8,7 @@ import {
   waitFor,
   waitForElementToBeRemoved,
   within,
-} from '@storybook/test';
-import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
-import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
+} from 'storybook/test';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'UI/JsonVisualizer/JsonTree',

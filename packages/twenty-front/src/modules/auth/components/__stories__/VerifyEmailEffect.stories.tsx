@@ -1,13 +1,13 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { type VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 
 // Mock component that just renders the error state of VerifyEmailEffect directly
 // (since normal VerifyEmailEffect has async logic that's hard to test in Storybook)
+import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 
 const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
   return (
