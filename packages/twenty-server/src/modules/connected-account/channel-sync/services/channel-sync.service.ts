@@ -280,6 +280,8 @@ export class ChannelSyncService {
           throw new Error(`Message channel ${messageChannelId} not found`);
         }
 
+        console.log(`[getSyncStatistics] messageChannel.syncedAt = ${messageChannel.syncedAt}`);
+
         // Get imported messages count using repository
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -376,6 +378,12 @@ export class ChannelSyncService {
           companiesCreated = 0;
         }
 
+        const lastSyncedAt = messageChannel.syncedAt
+          ? typeof messageChannel.syncedAt === 'string'
+            ? messageChannel.syncedAt
+            : new Date(messageChannel.syncedAt).toISOString()
+          : null;
+
         return {
           syncStatus: messageChannel.syncStatus || 'UNKNOWN',
           syncStage: messageChannel.syncStage || 'UNKNOWN',
@@ -383,7 +391,7 @@ export class ChannelSyncService {
           pendingMessages,
           contactsCreated,
           companiesCreated,
-          lastSyncedAt: messageChannel.syncedAt || null,
+          lastSyncedAt,
         };
       },
     );
