@@ -64,6 +64,20 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
         ifNoReadPermissionObject: CoreObjectNameSingular.Note,
       },
     },
+    comments: {
+      title: 'Comments',
+      icon: 'IconMessage',
+      position: 450,
+      cards: [{ type: CardType.CommentCard }],
+      hide: {
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [CoreObjectNameSingular.Comment],
+        ifRelationsMissing: ['commentTargets'],
+      },
+    },
     files: {
       title: 'Files',
       icon: 'IconPaperclip',

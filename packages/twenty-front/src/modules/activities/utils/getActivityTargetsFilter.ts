@@ -3,6 +3,22 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
+const getTargetObjectNameSingular = (
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Comment,
+): CoreObjectNameSingular => {
+  switch (activityObjectNameSingular) {
+    case CoreObjectNameSingular.Task:
+      return CoreObjectNameSingular.TaskTarget;
+    case CoreObjectNameSingular.Note:
+      return CoreObjectNameSingular.NoteTarget;
+    case CoreObjectNameSingular.Comment:
+      return CoreObjectNameSingular.CommentTarget;
+  }
+};
+
 export const getActivityTargetsFilter = ({
   targetableObjects,
   activityObjectNameSingular,
@@ -11,13 +27,13 @@ export const getActivityTargetsFilter = ({
   targetableObjects: ActivityTargetableObject[];
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
-    | CoreObjectNameSingular.Task;
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Comment;
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const activityTargetObjectNameSingular =
-    activityObjectNameSingular === CoreObjectNameSingular.Task
-      ? CoreObjectNameSingular.TaskTarget
-      : CoreObjectNameSingular.NoteTarget;
+  const activityTargetObjectNameSingular = getTargetObjectNameSingular(
+    activityObjectNameSingular,
+  );
 
   const activityTargetObjectMetadata = objectMetadataItems.find(
     (objectMetadataItem) =>

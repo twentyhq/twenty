@@ -12,6 +12,7 @@ import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/util
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { type CommentTargetWorkspaceEntity } from 'src/modules/comment/standard-objects/comment-target.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -58,5 +59,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  commentTargets: EntityRelation<CommentTargetWorkspaceEntity[]>;
   searchVector: string;
 }

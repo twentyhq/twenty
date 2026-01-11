@@ -182,6 +182,61 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  comment: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'comment'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'comment',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.comment.universalIdentifier,
+        nameSingular: 'comment',
+        namePlural: 'comments',
+        labelSingular: 'Comment',
+        labelPlural: 'Comments',
+        description: 'A comment',
+        icon: 'IconMessage',
+        isSystem: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  commentTarget: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'commentTarget'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'commentTarget',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.commentTarget.universalIdentifier,
+        nameSingular: 'commentTarget',
+        namePlural: 'commentTargets',
+        labelSingular: 'Comment Target',
+        labelPlural: 'Comment Targets',
+        description: 'A comment target',
+        icon: 'IconMessage',
+        isSystem: true,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   company: ({
     now,
     workspaceId,

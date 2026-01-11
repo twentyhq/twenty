@@ -28,6 +28,7 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'attachment',
   'noteTarget',
   'taskTarget',
+  'commentTarget',
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
 
 const morphIdByRelationObjectNameSingular = {
@@ -36,6 +37,7 @@ const morphIdByRelationObjectNameSingular = {
   attachment: null,
   noteTarget: null,
   taskTarget: null,
+  commentTarget: null,
 } satisfies Record<
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
   string | null

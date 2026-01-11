@@ -15,6 +15,7 @@ export type CardTypeToConfiguration = {
   [CardType.TimelineCard]: EmptyCardConfiguration;
   [CardType.TaskCard]: EmptyCardConfiguration;
   [CardType.NoteCard]: EmptyCardConfiguration;
+  [CardType.CommentCard]: EmptyCardConfiguration;
   [CardType.FileCard]: EmptyCardConfiguration;
   [CardType.EmailCard]: EmptyCardConfiguration;
   [CardType.CalendarCard]: EmptyCardConfiguration;

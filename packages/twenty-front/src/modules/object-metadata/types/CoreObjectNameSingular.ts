@@ -7,6 +7,7 @@ export enum CoreObjectNameSingular {
   CalendarChannel = 'calendarChannel',
   CalendarEvent = 'calendarEvent',
   Comment = 'comment',
+  CommentTarget = 'commentTarget',
   Company = 'company',
   ConnectedAccount = 'connectedAccount',
   Dashboard = 'dashboard',

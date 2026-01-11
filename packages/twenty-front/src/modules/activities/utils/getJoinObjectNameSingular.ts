@@ -3,9 +3,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 export const getJoinObjectNameSingular = (
   objectNameSingular: CoreObjectNameSingular,
 ) => {
-  return objectNameSingular === CoreObjectNameSingular.Note
-    ? CoreObjectNameSingular.NoteTarget
-    : objectNameSingular === CoreObjectNameSingular.Task
-      ? CoreObjectNameSingular.TaskTarget
-      : '';
+  switch (objectNameSingular) {
+    case CoreObjectNameSingular.Note:
+      return CoreObjectNameSingular.NoteTarget;
+    case CoreObjectNameSingular.Task:
+      return CoreObjectNameSingular.TaskTarget;
+    case CoreObjectNameSingular.Comment:
+      return CoreObjectNameSingular.CommentTarget;
+    default:
+      return '';
+  }
 };

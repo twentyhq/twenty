@@ -1,4 +1,5 @@
 import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEventsCard';
+import { CommentsCard } from '@/activities/comments/components/CommentsCard';
 import { EmailsCard } from '@/activities/emails/components/EmailsCard';
 import { FilesCard } from '@/activities/files/components/FilesCard';
 import { NotesCard } from '@/activities/notes/components/NotesCard';
@@ -66,6 +67,9 @@ export const getCardComponent = <T extends CardType>(
 
     case CardType.NoteCard:
       return <CardRenderer Component={NotesCard} />;
+
+    case CardType.CommentCard:
+      return <CardRenderer Component={CommentsCard} />;
 
     case CardType.FileCard:
       return <CardRenderer Component={FilesCard} />;

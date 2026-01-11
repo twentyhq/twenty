@@ -388,4 +388,27 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  commentTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'commentTargets',
+      label: 'Comments',
+      description: 'Comments linked to the task',
+      icon: 'IconMessage',
+      isSystem: true,
+      isNullable: true,
+      targetObjectName: 'commentTarget',
+      targetFieldName: 'task',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

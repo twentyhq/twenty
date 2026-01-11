@@ -8,6 +8,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { type CommentTargetWorkspaceEntity } from 'src/modules/comment/standard-objects/comment-target.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -35,5 +36,6 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   assigneeId: string | null;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
+  commentTargets: EntityRelation<CommentTargetWorkspaceEntity[]>;
   searchVector: string;
 }

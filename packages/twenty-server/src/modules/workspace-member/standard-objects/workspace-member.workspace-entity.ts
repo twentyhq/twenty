@@ -9,6 +9,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { type CommentWorkspaceEntity } from 'src/modules/comment/standard-objects/comment.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -77,6 +78,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
   accountOwnerForCompanies: EntityRelation<CompanyWorkspaceEntity[]>;
   authoredAttachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  authoredComments: EntityRelation<CommentWorkspaceEntity[]>;
   connectedAccounts: EntityRelation<ConnectedAccountWorkspaceEntity[]>;
   messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
   blocklist: EntityRelation<BlocklistWorkspaceEntity[]>;

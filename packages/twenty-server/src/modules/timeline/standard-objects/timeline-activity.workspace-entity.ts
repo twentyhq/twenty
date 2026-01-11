@@ -1,6 +1,7 @@
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
+import { type CommentWorkspaceEntity } from 'src/modules/comment/standard-objects/comment.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -39,6 +40,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   targetWorkflowRunId: string | null;
   targetDashboard: EntityRelation<DashboardWorkspaceEntity> | null;
   targetDashboardId: string | null;
+  targetComment: EntityRelation<CommentWorkspaceEntity> | null;
+  targetCommentId: string | null;
   custom: EntityRelation<CustomWorkspaceEntity>;
   targetCustom: EntityRelation<CustomWorkspaceEntity>;
 }

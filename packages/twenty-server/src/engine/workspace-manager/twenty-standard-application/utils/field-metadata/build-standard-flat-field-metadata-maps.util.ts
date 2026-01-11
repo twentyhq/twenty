@@ -11,6 +11,8 @@ import { buildCalendarChannelEventAssociationStandardFlatFieldMetadatas } from '
 import { buildCalendarChannelStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util';
 import { buildCalendarEventParticipantStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util';
 import { buildCalendarEventStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util';
+import { buildCommentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-comment-standard-flat-field-metadata.util';
+import { buildCommentTargetStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-comment-target-standard-flat-field-metadata.util';
 import { buildCompanyStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util';
 import { buildConnectedAccountStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util';
 import { buildDashboardStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util';
@@ -49,6 +51,8 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   calendarEventParticipant:
     buildCalendarEventParticipantStandardFlatFieldMetadatas,
   calendarEvent: buildCalendarEventStandardFlatFieldMetadatas,
+  comment: buildCommentStandardFlatFieldMetadatas,
+  commentTarget: buildCommentTargetStandardFlatFieldMetadatas,
   company: buildCompanyStandardFlatFieldMetadatas,
   connectedAccount: buildConnectedAccountStandardFlatFieldMetadatas,
   dashboard: buildDashboardStandardFlatFieldMetadatas,

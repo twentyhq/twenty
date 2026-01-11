@@ -7,6 +7,8 @@ import {
   CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
   CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS,
   CALENDAR_EVENT_STANDARD_FIELD_IDS,
+  COMMENT_STANDARD_FIELD_IDS,
+  COMMENT_TARGET_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
   CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
   DASHBOARD_STANDARD_FIELD_IDS,
@@ -68,6 +70,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
       },
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
+      author: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.author },
     },
     indexes: {
       taskIdIndex: {
@@ -369,6 +372,80 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  comment: {
+    universalIdentifier: STANDARD_OBJECT_IDS.comment,
+    fields: {
+      id: { universalIdentifier: '20202020-c01a-4001-8a01-1a2b3c4d5e6f' },
+      createdAt: {
+        universalIdentifier: '20202020-c01b-4002-9b02-2b3c4d5e6f7a',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-c01c-4003-8c03-3c4d5e6f7a8b',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-c01d-4004-9d04-4d5e6f7a8b9c',
+      },
+      body: { universalIdentifier: COMMENT_STANDARD_FIELD_IDS.body },
+      createdBy: {
+        universalIdentifier: '20202020-c01e-4005-8e05-5e6f7a8b9c0d',
+      },
+      author: { universalIdentifier: COMMENT_STANDARD_FIELD_IDS.author },
+      commentTargets: {
+        universalIdentifier: COMMENT_STANDARD_FIELD_IDS.commentTargets,
+      },
+      timelineActivities: {
+        universalIdentifier: COMMENT_STANDARD_FIELD_IDS.timelineActivities,
+      },
+    },
+    indexes: {
+      authorIdIndex: {
+        universalIdentifier: '20202020-c02a-4006-9f06-6f7a8b9c0d1e',
+      },
+    },
+  },
+  commentTarget: {
+    universalIdentifier: STANDARD_OBJECT_IDS.commentTarget,
+    fields: {
+      id: { universalIdentifier: '20202020-c11a-4011-8a11-7a8b9c0d1e2f' },
+      createdAt: {
+        universalIdentifier: '20202020-c11b-4012-9b12-8b9c0d1e2f3a',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-c11c-4013-8c13-9c0d1e2f3a4b',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-c11d-4014-9d14-0d1e2f3a4b5c',
+      },
+      comment: {
+        universalIdentifier: COMMENT_TARGET_STANDARD_FIELD_IDS.comment,
+      },
+      person: { universalIdentifier: COMMENT_TARGET_STANDARD_FIELD_IDS.person },
+      company: {
+        universalIdentifier: COMMENT_TARGET_STANDARD_FIELD_IDS.company,
+      },
+      opportunity: {
+        universalIdentifier: COMMENT_TARGET_STANDARD_FIELD_IDS.opportunity,
+      },
+      task: { universalIdentifier: COMMENT_TARGET_STANDARD_FIELD_IDS.task },
+    },
+    indexes: {
+      commentIdIndex: {
+        universalIdentifier: '20202020-c12a-4015-9e15-1e2f3a4b5c6d',
+      },
+      personIdIndex: {
+        universalIdentifier: '20202020-c12b-4016-8f16-2f3a4b5c6d7e',
+      },
+      companyIdIndex: {
+        universalIdentifier: '20202020-c12c-4017-9a17-3a4b5c6d7e8f',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '20202020-c12d-4018-8b18-4b5c6d7e8f9a',
+      },
+      taskIdIndex: {
+        universalIdentifier: '20202020-c12e-4019-9c19-5c6d7e8f9a0b',
+      },
+    },
+  },
   company: {
     universalIdentifier: STANDARD_OBJECT_IDS.company,
     fields: {
@@ -420,6 +497,9 @@ export const STANDARD_OBJECTS = {
       },
       timelineActivities: {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
+      },
+      commentTargets: {
+        universalIdentifier: COMPANY_STANDARD_FIELD_IDS.commentTargets,
       },
       searchVector: {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.searchVector,
@@ -1157,6 +1237,9 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
       },
+      commentTargets: {
+        universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.commentTargets,
+      },
       searchVector: {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
       },
@@ -1292,6 +1375,9 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.timelineActivities,
       },
+      commentTargets: {
+        universalIdentifier: PERSON_STANDARD_FIELD_IDS.commentTargets,
+      },
       searchVector: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.searchVector,
       },
@@ -1372,6 +1458,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: TASK_STANDARD_FIELD_IDS.timelineActivities,
       },
       favorites: { universalIdentifier: TASK_STANDARD_FIELD_IDS.favorites },
+      commentTargets: {
+        universalIdentifier: TASK_STANDARD_FIELD_IDS.commentTargets,
+      },
       searchVector: {
         universalIdentifier: TASK_STANDARD_FIELD_IDS.searchVector,
       },
@@ -1582,6 +1671,9 @@ export const STANDARD_OBJECTS = {
       targetDashboard: {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetDashboard,
+      },
+      targetComment: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetComment,
       },
       linkedRecordCachedName: {
         universalIdentifier:
@@ -1950,6 +2042,14 @@ export const STANDARD_OBJECTS = {
       accountOwnerForCompanies: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+      },
+      authoredAttachments: {
+        universalIdentifier:
+          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
+      },
+      authoredComments: {
+        universalIdentifier:
+          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
       },
       connectedAccounts: {
         universalIdentifier:

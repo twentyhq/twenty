@@ -442,4 +442,27 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  commentTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'commentTargets',
+      label: 'Comments',
+      description: 'Comments linked to the opportunity',
+      icon: 'IconMessage',
+      isSystem: true,
+      isNullable: true,
+      targetObjectName: 'commentTarget',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });
