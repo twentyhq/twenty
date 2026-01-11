@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
-import { expect } from 'storybook/test';
 
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
