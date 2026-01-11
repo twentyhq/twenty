@@ -12,7 +12,19 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 const StyledCommentsContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
+  min-height: 0;
+`;
+
+const StyledCommentsScrollArea = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+const StyledFormWrapper = styled.div`
+  flex-shrink: 0;
 `;
 
 export const CommentsCard = () => {
@@ -50,27 +62,34 @@ export const CommentsCard = () => {
   if (isCommentsEmpty) {
     return (
       <StyledCommentsContainer>
-        {hasObjectUpdatePermissions && (
-          <CommentForm targetableObject={targetRecord} />
-        )}
+        <StyledCommentsScrollArea />
+        <StyledFormWrapper>
+          {hasObjectUpdatePermissions && (
+            <CommentForm targetableObject={targetRecord} />
+          )}
+        </StyledFormWrapper>
       </StyledCommentsContainer>
     );
   }
 
   return (
     <StyledCommentsContainer>
-      <CommentList
-        title={t`Comments`}
-        comments={comments}
-        totalCount={totalCountComments}
-      />
-      <CustomResolverFetchMoreLoader
-        loading={loading}
-        onLastRowVisible={handleLastRowVisible}
-      />
-      {hasObjectUpdatePermissions && (
-        <CommentForm targetableObject={targetRecord} />
-      )}
+      <StyledCommentsScrollArea>
+        <CommentList
+          title={t`Comments`}
+          comments={comments}
+          totalCount={totalCountComments}
+        />
+        <CustomResolverFetchMoreLoader
+          loading={loading}
+          onLastRowVisible={handleLastRowVisible}
+        />
+      </StyledCommentsScrollArea>
+      <StyledFormWrapper>
+        {hasObjectUpdatePermissions && (
+          <CommentForm targetableObject={targetRecord} />
+        )}
+      </StyledFormWrapper>
     </StyledCommentsContainer>
   );
 };

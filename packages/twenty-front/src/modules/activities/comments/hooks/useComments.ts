@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
+import { FIND_MANY_COMMENTS_ORDER_BY } from '@/activities/comments/constants/FindManyCommentsOrderBy';
 import { findCommentTargetsOperationSignatureFactory } from '@/activities/comments/graphql/operation-signatures/factories/findCommentTargetsOperationSignatureFactory';
 import { currentCommentsQueryVariablesState } from '@/activities/comments/states/currentCommentsQueryVariablesState';
 import { type Comment } from '@/activities/comments/types/Comment';
 import { type CommentTarget } from '@/activities/comments/types/CommentTarget';
-import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -23,7 +23,7 @@ export const useComments = (targetableObject: ActivityTargetableObject) => {
   const commentsQueryVariables = useMemo(
     () =>
       ({
-        orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+        orderBy: FIND_MANY_COMMENTS_ORDER_BY,
       }) as RecordGqlOperationVariables,
     [],
   );

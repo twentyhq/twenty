@@ -3,6 +3,7 @@ import {
   type SuggestionMenuProps,
 } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -27,16 +28,16 @@ export type MentionSuggestionItem = DefaultReactSuggestionItem & {
   avatarUrl?: string | null;
 };
 
-export const MentionSuggestionMenu = (
-  props: SuggestionMenuProps<MentionSuggestionItem>,
-) => {
+type MentionSuggestionMenuProps = SuggestionMenuProps<MentionSuggestionItem>;
+
+export const MentionSuggestionMenu = (props: MentionSuggestionMenuProps) => {
   const { items, selectedIndex, onItemClick } = props;
 
   if (items.length === 0) {
     return (
       <StyledContainer>
         <DropdownContent>
-          <StyledEmptyState>No members found</StyledEmptyState>
+          <StyledEmptyState>{t`No members found`}</StyledEmptyState>
         </DropdownContent>
       </StyledContainer>
     );
@@ -65,7 +66,9 @@ export const MentionSuggestionMenu = (
 
             if (isSelected) {
               return (
-                <StyledSelectedItem key={item.id}>{menuItem}</StyledSelectedItem>
+                <StyledSelectedItem key={item.id}>
+                  {menuItem}
+                </StyledSelectedItem>
               );
             }
 

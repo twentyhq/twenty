@@ -26,12 +26,14 @@ const StyledInputRow = styled.div`
 `;
 
 const StyledEditorContainer = styled.div`
-  flex: 1;
-  min-height: 48px;
-  padding: ${({ theme }) => theme.spacing(2)};
+  align-items: center;
+  background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  background: ${({ theme }) => theme.background.primary};
+  display: flex;
+  flex: 1;
+  min-height: 32px;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 
   &:focus-within {
     border-color: ${({ theme }) => theme.color.blue};

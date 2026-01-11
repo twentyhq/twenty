@@ -35,7 +35,9 @@ const renderInlineContent = (
 
   if (content.type === 'mention') {
     return (
-      <StyledMention key={index}>@{content.props?.name || 'Unknown'}</StyledMention>
+      <StyledMention key={index}>
+        @{content.props?.name || 'Unknown'}
+      </StyledMention>
     );
   }
 

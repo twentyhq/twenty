@@ -46,7 +46,9 @@ const StyledTabList = styled(TabList)`
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+  display: flex;
   flex: 1;
+  flex-direction: column;
   overflow-y: auto;
   background: ${({ theme }) => theme.background.primary};
   padding-bottom: ${({ theme, isInRightDrawer }) =>

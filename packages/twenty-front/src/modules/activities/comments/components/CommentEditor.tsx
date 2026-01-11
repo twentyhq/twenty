@@ -5,7 +5,7 @@ import { SuggestionMenuController, useCreateBlockNote } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 } from 'uuid';
 
 import { COMMENT_SCHEMA } from '@/activities/comments/constants/CommentSchema';
@@ -29,11 +29,10 @@ const StyledEditorContainer = styled.div`
   }
 
   & .bn-editor {
-    padding: 0;
-    min-height: 24px;
     background: transparent;
-    font-size: ${({ theme }) => theme.font.size.md};
     color: ${({ theme }) => theme.font.color.primary};
+    font-size: ${({ theme }) => theme.font.size.md};
+    padding: 0;
   }
 
   & .bn-block-group {
@@ -41,17 +40,26 @@ const StyledEditorContainer = styled.div`
   }
 
   & .bn-block-outer {
-    padding: 0;
     margin: 0;
+    padding: 0;
+  }
+
+  & .bn-block-outer:not(:first-of-type) {
+    display: none;
+  }
+
+  & .bn-block-content {
+    padding: 0;
   }
 
   & .bn-inline-content {
     width: 100%;
   }
 
+  & [data-placeholder]:empty::before,
   & .bn-inline-content:has(> .ProseMirror-trailingBreak):before {
-    font-style: normal;
     color: ${({ theme }) => theme.font.color.tertiary};
+    font-style: normal;
   }
 
   & .bn-container .bn-side-menu,
@@ -80,7 +88,7 @@ export const CommentEditor = ({
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
   const [mentionQuery, setMentionQuery] = useState('');
-  const focusIdRef = useRef(v4());
+  const focusId = useMemo(() => v4(), []);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -160,7 +168,7 @@ export const CommentEditor = ({
   );
 
   const handleChange = useCallback(() => {
-    if (onContentChange) {
+    if (onContentChange !== undefined) {
       const blocks = editor.document;
       const blocknoteJson = JSON.stringify(blocks);
 
@@ -193,22 +201,22 @@ export const CommentEditor = ({
 
   const handleFocus = useCallback(() => {
     pushFocusItemToFocusStack({
-      focusId: focusIdRef.current,
+      focusId: focusId,
       component: {
         type: FocusComponentType.COMMENT_EDITOR,
-        instanceId: focusIdRef.current,
+        instanceId: focusId,
       },
       globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
     });
     onFocus?.();
-  }, [pushFocusItemToFocusStack, onFocus]);
+  }, [focusId, pushFocusItemToFocusStack, onFocus]);
 
   const handleBlur = useCallback(() => {
     removeFocusItemFromFocusStackById({
-      focusId: focusIdRef.current,
+      focusId: focusId,
     });
     onBlur?.();
-  }, [removeFocusItemFromFocusStackById, onBlur]);
+  }, [focusId, removeFocusItemFromFocusStackById, onBlur]);
 
   return (
     <StyledEditorContainer onKeyDown={handleKeyDownWrapper}>

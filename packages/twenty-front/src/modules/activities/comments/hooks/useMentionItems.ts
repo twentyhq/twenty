@@ -46,7 +46,8 @@ export const useMentionItems = ({
         id: searchRecord.recordId,
         title: searchRecord.label,
         avatarUrl: searchRecord.imageUrl,
-        onItemClick: () => insertMention(searchRecord.recordId, searchRecord.label),
+        onItemClick: () =>
+          insertMention(searchRecord.recordId, searchRecord.label),
       };
     });
   }, [searchRecords, insertMention]);
