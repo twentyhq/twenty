@@ -305,6 +305,7 @@ export class MessageChannelSyncStatusService {
         await messageChannelRepository.update(messageChannelIds, {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
           syncStageStartedAt: new Date().toISOString(),
+          syncedAt: new Date().toISOString(),
         });
       },
     );

@@ -9,6 +9,7 @@ type SyncStatisticsResult = {
   pendingMessages: number;
   contactsCreated: number;
   companiesCreated: number;
+  lastSyncedAt: string | null;
 };
 
 type GetSyncStatisticsQuery = {

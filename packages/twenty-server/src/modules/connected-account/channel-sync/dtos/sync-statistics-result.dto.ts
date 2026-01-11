@@ -19,4 +19,7 @@ export class SyncStatisticsResultDTO {
 
   @Field(() => Int)
   companiesCreated: number;
+
+  @Field(() => String, { nullable: true })
+  lastSyncedAt: string | null;
 }

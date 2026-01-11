@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { formatDistanceToNow } from 'date-fns';
 import {
   IconBriefcase,
+  IconCheck,
+  IconHourglassHigh,
   IconLoader,
   IconMail,
   IconUsers,
+  Status,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 
@@ -21,8 +25,14 @@ const StyledCard = styled(Card)`
 const StyledHeader = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledHeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledTitle = styled.span`
@@ -30,50 +40,96 @@ const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const StyledStatusBadge = styled.span<{ status: string }>`
-  padding: ${({ theme }) => `${theme.spacing(0.5)} ${theme.spacing(2)}`};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
+const StyledLastSynced = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  background-color: ${({ theme, status }) => {
-    switch (status) {
-      case 'ACTIVE':
-        return theme.color.green10;
-      case 'ONGOING':
-        return theme.color.blue10;
-      case 'FAILED':
-        return theme.color.red10;
-      default:
-        return theme.background.tertiary;
-    }
-  }};
-  color: ${({ theme, status }) => {
-    switch (status) {
-      case 'ACTIVE':
-        return theme.color.green;
-      case 'ONGOING':
-        return theme.color.blue;
-      case 'FAILED':
-        return theme.color.red;
-      default:
-        return theme.font.color.secondary;
-    }
-  }};
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledStatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+const StyledStatsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledStatItem = styled.div`
+const StyledSectionLabel = styled.span`
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const StyledCurrentSyncRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSyncItem = styled.div<{ variant: 'pending' | 'imported' | 'complete' }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing(2)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${({ theme, variant }) => {
+    if (variant === 'pending') return theme.color.orange3;
+    if (variant === 'complete') return theme.color.green3;
+    return theme.background.tertiary;
+  }};
+`;
+
+const StyledSyncItemContent = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledStatIcon = styled.div`
+const StyledSyncItemIcon = styled.div<{ variant: 'pending' | 'imported' | 'complete' }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme, variant }) => {
+    if (variant === 'pending') return theme.color.orange;
+    if (variant === 'complete') return theme.color.green;
+    return theme.font.color.secondary;
+  }};
+`;
+
+const StyledSyncItemLabel = styled.span`
+  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const StyledSyncItemValue = styled.span<{ variant: 'pending' | 'imported' | 'complete' }>`
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme, variant }) => {
+    if (variant === 'pending') return theme.color.orange;
+    if (variant === 'complete') return theme.color.green;
+    return theme.font.color.primary;
+  }};
+`;
+
+const StyledDivider = styled.div`
+  height: 1px;
+  background-color: ${({ theme }) => theme.border.color.light};
+`;
+
+const StyledTotalsRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTotalItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTotalIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,32 +140,51 @@ const StyledStatIcon = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
 `;
 
-const StyledStatContent = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledStatValue = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledTotalValue = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-size: ${({ theme }) => theme.font.size.lg};
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const StyledStatLabel = styled.span`
+const StyledTotalLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
   color: ${({ theme }) => theme.font.color.tertiary};
+  text-align: center;
 `;
 
-const formatSyncStage = (stage: string): string => {
-  const stageMap: Record<string, string> = {
-    PENDING_CONFIGURATION: t`Pending configuration`,
-    MESSAGE_LIST_FETCH_PENDING: t`Fetching message list...`,
-    MESSAGE_LIST_FETCH_SCHEDULED: t`Message list fetch scheduled`,
-    MESSAGE_LIST_FETCH_ONGOING: t`Fetching message list...`,
-    MESSAGES_IMPORT_PENDING: t`Import pending`,
-    MESSAGES_IMPORT_SCHEDULED: t`Import scheduled`,
-    MESSAGES_IMPORT_ONGOING: t`Importing messages...`,
-  };
-  return stageMap[stage] || stage;
+const formatLastSynced = (lastSyncedAt: string | null): string => {
+  if (!lastSyncedAt) {
+    return t`Never synced`;
+  }
+  try {
+    const date = new Date(lastSyncedAt);
+
+    return t`Last synced ${formatDistanceToNow(date, { addSuffix: true })}`;
+  } catch {
+    return t`Never synced`;
+  }
+};
+
+const getStatusProps = (
+  syncStatus: string,
+): {
+  color: 'green' | 'turquoise' | 'orange' | 'red';
+  text: string;
+  isLoaderVisible?: boolean;
+} => {
+  switch (syncStatus) {
+    case 'ACTIVE':
+      return { color: 'green', text: t`Synced` };
+    case 'ONGOING':
+      return { color: 'turquoise', text: t`Importing`, isLoaderVisible: true };
+    case 'NOT_SYNCED':
+      return { color: 'orange', text: t`Not synced` };
+    case 'FAILED_INSUFFICIENT_PERMISSIONS':
+    case 'FAILED_UNKNOWN':
+      return { color: 'red', text: t`Sync failed` };
+    default:
+      return { color: 'orange', text: t`Not synced` };
+  }
 };
 
 export const SettingsAccountsSyncStatusCard = ({
@@ -121,65 +196,101 @@ export const SettingsAccountsSyncStatusCard = ({
     return (
       <StyledCard rounded>
         <StyledHeader>
-          <IconLoader size={16} />
-          <StyledTitle>{t`Loading sync status...`}</StyledTitle>
+          <StyledHeaderLeft>
+            <IconLoader size={16} />
+            <StyledTitle>{t`Loading sync status...`}</StyledTitle>
+          </StyledHeaderLeft>
         </StyledHeader>
       </StyledCard>
     );
   }
 
   const stats = data.getSyncStatistics;
+  const statusProps = getStatusProps(stats.syncStatus);
+  const hasPending = stats.pendingMessages > 0;
 
   return (
     <StyledCard rounded>
       <StyledHeader>
-        <StyledTitle>{t`Sync Status`}</StyledTitle>
-        <StyledStatusBadge status={stats.syncStatus}>
-          {stats.syncStatus === 'ACTIVE'
-            ? t`Synced`
-            : stats.syncStatus === 'ONGOING'
-              ? formatSyncStage(stats.syncStage)
-              : stats.syncStatus}
-        </StyledStatusBadge>
+        <StyledHeaderLeft>
+          <StyledTitle>{t`Sync Status`}</StyledTitle>
+          <Status
+            color={statusProps.color}
+            text={statusProps.text}
+            weight="medium"
+            isLoaderVisible={statusProps.isLoaderVisible}
+          />
+        </StyledHeaderLeft>
+        <StyledLastSynced>
+          {formatLastSynced(stats.lastSyncedAt)}
+        </StyledLastSynced>
       </StyledHeader>
-      <StyledStatsGrid>
-        <StyledStatItem>
-          <StyledStatIcon>
-            <IconMail size={16} />
-          </StyledStatIcon>
-          <StyledStatContent>
-            <StyledStatValue>{stats.importedMessages}</StyledStatValue>
-            <StyledStatLabel>{t`Messages imported`}</StyledStatLabel>
-          </StyledStatContent>
-        </StyledStatItem>
-        <StyledStatItem>
-          <StyledStatIcon>
-            <IconLoader size={16} />
-          </StyledStatIcon>
-          <StyledStatContent>
-            <StyledStatValue>{stats.pendingMessages}</StyledStatValue>
-            <StyledStatLabel>{t`Pending import`}</StyledStatLabel>
-          </StyledStatContent>
-        </StyledStatItem>
-        <StyledStatItem>
-          <StyledStatIcon>
-            <IconUsers size={16} />
-          </StyledStatIcon>
-          <StyledStatContent>
-            <StyledStatValue>{stats.contactsCreated}</StyledStatValue>
-            <StyledStatLabel>{t`Contacts created`}</StyledStatLabel>
-          </StyledStatContent>
-        </StyledStatItem>
-        <StyledStatItem>
-          <StyledStatIcon>
-            <IconBriefcase size={16} />
-          </StyledStatIcon>
-          <StyledStatContent>
-            <StyledStatValue>{stats.companiesCreated}</StyledStatValue>
-            <StyledStatLabel>{t`Companies created`}</StyledStatLabel>
-          </StyledStatContent>
-        </StyledStatItem>
-      </StyledStatsGrid>
+
+      <StyledStatsContainer>
+        <StyledSectionLabel>{t`Current Sync`}</StyledSectionLabel>
+        <StyledCurrentSyncRow>
+          {hasPending ? (
+            <StyledSyncItem variant="pending">
+              <StyledSyncItemContent>
+                <StyledSyncItemIcon variant="pending">
+                  <IconHourglassHigh size={18} />
+                </StyledSyncItemIcon>
+                <StyledSyncItemLabel>{t`Pending`}</StyledSyncItemLabel>
+              </StyledSyncItemContent>
+              <StyledSyncItemValue variant="pending">
+                {stats.pendingMessages}
+              </StyledSyncItemValue>
+            </StyledSyncItem>
+          ) : (
+            <StyledSyncItem variant="complete">
+              <StyledSyncItemContent>
+                <StyledSyncItemIcon variant="complete">
+                  <IconCheck size={18} />
+                </StyledSyncItemIcon>
+                <StyledSyncItemLabel>{t`No pending import`}</StyledSyncItemLabel>
+              </StyledSyncItemContent>
+            </StyledSyncItem>
+          )}
+          <StyledSyncItem variant="imported">
+            <StyledSyncItemContent>
+              <StyledSyncItemIcon variant="imported">
+                <IconMail size={18} />
+              </StyledSyncItemIcon>
+              <StyledSyncItemLabel>{t`Imported`}</StyledSyncItemLabel>
+            </StyledSyncItemContent>
+            <StyledSyncItemValue variant="imported">
+              {stats.importedMessages}
+            </StyledSyncItemValue>
+          </StyledSyncItem>
+        </StyledCurrentSyncRow>
+
+        <StyledDivider />
+
+        <StyledSectionLabel>{t`Total`}</StyledSectionLabel>
+        <StyledTotalsRow>
+          <StyledTotalItem>
+            <StyledTotalIcon>
+              <IconMail size={16} />
+            </StyledTotalIcon>
+            <StyledTotalValue>{stats.importedMessages}</StyledTotalValue>
+            <StyledTotalLabel>{t`Messages`}</StyledTotalLabel>
+          </StyledTotalItem>
+          <StyledTotalItem>
+            <StyledTotalIcon>
+              <IconUsers size={16} />
+            </StyledTotalIcon>
+            <StyledTotalValue>{stats.contactsCreated}</StyledTotalValue>
+            <StyledTotalLabel>{t`Contacts`}</StyledTotalLabel>
+          </StyledTotalItem>
+          <StyledTotalItem>
+            <StyledTotalIcon>
+              <IconBriefcase size={16} />
+            </StyledTotalIcon>
+            <StyledTotalValue>{stats.companiesCreated}</StyledTotalValue>
+            <StyledTotalLabel>{t`Companies`}</StyledTotalLabel>
+          </StyledTotalItem>
+        </StyledTotalsRow>
+      </StyledStatsContainer>
     </StyledCard>
   );
 };

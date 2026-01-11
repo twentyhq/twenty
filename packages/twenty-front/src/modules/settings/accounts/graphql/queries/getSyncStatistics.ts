@@ -9,6 +9,7 @@ export const GET_SYNC_STATISTICS = gql`
       pendingMessages
       contactsCreated
       companiesCreated
+      lastSyncedAt
     }
   }
 `;

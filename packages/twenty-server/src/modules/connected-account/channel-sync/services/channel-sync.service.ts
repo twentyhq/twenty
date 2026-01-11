@@ -63,6 +63,7 @@ export type SyncStatisticsResult = {
   pendingMessages: number;
   contactsCreated: number;
   companiesCreated: number;
+  lastSyncedAt: string | null;
 };
 
 @Injectable()
@@ -335,6 +336,7 @@ export class ChannelSyncService {
           pendingMessages,
           contactsCreated,
           companiesCreated,
+          lastSyncedAt: messageChannel.syncedAt || null,
         };
       },
     );
