@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import { formatDistanceToNow } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
+import { CommentBody } from '@/activities/comments/components/CommentBody';
 import { useDeleteComment } from '@/activities/comments/hooks/useDeleteComment';
 import { type Comment } from '@/activities/comments/types/Comment';
-import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -79,8 +79,6 @@ export const CommentTile = ({ comment, onDelete }: CommentTileProps) => {
     ? `${comment.author.name.firstName} ${comment.author.name.lastName}`.trim()
     : 'Unknown';
 
-  const body = getActivityPreview(comment.body?.blocknote ?? null);
-
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), {
     addSuffix: true,
   });
@@ -132,7 +130,9 @@ export const CommentTile = ({ comment, onDelete }: CommentTileProps) => {
           </StyledActionsContainer>
         )}
       </StyledCommentHeader>
-      <StyledCommentBody>{body}</StyledCommentBody>
+      <StyledCommentBody>
+        <CommentBody blocknoteContent={comment.body?.blocknote ?? null} />
+      </StyledCommentBody>
     </StyledCommentContainer>
   );
 };

@@ -3,12 +3,13 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { CommentEditor } from '@/activities/comments/components/CommentEditor';
 import { useCreateComment } from '@/activities/comments/hooks/useCreateComment';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { TextArea } from '@/ui/input/components/TextArea';
 import { Avatar } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledFormContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -24,8 +25,17 @@ const StyledInputRow = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledTextAreaContainer = styled.div`
+const StyledEditorContainer = styled.div`
   flex: 1;
+  min-height: 48px;
+  padding: ${({ theme }) => theme.spacing(2)};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${({ theme }) => theme.background.primary};
+
+  &:focus-within {
+    border-color: ${({ theme }) => theme.color.blue};
+  }
 `;
 
 const StyledButtonRow = styled.div`
@@ -43,17 +53,41 @@ export const CommentForm = ({
   targetableObject,
   onCommentCreated,
 }: CommentFormProps) => {
-  const [commentText, setCommentText] = useState('');
+  const [blocknoteContent, setBlocknoteContent] = useState('');
+  const [markdownContent, setMarkdownContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clearEditorFn, setClearEditorFn] = useState<(() => void) | null>(null);
   const { createComment } = useCreateComment();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const authorName = currentWorkspaceMember
+  const authorName = isDefined(currentWorkspaceMember)
     ? `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`.trim()
     : 'You';
 
+  const hasContent = markdownContent.trim().length > 0;
+
+  const handleContentChange = useCallback(
+    (blocknote: string, markdown: string) => {
+      setBlocknoteContent(blocknote);
+      setMarkdownContent(markdown);
+    },
+    [],
+  );
+
+  const handleEditorReady = useCallback((clearEditor: () => void) => {
+    setClearEditorFn(() => clearEditor);
+  }, []);
+
+  const clearEditor = useCallback(() => {
+    if (isDefined(clearEditorFn)) {
+      clearEditorFn();
+    }
+    setBlocknoteContent('');
+    setMarkdownContent('');
+  }, [clearEditorFn]);
+
   const handleSubmit = useCallback(async () => {
-    if (!commentText.trim() || isSubmitting) {
+    if (!hasContent || isSubmitting) {
       return;
     }
 
@@ -63,36 +97,34 @@ export const CommentForm = ({
       await createComment(
         {
           body: {
-            blocknote: JSON.stringify([
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: commentText }],
-              },
-            ]),
-            markdown: commentText,
+            blocknote: blocknoteContent,
+            markdown: markdownContent,
           },
           authorId: currentWorkspaceMember?.id,
         },
         [targetableObject],
       );
 
-      setCommentText('');
+      clearEditor();
       onCommentCreated?.();
     } finally {
       setIsSubmitting(false);
     }
   }, [
-    commentText,
+    hasContent,
     isSubmitting,
     createComment,
+    blocknoteContent,
+    markdownContent,
     currentWorkspaceMember?.id,
     targetableObject,
+    clearEditor,
     onCommentCreated,
   ]);
 
   const handleCancel = useCallback(() => {
-    setCommentText('');
-  }, []);
+    clearEditor();
+  }, [clearEditor]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -113,18 +145,16 @@ export const CommentForm = ({
           size="md"
           type="rounded"
         />
-        <StyledTextAreaContainer onKeyDown={handleKeyDown}>
-          <TextArea
-            textAreaId="comment-form-textarea"
-            placeholder={t`Write a comment...`}
-            value={commentText}
-            onChange={setCommentText}
-            minRows={2}
-            maxRows={8}
+        <StyledEditorContainer>
+          <CommentEditor
+            placeholder={t`Write a comment... Use @ to mention`}
+            onContentChange={handleContentChange}
+            onKeyDown={handleKeyDown}
+            onEditorReady={handleEditorReady}
           />
-        </StyledTextAreaContainer>
+        </StyledEditorContainer>
       </StyledInputRow>
-      {commentText.trim() && (
+      {hasContent && (
         <StyledButtonRow>
           <Button
             title={t`Cancel`}
@@ -136,7 +166,7 @@ export const CommentForm = ({
             title={t`Send`}
             variant="primary"
             onClick={handleSubmit}
-            disabled={isSubmitting || !commentText.trim()}
+            disabled={isSubmitting || !hasContent}
           />
         </StyledButtonRow>
       )}

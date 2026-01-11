@@ -15,4 +15,5 @@ export enum FocusComponentType {
   STANDALONE_RICH_TEXT_WIDGET = 'standalone-rich-text-widget',
   KEYBOARD_SHORTCUT_MENU = 'keyboard-shortcut-menu',
   DIALOG = 'dialog',
+  COMMENT_EDITOR = 'comment-editor',
 }
