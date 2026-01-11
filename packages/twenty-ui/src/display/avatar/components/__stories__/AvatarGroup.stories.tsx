@@ -4,10 +4,10 @@ import { Avatar, type AvatarProps } from '@ui/display/avatar/components/Avatar';
 import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import {
-    AVATAR_URL_MOCK,
-    CatalogDecorator,
-    ComponentDecorator,
-    RecoilRootDecorator,
+  AVATAR_URL_MOCK,
+  CatalogDecorator,
+  ComponentDecorator,
+  RecoilRootDecorator,
 } from '@ui/testing';
 
 import { AvatarGroup, type AvatarGroupProps } from '../AvatarGroup';

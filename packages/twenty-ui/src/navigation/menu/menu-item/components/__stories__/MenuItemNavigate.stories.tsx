@@ -4,11 +4,11 @@ import { IconBell } from '@ui/display';
 import { MenuItemNavigate } from '../MenuItemNavigate';
 
 import {
-    CatalogDecorator,
-    type CatalogDimension,
-    type CatalogOptions,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 
 const meta: Meta<typeof MenuItemNavigate> = {

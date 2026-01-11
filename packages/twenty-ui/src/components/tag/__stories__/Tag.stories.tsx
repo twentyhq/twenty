@@ -3,9 +3,9 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconUser } from '@ui/display/icon/components/TablerIcons';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
 

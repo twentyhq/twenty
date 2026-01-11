@@ -1,11 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-    CatalogDecorator,
-    type CatalogDimension,
-    type CatalogOptions,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { type ThemeColor } from '@ui/theme';
 import { MenuItemSelectTag } from '../MenuItemSelectTag';

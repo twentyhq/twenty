@@ -1,13 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/display';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import {
-    FloatingIconButton,
-    type FloatingIconButtonSize,
+  FloatingIconButton,
+  type FloatingIconButtonSize,
 } from '../FloatingIconButton';
 
 const meta: Meta<typeof FloatingIconButton> = {

@@ -2,8 +2,8 @@ import { type StoryObj } from '@storybook/react-vite';
 import { type ElementType } from 'react';
 
 import {
-    type CatalogDimension,
-    type CatalogOptions,
+  type CatalogDimension,
+  type CatalogOptions,
 } from '../decorators/CatalogDecorator';
 
 export type CatalogStory<

@@ -1,19 +1,19 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-    IconCheckbox,
-    IconChevronDown,
-    IconMail,
-    IconSearch,
-    IconSettings,
-    IconUser,
+  IconCheckbox,
+  IconChevronDown,
+  IconMail,
+  IconSearch,
+  IconSettings,
+  IconUser,
 } from '@ui/display';
 import { TabButton } from '@ui/input/button/components/TabButton/TabButton';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentWithRouterDecorator,
-    RecoilRootDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentWithRouterDecorator,
+  RecoilRootDecorator,
 } from '@ui/testing';
 
 // Mimic the TabList container styling for proper positioning

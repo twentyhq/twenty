@@ -2,11 +2,11 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { type ColorSampleVariant } from '@ui/display';
 import {
-    CatalogDecorator,
-    type CatalogDimension,
-    type CatalogOptions,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
 import { MenuItemSelectColor } from '../MenuItemSelectColor';

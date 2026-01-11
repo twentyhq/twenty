@@ -2,12 +2,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
 import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
 import {
-    expect,
-    fn,
-    userEvent,
-    waitFor,
-    waitForElementToBeRemoved,
-    within,
+  expect,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
 } from 'storybook/test';
 
 const meta: Meta<typeof JsonTree> = {

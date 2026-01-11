@@ -3,9 +3,9 @@ import { action } from 'storybook/actions';
 
 import { IconBell } from '@ui/display';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';

@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/display';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { type FloatingIconButtonSize } from '../FloatingIconButton';
 import { FloatingIconButtonGroup } from '../FloatingIconButtonGroup';

@@ -1,10 +1,10 @@
 import { type Decorator } from '@storybook/react-vite';
 import {
-    createMemoryRouter,
-    createRoutesFromElements,
-    Outlet,
-    Route,
-    RouterProvider,
+  createMemoryRouter,
+  createRoutesFromElements,
+  Outlet,
+  Route,
+  RouterProvider,
 } from 'react-router-dom';
 
 import { ComponentStorybookLayout } from '../ComponentStorybookLayout';

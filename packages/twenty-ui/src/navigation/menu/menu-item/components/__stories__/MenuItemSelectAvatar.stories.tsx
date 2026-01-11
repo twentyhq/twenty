@@ -2,13 +2,13 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Avatar } from '@ui/display';
 import {
-    AVATAR_URL_MOCK,
-    CatalogDecorator,
-    type CatalogDimension,
-    type CatalogOptions,
-    type CatalogStory,
-    ComponentDecorator,
-    RecoilRootDecorator,
+  AVATAR_URL_MOCK,
+  CatalogDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
+  ComponentDecorator,
+  RecoilRootDecorator,
 } from '@ui/testing';
 import { MenuItemSelectAvatar } from '../MenuItemSelectAvatar';
 

@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-    CatalogDecorator,
-    type CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
 import { expect, fn, userEvent, within } from 'storybook/test';
