@@ -44,9 +44,9 @@ const config: StorybookConfig = {
 
   addons: [
     // '@chromatic-com/storybook',
+    '@storybook-community/storybook-addon-cookie',
     '@storybook/addon-links',
     '@storybook/addon-coverage',
-    // 'storybook-addon-cookie',
     'storybook-addon-pseudo-states',
     'storybook-addon-mock-date',
     // 'storybook-dark-mode',
