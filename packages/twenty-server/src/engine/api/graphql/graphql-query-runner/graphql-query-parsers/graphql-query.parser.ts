@@ -142,17 +142,23 @@ export class GraphqlQueryParser {
     queryBuilder: WorkspaceSelectQueryBuilder<any>,
     parsedOrderBy: Record<string, OrderByClause>,
     objectNameSingular: string,
+    columnsToSelect: Record<string, boolean>,
   ): void {
-    // Add relation ORDER BY columns with underscore alias for DISTINCT compatibility
+    // Add ORDER BY columns with underscore alias for DISTINCT compatibility
     // This must be called AFTER setFindOptions because setFindOptions clears addSelect
+    // We need to add columns that are in orderBy but NOT in the selected columns
     for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
 
       if (parts.length === 2) {
         const [alias, column] = parts;
 
-        // Only add select for joined relation columns, not main entity columns
-        if (alias !== objectNameSingular) {
+        // For relation columns: always add (they're never in columnsToSelect)
+        // For main entity columns: only add if NOT already in columnsToSelect
+        const isMainEntity = alias === objectNameSingular;
+        const isAlreadySelected = isMainEntity && columnsToSelect[column];
+
+        if (!isAlreadySelected) {
           queryBuilder.addSelect(
             `"${alias}"."${column}"`,
             `${alias}_${column}`,
