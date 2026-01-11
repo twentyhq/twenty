@@ -1232,7 +1232,10 @@ export type DomainValidRecords = {
 export type DryRunImportResult = {
   __typename?: 'DryRunImportResult';
   alreadyImported: Scalars['Int'];
+  /** When true, messagesToImport is an estimate. Actual count may be lower due to email filtering (group emails, blocklist, etc.) */
+  isEstimate: Scalars['Boolean'];
   messagesToImport: Scalars['Int'];
+  pendingImport: Scalars['Int'];
   totalMessagesInFolder: Scalars['Int'];
 };
 
@@ -4173,6 +4176,7 @@ export type SyncStatisticsResultDto = {
   companiesCreated: Scalars['Int'];
   contactsCreated: Scalars['Int'];
   importedMessages: Scalars['Int'];
+  lastSyncedAt?: Maybe<Scalars['String']>;
   pendingMessages: Scalars['Int'];
   syncStage: Scalars['String'];
   syncStatus: Scalars['String'];

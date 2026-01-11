@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { formatDistanceToNow } from 'date-fns';
 import {
+  IconAlertCircle,
   IconBriefcase,
   IconCheck,
   IconHourglassHigh,
@@ -203,15 +204,28 @@ const getStatusProps = (
 export const SettingsAccountsSyncStatusCard = ({
   messageChannelId,
 }: SettingsAccountsSyncStatusCardProps) => {
-  const { data, loading } = useGetSyncStatistics(messageChannelId);
+  const { data, loading, error } = useGetSyncStatistics(messageChannelId);
 
-  if (loading || !data) {
+  if (loading) {
     return (
       <StyledCard rounded>
         <StyledHeader>
           <StyledHeaderLeft>
             <IconLoader size={16} />
             <StyledTitle>{t`Loading sync status...`}</StyledTitle>
+          </StyledHeaderLeft>
+        </StyledHeader>
+      </StyledCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <StyledCard rounded>
+        <StyledHeader>
+          <StyledHeaderLeft>
+            <IconAlertCircle size={16} />
+            <StyledTitle>{t`Failed to load sync status`}</StyledTitle>
           </StyledHeaderLeft>
         </StyledHeader>
       </StyledCard>

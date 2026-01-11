@@ -103,7 +103,13 @@ export class MessagingFolderRetroactiveImportService {
 
           return messageChannel.connectedAccount;
         })
-        .catch(() => undefined);
+        .catch((error) => {
+          this.logger.error(
+            `Failed to fetch connected account for channel ${messageChannelId}: ${error.message}`,
+          );
+
+          return undefined;
+        });
 
       if (!connectedAccount) {
         return;

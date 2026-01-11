@@ -1246,6 +1246,16 @@ export type DomainValidRecords = {
   records: Array<DomainRecord>;
 };
 
+export type DryRunImportResult = {
+  __typename?: 'DryRunImportResult';
+  alreadyImported: Scalars['Int'];
+  /** When true, messagesToImport is an estimate. Actual count may be lower due to email filtering (group emails, blocklist, etc.) */
+  isEstimate: Scalars['Boolean'];
+  messagesToImport: Scalars['Int'];
+  pendingImport: Scalars['Int'];
+  totalMessagesInFolder: Scalars['Int'];
+};
+
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
   workflowIdToDuplicate: Scalars['UUID'];
@@ -1619,6 +1629,11 @@ export type ImpersonateOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type ImportProgressResultDto = {
+  __typename?: 'ImportProgressResultDTO';
+  remainingMessages: Scalars['Int'];
+};
+
 export type Index = {
   __typename?: 'Index';
   createdAt: Scalars['DateTime'];
@@ -1962,6 +1977,7 @@ export type Mutation = {
   syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
+  triggerMessageFolderSync: ChannelSyncSuccess;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
@@ -2721,6 +2737,11 @@ export type MutationTrackAnalyticsArgs = {
 };
 
 
+export type MutationTriggerMessageFolderSyncArgs = {
+  messageFolderId: Scalars['UUID'];
+};
+
+
 export type MutationUninstallApplicationArgs = {
   universalIdentifier: Scalars['String'];
 };
@@ -3350,6 +3371,7 @@ export type Query = {
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
+  dryRunMessageFolderSync: DryRunImportResult;
   field: Field;
   fields: FieldConnection;
   findManyAgents: Array<Agent>;
@@ -3387,6 +3409,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
+  getImportProgress: ImportProgressResultDto;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
@@ -3405,6 +3428,7 @@ export type Query = {
   getRowLevelPermissionPredicates: Array<RowLevelPermissionPredicate>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getSyncStatistics: SyncStatisticsResultDto;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
@@ -3461,6 +3485,11 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryDryRunMessageFolderSyncArgs = {
+  messageFolderId: Scalars['UUID'];
 };
 
 
@@ -3599,6 +3628,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 };
 
 
+export type QueryGetImportProgressArgs = {
+  messageChannelId: Scalars['UUID'];
+};
+
+
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
 };
@@ -3671,6 +3705,11 @@ export type QueryGetRowLevelPermissionPredicatesArgs = {
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
+};
+
+
+export type QueryGetSyncStatisticsArgs = {
+  messageChannelId: Scalars['UUID'];
 };
 
 
@@ -4256,6 +4295,17 @@ export enum SupportDriver {
   FRONT = 'FRONT',
   NONE = 'NONE'
 }
+
+export type SyncStatisticsResultDto = {
+  __typename?: 'SyncStatisticsResultDTO';
+  companiesCreated: Scalars['Int'];
+  contactsCreated: Scalars['Int'];
+  importedMessages: Scalars['Int'];
+  lastSyncedAt?: Maybe<Scalars['String']>;
+  pendingMessages: Scalars['Int'];
+  syncStage: Scalars['String'];
+  syncStatus: Scalars['String'];
+};
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';
@@ -5788,12 +5838,33 @@ export type StartChannelSyncMutationVariables = Exact<{
 
 export type StartChannelSyncMutation = { __typename?: 'Mutation', startChannelSync: { __typename?: 'ChannelSyncSuccess', success: boolean } };
 
+export type TriggerMessageFolderSyncMutationVariables = Exact<{
+  messageFolderId: Scalars['UUID'];
+}>;
+
+
+export type TriggerMessageFolderSyncMutation = { __typename?: 'Mutation', triggerMessageFolderSync: { __typename?: 'ChannelSyncSuccess', success: boolean } };
+
+export type DryRunMessageFolderSyncQueryVariables = Exact<{
+  messageFolderId: Scalars['UUID'];
+}>;
+
+
+export type DryRunMessageFolderSyncQuery = { __typename?: 'Query', dryRunMessageFolderSync: { __typename?: 'DryRunImportResult', totalMessagesInFolder: number, messagesToImport: number, alreadyImported: number, pendingImport: number, isEstimate: boolean } };
+
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
 export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
+
+export type GetSyncStatisticsQueryVariables = Exact<{
+  messageChannelId: Scalars['UUID'];
+}>;
+
+
+export type GetSyncStatisticsQuery = { __typename?: 'Query', getSyncStatistics: { __typename?: 'SyncStatisticsResultDTO', syncStatus: string, syncStage: string, importedMessages: number, pendingMessages: number, contactsCreated: number, companiesCreated: number, lastSyncedAt?: string | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -10377,6 +10448,78 @@ export function useStartChannelSyncMutation(baseOptions?: Apollo.MutationHookOpt
 export type StartChannelSyncMutationHookResult = ReturnType<typeof useStartChannelSyncMutation>;
 export type StartChannelSyncMutationResult = Apollo.MutationResult<StartChannelSyncMutation>;
 export type StartChannelSyncMutationOptions = Apollo.BaseMutationOptions<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
+export const TriggerMessageFolderSyncDocument = gql`
+    mutation TriggerMessageFolderSync($messageFolderId: UUID!) {
+  triggerMessageFolderSync(messageFolderId: $messageFolderId) {
+    success
+  }
+}
+    `;
+export type TriggerMessageFolderSyncMutationFn = Apollo.MutationFunction<TriggerMessageFolderSyncMutation, TriggerMessageFolderSyncMutationVariables>;
+
+/**
+ * __useTriggerMessageFolderSyncMutation__
+ *
+ * To run a mutation, you first call `useTriggerMessageFolderSyncMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTriggerMessageFolderSyncMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [triggerMessageFolderSyncMutation, { data, loading, error }] = useTriggerMessageFolderSyncMutation({
+ *   variables: {
+ *      messageFolderId: // value for 'messageFolderId'
+ *   },
+ * });
+ */
+export function useTriggerMessageFolderSyncMutation(baseOptions?: Apollo.MutationHookOptions<TriggerMessageFolderSyncMutation, TriggerMessageFolderSyncMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TriggerMessageFolderSyncMutation, TriggerMessageFolderSyncMutationVariables>(TriggerMessageFolderSyncDocument, options);
+      }
+export type TriggerMessageFolderSyncMutationHookResult = ReturnType<typeof useTriggerMessageFolderSyncMutation>;
+export type TriggerMessageFolderSyncMutationResult = Apollo.MutationResult<TriggerMessageFolderSyncMutation>;
+export type TriggerMessageFolderSyncMutationOptions = Apollo.BaseMutationOptions<TriggerMessageFolderSyncMutation, TriggerMessageFolderSyncMutationVariables>;
+export const DryRunMessageFolderSyncDocument = gql`
+    query DryRunMessageFolderSync($messageFolderId: UUID!) {
+  dryRunMessageFolderSync(messageFolderId: $messageFolderId) {
+    totalMessagesInFolder
+    messagesToImport
+    alreadyImported
+    pendingImport
+    isEstimate
+  }
+}
+    `;
+
+/**
+ * __useDryRunMessageFolderSyncQuery__
+ *
+ * To run a query within a React component, call `useDryRunMessageFolderSyncQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDryRunMessageFolderSyncQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDryRunMessageFolderSyncQuery({
+ *   variables: {
+ *      messageFolderId: // value for 'messageFolderId'
+ *   },
+ * });
+ */
+export function useDryRunMessageFolderSyncQuery(baseOptions: Apollo.QueryHookOptions<DryRunMessageFolderSyncQuery, DryRunMessageFolderSyncQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DryRunMessageFolderSyncQuery, DryRunMessageFolderSyncQueryVariables>(DryRunMessageFolderSyncDocument, options);
+      }
+export function useDryRunMessageFolderSyncLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DryRunMessageFolderSyncQuery, DryRunMessageFolderSyncQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DryRunMessageFolderSyncQuery, DryRunMessageFolderSyncQueryVariables>(DryRunMessageFolderSyncDocument, options);
+        }
+export type DryRunMessageFolderSyncQueryHookResult = ReturnType<typeof useDryRunMessageFolderSyncQuery>;
+export type DryRunMessageFolderSyncLazyQueryHookResult = ReturnType<typeof useDryRunMessageFolderSyncLazyQuery>;
+export type DryRunMessageFolderSyncQueryResult = Apollo.QueryResult<DryRunMessageFolderSyncQuery, DryRunMessageFolderSyncQueryVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = gql`
     query GetConnectedImapSmtpCaldavAccount($id: UUID!) {
   getConnectedImapSmtpCaldavAccount(id: $id) {
@@ -10436,6 +10579,47 @@ export function useGetConnectedImapSmtpCaldavAccountLazyQuery(baseOptions?: Apol
 export type GetConnectedImapSmtpCaldavAccountQueryHookResult = ReturnType<typeof useGetConnectedImapSmtpCaldavAccountQuery>;
 export type GetConnectedImapSmtpCaldavAccountLazyQueryHookResult = ReturnType<typeof useGetConnectedImapSmtpCaldavAccountLazyQuery>;
 export type GetConnectedImapSmtpCaldavAccountQueryResult = Apollo.QueryResult<GetConnectedImapSmtpCaldavAccountQuery, GetConnectedImapSmtpCaldavAccountQueryVariables>;
+export const GetSyncStatisticsDocument = gql`
+    query GetSyncStatistics($messageChannelId: UUID!) {
+  getSyncStatistics(messageChannelId: $messageChannelId) {
+    syncStatus
+    syncStage
+    importedMessages
+    pendingMessages
+    contactsCreated
+    companiesCreated
+    lastSyncedAt
+  }
+}
+    `;
+
+/**
+ * __useGetSyncStatisticsQuery__
+ *
+ * To run a query within a React component, call `useGetSyncStatisticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSyncStatisticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSyncStatisticsQuery({
+ *   variables: {
+ *      messageChannelId: // value for 'messageChannelId'
+ *   },
+ * });
+ */
+export function useGetSyncStatisticsQuery(baseOptions: Apollo.QueryHookOptions<GetSyncStatisticsQuery, GetSyncStatisticsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSyncStatisticsQuery, GetSyncStatisticsQueryVariables>(GetSyncStatisticsDocument, options);
+      }
+export function useGetSyncStatisticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSyncStatisticsQuery, GetSyncStatisticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSyncStatisticsQuery, GetSyncStatisticsQueryVariables>(GetSyncStatisticsDocument, options);
+        }
+export type GetSyncStatisticsQueryHookResult = ReturnType<typeof useGetSyncStatisticsQuery>;
+export type GetSyncStatisticsLazyQueryHookResult = ReturnType<typeof useGetSyncStatisticsLazyQuery>;
+export type GetSyncStatisticsQueryResult = Apollo.QueryResult<GetSyncStatisticsQuery, GetSyncStatisticsQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)
