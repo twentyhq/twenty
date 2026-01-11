@@ -33,6 +33,8 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
 export type StartChannelSyncInput = {
   connectedAccountId: string;
@@ -250,67 +252,91 @@ export class ChannelSyncService {
   ): Promise<SyncStatisticsResult> {
     const { messageChannelId, workspaceId } = input;
 
-    // Get message channel info
-    const messageChannelRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: messageChannelId },
-    });
+    return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        // Get message channel info
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-    if (!messageChannel) {
-      throw new Error(`Message channel ${messageChannelId} not found`);
-    }
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: messageChannelId },
+        });
 
-    // Get imported messages count using repository
-    const messageChannelMessageAssociationRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        'messageChannelMessageAssociation',
-      );
+        if (!messageChannel) {
+          throw new Error(`Message channel ${messageChannelId} not found`);
+        }
 
-    const importedMessages = await messageChannelMessageAssociationRepository.count({
-      where: { messageChannelId },
-    });
+        // Get imported messages count using repository
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
 
-    // Get pending messages from Redis cache
-    const pendingResult =
-      await this.messagingFolderRetroactiveImportService.getImportProgress(
-        workspaceId,
-        messageChannelId,
-      );
-    const pendingMessages = pendingResult.remainingMessages;
+        const importedMessages =
+          await messageChannelMessageAssociationRepository.count({
+            where: { messageChannelId },
+          });
 
-    // Get contacts created from email using repository
-    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      'person',
+        // Get pending messages from Redis cache
+        const pendingResult =
+          await this.messagingFolderRetroactiveImportService.getImportProgress(
+            workspaceId,
+            messageChannelId,
+          );
+        const pendingMessages = pendingResult.remainingMessages;
+
+        // Count contacts and companies created from email
+        // Use the entity classes with shouldBypassPermissionChecks to query createdBy.source
+        let contactsCreated = 0;
+        let companiesCreated = 0;
+
+        try {
+          const personRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              PersonWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          // Query using the composite field path
+          contactsCreated = await personRepository
+            .createQueryBuilder('person')
+            .where('"createdBySource" = :source', { source: 'EMAIL' })
+            .getCount();
+
+          const companyRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              CompanyWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          companiesCreated = await companyRepository
+            .createQueryBuilder('company')
+            .where('"createdBySource" = :source', { source: 'EMAIL' })
+            .getCount();
+        } catch {
+          // If query fails, default to 0
+          contactsCreated = 0;
+          companiesCreated = 0;
+        }
+
+        return {
+          syncStatus: messageChannel.syncStatus || 'UNKNOWN',
+          syncStage: messageChannel.syncStage || 'UNKNOWN',
+          importedMessages,
+          pendingMessages,
+          contactsCreated,
+          companiesCreated,
+        };
+      },
     );
-
-    const contactsCreated = await personRepository.count({
-      where: { createdBySource: 'EMAIL' },
-    });
-
-    // Get companies created from email using repository
-    const companyRepository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      'company',
-    );
-
-    const companiesCreated = await companyRepository.count({
-      where: { createdBySource: 'EMAIL' },
-    });
-
-    return {
-      syncStatus: messageChannel.syncStatus || 'UNKNOWN',
-      syncStage: messageChannel.syncStage || 'UNKNOWN',
-      importedMessages,
-      pendingMessages,
-      contactsCreated,
-      companiesCreated,
-    };
   }
 }

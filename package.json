@@ -201,7 +201,7 @@
   "scripts": {
     "docs:generate": "tsx packages/twenty-docs/scripts/generate-docs-json.ts",
     "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
-    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker' 'npx wait-on tcp:3000 && npx nx run twenty-server:command -- cron:messaging:messages-import && npx nx run twenty-server:command -- cron:messaging:message-list-fetch && echo Crons registered && tail -f /dev/null'"
+    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker' 'npx wait-on tcp:3000 && npx nx run twenty-server:command -- cron:register:all && echo All crons registered && tail -f /dev/null'"
   },
   "workspaces": {
     "packages": [
