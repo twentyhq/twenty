@@ -1,40 +1,30 @@
-import { type StorybookConfig } from '@storybook/react-vite';
-import * as path from 'path';
-import { dirname, join } from 'path';
+import type { StorybookConfig } from '@storybook/react-vite';
+import path from 'path';
 import checker from 'vite-plugin-checker';
-
-const getAbsolutePath = (value: string): any => {
-  return dirname(require.resolve(join(value, 'package.json')));
-};
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
 
   addons: [
-    getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-coverage'),
-    // getAbsolutePath('storybook-addon-cookie'),
-    getAbsolutePath('storybook-addon-pseudo-states'),
+    '@storybook/addon-links',
+    '@storybook/addon-coverage',
+    // 'storybook-addon-cookie',
+    'storybook-addon-pseudo-states',
   ],
 
-  framework: {
-    name: getAbsolutePath('@storybook/react-vite'),
-    options: {},
-  },
+  framework: '@storybook/react-vite',
 
-  viteFinal: (config) => {
-    return {
-      ...config,
-      plugins: [
-        ...(config.plugins ?? []),
-        checker({
-          typescript: {
-            tsconfigPath: path.resolve(__dirname, '../tsconfig.dev.json'),
-          },
-        }),
-      ],
-    };
-  },
+  viteFinal: async (viteConfig) => ({
+    ...viteConfig,
+    plugins: [
+      ...(viteConfig.plugins ?? []),
+      checker({
+        typescript: {
+          tsconfigPath: path.resolve(__dirname, '../tsconfig.dev.json'),
+        },
+      }),
+    ],
+  }),
 };
 
 export default config;
