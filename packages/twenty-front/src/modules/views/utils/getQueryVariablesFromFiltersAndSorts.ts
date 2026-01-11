@@ -11,12 +11,14 @@ export const getQueryVariablesFromFiltersAndSorts = ({
   recordFilters,
   recordSorts,
   objectMetadataItem,
+  objectMetadataItems = [],
   filterValueDependencies,
 }: {
   recordFilterGroups: RecordFilterGroup[];
   recordFilters: RecordFilter[];
   recordSorts: RecordSort[];
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems?: ObjectMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
   const filter = computeRecordGqlOperationFilter({
@@ -26,7 +28,11 @@ export const getQueryVariablesFromFiltersAndSorts = ({
     recordFilters,
   });
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordSorts);
+  const orderBy = turnSortsIntoOrderBy(
+    objectMetadataItem,
+    recordSorts,
+    objectMetadataItems,
+  );
 
   return {
     filter,

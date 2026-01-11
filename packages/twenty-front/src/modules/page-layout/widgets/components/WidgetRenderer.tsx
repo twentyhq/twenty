@@ -24,9 +24,16 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { WidgetType } from '~/generated/graphql';
+
+const StyledNoAccessContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -150,10 +157,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         <WidgetCardContent variant={variant}>
           {hasAccess && <WidgetContentRenderer widget={widget} />}
           {!hasAccess && (
-            <IconLock
-              color={theme.font.color.tertiary}
-              stroke={theme.icon.stroke.sm}
-            />
+            <StyledNoAccessContainer>
+              <IconLock
+                color={theme.font.color.tertiary}
+                stroke={theme.icon.stroke.sm}
+              />
+            </StyledNoAccessContainer>
           )}
         </WidgetCardContent>
       </WidgetCard>

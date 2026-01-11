@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Constrângeri de unicitate
+description: Cum impune Twenty unicitatea datelor în timpul importului.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Prezentare generală
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty impune unicitatea pentru anumite câmpuri pentru a preveni înregistrările duplicate și a asigura integritatea datelor. Înțelegerea acestor constrângeri este esențială pentru importuri reușite.
 
-## Default Unique Fields
+## Câmpuri unice implicite
 
-| Obiect                    | Unique Fields          |
-| ------------------------- | ---------------------- |
-| **People**                | `id`, `email`          |
-| **Companii**              | `id`, `domain`         |
-| **Obiecte personalizate** | `id` only (by default) |
+| Obiect                    | Câmpuri unice        |
+| ------------------------- | -------------------- |
+| **Persoane**              | `id`, `email`        |
+| **Companii**              | `id`, `domain`       |
+| **Obiecte personalizate** | doar `id` (implicit) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Câmpul `id` este identificatorul intern al Twenty, generat automat pentru fiecare înregistrare. Acesta folosește formatul UUID (de ex., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Câmpuri unice personalizate
 
-You can define additional unique fields under **Settings → Data Model**:
+Puteți defini câmpuri unice suplimentare în **Setări → Model de date**:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul
+3. Faceți clic pe un câmp
+4. Activați **Unique** în setările câmpului
 
-### Use Cases for Custom Unique Fields
+### Cazuri de utilizare pentru câmpuri unice personalizate
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **ID-uri externe**: Stocați ID-uri din alte sisteme (Salesforce ID, HubSpot ID)
+* **Identificatori de afaceri**: Numere de angajat, coduri de client
+* **Informații de contact alternative**: Profil LinkedIn, număr de telefon
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>Numele câmpului `id` este rezervat pentru ID-ul intern al Twenty. Folosiți un nume diferit, precum `externalId` sau `legacyId`, pentru identificatori externi.</Note>
 
-## Import Behavior
+## Comportamentul importului
 
-### Creating New Records
+### Crearea de înregistrări noi
 
-If a unique field value doesn't exist, a new record is created.
+Dacă valoarea unui câmp unic nu există, se creează o înregistrare nouă.
 
-### Updating Existing Records
+### Actualizarea înregistrărilor existente
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Dacă valoarea unui câmp unic se potrivește cu o înregistrare existentă, acea înregistrare este **actualizată** cu noile date.
+<Warning>Pentru a **actualiza înregistrările existente**, se recomandă să **potriviți un singur câmp unic**.</Warning>
 
-### Soft-Deleted Records
+### Înregistrări șterse logic
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **Înregistrările șterse logic se iau în calcul pentru unicitate.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  Înregistrările șterse logic (vizibile în Command Menu → See deleted records) sunt incluse în verificările de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi **restaurată** cu noile date.
 </Warning>
 
-## Duplicate Detection During Import
+## Detectarea duplicatelor în timpul importului
 
-During the validation phase:
+În timpul etapei de validare:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* Duplicatele din fișier sunt evidențiate cu galben
+* Puteți edita sau elimina rândurile duplicate din interfață înainte de a începe importul
 
 <VimeoEmbed videoId="1145246326" title="Demonstrație video" />
 
 ## Cele mai bune practici
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **Eliminați duplicatele** din fișier înainte de import
+2. **Verificați dacă există înregistrări** în Twenty înainte de import
+3. **Folosiți ID-uri externe** când migrați din alte sisteme
+4. **Includeți câmpuri unice** dacă doriți să actualizați înregistrările existente

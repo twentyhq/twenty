@@ -1,140 +1,140 @@
 ---
-title: Closed Won Automations
-description: Automate post-win activities when opportunities close.
+title: Closed Won Otomasyonları
+description: Fırsatlar kazanılarak kapandığında kazanım sonrası faaliyetleri otomatikleştirin.
 ---
 
-When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+Bir anlaşma kapandığında birden çok şeyin olması gerekir: şirket durumunu güncelleyin, ekip üyelerini bilgilendirin, müşteri işe alıştırma görevleri oluşturun. Bunların tümünü tek bir iş akışıyla otomatikleştirin.
 
-## The Problem
+## Sorun
 
-When an opportunity moves to "Closed Won":
+Bir fırsat "Closed Won" aşamasına geçtiğinde:
 
-* Company type needs to change from "Prospect" to "Customer"
-* Onboarding tasks need to be created
-* Customer success team needs to be notified
-* Sales rep needs confirmation
+* Şirket türünün "Prospect"'ten "Customer"'a değişmesi gerekir
+* Onboarding görevleri oluşturulmalıdır
+* Müşteri başarı ekibinin bilgilendirilmesi gerekir
+* Satış temsilcisinin onay alması gerekir
 
-Doing this manually is time-consuming and error-prone.
+Bunu elle yapmak zaman alıcıdır ve hataya açıktır.
 
-## The Solution
+## Çözüm
 
-Create a workflow that handles all post-win activities automatically.
+Kazanım sonrası tüm faaliyetleri otomatik olarak yöneten bir iş akışı oluşturun.
 
-## Complete Workflow Setup
+## Tam İş Akışı Kurulumu
 
-### Step 1: Create the Workflow
+### Adım 1: İş akışını oluşturun
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Deal Won - Post-Win Automation"
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Deal Won - Post-Win Automation" olarak verin
 
-### Step 2: Configure the Trigger
+### Adım 2: Tetikleyiciyi yapılandırın
 
-1. Select **Record is Updated**
-2. Choose **Opportunities**
-3. Under "Fields to monitor", select **Stage**
+1. **Kayıt Güncellendi**'yi seçin
+2. **Fırsatlar**'ı seçin
+3. "Fields to monitor" altında, **Stage**'i seçin
 
-### Step 3: Add Stage Filter
+### Adım 3: Aşama Filtresi ekleyin
 
-1. Add **Filter** action
-2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{trigger.object.stage}}` "Closed Won" değerine eşittir
 
-### Step 4: Update Company Type
+### Adım 4: Şirket Türünü Güncelleyin
 
-1. Add **Update Record** action
+1. **Kayıt Güncelle** eylemini ekleyin
 2. Alanı Yapılandır:
 
-| Alan                | Değer                           |
-| ------------------- | ------------------------------- |
-| **Object**          | Şirketler                       |
-| **Record**          | `{{trigger.object.company.id}}` |
-| **Tür**             | Müşteri                         |
-| **First Deal Date** | `{{trigger.object.closedAt}}`   |
-| **Hesap Sahibi**    | `{{trigger.object.owner.id}}`   |
+| Alan                   | Değer                           |
+| ---------------------- | ------------------------------- |
+| **Nesne**              | Şirketler                       |
+| **Kayıt**              | `{{trigger.object.company.id}}` |
+| **Tür**                | Müşteri                         |
+| **İlk Anlaşma Tarihi** | `{{trigger.object.closedAt}}`   |
+| **Hesap Sahibi**       | `{{trigger.object.owner.id}}`   |
 
-### Step 5: Create Onboarding Task
+### Adım 5: Onboarding Görevi Oluşturun
 
-1. Add **Create Record** action
+1. **Kayıt Oluştur** eylemini ekleyin
 2. Alanı Yapılandır:
 
-| Alan                    | Değer                                                                                                |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Object**              | Görevler                                                                                             |
-| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
-| **Assignee**            | Customer Success team member                                                                         |
-| **Due Date**            | 3 days from now                                                                                      |
-| **Priority**            | High                                                                                                 |
-| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
-| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
-| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| Alan              | Değer                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Nesne**         | Görevler                                                                                                      |
+| **Başlık**        | `Onboarding: {{trigger.object.name}}`                                                                         |
+| **Atanan kişi**   | Müşteri başarı ekibi üyesi                                                                                    |
+| **Bitiş Tarihi**  | Şu andan itibaren 3 gün                                                                                       |
+| **Öncelik**       | Yüksek                                                                                                        |
+| **İlgili Şirket** | `{{trigger.object.company.id}}`                                                                               |
+| **İlgili Fırsat** | `{{trigger.object.id}}`                                                                                       |
+| **Açıklama**      | `{{trigger.object.company.name}} için yeni müşteri uyumlandırması. Anlaşma değeri: {{trigger.object.amount}}` |
 
-### Step 6: Notify Customer Success
+### Adım 6: Müşteri Başarı Ekibini Bilgilendirin
 
-1. Add **Send Email** action
+1. **E-posta Gönder** eylemini ekleyin
 2. Alanı Yapılandır:
 
-| Alan        | Değer                                              |
-| ----------- | -------------------------------------------------- |
-| **To**      | customer-success@yourcompany.com                   |
-| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Body**    | See example below                                  |
+| Alan      | Değer                                              |
+| --------- | -------------------------------------------------- |
+| **Kime**  | customer-success@yourcompany.com                   |
+| **Konu**  | `🎉 Yeni Müşteri: {{trigger.object.company.name}}` |
+| **Gövde** | Aşağıdaki örneğe bakın                             |
 
-**Email body example**:
+**E-posta gövdesi örneği**:
 
 ```
-Hi CS Team,
+Merhaba CS Ekibi,
 
-We have a new customer!
+Yeni bir müşterimiz var!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Şirket: {{trigger.object.company.name}}
+Anlaşma: {{trigger.object.name}}
+Değer: {{trigger.object.amount}}
+Satış Temsilcisi: {{trigger.object.owner.name}}
+Kapanış Tarihi: {{trigger.object.closedAt}}
 
-An onboarding task has been created automatically.
+Bir onboarding görevi otomatik olarak oluşturuldu.
 
-Let's give them a great start!
+Onlara harika bir başlangıç yapalım!
 ```
 
-### Step 7: Confirm to Sales Rep
+### Adım 7: Satış temsilcisine onay gönderin
 
-1. Add another **Send Email** action
+1. Bir tane daha **E-posta Gönder** eylemi ekleyin
 2. Alanı Yapılandır:
 
-| Alan        | Değer                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------- |
-| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
-| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+| Alan      | Değer                                                                                               |
+| --------- | --------------------------------------------------------------------------------------------------- |
+| **Kime**  | `{{trigger.object.owner.email}}`                                                                    |
+| **Konu**  | `✅ Anlaşma Kapandı: {{trigger.object.name}}`                                                        |
+| **Gövde** | Tebrikler! Anlaşmanız işleme alındı. Müşteri başarı ekibi bilgilendirildi ve onboarding başlatıldı. |
 
-### Step 8: Test and Activate
+### Adım 8: Test Edin ve Etkinleştirin
 
-1. Test by moving a test opportunity to "Closed Won"
+1. Bir test fırsatını "Closed Won" aşamasına taşıyarak test edin
 2. Doğrula:
-   * Company type changed to "Customer"
-   * Onboarding task created
-   * CS team received email
-   * Sales rep received confirmation
-3. Activate when ready
+   * Şirket türü "Customer" olarak değiştirildi
+   * Onboarding görevi oluşturuldu
+   * CS ekibi e-postayı aldı
+   * Satış temsilcisi onayı aldı
+3. Hazır olduğunuzda etkinleştirin
 
-## Handling Closed Lost
+## Closed Lost'u Yönetme
 
-Create a similar workflow for lost deals:
+Kaybedilen anlaşmalar için benzer bir iş akışı oluşturun:
 
 ### Tetikleyici
 
-* Record is Updated (Opportunities, Stage = "Closed Lost")
+* Kayıt Güncellendi (Fırsatlar, Aşama = "Closed Lost")
 
 ### Eylemler
 
-1. **Create Record**: Task for "Lost Deal Analysis"
-2. **Update Record**: Add lost reason to company record
-3. **Send Email**: Notify manager of lost deal
+1. **Kayıt Oluştur**: "Lost Deal Analysis" için görev
+2. **Kayıt Güncelle**: Şirket kaydına kaybetme nedenini ekleyin
+3. **E-posta Gönder**: Kaybedilen anlaşmayı yöneticiye bildirin
 
-## Advanced: Multi-Step Onboarding
+## Gelişmiş: Çok Aşamalı Onboarding
 
-For complex onboarding, create multiple tasks:
+Karmaşık onboarding için birden fazla görev oluşturun:
 
 ```javascript
 export const main = async (params) => {
@@ -149,31 +149,31 @@ export const main = async (params) => {
 };
 ```
 
-Use **Iterator** to create each task from the array.
+Diziden her bir görevi oluşturmak için **Iterator** kullanın.
 
-## Customization Ideas
+## Özelleştirme Fikirleri
 
-### Keep your other tools up-to-date
+### Diğer araçlarınızı güncel tutun
 
-* Create customer in billing system with an **HTTP Request**
+* Faturalama sisteminde bir **HTTP Request** ile müşteri oluşturun
 
-### Conditional Actions
+### Koşullu Eylemler
 
-Use **Filter** actions to:
+**Filtre** eylemlerini şunlar için kullanın:
 
-* Different onboarding for enterprise vs SMB
-* Different assignees based on region
-* Skip notifications for small deals
+* Kurumsal ve KOBİ için farklı onboarding
+* Bölgeye göre farklı atanan kişiler
+* Küçük anlaşmalar için bildirimleri atlayın
 
-### Include Deal Details
+### Anlaşma Ayrıntılarını Dahil Edin
 
-Use **Code** action to format:
+Biçimlendirmek için **Kod** eylemini kullanın:
 
-* Deal summary documents
-* Handoff notes for CS team
-* Custom onboarding checklists
+* Anlaşma özet belgeleri
+* CS ekibi için devir notları
+* Özel onboarding kontrol listeleri
 
-## Related
+## İlgili
 
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)

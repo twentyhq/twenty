@@ -1,15 +1,15 @@
 ---
 title: API-uri
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+description: Interogați și modificați programatic datele din CRM folosind REST sau GraphQL.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Twenty a fost creat pentru a fi prietenos cu dezvoltatorii, oferind API-uri puternice care se adaptează la modelul dvs. de date personalizat. Oferim patru tipuri distincte de API-uri pentru a satisface diferite nevoi de integrare.
 
-## Developer-First Approach
+## Abordare orientată către dezvoltatori
 
-Twenty generates APIs specifically for your data model:
+Twenty generează API-uri special pentru modelul dvs. de date:
 
 * **Nu sunt necesare ID-uri lungi**: Utilizați direct numele obiectelor și câmpurilor în punctele finale
 * **Obiectele standard și personalizate tratate în mod egal**: Obiectele dvs. personalizate primesc același tratament API ca și cele încorporate
@@ -17,52 +17,52 @@ Twenty generates APIs specifically for your data model:
 * **Documentație personalizată**: Generată special pentru modelul de date al spațiului dvs. de lucru
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Documentația API personalizată este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Deoarece Twenty generează API-uri care se potrivesc modelului dvs. de date personalizat, documentația este unică pentru spațiul dvs. de lucru.
 </Note>
 
-## The Two API Types
+## Cele două tipuri de API-uri
 
 ### API Core
 
 Accesibil prin `/rest/` sau `/graphql/`
 
-Work with your actual **records** (the data):
+Lucrați cu **înregistrările** reale (datele):
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
+* Creați, citiți, actualizați, ștergeți Persoane, Companii, Oportunități etc.
+* Interogați și filtrați datele
 * Gestionați relațiile de înregistrări
 
 ### API Metadata
 
 Accesibil prin `/rest/metadata/` sau `/metadata/`
 
-Manage your **workspace and data model**:
+Gestionați-vă **spațiul de lucru și modelul de date**:
 
 * Creați, modificați sau ștergeți obiecte și câmpuri
 * Configurați setările spațiului de lucru
-* Define relationships between objects
+* Definiți relațiile dintre obiecte
 
 ## REST vs GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+Atât API-urile Core, cât și API-urile Metadata sunt disponibile în formatele REST și GraphQL:
 
-| Format      | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| Format      | Operațiuni disponibile                                                     |
+| ----------- | -------------------------------------------------------------------------- |
+| **REST**    | CRUD, operațiuni de grup, upsert-uri                                       |
+| **GraphQL** | La fel + **upsert-uri de grup**, interogări de relații într-un singur apel |
 
-Choose based on your needs — both formats access the same data.
+Alegeți în funcție de nevoi — ambele formate accesează aceleași date.
 
 ## Puncte Finale API
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| Mediu                | URL de bază               |
+| -------------------- | ------------------------- |
+| **Cloud**            | `https://api.twenty.com/` |
+| **Găzduire proprie** | `https://{your-domain}/`  |
 
 ## Autentificare
 
-Every API request requires an API key in the header:
+Fiecare solicitare API necesită o cheie API în antet:
 
 ```
 Authorization: Bearer YOUR_API_KEY
@@ -71,77 +71,77 @@ Authorization: Bearer YOUR_API_KEY
 ### Creați o cheie API
 
 1. Mergeți la **Setări → API-uri & Webhook-uri**
-2. Click **+ Create key**
+2. Faceți clic pe **+ Create key**
 3. Configurați:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
+   * **Name**: Nume descriptiv pentru cheie
+   * **Expiration Date**: Când expiră cheia
 4. Faceți clic pe **Salvare**
-5. **Copy immediately** — the key is only shown once
+5. **Copiați imediat** — cheia este afișată o singură dată
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="Crearea unei chei API" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  Cheia dvs. API oferă acces la date sensibile. Nu o partajați cu servicii care nu sunt de încredere. Dacă este compromisă, dezactivați-o imediat și generați una nouă.
 </Warning>
 
-### Assign a Role to an API Key
+### Atribuiți un rol unei chei API
 
-For better security, assign a specific role to limit access:
+Pentru o securitate sporită, atribuiți un rol specific pentru a limita accesul:
 
 1. Accesați **Setări → Roluri**
-2. Click on the role to assign
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
 3. Deschideți fila **Atribuire**
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+4. În **API Keys**, faceți clic pe **+ Assign to API key**
+5. Selectați cheia API
 
-The key will inherit that role's permissions. See [Permissions](/l/ro/user-guide/permissions-access/capabilities/permissions) for details.
+Cheia va moșteni permisiunile acelui rol. Consultați [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
 
 ### Gestionați cheile API
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Regenerate**: Settings → APIs & Webhooks → Faceți clic pe cheie → **Regenerate**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Delete**: Settings → APIs & Webhooks → Faceți clic pe cheie → **Delete**
 
-## API Playground
+## Platformă de testare API
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+Testați API-urile direct în browser cu platforma noastră integrată de testare — disponibilă atât pentru **REST**, cât și pentru **GraphQL**.
 
-### Access the Playground
+### Accesați platforma de testare
 
 1. Mergeți la **Setări → API-uri & Webhook-uri**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+2. Creați o cheie API (obligatoriu)
+3. Faceți clic pe **REST API** sau **GraphQL API** pentru a deschide platforma de testare
 
-### What You Get
+### Ce obțineți
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **Documentație interactivă**: Generată pentru modelul dvs. de date specific
+* **Testare live**: Executați apeluri API reale către spațiul dvs. de lucru
+* **Explorator de scheme**: Parcurgeți obiectele, câmpurile și relațiile disponibile
+* **Constructor de cereri**: Construiți interogări cu completare automată
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+Platforma de testare reflectă obiectele și câmpurile dvs. personalizate, astfel încât documentația este întotdeauna corectă pentru spațiul dvs. de lucru.
 
 ## Operațiuni de grup
 
-Both REST and GraphQL support batch operations:
+Atât REST, cât și GraphQL suportă operațiuni de grup:
 
 * **Dimensiunea grupului**: Până la 60 de înregistrări pe cerere
-* **Operations**: Create, update, delete multiple records
+* **Operațiuni**: Creați, actualizați, ștergeți mai multe înregistrări
 
-**GraphQL-only features:**
+**Funcții exclusive GraphQL:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **Upsert de grup**: Creați sau actualizați într-un singur apel
+* Folosiți nume de obiecte la plural (de exemplu, `CreateCompanies` în loc de `CreateCompany`)
 
-## Rate Limits
+## Limitări de rată
 
-API requests are throttled to ensure platform stability:
+Solicitările API sunt limitate pentru a asigura stabilitatea platformei:
 
-| Limit          | Valoare              |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| Limită                  | Valoare                    |
+| ----------------------- | -------------------------- |
+| **Solicitări**          | 100 de apeluri pe minut    |
+| **Dimensiunea lotului** | 60 de înregistrări pe apel |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Utilizați operațiunile de grup pentru a maximiza debitul — procesați până la 60 de înregistrări într-un singur apel API în loc să faceți solicitări individuale.
 </Tip>

@@ -35790,7 +35790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.0.3":
+"fast-glob@npm:^3.0.3, fast-glob@npm:^3.3.0":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -41689,6 +41689,15 @@ __metadata:
   bin:
     jiti: bin/jiti.js
   checksum: 10c0/77b61989c758ff32407cdae8ddc77f85e18e1a13fc4977110dbd2e05fc761842f5f71bce684d9a01316e1c4263971315a111385759951080bbfe17cbb5de8f7a
+  languageName: node
+  linkType: hard
+
+"jiti@npm:^2.0.0":
+  version: 2.6.1
+  resolution: "jiti@npm:2.6.1"
+  bin:
+    jiti: lib/jiti-cli.mjs
+  checksum: 10c0/79b2e96a8e623f66c1b703b98ec1b8be4500e1d217e09b09e343471bbb9c105381b83edbb979d01cef18318cc45ce6e153571b6c83122170eefa531c64b6789b
   languageName: node
   linkType: hard
 
@@ -56740,11 +56749,13 @@ __metadata:
     chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
     dotenv: "npm:^16.4.0"
+    fast-glob: "npm:^3.3.0"
     fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
     inquirer: "npm:^10.0.0"
     jest: "npm:^29.5.0"
+    jiti: "npm:^2.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
     lodash.capitalize: "npm:^4.2.1"
