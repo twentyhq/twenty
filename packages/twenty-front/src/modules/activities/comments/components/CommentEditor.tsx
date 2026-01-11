@@ -44,12 +44,12 @@ const StyledEditorContainer = styled.div`
     padding: 0;
   }
 
-  & .bn-block-outer:not(:first-of-type) {
-    display: none;
-  }
-
   & .bn-block-content {
     padding: 0;
+  }
+
+  & .bn-block-outer:not(:first-of-type) [data-placeholder]::before {
+    display: none;
   }
 
   & .bn-inline-content {
