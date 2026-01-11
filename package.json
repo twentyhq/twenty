@@ -92,6 +92,7 @@
     "@swc/core": "1.13.3",
     "@swc/helpers": "~0.5.2",
     "@swc/jest": "^0.2.39",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/addressparser": "^1.0.3",
