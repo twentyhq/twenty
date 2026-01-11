@@ -6,6 +6,8 @@ type DryRunImportResult = {
   totalMessagesInFolder: number;
   messagesToImport: number;
   alreadyImported: number;
+  pendingImport: number;
+  isEstimate: boolean;
 };
 
 type DryRunMessageFolderSyncQuery = {

@@ -6,6 +6,8 @@ export const DRY_RUN_MESSAGE_FOLDER_SYNC = gql`
       totalMessagesInFolder
       messagesToImport
       alreadyImported
+      pendingImport
+      isEstimate
     }
   }
 `;

@@ -280,8 +280,6 @@ export class ChannelSyncService {
           throw new Error(`Message channel ${messageChannelId} not found`);
         }
 
-        console.log(`[getSyncStatistics] messageChannel.syncedAt = ${messageChannel.syncedAt}`);
-
         // Get imported messages count using repository
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository(

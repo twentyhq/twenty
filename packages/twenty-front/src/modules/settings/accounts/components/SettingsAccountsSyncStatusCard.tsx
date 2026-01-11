@@ -36,13 +36,13 @@ const StyledHeaderLeft = styled.div`
 `;
 
 const StyledTitle = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
   color: ${({ theme }) => theme.font.color.primary};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledLastSynced = styled.span`
-  font-size: ${({ theme }) => theme.font.size.xs};
   color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
 const StyledStatsContainer = styled.div`
@@ -52,11 +52,11 @@ const StyledStatsContainer = styled.div`
 `;
 
 const StyledSectionLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
 `;
 
 const StyledCurrentSyncRow = styled.div`
@@ -65,17 +65,19 @@ const StyledCurrentSyncRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSyncItem = styled.div<{ variant: 'pending' | 'imported' | 'complete' }>`
-  display: flex;
+const StyledSyncItem = styled.div<{
+  variant: 'pending' | 'imported' | 'complete';
+}>`
   align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   background-color: ${({ theme, variant }) => {
     if (variant === 'pending') return theme.color.orange3;
     if (variant === 'complete') return theme.color.green3;
     return theme.background.tertiary;
   }};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSyncItemContent = styled.div`
@@ -84,23 +86,27 @@ const StyledSyncItemContent = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSyncItemIcon = styled.div<{ variant: 'pending' | 'imported' | 'complete' }>`
-  display: flex;
+const StyledSyncItemIcon = styled.div<{
+  variant: 'pending' | 'imported' | 'complete';
+}>`
   align-items: center;
-  justify-content: center;
   color: ${({ theme, variant }) => {
     if (variant === 'pending') return theme.color.orange;
     if (variant === 'complete') return theme.color.green;
     return theme.font.color.secondary;
   }};
+  display: flex;
+  justify-content: center;
 `;
 
 const StyledSyncItemLabel = styled.span`
-  font-size: ${({ theme }) => theme.font.size.sm};
   color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-const StyledSyncItemValue = styled.span<{ variant: 'pending' | 'imported' | 'complete' }>`
+const StyledSyncItemValue = styled.span<{
+  variant: 'pending' | 'imported' | 'complete';
+}>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   font-size: ${({ theme }) => theme.font.size.md};
   color: ${({ theme, variant }) => {
@@ -111,8 +117,8 @@ const StyledSyncItemValue = styled.span<{ variant: 'pending' | 'imported' | 'com
 `;
 
 const StyledDivider = styled.div`
-  height: 1px;
   background-color: ${({ theme }) => theme.border.color.light};
+  height: 1px;
 `;
 
 const StyledTotalsRow = styled.div`
@@ -130,14 +136,14 @@ const StyledTotalItem = styled.div`
 `;
 
 const StyledTotalIcon = styled.div`
-  display: flex;
   align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  height: 32px;
   justify-content: center;
   width: 32px;
-  height: 32px;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  background-color: ${({ theme }) => theme.background.tertiary};
-  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 const StyledTotalValue = styled.span`
@@ -164,8 +170,9 @@ const formatLastSynced = (
   }
   try {
     const date = new Date(lastSyncedAt);
+    const timeAgo = formatDistanceToNow(date, { addSuffix: true });
 
-    return t`Last synced ${formatDistanceToNow(date, { addSuffix: true })}`;
+    return t`Last synced ${timeAgo}`;
   } catch {
     return t`Never synced`;
   }
