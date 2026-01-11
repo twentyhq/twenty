@@ -197,13 +197,6 @@ export class ChannelSyncService {
           true, // preserve syncStageStartedAt
         );
 
-        console.log(
-          `\n[triggerMessageFolderSync] Adding job to queue for folder ${messageFolder.externalId}`,
-        );
-        console.log(`  workspaceId: ${workspaceId}`);
-        console.log(`  messageChannelId: ${messageFolder.messageChannelId}`);
-        console.log(`  messageFolderId: ${messageFolder.id}`);
-
         await this.messageQueueService.add<MessagingFolderRetroactiveImportJobData>(
           MessagingFolderRetroactiveImportJob.name,
           {
@@ -213,8 +206,6 @@ export class ChannelSyncService {
             folderExternalId: messageFolder.externalId,
           },
         );
-
-        console.log(`[triggerMessageFolderSync] Job added to queue successfully\n`);
       },
     );
   }
@@ -300,10 +291,6 @@ export class ChannelSyncService {
           await messageChannelMessageAssociationRepository.count({
             where: { messageChannelId },
           });
-
-        console.log(
-          `[getSyncStatistics] workspaceId: ${workspaceId}, messageChannelId: ${messageChannelId}, importedMessages: ${importedMessages}`,
-        );
 
         // Get pending messages from Redis cache
         const pendingResult =

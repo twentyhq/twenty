@@ -10,4 +10,13 @@ export class DryRunImportResultDTO {
 
   @Field(() => Int)
   alreadyImported: number;
+
+  @Field(() => Int)
+  pendingImport: number;
+
+  @Field(() => Boolean, {
+    description:
+      'When true, messagesToImport is an estimate. Actual count may be lower due to email filtering (group emails, blocklist, etc.)',
+  })
+  isEstimate: boolean;
 }
