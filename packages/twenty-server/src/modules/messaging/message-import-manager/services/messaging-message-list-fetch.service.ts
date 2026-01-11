@@ -232,13 +232,22 @@ export class MessagingMessageListFetchService {
             );
           }
 
-          const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
-            ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
-                freshMessageChannel,
-                messageExternalIds,
-                workspaceId,
-              )
-            : [];
+          // Only perform full sync deletion for ALL_FOLDERS policy
+          // For SELECTED_FOLDERS, we can't reliably determine which messages belong to which folder,
+          // so we skip full sync deletion to avoid removing retroactively imported messages
+          const shouldPerformFullSyncDeletion =
+            isFullSync &&
+            freshMessageChannel.messageFolderImportPolicy ===
+              MessageFolderImportPolicy.ALL_FOLDERS;
+
+          const fullSyncMessageChannelMessageAssociationsToDelete =
+            shouldPerformFullSyncDeletion
+              ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
+                  freshMessageChannel,
+                  messageExternalIds,
+                  workspaceId,
+                )
+              : [];
 
           const allMessageExternalIdsToDelete = [
             ...messageExternalIdsToDelete,

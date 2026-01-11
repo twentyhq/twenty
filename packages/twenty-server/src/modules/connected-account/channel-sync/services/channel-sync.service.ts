@@ -300,8 +300,8 @@ export class ChannelSyncService {
           );
         const pendingMessages = pendingResult.remainingMessages;
 
-        // Count contacts and companies created from email
-        // Use the entity classes with shouldBypassPermissionChecks to query createdBy.source
+        // Count contacts linked to messages in this channel
+        // via messageParticipant -> message -> messageChannelMessageAssociation
         let contactsCreated = 0;
         let companiesCreated = 0;
 
@@ -313,11 +313,28 @@ export class ChannelSyncService {
               { shouldBypassPermissionChecks: true },
             );
 
-          // Query using the composite field path
+          // Count unique persons linked to messages in this channel
           contactsCreated = await personRepository
             .createQueryBuilder('person')
-            .where('"createdBySource" = :source', { source: 'EMAIL' })
-            .getCount();
+            .innerJoin(
+              'messageParticipant',
+              'mp',
+              'mp."personId" = person.id AND mp."deletedAt" IS NULL',
+            )
+            .innerJoin(
+              'message',
+              'm',
+              'm.id = mp."messageId" AND m."deletedAt" IS NULL',
+            )
+            .innerJoin(
+              'messageChannelMessageAssociation',
+              'mcma',
+              'mcma."messageId" = m.id AND mcma."messageChannelId" = :channelId AND mcma."deletedAt" IS NULL',
+              { channelId: messageChannelId },
+            )
+            .select('COUNT(DISTINCT person.id)', 'count')
+            .getRawOne()
+            .then((result) => parseInt(result?.count || '0', 10));
 
           const companyRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -326,10 +343,33 @@ export class ChannelSyncService {
               { shouldBypassPermissionChecks: true },
             );
 
+          // Count unique companies linked to persons in this channel's messages
           companiesCreated = await companyRepository
             .createQueryBuilder('company')
-            .where('"createdBySource" = :source', { source: 'EMAIL' })
-            .getCount();
+            .innerJoin(
+              'person',
+              'p',
+              'p."companyId" = company.id AND p."deletedAt" IS NULL',
+            )
+            .innerJoin(
+              'messageParticipant',
+              'mp',
+              'mp."personId" = p.id AND mp."deletedAt" IS NULL',
+            )
+            .innerJoin(
+              'message',
+              'm',
+              'm.id = mp."messageId" AND m."deletedAt" IS NULL',
+            )
+            .innerJoin(
+              'messageChannelMessageAssociation',
+              'mcma',
+              'mcma."messageId" = m.id AND mcma."messageChannelId" = :channelId AND mcma."deletedAt" IS NULL',
+              { channelId: messageChannelId },
+            )
+            .select('COUNT(DISTINCT company.id)', 'count')
+            .getRawOne()
+            .then((result) => parseInt(result?.count || '0', 10));
         } catch {
           // If query fails, default to 0
           contactsCreated = 0;
