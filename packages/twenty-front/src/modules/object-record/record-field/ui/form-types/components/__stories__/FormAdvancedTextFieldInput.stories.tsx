@@ -19,7 +19,7 @@ const DEFAULT_PROPS = {
   defaultValue: '',
   onChange: fn(),
   readonly: false,
-  maxHeight: 200,
+  minHeight: 200,
   maxWidth: 800,
 };
 
@@ -255,7 +255,7 @@ export const CustomSize: Story = {
   args: {
     ...DEFAULT_PROPS,
     label: 'Custom Size Field',
-    maxHeight: 300,
+    minHeight: 300,
     maxWidth: 600,
     placeholder: 'This field has custom dimensions...',
   },
