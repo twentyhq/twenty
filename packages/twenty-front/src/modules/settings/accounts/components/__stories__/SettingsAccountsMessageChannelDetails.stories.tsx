@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-    MessageChannelContactAutoCreationPolicy,
-    MessageFolderImportPolicy,
+  MessageChannelContactAutoCreationPolicy,
+  MessageFolderImportPolicy,
 } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';

@@ -2,13 +2,13 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-    IconCalendar,
-    IconCheckbox,
-    IconHeart,
-    IconHome,
-    IconMail,
-    IconPhone,
-    IconUser,
+  IconCalendar,
+  IconCheckbox,
+  IconHeart,
+  IconHome,
+  IconMail,
+  IconPhone,
+  IconUser,
 } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 

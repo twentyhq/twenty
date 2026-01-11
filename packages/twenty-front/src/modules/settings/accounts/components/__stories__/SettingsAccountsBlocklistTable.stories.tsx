@@ -1,4 +1,8 @@
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';

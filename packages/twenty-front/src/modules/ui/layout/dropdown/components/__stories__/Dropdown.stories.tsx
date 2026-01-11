@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { type PlayFunction } from 'storybook/internal/types';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 // TEMP_DISABLED_TEST: Commented out unused import

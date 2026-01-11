@@ -13,8 +13,8 @@ import { type Decorator } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
-    getWorkflowMock,
-    getWorkflowNodeIdMock,
+  getWorkflowMock,
+  getWorkflowNodeIdMock,
 } from '~/testing/mock-data/workflow';
 
 export const WorkflowStepDecorator: Decorator = (Story) => {

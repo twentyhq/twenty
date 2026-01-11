@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import {
-    PageDecorator,
-    type PageDecoratorArgs,
+  PageDecorator,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

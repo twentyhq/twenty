@@ -10,8 +10,8 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import {
-    AppNavigationDrawer,
-    type AppNavigationDrawerProps,
+  AppNavigationDrawer,
+  type AppNavigationDrawerProps,
 } from '@/navigation/components/AppNavigationDrawer';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { AppPath } from 'twenty-shared/types';

@@ -3,11 +3,11 @@ import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { HelmetProvider } from 'react-helmet-async';
 import {
-    createMemoryRouter,
-    createRoutesFromElements,
-    Outlet,
-    Route,
-    RouterProvider,
+  createMemoryRouter,
+  createRoutesFromElements,
+  Outlet,
+  Route,
+  RouterProvider,
 } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 

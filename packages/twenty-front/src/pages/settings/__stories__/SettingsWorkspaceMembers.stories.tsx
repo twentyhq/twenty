@@ -2,8 +2,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-    PageDecorator,
-    type PageDecoratorArgs,
+  PageDecorator,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 // TEMP_DISABLED_TEST: Removed unused import due to commented test

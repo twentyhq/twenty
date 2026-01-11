@@ -6,10 +6,10 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import {
-    Avatar,
-    IconChevronLeft,
-    IconChevronRight,
-    IconPlus,
+  Avatar,
+  IconChevronLeft,
+  IconChevronRight,
+  IconPlus,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';

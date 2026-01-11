@@ -1,10 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
-    IconCheckbox,
-    IconList,
-    IconSearch,
-    IconSettings,
+  IconCheckbox,
+  IconList,
+  IconSearch,
+  IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';

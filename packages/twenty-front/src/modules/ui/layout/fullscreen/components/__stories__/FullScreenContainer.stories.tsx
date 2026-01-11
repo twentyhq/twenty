@@ -2,8 +2,8 @@ import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScree
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-    ComponentDecorator,
-    ComponentWithRouterDecorator,
+  ComponentDecorator,
+  ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 

@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import {
-    TextInput,
-    type TextInputComponentProps,
+  TextInput,
+  type TextInputComponentProps,
 } from '@/ui/input/components/TextInput';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

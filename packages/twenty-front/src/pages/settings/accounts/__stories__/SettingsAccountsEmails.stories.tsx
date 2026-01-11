@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import {
-    PageDecorator,
-    type PageDecoratorArgs,
+  PageDecorator,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

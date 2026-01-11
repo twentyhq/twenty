@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import {
-    PageDecorator,
-    type PageDecoratorArgs,
+  PageDecorator,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import {
-    IconLanguage,
-    IconLayoutKanban,
-    IconList,
-    IconNotes,
-    IconTable,
-    IconUsers,
+  IconLanguage,
+  IconLayoutKanban,
+  IconList,
+  IconNotes,
+  IconTable,
+  IconUsers,
 } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

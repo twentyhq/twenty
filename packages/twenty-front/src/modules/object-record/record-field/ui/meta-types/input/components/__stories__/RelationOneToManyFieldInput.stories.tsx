@@ -9,8 +9,8 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-    mockCurrentWorkspace,
-    mockedWorkspaceMemberData,
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

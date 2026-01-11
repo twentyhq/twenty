@@ -2,10 +2,10 @@ import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/comp
 import { WorkflowStepFilterDecorator } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/decorators/WorkflowStepFilterDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
-    type StepFilter,
-    type StepFilterGroup,
-    StepLogicalOperator,
-    ViewFilterOperand,
+  type StepFilter,
+  type StepFilterGroup,
+  StepLogicalOperator,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
