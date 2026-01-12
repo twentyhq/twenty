@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
+import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
@@ -79,9 +80,24 @@ export const transformGroupByDataToPieChartData = ({
       )
     : rawResults;
 
+  const isSelectField = isFieldMetadataSelectKind(groupByField.type);
+  const shouldApplySelectGapFill =
+    isSelectField && !configuration.hideEmptyCategory;
+
+  const selectGapFillResult = shouldApplySelectGapFill
+    ? fillSelectGapsInBarChartData({
+        data: filteredResults,
+        selectOptions: groupByField.options,
+        aggregateKeys: [aggregateField.name],
+        hasSecondDimension: false,
+      })
+    : { data: filteredResults };
+
+  const resultsWithSelectGaps = selectGapFillResult.data;
+
   const { processedDataPoints, formattedToRawLookup } =
     processOneDimensionalGroupByResults({
-      rawResults: filteredResults,
+      rawResults: resultsWithSelectGaps,
       groupByFieldX: groupByField,
       aggregateField,
       configuration,
@@ -149,7 +165,7 @@ export const transformGroupByDataToPieChartData = ({
     data,
     showLegend,
     hasTooManyGroups:
-      filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+      resultsWithSelectGaps.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
     formattedToRawLookup,
     colorMode,
   };

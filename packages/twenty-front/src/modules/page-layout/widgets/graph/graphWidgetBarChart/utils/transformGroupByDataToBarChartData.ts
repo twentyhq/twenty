@@ -6,6 +6,7 @@ import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupB
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
+import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -18,6 +19,7 @@ import { type BarDatum } from '@nivo/bar';
 import {
   isDefined,
   isFieldMetadataDateKind,
+  isFieldMetadataSelectKind,
   type FirstDayOfTheWeek,
 } from 'twenty-shared/utils';
 import {
@@ -244,9 +246,23 @@ export const transformGroupByDataToBarChartData = ({
   const filteredResultsWithDateGaps = dateGapFillResult.data;
   const dateRangeWasTruncated = dateGapFillResult.wasTruncated;
 
+  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
+  const shouldApplySelectGapFill = isSelectField && !omitNullValues;
+
+  const selectGapFillResult = shouldApplySelectGapFill
+    ? fillSelectGapsInBarChartData({
+        data: filteredResultsWithDateGaps,
+        selectOptions: groupByFieldX.options,
+        aggregateKeys: [aggregateField.name],
+        hasSecondDimension: isDefined(groupByFieldY),
+      })
+    : { data: filteredResultsWithDateGaps };
+
+  const filteredResultsWithGaps = selectGapFillResult.data;
+
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
-        rawResults: filteredResultsWithDateGaps,
+        rawResults: filteredResultsWithGaps,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
@@ -258,7 +274,7 @@ export const transformGroupByDataToBarChartData = ({
         firstDayOfTheWeek,
       })
     : transformOneDimensionalGroupByToBarChartData({
-        rawResults: filteredResultsWithDateGaps,
+        rawResults: filteredResultsWithGaps,
         groupByFieldX,
         aggregateField,
         configuration: sanitizedConfiguration,
