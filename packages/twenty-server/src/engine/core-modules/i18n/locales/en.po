@@ -561,6 +561,51 @@ msgstr "Cannot give write permission without read permission."
 msgid "Cannot have more than one active workflow version"
 msgstr "Cannot have more than one active workflow version"
 
+#. js-lingui-id: DAGexD
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Cannot modify predicate belonging to a different object."
+msgstr "Cannot modify predicate belonging to a different object."
+
+#. js-lingui-id: xO923u
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+msgid "Cannot modify predicate belonging to a different role."
+msgstr "Cannot modify predicate belonging to a different role."
+
+#. js-lingui-id: 3niIR5
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+msgid "Cannot modify predicate group belonging to a different role."
+msgstr "Cannot modify predicate group belonging to a different role."
+
+#. js-lingui-id: jm1hwE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its role"
+msgstr "Cannot modify predicate group to change its role"
+
+#. js-lingui-id: mV16wS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Cannot modify predicate group to change its role from {existingRoleId} to {updatedRoleId}"
+msgstr "Cannot modify predicate group to change its role from {existingRoleId} to {updatedRoleId}"
+
+#. js-lingui-id: HDo5ie
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its object"
+msgstr "Cannot modify predicate to change its object"
+
+#. js-lingui-id: BNrNUY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
+msgstr "Cannot modify predicate to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
+
+#. js-lingui-id: 7JaPm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its role"
+msgstr "Cannot modify predicate to change its role"
+
+#. js-lingui-id: sn8IgB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Cannot modify predicate to change its role from {existingRoleId} to {updatedRoleId}"
+msgstr "Cannot modify predicate to change its role from {existingRoleId} to {updatedRoleId}"
+
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
