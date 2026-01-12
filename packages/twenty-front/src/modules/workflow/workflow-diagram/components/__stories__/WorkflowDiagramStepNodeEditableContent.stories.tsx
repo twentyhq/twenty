@@ -153,7 +153,7 @@ export const Catalog: CatalogStory<
         <div>
           <RecoilRoot
             initializeState={({ set }) => {
-              if (args.selected) {
+              if (args.selected === true) {
                 set(
                   workflowSelectedNodeComponentState.atomFamily({
                     instanceId: 'workflow-visualizer-instance-id',

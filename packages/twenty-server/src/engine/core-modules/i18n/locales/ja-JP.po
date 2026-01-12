@@ -2520,11 +2520,6 @@ msgstr "オプション値は少なくとも1文字の文字列である必要�
 msgid "Options are required for enum fields"
 msgstr "列挙フィールドにはオプションが必要です"
 
-#. js-lingui-id: xCAYz6
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout is not deleted and cannot be restored"
-msgstr "ページレイアウトは削除されていないため、復元できません。"
-
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
@@ -2541,11 +2536,6 @@ msgstr "ページレイアウトが見つかりません"
 msgid "Page layout not found."
 msgstr "ページレイアウトが見つかりません."
 
-#. js-lingui-id: tR9faK
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab is not deleted and cannot be restored"
-msgstr "ページレイアウトタブは削除されていないため、復元できません。"
-
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2561,40 +2551,20 @@ msgstr "ページレイアウトタブが見つかりません"
 msgid "Page layout tab not found."
 msgstr "ページレイアウトタブが見つかりません."
 
-#. js-lingui-id: CWtQfv
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to delete not found"
-msgstr "削除するページレイアウトタブが見つかりません。"
-
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
 msgstr "破棄するページレイアウトタブが見つかりません。"
-
-#. js-lingui-id: BaYGVl
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to restore not found"
-msgstr "復元するページレイアウトタブが見つかりません。"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
 msgstr "更新するページレイアウトタブが見つかりません。"
 
-#. js-lingui-id: eQHXfb
-#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to delete not found"
-msgstr "削除するページレイアウトが見つかりません。"
-
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
 msgstr "破棄するページレイアウトが見つかりません。"
-
-#. js-lingui-id: TsrNXq
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to restore not found"
-msgstr "復元するページレイアウトが見つかりません。"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
@@ -2606,11 +2576,6 @@ msgstr "更新するページレイアウトが見つかりません。"
 msgid "Page layout widget already exists"
 msgstr "ページレイアウトウィジェットはすでに存在します"
 
-#. js-lingui-id: A3hsQ6
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget is not deleted and cannot be restored"
-msgstr "ページレイアウトウィジェットは削除されていないため、復元できません。"
-
 #. js-lingui-id: GcU04G
 #: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
@@ -2619,7 +2584,6 @@ msgstr "ページレイアウトウィジェットが見つかりません。"
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
 msgstr "削除するページレイアウトウィジェットが見つかりません"
 
@@ -2627,11 +2591,6 @@ msgstr "削除するページレイアウトウィジェットが見つかりま
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
 msgstr "破棄するページレイアウトウィジェットが見つかりません"
-
-#. js-lingui-id: fDTVnj
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget to restore not found"
-msgstr "復元するページレイアウトウィジェットが見つかりません。"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts

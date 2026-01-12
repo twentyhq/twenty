@@ -2520,11 +2520,6 @@ msgstr "Il valore dell'opzione deve essere una stringa di almeno un carattere"
 msgid "Options are required for enum fields"
 msgstr "Le opzioni sono richieste per i campi enum"
 
-#. js-lingui-id: xCAYz6
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout is not deleted and cannot be restored"
-msgstr "Il layout di pagina non è stato eliminato e non può essere ripristinato"
-
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
@@ -2541,11 +2536,6 @@ msgstr "Layout della pagina non trovato"
 msgid "Page layout not found."
 msgstr "Layout della pagina non trovato."
 
-#. js-lingui-id: tR9faK
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab is not deleted and cannot be restored"
-msgstr "La scheda del layout di pagina non è stata eliminata e non può essere ripristinata"
-
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2561,40 +2551,20 @@ msgstr "Scheda del layout della pagina non trovata"
 msgid "Page layout tab not found."
 msgstr "Scheda del layout della pagina non trovata."
 
-#. js-lingui-id: CWtQfv
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to delete not found"
-msgstr "Scheda del layout di pagina da eliminare non trovata"
-
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
 msgstr "Scheda del layout di pagina da distruggere non trovata"
-
-#. js-lingui-id: BaYGVl
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to restore not found"
-msgstr "Scheda del layout di pagina da ripristinare non trovata"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
 msgstr "Scheda del layout di pagina da aggiornare non trovata"
 
-#. js-lingui-id: eQHXfb
-#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to delete not found"
-msgstr "Layout di pagina da eliminare non trovato"
-
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
 msgstr "Layout di pagina da distruggere non trovato"
-
-#. js-lingui-id: TsrNXq
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to restore not found"
-msgstr "Layout di pagina da ripristinare non trovato"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
@@ -2606,11 +2576,6 @@ msgstr "Layout di pagina da aggiornare non trovato"
 msgid "Page layout widget already exists"
 msgstr "Il widget del layout di pagina esiste già"
 
-#. js-lingui-id: A3hsQ6
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget is not deleted and cannot be restored"
-msgstr "Il widget del layout di pagina non è stato eliminato e non può essere ripristinato"
-
 #. js-lingui-id: GcU04G
 #: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
@@ -2619,7 +2584,6 @@ msgstr "Widget del layout di pagina non trovato."
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
 msgstr "Widget del layout di pagina da eliminare non trovato"
 
@@ -2627,11 +2591,6 @@ msgstr "Widget del layout di pagina da eliminare non trovato"
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
 msgstr "Widget del layout di pagina da distruggere non trovato"
-
-#. js-lingui-id: fDTVnj
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget to restore not found"
-msgstr "Widget del layout di pagina da ripristinare non trovato"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts

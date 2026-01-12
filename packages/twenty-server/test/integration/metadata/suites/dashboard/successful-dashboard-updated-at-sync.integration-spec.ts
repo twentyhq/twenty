@@ -5,19 +5,13 @@ import {
   findDashboardWithGraphQL,
 } from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
-import { deleteOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/delete-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
-import { restoreOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/restore-one-page-layout-tab.util';
 import { updateOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/update-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
-import { deleteOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/delete-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
-import { restoreOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/restore-one-page-layout-widget.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
-import { deleteOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/delete-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
-import { restoreOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/restore-one-page-layout.util';
 import { updateOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout.util';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -83,22 +77,7 @@ const createTestContext = async (): Promise<TestContext> => {
 };
 
 const cleanupTestContext = async (context: TestContext): Promise<void> => {
-  await destroyOnePageLayoutWidget({
-    expectToFail: false,
-    input: { id: context.widgetId },
-  });
-
-  await destroyOnePageLayoutTab({
-    expectToFail: false,
-    input: { id: context.tabId },
-  });
-
   await destroyDashboardWithGraphQL(context.dashboardId);
-
-  await destroyOnePageLayout({
-    expectToFail: false,
-    input: { id: context.pageLayoutId },
-  });
 };
 
 const assertDashboardUpdatedAtIncreased = async (
@@ -122,43 +101,6 @@ const assertDashboardUpdatedAtIncreased = async (
   const isIncreased = updatedAtAfter > updatedAtBefore;
 
   expect(isIncreased).toBe(true);
-};
-
-const assertDashboardSoftDeleted = async (
-  dashboardId: string,
-  operation: () => Promise<void>,
-): Promise<void> => {
-  const dashboardBefore = await findDashboardWithGraphQL(dashboardId);
-
-  expect(dashboardBefore).not.toBeNull();
-
-  await operation();
-
-  const dashboardAfter = await findDashboardWithGraphQL(dashboardId);
-
-  expect(dashboardAfter).toBeNull();
-};
-
-const assertDashboardRestored = async (
-  dashboardId: string,
-  operation: () => Promise<void>,
-): Promise<void> => {
-  const dashboardBefore = await findDashboardWithGraphQL(dashboardId);
-
-  expect(dashboardBefore).toBeNull();
-
-  await operation();
-
-  const dashboardAfter = await findDashboardWithGraphQL(dashboardId);
-
-  expect(dashboardAfter).not.toBeNull();
-
-  const updatedAtAfter = new Date(dashboardAfter!.updatedAt);
-
-  const now = new Date();
-  const timeDiff = now.getTime() - updatedAtAfter.getTime();
-
-  expect(timeDiff).toBeLessThan(5000);
 };
 
 describe('Dashboard updatedAt should sync when linked page layout entities change', () => {
@@ -212,29 +154,6 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
         });
       });
     });
-
-    it('should update dashboard updatedAt when widget is soft deleted', async () => {
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
-        await deleteOnePageLayoutWidget({
-          expectToFail: false,
-          input: { id: context.widgetId },
-        });
-      });
-    });
-
-    it('should update dashboard updatedAt when widget is restored', async () => {
-      await deleteOnePageLayoutWidget({
-        expectToFail: false,
-        input: { id: context.widgetId },
-      });
-
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
-        await restoreOnePageLayoutWidget({
-          expectToFail: false,
-          input: { id: context.widgetId },
-        });
-      });
-    });
   });
 
   describe('Tab operations', () => {
@@ -278,49 +197,6 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
         });
       });
     });
-
-    it('should update dashboard updatedAt when tab is soft deleted', async () => {
-      const { data: tabData } = await createOnePageLayoutTab({
-        expectToFail: false,
-        input: {
-          title: 'Tab to Delete',
-          pageLayoutId: context.pageLayoutId,
-        },
-      });
-
-      additionalTabId = tabData.createPageLayoutTab.id;
-
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
-        await deleteOnePageLayoutTab({
-          expectToFail: false,
-          input: { id: additionalTabId! },
-        });
-      });
-    });
-
-    it('should update dashboard updatedAt when tab is restored', async () => {
-      const { data: tabData } = await createOnePageLayoutTab({
-        expectToFail: false,
-        input: {
-          title: 'Tab to Restore',
-          pageLayoutId: context.pageLayoutId,
-        },
-      });
-
-      additionalTabId = tabData.createPageLayoutTab.id;
-
-      await deleteOnePageLayoutTab({
-        expectToFail: false,
-        input: { id: additionalTabId },
-      });
-
-      await assertDashboardUpdatedAtIncreased(context.dashboardId, async () => {
-        await restoreOnePageLayoutTab({
-          expectToFail: false,
-          input: { id: additionalTabId! },
-        });
-      });
-    });
   });
 
   describe('Page layout operations', () => {
@@ -342,29 +218,6 @@ describe('Dashboard updatedAt should sync when linked page layout entities chang
             id: context.pageLayoutId,
             name: 'Updated Page Layout Name',
           },
-        });
-      });
-    });
-
-    it('should update dashboard updatedAt when page layout is soft deleted', async () => {
-      await assertDashboardSoftDeleted(context.dashboardId, async () => {
-        await deleteOnePageLayout({
-          expectToFail: false,
-          input: { id: context.pageLayoutId },
-        });
-      });
-    });
-
-    it('should update dashboard updatedAt when page layout is restored', async () => {
-      await deleteOnePageLayout({
-        expectToFail: false,
-        input: { id: context.pageLayoutId },
-      });
-
-      await assertDashboardRestored(context.dashboardId, async () => {
-        await restoreOnePageLayout({
-          expectToFail: false,
-          input: { id: context.pageLayoutId },
         });
       });
     });

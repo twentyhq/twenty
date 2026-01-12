@@ -8,9 +8,7 @@ import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
@@ -19,8 +17,7 @@ export class DashboardCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly pageLayoutService: PageLayoutService,
-    private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
   ) {}
 
   async execute(
@@ -36,24 +33,12 @@ export class DashboardCreateOnePreQueryHook
       return payload;
     }
 
-    const pageLayout = await this.pageLayoutService.create(
-      {
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: null,
-        name: 'Dashboard Layout',
-      },
-      workspace.id,
-    );
+    const pageLayoutId =
+      await this.dashboardToPageLayoutSyncService.createPageLayoutForDashboard({
+        workspaceId: workspace.id,
+      });
 
-    await this.pageLayoutTabService.create(
-      {
-        title: 'Tab 1',
-        pageLayoutId: pageLayout.id,
-      },
-      workspace.id,
-    );
-
-    payload.data.pageLayoutId = pageLayout.id;
+    payload.data.pageLayoutId = pageLayoutId;
 
     return payload;
   }
