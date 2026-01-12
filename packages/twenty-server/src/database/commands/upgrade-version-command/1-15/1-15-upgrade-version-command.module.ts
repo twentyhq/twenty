@@ -8,7 +8,6 @@ import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/comman
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
@@ -24,7 +23,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       WorkspaceEntity,
       PageLayoutWidgetEntity,
       ObjectMetadataEntity,
-      FieldMetadataEntity,
       ViewEntity,
       ViewFieldEntity,
     ]),
