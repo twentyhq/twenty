@@ -67,7 +67,6 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       WorkspaceActivationStatus.ACTIVE,
       WorkspaceActivationStatus.SUSPENDED,
       WorkspaceActivationStatus.ONGOING_CREATION,
-      WorkspaceActivationStatus.PENDING_CREATION,
     ]);
   }
 
