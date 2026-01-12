@@ -78,7 +78,7 @@ export class IdentifyFieldMetadataCommand extends WorkspacesMigrationCommandRunn
 
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId, withDeleted: true },
+        { workspaceId },
       );
 
     const allFieldMetadataEntities = await this.fieldMetadataRepository.find({

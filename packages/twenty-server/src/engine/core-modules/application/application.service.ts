@@ -28,17 +28,14 @@ export class ApplicationService {
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,
-    withDeleted = false,
   }:
     | {
         workspaceId: string;
         workspace?: never;
-        withDeleted?: boolean;
       }
     | {
         workspace: WorkspaceEntity;
         workspaceId?: never;
-        withDeleted?: boolean;
       }) {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
@@ -46,7 +43,7 @@ export class ApplicationService {
           where: {
             id: workspaceId,
           },
-          withDeleted,
+          withDeleted: true,
         });
 
     if (!isDefined(workspace)) {
