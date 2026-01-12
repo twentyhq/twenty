@@ -258,11 +258,11 @@ export const transformGroupByDataToBarChartData = ({
       })
     : { data: filteredResultsWithDateGaps };
 
-  const filteredResultsWithGaps = selectGapFillResult.data;
+  const resultsWithAllGapsFilled = selectGapFillResult.data;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
-        rawResults: filteredResultsWithGaps,
+        rawResults: resultsWithAllGapsFilled,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
@@ -274,7 +274,7 @@ export const transformGroupByDataToBarChartData = ({
         firstDayOfTheWeek,
       })
     : transformOneDimensionalGroupByToBarChartData({
-        rawResults: filteredResultsWithGaps,
+        rawResults: resultsWithAllGapsFilled,
         groupByFieldX,
         aggregateField,
         configuration: sanitizedConfiguration,
