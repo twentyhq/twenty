@@ -28,6 +28,14 @@ import {
   LightIconButton,
 } from 'twenty-ui/input';
 
+const StyledIconButton = styled(IconButton)`
+  background: ${({ theme }) => theme.accent.accent3};
+  border: 1px solid ${({ theme }) => theme.accent.accent4};
+  color: ${({ theme }) => theme.accent.accent9};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 export type IconPickerProps = {
   disabled?: boolean;
   dropdownId?: string;
@@ -262,7 +270,7 @@ export const IconPicker = ({
         dropdownOffset={dropdownOffset}
         clickableComponent={
           clickableComponent || (
-            <IconButton
+            <StyledIconButton
               ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
               Icon={icon}
