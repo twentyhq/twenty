@@ -3,6 +3,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -41,6 +42,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
   },
   decorators: [
     ComponentDecorator,
+    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     RouterDecorator,
