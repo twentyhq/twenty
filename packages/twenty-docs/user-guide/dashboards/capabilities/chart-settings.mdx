@@ -79,17 +79,16 @@ The "of week/year" options aggregate across all time. Use **Day of week** to see
 
 Control the order of categories on the X axis.
 
-| Option | What it does |
-|--------|-------------|
-| **Position ascending** | Uses order defined in field settings (for Select fields) |
-| **Position descending** | Reverse of field position order |
-| **Alphabetical** | A to Z (or ascending for numbers/dates) |
-| **Reverse alphabetical** | Z to A (or descending for numbers/dates) |
-| **Value ascending** | Lowest metric values first |
-| **Value descending** | Highest metric values first |
-| **Manual** | Custom order—drag to reorder |
+- **Position** – Uses the order defined in your Select field settings
+- **Alphabetical** – A to Z (or chronological for dates)
+- **By value** – Ordered by the metric (highest or lowest first)
+- **Manual** – Drag to set your own order
 
-**Tip**: For pipeline stages, use **Position ascending** to show stages in your sales process order (Lead → Qualified → Proposal → Won).
+**Tip**: For pipeline stages, use **Position** to show stages in your sales process order (Lead → Qualified → Proposal → Won).
+
+<Note>
+The options shown depend on your field type. Select fields have all options; date and text fields show fewer.
+</Note>
 
 ### Omit zero values
 
@@ -159,19 +158,9 @@ When Group by is a date field, choose the time period (same options as X axis).
 
 ### Sort by
 
-When **Group by** is set, control the order of grouped categories.
+When **Group by** is set, control the order of grouped series (e.g., which owner's bar appears first within each category).
 
-| Option | What it does |
-|--------|-------------|
-| **Position ascending** | Uses order defined in field settings (Select fields) |
-| **Position descending** | Reverse of field position |
-| **Alphabetical** | A to Z |
-| **Reverse alphabetical** | Z to A |
-| **Manual** | Custom order—drag to reorder |
-
-<Note>
-Value-based sorting (by metric) is not available for secondary grouping. Use X axis sort for value-based ordering.
-</Note>
+Same options as X axis sorting—Position, Alphabetical, and Manual—except **value-based sorting is not available** for secondary grouping.
 
 ### Cumulative
 
