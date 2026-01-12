@@ -219,7 +219,7 @@ export const SettingsAccountsSyncStatusCard = ({
     );
   }
 
-  if (error || !data) {
+  if (error !== undefined || !data) {
     return (
       <StyledCard rounded>
         <StyledHeader>
