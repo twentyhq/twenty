@@ -195,6 +195,70 @@ export class GmailGetMessageListService {
     ];
   }
 
+  public async getMessageListForLabel(
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+    >,
+    labelId: string,
+  ): Promise<string[]> {
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+        connectedAccount,
+      );
+    const gmailClient = google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+    });
+
+    let pageToken: string | undefined;
+    let hasMoreMessages = true;
+    const messageExternalIds: string[] = [];
+
+    while (hasMoreMessages) {
+      const messageList = await gmailClient.users.messages
+        .list({
+          userId: 'me',
+          maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
+          pageToken,
+          labelIds: [labelId],
+        })
+        .catch((error) => {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching message list for label ${labelId}: ${error.message}`,
+          );
+
+          this.gmailMessageListFetchErrorHandler.handleError(error);
+
+          return {
+            data: {
+              messages: [],
+              nextPageToken: undefined,
+            },
+          };
+        });
+
+      const { messages } = messageList.data;
+
+      if (!messages || messages.length === 0) {
+        break;
+      }
+
+      pageToken = messageList.data.nextPageToken ?? undefined;
+      hasMoreMessages = !!pageToken;
+
+      messageExternalIds.push(
+        ...messages.map((message) => message.id).filter(isDefined),
+      );
+    }
+
+    this.logger.log(
+      `Connected account ${connectedAccount.id}: Fetched ${messageExternalIds.length} messages for label ${labelId}`,
+    );
+
+    return messageExternalIds;
+  }
+
   private async getEmailIdsFromExcludedFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,

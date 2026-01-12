@@ -12,6 +12,7 @@ import {
   MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
+import { MessagingImportFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-import-folder-messages.service';
 
 @Injectable()
 export class MessagingProcessFolderActionsService {
@@ -22,6 +23,7 @@ export class MessagingProcessFolderActionsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingDeleteFolderMessagesService: MessagingDeleteFolderMessagesService,
+    private readonly messagingImportFolderMessagesService: MessagingImportFolderMessagesService,
   ) {}
 
   async processFolderActions(
@@ -67,6 +69,19 @@ export class MessagingProcessFolderActionsService {
 
           this.logger.log(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
+          );
+        } else if (
+          folder.pendingSyncAction ===
+          MessageFolderPendingSyncAction.FOLDER_IMPORT
+        ) {
+          await this.messagingImportFolderMessagesService.importFolderMessages(
+            workspaceId,
+            messageChannel,
+            folder,
+          );
+
+          this.logger.log(
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_IMPORT action`,
           );
         }
 

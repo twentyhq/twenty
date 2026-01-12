@@ -7,6 +7,7 @@ import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common
 export enum MessageFolderPendingSyncAction {
   FOLDER_DELETION = 'FOLDER_DELETION',
   NONE = 'NONE',
+  FOLDER_IMPORT = 'FOLDER_IMPORT',
 }
 
 registerEnumType(MessageFolderPendingSyncAction, {
