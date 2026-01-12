@@ -42,6 +42,7 @@ export type {
   ObjectRecordUpsertEvent,
 } from './functions/triggers/database-event-payload-type';
 export { defineObject } from './objects/define-object';
+export { extendObject } from './objects/extend-object';
 export { Object } from './objects/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { PermissionFlag } from './permission-flag-type';

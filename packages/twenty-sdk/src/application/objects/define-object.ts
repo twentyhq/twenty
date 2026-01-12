@@ -57,27 +57,23 @@ export const defineObject = <T extends ObjectManifest>(config: T): T => {
 
   // Validate each field
   for (const field of config.fields ?? []) {
-    if (!field.universalIdentifier) {
-      throw new Error(`Field "${field.label}" must have a universalIdentifier`);
-    }
-
-    if (!field.type) {
-      throw new Error(`Field "${field.label}" must have a type`);
+    if (!field.label) {
+      throw new Error('Field must have a label');
     }
 
     if (!field.name) {
-      throw new Error('Field must have a name');
+      throw new Error(`Field "${field.label}" must have a name`);
     }
 
-    if (!field.label) {
-      throw new Error('Field must have a label');
+    if (!field.universalIdentifier) {
+      throw new Error(`Field "${field.label}" must have a universalIdentifier`);
     }
 
     // Validate SELECT fields have options
     if (
       (field.type === FieldMetadataType.SELECT ||
         field.type === FieldMetadataType.MULTI_SELECT) &&
-      (!field.options || field.options.length === 0)
+      (!field.options || (field.options as unknown[]).length === 0)
     ) {
       throw new Error(
         `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,

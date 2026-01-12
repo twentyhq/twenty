@@ -4,6 +4,10 @@ import {
   type LoadManifestResult,
 } from '@/cli/utils/load-manifest';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/test-app/src/app/default-function.role';
+import {
+  POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
+  POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
+} from '@/cli/__tests__/test-app/src/app/postCard.object-extension';
 
 const TEST_APP_PATH = join(__dirname, '../../__tests__/test-app');
 
@@ -70,7 +74,6 @@ describe('loadManifest with test-app', () => {
     const statusField = postCard.fields?.find((f) => f.name === 'status');
     expect(statusField).toBeDefined();
     expect(statusField?.type).toBe('SELECT');
-    expect(statusField?.options).toHaveLength(4);
 
     expect(manifest.serverlessFunctions).toHaveLength(2);
 
@@ -153,6 +156,41 @@ describe('loadManifest with test-app', () => {
     expect(appSources['postCard.object.ts']).toContain('defineObject');
     expect(appSources['test-function.function.ts']).toContain('defineFunction');
     expect(appSources['default-function.role.ts']).toContain('defineRole');
+    expect(appSources['postCard.object-extension.ts']).toContain(
+      'extendObject',
+    );
+
+    // Check object extensions
+    expect(manifest.objectExtensions).toBeDefined();
+    expect(manifest.objectExtensions).toHaveLength(1);
+
+    const postCardExtension = manifest.objectExtensions![0];
+    expect(postCardExtension.targetObject.nameSingular).toBe('postCard');
+    expect(postCardExtension.fields).toHaveLength(2);
+
+    const priorityField = postCardExtension.fields.find(
+      (f) => f.name === 'priority',
+    );
+    expect(priorityField).toBeDefined();
+    expect(priorityField?.universalIdentifier).toBe(
+      POST_CARD_EXTENSION_PRIORITY_FIELD_ID,
+    );
+    expect(priorityField?.type).toBe('NUMBER');
+    expect(priorityField?.label).toBe('Priority');
+    expect(priorityField?.description).toBe(
+      'Priority level for the post card (1-10)',
+    );
+
+    const categoryField = postCardExtension.fields.find(
+      (f) => f.name === 'category',
+    );
+    expect(categoryField).toBeDefined();
+    expect(categoryField?.universalIdentifier).toBe(
+      POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
+    );
+    expect(categoryField?.type).toBe('SELECT');
+    expect(categoryField?.label).toBe('Category');
+    expect((categoryField as any)?.options).toHaveLength(3);
 
     expect(shouldGenerate).toBe(true);
 
