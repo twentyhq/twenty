@@ -21,8 +21,8 @@ import {
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
@@ -106,7 +106,6 @@ export const CalendarEventDetails = ({
     'location',
     'description',
   ];
-  const standardFieldNames = new Set(standardFieldOrder);
 
   const standardFields = standardFieldOrder
     .map((fieldName) =>
@@ -129,8 +128,6 @@ export const CalendarEventDetails = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const updateEntity = useCallback(
     ({ variables }: RecordUpdateHookParams) => {
-      if (!updateOneRecord) return;
-
       setIsUpdating(true);
       void updateOneRecord({
         idToUpdate: variables.where.id as string,
@@ -148,23 +145,20 @@ export const CalendarEventDetails = ({
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-  const isRecordDeleted = useIsRecordDeleted({ recordId: calendarEvent.id });
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: calendarEvent.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const isFieldReadOnly = (fieldMetadataItem: FieldMetadataItem) => {
-    if (standardFieldNames.has(fieldMetadataItem.name)) {
-      return true;
-    }
-
-    const fieldReadOnlyByPermissions = isFieldMetadataReadOnlyByPermissions({
+    return isRecordFieldReadOnly({
+      isRecordReadOnly,
       objectPermissions,
-      fieldMetadataId: fieldMetadataItem.id,
+      fieldMetadataItem: {
+        id: fieldMetadataItem.id,
+        isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+      },
     });
-
-    return (
-      isRecordDeleted ||
-      fieldMetadataItem.isUIReadOnly ||
-      fieldReadOnlyByPermissions
-    );
   };
 
   const renderField = (fieldMetadataItem: FieldMetadataItem) => (

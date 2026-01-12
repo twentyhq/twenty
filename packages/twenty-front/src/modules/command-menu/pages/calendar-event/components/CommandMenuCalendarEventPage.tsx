@@ -7,7 +7,6 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useMemo } from 'react';
 
 export const CommandMenuCalendarEventPage = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -20,24 +19,21 @@ export const CommandMenuCalendarEventPage = () => {
     depth: 1,
   });
 
-  const calendarEventRecordGqlFields = useMemo(
-    () => ({
-      ...recordGqlFields,
-      calendarEventParticipants: {
-        id: true,
-        person: true,
-        workspaceMember: true,
-        isOrganizer: true,
-        responseStatus: true,
-        handle: true,
-        createdAt: true,
-        calendarEventId: true,
-        updatedAt: true,
-        displayName: true,
-      },
-    }),
-    [recordGqlFields],
-  );
+  const calendarEventRecordGqlFields = {
+    ...recordGqlFields,
+    calendarEventParticipants: {
+      id: true,
+      person: true,
+      workspaceMember: true,
+      isOrganizer: true,
+      responseStatus: true,
+      handle: true,
+      createdAt: true,
+      calendarEventId: true,
+      updatedAt: true,
+      displayName: true,
+    },
+  };
 
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
