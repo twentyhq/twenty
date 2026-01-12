@@ -491,9 +491,7 @@ export class ApplicationSyncService {
 
     for (const fieldToCreate of fieldsToCreate) {
       const createFieldInput: CreateFieldInput = {
-        name:
-          fieldToCreate.name ??
-          computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
+        name: computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
         type: fieldToCreate.type,
         label: fieldToCreate.label,
         description: fieldToCreate.description ?? undefined,
@@ -567,8 +565,7 @@ export class ApplicationSyncService {
       }
 
       const createFieldInput: CreateFieldInput = {
-        name:
-          relation.name ?? computeMetadataNameFromLabelOrThrow(relation.label),
+        name: computeMetadataNameFromLabelOrThrow(relation.label),
         type: FieldMetadataType.RELATION,
         label: relation.label,
         description: relation.description ?? undefined,
