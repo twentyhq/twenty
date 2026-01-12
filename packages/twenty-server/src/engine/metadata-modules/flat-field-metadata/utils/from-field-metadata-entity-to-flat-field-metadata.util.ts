@@ -18,6 +18,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...fieldMetadataWithoutRelations,
+    // TODO remove once 1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command.ts has been run once
+    universalIdentifier:
+      fieldMetadataWithoutRelations.universalIdentifier ??
+      fieldMetadataWithoutRelations.id,
     createdAt: fieldMetadataWithoutRelations.createdAt.toISOString(),
     updatedAt: fieldMetadataWithoutRelations.updatedAt.toISOString(),
     kanbanAggregateOperationViewIds:
@@ -28,8 +32,5 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       [],
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
-    universalIdentifier:
-      fieldMetadataWithoutRelations.standardId ??
-      fieldMetadataWithoutRelations.id,
   };
 };
