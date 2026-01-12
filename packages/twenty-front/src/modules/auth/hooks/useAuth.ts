@@ -66,6 +66,7 @@ import { iconsState } from 'twenty-ui/display';
 import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { LAST_AUTHENTICATED_METHOD_STORAGE_KEY } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 
 export const useAuth = () => {
@@ -176,8 +177,22 @@ export const useAuth = () => {
 
         goToRecoilSnapshot(initialSnapshot);
 
+        // Preserve the last authenticated method before clearing localStorage
+        const lastAuthenticatedMethod = localStorage.getItem(
+          LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+        );
+
         sessionStorage.clear();
         localStorage.clear();
+
+        // Restore the last authenticated method after clearing
+        if (lastAuthenticatedMethod) {
+          localStorage.setItem(
+            LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+            lastAuthenticatedMethod,
+          );
+        }
+
         await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);

@@ -1,5 +1,9 @@
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import {
+  lastAuthenticatedMethodState,
+  LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+  type LastAuthenticatedMethod,
+} from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -21,9 +25,10 @@ const StyledButtonContainer = styled.div`
 
 const StyledLastUsedPill = styled(Pill)`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: 50%;
-  transform: translateY(-50%);
+  right: -${({ theme }) => theme.spacing(2)};
+  top: -${({ theme }) => theme.spacing(2)};
+  background: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.font.color.inverted};
 `;
 
 export const SignInUpWithSSO = () => {
@@ -31,17 +36,17 @@ export const SignInUpWithSSO = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
-
   const signInUpStep = useRecoilValue(signInUpStepState);
   const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
-  const setLastAuthenticatedMethod = useSetRecoilState(
-    lastAuthenticatedMethodState,
-  );
 
   const { redirectToSSOLoginPage } = useSSO();
 
   const signInWithSSO = () => {
-    setLastAuthenticatedMethod('sso');
+    // Save to localStorage synchronously before redirect to ensure it persists
+    localStorage.setItem(
+      LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+      JSON.stringify('sso' as LastAuthenticatedMethod),
+    );
     if (
       isDefined(workspaceAuthProviders) &&
       workspaceAuthProviders.sso.length === 1

@@ -1,5 +1,9 @@
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
-import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import {
+  lastAuthenticatedMethodState,
+  LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+  type LastAuthenticatedMethod,
+} from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -9,7 +13,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Pill } from 'twenty-ui/components';
 import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -26,9 +30,10 @@ const StyledButtonContainer = styled.div`
 
 const StyledLastUsedPill = styled(Pill)`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: 50%;
-  transform: translateY(-50%);
+  right: -${({ theme }) => theme.spacing(2)};
+  top: -${({ theme }) => theme.spacing(2)};
+  background: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.font.color.inverted};
 `;
 
 export const SignInUpWithGoogle = ({
@@ -39,13 +44,14 @@ export const SignInUpWithGoogle = ({
   const { t } = useLingui();
   const signInUpStep = useRecoilValue(signInUpStepState);
   const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
-  const setLastAuthenticatedMethod = useSetRecoilState(
-    lastAuthenticatedMethodState,
-  );
   const { signInWithGoogle } = useSignInWithGoogle();
 
   const handleClick = () => {
-    setLastAuthenticatedMethod('google');
+    // Save to localStorage synchronously before redirect to ensure it persists
+    localStorage.setItem(
+      LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+      JSON.stringify('google' as LastAuthenticatedMethod),
+    );
     signInWithGoogle({ action });
   };
 
