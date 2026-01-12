@@ -58,11 +58,6 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import('vite');
 
     return mergeConfig(viteConfig, {
-      resolve: {
-        alias: {
-          'react-dom/client': 'react-dom/profiling',
-        },
-      },
       logLevel: 'warn',
     });
   },
