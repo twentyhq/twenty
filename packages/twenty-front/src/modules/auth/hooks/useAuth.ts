@@ -182,14 +182,12 @@ export const useAuth = () => {
           lastAuthenticatedMethod = localStorage.getItem(
             LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
           );
-        } catch {
-        }
+        } catch {}
 
         try {
           sessionStorage.clear();
           localStorage.clear();
-        } catch {
-        }
+        } catch {}
 
         if (lastAuthenticatedMethod !== null) {
           try {
@@ -197,8 +195,7 @@ export const useAuth = () => {
               LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
               lastAuthenticatedMethod,
             );
-          } catch {
-          }
+          } catch {}
         }
 
         await client.clearStore();
