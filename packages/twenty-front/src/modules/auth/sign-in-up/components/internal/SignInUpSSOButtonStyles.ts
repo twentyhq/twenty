@@ -7,9 +7,9 @@ export const StyledSSOButtonContainer = styled.div`
 `;
 
 export const StyledLastUsedPill = styled(Pill)`
+  background: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.font.color.inverted};
   position: absolute;
   right: -${({ theme }) => theme.spacing(2)};
   top: -${({ theme }) => theme.spacing(2)};
-  background: ${({ theme }) => theme.color.blue};
-  color: ${({ theme }) => theme.font.color.inverted};
 `;

@@ -1,8 +1,8 @@
 import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import {
-    SignInUpStep,
-    signInUpStepState,
+  SignInUpStep,
+  signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
@@ -11,8 +11,8 @@ import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import {
-    StyledLastUsedPill,
-    StyledSSOButtonContainer,
+  StyledLastUsedPill,
+  StyledSSOButtonContainer,
 } from './SignInUpSSOButtonStyles';
 
 export const SignInUpWithMicrosoft = ({

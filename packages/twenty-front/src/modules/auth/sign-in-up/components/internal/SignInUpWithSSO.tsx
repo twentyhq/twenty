@@ -1,8 +1,8 @@
 import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import {
-    SignInUpStep,
-    signInUpStepState,
+  SignInUpStep,
+  signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useTheme } from '@emotion/react';
@@ -12,8 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import {
-    StyledLastUsedPill,
-    StyledSSOButtonContainer,
+  StyledLastUsedPill,
+  StyledSSOButtonContainer,
 } from './SignInUpSSOButtonStyles';
 
 export const SignInUpWithSSO = () => {

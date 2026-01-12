@@ -183,14 +183,12 @@ export const useAuth = () => {
             LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
           );
         } catch {
-          // Ignore storage errors - last auth method is non-critical
         }
 
         try {
           sessionStorage.clear();
           localStorage.clear();
         } catch {
-          // Ignore storage errors during sign-out
         }
 
         if (lastAuthenticatedMethod !== null) {
@@ -200,7 +198,6 @@ export const useAuth = () => {
               lastAuthenticatedMethod,
             );
           } catch {
-            // Ignore failures preserving last auth method - it's non-critical
           }
         }
 
