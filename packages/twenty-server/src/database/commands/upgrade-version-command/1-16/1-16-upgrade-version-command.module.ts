@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,11 +31,15 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    IdentifyFieldMetadataCommand,
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    IdentifyFieldMetadataCommand,
+    MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}

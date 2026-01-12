@@ -24,6 +24,8 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -67,6 +69,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly updateTaskOnDeleteActionCommand: UpdateTaskOnDeleteActionCommand,
     protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
+    protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -104,6 +108,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateTaskOnDeleteActionCommand,
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
+      this.identifyFieldMetadataCommand,
+      this
+        .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
 
     this.allCommands = {
