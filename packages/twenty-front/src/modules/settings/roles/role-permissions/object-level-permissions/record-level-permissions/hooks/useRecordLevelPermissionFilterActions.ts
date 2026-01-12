@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';

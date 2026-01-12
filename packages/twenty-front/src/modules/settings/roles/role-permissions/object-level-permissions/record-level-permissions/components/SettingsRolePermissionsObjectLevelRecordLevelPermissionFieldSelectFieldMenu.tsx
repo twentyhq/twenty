@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 

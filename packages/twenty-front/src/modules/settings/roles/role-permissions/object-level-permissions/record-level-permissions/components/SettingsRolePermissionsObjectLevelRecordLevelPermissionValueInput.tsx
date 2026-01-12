@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';

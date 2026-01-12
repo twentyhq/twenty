@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconVariablePlus } from 'twenty-ui/display';

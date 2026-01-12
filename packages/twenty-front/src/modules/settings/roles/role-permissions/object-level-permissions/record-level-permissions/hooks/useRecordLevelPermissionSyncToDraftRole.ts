@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

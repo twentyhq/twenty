@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import styled from '@emotion/styled';
 
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';

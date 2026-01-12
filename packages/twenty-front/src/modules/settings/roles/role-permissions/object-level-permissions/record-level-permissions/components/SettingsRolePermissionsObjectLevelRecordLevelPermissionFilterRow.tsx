@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import styled from '@emotion/styled';
 
 import { AdvancedFilterCommandMenuRecordFilterOperandSelect } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect';

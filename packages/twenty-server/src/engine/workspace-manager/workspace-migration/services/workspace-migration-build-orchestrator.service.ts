@@ -475,6 +475,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
             },
             workspaceId,
           },

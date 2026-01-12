@@ -372,7 +372,12 @@ export class RowLevelPermissionPredicateService {
 
     const resultGroups = Object.values(updatedGroupMaps.byId)
       .filter(isDefined)
-      .filter((group) => group.deletedAt === null && group.roleId === roleId)
+      .filter(
+        (group) =>
+          group.deletedAt === null &&
+          group.roleId === roleId &&
+          group.objectMetadataId === objectMetadataId,
+      )
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
 
     return {

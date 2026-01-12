@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { gql } from '@apollo/client';
 
 export const ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT = gql`
