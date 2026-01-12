@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Object metadata update should fail when labelIdentifier is a UUID field (reserved for system objects) 1`] = `
 [

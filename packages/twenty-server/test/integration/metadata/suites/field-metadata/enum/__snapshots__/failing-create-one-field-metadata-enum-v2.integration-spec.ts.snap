@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
 [

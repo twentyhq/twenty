@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`View Group REST API POST /metadata/viewGroups should fail to create view group with missing required fields 1`] = `
 {
