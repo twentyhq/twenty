@@ -107,27 +107,18 @@ These settings control what you're measuring and how it's displayed.
 
 ### Data on display
 
-Select the field and operation to calculate your metric. This is what each bar or line represents.
+Select the field and operation to calculate your metric.
 
-| Operation | What it calculates | Works with |
-|-----------|-------------------|------------|
-| **Count all** | Total number of records | Any field |
-| **Count empty** | Records without a value | Any field |
-| **Count not empty** | Records with a value | Any field |
-| **Count unique values** | Number of distinct values | Any field |
-| **Percent empty** | % of records without a value | Any field |
-| **Percent not empty** | % of records with a value | Any field |
-| **Sum** | Total of all values | Number fields |
-| **Average** | Mean value | Number fields |
-| **Min** | Lowest value | Number fields |
-| **Max** | Highest value | Number fields |
-| **Earliest date** | Oldest date | Date fields |
-| **Latest date** | Most recent date | Date fields |
-| **Count true** | Records where checkbox is checked | Checkbox fields |
-| **Count false** | Records where checkbox is unchecked | Checkbox fields |
+- **Counts** – Count all, Count empty, Count not empty, Count unique values
+- **Math** – Sum, Average, Min, Max (number fields)
+- **Percentages** – Percent empty, Percent not empty
+
+Boolean fields add Count true/false. Aggregate charts with date fields show Earliest/Latest.
+
+**Example**: Select "Amount" with Sum to see total deal value per category, or Count all to see number of deals.
 
 <Note>
-The available operations depend on the field type. If you don't see Sum or Average, you've selected a non-number field.
+The options shown depend on your field and chart type. If you don't see an expected operation, check your field type.
 </Note>
 
 ### Ratio
