@@ -25,6 +25,7 @@ import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/comman
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
+import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -70,6 +71,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
     protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
     protected readonly identifyFieldMetadataCommand: IdentifyFieldMetadataCommand,
+    protected readonly identifyObjectMetadataCommand: IdentifyObjectMetadataCommand,
     protected readonly makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
@@ -109,6 +111,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillOpportunityOwnerFieldCommand,
       this.backfillStandardPageLayoutsCommand,
       this.identifyFieldMetadataCommand,
+      this.identifyObjectMetadataCommand,
       this
         .makeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     ];
