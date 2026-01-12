@@ -16,8 +16,8 @@ import {
   type FirstDayOfTheWeek,
   isDefined,
   isFieldMetadataDateKind,
-  isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
   type LineChartConfiguration,
@@ -155,8 +155,8 @@ export const transformGroupByDataToLineChartData = ({
   const showLegend = configuration.displayLegend ?? true;
 
   const omitNullValues = configuration.omitNullValues ?? false;
-  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
-  const shouldApplySelectGapFill = isSelectField && !omitNullValues;
+  const isSingleSelectField = groupByFieldX.type === FieldMetadataType.SELECT;
+  const shouldApplySelectGapFill = isSingleSelectField && !omitNullValues;
 
   const selectGapFillResult = shouldApplySelectGapFill
     ? fillSelectGapsInChartData({

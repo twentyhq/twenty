@@ -19,9 +19,9 @@ import { type BarDatum } from '@nivo/bar';
 import {
   isDefined,
   isFieldMetadataDateKind,
-  isFieldMetadataSelectKind,
   type FirstDayOfTheWeek,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
   BarChartLayout,
@@ -246,8 +246,8 @@ export const transformGroupByDataToBarChartData = ({
   const filteredResultsWithDateGaps = dateGapFillResult.data;
   const dateRangeWasTruncated = dateGapFillResult.wasTruncated;
 
-  const isSelectField = isFieldMetadataSelectKind(groupByFieldX.type);
-  const shouldApplySelectGapFill = isSelectField && !omitNullValues;
+  const isSingleSelectField = groupByFieldX.type === FieldMetadataType.SELECT;
+  const shouldApplySelectGapFill = isSingleSelectField && !omitNullValues;
 
   const selectGapFillResult = shouldApplySelectGapFill
     ? fillSelectGapsInChartData({
