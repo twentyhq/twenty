@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { ComponentDecorator } from 'twenty-ui/testing';

@@ -31,10 +31,6 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
@@ -112,11 +108,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
           fieldIdByName,
         )
       ) {
-        throw new GraphqlQueryRunnerException(
+        // Not throwing exception because still used on record show page
+        /* throw new GraphqlQueryRunnerException(
           'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
           GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
           { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-        );
+        ); */
       }
 
       const cursorArgFilter = computeCursorArgFilter(
@@ -172,11 +169,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryBuilder.setFindOptions({ select: columnsToSelect });
     queryBuilder.take(limit + 1);
 
-    // Add relation order columns AFTER setFindOptions (setFindOptions clears addSelect)
+    // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
+    // Pass columnsToSelect so we only add columns that aren't already selected
     commonQueryParser.addRelationOrderColumnsToBuilder(
       queryBuilder,
       parsedOrderBy,
       flatObjectMetadata.nameSingular,
+      columnsToSelect,
     );
 
     const objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];

@@ -1,9 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof ApiKeyInput> = {
   title: 'Modules/Settings/Developers/ApiKeys/ApiKeyInput',
