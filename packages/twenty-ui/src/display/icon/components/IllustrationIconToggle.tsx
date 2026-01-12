@@ -9,14 +9,13 @@ type IllustrationIconToggleProps = Pick<IconComponentProps, 'size'>;
 export const IllustrationIconToggle = (props: IllustrationIconToggleProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
-  const { color, fill } = theme.IllustrationIcon;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconToggleRaw
         height={size}
         width={size}
-        fill={fill.blue}
-        color={color.blue}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
       />
     </IllustrationIconWrapper>
   );
