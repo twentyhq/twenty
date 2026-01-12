@@ -18,12 +18,11 @@ export type { PackageJson } from './packageJsonType';
 export type { RelationFieldManifest } from './relationFieldManifestType';
 export type { RoleManifest } from './roleManifestType';
 export type {
-  CronTrigger,
-  DatabaseEventTrigger,
   InputJsonSchema,
-  RouteTrigger,
   ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest
+  DatabaseEventTrigger,
+  CronTrigger,
+  RouteTrigger,
+  ServerlessFunctionTriggerManifest,
 } from './serverlessFunctionManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
-
