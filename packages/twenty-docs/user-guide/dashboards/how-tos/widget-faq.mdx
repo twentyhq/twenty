@@ -1,218 +1,67 @@
 ---
 title: Widget FAQ
-description: Common questions about configuring widgets and charts.
+description: Common questions and error messages explained.
 ---
 
-## Configuration
-
 <AccordionGroup>
-  <Accordion title="Why can't I see Sum or Average options?">
-    Sum, Average, Min, and Max only work with **number fields**.
+  <Accordion title="How do I show percentages instead of counts?">
+    Three options:
 
-    If you've selected a text, date, or select field, these options won't appear. Switch to a number field to use these operations.
-
-    **Available operations by field type:**
-    - **Any field**: Count all, Count empty, Count not empty, Count unique, Percent empty, Percent not empty
-    - **Number fields**: Sum, Average, Min, Max
-    - **Date fields**: Earliest date, Latest date
-    - **Checkbox fields**: Count true, Count false
+    - **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
+    - **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
+    - **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
   </Accordion>
 
   <Accordion title="What's the difference between grouped and stacked bars?">
-    When you add a **Group by** field, you can display multiple series in two ways:
+    When using **Group by**, you can display series two ways:
 
-    **Grouped (side by side)**
-    - Bars appear next to each other
-    - Best for comparing exact values between groups
-    - Example: See exactly how many deals each sales rep has per stage
+    - **Grouped**: Bars side by side—best for comparing exact values
+    - **Stacked**: Bars on top of each other—best for showing composition
 
-    **Stacked (on top)**
-    - Bars stack on top of each other
-    - Best for showing composition—how parts make up a whole
-    - Example: See total deals per stage, with each rep's contribution shown as a section
-
-    Toggle **Stacked bars** in the Style section to switch between them.
+    Toggle **Stacked** in Style settings to switch.
   </Accordion>
 
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options depending on what you want:
+  <Accordion title="Why can't I see Sum or Average options?">
+    Available operations depend on **field type**:
 
-    **Option 1: Percentage of total records**
-    - Under **Data on display**, select **Percent empty** or **Percent not empty**
-    - Shows what % of records have or don't have a value
+    - **Number fields**: Sum, Average, Min, Max
+    - **Date fields**: Earliest, Latest (aggregate charts only)
+    - **Checkbox fields**: Count true, Count false
 
-    **Option 2: Percentage of a specific option (Ratio)**
-    - Select a Select, Multi-select, or Checkbox field
-    - Enable **Ratio**
-    - Choose the specific option
-    - Shows that option as a % of all records
-
-    **Option 3: Add a % suffix (aggregate charts)**
-    - If your data is already in percentage form
-    - Add `%` as a **Suffix** in Style settings
+    If you don't see an option, check that you've selected a compatible field type.
   </Accordion>
 
-  <Accordion title="What does cumulative mean?">
-    Cumulative shows a **running total**. Each bar or point includes all previous values added together.
-
-    **Example:**
-    - January: 10 deals
-    - February: 15 deals
-    - March: 8 deals
-
-    **Without cumulative:** Shows 10, 15, 8
-
-    **With cumulative:** Shows 10, 25 (10+15), 33 (10+15+8)
-
-    Use cumulative to track progress toward a goal over time, like seeing your year-to-date total grow month by month.
-  </Accordion>
-
-  <Accordion title="How do I set a manual sort order?">
-    1. Open your widget settings
-    2. Find **Sort by** (in X axis or Y axis section)
-    3. Select **Manual**
-    4. Drag items to reorder them
-
-    Manual sort is useful when you want a specific order that isn't alphabetical or by value—like custom pipeline stages or priority levels.
-  </Accordion>
-
-  <Accordion title="How do I add a secondary grouping?">
-    Secondary grouping lets you split data by two dimensions (e.g., deals by stage AND by owner).
-
-    1. Set your **X axis** field (primary grouping)
-    2. In the **Y axis** section, click **Group by**
-    3. Select a second field
-
-    This creates a multi-series chart. Each group gets its own color, and a legend appears to identify them.
-  </Accordion>
-
-  <Accordion title="What's the difference between Day and Day of week?">
-    **Day** groups by specific calendar dates:
-    - Jan 1, Jan 2, Jan 3, Jan 4...
-    - Shows each individual day
-
-    **Day of week** aggregates all data by weekday:
-    - Monday (all Mondays combined), Tuesday (all Tuesdays combined)...
-    - Shows patterns across the week
-
-    Use **Day** for trends over time. Use **Day of week** to find which weekday typically performs best.
-
-    The same logic applies to **Month** vs **Month of year** and **Quarter** vs **Quarter of year**.
-  </Accordion>
-</AccordionGroup>
-
-## Display
-
-<AccordionGroup>
-  <Accordion title="Why is my chart showing 'Undisplayed data'?">
-    Charts have display limits to keep them readable:
-
-    - **Bar charts**: Maximum 100 bars, and 50 groups per bar when using Group By
-    - **Line charts**: Maximum 100 data points
-    - **Pie charts**: Maximum 100 slices
-
-    If your data exceeds this, some items won't be shown.
-
-    **To fix this:**
-    - Add filters to narrow down your data
-    - Change date granularity (e.g., from Day to Week or Month)
-    - Group by a field with fewer categories
-  </Accordion>
-
-  <Accordion title="Why does my chart look different than my colleague's?">
-    Dashboards display data based on the **viewer's timezone**.
-
-    If you're in different regions (e.g., US vs APAC), you may see slightly different numbers for the same dashboard because "today" or "this week" differs by timezone.
-
-    <Note>
-    **Coming soon**: We're adding the ability to set a specific timezone per dashboard so all users see consistent data.
-    </Note>
-  </Accordion>
-
-  <Accordion title="How do I show the total in a pie chart?">
-    1. Open your pie chart settings
-    2. In the **Style** section, find **Show value in center**
-    3. Toggle it on
-
-    The total value (sum of all slices) appears in the center of the pie.
-  </Accordion>
-
-  <Accordion title="How do I hide empty slices in a pie chart?">
-    1. Open your pie chart settings
-    2. In the **Data** section, find **Hide empty category**
-    3. Toggle it on
-
-    Slices with zero values are removed, keeping your chart clean.
-  </Accordion>
-
-  <Accordion title="Can I use the same colors across multiple charts?">
-    Yes, in two ways:
-
-    **Option 1: Set the same color manually**
-    - Open each chart's settings
-    - Under **Colors**, select the same color
-
-    **Option 2: Use Select field colors**
-    - When grouping by a Select field, the chart automatically uses the colors defined for each option in your field settings
-    - These colors stay consistent across all charts that group by that field
-  </Accordion>
-</AccordionGroup>
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Some settings are grayed out or missing—why?">
+  <Accordion title="Why are some settings grayed out or missing?">
     Many settings only appear when prerequisites are met:
 
-    - **Date granularity**: Only appears when you select a date field
-    - **Group by**: Only appears after Source is set
-    - **Legend toggle**: Only appears when Group by is set
-    - **Stacked bars/lines**: Only appears when Group by is set
-    - **Sort by (for groups)**: Only appears when Group by is set
+    - **Date granularity**: Select a date field first
+    - **Group by, Legend, Stacked**: Set Source first
+    - **Legend, Stacked toggles**: Set Group by first
 
-    If a setting is missing, check if you need to configure another setting first.
+    If a setting is missing, configure its prerequisite first.
   </Accordion>
 
-  <Accordion title="My aggregate options changed—what happened?">
-    The available aggregate operations depend on the **field type** you select:
+  <Accordion title="What does 'No data' mean?">
+    The chart found no records matching your configuration.
 
-    - Select a **number field** → Sum, Average, Min, Max become available
-    - Select a **date field** → Earliest date, Latest date become available
-    - Select a **checkbox field** → Count true, Count false become available
-    - Select a **Select/Multi-select field** → Ratio option becomes available
-
-    When you change fields, the options update to match what's possible for that field type.
+    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
   </Accordion>
 
-  <Accordion title="Colors don't match my Select field options—why?">
-    The chart uses Select field colors **only when grouping by that field**.
+  <Accordion title="What does 'Invalid configuration' mean?">
+    A required setting is missing or incompatible.
 
-    If you're grouping by a different field, the chart uses its own color palette.
-
-    To ensure colors match:
-    1. Make sure **Group by** (or **Each slice represents** for pie charts) is set to your Select field
-    2. Verify colors are defined in your Select field settings (Settings → Data model → [Object] → [Field] → Options)
+    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
   </Accordion>
 
-  <Accordion title="My chart is empty—what's wrong?">
-    Check these common causes:
+  <Accordion title="What does 'Undisplayed data' mean?">
+    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
 
-    1. **No data matches filters**: Remove or adjust filters to include more records
-    2. **Wrong source object**: Verify you've selected the correct object in Source
-    3. **Date range issue**: If grouping by date, ensure your date range includes records
-    4. **Permissions**: Ensure you have access to view the records in the selected object
-
-    Try removing all filters first to see if data appears, then add filters back one by one.
+    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
   </Accordion>
 
-  <Accordion title="How do I reset all chart settings?">
-    There's no single "reset" button, but you can:
+  <Accordion title="Why is one axis showing no data?">
+    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
 
-    1. Change the **Source** to a different object
-    2. Change it back to your original object
-
-    This clears all dependent settings since they're tied to the source object's fields.
-
-    Alternatively, delete the widget and create a new one.
+    **To fix:** Try a different field, or check that records have values for the selected field.
   </Accordion>
 </AccordionGroup>
