@@ -62,7 +62,7 @@ export class MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMig
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.log(
-        `Rollbacking MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
+        `Roll backing MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
       );
     } finally {
       await queryRunner.release();
