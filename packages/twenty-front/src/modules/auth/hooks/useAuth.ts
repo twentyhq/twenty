@@ -32,7 +32,6 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { LAST_AUTHENTICATED_METHOD_STORAGE_KEY } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
@@ -75,6 +74,8 @@ export const useAuth = () => {
   const setIsAppEffectRedirectEnabled = useSetRecoilState(
     isAppEffectRedirectEnabledState,
   );
+
+  const LAST_AUTHENTICATED_METHOD_STORAGE_KEY = 'lastAuthenticatedMethodState';
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -177,31 +178,18 @@ export const useAuth = () => {
 
         goToRecoilSnapshot(initialSnapshot);
 
-        let lastAuthenticatedMethod: string | null = null;
-        try {
-          lastAuthenticatedMethod = localStorage.getItem(
-            LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-          );
-        } catch {
-          // Ignore storage errors - last auth method is non-critical
-        }
+        const lastAuthenticatedMethod = localStorage.getItem(
+          LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+        );
 
-        try {
-          sessionStorage.clear();
-          localStorage.clear();
-        } catch {
-          // Ignore storage errors during sign-out
-        }
+        sessionStorage.clear();
+        localStorage.clear();
 
         if (lastAuthenticatedMethod !== null) {
-          try {
-            localStorage.setItem(
-              LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-              lastAuthenticatedMethod,
-            );
-          } catch {
-            // Ignore failures preserving last auth method - it's non-critical
-          }
+          localStorage.setItem(
+            LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+            lastAuthenticatedMethod,
+          );
         }
 
         await client.clearStore();

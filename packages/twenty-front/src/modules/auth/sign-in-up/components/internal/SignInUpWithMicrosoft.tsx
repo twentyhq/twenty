@@ -4,6 +4,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
@@ -29,11 +30,11 @@ export const SignInUpWithMicrosoft = ({
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
 
   const handleClick = () => {
-    setLastAuthenticatedMethod('microsoft');
+    setLastAuthenticatedMethod(AuthenticatedMethod.MICROSOFT);
     signInWithMicrosoft({ action });
   };
 
-  const isLastUsed = lastAuthenticatedMethod === 'microsoft';
+  const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.MICROSOFT;
 
   return (
     <>

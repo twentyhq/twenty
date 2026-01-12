@@ -1,22 +1,16 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import {
-  LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-  lastAuthenticatedMethodState,
-  type LastAuthenticatedMethod,
-} from '@/auth/states/lastAuthenticatedMethodState';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 
 export const useLastAuthenticatedMethod = () => {
-  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
-  const setLastAuthenticatedMethod = (method: LastAuthenticatedMethod) => {
-    localStorage.setItem(
-      LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-      JSON.stringify(method),
-    );
-  };
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
+    lastAuthenticatedMethodState,
+  );
 
   return {
     lastAuthenticatedMethod,
-    setLastAuthenticatedMethod,
+    setLastAuthenticatedMethod: (method: AuthenticatedMethod) =>
+      setLastAuthenticatedMethod(method),
   };
 };

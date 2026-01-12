@@ -1,12 +1,11 @@
 import { atom } from 'recoil';
+
+import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 
-export type LastAuthenticatedMethod = 'google' | 'microsoft' | 'sso' | null;
+const LAST_AUTHENTICATED_METHOD_STORAGE_KEY = 'lastAuthenticatedMethodState';
 
-export const LAST_AUTHENTICATED_METHOD_STORAGE_KEY =
-  'lastAuthenticatedMethodState';
-
-export const lastAuthenticatedMethodState = atom<LastAuthenticatedMethod>({
+export const lastAuthenticatedMethodState = atom<AuthenticatedMethod | null>({
   key: LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
   default: null,
   effects: [localStorageEffect()],

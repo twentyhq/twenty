@@ -4,6 +4,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
@@ -28,7 +29,7 @@ export const SignInUpWithSSO = () => {
   const { redirectToSSOLoginPage } = useSSO();
 
   const signInWithSSO = () => {
-    setLastAuthenticatedMethod('sso');
+    setLastAuthenticatedMethod(AuthenticatedMethod.SSO);
     if (
       isDefined(workspaceAuthProviders) &&
       workspaceAuthProviders.sso.length === 1
@@ -39,7 +40,7 @@ export const SignInUpWithSSO = () => {
     setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
   };
 
-  const isLastUsed = lastAuthenticatedMethod === 'sso';
+  const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
   return (
     <>

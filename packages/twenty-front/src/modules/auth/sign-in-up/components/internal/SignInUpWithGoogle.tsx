@@ -4,6 +4,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
@@ -33,11 +34,11 @@ export const SignInUpWithGoogle = ({
   const { signInWithGoogle } = useSignInWithGoogle();
 
   const handleClick = () => {
-    setLastAuthenticatedMethod('google');
+    setLastAuthenticatedMethod(AuthenticatedMethod.GOOGLE);
     signInWithGoogle({ action });
   };
 
-  const isLastUsed = lastAuthenticatedMethod === 'google';
+  const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.GOOGLE;
 
   return (
     <>
