@@ -2520,11 +2520,6 @@ msgstr "Hodnota možnosti musí být řetězec s alespoň jedním znakem"
 msgid "Options are required for enum fields"
 msgstr "Pro pole s výčtem možností jsou vyžadovány možnosti"
 
-#. js-lingui-id: xCAYz6
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout is not deleted and cannot be restored"
-msgstr "Rozložení stránky není odstraněno a nelze je obnovit"
-
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
@@ -2541,11 +2536,6 @@ msgstr "Rozložení stránky nebylo nalezeno"
 msgid "Page layout not found."
 msgstr "Rozložení stránky nebylo nalezeno."
 
-#. js-lingui-id: tR9faK
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab is not deleted and cannot be restored"
-msgstr "Karta rozložení stránky není odstraněna a nelze ji obnovit"
-
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2561,40 +2551,20 @@ msgstr "Karta rozložení stránky nebyla nalezena"
 msgid "Page layout tab not found."
 msgstr "Karta rozložení stránky nebyla nalezena."
 
-#. js-lingui-id: CWtQfv
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to delete not found"
-msgstr "Karta rozložení stránky k odstranění nebyla nalezena"
-
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
 msgstr "Karta rozložení stránky ke zničení nebyla nalezena"
-
-#. js-lingui-id: BaYGVl
-#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
-msgid "Page layout tab to restore not found"
-msgstr "Karta rozložení stránky k obnovení nebyla nalezena"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
 msgstr "Karta rozložení stránky k aktualizaci nebyla nalezena"
 
-#. js-lingui-id: eQHXfb
-#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to delete not found"
-msgstr "Rozložení stránky k odstranění nebylo nalezeno"
-
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
 msgstr "Rozložení stránky ke zničení nebylo nalezeno"
-
-#. js-lingui-id: TsrNXq
-#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
-msgid "Page layout to restore not found"
-msgstr "Rozložení stránky k obnovení nebylo nalezeno"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
@@ -2606,11 +2576,6 @@ msgstr "Rozložení stránky k aktualizaci nebylo nalezeno"
 msgid "Page layout widget already exists"
 msgstr "Widget rozložení stránky již existuje"
 
-#. js-lingui-id: A3hsQ6
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget is not deleted and cannot be restored"
-msgstr "Widget rozložení stránky není odstraněn a nelze jej obnovit"
-
 #. js-lingui-id: GcU04G
 #: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
@@ -2619,7 +2584,6 @@ msgstr "Widget rozložení stránky nenalezen."
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
 msgstr "Widget rozložení stránky k odstranění nebyl nalezen"
 
@@ -2627,11 +2591,6 @@ msgstr "Widget rozložení stránky k odstranění nebyl nalezen"
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
 msgstr "Widget rozložení stránky ke zničení nebyl nalezen"
-
-#. js-lingui-id: fDTVnj
-#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
-msgid "Page layout widget to restore not found"
-msgstr "Widget rozložení stránky k obnovení nebyl nalezen"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
