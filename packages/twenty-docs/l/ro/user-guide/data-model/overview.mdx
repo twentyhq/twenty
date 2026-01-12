@@ -123,53 +123,53 @@ Creează un obiect `Products` și relaționează-l cu înregistrările. Astfel, 
 
 Începe cu câmpurile. Treci la obiecte noi doar când simți limitele:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Prea multe câmpuri pe un singur obiect
+* Înregistrări repetate care ar trebui să fie separate
+* Relații care nu se potrivesc bine
 
-## Special Note on People, Companies, and Opportunities
+## Notă specială despre Persoane, Companii și Oportunități
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **Sincronizarea e-mailului și a calendarului funcționează doar cu Persoane, Companii și Oportunități.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Acestea sunt singurele obiecte în care puteți accesa e-mailuri și întâlniri sincronizate din căsuța poștală/calendar. Vă recomandăm să le utilizați cât mai mult posibil.
 </Warning>
 
-**Best practices:**
+**Cele mai bune practici:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Dacă aveți nevoie de categorii de Persoane, folosiți câmpuri (nu obiecte noi)
+* Exemplu: folosiți un câmp `Person Type` cu valorile "Prospect" și "Partner" în loc să creați obiecte separate
+* Creați **vizualizări** diferite pentru filtrare: una care afișează partenerii, alta care afișează prospectele
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Este în regulă să aveți câmpuri care nu se aplică fiecărei înregistrări.** De exemplu, un câmp `Referral Link` în Persoane care se aplică doar când `Person Type = Partner`. Ascundeți acest câmp din vizualizările în care nu este relevant.
 
-## Questions to Guide Your Choice
+## Întrebări pentru a vă ghida alegerea
 
 Întreabă-te:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Este aceasta doar o proprietate a ceva ce aveți deja sau necesită propriile sale proprietăți?</Check>
+<Check>Va fi vreodată nevoie să urmăriți mai multe dintre acestea pentru fiecare înregistrare, fără a ști câte?</Check>
+<Check>Acest concept se conectează la mai multe obiecte diferite, nu doar la unul singur?</Check>
+<Check>Va avea propriul ciclu de viață (etape, date de început/sfârșit)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Dacă răspunsul este "da" la una sau mai multe, probabil că este timpul pentru un nou obiect.
 
-## Accessing Your Data Model
+## Accesarea modelului de date
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Accesați **Setări** în bara laterală stângă
+2. Faceți clic pe **Model de date**
+3. Vizualizați toate obiectele (standard și personalizate)
+4. Faceți clic pe orice obiect pentru a-i vedea și edita câmpurile
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Nu vedeți Modelul de date în Setări?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Accesul la modelul de date este de obicei restricționat administratorilor. Contactați administratorul spațiului de lucru dacă aveți nevoie de acces.
 </Note>
 
 ## Pașii următori
 
-Once you've planned your data model:
+După ce ați planificat modelul de date:
 
 * [Cum să creezi obiecte personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-objects)
 * [Cum să creezi câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields)
@@ -177,4 +177,4 @@ Once you've planned your data model:
 
 ## Ai nevoie de ajutor?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/ro/user-guide/getting-started/capabilities/implementation-services).
+Echipa noastră vă poate ajuta să proiectați și să creați modelul de date de care aveți nevoie. Descoperiți [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services).

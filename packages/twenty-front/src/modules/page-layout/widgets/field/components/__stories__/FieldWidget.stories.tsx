@@ -3,10 +3,10 @@ import {
   type NormalizedCacheObject,
   useApolloClient,
 } from '@apollo/client';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';

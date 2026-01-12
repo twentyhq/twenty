@@ -1,4 +1,4 @@
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const ReactflowDecorator: Decorator = (Story) => {

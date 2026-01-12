@@ -12,7 +12,7 @@ import {
   tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
-import { type OrderBy } from '@/types/OrderBy';
+import { type OrderBy } from 'twenty-shared/types';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';

@@ -1,9 +1,11 @@
-import { useCallback } from 'react';
-
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated/graphql';
@@ -24,24 +26,42 @@ export const useHandleToggleColumnSort = ({
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
-  const handleToggleColumnSort = useCallback(
-    async (fieldMetadataId: string) => {
-      const correspondingColumnDefinition = columnDefinitions.find(
-        (columnDefinition) =>
-          columnDefinition.fieldMetadataId === fieldMetadataId,
-      );
+  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
+    currentRecordSortsComponentState,
+  );
 
-      if (!isDefined(correspondingColumnDefinition)) return;
+  const handleToggleColumnSort = useRecoilCallback(
+    ({ snapshot }) =>
+      (fieldMetadataId: string) => {
+        const correspondingColumnDefinition = columnDefinitions.find(
+          (columnDefinition) =>
+            columnDefinition.fieldMetadataId === fieldMetadataId,
+        );
 
-      const newSort: RecordSort = {
-        id: v4(),
-        fieldMetadataId,
-        direction: ViewSortDirection.ASC,
-      };
+        if (!isDefined(correspondingColumnDefinition)) return;
 
-      upsertRecordSort(newSort);
-    },
-    [columnDefinitions, upsertRecordSort],
+        const currentRecordSorts = getSnapshotValue(
+          snapshot,
+          currentRecordSortsCallbackState,
+        );
+
+        const existingSort = currentRecordSorts.find(
+          (sort) => sort.fieldMetadataId === fieldMetadataId,
+        );
+
+        const newSort: RecordSort = {
+          id: existingSort?.id ?? v4(),
+          fieldMetadataId,
+          direction: existingSort
+            ? existingSort.direction === ViewSortDirection.ASC
+              ? ViewSortDirection.DESC
+              : ViewSortDirection.ASC
+            : ViewSortDirection.ASC,
+        };
+
+        upsertRecordSort(newSort);
+      },
+    [columnDefinitions, currentRecordSortsCallbackState, upsertRecordSort],
   );
 
   return handleToggleColumnSort;

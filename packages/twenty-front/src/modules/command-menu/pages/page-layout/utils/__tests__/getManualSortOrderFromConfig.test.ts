@@ -1,5 +1,5 @@
 import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import {
   WidgetConfigurationType,
   type BarChartConfiguration,

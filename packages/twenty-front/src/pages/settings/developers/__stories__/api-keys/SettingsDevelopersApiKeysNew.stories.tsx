@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { SettingsPath } from 'twenty-shared/types';
 // TEMP_DISABLED_TEST: Removed unused imports due to commented test
 

@@ -4,7 +4,7 @@ import {
   type NormalizedCacheObject,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
