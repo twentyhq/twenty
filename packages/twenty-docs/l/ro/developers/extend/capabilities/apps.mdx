@@ -284,6 +284,10 @@ Puncte cheie:
 * Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
 * Puteți genera obiecte noi folosind `yarn create-entity`, care vă ghidează prin denumire, câmpuri și relații.
 
+<Note>
+  **Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+</Note>
+
 <Accordion title="Alternativă: Sintaxă bazată pe decoratori">
   Puteți defini obiecte și folosind decoratori TypeScript. Această abordare folosește o sintaxă bazată pe clase cu decoratorii `@Object`, `@Field` și `@Relation`:
 
