@@ -6,6 +6,7 @@ import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrad
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyFieldMetadataCommand,
     IdentifyObjectMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
   exports: [
     UpdateTaskOnDeleteActionCommand,
@@ -48,6 +50,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyFieldMetadataCommand,
     IdentifyObjectMetadataCommand,
     MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ],
 })
 export class V1_16_UpgradeVersionCommandModule {}
