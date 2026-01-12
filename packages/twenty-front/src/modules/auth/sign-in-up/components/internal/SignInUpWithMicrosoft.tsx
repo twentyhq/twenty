@@ -1,17 +1,17 @@
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Pill } from 'twenty-ui/components';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { Pill } from 'twenty-ui/components';
-import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 const StyledButtonContainer = styled.div`
   position: relative;

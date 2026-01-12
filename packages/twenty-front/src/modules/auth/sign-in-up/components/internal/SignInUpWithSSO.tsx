@@ -10,9 +10,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { Pill } from 'twenty-ui/components';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { Pill } from 'twenty-ui/components';
 
 const StyledButtonContainer = styled.div`
   position: relative;
