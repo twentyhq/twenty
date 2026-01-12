@@ -1,11 +1,12 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -15,7 +16,6 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
 
 const updateRecord = fn();
 

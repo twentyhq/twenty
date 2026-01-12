@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChart';
 import { ComponentDecorator } from 'twenty-ui/testing';

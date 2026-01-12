@@ -13,6 +13,16 @@ import { IconDownload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
+const MS_OFFICE_EXTENSIONS = [
+  'doc',
+  'docx',
+  'ppt',
+  'pptx',
+  'xls',
+  'xlsx',
+  'odt',
+];
+
 const StyledDocumentViewerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -58,6 +68,11 @@ const StyledMessage = styled.div`
   max-width: 400px;
 `;
 
+const StyledLightMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
@@ -67,6 +82,53 @@ const StyledTitle = styled.div`
 type DocumentViewerProps = {
   documentName: string;
   documentUrl: string;
+};
+
+// MS Office Online viewer requires documents to be publicly accessible from the internet.
+// For private/local URLs, Microsoft's servers cannot fetch the document.
+//
+// We explored more sophisticated detection approaches but they don't work:
+// - postMessage: Microsoft's viewer doesn't send any error messages
+// - Fetching the embed URL: Blocked by CORS (no Access-Control-Allow-Origin header)
+// - Reading iframe content: Cross-origin restrictions prevent access
+//
+// This simple URL-based detection catches the most common cases (localhost, private IPs)
+// where the preview will definitely fail. For edge cases on non-standard private networks,
+// users will see Microsoft's error page but can still download the file.
+//
+// See: https://github.com/twentyhq/twenty/issues/16900
+const isPrivateUrl = (url: string): boolean => {
+  try {
+    const { hostname } = new URL(url);
+
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '[::1]'
+    ) {
+      return true;
+    }
+
+    const ipParts = hostname.split('.').map(Number);
+    if (ipParts.length === 4 && ipParts.every((part) => !isNaN(part))) {
+      if (ipParts[0] === 10) return true;
+      if (ipParts[0] === 172 && ipParts[1] >= 16 && ipParts[1] <= 31)
+        return true;
+      if (ipParts[0] === 192 && ipParts[1] === 168) return true;
+    }
+
+    if (
+      hostname.endsWith('.local') ||
+      hostname.endsWith('.localhost') ||
+      hostname.endsWith('.internal')
+    ) {
+      return true;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
 };
 
 const MIME_TYPE_MAPPING: Record<
@@ -107,6 +169,7 @@ export const DocumentViewer = ({
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
   const fileCategory = getFileType(documentName);
   const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
+  const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);
 
   const mimeType = PREVIEWABLE_EXTENSIONS.includes(fileExtension)
     ? MIME_TYPE_MAPPING[fileExtension]
@@ -157,6 +220,27 @@ export const DocumentViewer = ({
         <Trans>Loading csv ... </Trans>
       </StyledDocumentViewerContainer>
     );
+
+  if (isMsOfficeFile && isPrivateUrl(documentUrl)) {
+    return (
+      <StyledDocumentViewerContainer>
+        <StyledUnavailablePreviewContainer>
+          <StyledLightMessage>
+            <Trans>
+              This file cannot be previewed because it is hosted locally.
+            </Trans>
+          </StyledLightMessage>
+          <Button
+            Icon={IconDownload}
+            title={t`Download`}
+            onClick={() => downloadFile(documentUrl, documentName)}
+            variant="secondary"
+            size="small"
+          />
+        </StyledUnavailablePreviewContainer>
+      </StyledDocumentViewerContainer>
+    );
+  }
 
   return (
     <StyledDocumentViewerContainer>

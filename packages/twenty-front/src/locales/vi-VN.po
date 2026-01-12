@@ -4162,6 +4162,7 @@ msgid "Downgrade"
 msgstr "Hạ cấp"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
 msgstr "Tải xuống"
@@ -8183,14 +8184,6 @@ msgstr "Không tìm thấy bản ghi"
 msgid "No records matching the filter criteria were found."
 msgstr "Không tìm thấy bản ghi nào khớp với tiêu chí lọc."
 
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationCard.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationField.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelationCard.tsx
-msgid "No related records"
-msgstr "Không có bản ghi liên quan"
-
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
@@ -11587,6 +11580,11 @@ msgstr "Hành động này sẽ xóa thư mục yêu thích này và mục yêu 
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "Giá trị cơ sở dữ liệu này ghi đè các thiết lập môi trường."
+
+#. js-lingui-id: own57K
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file cannot be previewed because it is hosted locally."
+msgstr ""
 
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx

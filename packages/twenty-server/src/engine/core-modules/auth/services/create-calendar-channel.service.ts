@@ -18,6 +18,7 @@ export type CreateCalendarChannelInput = {
   handle: string;
   calendarVisibility?: CalendarChannelVisibility;
   manager: WorkspaceEntityManager;
+  skipMessageChannelConfiguration?: boolean;
 };
 
 @Injectable()
@@ -35,6 +36,7 @@ export class CreateCalendarChannelService {
       handle,
       calendarVisibility,
       manager,
+      skipMessageChannelConfiguration,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
@@ -55,8 +57,12 @@ export class CreateCalendarChannelService {
             handle,
             visibility:
               calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
-            syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+            syncStatus: skipMessageChannelConfiguration
+              ? CalendarChannelSyncStatus.ONGOING
+              : CalendarChannelSyncStatus.NOT_SYNCED,
+            syncStage: skipMessageChannelConfiguration
+              ? CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING
+              : CalendarChannelSyncStage.PENDING_CONFIGURATION,
           },
           {},
           manager,

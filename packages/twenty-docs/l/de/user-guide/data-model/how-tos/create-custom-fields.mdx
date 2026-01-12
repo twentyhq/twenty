@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Benutzerdefinierte Felder erstellen
+description: Schritt-für-Schritt-Anleitung zum Hinzufügen benutzerdefinierter Felder zu jedem Objekt.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Benutzerdefinierte Felder ermöglichen es Ihnen, Informationen zu erfassen, die spezifisch für Ihr Unternehmen sind. Fügen Sie sie zu jedem Objekt hinzu – ob Standard- oder benutzerdefiniert.
 
-## Steps
+## Schritte
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/de/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt aus, dem Sie ein Feld hinzufügen möchten
+3. Klicken Sie auf **+ Feld hinzufügen**
+4. Wählen Sie einen **Feldtyp** (siehe [Felder](/l/de/user-guide/data-model/capabilities/fields) für alle Typen)
+5. Geben Sie den **Feldnamen** und eine optionale Beschreibung ein
+6. Konfigurieren Sie feldspezifische Einstellungen (siehe unten)
 7. Klicken Sie auf **Speichern**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Schnellmethode:** Klicken Sie in einer beliebigen Tabellenansicht am Ende der Spaltenüberschriften auf **+** → **Felder anpassen**.
 
-## Show the Field in Views
+## Feld in Ansichten anzeigen
 
-New fields aren't automatically visible. To display:
+Neue Felder sind nicht automatisch sichtbar. Zum Anzeigen:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Öffnen Sie die Tabellenansicht des Objekts
+2. Klicken Sie auf **Optionen → Felder**
+3. Klicken Sie auf das **Augensymbol** neben Ihrem Feld, um es anzuzeigen
+4. Ziehen, um neu anzuordnen
 
-## Configuration Options
+## Konfigurationsoptionen
 
-### For Select / Multi-Select
+### Für Auswahl / Mehrfachauswahl
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/de/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Klicken Sie auf **+ Option hinzufügen**, um Optionen zu erstellen
+2. Legen Sie bei Bedarf eine **Standardoption** fest
+3. Ziehen, um Optionen neu anzuordnen
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **Verwenden Sie für Importe API-Namen.** Aktivieren Sie in den Einstellungen den **Erweiterten Modus**, um API-Namen anzuzeigen. Siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Für Währungsfelder
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+Legen Sie die **Standardwährung** fest (USD, EUR usw.) für neue Datensätze.
 
-## Deactivating a Field
+### Für Telefonfelder
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Legen Sie den **Standard-Ländercode** fest, der für neue Telefonnummern vorausgefüllt wird.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Ein Feld eindeutig machen
 
-## Related
+Schalten Sie **Eindeutig** ein, um doppelte Werte über alle Datensätze hinweg zu verhindern.
 
-* [Fields](/l/de/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/de/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  Wenn Duplikate vorhanden sind (auch in gelöschten Datensätzen), erhalten Sie eine Fehlermeldung. Bereinigen Sie Duplikate zuerst.
+</Note>
+
+### Standardwerte festlegen
+
+Für Auswahlfelder können Sie festlegen, welche Option bei neuen Datensätzen vorausgewählt ist. Für Kontrollkästchenfelder legen Sie fest, ob diese standardmäßig aktiviert oder deaktiviert sind.
+
+## Ein Feld deaktivieren
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Suchen Sie das Feld
+3. Klicken Sie auf **⋮ → Deaktivieren**
+
+Daten bleiben erhalten. Sie können später reaktivieren oder dauerhaft löschen.
+
+## Verwandt
+
+* [Felder](/l/de/user-guide/data-model/capabilities/fields) — alle Feldtypen erklärt
+* [Datenmodell-FAQ](/l/de/user-guide/data-model/how-tos/data-model-faq) — häufige Fragen

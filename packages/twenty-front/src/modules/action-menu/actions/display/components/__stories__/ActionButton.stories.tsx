@@ -1,11 +1,11 @@
+import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
 
 const meta: Meta<typeof ActionButton> = {
   title: 'Modules/ActionMenu/Actions/Display/ActionButton',

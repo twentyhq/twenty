@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
