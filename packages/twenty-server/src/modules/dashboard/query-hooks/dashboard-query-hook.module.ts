@@ -5,8 +5,8 @@ import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-l
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { DashboardCreateManyPreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-create-many.pre-query.hook';
 import { DashboardCreateOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-create-one.pre-query.hook';
-import { DashboardDestroyManyPreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-many.pre-query.hook';
-import { DashboardDestroyOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-one.pre-query.hook';
+import { DashboardDestroyManyPostQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-many.post-query.hook';
+import { DashboardDestroyOnePostQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-one.post-query.hook';
 import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 
 @Module({
@@ -15,8 +15,8 @@ import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services
     DashboardToPageLayoutSyncService,
     DashboardCreateOnePreQueryHook,
     DashboardCreateManyPreQueryHook,
-    DashboardDestroyOnePreQueryHook,
-    DashboardDestroyManyPreQueryHook,
+    DashboardDestroyOnePostQueryHook,
+    DashboardDestroyManyPostQueryHook,
   ],
 })
 export class DashboardQueryHookModule {}

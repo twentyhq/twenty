@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -12,6 +12,8 @@ import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-ob
 
 @Injectable()
 export class DashboardToPageLayoutSyncService {
+  private readonly logger = new Logger(DashboardToPageLayoutSyncService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly pageLayoutService: PageLayoutService,
@@ -77,6 +79,42 @@ export class DashboardToPageLayoutSyncService {
           ids: pageLayoutIds,
           workspaceId,
         });
+      },
+    );
+  }
+
+  public async restoreDestroyedDashboards({
+    dashboards,
+    workspaceId,
+  }: {
+    dashboards: DashboardWorkspaceEntity[];
+    workspaceId: string;
+  }): Promise<void> {
+    if (dashboards.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const dashboardRepository =
+          await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
+            workspaceId,
+            'dashboard',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        for (const dashboard of dashboards) {
+          try {
+            await dashboardRepository.insert(dashboard);
+          } catch (error) {
+            this.logger.error(
+              `Failed to restore dashboard ${dashboard.id}: ${error}`,
+            );
+          }
+        }
       },
     );
   }
