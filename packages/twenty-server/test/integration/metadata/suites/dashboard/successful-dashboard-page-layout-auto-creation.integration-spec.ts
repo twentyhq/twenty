@@ -21,7 +21,6 @@ describe('Dashboard page layout auto-creation should succeed', () => {
     });
 
     afterEach(async () => {
-      // Destroying dashboard automatically destroys associated page layout via DashboardDestroyOnePreQueryHook
       if (isNonEmptyString(createdDashboardId)) {
         await destroyDashboardWithGraphQL(createdDashboardId);
       }
