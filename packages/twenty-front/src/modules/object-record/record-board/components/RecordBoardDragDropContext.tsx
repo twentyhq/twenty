@@ -59,9 +59,12 @@ export const RecordBoardDragDropContext = ({
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
-        endRecordDrag();
-
-        if (!result.destination) return;
+        // [FIXED]: 不要馬上 endRecordDrag，先判斷狀況，避免畫面閃爍
+        
+        if (!result.destination) {
+          endRecordDrag(); // 沒地方放，才結束
+          return;
+        }
 
         const currentRecordSorts = getSnapshotValue(
           snapshot,
@@ -70,6 +73,7 @@ export const RecordBoardDragDropContext = ({
 
         if (currentRecordSorts.length > 0) {
           openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+          endRecordDrag(); // 有排序擋住，結束
           return;
         }
 
@@ -78,7 +82,13 @@ export const RecordBoardDragDropContext = ({
           originalDragSelectionCallbackState,
         );
 
+        // [OPTIMISTIC UPDATE]: 先執行資料處理
         processBoardCardDrop(result, originalSelection);
+        
+        // [FIXED]: 最後才結束拖曳狀態，讓 Ghost 掩護資料更新的空窗期
+        requestAnimationFrame(() => {
+            endRecordDrag();
+        });
       },
     [
       processBoardCardDrop,
