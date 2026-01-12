@@ -29,6 +29,7 @@ import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/meta
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
+import { validateEnumValueCompatibility } from 'src/engine/twenty-orm/utils/validate-enum-value-compatibility.util';
 
 type BuildRowLevelPermissionRecordFilterArgs = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -117,6 +118,17 @@ export const buildRowLevelPermissionRecordFilter = ({
         }
 
         if (!isDefined(predicateValue)) {
+          return null;
+        }
+
+        // Validate that workspace member enum value is compatible with target field enum options
+        const isEnumValueCompatible = validateEnumValueCompatibility({
+          workspaceMemberFieldMetadata,
+          targetFieldMetadata: fieldMetadata,
+          predicateValue,
+        });
+
+        if (!isEnumValueCompatible) {
           return null;
         }
 

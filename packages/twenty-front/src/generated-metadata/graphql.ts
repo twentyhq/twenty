@@ -4560,6 +4560,7 @@ export type UpdateRowLevelPermissionPredicateGroupInput = {
 };
 
 export type UpdateRowLevelPermissionPredicateInput = {
+  fieldMetadataId?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   operand?: InputMaybe<RowLevelPermissionPredicateOperand>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
