@@ -3094,6 +3094,7 @@ export type ObjectPermissionInput = {
 
 export type ObjectRecordEvent = {
   __typename?: 'ObjectRecordEvent';
+  action: DatabaseEventAction;
   objectNameSingular: Scalars['String'];
   properties: ObjectRecordEventProperties;
   recordId: Scalars['String'];
