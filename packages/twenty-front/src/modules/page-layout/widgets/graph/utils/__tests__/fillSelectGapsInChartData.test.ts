@@ -1,6 +1,6 @@
-import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
+import { fillSelectGapsInChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInChartData';
 
-describe('fillSelectGapsInBarChartData', () => {
+describe('fillSelectGapsInChartData', () => {
   const selectOptions = [
     { id: '1', label: 'Option A', value: 'A', position: 0, color: 'green' },
     { id: '2', label: 'Option B', value: 'B', position: 1, color: 'blue' },
@@ -14,7 +14,7 @@ describe('fillSelectGapsInBarChartData', () => {
         { groupByDimensionValues: ['B'], count: 3 },
       ];
 
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data,
         selectOptions: undefined,
         aggregateKeys: ['count'],
@@ -29,7 +29,7 @@ describe('fillSelectGapsInBarChartData', () => {
         { groupByDimensionValues: ['B'], count: 3 },
       ];
 
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data,
         selectOptions: null,
         aggregateKeys: ['count'],
@@ -44,7 +44,7 @@ describe('fillSelectGapsInBarChartData', () => {
         { groupByDimensionValues: ['B'], count: 3 },
       ];
 
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data,
         selectOptions: [],
         aggregateKeys: ['count'],
@@ -54,7 +54,7 @@ describe('fillSelectGapsInBarChartData', () => {
     });
 
     it('returns empty data unchanged', () => {
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data: [],
         selectOptions: [...selectOptions],
         aggregateKeys: ['count'],
@@ -69,7 +69,7 @@ describe('fillSelectGapsInBarChartData', () => {
         { groupByDimensionValues: ['C'], count: 3 },
       ];
 
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data,
         selectOptions: [...selectOptions],
         aggregateKeys: ['count'],
@@ -99,7 +99,7 @@ describe('fillSelectGapsInBarChartData', () => {
         { groupByDimensionValues: ['A', 'Y'], count: 2 },
       ];
 
-      const result = fillSelectGapsInBarChartData({
+      const result = fillSelectGapsInChartData({
         data,
         selectOptions: [...selectOptions],
         aggregateKeys: ['count'],

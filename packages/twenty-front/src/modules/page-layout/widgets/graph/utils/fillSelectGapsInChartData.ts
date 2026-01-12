@@ -1,8 +1,8 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/FillSelectGapsResult';
-import { fillSelectGapsInOneDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInOneDimensionalBarChartData';
-import { fillSelectGapsInTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInTwoDimensionalBarChartData';
+import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { fillSelectGapsInOneDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInOneDimensionalChartData';
+import { fillSelectGapsInTwoDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInTwoDimensionalChartData';
 import { isDefined } from 'twenty-shared/utils';
 
 type FillSelectGapsParams = {
@@ -12,27 +12,27 @@ type FillSelectGapsParams = {
   hasSecondDimension?: boolean;
 };
 
-export const fillSelectGapsInBarChartData = ({
+export const fillSelectGapsInChartData = ({
   data,
   selectOptions,
   aggregateKeys,
   hasSecondDimension = false,
 }: FillSelectGapsParams): FillSelectGapsResult => {
-  if (!isDefined(selectOptions) || selectOptions.length === 0) {
-    return { data };
-  }
-
-  if (data.length === 0) {
+  if (
+    !isDefined(selectOptions) ||
+    selectOptions.length === 0 ||
+    data.length === 0
+  ) {
     return { data };
   }
 
   return hasSecondDimension
-    ? fillSelectGapsInTwoDimensionalBarChartData({
+    ? fillSelectGapsInTwoDimensionalChartData({
         data,
         selectOptions,
         aggregateKeys,
       })
-    : fillSelectGapsInOneDimensionalBarChartData({
+    : fillSelectGapsInOneDimensionalChartData({
         data,
         selectOptions,
         aggregateKeys,

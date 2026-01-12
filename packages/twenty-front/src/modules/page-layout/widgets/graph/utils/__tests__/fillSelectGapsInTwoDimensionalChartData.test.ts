@@ -1,6 +1,6 @@
-import { fillSelectGapsInTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInTwoDimensionalBarChartData';
+import { fillSelectGapsInTwoDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInTwoDimensionalChartData';
 
-describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
+describe('fillSelectGapsInTwoDimensionalChartData', () => {
   const selectOptions = [
     { id: '1', label: 'Option A', value: 'A', position: 0, color: 'green' },
     { id: '2', label: 'Option B', value: 'B', position: 1, color: 'blue' },
@@ -14,7 +14,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['A', 'Y'], count: 2 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -39,7 +39,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['C', 'Y'], count: 3 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -80,7 +80,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['C', 'Y'], count: 30 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -106,7 +106,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['A', 'X'], count: 5 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -126,7 +126,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['C', null], count: 3 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -152,7 +152,7 @@ describe('fillSelectGapsInTwoDimensionalBarChartData', () => {
       { groupByDimensionValues: ['A', 'Y'], count: 3 },
     ];
 
-    const result = fillSelectGapsInTwoDimensionalBarChartData({
+    const result = fillSelectGapsInTwoDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],

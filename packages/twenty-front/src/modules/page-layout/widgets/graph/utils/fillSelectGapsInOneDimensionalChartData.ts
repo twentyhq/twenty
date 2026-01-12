@@ -1,7 +1,7 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/FillSelectGapsResult';
-import { createEmptySelectGroup } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createEmptySelectGroup';
+import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { createEmptySelectGroup } from '@/page-layout/widgets/graph/utils/createEmptySelectGroup';
 import { isDefined } from 'twenty-shared/utils';
 
 type OneDimensionalFillSelectGapsParams = {
@@ -10,7 +10,7 @@ type OneDimensionalFillSelectGapsParams = {
   aggregateKeys: string[];
 };
 
-export const fillSelectGapsInOneDimensionalBarChartData = ({
+export const fillSelectGapsInOneDimensionalChartData = ({
   data,
   selectOptions,
   aggregateKeys,

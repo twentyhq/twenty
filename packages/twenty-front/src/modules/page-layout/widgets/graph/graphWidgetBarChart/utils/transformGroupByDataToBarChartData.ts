@@ -6,7 +6,7 @@ import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupB
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
-import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
+import { fillSelectGapsInChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInChartData';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -250,7 +250,7 @@ export const transformGroupByDataToBarChartData = ({
   const shouldApplySelectGapFill = isSelectField && !omitNullValues;
 
   const selectGapFillResult = shouldApplySelectGapFill
-    ? fillSelectGapsInBarChartData({
+    ? fillSelectGapsInChartData({
         data: filteredResultsWithDateGaps,
         selectOptions: groupByFieldX.options,
         aggregateKeys: [aggregateField.name],

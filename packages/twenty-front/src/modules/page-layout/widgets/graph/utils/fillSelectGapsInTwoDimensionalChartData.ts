@@ -1,7 +1,7 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/FillSelectGapsResult';
-import { createEmptySelectGroup } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createEmptySelectGroup';
+import { type FillSelectGapsResult } from '@/page-layout/widgets/graph/types/FillSelectGapsResult';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { createEmptySelectGroup } from '@/page-layout/widgets/graph/utils/createEmptySelectGroup';
 import { isDefined } from 'twenty-shared/utils';
 
 type TwoDimensionalFillSelectGapsParams = {
@@ -10,7 +10,7 @@ type TwoDimensionalFillSelectGapsParams = {
   aggregateKeys: string[];
 };
 
-export const fillSelectGapsInTwoDimensionalBarChartData = ({
+export const fillSelectGapsInTwoDimensionalChartData = ({
   data,
   selectOptions,
   aggregateKeys,
@@ -25,8 +25,9 @@ export const fillSelectGapsInTwoDimensionalBarChartData = ({
       continue;
     }
 
-    const secondDimensionValue = (item.groupByDimensionValues?.[1] ??
-      null) as string | null;
+    const secondDimensionValue = (item.groupByDimensionValues?.[1] ?? null) as
+      | string
+      | null;
     uniqueSecondDimensionValues.add(secondDimensionValue);
 
     const key = `${String(primaryDimensionValue)}_${String(secondDimensionValue)}`;

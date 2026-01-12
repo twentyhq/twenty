@@ -6,7 +6,7 @@ import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupB
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformTwoDimensionalGroupByToLineChartData';
-import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
+import { fillSelectGapsInChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInChartData';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -159,7 +159,7 @@ export const transformGroupByDataToLineChartData = ({
   const shouldApplySelectGapFill = isSelectField && !omitNullValues;
 
   const selectGapFillResult = shouldApplySelectGapFill
-    ? fillSelectGapsInBarChartData({
+    ? fillSelectGapsInChartData({
         data: filteredResults,
         selectOptions: groupByFieldX.options,
         aggregateKeys: [aggregateField.name],

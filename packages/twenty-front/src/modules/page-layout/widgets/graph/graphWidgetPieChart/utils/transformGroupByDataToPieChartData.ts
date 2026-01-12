@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
-import { fillSelectGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInBarChartData';
+import { fillSelectGapsInChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInChartData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
@@ -85,7 +85,7 @@ export const transformGroupByDataToPieChartData = ({
     isSelectField && !configuration.hideEmptyCategory;
 
   const selectGapFillResult = shouldApplySelectGapFill
-    ? fillSelectGapsInBarChartData({
+    ? fillSelectGapsInChartData({
         data: filteredResults,
         selectOptions: groupByField.options,
         aggregateKeys: [aggregateField.name],

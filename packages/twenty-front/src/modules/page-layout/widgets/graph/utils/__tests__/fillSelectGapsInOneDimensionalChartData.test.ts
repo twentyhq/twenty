@@ -1,6 +1,6 @@
-import { fillSelectGapsInOneDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillSelectGapsInOneDimensionalBarChartData';
+import { fillSelectGapsInOneDimensionalChartData } from '@/page-layout/widgets/graph/utils/fillSelectGapsInOneDimensionalChartData';
 
-describe('fillSelectGapsInOneDimensionalBarChartData', () => {
+describe('fillSelectGapsInOneDimensionalChartData', () => {
   const selectOptions = [
     { id: '1', label: 'Option A', value: 'A', position: 0, color: 'green' },
     { id: '2', label: 'Option B', value: 'B', position: 1, color: 'blue' },
@@ -13,7 +13,7 @@ describe('fillSelectGapsInOneDimensionalBarChartData', () => {
       { groupByDimensionValues: ['C'], count: 3 },
     ];
 
-    const result = fillSelectGapsInOneDimensionalBarChartData({
+    const result = fillSelectGapsInOneDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -41,7 +41,7 @@ describe('fillSelectGapsInOneDimensionalBarChartData', () => {
       { groupByDimensionValues: ['C'], count: 30, sum: 300 },
     ];
 
-    const result = fillSelectGapsInOneDimensionalBarChartData({
+    const result = fillSelectGapsInOneDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count', 'sum'],
@@ -57,7 +57,7 @@ describe('fillSelectGapsInOneDimensionalBarChartData', () => {
       { groupByDimensionValues: ['A'], count: 5 },
     ];
 
-    const result = fillSelectGapsInOneDimensionalBarChartData({
+    const result = fillSelectGapsInOneDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count'],
@@ -72,7 +72,7 @@ describe('fillSelectGapsInOneDimensionalBarChartData', () => {
   it('works with multiple aggregate keys', () => {
     const data = [{ groupByDimensionValues: ['A'], count: 5, sum: 100 }];
 
-    const result = fillSelectGapsInOneDimensionalBarChartData({
+    const result = fillSelectGapsInOneDimensionalChartData({
       data,
       selectOptions: [...selectOptions],
       aggregateKeys: ['count', 'sum'],
@@ -95,7 +95,7 @@ describe('fillSelectGapsInOneDimensionalBarChartData', () => {
 
     const data = [{ groupByDimensionValues: ['A'], count: 5 }];
 
-    const result = fillSelectGapsInOneDimensionalBarChartData({
+    const result = fillSelectGapsInOneDimensionalChartData({
       data,
       selectOptions: [...unsortedOptions],
       aggregateKeys: ['count'],
