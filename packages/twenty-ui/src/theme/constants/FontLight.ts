@@ -11,7 +11,6 @@ export const FONT_LIGHT = {
     extraLight: GRAY_SCALE_LIGHT.gray7,
     inverted: GRAY_SCALE_LIGHT.gray1,
     danger: COLOR_LIGHT.red,
-    indigo: COLOR_LIGHT.blue9,
   },
   ...FONT_COMMON,
 };

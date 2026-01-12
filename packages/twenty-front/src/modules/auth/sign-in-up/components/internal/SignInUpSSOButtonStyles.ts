@@ -10,7 +10,7 @@ export const StyledLastUsedPill = styled(Pill)`
   background: ${({ theme }) => theme.color.blue3};
   border: 1px solid ${({ theme }) => theme.color.blue5};
   border-radius: ${({ theme }) => theme.border.radius.pill};
-  color: ${({ theme }) => theme.color.blue9};
+  color: ${({ theme }) => theme.color.blue};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   position: absolute;
   right: -${({ theme }) => theme.spacing(5)};
