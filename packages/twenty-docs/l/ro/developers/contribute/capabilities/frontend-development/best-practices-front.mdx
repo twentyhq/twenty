@@ -10,10 +10,10 @@ React și Recoil se ocupă de managementul stării în cod.
 
 ### Folosiți `useRecoilState` pentru a stoca starea
 
-It's good practice to create as many atoms as you need to store your state.
+Este o bună practică să creezi atâția atomi câți ai nevoie pentru a-ți stoca starea.
 
 <Warning>
-  It's better to use extra atoms than trying to be too concise with props drilling.
+  Este mai bine să folosești atomi suplimentari decât să încerci să fii prea concis recurgând la prop drilling.
 </Warning>
 
 ```tsx
@@ -42,19 +42,19 @@ Evitați utilizarea `useRef` pentru a stoca starea.
 
 Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau `useRecoilState`.
 
-See [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+Vezi [cum să gestionezi re-randările](#managing-re-renders) dacă ți se pare că ai nevoie de `useRef` pentru a preveni apariția unor re-randări.
 
-## Managing re-renders
+## Gestionarea re-randărilor
 
 Re-render-urile pot fi greu de gestionat în React.
 
 Aici sunt câteva reguli de urmat pentru a evita re-render-urile inutile.
 
-Keep in mind that you can **always** avoid re-renders by understanding their cause.
+Ține minte că poți **întotdeauna** evita re-randările înțelegând cauza lor.
 
 ### Lucrați la nivelul rădăcinii
 
-Avoiding re-renders in new features is now made easy by eliminating them at the root level.
+Evitarea re-randărilor în funcționalități noi este acum ușoară prin eliminarea lor de la rădăcină.
 
 Componenta secundară `PageChangeEffect` conține doar un `useEffect` ce deține toată logica de execuție la o schimbare de pagină.
 
@@ -77,8 +77,8 @@ Dacă simțiți nevoia să adăugați un `useEffect` în componenta rădăcină,
 Puteți aplica același principiu pentru logica de interogare de date, folosind hooks cu Apollo.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Greșit, va provoca re-randări chiar dacă datele nu se schimbă,
+//    deoarece useEffect trebuie re-evaluat
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -100,8 +100,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Bun, nu va provoca re-randări dacă datele nu se schimbă,
+//   deoarece useEffect este re-evaluat într-o altă componentă la același nivel
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -168,13 +168,13 @@ Denumirile variabilelor trebuie să descrie cu precizie scopul sau funcția vari
 Denumirile generice în programare nu sunt ideale deoarece nu au specificitate, ducând la ambiguitate și la reducerea lizibilității codului. Astfel de denumiri nu reușesc să transmită scopul variabilei sau funcției, ceea ce îngreunează înțelegerea intenției codului de către dezvoltatori fără o investigație mai profundă. Acest lucru poate duce la creșterea timpului de depanare, la o mai mare susceptibilitate la erori și dificultăți în întreținere și colaborare. Între timp, denumirile descriptive fac codul auto-explicativ și mai ușor de navigat, îmbunătățind calitatea codului și productivitatea dezvoltatorilor.
 
 ```tsx
-// ❌ Bad, uses a generic name that doesn't communicate its
-//    purpose or content clearly
+// ❌ Greșit, folosește un nume generic care nu îi comunică
+//    clar scopul sau conținutul
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Good, uses a descriptive name
+// ✅ Bun, folosește un nume descriptiv
 const [email, setEmail] = useState('');
 ```
 
@@ -187,14 +187,14 @@ const [email, setEmail] = useState('');
 Numele handlerelor de evenimente ar trebui să înceapă cu `handle`, în timp ce `on` este un prefix folosit pentru a denumi evenimentele în prop-urile componentelor.
 
 ```tsx
-// ❌ Bad
+// ❌ Greșit
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Good
+// ✅ Bun
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -222,12 +222,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Utilizare**
 
 ```tsx
-// ❌ Bad, passing in the same value as the default value adds no value
+// ❌ Greșit, transmiterea aceleiași valori ca valoarea implicită nu aduce niciun beneficiu
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Good, assumes the default value
+// ✅ Bun, presupune valoarea implicită
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -240,7 +240,7 @@ Cel mai frecvent exemplu pentru aceasta sunt componentele de pictograme:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// In MyComponent
+// În MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -285,7 +285,7 @@ Când importați, optați pentru pseudonimele desemnate în loc să specificați
 **Utilizare**
 
 ```tsx
-// ❌ Bad, specifies the entire relative path
+// ❌ Greșit, specifică întreaga cale relativă
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -295,7 +295,7 @@ import {
 ```
 
 ```tsx
-// ✅ Good, utilises the designated aliases
+// ✅ Bun, utilizează aliasurile stabilite
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -310,10 +310,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('Email must be a valid email'),
+      .email('Adresa de email trebuie să fie validă'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+      .regex(PASSWORD_REGEX, 'Parola trebuie să conțină cel puțin 8 caractere'),
   })
   .required();
 

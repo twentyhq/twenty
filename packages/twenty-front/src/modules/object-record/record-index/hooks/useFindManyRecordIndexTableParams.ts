@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -20,6 +21,7 @@ export const useFindManyRecordIndexTableParams = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { recordGroupFilter } = useRecordGroupFilter(
     objectMetadataItem?.fields,
@@ -58,7 +60,11 @@ export const useFindManyRecordIndexTableParams = (
       filterValue: anyFieldFilterValue,
     });
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
+  const orderBy = turnSortsIntoOrderBy(
+    objectMetadataItem,
+    currentRecordSorts,
+    objectMetadataItems,
+  );
 
   return {
     objectNameSingular,

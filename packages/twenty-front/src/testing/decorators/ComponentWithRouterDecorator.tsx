@@ -1,3 +1,4 @@
+import { type Decorator } from '@storybook/react-vite';
 import {
   createMemoryRouter,
   createRoutesFromElements,
@@ -5,7 +6,6 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { type Decorator } from '@storybook/react';
 
 import {
   computeLocation,

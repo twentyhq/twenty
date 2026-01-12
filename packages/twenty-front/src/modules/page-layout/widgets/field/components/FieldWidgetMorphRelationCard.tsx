@@ -20,15 +20,7 @@ import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
 
 type FieldWidgetMorphRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
@@ -115,21 +107,7 @@ export const FieldWidgetMorphRelationCard = ({
   );
 
   if (validRecords.length === 0) {
-    return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
-        <AnimatedPlaceholderEmptyContainer
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-        >
-          <AnimatedPlaceholder type="noRecord" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              {t`No related records`}
-            </AnimatedPlaceholderEmptyTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-        </AnimatedPlaceholderEmptyContainer>
-      </RightDrawerProvider>
-    );
+    return null;
   }
 
   return (

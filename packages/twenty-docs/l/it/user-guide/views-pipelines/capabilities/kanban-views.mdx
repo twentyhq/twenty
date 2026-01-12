@@ -1,22 +1,22 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: Viste Kanban
+description: Scopri come utilizzare le viste Kanban per visualizzare e gestire i flussi di lavoro.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## Informazioni sulle viste Kanban
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+Le viste Kanban mappano visivamente i flussi di processo, dove ogni colonna rappresenta una fase distinta e ogni scheda rappresenta un record.
 
 ## Sposta le Carte tra le Fasi
 
 Puoi spostare ogni carta tra le fasi mentre attraversa il tuo flusso di lavoro trascinandola e rilasciandola. Per procedere, tieni premuto il clic su una carta e spostala nella fase successiva.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Dimostrazione video" />
 
-## Add and Delete Stages
+## Aggiungi ed elimina fasi
 
 Puoi adattare il tuo flusso di lavoro alle tue esigenze usando le fasi, che rappresentano un valore in un Campo Seleziona:
 
@@ -24,15 +24,15 @@ Puoi adattare il tuo flusso di lavoro alle tue esigenze usando le fasi, che rapp
 
 Per aggiungere una fase, accedi alle impostazioni del campo Seleziona navigando su Impostazioni > Modello dati, selezionando il tuo oggetto e poi il campo da cui dipende la tua board Kanban.
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Dimostrazione video" />
 
 ### Rimuovi Fasi
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+Per rimuovere una fase, passa il mouse sul nome della fase o sull'icona `⋮`, fai clic su `Edit from settings` nelle impostazioni del campo Selezione e quindi fai clic su **Elimina** accanto alla fase pertinente.
 
-## Display Fields
+## Campi da visualizzare
 
-Puoi configurare la tua bacheca Kanban per mostrare alcuni campi e nasconderne altri. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+Puoi configurare la tua bacheca Kanban per mostrare alcuni campi e nasconderne altri. Per nascondere un campo, fai clic su **Opzioni** in alto a destra, poi su **Campi** per visualizzare l'elenco delle opzioni. Cerca il campo necessario nella sezione Campi nascosti e fai clic sul pulsante a forma di occhio per visualizzare il campo.
 
 Puoi anche riordinare l'ordine dei campi tenendo premuto sul nome del campo e trascinandolo dove vuoi.
 
@@ -40,60 +40,60 @@ Puoi anche riordinare l'ordine dei campi tenendo premuto sul nome del campo e tr
 
 ## Vista compatta
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+Puoi nascondere tutti i campi e ottenere una panoramica di tutti i record a colpo d'occhio. Per abilitare:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. Fai clic su **Opzioni** in alto a destra
+2. Attiva l'interruttore per **Vista compatta**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## Aggregazioni per colonna
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+Ogni colonna in una vista Kanban può mostrare in alto valori aggregati, aiutandoti a comprendere i dati a colpo d'occhio.
 
-### Available Aggregations
+### Aggregazioni disponibili
 
-| Aggregation | Descrizione                                   |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| Aggregazione  | Descrizione                                                    |
+| ------------- | -------------------------------------------------------------- |
+| **Conteggio** | Numero di record nella colonna                                 |
+| **Somma**     | Totale di un campo numerico (ad es., importi delle trattative) |
+| **Media**     | Valore medio di un campo numerico                              |
+| **Minimo**    | Valore minimo                                                  |
+| **Massimo**   | Valore massimo                                                 |
 
-### Configuring Aggregations
+### Configurazione delle aggregazioni
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. Fai clic sul numero visualizzato accanto al valore della fase, nella parte superiore di una colonna
+2. Seleziona il tipo di aggregazione
+3. Scegli il campo da aggregare
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**Esempio:** Mostra il valore totale delle trattative per fase aggregando il campo Importo con Somma.
 
-## When to Use Kanban Views
+## Quando utilizzare le viste Kanban
 
-Kanban views are ideal for:
+Le viste Kanban sono ideali per:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **Pipeline di vendita**: Tieni traccia delle trattative attraverso le varie fasi, dal lead alla chiusura
+* **Gestione progetti**: Monitora le attività attraverso gli stati del flusso di lavoro
+* **Selezione del personale**: Tieni traccia dei candidati attraverso le fasi di assunzione
+* **Qualsiasi processo a fasi**: Visualizza qualsiasi flusso di lavoro con fasi definite
 
 ## Migliori Pratiche
 
-### Organize Your Stages
+### Organizza le fasi
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **Limita le fasi**: 5-7 fasi sono ideali per la visibilità
+* **Nomi chiari**: Usa nomi di fasi descrittivi
+* **Ordine logico**: Disponi le fasi nell'ordine del processo
 
-### Optimize Card Display
+### Ottimizza la visualizzazione delle schede
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **Mostra i campi chiave**: Visualizza solo le informazioni più importanti
+* **Usa la vista compatta**: Per panoramiche di alto livello
+* **Codifica a colori**: Usa i colori delle fasi per identificare rapidamente lo stato
 
-### Maintain Data Quality
+### Mantieni la qualità dei dati
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **Aggiorna regolarmente**: Mantieni le schede in movimento tra le fasi
+* **Archivia gli elementi completati**: Sposta gli elementi chiusi fuori dalla vista attiva
+* **Rivedi le schede inattive**: Esegui un follow-up sulle schede bloccate nelle fasi

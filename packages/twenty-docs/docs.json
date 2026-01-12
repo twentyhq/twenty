@@ -25,6 +25,11 @@
   "styling": {
     "eyebrows": "breadcrumbs"
   },
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.twenty.com"
+    }
+  },
   "navigation": {
     "languages": [
       {

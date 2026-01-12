@@ -1,44 +1,44 @@
 ---
 title: Webhooks
-description: Receive real-time notifications when events occur in your CRM.
+description: Primiți notificări în timp real atunci când au loc evenimente în CRM-ul dvs.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Webhooks push data to your systems in real-time when events occur in Twenty — no polling required. Use them to keep external systems in sync, trigger automations, or send alerts.
+Webhook-urile trimit date către sistemele dvs. în timp real atunci când au loc evenimente în Twenty — nu este necesară interogarea periodică. Folosiți-le pentru a menține sistemele externe sincronizate, a declanșa automatizări sau a trimite alerte.
 
 ## Creează Webhook
 
 1. Mergeți la **Setări → API-uri şi Webhooks → Webhooks**
 2. Faceți clic pe **+ Creează webhook**
-3. Enter your webhook URL (must be publicly accessible)
+3. Introduceți URL-ul webhook-ului dvs. (trebuie să fie accesibil public)
 4. Faceți clic pe **Salvare**
 
-The webhook activates immediately and starts sending notifications.
+Webhook-ul se activează imediat și începe să trimită notificări.
 
-<VimeoEmbed videoId="928786708" title="Creating a webhook" />
+<VimeoEmbed videoId="928786708" title="Crearea unui webhook" />
 
 ### Administrează Webhooks
 
-**Edit**: Click the webhook → Update URL → **Save**
+**Editează**: Faceți clic pe webhook → Actualizați URL-ul → **Salvează**
 
-**Delete**: Click the webhook → **Delete** → Confirm
+**Șterge**: Faceți clic pe webhook → **Șterge** → Confirmă
 
 ## Evenimente
 
-Twenty sends webhooks for these event types:
+Twenty trimite webhook-uri pentru aceste tipuri de evenimente:
 
-| Eveniment          | Exemplu                                                    |
-| ------------------ | ---------------------------------------------------------- |
-| **Record Created** | `person.created`, `company.created`, `note.created`        |
-| **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
-| **Record Deleted** | `person.deleted`, `company.deleted`                        |
+| Eveniment                    | Exemplu                                                    |
+| ---------------------------- | ---------------------------------------------------------- |
+| **Înregistrare creată**      | `person.created`, `company.created`, `note.created`        |
+| **Înregistrare actualizată** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **Înregistrare ștearsă**     | `person.deleted`, `company.deleted`                        |
 
-All event types are sent to your webhook URL. Event filtering may be added in future releases.
+Toate tipurile de evenimente sunt trimise către URL-ul webhook-ului dvs. Filtrarea evenimentelor poate fi adăugată în versiunile viitoare.
 
-## Payload Format
+## Formatul payload-ului
 
-Each webhook sends an HTTP POST with a JSON body:
+Fiecare webhook trimite un HTTP POST cu un corp JSON:
 
 ```json
 {
@@ -55,35 +55,35 @@ Each webhook sends an HTTP POST with a JSON body:
 }
 ```
 
-| Câmp              | Descriere                                        |
-| ----------------- | ------------------------------------------------ |
-| `eveniment`       | What happened (e.g., `person.created`)           |
-| `date`            | The full record that was created/updated/deleted |
-| `marcaj temporal` | When the event occurred (UTC)                    |
+| Câmp              | Descriere                                                     |
+| ----------------- | ------------------------------------------------------------- |
+| `eveniment`       | Ce s-a întâmplat (de ex., `person.created`)                   |
+| `date`            | Înregistrarea completă care a fost creată/actualizată/ștearsă |
+| `marcaj temporal` | Când a avut loc evenimentul (UTC)                             |
 
 <Note>
-  Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
+  Răspundeți cu un **status HTTP 2xx** (200-299) pentru a confirma primirea. Răspunsurile non-2xx sunt înregistrate ca eșecuri de livrare.
 </Note>
 
 ## Validarea Webhook-ului
 
-Twenty signs each webhook request for security. Validate signatures to ensure requests are authentic.
+Twenty semnează fiecare cerere webhook din motive de securitate. Validați semnăturile pentru a vă asigura că cererile sunt autentice.
 
-### Headers
+### Anteturi
 
-| Antet                        | Descriere             |
-| ---------------------------- | --------------------- |
-| `X-Twenty-Webhook-Signature` | HMAC SHA256 signature |
-| `X-Twenty-Webhook-Timestamp` | Request timestamp     |
+| Antet                        | Descriere                  |
+| ---------------------------- | -------------------------- |
+| `X-Twenty-Webhook-Signature` | Semnătură HMAC SHA256      |
+| `X-Twenty-Webhook-Timestamp` | Marcaj temporal al cererii |
 
-### Validation Steps
+### Pași de validare
 
-1. Get the timestamp from `X-Twenty-Webhook-Timestamp`
-2. Create the string: `{timestamp}:{JSON payload}`
-3. Compute HMAC SHA256 using your webhook secret
-4. Compare with `X-Twenty-Webhook-Signature`
+1. Obțineți marcajul temporal din `X-Twenty-Webhook-Timestamp`
+2. Creați șirul: `{timestamp}:{JSON payload}`
+3. Calculați HMAC SHA256 folosind secretul webhook-ului dvs.
+4. Comparați cu `X-Twenty-Webhook-Signature`
 
-### Example (Node.js)
+### Exemplu (Node.js)
 
 ```javascript
 const crypto = require("crypto");
@@ -101,12 +101,12 @@ const expectedSignature = crypto
 const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 ```
 
-## Webhooks vs Workflows
+## Webhook-uri vs Fluxuri de lucru
 
-| Metodă                       | Direcție | Use Case                                                   |
-| ---------------------------- | -------- | ---------------------------------------------------------- |
-| **Webhooks**                 | OUT      | Automatically notify external systems of any record change |
-| **Workflow + HTTP Request**  | OUT      | Send data out with custom logic (filters, transformations) |
-| **Workflow Webhook Trigger** | IN       | Receive data into Twenty from external systems             |
+| Metodă                                     | Direcție | Caz de utilizare                                                                 |
+| ------------------------------------------ | -------- | -------------------------------------------------------------------------------- |
+| **Webhook-uri**                            | OUT      | Notificați automat sistemele externe despre orice modificare a unei înregistrări |
+| **Flux de lucru + Cerere HTTP**            | OUT      | Trimiteți date în exterior cu logică personalizată (filtre, transformări)        |
+| **Declanșator webhook în fluxul de lucru** | IN       | Primiți date în Twenty din sisteme externe                                       |
 
-For receiving external data, see [Set Up a Webhook Trigger](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+Pentru a primi date externe, consultați [Configurați un declanșator Webhook](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
