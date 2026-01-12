@@ -27,6 +27,7 @@ import {
 import {
   computeBatchPath,
   computeDuplicatesResultPath,
+  computeGroupByResultPath,
   computeManyResultPath,
   computeMergeManyResultPath,
   computeRestoreManyResultPath,
@@ -157,6 +158,11 @@ export class OpenApiService {
         flatFieldMetadataMaps,
       );
       paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/${item.namePlural}/groupBy`] = computeGroupByResultPath(
         item,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

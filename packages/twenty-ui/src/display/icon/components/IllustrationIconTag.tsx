@@ -9,14 +9,13 @@ type IllustrationIconTagProps = Pick<IconComponentProps, 'size'>;
 export const IllustrationIconTag = (props: IllustrationIconTagProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
-  const { color, fill } = theme.IllustrationIcon;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconTagRaw
         height={size}
         width={size}
-        fill={fill.blue}
-        color={color.blue}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
       />
     </IllustrationIconWrapper>
   );

@@ -14,6 +14,7 @@ import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-object
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -38,6 +39,8 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  owner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
+  ownerId: string | null;
   /** @deprecated */
   probability: string;
   searchVector: string;
