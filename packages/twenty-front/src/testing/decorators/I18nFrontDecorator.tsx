@@ -1,8 +1,8 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { type Decorator } from '@storybook/react';
-import { messages as enMessages } from '~/locales/generated/en';
+import { type Decorator } from '@storybook/react-vite';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { messages as enMessages } from '~/locales/generated/en';
 
 i18n.load({
   [SOURCE_LOCALE]: enMessages,

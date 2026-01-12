@@ -42,6 +42,7 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPI
       redirectLocation: state.redirectLocation,
       calendarVisibility: state.calendarVisibility,
       messageVisibility: state.messageVisibility,
+      skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
     };
 
     done(null, user);

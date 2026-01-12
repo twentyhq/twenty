@@ -1,5 +1,5 @@
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
 
 jest.useFakeTimers().setSystemTime(new Date('2024-10-01T00:00:00.000Z'));

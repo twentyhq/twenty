@@ -2427,6 +2427,11 @@ msgstr "Bir görünüm oluşturmak için ObjeMetaVeriKimliği gereklidir."
 msgid "October"
 msgstr "Ekim"
 
+#. js-lingui-id: Tp2ptT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
+msgid "On delete action is only supported for many to one relations"
+msgstr ""
+
 #. js-lingui-id: eWQQpx
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."

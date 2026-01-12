@@ -3,10 +3,10 @@ import {
   type NormalizedCacheObject,
   useApolloClient,
 } from '@apollo/client';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -1762,103 +1762,6 @@ export const OneToManyRelationCardWidget: Story = {
   },
 };
 
-export const ManyToOneRelationCardWidgetEmpty: Story = {
-  render: () => {
-    const widget: PageLayoutWidget = {
-      __typename: 'PageLayoutWidget',
-      id: 'widget-relation-card-empty',
-      pageLayoutTabId: TAB_ID_OVERVIEW,
-      type: WidgetType.FIELD,
-      title: 'Account Owner',
-      objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
-        row: 4,
-        column: 0,
-        rowSpan: 1,
-        columnSpan: 2,
-      },
-      configuration: {
-        __typename: 'FieldConfiguration',
-        configurationType: WidgetConfigurationType.FIELD,
-        fieldMetadataId: accountOwnerField.id,
-        layout: 'CARD',
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-      deletedAt: null,
-    };
-
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        companyObjectMetadataItem.id,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), {
-        ...mockCompanyRecord,
-        accountOwner: null,
-      });
-    };
-
-    return (
-      <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
-          <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
-              <LayoutRenderingProvider
-                value={{
-                  isInRightDrawer: false,
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: TEST_RECORD_ID,
-                    targetObjectNameSingular:
-                      companyObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
-                  value={{
-                    layoutMode: 'vertical-list',
-                    tabId: 'fields',
-                  }}
-                >
-                  <WidgetComponentInstanceContext.Provider
-                    value={{ instanceId: widget.id }}
-                  >
-                    <FieldWidget widget={widget} />
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
-          </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
-      </div>
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(() => {
-      const emptyPlaceholder = canvas.queryByText('No related records');
-      expect(emptyPlaceholder).toBeInTheDocument();
-    });
-  },
-};
-
 export const TimelineActivityRelationCardWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
@@ -1963,104 +1866,6 @@ export const TimelineActivityRelationCardWidget: Story = {
 
     await waitFor(() => {
       expect(lastUpdateField).toBeVisible();
-    });
-  },
-};
-
-export const TimelineActivityRelationCardWidgetEmpty: Story = {
-  render: () => {
-    const widget: PageLayoutWidget = {
-      __typename: 'PageLayoutWidget',
-      id: 'widget-timeline-activity-relation-card-empty',
-      pageLayoutTabId: TAB_ID_OVERVIEW,
-      type: WidgetType.FIELD,
-      title: 'Workspace Member',
-      objectMetadataId: timelineActivityObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
-        row: 12,
-        column: 0,
-        rowSpan: 1,
-        columnSpan: 2,
-      },
-      configuration: {
-        __typename: 'FieldConfiguration',
-        configurationType: WidgetConfigurationType.FIELD,
-        fieldMetadataId: timelineActivityWorkspaceMemberField.id,
-        layout: 'CARD',
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-      deletedAt: null,
-    };
-
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        timelineActivityObjectMetadataItem.id,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID), {
-        ...mockTimelineActivityRecord,
-        workspaceMember: null,
-      });
-    };
-
-    return (
-      <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
-          <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
-              <LayoutRenderingProvider
-                value={{
-                  isInRightDrawer: false,
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: TEST_TIMELINE_ACTIVITY_RECORD_ID,
-                    targetObjectNameSingular:
-                      timelineActivityObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
-                  value={{
-                    layoutMode: 'vertical-list',
-                    tabId: 'fields',
-                  }}
-                >
-                  <WidgetComponentInstanceContext.Provider
-                    value={{ instanceId: widget.id }}
-                  >
-                    <FieldWidget widget={widget} />
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
-          </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
-      </div>
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const emptyPlaceholder = await canvas.findByText('No related records');
-
-    await waitFor(() => {
-      expect(emptyPlaceholder).toBeVisible();
     });
   },
 };

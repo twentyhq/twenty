@@ -42,9 +42,11 @@ export class FlatPageLayoutWidgetValidatorService {
     const isDashboardV2Enabled =
       featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
-    const existingFlatPageLayoutWidget =
-      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
-        .byId[flatEntityId];
+    const existingFlatPageLayoutWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatEntityId,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
