@@ -941,6 +941,7 @@ export type CreateRouteTriggerInput = {
 
 export type CreateRowLevelPermissionPredicateGroupInput = {
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -2003,6 +2004,7 @@ export type Mutation = {
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<PermissionFlag>;
+  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
@@ -2873,6 +2875,11 @@ export type MutationUpsertObjectPermissionsArgs = {
 
 export type MutationUpsertPermissionFlagsArgs = {
   upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
+};
+
+
+export type MutationUpsertRowLevelPermissionPredicatesArgs = {
+  input: UpsertRowLevelPermissionPredicatesInput;
 };
 
 
@@ -3766,6 +3773,8 @@ export type Role = {
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlag>>;
+  rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
+  rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
   standardId?: Maybe<Scalars['UUID']>;
   universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
@@ -3804,15 +3813,36 @@ export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
   id: Scalars['String'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['String'];
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
   roleId: Scalars['String'];
+};
+
+export type RowLevelPermissionPredicateGroupInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  objectMetadataId: Scalars['UUID'];
+  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
 };
 
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND = 'AND',
   OR = 'OR'
 }
+
+export type RowLevelPermissionPredicateInput = {
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  operand: RowLevelPermissionPredicateOperand;
+  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
+  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['JSON']>;
+  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
+  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
+};
 
 export enum RowLevelPermissionPredicateOperand {
   CONTAINS = 'CONTAINS',
@@ -4472,6 +4502,7 @@ export type UpdateRowLevelPermissionPredicateGroupInput = {
 };
 
 export type UpdateRowLevelPermissionPredicateInput = {
+  fieldMetadataId?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   operand?: InputMaybe<RowLevelPermissionPredicateOperand>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
@@ -4641,6 +4672,19 @@ export type UpsertObjectPermissionsInput = {
 export type UpsertPermissionFlagsInput = {
   permissionFlagKeys: Array<PermissionFlagType>;
   roleId: Scalars['UUID'];
+};
+
+export type UpsertRowLevelPermissionPredicatesInput = {
+  objectMetadataId: Scalars['UUID'];
+  predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
+  predicates: Array<RowLevelPermissionPredicateInput>;
+  roleId: Scalars['UUID'];
+};
+
+export type UpsertRowLevelPermissionPredicatesResult = {
+  __typename?: 'UpsertRowLevelPermissionPredicatesResult';
+  predicateGroups: Array<RowLevelPermissionPredicateGroup>;
+  predicates: Array<RowLevelPermissionPredicate>;
 };
 
 export type User = {

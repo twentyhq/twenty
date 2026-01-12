@@ -14,13 +14,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'rowLevelPermissionPredicateGroup', schema: 'core' })
-@Index('IDX_RLPPG_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
+@Index('IDX_RLPPG_WORKSPACE_ID_ROLE_ID_OBJECT_METADATA_ID', [
+  'workspaceId',
+  'roleId',
+  'objectMetadataId',
+])
 export class RowLevelPermissionPredicateGroupEntity
   extends SyncableEntity
   implements Required<RowLevelPermissionPredicateGroupEntity>
@@ -45,6 +50,9 @@ export class RowLevelPermissionPredicateGroupEntity
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
+  @Column({ nullable: false, type: 'uuid' })
+  objectMetadataId: string;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
@@ -57,6 +65,10 @@ export class RowLevelPermissionPredicateGroupEntity
   @ManyToOne(() => RoleEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
+
+  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'objectMetadataId' })
+  objectMetadata: Relation<ObjectMetadataEntity>;
 
   @ManyToOne(
     () => RowLevelPermissionPredicateGroupEntity,
