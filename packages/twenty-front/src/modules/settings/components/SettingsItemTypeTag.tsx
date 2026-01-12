@@ -1,9 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
-import { useTheme } from '@emotion/react';
+import {
+  getItemTagInfo,
+  type ItemTagInfo,
+} from '@/settings/data-model/utils/getItemTagInfo';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar } from 'twenty-ui/display';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -21,11 +22,28 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledIconContainer = styled.div<{
+  labelColor: ItemTagInfo['labelColor'];
+}>`
+  align-items: center;
+  background: ${({ theme, labelColor }) => theme.tag.background[labelColor]};
+  border: 1px solid ${({ theme, labelColor }) => theme.color[labelColor + '4']};
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: ${({ theme, labelColor }) => theme.tag.text[labelColor]};
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+`;
+
 export const SettingsItemTypeTag = ({
   className,
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const theme = useTheme();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
     item: { isCustom, isRemote, applicationId },
@@ -35,14 +53,9 @@ export const SettingsItemTypeTag = ({
 
   return (
     <StyledContainer className={className}>
-      <Avatar
-        placeholder={itemTagInfo.labelText}
-        placeholderColorSeed={itemTagInfo.labelText}
-        type="squared"
-        size="xs"
-        color={theme.tag.text[itemTagInfo.labelColor]}
-        backgroundColor={theme.tag.background[itemTagInfo.labelColor]}
-      />
+      <StyledIconContainer labelColor={itemTagInfo.labelColor}>
+        {itemTagInfo.labelText.charAt(0).toUpperCase()}
+      </StyledIconContainer>
       {itemTagInfo.labelText}
     </StyledContainer>
   );
