@@ -239,7 +239,7 @@ export const computeOrderByForRecordsParameters =
     return {
       name: 'order_by_for_records',
       in: 'query',
-      description: `Order by clause for records within each group. Only applicable when include_records is true.`,
+      description: `Order by clause for records within each group. Only applicable when include_records_sample is true.`,
       required: false,
       schema: {
         type: 'string',

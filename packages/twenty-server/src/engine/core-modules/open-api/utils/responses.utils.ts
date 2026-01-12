@@ -502,14 +502,14 @@ export const getGroupByResponse200 = (
                       records: {
                         type: 'array',
                         description:
-                          'Sample of records for this group (only present when include_records is true)',
+                          'Sample of records for this group (only present when include_records_sample is true)',
                         items: {
                           $ref: schemaRef,
                         },
                       },
                     },
                     additionalProperties: {
-                      type: 'string',
+                      type: 'number',
                       description: 'Aggregate values (e.g., countNotEmptyId)',
                     },
                   },
