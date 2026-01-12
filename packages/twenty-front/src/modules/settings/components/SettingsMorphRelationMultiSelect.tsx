@@ -68,20 +68,6 @@ const StyledDescription = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-const StyledMenuItemWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-width: 0;
-
-  > div > div {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
 export const SettingsMorphRelationMultiSelect = ({
   className,
   disabled: disabledFromProps,
@@ -253,29 +239,27 @@ export const SettingsMorphRelationMultiSelect = ({
                           closeDropdown(dropdownId);
                         }}
                       >
-                        <StyledMenuItemWrapper>
-                          <MenuItemMultiSelect
-                            className=""
-                            LeftIcon={option.Icon ?? undefined}
-                            text={option.label}
-                            selected={selectedObjectMetadataIds.some(
-                              (selectedObjectMetadataId) =>
-                                selectedObjectMetadataId ===
+                        <MenuItemMultiSelect
+                          className=""
+                          LeftIcon={option.Icon ?? undefined}
+                          text={option.label}
+                          selected={selectedObjectMetadataIds.some(
+                            (selectedObjectMetadataId) =>
+                              selectedObjectMetadataId ===
+                              option.objectMetadataId,
+                          )}
+                          isKeySelected={selectedItemId === option.label}
+                          onSelectChange={() => {
+                            let newSelectedObjectMetadataIds =
+                              addOrRemoveFromArray(
+                                selectedObjectMetadataIds,
                                 option.objectMetadataId,
-                            )}
-                            isKeySelected={selectedItemId === option.label}
-                            onSelectChange={() => {
-                              let newSelectedObjectMetadataIds =
-                                addOrRemoveFromArray(
-                                  selectedObjectMetadataIds,
-                                  option.objectMetadataId,
-                                );
+                              );
 
-                              onChange?.(newSelectedObjectMetadataIds);
-                              onBlur?.();
-                            }}
-                          />
-                        </StyledMenuItemWrapper>
+                            onChange?.(newSelectedObjectMetadataIds);
+                            onBlur?.();
+                          }}
+                        />
                       </SelectableListItem>
                     ))}
                   </SelectableList>

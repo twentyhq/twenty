@@ -12,6 +12,8 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
+  overflow: hidden;
 `;
 
 type MenuItemMultiSelectProps = {
