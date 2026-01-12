@@ -181,7 +181,9 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onCreate={handleCreateNew}
+          onCreate={
+            createNewRecordAndOpenRightDrawer ? handleCreateNew : undefined
+          }
           objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
           onChange={updateRelation}
           onSubmit={() => {
