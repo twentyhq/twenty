@@ -1,11 +1,11 @@
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
-  snapshot_UNSTABLE,
-  useGotoRecoilSnapshot,
-  useRecoilCallback,
-  useRecoilValue,
-  useSetRecoilState,
+    snapshot_UNSTABLE,
+    useGotoRecoilSnapshot,
+    useRecoilCallback,
+    useRecoilValue,
+    useSetRecoilState,
 } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 
@@ -14,33 +14,35 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useCheckUserExistsLazyQuery,
-  useGetAuthTokensFromLoginTokenMutation,
-  useGetAuthTokensFromOtpMutation,
-  useGetLoginTokenFromCredentialsMutation,
-  useSignInMutation,
-  useSignUpInWorkspaceMutation,
-  useSignUpMutation,
-  useVerifyEmailAndGetLoginTokenMutation,
-  useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
-  type AuthTokenPair,
+    useCheckUserExistsLazyQuery,
+    useGetAuthTokensFromLoginTokenMutation,
+    useGetAuthTokensFromOtpMutation,
+    useGetLoginTokenFromCredentialsMutation,
+    useSignInMutation,
+    useSignUpInWorkspaceMutation,
+    useSignUpMutation,
+    useVerifyEmailAndGetLoginTokenMutation,
+    useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
+    type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { LAST_AUTHENTICATED_METHOD_STORAGE_KEY } from '@/auth/states/lastAuthenticatedMethodState';
+import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
-  countAvailableWorkspaces,
-  getFirstAvailableWorkspaces,
+    countAvailableWorkspaces,
+    getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -66,8 +68,6 @@ import { iconsState } from 'twenty-ui/display';
 import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { LAST_AUTHENTICATED_METHOD_STORAGE_KEY } from '@/auth/states/lastAuthenticatedMethodState';
-import { loginTokenState } from '@/auth/states/loginTokenState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);

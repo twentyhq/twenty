@@ -1,12 +1,12 @@
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import {
-  lastAuthenticatedMethodState,
-  LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-  type LastAuthenticatedMethod,
+    LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+    lastAuthenticatedMethodState,
+    type LastAuthenticatedMethod,
 } from '@/auth/states/lastAuthenticatedMethodState';
 import {
-  SignInUpStep,
-  signInUpStepState,
+    SignInUpStep,
+    signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';

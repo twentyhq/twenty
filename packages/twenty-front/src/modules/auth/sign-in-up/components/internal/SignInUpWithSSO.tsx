@@ -1,7 +1,7 @@
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import {
-  lastAuthenticatedMethodState,
   LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+  lastAuthenticatedMethodState,
   type LastAuthenticatedMethod,
 } from '@/auth/states/lastAuthenticatedMethodState';
 import {
