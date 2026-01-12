@@ -1,11 +1,11 @@
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
-    snapshot_UNSTABLE,
-    useGotoRecoilSnapshot,
-    useRecoilCallback,
-    useRecoilValue,
-    useSetRecoilState,
+  snapshot_UNSTABLE,
+  useGotoRecoilSnapshot,
+  useRecoilCallback,
+  useRecoilValue,
+  useSetRecoilState,
 } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 
@@ -14,16 +14,16 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-    useCheckUserExistsLazyQuery,
-    useGetAuthTokensFromLoginTokenMutation,
-    useGetAuthTokensFromOtpMutation,
-    useGetLoginTokenFromCredentialsMutation,
-    useSignInMutation,
-    useSignUpInWorkspaceMutation,
-    useSignUpMutation,
-    useVerifyEmailAndGetLoginTokenMutation,
-    useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
-    type AuthTokenPair,
+  useCheckUserExistsLazyQuery,
+  useGetAuthTokensFromLoginTokenMutation,
+  useGetAuthTokensFromOtpMutation,
+  useGetLoginTokenFromCredentialsMutation,
+  useSignInMutation,
+  useSignUpInWorkspaceMutation,
+  useSignUpMutation,
+  useVerifyEmailAndGetLoginTokenMutation,
+  useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
+  type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -35,14 +35,14 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState
 import { LAST_AUTHENTICATED_METHOD_STORAGE_KEY } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
-    SignInUpStep,
-    signInUpStepState,
+  SignInUpStep,
+  signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
-    countAvailableWorkspaces,
-    getFirstAvailableWorkspaces,
+  countAvailableWorkspaces,
+  getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -177,24 +177,34 @@ export const useAuth = () => {
 
         goToRecoilSnapshot(initialSnapshot);
 
-        // Preserve the last authenticated method before clearing localStorage
-        const lastAuthenticatedMethod = localStorage.getItem(
-          LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-        );
-
-        sessionStorage.clear();
-        localStorage.clear();
-
-        // Restore the last authenticated method after clearing
-        if (lastAuthenticatedMethod) {
-          localStorage.setItem(
+        let lastAuthenticatedMethod: string | null = null;
+        try {
+          lastAuthenticatedMethod = localStorage.getItem(
             LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-            lastAuthenticatedMethod,
           );
+        } catch {
+          // Ignore storage errors - last auth method is non-critical
+        }
+
+        try {
+          sessionStorage.clear();
+          localStorage.clear();
+        } catch {
+          // Ignore storage errors during sign-out
+        }
+
+        if (lastAuthenticatedMethod !== null) {
+          try {
+            localStorage.setItem(
+              LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
+              lastAuthenticatedMethod,
+            );
+          } catch {
+            // Ignore failures preserving last auth method - it's non-critical
+          }
         }
 
         await client.clearStore();
-        // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
         await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);

@@ -1,34 +1,19 @@
+import { useLastAuthenticatedMethod } from '@/auth/sign-in-up/hooks/useLastAuthenticatedMethod';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import {
-    LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-    lastAuthenticatedMethodState,
-    type LastAuthenticatedMethod,
-} from '@/auth/states/lastAuthenticatedMethodState';
 import {
     SignInUpStep,
     signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { Pill } from 'twenty-ui/components';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-
-const StyledButtonContainer = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const StyledLastUsedPill = styled(Pill)`
-  position: absolute;
-  right: -${({ theme }) => theme.spacing(2)};
-  top: -${({ theme }) => theme.spacing(2)};
-  background: ${({ theme }) => theme.color.blue};
-  color: ${({ theme }) => theme.font.color.inverted};
-`;
+import {
+    StyledLastUsedPill,
+    StyledSSOButtonContainer,
+} from './SignInUpSSOButtonStyles';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -39,15 +24,12 @@ export const SignInUpWithMicrosoft = ({
   const { t } = useLingui();
 
   const signInUpStep = useRecoilValue(signInUpStepState);
-  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
+  const { lastAuthenticatedMethod, setLastAuthenticatedMethod } =
+    useLastAuthenticatedMethod();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
 
   const handleClick = () => {
-    // Save to localStorage synchronously before redirect to ensure it persists
-    localStorage.setItem(
-      LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-      JSON.stringify('microsoft' as LastAuthenticatedMethod),
-    );
+    setLastAuthenticatedMethod('microsoft');
     signInWithMicrosoft({ action });
   };
 
@@ -55,7 +37,7 @@ export const SignInUpWithMicrosoft = ({
 
   return (
     <>
-      <StyledButtonContainer>
+      <StyledSSOButtonContainer>
         <MainButton
           Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
           title={t`Continue with Microsoft`}
@@ -64,7 +46,7 @@ export const SignInUpWithMicrosoft = ({
           fullWidth
         />
         {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
-      </StyledButtonContainer>
+      </StyledSSOButtonContainer>
       <HorizontalSeparator visible={false} />
     </>
   );
