@@ -375,25 +375,6 @@ const updateDealValueCreatedThisMonthWidget = ({
   });
 };
 
-/**
- * Updates all standard page layout widgets with workspace-specific field IDs.
- *
- * When using computeTwentyStandardApplicationAllFlatEntityMaps to generate widget configurations,
- * the field IDs are newly generated UUIDs. For existing workspaces, we need to replace
- * these generated IDs with the actual field IDs from the workspace's field metadata.
- *
- * This function handles widgets that reference fields or objects:
- * - dealsByCompany (PIE_CHART)
- * - pipelineValueByStage (BAR_CHART)
- * - revenueTimeline (LINE_CHART)
- * - opportunitiesByOwner (BAR_CHART)
- * - dealsCreatedThisMonth (AGGREGATE_CHART)
- * - dealValueCreatedThisMonth (AGGREGATE_CHART)
- *
- * Widgets without field/object references are not processed:
- * - welcomeRichText (STANDALONE_RICH_TEXT)
- * - stockMarketIframe (IFRAME)
- */
 export const updateStandardPageLayoutWidgetsWithWorkspaceFieldIds = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,

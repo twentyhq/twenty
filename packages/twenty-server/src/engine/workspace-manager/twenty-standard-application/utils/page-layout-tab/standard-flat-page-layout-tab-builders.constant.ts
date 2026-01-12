@@ -16,7 +16,7 @@ export const STANDARD_FLAT_PAGE_LAYOUT_TAB_BUILDERS_BY_LAYOUT_NAME = {
       context: {
         layoutName: 'myFirstDashboard',
         tabName: 'tab1',
-        title: 'Tab 1', // TODO: ask Thomas to provide the appropriate title
+        title: 'Tab 1',
         position: 0,
       },
     }),
