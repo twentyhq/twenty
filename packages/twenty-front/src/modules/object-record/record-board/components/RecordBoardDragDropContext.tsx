@@ -1,15 +1,3 @@
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
-import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
-import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import {
   DragDropContext,
   type DragStart,
@@ -17,6 +5,18 @@ import {
 } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
+
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
+import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
+import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const RecordBoardDragDropContext = ({
   children,
@@ -59,9 +59,10 @@ export const RecordBoardDragDropContext = ({
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
       (result) => {
-        endRecordDrag();
-
-        if (!result.destination) return;
+        if (!result.destination) {
+          endRecordDrag();
+          return;
+        }
 
         const currentRecordSorts = getSnapshotValue(
           snapshot,
@@ -70,6 +71,7 @@ export const RecordBoardDragDropContext = ({
 
         if (currentRecordSorts.length > 0) {
           openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+          endRecordDrag();
           return;
         }
 
@@ -79,6 +81,11 @@ export const RecordBoardDragDropContext = ({
         );
 
         processBoardCardDrop(result, originalSelection);
+
+        // [Fix]: 使用 window.requestAnimationFrame 避免 no-undef 報錯
+        window.requestAnimationFrame(() => {
+          endRecordDrag();
+        });
       },
     [
       processBoardCardDrop,
