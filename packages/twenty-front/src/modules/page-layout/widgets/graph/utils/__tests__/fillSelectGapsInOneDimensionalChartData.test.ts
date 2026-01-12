@@ -85,5 +85,4 @@ describe('fillSelectGapsInOneDimensionalChartData', () => {
       sum: 0,
     });
   });
-
 });
