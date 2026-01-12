@@ -596,4 +596,27 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  ownedOpportunities: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'ownedOpportunities',
+      label: 'Owned opportunities',
+      description: 'Opportunities owned by the workspace member',
+      icon: 'IconTargetArrow',
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'opportunity',
+      targetFieldName: 'owner',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

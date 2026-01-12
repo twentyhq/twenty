@@ -22,6 +22,8 @@ import { AddWorkspaceForeignKeysMigrationCommand } from 'src/database/commands/u
 import { BackfillUpdatedByFieldCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-backfill-updated-by-field.command';
 import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-fix-nan-position-values-in-notes.command';
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
+import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
+import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -63,6 +65,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.16 Commands
     protected readonly updateTaskOnDeleteActionCommand: UpdateTaskOnDeleteActionCommand,
+    protected readonly backfillOpportunityOwnerFieldCommand: BackfillOpportunityOwnerFieldCommand,
+    protected readonly backfillStandardPageLayoutsCommand: BackfillStandardPageLayoutsCommand,
   ) {
     super(
       workspaceRepository,
@@ -98,6 +102,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1160: VersionCommands = [
       this.updateTaskOnDeleteActionCommand,
+      this.backfillOpportunityOwnerFieldCommand,
+      this.backfillStandardPageLayoutsCommand,
     ];
 
     this.allCommands = {

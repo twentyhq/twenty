@@ -11,4 +11,7 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'role',
   'agent',
   'skill',
+  'pageLayout',
+  'pageLayoutTab',
+  'pageLayoutWidget',
 ] as const satisfies AllMetadataName[];
