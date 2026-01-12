@@ -6,6 +6,8 @@ import {
   destroyManyDashboardsWithGraphQL,
 } from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
 import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
+import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -114,10 +116,25 @@ describe('Dashboard page layout auto-creation should succeed', () => {
     });
 
     it('should use provided pageLayoutId for some dashboards and auto-create for others', async () => {
+      const { data: pageLayoutData } = await createOnePageLayout({
+        input: {
+          name: 'Pre-existing page layout',
+          type: PageLayoutType.DASHBOARD,
+        },
+        expectToFail: false,
+      });
+
+      const existingPageLayoutId = pageLayoutData.createPageLayout.id;
+
+      expect(existingPageLayoutId).toBeDefined();
+
       const dashboardsData = [
+        {
+          title: 'Dashboard with provided layout',
+          pageLayoutId: existingPageLayoutId,
+        },
         { title: 'Dashboard without layout 1' },
         { title: 'Dashboard without layout 2' },
-        { title: 'Dashboard without layout 3' },
       ];
 
       const dashboards = await createManyDashboardsWithGraphQL(dashboardsData);
@@ -126,10 +143,27 @@ describe('Dashboard page layout auto-creation should succeed', () => {
 
       expect(dashboards.length).toBe(3);
 
-      for (const dashboard of dashboards) {
+      const dashboardWithProvidedLayout = dashboards.find(
+        (d) => d.title === 'Dashboard with provided layout',
+      );
+      const dashboardsWithAutoCreatedLayout = dashboards.filter(
+        (d) => d.title !== 'Dashboard with provided layout',
+      );
+
+      expect(dashboardWithProvidedLayout?.pageLayoutId).toBe(
+        existingPageLayoutId,
+      );
+
+      for (const dashboard of dashboardsWithAutoCreatedLayout) {
         expect(dashboard.pageLayoutId).toBeDefined();
         expect(isNonEmptyString(dashboard.pageLayoutId)).toBe(true);
+        expect(dashboard.pageLayoutId).not.toBe(existingPageLayoutId);
       }
+
+      await destroyOnePageLayout({
+        input: { id: existingPageLayoutId },
+        expectToFail: false,
+      });
     });
   });
 });
