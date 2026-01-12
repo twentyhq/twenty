@@ -107,10 +107,11 @@ description: Common questions about configuring widgets and charts.
   <Accordion title="Why is my chart showing 'Undisplayed data'?">
     Charts have display limits to keep them readable:
 
-    - **Bar charts (horizontal)**: Maximum 100 bars
-    - **Bar charts (vertical)**: Maximum 50 bars
+    - **Bar charts**: Maximum 100 bars, and 50 groups per bar when using Group By
+    - **Line charts**: Maximum 100 data points
+    - **Pie charts**: Maximum 100 slices
 
-    If your data exceeds this, some bars won't be shown.
+    If your data exceeds this, some items won't be shown.
 
     **To fix this:**
     - Add filters to narrow down your data
