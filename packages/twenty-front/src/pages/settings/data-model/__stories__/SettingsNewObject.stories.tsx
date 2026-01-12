@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -7,8 +7,8 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',

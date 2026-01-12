@@ -1,5 +1,5 @@
 import { ApolloProvider } from '@apollo/client';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { RecoilRoot } from 'recoil';
 
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';

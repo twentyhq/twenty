@@ -9,7 +9,7 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { type OrderBy } from '@/types/OrderBy';
+import { type OrderBy } from 'twenty-shared/types';
 
 export const useRecordsForSelect = ({
   searchFilterText,

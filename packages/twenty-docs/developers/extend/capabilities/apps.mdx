@@ -280,6 +280,10 @@ Key points:
 - The `fields` array is optional — you can define objects without custom fields.
 - You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships.
 
+<Note>
+**Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+</Note>
+
 <Accordion title="Alternative: Decorator-based syntax">
 You can also define objects using TypeScript decorators. This approach uses class-based syntax with `@Object`, `@Field`, and `@Relation` decorators:
 
