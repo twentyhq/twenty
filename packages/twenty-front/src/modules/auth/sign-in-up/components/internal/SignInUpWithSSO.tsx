@@ -1,15 +1,30 @@
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { Pill } from 'twenty-ui/components';
+
+const StyledButtonContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const StyledLastUsedPill = styled(Pill)`
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(2)};
+  top: 50%;
+  transform: translateY(-50%);
+`;
 
 export const SignInUpWithSSO = () => {
   const theme = useTheme();
@@ -18,10 +33,15 @@ export const SignInUpWithSSO = () => {
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const signInUpStep = useRecoilValue(signInUpStepState);
+  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
+  const setLastAuthenticatedMethod = useSetRecoilState(
+    lastAuthenticatedMethodState,
+  );
 
   const { redirectToSSOLoginPage } = useSSO();
 
   const signInWithSSO = () => {
+    setLastAuthenticatedMethod('sso');
     if (
       isDefined(workspaceAuthProviders) &&
       workspaceAuthProviders.sso.length === 1
@@ -32,15 +52,20 @@ export const SignInUpWithSSO = () => {
     setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
   };
 
+  const isLastUsed = lastAuthenticatedMethod === 'sso';
+
   return (
     <>
-      <MainButton
-        Icon={() => <IconLock size={theme.icon.size.md} />}
-        title={t`Single sign-on (SSO)`}
-        onClick={signInWithSSO}
-        variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
-        fullWidth
-      />
+      <StyledButtonContainer>
+        <MainButton
+          Icon={() => <IconLock size={theme.icon.size.md} />}
+          title={t`Single sign-on (SSO)`}
+          onClick={signInWithSSO}
+          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
+          fullWidth
+        />
+        {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+      </StyledButtonContainer>
       <HorizontalSeparator visible={false} />
     </>
   );

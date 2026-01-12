@@ -1,14 +1,29 @@
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { Pill } from 'twenty-ui/components';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+
+const StyledButtonContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const StyledLastUsedPill = styled(Pill)`
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(2)};
+  top: 50%;
+  transform: translateY(-50%);
+`;
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -19,17 +34,31 @@ export const SignInUpWithMicrosoft = ({
   const { t } = useLingui();
 
   const signInUpStep = useRecoilValue(signInUpStepState);
+  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
+  const setLastAuthenticatedMethod = useSetRecoilState(
+    lastAuthenticatedMethodState,
+  );
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
+
+  const handleClick = () => {
+    setLastAuthenticatedMethod('microsoft');
+    signInWithMicrosoft({ action });
+  };
+
+  const isLastUsed = lastAuthenticatedMethod === 'microsoft';
 
   return (
     <>
-      <MainButton
-        Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
-        title={t`Continue with Microsoft`}
-        onClick={() => signInWithMicrosoft({ action })}
-        variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
-        fullWidth
-      />
+      <StyledButtonContainer>
+        <MainButton
+          Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
+          title={t`Continue with Microsoft`}
+          onClick={handleClick}
+          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
+          fullWidth
+        />
+        {isLastUsed && <StyledLastUsedPill label={t`Last`} />}
+      </StyledButtonContainer>
       <HorizontalSeparator visible={false} />
     </>
   );
