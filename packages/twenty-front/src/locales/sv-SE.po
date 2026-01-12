@@ -569,9 +569,9 @@ msgstr "Möjlighet att lägga till fler än en URL"
 msgid "Ability to edit all settings"
 msgstr "Möjlighet att redigera alla inställningar"
 
-#. js-lingui-id: be8QOI
+#. js-lingui-id: 7J3Y++
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to interact with specific records of this object."
+msgid "Ability to filter the records a user can interact with."
 msgstr ""
 
 #. js-lingui-id: wTKqOI
@@ -804,6 +804,8 @@ msgstr "Lägg till fil"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
 msgid "Add filter"
@@ -918,6 +920,8 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -5523,6 +5527,7 @@ msgstr "Fält på destinationen"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
@@ -6042,6 +6047,11 @@ msgstr "Dölj"
 msgid "Hide deleted"
 msgstr "Dölj raderade"
 
+#. js-lingui-id: rp2bZI
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Hide deleted dashboards"
+msgstr ""
+
 #. js-lingui-id: OTmbll
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Hide deleted members"
@@ -6473,6 +6483,16 @@ msgstr "Ogiltig autentiseringsleverantör"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Ogiltig autentiseringsleverantör"
+
+#. js-lingui-id: O/7n0L
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay.tsx
+msgid "Invalid Configuration"
+msgstr ""
+
+#. js-lingui-id: fSwqXe
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay.tsx
+msgid "Invalid configuration. Click edit to configure this widget."
+msgstr ""
 
 #. js-lingui-id: ER/0YT
 #: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
@@ -7311,8 +7331,14 @@ msgstr "MCP Server"
 
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
 msgid "Me"
 msgstr "Jag"
+
+#. js-lingui-id: pfWzog
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Me (User ID)"
+msgstr ""
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7931,6 +7957,11 @@ msgstr "Ingen ändring upptäckt"
 msgid "No comment"
 msgstr ""
 
+#. js-lingui-id: qTxPPY
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "No compatible fields"
+msgstr ""
+
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
@@ -8169,11 +8200,6 @@ msgstr "Inga behörigheter har satts för enskilda objekt."
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "No record is required to trigger this workflow"
 msgstr "Ingen post krävs för att utlösa detta arbetsflöde"
-
-#. js-lingui-id: DiSvfp
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "No record-level rules have been set yet."
-msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -9662,6 +9688,11 @@ msgstr "Återställ till standard"
 msgid "Reset to Default"
 msgstr "Återställ till standard"
 
+#. js-lingui-id: 14xBUx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+msgid "Reset to static value"
+msgstr ""
+
 #. js-lingui-id: 6rzsES
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "Reset variable"
@@ -9710,6 +9741,11 @@ msgstr "Återställ"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Restore dashboard"
 msgstr "Återställ instrumentpanel"
+
+#. js-lingui-id: jC7v7d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboards"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -9977,6 +10013,16 @@ msgstr "Sök"
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Sök ''{commandMenuSearch}'' med..."
 
+#. js-lingui-id: g2dQp/
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Search 1 {fieldTypeLabelLowercase} field"
+msgstr ""
+
+#. js-lingui-id: 4XD2Lr
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Search 1 field"
+msgstr ""
+
 #. js-lingui-id: n9V88v
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 msgid "Search a built-in tool..."
@@ -10197,6 +10243,11 @@ msgstr "Visa {objectLabelPlural}"
 msgid "See active version"
 msgstr "Se aktiv version"
 
+#. js-lingui-id: f4Lu+X
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "See deleted dashboards"
+msgstr ""
+
 #. js-lingui-id: 8O9AJI
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "See deleted members"
@@ -10273,6 +10324,16 @@ msgstr "Se arbetsflöden"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
 msgid "Select"
 msgstr "Välj"
+
+#. js-lingui-id: 9NFSzl
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Select 1 {fieldTypeLabelLowercase} field"
+msgstr ""
+
+#. js-lingui-id: VjMMyZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Select 1 field"
+msgstr ""
 
 #. js-lingui-id: D1pVcW
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
@@ -12729,6 +12790,7 @@ msgstr "När nyckeln kommer att inaktiveras"
 
 #. js-lingui-id: YvwwqC
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell.tsx
 msgid "Where"

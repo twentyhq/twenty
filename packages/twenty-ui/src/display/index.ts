@@ -222,6 +222,7 @@ export {
   IconDownload,
   IconEdit,
   IconEditCircle,
+  IconEraser,
   IconExclamationCircle,
   IconExternalLink,
   IconEye,

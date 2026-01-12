@@ -23,6 +23,7 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -144,9 +145,16 @@ export class WorkspaceEventEmitterResolver {
       }[] = [];
 
       for (const event of payload.workspaceEventBatch.events) {
+        const eventName = parseEventNameOrThrow(
+          payload.workspaceEventBatch.name,
+        );
+
+        const action = eventName.action;
+
         const eventWithObjectName = {
-          objectNameSingular,
           ...event,
+          objectNameSingular,
+          action,
         };
 
         const matchedQueryIds =

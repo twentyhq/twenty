@@ -28,8 +28,5 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
       [],
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
-    universalIdentifier:
-      fieldMetadataWithoutRelations.standardId ??
-      fieldMetadataWithoutRelations.id,
   };
 };

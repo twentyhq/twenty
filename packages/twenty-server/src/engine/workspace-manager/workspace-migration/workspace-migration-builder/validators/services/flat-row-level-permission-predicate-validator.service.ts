@@ -205,6 +205,30 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       }),
     };
 
+    if (updatedPredicate.roleId !== existingPredicate.roleId) {
+      const existingRoleId = existingPredicate.roleId;
+      const updatedRoleId = updatedPredicate.roleId;
+
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
+        message: t`Cannot modify predicate to change its role from ${existingRoleId} to ${updatedRoleId}`,
+        userFriendlyMessage: msg`Cannot modify predicate to change its role`,
+      });
+    }
+
+    if (
+      updatedPredicate.objectMetadataId !== existingPredicate.objectMetadataId
+    ) {
+      const existingObjectMetadataId = existingPredicate.objectMetadataId;
+      const updatedObjectMetadataId = updatedPredicate.objectMetadataId;
+
+      validationResult.errors.push({
+        code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
+        message: t`Cannot modify predicate to change its object from ${existingObjectMetadataId} to ${updatedObjectMetadataId}`,
+        userFriendlyMessage: msg`Cannot modify predicate to change its object`,
+      });
+    }
+
     const fieldMetadata = flatFieldMetadataMaps
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: updatedPredicate.fieldMetadataId,
