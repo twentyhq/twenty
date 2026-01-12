@@ -28,18 +28,21 @@ export class ApplicationService {
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,
+    withDeleted = false
   }:
     | {
         workspaceId: string;
         workspace?: never;
+        withDeleted?: boolean
       }
-    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    | { workspace: WorkspaceEntity; workspaceId?: never, withDeleted?: boolean }) {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
           where: {
             id: workspaceId,
           },
+          withDeleted,
         });
 
     if (!isDefined(workspace)) {

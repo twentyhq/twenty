@@ -2,11 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import {
+  RunOnWorkspaceArgs,
+  WorkspacesMigrationCommandRunner,
+} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -46,7 +49,7 @@ type FieldMetadataException = {
   name: 'upgrade:1-16:identify-field-metadata',
   description: 'Identify standard field metadata',
 })
-export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class IdentifyFieldMetadataCommand extends WorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -57,7 +60,12 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     protected readonly applicationService: ApplicationService,
     protected readonly workspaceCacheService: WorkspaceCacheService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
+      WorkspaceActivationStatus.ACTIVE,
+      WorkspaceActivationStatus.SUSPENDED,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+      WorkspaceActivationStatus.PENDING_CREATION,
+    ]);
   }
 
   override async runOnWorkspace({
@@ -70,7 +78,7 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
 
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
+        { workspaceId, withDeleted: true },
       );
 
     const allFieldMetadataEntities = await this.fieldMetadataRepository.find({
@@ -230,4 +238,3 @@ export class IdentifyFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     }
   }
 }
-
