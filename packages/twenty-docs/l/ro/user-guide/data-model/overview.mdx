@@ -1,6 +1,6 @@
 ---
 title: Model de date
-description: Learn what a data model is and how to design one that fits your business.
+description: Află ce este un model de date și cum să proiectezi unul care se potrivește afacerii tale.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
@@ -8,168 +8,168 @@ image: /images/user-guide/fields/custom_data_model.png
   <img src="/images/user-guide/fields/custom_data_model.png" alt="Model de date" />
 </Frame>
 
-## What is a Data Model?
+## Ce este un model de date?
 
-Un model de date este structura care definește cum sunt organizate informațiile în CRM-ul tău. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+Un model de date este structura care definește cum sunt organizate informațiile în CRM-ul tău. Gândește-te la el ca la **planul** datelor tale despre clienți — îl proiectezi o singură dată, apoi îl umpli cu datele tale reale.
 
-## Key Concepts
+## Concepte cheie
 
 ### Obiecte
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**Obiectele** sunt principalele categorii de date din CRM-ul tău. Fiecare obiect reprezintă un tip de element pe care vrei să îl urmărești.
 
-Twenty comes with standard objects:
+Twenty include obiecte standard:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **People** — persoane (contacte, leaduri, parteneri)
+* **Companii** — organizații
+* **Oportunități** — tranzacții sau vânzări
+* **Note** — note atașate la înregistrări
+* **Sarcini** — sarcini legate de înregistrări
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+Poți crea și **obiecte personalizate** pentru orice este specific afacerii tale (de ex., Proiecte, Abonamente, Evenimente).
 
 ### Câmpuri
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**Câmpurile** sunt proprietățile sau atributele care descriu fiecare obiect. Ele stochează informațiile efective.
 
-For example, the **People** object has fields like:
+De exemplu, obiectul **People** are câmpuri precum:
 
 * Nume
 * Email
 * Telefon
-* Job Title
-* Company (a relation to the Companies object)
+* Funcție
+* Companie (o relație cu obiectul Companies)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+Câmpurile au diferite **tipuri**: text, număr, dată, selectare, selecție multiplă, relație și altele. Poți adăuga câmpuri personalizate la orice obiect.
 
 ### Înregistrări
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**Înregistrările** sunt intrările individuale dintr-un obiect — datele efective pe care le creezi și le gestionezi.
 
 De exemplu:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" este o **înregistrare** în obiectul People
+* "Acme Corp" este o **înregistrare** în obiectul Companies
 
-**An analogy:**
+**O analogie:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Câmpuri**        | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| Conceptul de model de date | Analogie din lumea reală                                |
+| -------------------------- | ------------------------------------------------------- |
+| **Obiecte**                | Secțiuni într-o carte (categoriile)                     |
+| **Câmpuri**                | Coloane într-o foaie de calcul (proprietățile)          |
+| **Înregistrări**           | Rânduri într-o foaie de calcul (intrările propriu-zise) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+Proiectezi modelul de date (obiecte + câmpuri) o singură dată, apoi creezi multe înregistrări în acea structură.
 
-## Why Customize Your Data Model?
+## De ce să-ți personalizezi modelul de date?
 
-Fiecare afacere funcționează diferit. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Fiecare afacere funcționează diferit. Personalizarea modelului tău de date înseamnă că poți modela Twenty în jurul proceselor **tale**, în loc să le forțezi într-un sistem rigid.
 
-Twenty offers full flexibility:
+Twenty oferă flexibilitate totală:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* Creează oricâte obiecte personalizate de care ai nevoie
+* Adaugă un număr nelimitat de câmpuri personalizate
+* Prețul nu se schimbă în funcție de personalizare
 
-## Tips to Design Your Data Model
+## Sfaturi pentru a proiecta modelul tău de date
 
-### 1. Start with Your Core Objects
+### 1. Începe cu obiectele tale de bază
 
-Identify the main concepts you work with. Twenty already provides:
+Identifică principalele concepte cu care lucrezi. Twenty oferă deja:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **People** — contactele tale
+* **Companies** — conturile tale
+* **Oportunități** — tranzacțiile tale
 
-Think about what else you might need:
+Gândește-te la ce altceva ai putea avea nevoie:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe ar avea nevoie de un obiect `Subscriptions`
+* Airbnb ar avea nevoie de un obiect `Trips`
+* Un accelerator ar avea nevoie de un obiect `Batches`
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. Folosește câmpuri pentru variații, nu obiecte noi
 
-If something is just a characteristic of an existing object, make it a **field**.
+Dacă ceva este doar o caracteristică a unui obiect existent, fă-l un **câmp**.
 
-**Use fields for:**
+**Folosește câmpuri pentru:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* Categorii și etichete (de ex., `Industry` pentru Companies)
+* Valori de stare (de ex., `Stage` pentru Opportunities)
+* Atribute și proprietăți
 
-### 3. Create an Object When It Stands on Its Own
+### 3. Creează un obiect atunci când stă pe cont propriu
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+Dacă conceptul are propriul ciclu de viață, propriile proprietăți sau relații, merită un obiect.
 
-**Create an object for:**
+**Creează un obiect pentru:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Proiecte** — au termene limită, responsabili și sarcini
+* **Abonamente** — conectează companii, produse și facturi
+* **Evenimente** — implică participanți și acțiuni ulterioare
 
 Acestea depășesc un singur câmp deoarece au propriile date și relații.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. Creează un obiect atunci când numărul înregistrărilor este nedeterminat
 
-If something can be linked multiple times and you don't know how many, use an object.
+Dacă ceva poate fi asociat de mai multe ori și nu știi de câte, folosește un obiect.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**Abordare greșită:**
+Crearea de câmpuri precum `Product 1`, `Product 2`, `Product 3`...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**Abordare bună:**
+Creează un obiect `Products` și relaționează-l cu înregistrările. Astfel, poți susține unul, două sau o sută de produse fără a-ți schimba modelul.
 
-### 5. Keep It Simple First
+### 5. Păstrează totul simplu la început
 
-Start with fields. Move to new objects only when you feel the limits:
+Începe cu câmpurile. Treci la obiecte noi doar când simți limitele:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Prea multe câmpuri pe un singur obiect
+* Înregistrări repetate care ar trebui să fie separate
+* Relații care nu se potrivesc bine
 
-## Special Note on People, Companies, and Opportunities
+## Notă specială despre Persoane, Companii și Oportunități
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **Sincronizarea e-mailului și a calendarului funcționează doar cu Persoane, Companii și Oportunități.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Acestea sunt singurele obiecte în care puteți accesa e-mailuri și întâlniri sincronizate din căsuța poștală/calendar. Vă recomandăm să le utilizați cât mai mult posibil.
 </Warning>
 
-**Best practices:**
+**Cele mai bune practici:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Dacă aveți nevoie de categorii de Persoane, folosiți câmpuri (nu obiecte noi)
+* Exemplu: folosiți un câmp `Person Type` cu valorile "Prospect" și "Partner" în loc să creați obiecte separate
+* Creați **vizualizări** diferite pentru filtrare: una care afișează partenerii, alta care afișează prospectele
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Este în regulă să aveți câmpuri care nu se aplică fiecărei înregistrări.** De exemplu, un câmp `Referral Link` în Persoane care se aplică doar când `Person Type = Partner`. Ascundeți acest câmp din vizualizările în care nu este relevant.
 
-## Questions to Guide Your Choice
+## Întrebări pentru a vă ghida alegerea
 
 Întreabă-te:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Este aceasta doar o proprietate a ceva ce aveți deja sau necesită propriile sale proprietăți?</Check>
+<Check>Va fi vreodată nevoie să urmăriți mai multe dintre acestea pentru fiecare înregistrare, fără a ști câte?</Check>
+<Check>Acest concept se conectează la mai multe obiecte diferite, nu doar la unul singur?</Check>
+<Check>Va avea propriul ciclu de viață (etape, date de început/sfârșit)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Dacă răspunsul este "da" la una sau mai multe, probabil că este timpul pentru un nou obiect.
 
-## Accessing Your Data Model
+## Accesarea modelului de date
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Accesați **Setări** în bara laterală stângă
+2. Faceți clic pe **Model de date**
+3. Vizualizați toate obiectele (standard și personalizate)
+4. Faceți clic pe orice obiect pentru a-i vedea și edita câmpurile
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Nu vedeți Modelul de date în Setări?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Accesul la modelul de date este de obicei restricționat administratorilor. Contactați administratorul spațiului de lucru dacă aveți nevoie de acces.
 </Note>
 
 ## Pașii următori
 
-Once you've planned your data model:
+După ce ați planificat modelul de date:
 
 * [Cum să creezi obiecte personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-objects)
 * [Cum să creezi câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields)
@@ -177,4 +177,4 @@ Once you've planned your data model:
 
 ## Ai nevoie de ajutor?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/ro/user-guide/getting-started/capabilities/implementation-services).
+Echipa noastră vă poate ajuta să proiectați și să creați modelul de date de care aveți nevoie. Descoperiți [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services).

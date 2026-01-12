@@ -35,6 +35,7 @@ export const getTsVectorColumnExpressionFromFields = (
   );
   const concatenatedExpression = columnExpressions.join(" || ' ' || ");
 
+  // Note: changing this expression requires reindexing/backfilling existing searchVector values.
   return `to_tsvector('simple', ${concatenatedExpression})`;
 };
 
@@ -68,6 +69,7 @@ const getColumnExpressionsFromField = (
     if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
       const phoneNumberColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneNumber"`;
       const callingCodeColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode"`;
+      const additionalPhonesColumn = `"${fieldMetadataTypeAndName.name}AdditionalPhones"`;
 
       const internationalFormats = [
         `COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
@@ -75,7 +77,29 @@ const getColumnExpressionsFromField = (
         `COALESCE('0' || ${phoneNumberColumn}, '')`,
       ];
 
-      return [...baseExpressions, ...internationalFormats];
+      const additionalPhonesExpression = `COALESCE(TRANSLATE(regexp_replace(${additionalPhonesColumn}::text, '"(number|countryCode|callingCode)"\\s*:\\s*', '', 'g'), '[]{}",:', '        '), '')`;
+
+      return [
+        ...baseExpressions,
+        ...internationalFormats,
+        additionalPhonesExpression,
+      ];
+    }
+
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.LINKS) {
+      const secondaryLinksColumn = `"${fieldMetadataTypeAndName.name}SecondaryLinks"`;
+
+      const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
+
+      return [...baseExpressions, secondaryLinksExpression];
+    }
+
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.EMAILS) {
+      const additionalEmailsColumn = `"${fieldMetadataTypeAndName.name}AdditionalEmails"`;
+
+      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(${additionalEmailsColumn}::text, '@', ' '), '[]",', '    ')), '')`;
+
+      return [...baseExpressions, additionalEmailsExpression];
     }
 
     return baseExpressions;

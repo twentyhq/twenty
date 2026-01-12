@@ -66,8 +66,8 @@ export class ConnectedAccountRefreshTokensService {
       };
     }
 
-    this.logger.log(
-      `Access token expired for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}, refreshing...`,
+    this.logger.debug(
+      `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
     );
 
     const connectedAccountTokens = await this.refreshTokens(
@@ -159,13 +159,13 @@ export class ConnectedAccountRefreshTokensService {
     } catch (error) {
       if (isGmailNetworkError(error)) {
         throw new ConnectedAccountRefreshAccessTokenException(
-          `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.code}`,
+          `Error refreshing tokens for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.code}`,
           ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
         );
       }
 
       this.logger.log(
-        `Error while refreshing tokens on connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+        `Error while refreshing tokens on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         error,
       );
       throw error;
