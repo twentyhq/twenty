@@ -246,7 +246,7 @@ export class IdentifyViewFieldMetadataCommand extends WorkspacesMigrationCommand
         warnings.push({
           viewFieldEntity,
           warning: 'unknown_view_field_name',
-          viewName: view.name,
+          viewName: flatView.name,
           objectNameSingular: flatObjectMetadata.nameSingular,
           fieldName: flatFieldMetadata.name,
         });
