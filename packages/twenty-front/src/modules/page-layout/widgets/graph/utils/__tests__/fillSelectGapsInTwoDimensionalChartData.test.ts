@@ -100,7 +100,7 @@ describe('fillSelectGapsInTwoDimensionalChartData', () => {
     });
   });
 
-  it('orders results by primary axis option position', () => {
+  it('preserves selectOptions order for primary axis', () => {
     const data = [
       { groupByDimensionValues: ['C', 'X'], count: 3 },
       { groupByDimensionValues: ['A', 'X'], count: 5 },

@@ -34,11 +34,7 @@ export const fillSelectGapsInTwoDimensionalChartData = ({
     existingGroupsMap.set(key, item);
   }
 
-  const sortedOptions = [...selectOptions].sort(
-    (a, b) => a.position - b.position,
-  );
-
-  const filledData = sortedOptions.flatMap((option) =>
+  const filledData = selectOptions.flatMap((option) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {
       const key = `${option.value}_${String(secondDimensionValue)}`;
       const existingGroup = existingGroupsMap.get(key);

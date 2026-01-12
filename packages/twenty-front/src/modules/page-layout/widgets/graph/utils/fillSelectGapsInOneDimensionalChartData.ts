@@ -25,11 +25,7 @@ export const fillSelectGapsInOneDimensionalChartData = ({
     }
   }
 
-  const sortedOptions = [...selectOptions].sort(
-    (a, b) => a.position - b.position,
-  );
-
-  const filledData: GroupByRawResult[] = sortedOptions.map((option) => {
+  const filledData: GroupByRawResult[] = selectOptions.map((option) => {
     const existingGroup = existingGroupsMap.get(option.value);
 
     return isDefined(existingGroup)
