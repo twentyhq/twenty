@@ -35,12 +35,8 @@ export const defineFunction = <T extends FunctionConfig>(config: T): T => {
     throw new Error('Function must have a handler');
   }
 
-  if (!config.triggers || config.triggers.length === 0) {
-    throw new Error('Function must have at least one trigger');
-  }
-
   // Validate each trigger
-  for (const trigger of config.triggers) {
+  for (const trigger of config.triggers ?? []) {
     if (!trigger.universalIdentifier) {
       throw new Error('Each trigger must have a universalIdentifier');
     }

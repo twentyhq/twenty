@@ -1,10 +1,10 @@
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 import { IconBell } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableList> = {
   title: 'UI/Layout/DraggableList/DraggableList',

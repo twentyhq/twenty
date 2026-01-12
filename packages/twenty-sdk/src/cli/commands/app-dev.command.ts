@@ -15,25 +15,17 @@ export class AppDevCommand {
     appPath?: string;
     debounce: string;
   }): Promise<void> {
-    try {
-      const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-      const debounceMs = parseInt(options.debounce, 10);
+    const debounceMs = parseInt(options.debounce, 10);
 
-      this.logStartupInfo(appPath, debounceMs);
+    this.logStartupInfo(appPath, debounceMs);
 
-      await this.synchronize(appPath);
+    await this.synchronize(appPath);
 
-      const watcher = this.setupFileWatcher(appPath, debounceMs);
+    const watcher = this.setupFileWatcher(appPath, debounceMs);
 
-      this.setupGracefulShutdown(watcher);
-    } catch (error) {
-      console.error(
-        chalk.red('Development mode failed:'),
-        error instanceof Error ? error.message : error,
-      );
-      process.exit(1);
-    }
+    this.setupGracefulShutdown(watcher);
   }
 
   private async synchronize(appPath: string) {
@@ -55,9 +47,12 @@ export class AppDevCommand {
     } catch (error) {
       if (error instanceof ManifestValidationError) {
         displayErrors(error);
-        throw error;
+      } else {
+        console.error(
+          chalk.red('  ✗ Sync failed:'),
+          error instanceof Error ? error.message : error,
+        );
       }
-      throw error;
     }
   }
 

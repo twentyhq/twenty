@@ -92,26 +92,26 @@ describe('defineObject', () => {
     );
   });
 
-  it('should throw error when fields is empty', () => {
+  it('should accept empty fields array', () => {
     const config = {
       ...validConfig,
       fields: [],
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have at least one field',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.fields).toEqual([]);
   });
 
-  it('should throw error when fields is missing', () => {
+  it('should accept missing fields', () => {
     const config = {
       ...validConfig,
       fields: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have at least one field',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.fields).toBeUndefined();
   });
 
   it('should throw error when field is missing universalIdentifier', () => {

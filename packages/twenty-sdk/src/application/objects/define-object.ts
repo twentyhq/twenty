@@ -55,12 +55,8 @@ export const defineObject = <T extends ObjectManifest>(config: T): T => {
     throw new Error('Object must have a labelPlural');
   }
 
-  if (!config.fields || config.fields.length === 0) {
-    throw new Error('Object must have at least one field');
-  }
-
   // Validate each field
-  for (const field of config.fields) {
+  for (const field of config.fields ?? []) {
     if (!field.universalIdentifier) {
       throw new Error(`Field "${field.label}" must have a universalIdentifier`);
     }

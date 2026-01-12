@@ -3,15 +3,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -41,7 +33,15 @@ export const FieldWidgetRelationField = ({
   const relationObjectNameSingular =
     fieldMetadata.relationObjectMetadataNameSingular;
 
-  if (isOneToMany && Array.isArray(relationValue)) {
+  if (isOneToMany && !Array.isArray(relationValue)) {
+    return null;
+  }
+
+  if (!isOneToMany && !isDefined(relationValue)) {
+    return null;
+  }
+
+  if (isOneToMany) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -59,35 +59,15 @@ export const FieldWidgetRelationField = ({
     );
   }
 
-  if (!isOneToMany && isDefined(relationValue)) {
-    return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
-        <StyledContainer>
-          <StyledRelationChipsContainer>
-            <RecordChip
-              objectNameSingular={relationObjectNameSingular}
-              record={relationValue}
-            />
-          </StyledRelationChipsContainer>
-        </StyledContainer>
-      </RightDrawerProvider>
-    );
-  }
-
   return (
     <RightDrawerProvider value={{ isInRightDrawer }}>
       <StyledContainer>
-        <AnimatedPlaceholderEmptyContainer
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-        >
-          <AnimatedPlaceholder type="noRecord" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              {t`No related records`}
-            </AnimatedPlaceholderEmptyTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-        </AnimatedPlaceholderEmptyContainer>
+        <StyledRelationChipsContainer>
+          <RecordChip
+            objectNameSingular={relationObjectNameSingular}
+            record={relationValue}
+          />
+        </StyledRelationChipsContainer>
       </StyledContainer>
     </RightDrawerProvider>
   );

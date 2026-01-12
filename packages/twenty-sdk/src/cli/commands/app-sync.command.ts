@@ -60,11 +60,11 @@ export class AppSyncCommand {
 
       if (serverlessSyncResult.success === false) {
         console.error(
-          chalk.red('❌ Serverless functions Sync failed:'),
+          chalk.red('❌ Application Sync failed:'),
           serverlessSyncResult.error,
         );
       } else {
-        console.log(chalk.green('✅ Serverless functions synced successfully'));
+        console.log(chalk.green('✅ Application synced successfully'));
       }
 
       return serverlessSyncResult;

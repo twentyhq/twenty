@@ -153,7 +153,10 @@ const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
 
   // Get all TypeScript files in src/ folder
-  const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
+  const tsFiles = await loadFiles(
+    ['src/**/*.ts', 'generated/**/*.ts'],
+    appPath,
+  );
 
   for (const filepath of tsFiles) {
     const relPath = relative(appPath, filepath);
@@ -178,19 +181,24 @@ const loadSources = async (appPath: string): Promise<Sources> => {
 
 /**
  * Check if the app imports from the generated folder.
- * Detects any `import ... from '...generated'` or `import ... from '...generated/...'` pattern.
+ * Detects ESM imports: `import ... from '...generated'` or `import ... from '...generated/...'`
+ * Detects CommonJS requires: `require('...generated')` or `require('...generated/...')`
  */
 const checkShouldGenerate = async (appPath: string): Promise<boolean> => {
   const tsFiles = await loadFiles(['src/**/*.ts'], appPath);
 
-  // Matches: import ... from 'generated' or from '.../generated' or from '.../generated/...'
-  const generatedImportPattern =
+  // Matches ESM: import ... from 'generated' or from '.../generated' or from '.../generated/...'
+  const esmImportPattern =
     /from\s+['"][^'"]*\/generated(?:\/[^'"]*)?['"]|from\s+['"]generated['"]/;
+
+  // Matches CommonJS: require('generated') or require('.../generated') or require('.../generated/...')
+  const commonJsRequirePattern =
+    /require\s*\(\s*['"][^'"]*\/generated(?:\/[^'"]*)?['"]\s*\)|require\s*\(\s*['"]generated['"]\s*\)/;
 
   for (const filepath of tsFiles) {
     const content = await fs.readFile(filepath, 'utf8');
 
-    if (generatedImportPattern.test(content)) {
+    if (esmImportPattern.test(content) || commonJsRequirePattern.test(content)) {
       return true;
     }
   }

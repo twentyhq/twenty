@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/display';
 import {
   CatalogDecorator,

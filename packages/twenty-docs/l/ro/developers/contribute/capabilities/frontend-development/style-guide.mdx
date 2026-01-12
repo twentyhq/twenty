@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - Bun, un tip separat (OwnProps) este definit explicit pentru
+ *      proprietățile componentei
+ *    - Această metodă nu include automat prop-ul children. Dacă
+ *      vrei să-l incluzi, trebuie să-l specifici în OwnProps.
  */
 type EmailFieldProps = {
   value: string;
@@ -94,8 +94,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - Bun, listează explicit toate proprietățile
+ *    - Îmbunătățește lizibilitatea și întreținerea
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -123,26 +123,26 @@ const value = process.env.MY_VALUE ?? 'default';
 ### Folosește accesarea opțională `?.`
 
 ```tsx
-// ❌ Bad
+// ❌ Rău
 onClick && onClick();
 
-// ✅ Good
+// ✅ Bun
 onClick?.();
 ```
 
 ## TypeScript
 
-### Use `type` instead of `interface`
+### Utilizați `type` în loc de `interface`
 
-Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+Utilizați întotdeauna `type` în loc de `interface`, deoarece aproape întotdeauna se suprapun, iar `type` este mai flexibil.
 
 ```tsx
-// ❌ Bad
+// ❌ Rău
 interface MyInterface {
   name: string;
 }
 
-// ✅ Good
+// ✅ Bun
 type MyType = {
   name: string;
 };
@@ -277,7 +277,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Consistență**: Evitând importurile de tip și folosind o singură abordare atât pentru importurile de tip cât și de valoare, baza de cod rămâne consistentă în stilul său de import module.
 
-* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. Aceasta reduce ambiguitatea și face mai ușor de înțeles scopul simbolurilor importate.
+* **Lizibilitate**: Importurile doar de tip îmbunătățesc lizibilitatea codului, făcând clar când importați valori sau tipuri. Aceasta reduce ambiguitatea și face mai ușor de înțeles scopul simbolurilor importate.
 
 * **Întreținere**: Îmbunătățește întreținerea bazei de cod, deoarece dezvoltatorii pot identifica și localiza importurile doar de tip când revizuiesc sau modifică codul.
 
@@ -285,6 +285,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 O regulă ESLint, `@typescript-eslint/consistent-type-imports`, impune standardul fără importuri de tip. Această regulă va genera erori sau avertismente pentru orice încălcare a importurilor de tip.
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript descurajează el însuși această practică, așa cum este menționat în notele de lansare [TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). În majoritatea situațiilor, nu ar trebui să aveți nevoie de importuri doar de tip.
+Rețineți că această regulă abordează în mod specific cazurile-limită rare în care apar importuri de tip neintenționate. TypeScript descurajează el însuși această practică, așa cum este menționat în notele de lansare [TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). În majoritatea situațiilor, nu ar trebui să aveți nevoie de importuri doar de tip.
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+Pentru a vă asigura că codul respectă această regulă, rulați ESLint ca parte a fluxului de lucru de dezvoltare.
