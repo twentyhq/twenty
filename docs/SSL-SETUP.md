@@ -4,8 +4,8 @@
 Twenty CRM is configured with HTTPS using self-signed SSL certificates and Nginx reverse proxy.
 
 ## Access URLs
-- **HTTPS (recommended):** https://localhost
-- **HTTP (redirects to HTTPS):** http://localhost
+- **HTTPS (recommended):** https://localhost:3443
+- **HTTP (redirects to HTTPS):** http://localhost:3080
 
 ## Browser Warning
 You'll see a security warning because the certificate is self-signed. This is normal for local development.

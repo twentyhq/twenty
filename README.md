@@ -28,6 +28,54 @@ See:
 🚀 [Self-hosting](https://docs.twenty.com/developers/self-hosting/docker-compose)
 🖥️ [Local Setup](https://docs.twenty.com/developers/local-setup)
 
+## Production Infrastructure Setup
+
+This repository includes a production-ready infrastructure configuration with:
+
+✅ **HTTPS/SSL** - Secure access with Nginx reverse proxy
+✅ **Automated Backups** - Daily PostgreSQL backups to Desktop
+✅ **S3 Storage** - Scalable file storage
+✅ **Email Integration** - SMTP configuration
+✅ **Docker Compose** - Easy deployment
+
+### Quick Start
+
+```bash
+# Start all services
+docker compose up -d
+
+# Access application
+https://localhost:3443
+```
+
+### Access URLs
+- **HTTPS:** https://localhost:3443
+- **HTTP (redirects):** http://localhost:3080
+
+### Documentation
+- [Infrastructure Overview](docs/INFRASTRUCTURE.md)
+- [Backup Setup](docs/BACKUP-SETUP.md)
+- [SSL/HTTPS Configuration](docs/SSL-SETUP.md)
+- [S3 Storage](docs/S3-STORAGE.md)
+- [Email Setup](docs/EMAIL-SETUP.md)
+
+### Health Check
+```bash
+./scripts/health-check.sh
+```
+
+### Maintenance
+```bash
+# View logs
+docker compose logs -f
+
+# Restart services
+docker compose restart
+
+# Backup now
+./scripts/backup-database.sh
+```
+
 # Does the world need another CRM?
 
 We built Twenty for three reasons:
