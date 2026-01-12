@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { createClient } from 'graphql-sse';
 
+import { useOnDbEvent } from '@/sse-db-event/hooks/useOnDbEvent';
 import { DatabaseEventAction } from '~/generated/graphql';
 import { getTokenPair } from '~/modules/apollo/utils/getTokenPair';
-import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 
 jest.mock('~/modules/apollo/utils/getTokenPair');
 jest.mock('graphql-sse');
