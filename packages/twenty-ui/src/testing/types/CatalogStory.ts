@@ -1,5 +1,5 @@
+import { type StoryObj } from '@storybook/react-vite';
 import { type ElementType } from 'react';
-import { type StoryObj } from '@storybook/react';
 
 import {
   type CatalogDimension,

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { CurrencyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/CurrencyFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';

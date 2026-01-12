@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Создание пользовательских полей
+description: Пошаговое руководство по добавлению пользовательских полей в любой объект.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Пользовательские поля позволяют собирать информацию, характерную для вашего бизнеса. Добавляйте их в любой объект — стандартный или пользовательский.
 
-## Steps
+## Шаги
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/ru/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект, в который вы хотите добавить поле
+3. Нажмите **+ Добавить поле**
+4. Выберите **тип поля** (все типы см. в разделе [Поля](/l/ru/user-guide/data-model/capabilities/fields))
+5. Введите **имя поля** и при необходимости описание
+6. Настройте параметры, специфичные для поля (см. ниже)
 7. Нажмите **Сохранить**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Быстрый способ:** нажмите **+** в конце заголовков столбцов в любом табличном представлении → **Настроить поля**.
 
-## Show the Field in Views
+## Отображение поля в представлениях
 
-New fields aren't automatically visible. To display:
+Новые поля не отображаются автоматически. Чтобы отобразить:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Откройте табличное представление объекта
+2. Нажмите **Параметры → Поля**
+3. Нажмите **значок глаза** рядом с вашим полем, чтобы отобразить его
+4. Перетащите, чтобы изменить порядок
 
-## Configuration Options
+## Параметры настройки
 
-### For Select / Multi-Select
+### Для полей «Выбор» / «Множественный выбор»
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/ru/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Нажмите **+ Добавить вариант**, чтобы создать варианты выбора
+2. При необходимости задайте **вариант по умолчанию**
+3. Перетащите, чтобы изменить порядок вариантов
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **Используйте имена API для импорта.** Включите **Расширенный режим** в Настройках, чтобы видеть имена API. См. [Сопоставление полей](/l/ru/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Для валютных полей
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+Установите **валюту по умолчанию** (USD, EUR и т. д.) для новых записей.
 
-## Deactivating a Field
+### Для телефонных полей
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Установите **код страны по умолчанию** для автозаполнения новых телефонных номеров.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Уникальность поля
 
-## Related
+Включите **Уникальность**, чтобы предотвратить дубли значений между записями.
 
-* [Fields](/l/ru/user-guide/data-model/capabilities/fields) — all field types explained
+<Note>
+  Если уже есть дубликаты (включая удалённые записи), вы получите ошибку. Сначала устраните дубликаты.
+</Note>
+
+### Установка значений по умолчанию
+
+Для полей «Выбор» вы можете указать, какой вариант будет предварительно выбран для новых записей. Для полей «Флажок» задайте, будет ли он установлен или снят по умолчанию.
+
+## Деактивация поля
+
+1. Перейдите в **Настройки → Модель данных**
+2. Найдите поле
+3. Нажмите **⋮ → Деактивировать**
+
+Данные сохраняются. Позже вы сможете повторно активировать или удалить навсегда.
+
+## Связанные материалы
+
+* [Поля](/l/ru/user-guide/data-model/capabilities/fields) — описание всех типов полей
 * [Частые вопросы о модели данных](/l/ru/user-guide/data-model/how-tos/data-model-faq) — распространённые вопросы

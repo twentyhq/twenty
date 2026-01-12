@@ -89,4 +89,41 @@ export class WorkspaceSchemaForeignKeyManagerService {
 
     await queryRunner.query(sql);
   }
+
+  async getForeignKeyName({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<string | undefined> {
+    const safeSchemaName = removeSqlDDLInjection(schemaName);
+    const safeTableName = removeSqlDDLInjection(tableName);
+    const safeColumnName = removeSqlDDLInjection(columnName);
+
+    const foreignKeys = await queryRunner.query(
+      `
+      SELECT
+        tc.constraint_name AS constraint_name
+      FROM
+        information_schema.table_constraints AS tc
+      JOIN
+        information_schema.key_column_usage AS kcu
+        ON tc.constraint_name = kcu.constraint_name
+        AND tc.table_schema = kcu.table_schema
+      WHERE
+        tc.constraint_type = 'FOREIGN KEY'
+        AND tc.table_schema = $1
+        AND tc.table_name = $2
+        AND kcu.column_name = $3
+    `,
+      [safeSchemaName, safeTableName, safeColumnName],
+    );
+
+    return foreignKeys[0]?.constraint_name;
+  }
 }

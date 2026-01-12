@@ -1,92 +1,92 @@
 ---
 title: Relační pole
-description: Connect records across different objects using relation fields.
+description: Propojte záznamy napříč různými objekty pomocí relačních polí.
 ---
 
-## Types of Relations
+## Typy relací
 
-### One-to-Many
+### Jeden k mnoha
 
-One record in Object A can be linked to many records in Object B.
+Jeden záznam v Objektu A může být propojen s mnoha záznamy v Objektu B.
 
-**Example:** One Company can have many People (employees).
+**Příklad:** Jedna společnost může mít mnoho lidí (zaměstnanců).
 
-### Many-to-One
+### Mnoho k jednomu
 
-Many records in Object A can be linked to one record in Object B.
+Mnoho záznamů v Objektu A může být propojeno s jedním záznamem v Objektu B.
 
-**Example:** Many People can belong to one Company.
+**Příklad:** Mnoho lidí může patřit k jedné společnosti.
 
-### Relations to Multiple Object Types
+### Relace k více typům objektů
 
-Some objects can link to multiple object types on one side of the relation.
+Některé objekty mohou na jedné straně relace odkazovat na více typů objektů.
 
-**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+**Příklad:** Poznámku lze současně připojit k jedné osobě, jedné společnosti a jedné příležitosti. Poznámka je na straně "mnoho" a propojuje se s více stranami "jeden".
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+Podobně může Projekt (na straně "jeden") přijímat odkazy od více lidí, více společností a více poznámek.
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+  **Omezení importu/exportu**: Relace směřující k více typům objektů zatím nejsou podporovány pro import/export CSV. Je to v našem plánu.
 </Warning>
 
-### Many-to-Many
+### Mnoho k mnoha
 
-Many records in Object A can be linked to many records in Object B.
+Mnoho záznamů v Objektu A může být propojeno s mnoha záznamy v Objektu B.
 
-**Example:** Many People can be linked to many Projects, and vice versa.
+**Příklad:** Mnoho lidí může být propojeno s mnoha projekty a naopak.
 
 <Warning>
-  **Many-to-Many is not yet supported.**
+  **Mnoho k mnoha zatím není podporováno.**
 
-  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+  Tento typ relace je plánován na 1. pololetí 2026. Jako dočasné řešení vytvořte prostřední "spojovací" objekt (např. "Project Assignments"), který má relace typu mnoho k jednomu k oběma objektům.
 </Warning>
 
-## Creating a Relation Field
+## Vytvoření relačního pole
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want to add the relation
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the target object(s) to relate to
-6. Configure the relation settings:
-   * **Field name on source object**: The name of the relation field on the object you're editing
-   * **Field name on destination object**: The name of the relation field that will appear on the target object
-   * Relation type (one-to-many, many-to-one)
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt, do kterého chcete přidat relaci
+3. Klikněte na **+ Add Field**
+4. Vyberte **Relation** jako typ pole
+5. Vyberte cílový objekt nebo objekty, ke kterým chcete relaci vytvořit
+6. Nakonfigurujte nastavení relace:
+   * **Název pole na zdrojovém objektu**: Název relačního pole na objektu, který upravujete
+   * **Název pole na cílovém objektu**: Název relačního pole, které se zobrazí na cílovém objektu
+   * Typ vztahu (jeden k mnoha, mnoho k jednomu)
 7. Klikněte na **Uložit**
 
-## Standard Relations
+## Standardní relace
 
-Twenty comes with pre-built relations between standard objects:
+Twenty obsahuje předpřipravené relace mezi standardními objekty:
 
-| From Object  | To Object   | Relation Type |
-| ------------ | ----------- | ------------- |
-| Osoby        | Společnosti | Many-to-One   |
-| Příležitosti | Společnosti | Many-to-One   |
-| Příležitosti | Osoby       | Many-to-One   |
+| Z objektu    | Do objektu  | Typ vztahu      |
+| ------------ | ----------- | --------------- |
+| Osoby        | Společnosti | Mnoho k jednomu |
+| Příležitosti | Společnosti | Mnoho k jednomu |
+| Příležitosti | Osoby       | Mnoho k jednomu |
 
 ## Osvědčené postupy
 
-### Planning Relations
+### Plánování relací
 
-* **Map your data model**: Plan relations before creating them
-* **Consider direction**: Think about which object "owns" the relationship
-* **Avoid circular dependencies**: Keep your data model clean
+* **Zmapujte svůj datový model**: Relace si naplánujte před jejich vytvořením
+* **Zvažte směr**: Promyslete, který objekt "vlastní" relaci
+* **Vyhněte se cyklickým závislostem**: Udržujte svůj datový model čistý
 
-### Naming Relations
+### Pojmenovávání relací
 
-* **Use clear names**: Make it obvious what the relation represents
-* **Be consistent**: Use similar naming patterns across relations
-* **Consider both sides**: Name both sides of the relation appropriately
+* **Používejte jasné názvy**: Ať je zřejmé, co relace představuje
+* **Buďte konzistentní**: Používejte podobné vzory pojmenování napříč relacemi
+* **Zvažte obě strany**: Vhodně pojmenujte obě strany relace
 
-### Performance
+### Výkon
 
-* **Don't over-relate**: Too many relations can slow down your workspace
+* **Nepřehánějte to s relacemi**: Příliš mnoho relací může zpomalit váš pracovní prostor
 
-## Limitations
+## Omezení
 
-* **Deleting relations** removes the link but not the related records
-* **Circular relations** should be avoided for data integrity
+* **Mazání relací** odstraní propojení, nikoli související záznamy
+* **Cyklickým relacím** je třeba se kvůli integritě dat vyhnout
