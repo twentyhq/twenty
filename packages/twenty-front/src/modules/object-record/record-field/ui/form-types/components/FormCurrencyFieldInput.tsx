@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -7,37 +6,10 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import { IconCircleOff } from 'twenty-ui/display';
-import {
-  convertCurrencyAmountToCurrencyMicros,
-  convertCurrencyMicrosToCurrencyAmount,
-} from '~/utils/convertCurrencyToCurrencyMicros';
-
-const formatMicrosToDisplayAmount = (
-  amountMicros: string | number | null | undefined,
-): string | number => {
-  if (amountMicros == null) {
-    return '';
-  }
-  if (Number.isFinite(+amountMicros)) {
-    return convertCurrencyMicrosToCurrencyAmount(+amountMicros);
-  }
-  return amountMicros;
-};
-
-const parseDisplayAmountToMicros = (
-  displayAmount: string | number | null,
-): number | null => {
-  if (displayAmount == null) {
-    return null;
-  }
-  if (Number.isFinite(+displayAmount)) {
-    return convertCurrencyAmountToCurrencyMicros(Number(displayAmount));
-  }
-  return null;
-};
 
 type FormCurrencyFieldInputProps = {
   label?: string;
@@ -70,7 +42,7 @@ export const FormCurrencyFieldInput = ({
   ) => {
     onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
-      amountMicros: parseDisplayAmountToMicros(newAmountMicros),
+      amountMicros: newAmountMicros,
     });
   };
 
@@ -94,11 +66,11 @@ export const FormCurrencyFieldInput = ({
           readonly={readonly}
         />
         <FormNumberFieldInput
-          label={t`Amount`}
-          defaultValue={formatMicrosToDisplayAmount(defaultValue?.amountMicros)}
+          label={t`Amount Micros`}
+          defaultValue={defaultValue?.amountMicros ?? ''}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          placeholder={t`Set 3.21 for $3.21`}
+          hint={t`Enter amount x 1 000 000 (e.g. $3.21 → 3210000)`}
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>
