@@ -1144,7 +1144,6 @@ msgstr "אסימוני סוכן"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "סוכנים"
@@ -1153,11 +1152,6 @@ msgstr "סוכנים"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
 msgstr "סוכנים המפעילים את היישום הזה"
-
-#. js-lingui-id: 0k5XwN
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
-msgid "Agents used to route queries to specialized agents"
-msgstr "סוכנים המשמשים להכוונה של פניות לסוכנים המתמחים"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts

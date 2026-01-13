@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`useDeleteOneRecord A. Starting from empty cache 1. Should successfully delete record and update record cache entry 1`] = `
 {

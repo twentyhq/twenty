@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`updateOne failing update should not update a field name if it is not synced correctly with label and labelSync is true 1`] = `
 [
