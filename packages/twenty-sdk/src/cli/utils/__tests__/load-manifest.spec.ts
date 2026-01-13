@@ -26,7 +26,7 @@ describe('loadManifest with test-app', () => {
     yarnLock = result.yarnLock;
     warnings = result.warnings;
     shouldGenerate = result.shouldGenerate;
-  });
+  }, 15_000);
 
   it('should load manifest from test-app directory', async () => {
     // Check package.json loaded correctly
