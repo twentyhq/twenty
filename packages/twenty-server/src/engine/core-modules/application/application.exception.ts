@@ -11,6 +11,7 @@ export enum ApplicationExceptionCode {
   ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
+  INVALID_INPUT = 'INVALID_INPUT',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -29,6 +30,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Application not found.`;
     case ApplicationExceptionCode.FORBIDDEN:
       return msg`You do not have permission to perform this action.`;
+    case ApplicationExceptionCode.INVALID_INPUT:
+      return msg`Invalid input provided.`;
     default:
       assertUnreachable(code);
   }

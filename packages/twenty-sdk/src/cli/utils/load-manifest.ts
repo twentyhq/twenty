@@ -4,6 +4,7 @@ import path, { posix, relative, sep } from 'path';
 import {
   type Application,
   type ApplicationManifest,
+  type ObjectExtensionManifest,
   type ObjectManifest,
   type PackageJson,
   type RoleManifest,
@@ -81,6 +82,35 @@ const loadObjects = async (appPath: string): Promise<ObjectManifest[]> => {
   }
 
   return objects;
+};
+
+/**
+ * Load all object extension definitions from src/app/ (any *.object-extension.ts file).
+ */
+const loadObjectExtensions = async (
+  appPath: string,
+): Promise<ObjectExtensionManifest[]> => {
+  const extensionFiles = await loadFiles(
+    ['src/app/**/*.object-extension.ts'],
+    appPath,
+  );
+
+  const extensions: ObjectExtensionManifest[] = [];
+
+  for (const filepath of extensionFiles) {
+    try {
+      const manifest = await loadConfig<ObjectExtensionManifest>(filepath);
+
+      extensions.push(manifest);
+    } catch (error) {
+      const relPath = toPosixRelative(filepath, appPath);
+      throw new Error(
+        `Failed to load object extension from ${relPath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return extensions;
 };
 
 /**
@@ -217,8 +247,11 @@ export type LoadManifestResult = {
 /**
  * Load an application manifest using the folder structure with jiti runtime evaluation.
  *
- * Files are detected by their suffix (*.object.ts, *.function.ts, *.role.ts)
- * and can be placed anywhere within src/app/.
+ * Files are detected by their suffix and can be placed anywhere within src/app/:
+ * - *.object.ts - Custom object definitions
+ * - *.object-extension.ts - Extensions to existing objects (adding fields)
+ * - *.function.ts - Serverless function definitions
+ * - *.role.ts - Role definitions
  *
  * Example structures:
  * ```
@@ -229,6 +262,8 @@ export type LoadManifestResult = {
  * │       ├── application.config.ts
  * │       ├── objects/
  * │       │   └── postCard.object.ts
+ * │       ├── object-extensions/
+ * │       │   └── company.object-extension.ts
  * │       ├── functions/
  * │       │   └── createPostCard.function.ts
  * │       └── roles/
@@ -241,6 +276,7 @@ export type LoadManifestResult = {
  * │       ├── application.config.ts
  * │       └── post-card/
  * │           ├── postCard.object.ts
+ * │           ├── company.object-extension.ts
  * │           ├── createPostCard.function.ts
  * │           └── postCardAdmin.role.ts
  * ```
@@ -270,19 +306,28 @@ export const loadManifest = async (
   const application = await loadConfig<Application>(applicationConfigPath);
 
   // Load all entities in parallel
-  const [objects, serverlessFunctions, roles, sources, shouldGenerate] =
-    await Promise.all([
-      loadObjects(appPath),
-      loadFunctions(appPath),
-      loadRoles(appPath),
-      loadSources(appPath),
-      checkShouldGenerate(appPath),
-    ]);
+  const [
+    objects,
+    objectExtensions,
+    serverlessFunctions,
+    roles,
+    sources,
+    shouldGenerate,
+  ] = await Promise.all([
+    loadObjects(appPath),
+    loadObjectExtensions(appPath),
+    loadFunctions(appPath),
+    loadRoles(appPath),
+    loadSources(appPath),
+    checkShouldGenerate(appPath),
+  ]);
 
   // Build manifest
   const manifest: ApplicationManifest = {
     application,
     objects,
+    objectExtensions:
+      objectExtensions.length > 0 ? objectExtensions : undefined,
     serverlessFunctions,
     roles,
     sources,
@@ -292,6 +337,7 @@ export const loadManifest = async (
   const validation = validateManifest({
     application,
     objects,
+    objectExtensions,
     serverlessFunctions,
     roles,
   });

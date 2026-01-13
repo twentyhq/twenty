@@ -1637,6 +1637,7 @@ msgstr "无效的身份提供商类型。"
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Invalid input provided."
 msgstr "提供的输入无效。"
 
