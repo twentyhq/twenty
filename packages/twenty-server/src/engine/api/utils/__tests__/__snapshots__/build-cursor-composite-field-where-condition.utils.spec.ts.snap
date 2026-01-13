@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for address composite field - both ascending, forward pagination: multiple properties - address composite field - both ascending, forward pagination 1`] = `
 {
