@@ -45,7 +45,7 @@ This repository includes a production-ready infrastructure configuration with:
 docker compose up -d
 
 # Access application
-https://localhost:3443
+# https://localhost:3443
 ```
 
 ### Access URLs
