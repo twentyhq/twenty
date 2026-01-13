@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { capitalize, isDefined, uncapitalize } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -10,13 +10,13 @@ import {
   RunOnWorkspaceArgs,
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { computeFormattedViewName } from 'src/database/commands/upgrade-version-command/1-16/utils/compute-formatted-view-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -51,13 +51,6 @@ type ViewMetadataException = {
   objectNameSingular?: string;
 };
 
-const ALL_ENTITY_VIEW_NAME = 'All {objectLabelPlural}';
-
-const computeAllEntityViewName = ({
-  flatObjectMetadata,
-}: {
-  flatObjectMetadata: FlatObjectMetadata;
-}) => `all${capitalize(flatObjectMetadata.namePlural)}`;
 @Command({
   name: 'upgrade:1-16:identify-view-metadata',
   description: 'Identify standard view metadata',
@@ -183,10 +176,11 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
         continue;
       }
 
-      const formattedViewName =
-        viewEntity.name === ALL_ENTITY_VIEW_NAME
-          ? computeAllEntityViewName({ flatObjectMetadata })
-          : uncapitalize(viewEntity.name.split(' ').map(capitalize).join(''));
+      const formattedViewName = computeFormattedViewName({
+        viewName: viewEntity.name,
+        flatObjectMetadata,
+      });
+
       this.logger.log(formattedViewName);
       const viewConfig = objectViews[formattedViewName];
       const universalIdentifier = viewConfig?.universalIdentifier;
@@ -273,17 +267,17 @@ export class IdentifyViewMetadataCommand extends WorkspacesMigrationCommandRunne
       await this.viewRepository.save([...customUpdates, ...standardUpdates]);
 
       const relatedMetadataNames = getMetadataRelatedMetadataNames('view');
-      const cacheKeysToInvalidate = relatedMetadataNames.map(
+      const relatedCacheKeysToInvalidate = relatedMetadataNames.map(
         getMetadataFlatEntityMapsKey,
       );
 
       this.logger.log(
-        `Invalidating caches: ${cacheKeysToInvalidate.join(' ')}`,
+        `Invalidating caches: ${relatedCacheKeysToInvalidate.join(' ')}`,
       );
-      await this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        cacheKeysToInvalidate,
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatViewMaps',
+        ...relatedCacheKeysToInvalidate,
+      ]);
 
       this.logger.log(
         `Applied ${totalUpdates} view metadata update(s) for workspace ${workspaceId}`,
