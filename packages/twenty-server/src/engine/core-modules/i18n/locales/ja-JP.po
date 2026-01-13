@@ -39,21 +39,6 @@ msgstr "{fieldType}フィールドにはデフォルト値を設定できませ�
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "ドメイン「{domainName}」に{hostnameCount}件のホスト名が見つかりました。1件である必要があります。"
 
-#. js-lingui-id: kZR6+h
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "A company"
-msgstr "会社"
-
-#. js-lingui-id: +aeifv
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "A connected account"
-msgstr "連携済みアカウント"
-
-#. js-lingui-id: cOSBjW
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "A dashboard"
-msgstr "ダッシュボード"
-
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
 msgid "A DNS manager error occurred."
@@ -69,11 +54,6 @@ msgstr "重複するエントリが検出されました。"
 msgid "A field with this name already exists."
 msgstr "この名前のフィールドはすでに存在します。"
 
-#. js-lingui-id: 6w8bHl
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-msgid "A Folder of favorites"
-msgstr "お気に入りフォルダー"
-
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "A function with this name already exists."
@@ -83,11 +63,6 @@ msgstr "この名前の関数はすでに存在します。"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A many to one relation field should always declare a join column"
 msgstr "多対一のリレーションフィールドには必ず結合カラムを宣言する必要があります"
-
-#. js-lingui-id: vZj1Xc
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr "メッセージングチャンネル（メール、チャットなど）を通じて送受信されるメッセージ"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -99,16 +74,6 @@ msgstr "名前の競合が発生しました。"
 msgid "A network error occurred while accessing calendar."
 msgstr "カレンダーへのアクセス中にネットワークエラーが発生しました。"
 
-#. js-lingui-id: bufuBA
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "A note"
-msgstr "メモ"
-
-#. js-lingui-id: 6kUkZW
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "A note target"
-msgstr "メモターゲット"
-
 #. js-lingui-id: MtcxLV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A one to many relation field should never declare a join column"
@@ -118,11 +83,6 @@ msgstr "一対多のリレーションフィールドには結合カラムを宣
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "A payment processing error occurred."
 msgstr "支払い処理エラーが発生しました。"
-
-#. js-lingui-id: Io42ej
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "A person"
-msgstr "連絡先"
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -210,23 +170,6 @@ msgstr "ビューソートエラーが発生しました。"
 msgid "Access token not found."
 msgstr "アクセストークンが見つかりません。"
 
-#. js-lingui-id: pd81Qb
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Account Owner"
-msgstr "アカウントオーナー"
-
-#. js-lingui-id: loqL/f
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Account owner for companies"
-msgstr "会社のアカウントオーナー"
-
-#. js-lingui-id: HZosRi
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Account Owner For Companies"
-msgstr "会社向けアカウントオーナー"
-
 #. js-lingui-id: 48AxkT
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Action needed to prevent workspace deletion"
@@ -241,26 +184,6 @@ msgstr "パスワードをリセットするためのアクションが必要で
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Set Password"
 msgstr "パスワードを設定するためのアクションが必要です"
-
-#. js-lingui-id: Du6bPw
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Address"
-msgstr "住所"
-
-#. js-lingui-id: JiOJxf
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Address (deprecated) "
-msgstr "住所(非推奨)"
-
-#. js-lingui-id: Knl3c9
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Address of the company"
-msgstr "会社の住所"
-
-#. js-lingui-id: zJhwjv
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Address of the company - deprecated in favor of new address field"
-msgstr "会社の住所 - 新しい住所フィールドに取って代わられ、非推奨"
 
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -314,29 +237,6 @@ msgstr ""
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "AI agent step execution failed."
 msgstr "AIエージェントステップの実行に失敗しました。"
-
-#. js-lingui-id: pdOYzu
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
-msgid "All {objectLabelPlural}"
-msgstr "すべての{objectLabelPlural}"
-
-#. js-lingui-id: hehnjM
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Amount"
-msgstr "金額"
 
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -478,148 +378,10 @@ msgstr "承認済みアクセスドメインが見つかりません。"
 msgid "April"
 msgstr "4月"
 
-#. js-lingui-id: 3EiOLz
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "ARR"
-msgstr "年間経常収益"
-
-#. js-lingui-id: Ek7xGj
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Assigned tasks"
-msgstr "割り当てられたタスク"
-
-#. js-lingui-id: kZ7PLo
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
-msgid "Assigned to Me"
-msgstr "自分に割り当て"
-
-#. js-lingui-id: ojKCLU
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Assignee"
-msgstr "担当者"
-
-#. js-lingui-id: Max2GU
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Associated User Id"
-msgstr "関連ユーザーID"
-
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
 msgstr "少なくとも1つの関連が必要です"
-
-#. js-lingui-id: UY1vmE
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment"
-msgstr "添付ファイル"
-
-#. js-lingui-id: dda+ze
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author (deprecated - use createdBy)"
-msgstr "添付ファイルの著者（非推奨 - createdByを使用）"
-
-#. js-lingui-id: bIaesZ
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment company"
-msgstr "添付ファイルの会社"
-
-#. js-lingui-id: wtcL/T
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment dashboard"
-msgstr "添付ファイルのダッシュボード"
-
-#. js-lingui-id: u3pBxa
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment file category"
-msgstr "添付ファイルのカテゴリー"
-
-#. js-lingui-id: gfGYcl
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment full path"
-msgstr "添付ファイルのフルパス"
-
-#. js-lingui-id: wjocwa
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment name"
-msgstr "添付ファイル名"
-
-#. js-lingui-id: FWlOXr
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment note"
-msgstr "添付ファイルのメモ"
-
-#. js-lingui-id: YASWpH
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment opportunity"
-msgstr "添付ファイルの商談"
-
-#. js-lingui-id: P38yED
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment person"
-msgstr "添付ファイルの連絡先"
-
-#. js-lingui-id: Tx1DxS
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment task"
-msgstr "添付ファイルのタスク"
-
-#. js-lingui-id: ZXjjRz
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type (deprecated - use fileCategory)"
-msgstr "添付ファイルタイプ（非推奨 - fileCategoryを使用してください）"
-
-#. js-lingui-id: tH6L3e
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment workflow"
-msgstr "添付ファイルのワークフロー"
-
-#. js-lingui-id: w/Sphq
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Attachments"
-msgstr "添付ファイル"
-
-#. js-lingui-id: 2tQOVc
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Attachments created by the workspace member"
-msgstr "ワークスペースメンバーが作成した添付ファイル"
-
-#. js-lingui-id: iVnA89
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Attachments linked to the company"
-msgstr "会社に関連する添付ファイル"
-
-#. js-lingui-id: MuTXtT
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Attachments linked to the contact."
-msgstr "連絡先に関連する添付ファイル"
-
-#. js-lingui-id: 2AEUIb
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Attachments linked to the dashboard"
-msgstr "ダッシュボードに関連する添付ファイル"
-
-#. js-lingui-id: kw0mLu
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Attachments linked to the opportunity"
-msgstr "商談に関連する添付ファイル"
-
-#. js-lingui-id: 83l3Yd
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Attachments linked to the workflow"
-msgstr "ワークフローに関連する添付ファイル"
-
-#. js-lingui-id: fCbqr7
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Attachments tied to the {label}"
-msgstr "{label}に関連する添付ファイル"
 
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -641,46 +403,6 @@ msgstr "この機能にアクセスするには認証が必要です。サイン
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
 msgstr "認証が必要です。"
-
-#. js-lingui-id: VbeIOx
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Author"
-msgstr "作成者"
-
-#. js-lingui-id: XJONK6
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Authored attachments"
-msgstr "作成された添付ファイル"
-
-#. js-lingui-id: cvSznK
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "Automated Trigger Type"
-msgstr "自動化トリガーの種類"
-
-#. js-lingui-id: 2mtBXs
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Automated Triggers"
-msgstr "自動化トリガー"
-
-#. js-lingui-id: RpExX0
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Automatically create People records when receiving or sending emails"
-msgstr "メールの受信・送信時に自動的に連絡先レコードを作成"
-
-#. js-lingui-id: lXxdId
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Automatically create records for people you participated with in an event."
-msgstr "イベントでやり取りした相手の連絡先を自動的に作成"
-
-#. js-lingui-id: kfcRb0
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Avatar"
-msgstr "アバター"
-
-#. js-lingui-id: S/mJUR
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Avatar Url"
-msgstr "アバターURL"
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -829,11 +551,6 @@ msgstr "削除できません。まずラベル識別子フィールドを更新
 msgid "Cannot disable non-active workflow version"
 msgstr "非アクティブなワークフローバージョンは無効化できません"
 
-#. js-lingui-id: otFZos
-#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr "重複データがあるため一意性を有効にできません。先にデータを確認・修正してください（ソフト削除済みレコードを含む）。"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
@@ -942,33 +659,6 @@ msgstr "ビューフィルターグループ階層で循環依存関係が検出
 msgid "Code step execution failed."
 msgstr "コードステップの実行に失敗しました。"
 
-#. js-lingui-id: 96YB1a
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Color Scheme"
-msgstr "カラースキーム"
-
-#. js-lingui-id: s2QZS6
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Companies"
-msgstr "会社"
-
-#. js-lingui-id: 7i8j3G
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Company"
-msgstr "会社"
-
-#. js-lingui-id: yA1de7
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Company record position"
-msgstr "会社表示順"
-
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Composite type not found."
@@ -1048,86 +738,10 @@ msgstr "電話の国コードが競合しています。"
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "{objectMetadataNameSingular}に対して{connectFieldName}での接続は許可されていません。"
 
-#. js-lingui-id: PQ1Dw2
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Connected Account"
-msgstr "連携済みアカウント"
-
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "連携済みアカウントが見つかりません。"
-
-#. js-lingui-id: 9TzudL
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Connected accounts"
-msgstr "連携済みアカウント"
-
-#. js-lingui-id: AMDUqA
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Connected Accounts"
-msgstr "連携済みアカウント"
-
-#. js-lingui-id: bA6O5B
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Contact auto creation policy"
-msgstr "連絡先自動作成ポリシー"
-
-#. js-lingui-id: RnsmQs
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's avatar"
-msgstr "連絡先のアバター"
-
-#. js-lingui-id: pL+pqi
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's city"
-msgstr "連絡先の市"
-
-#. js-lingui-id: VnWMlz
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's company"
-msgstr "連絡先の会社"
-
-#. js-lingui-id: ITlFIB
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's Emails"
-msgstr "連絡先のメール"
-
-#. js-lingui-id: GuRtLY
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's job title"
-msgstr "連絡先の役職"
-
-#. js-lingui-id: QrCvRQ
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's Linkedin account"
-msgstr "連絡先のLinkedInアカウント"
-
-#. js-lingui-id: 6xPSVt
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's name"
-msgstr "連絡先の名前"
-
-#. js-lingui-id: Y37CZ4
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's phone number"
-msgstr "連絡先の電話番号"
-
-#. js-lingui-id: zsW3gg
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's phone numbers"
-msgstr "連絡先の電話番号"
-
-#. js-lingui-id: uuZ00G
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Contact's X/Twitter account"
-msgstr "連絡先のX/Twitterアカウント"
 
 #. js-lingui-id: rx63gq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
@@ -1217,26 +831,6 @@ msgstr "カスタムオブジェクトにラベル識別子フィールドがあ
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Dashboard not found."
 msgstr "ダッシュボードが見つかりません。"
-
-#. js-lingui-id: Lddz0a
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Dashboard page layout"
-msgstr "ダッシュボードページレイアウト"
-
-#. js-lingui-id: FrOkwR
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Dashboard record Position"
-msgstr "ダッシュボード表示順"
-
-#. js-lingui-id: xGgnPh
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Dashboard title"
-msgstr "ダッシュボードのタイトル"
-
-#. js-lingui-id: w6iIMm
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Dashboards"
-msgstr "ダッシュボード"
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -1431,11 +1025,6 @@ msgstr "エンティティが見つかりません。"
 msgid "Enum operation failed."
 msgstr "列挙型の操作に失敗しました。"
 
-#. js-lingui-id: AOk97Y
-#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
-msgid "Enum type not found."
-msgstr "列挙型が見つかりません。"
-
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
@@ -1447,135 +1036,10 @@ msgstr "CLOUDFLARE_API_KEYという環境変数はこの機能を使用するた
 msgid "Error"
 msgstr "エラー"
 
-#. js-lingui-id: k//6Xs
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event company"
-msgstr "イベントの会社"
-
-#. js-lingui-id: CPhvC+
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event dashboard"
-msgstr "イベントのダッシュボード"
-
-#. js-lingui-id: kJDmsI
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event details"
-msgstr "イベントの詳細"
-
-#. js-lingui-id: 0JhmlM
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-msgid "Event external ID"
-msgstr "イベント外部ID"
-
-#. js-lingui-id: aZJLAR
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-msgid "Event ID"
-msgstr "イベントID"
-
-#. js-lingui-id: PYs3rP
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event name"
-msgstr "イベント名"
-
-#. js-lingui-id: vv99Wu
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event note"
-msgstr "イベントのメモ"
-
-#. js-lingui-id: eSt759
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event opportunity"
-msgstr "イベントの商談"
-
-#. js-lingui-id: aicVfT
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Event Participants"
-msgstr "イベント参加者"
-
-#. js-lingui-id: 0mp45a
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event person"
-msgstr "イベントの連絡先"
-
-#. js-lingui-id: mMq0Wy
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event task"
-msgstr "イベントのタスク"
-
-#. js-lingui-id: dCV1dS
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event workflow"
-msgstr "イベントのワークフロー"
-
-#. js-lingui-id: W84pl6
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event workflow run"
-msgstr "イベントのワークフロー実行"
-
-#. js-lingui-id: vUpps9
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event workflow version"
-msgstr "イベントのワークフローバージョン"
-
-#. js-lingui-id: LxOGsB
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Event workspace member"
-msgstr "イベントのワークスペースメンバー"
-
-#. js-lingui-id: tst44n
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Events"
-msgstr "イベント"
-
-#. js-lingui-id: fHL+iH
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Events linked to the person"
-msgstr "連絡先に関連するイベント"
-
-#. js-lingui-id: 3/O8MM
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Events linked to the workspace member"
-msgstr "ワークスペースメンバーに関連するイベント"
-
-#. js-lingui-id: QQlMid
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Exclude group emails"
-msgstr "グループメールを除外"
-
-#. js-lingui-id: kenYGr
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Exclude non professional emails"
-msgstr "プロ以外のメールを除外"
-
-#. js-lingui-id: Lo5U0b
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Executed by"
-msgstr "実行者"
-
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "{connectFieldName}のすべての操作で、同じ制約フィールドを一貫して使用する必要があります。"
-
-#. js-lingui-id: 5KfWxA
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "External ID"
-msgstr "外部ID"
-
-#. js-lingui-id: AOxB/G
-#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
-msgid "Failed to connect to remote server."
-msgstr "リモートサーバーへの接続に失敗しました。"
 
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
@@ -1636,159 +1100,6 @@ msgstr "レコードの更新に失敗しました。"
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to upsert record."
 msgstr "レコードの更新/挿入に失敗しました。"
-
-#. js-lingui-id: 6Ki4Pv
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite"
-msgstr "お気に入り"
-
-#. js-lingui-id: aKUOPp
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite company"
-msgstr "お気に入りの会社"
-
-#. js-lingui-id: Aj026i
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite dashboard"
-msgstr "お気に入りのダッシュボード"
-
-#. js-lingui-id: TDlZ/o
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite Folder"
-msgstr "お気に入りフォルダー"
-
-#. js-lingui-id: WDVfUH
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-msgid "Favorite folder position"
-msgstr "お気に入りフォルダー表示順"
-
-#. js-lingui-id: SStz54
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-msgid "Favorite Folders"
-msgstr "お気に入りフォルダー"
-
-#. js-lingui-id: dz/fFp
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite note"
-msgstr "お気に入りのメモ"
-
-#. js-lingui-id: RRr9Bp
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite opportunity"
-msgstr "お気に入りの商談"
-
-#. js-lingui-id: RM6B6V
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite person"
-msgstr "お気に入りの連絡先"
-
-#. js-lingui-id: oVA9vM
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite position"
-msgstr "お気に入り表示順"
-
-#. js-lingui-id: OaQVQH
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite task"
-msgstr "お気に入りのタスク"
-
-#. js-lingui-id: l+lx2f
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite workflow"
-msgstr "お気に入りのワークフロー"
-
-#. js-lingui-id: BPBnux
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite workflow run"
-msgstr "お気に入りのワークフロー実行"
-
-#. js-lingui-id: 5X6Vlz
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite workflow version"
-msgstr "お気に入りのワークフローバージョン"
-
-#. js-lingui-id: FDpezg
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite workspace member"
-msgstr "お気に入りのワークスペースメンバー"
-
-#. js-lingui-id: X9kySA
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Favorites"
-msgstr "お気に入り"
-
-#. js-lingui-id: 0CzeFL
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-msgid "Favorites in this folder"
-msgstr "このフォルダーのお気に入り"
-
-#. js-lingui-id: zQponA
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Favorites linked to the company"
-msgstr "会社に関連するお気に入り"
-
-#. js-lingui-id: VaKLrB
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Favorites linked to the contact"
-msgstr "連絡先に関連するお気に入り"
-
-#. js-lingui-id: 5zuBdE
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Favorites linked to the dashboard"
-msgstr "ダッシュボードに関連するお気に入り"
-
-#. js-lingui-id: GOfcBt
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Favorites linked to the note"
-msgstr "メモに関連するお気に入り"
-
-#. js-lingui-id: 9zd8hg
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Favorites linked to the opportunity"
-msgstr "商談に関連するお気に入り"
-
-#. js-lingui-id: L5ccWD
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Favorites linked to the task"
-msgstr "タスクに関連するお気に入り"
-
-#. js-lingui-id: ee0tmj
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Favorites linked to the workflow"
-msgstr "ワークフローに関連するお気に入り"
-
-#. js-lingui-id: zar5jz
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Favorites linked to the workflow run"
-msgstr "ワークフロー実行に関連するお気に入り"
-
-#. js-lingui-id: 499/sw
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Favorites linked to the workflow version"
-msgstr "ワークフローバージョンに関連するお気に入り"
-
-#. js-lingui-id: rgmtb4
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Favorites linked to the workspace member"
-msgstr "ワークスペースメンバーに関連するお気に入り"
-
-#. js-lingui-id: GyXrE1
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Favorites tied to the {label}"
-msgstr "{label}に関連するお気に入り"
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -1982,16 +1293,6 @@ msgstr "ビューソートを作成するにはFieldMetadataIdが必要です。
 #: src/engine/core-modules/file/file.exception.ts
 msgid "File not found."
 msgstr "ファイルが見つかりません。"
-
-#. js-lingui-id: lEpDue
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Folder for Message Channel"
-msgstr "メッセージチャンネル用フォルダー"
-
-#. js-lingui-id: cqQyPB
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Folder name"
-msgstr "フォルダー名"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -2213,11 +1514,6 @@ msgstr "無効なキャプチャです。他のデバイスを試してくださ
 msgid "Invalid captcha. Please try again."
 msgstr "無効なキャプチャです。もう一度お試しください。"
 
-#. js-lingui-id: z4W/Ky
-#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
-msgid "Invalid composite type."
-msgstr "無効な複合型です。"
-
 #. js-lingui-id: C25VTR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
@@ -2299,11 +1595,6 @@ msgstr "無効な機能フラグキーです。"
 msgid "Invalid field input."
 msgstr "無効なフィールド入力です。"
 
-#. js-lingui-id: UcOaIa
-#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
-msgid "Invalid field metadata."
-msgstr "無効なフィールドメタデータです。"
-
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid file ID."
@@ -2321,11 +1612,6 @@ msgstr "無効なフィルターパラメータです。"
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
 msgstr "無効なフィルター値:「{value}」"
-
-#. js-lingui-id: oxZTCD
-#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
-msgid "Invalid foreign table input."
-msgstr "無効な外部テーブル入力です。"
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -2368,11 +1654,6 @@ msgstr "無効なラベル形式です。"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
 msgstr "無効な制限パラメータです。"
-
-#. js-lingui-id: 2VcEMI
-#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
-msgid "Invalid migration action."
-msgstr "無効なマイグレーションアクションです。"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2719,52 +2000,6 @@ msgstr "無効なワークフロートリガー入力です。"
 msgid "Invalid workflow version."
 msgstr "無効なワークフローバージョンです。"
 
-#. js-lingui-id: grHYXZ
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Is canceled"
-msgstr "キャンセル済み"
-
-#. js-lingui-id: k+g9Uh
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Is Contact Auto Creation Enabled"
-msgstr "連絡先の自動作成が有効か"
-
-#. js-lingui-id: uBx1xd
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Is Full Day"
-msgstr "終日イベントかどうか"
-
-#. js-lingui-id: 3iAfL2
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-msgid "Is Organizer"
-msgstr "オーガナイザーであるか"
-
-#. js-lingui-id: VrHWrH
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Is Sent Folder"
-msgstr "送信済みフォルダー"
-
-#. js-lingui-id: Mqzqb8
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Is Sync Enabled"
-msgstr "同期が有効か"
-
-#. js-lingui-id: BHCUSr
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Is Synced"
-msgstr "同期済み"
-
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
@@ -2779,21 +2014,6 @@ msgstr "結合列名は必須です。"
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
 msgstr "Twentyでチームに参加"
-
-#. js-lingui-id: WNfJ8M
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "JSON object containing custom connection parameters"
-msgstr "カスタム接続パラメータを含むJSONオブジェクト"
-
-#. js-lingui-id: AQuLwi
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Json object to provide steps"
-msgstr "手順を提供するJSONオブジェクト"
-
-#. js-lingui-id: fOjmZ1
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Json object to provide trigger"
-msgstr "トリガーを提供するJSONオブジェクト"
 
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -2897,52 +2117,6 @@ msgstr "ラベルは空にできません"
 msgid "Label must not contain a comma"
 msgstr "ラベルにコンマは使用できません"
 
-#. js-lingui-id: vXIe7J
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Language"
-msgstr "言語"
-
-#. js-lingui-id: hHtzNQ
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Last credentials refreshed at"
-msgstr "最後の資格情報が更新された日時"
-
-#. js-lingui-id: WvYp6o
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Last published Version Id"
-msgstr "最終公開バージョンID"
-
-#. js-lingui-id: Y60/DC
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Last sync cursor"
-msgstr "最後の同期カーソル"
-
-#. js-lingui-id: Zdx9Qq
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-msgid "Last sync date"
-msgstr "最終同期日"
-
-#. js-lingui-id: c7uqNg
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Last sync history ID"
-msgstr "最終同期履歴ID"
-
-#. js-lingui-id: tGwswq
-#: src/engine/twenty-orm/base.workspace-entity.ts
-msgid "Last time the record was changed"
-msgstr "レコードが変更された最後の時刻"
-
-#. js-lingui-id: o1zvNS
-#: src/engine/twenty-orm/base.workspace-entity.ts
-msgid "Last update"
-msgstr "最終更新"
-
 #. js-lingui-id: 0x2TQ/
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart"
@@ -2952,40 +2126,6 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr ""
-
-#. js-lingui-id: wR9USP
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Linked Object Metadata Id"
-msgstr "関連オブジェクトメタデータID"
-
-#. js-lingui-id: 6YiMr4
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Linked Record cached name"
-msgstr "関連レコードのキャッシュ名"
-
-#. js-lingui-id: sgHAxx
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Linked Record id"
-msgstr "関連レコードID"
-
-#. js-lingui-id: uCA6be
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Linkedin"
-msgstr "LinkedIn"
-
-#. js-lingui-id: LeFv/R
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "List of opportunities for which that person is the point of contact"
-msgstr "その連絡先が担当者である商談のリスト"
-
-#. js-lingui-id: wJijgU
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Location"
-msgstr "場所"
 
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3002,169 +2142,10 @@ msgstr "アップサートできるレコードの最大数は{QUERY_MAX_RECORDS
 msgid "May"
 msgstr "5月"
 
-#. js-lingui-id: EnfPm2
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Meet Link"
-msgstr "Meetリンク"
-
-#. js-lingui-id: xDAtGP
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-msgid "Message"
-msgstr "メッセージ"
-
-#. js-lingui-id: g+QGD6
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Message Channel"
-msgstr "メッセージチャンネル"
-
-#. js-lingui-id: DzU4a3
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Message Channel Association"
-msgstr "メッセージチャンネルアソシエーション"
-
-#. js-lingui-id: wd/R++
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Channel Id"
-msgstr "メッセージチャンネルID"
-
-#. js-lingui-id: disipM
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Channel Message Association"
-msgstr "メッセージチャンネルメッセージアソシエーション"
-
-#. js-lingui-id: ijQY3P
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Channel Message Associations"
-msgstr "メッセージチャンネルメッセージアソシエーション"
-
 #. js-lingui-id: LOU3x5
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "メッセージチャンネルが見つかりません"
-
-#. js-lingui-id: k7LXPQ
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Message Channels"
-msgstr "メッセージチャンネル"
-
-#. js-lingui-id: /4uGJc
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Direction"
-msgstr "メッセージの方向"
-
-#. js-lingui-id: fBw8fQ
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message External Id"
-msgstr "メッセージ外部ID"
-
-#. js-lingui-id: CStLnc
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Message Folder"
-msgstr "メッセージフォルダー"
-
-#. js-lingui-id: XCJIdB
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Message folder import policy"
-msgstr "メッセージフォルダーのインポートポリシー"
-
-#. js-lingui-id: p4ANpY
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Message Folders"
-msgstr "メッセージフォルダー"
-
-#. js-lingui-id: 6icznk
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Id"
-msgstr "メッセージID"
-
-#. js-lingui-id: 9FJSpK
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-msgid "Message id from the message header"
-msgstr "メッセージヘッダーからのメッセージID"
-
-#. js-lingui-id: yaC1Aq
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message id from the messaging provider"
-msgstr "メッセージングプロバイダーからのメッセージID"
-
-#. js-lingui-id: IUmVwu
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-msgid "Message Participant"
-msgstr "メッセージ参加者"
-
-#. js-lingui-id: FhIFx7
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-msgid "Message Participants"
-msgstr "メッセージ参加者"
-
-#. js-lingui-id: IC5A8V
-#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
-msgid "Message Synced with a Message Channel"
-msgstr "メッセージチャンネルと同期済みのメッセージ"
-
-#. js-lingui-id: de2nM/
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
-msgid "Message Thread"
-msgstr "メッセージスレッド"
-
-#. js-lingui-id: km1jgD
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-msgid "Message Thread Id"
-msgstr "メッセージスレッドID"
-
-#. js-lingui-id: RD0ecC
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
-msgid "Message Threads"
-msgstr "メッセージスレッド"
-
-#. js-lingui-id: t7TeQU
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
-msgid "Messages"
-msgstr "メッセージ"
-
-#. js-lingui-id: WoWdku
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Messages from the channel."
-msgstr "チャンネルからのメッセージ。"
-
-#. js-lingui-id: rYPBO7
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
-msgid "Messages from the thread."
-msgstr "スレッドからのメッセージ。"
-
-#. js-lingui-id: XcKQrV
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Messaging provider access token"
-msgstr "メッセージングプロバイダーのアクセストークン"
-
-#. js-lingui-id: 80EvIk
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Messaging provider refresh token"
-msgstr "メッセージングプロバイダーのリフレッシュトークン"
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
@@ -3298,16 +2279,6 @@ msgstr "名前が短すぎます"
 msgid "Name must be in camelCase format."
 msgstr "名前はcamelCase形式でなければなりません。"
 
-#. js-lingui-id: EEVPOx
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-msgid "Name of the favorite folder"
-msgstr "お気に入りフォルダーの名前"
-
-#. js-lingui-id: csMjko
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Name of the workflow run"
-msgstr "ワークフロー実行の名前"
-
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -3395,99 +2366,6 @@ msgstr "トリガータイプが提供されていません"
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "有効な認証コンテキストが見つかりません。"
-
-#. js-lingui-id: KiJn9B
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Note"
-msgstr "メモ"
-
-#. js-lingui-id: GGlkb7
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Note attachments"
-msgstr "メモの添付ファイル"
-
-#. js-lingui-id: Q1Rz+6
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Note body"
-msgstr "メモの本文"
-
-#. js-lingui-id: Yp057F
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Note record position"
-msgstr "メモ表示順"
-
-#. js-lingui-id: spaO7l
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "Note Target"
-msgstr "メモターゲット"
-
-#. js-lingui-id: mkchvJ
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Note targets"
-msgstr "メモターゲット"
-
-#. js-lingui-id: tD4BxK
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "Note Targets"
-msgstr "メモターゲット"
-
-#. js-lingui-id: jDThel
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Note title"
-msgstr "メモのタイトル"
-
-#. js-lingui-id: 1DBGsz
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Notes"
-msgstr "メモ"
-
-#. js-lingui-id: Ne73P/
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Notes tied to the {label}"
-msgstr "{label}に関連するメモ"
-
-#. js-lingui-id: fXBE74
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Notes tied to the company"
-msgstr "会社に関連するメモ"
-
-#. js-lingui-id: iQ5AH6
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Notes tied to the contact"
-msgstr "連絡先に関連するメモ"
-
-#. js-lingui-id: 0bi/Eh
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Notes tied to the opportunity"
-msgstr "商談に関連するメモ"
-
-#. js-lingui-id: B2Y6QU
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget company"
-msgstr "メモターゲットの会社"
-
-#. js-lingui-id: /mH0jo
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget note"
-msgstr "メモターゲットのメモ"
-
-#. js-lingui-id: DTs4tO
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget opportunity"
-msgstr "メモターゲットの商談"
-
-#. js-lingui-id: gBwbnk
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-msgid "NoteTarget person"
-msgstr "メモターゲットの連絡先"
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3613,63 +2491,6 @@ msgstr "1つ以上のレコードが見つかりませんでした。"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "フィールド制限のみ許可されています。"
-
-#. js-lingui-id: 4MyDFl
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Opportunities"
-msgstr "商談"
-
-#. js-lingui-id: 5QgKbT
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Opportunities linked to the company."
-msgstr "会社に紐付けられた商談。"
-
-#. js-lingui-id: SV/iis
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Opportunity"
-msgstr "商談"
-
-#. js-lingui-id: WnMlKn
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity amount"
-msgstr "商談の金額"
-
-#. js-lingui-id: aj3fnv
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity close date"
-msgstr "商談の終了日"
-
-#. js-lingui-id: 3NYczb
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity company"
-msgstr "商談の会社"
-
-#. js-lingui-id: as45IN
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity point of contact"
-msgstr "商談の担当者"
-
-#. js-lingui-id: 5Nu7Uw
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity probability"
-msgstr "商談の確度"
-
-#. js-lingui-id: Q1dzBp
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity record position"
-msgstr "商談表示順"
-
-#. js-lingui-id: 5ugYS3
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Opportunity stage"
-msgstr "商談のステージ"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3828,12 +2649,6 @@ msgstr "更新するページレイアウトウィジェットが見つかりま
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
 msgstr "ID {flatPageLayoutWidgetId}のページレイアウトウィジェットはすでに存在します"
 
-#. js-lingui-id: G1fWNt
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Parent Folder ID"
-msgstr "親フォルダーID"
-
 #. js-lingui-id: Xsgh7b
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -3860,70 +2675,10 @@ msgstr "パスワードが弱すぎます。"
 msgid "Password too weak"
 msgstr "パスワードが弱すぎます"
 
-#. js-lingui-id: l6qKfi
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Pending action for folder sync"
-msgstr "フォルダー同期の保留中のアクション"
-
-#. js-lingui-id: ttZgHv
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Pending action for group emails"
-msgstr "グループメールの保留中のアクション"
-
-#. js-lingui-id: 5aGQev
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Pending group emails action"
-msgstr "保留中のグループメールアクション"
-
-#. js-lingui-id: 6jM9pB
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-msgid "Pending Sync Action"
-msgstr "保留中の同期アクション"
-
-#. js-lingui-id: 1wdjme
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "People"
-msgstr "連絡先"
-
-#. js-lingui-id: E1zc7W
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "People linked to the company."
-msgstr "会社に紐づいた連絡先。"
-
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "権限が見つかりません。"
-
-#. js-lingui-id: OZdaTZ
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Person"
-msgstr "連絡先"
-
-#. js-lingui-id: c3Qq6o
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Person record Position"
-msgstr "連絡先表示順"
-
-#. js-lingui-id: zmwvG2
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Phone"
-msgstr "電話"
-
-#. js-lingui-id: m2ivgq
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Phones"
-msgstr "電話番号"
 
 #. js-lingui-id: rxi3R2
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -3972,39 +2727,6 @@ msgstr "ワークスペースメンバーを削除するには設定を使用し
 msgid "Please use single sign-on to authenticate."
 msgstr "認証にはシングルサインオンを使用してください。"
 
-#. js-lingui-id: P04j61
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Point of Contact"
-msgstr "担当者"
-
-#. js-lingui-id: p/78dY
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Position"
-msgstr "表示順"
-
-#. js-lingui-id: TTHIbk
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Preferred color scheme"
-msgstr "カラーテーマ"
-
-#. js-lingui-id: 5v4qYi
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Preferred language"
-msgstr "言語設定"
-
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
@@ -4024,11 +2746,6 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-line-chart-configuration.util.ts
 msgid "Primary axis group by field is required for line chart widget \"{widgetTitle}\""
 msgstr ""
-
-#. js-lingui-id: WJIL29
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Probability"
-msgstr "確度"
 
 #. js-lingui-id: t/0e9D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -4060,11 +2777,6 @@ msgstr "提供された国コードと国番号が矛盾しています"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided phone number is invalid {number}"
 msgstr "電話番号「{number}」は無効です"
-
-#. js-lingui-id: CrfRPa
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "provider"
-msgstr "プロバイダー"
 
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -4101,26 +2813,10 @@ msgstr "レート制限に達しました。後でもう一度お試しくださ
 msgid "Raw SQL queries are not allowed."
 msgstr "生のSQLクエリは許可されていません。"
 
-#. js-lingui-id: YfbwOB
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-msgid "Received At"
-msgstr "受信日時"
-
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
 msgstr "レコードが見つかりません。"
-
-#. js-lingui-id: 9gXJw8
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-msgid "Recurring Event ID"
-msgstr "定期イベントID"
-
-#. js-lingui-id: 2rvMKg
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-msgid "Refresh Token"
-msgstr "リフレッシュトークン"
 
 #. js-lingui-id: 1GvzpH
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -4131,11 +2827,6 @@ msgstr "リフレッシュトークンが見つかりません。"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
 msgstr "関連レコードが見つかりません。"
-
-#. js-lingui-id: 2LpFdR
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Related user email address"
-msgstr "関連ユーザーのメールアドレス"
 
 #. js-lingui-id: 2LXGtF
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -4157,12 +2848,6 @@ msgstr "関係フィールドターゲットメタデータが見つかりませ
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "このフィールドではリレーションが有効になっていません。"
-
-#. js-lingui-id: g87L9j
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Relations"
-msgstr "関連"
 
 #. js-lingui-id: PWdFkY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -4607,119 +3292,6 @@ msgstr "ターゲットリレーションフィールドはソースオブジェ
 msgid "Target relation field does not reference this field"
 msgstr "ターゲットリレーションフィールドはこのフィールドを参照していません"
 
-#. js-lingui-id: Q3P/4s
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Task"
-msgstr "タスク"
-
-#. js-lingui-id: kS+Ym6
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task assignee"
-msgstr "タスクの担当者"
-
-#. js-lingui-id: 7fYQ6E
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task attachments"
-msgstr "タスクの添付ファイル"
-
-#. js-lingui-id: X8fs74
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task body"
-msgstr "タスクの内容"
-
-#. js-lingui-id: EPxYHS
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task due date"
-msgstr "タスクの期日"
-
-#. js-lingui-id: fUw1j+
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task record position"
-msgstr "タスク表示順"
-
-#. js-lingui-id: I6+0ph
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task status"
-msgstr "タスクのステータス"
-
-#. js-lingui-id: WSiiWf
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "Task Target"
-msgstr "タスクターゲット"
-
-#. js-lingui-id: khGQLP
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task targets"
-msgstr "タスクターゲット"
-
-#. js-lingui-id: 836FiO
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "Task Targets"
-msgstr "タスクターゲット"
-
-#. js-lingui-id: R+s8S+
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Task title"
-msgstr "タスクのタイトル"
-
-#. js-lingui-id: GtycJ/
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Tasks"
-msgstr "タスク"
-
-#. js-lingui-id: HlDeG3
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Tasks assigned to the workspace member"
-msgstr "ワークスペースメンバーに割り当てられたタスク"
-
-#. js-lingui-id: Ca/n4T
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Tasks tied to the {label}"
-msgstr "{label}に関連するタスク"
-
-#. js-lingui-id: M4rBti
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Tasks tied to the company"
-msgstr "会社に関連するタスク"
-
-#. js-lingui-id: /VaiDW
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-msgid "Tasks tied to the contact"
-msgstr "連絡先に関連するタスク"
-
-#. js-lingui-id: 1TfX9U
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Tasks tied to the opportunity"
-msgstr "商談に関連するタスク"
-
-#. js-lingui-id: pP0Dt9
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "TaskTarget company"
-msgstr "タスクターゲットの会社"
-
-#. js-lingui-id: UJ2aPi
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "TaskTarget opportunity"
-msgstr "タスクターゲットの商談"
-
-#. js-lingui-id: I1MiSs
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "TaskTarget person"
-msgstr "タスクターゲットの連絡先"
-
-#. js-lingui-id: pciKLT
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-msgid "TaskTarget task"
-msgstr "タスクターゲットのタスク"
-
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
@@ -4746,49 +3318,6 @@ msgstr "お探しのエージェントが見つかりませんでした。削除
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "APIキーに有効なロールが割り当てられていません。APIキーの設定を確認してください。"
-
-#. js-lingui-id: qnNFrW
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "The company Linkedin account"
-msgstr "会社のLinkedInアカウント"
-
-#. js-lingui-id: N31Pso
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "The company name"
-msgstr "会社名"
-
-#. js-lingui-id: BHFCqB
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "The company Twitter/X account"
-msgstr "会社のTwitter/Xアカウント"
-
-#. js-lingui-id: OBmU0K
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "The company website URL. We use this url to fetch the company icon"
-msgstr "会社のウェブサイトのURLです。このURLを使用して会社のアイコンを取得します"
-
-#. js-lingui-id: zGBDEH
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "The creator of the record"
-msgstr "レコードの作成者"
-
-#. js-lingui-id: bMyVOx
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "The current statuses of the workflow versions"
-msgstr "ワークフローバージョンの現在のステータス"
-
-#. js-lingui-id: 0bo4Q0
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-msgid "The date the message was received"
-msgstr "メッセージ受信日"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -4864,50 +3393,6 @@ msgstr "オブジェクトの単数形と複数形のラベルは同一にでき
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "オブジェクトの単数形と複数形の名前は同一にできません"
-
-#. js-lingui-id: 5N6QtE
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "The workflow automated trigger settings"
-msgstr "ワークフローの自動化トリガー設定"
-
-#. js-lingui-id: SpKbfT
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "The workflow automated trigger type"
-msgstr "ワークフロー自動トリガータイプ"
-
-#. js-lingui-id: od0omS
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "The workflow last published version id"
-msgstr "ワークフローの最終公開バージョンID"
-
-#. js-lingui-id: /EdWx6
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "The workflow name"
-msgstr "ワークフロー名"
-
-#. js-lingui-id: EhAsND
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "The workflow version name"
-msgstr "ワークフローバージョン名"
-
-#. js-lingui-id: dhx13p
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "The workflow version status"
-msgstr "ワークフローバージョンのステータス"
-
-#. js-lingui-id: a6NBQe
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "The workspace member who last updated the record"
-msgstr "レコードを最後に更新したワークスペースメンバー"
 
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -5131,89 +3616,6 @@ msgstr "この変数は環境変数でのみ設定できます。"
 msgid "Thursday"
 msgstr "木曜日"
 
-#. js-lingui-id: n9nSNJ
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Time format"
-msgstr "時間形式"
-
-#. js-lingui-id: Mz2JN2
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Time zone"
-msgstr "タイムゾーン"
-
-#. js-lingui-id: az1boY
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Timeline Activities"
-msgstr "タイムライン活動"
-
-#. js-lingui-id: fqKMpF
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Timeline Activities linked to the company"
-msgstr "会社に関連するタイムライン活動"
-
-#. js-lingui-id: CNev+0
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-msgid "Timeline activities linked to the dashboard"
-msgstr "ダッシュボードに関連するタイムライン活動"
-
-#. js-lingui-id: 4/UzU5
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-msgid "Timeline Activities linked to the note."
-msgstr "メモに関連するタイムライン活動"
-
-#. js-lingui-id: p6feIz
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-msgid "Timeline Activities linked to the opportunity."
-msgstr "商談に関連するタイムライン活動"
-
-#. js-lingui-id: yvPwuF
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Timeline activities linked to the run"
-msgstr "実行に関連するタイムライン活動"
-
-#. js-lingui-id: q96UvB
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-msgid "Timeline Activities linked to the task."
-msgstr "タスクに関連するタイムライン活動"
-
-#. js-lingui-id: N9HMa/
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Timeline activities linked to the version"
-msgstr "バージョンに関連するタイムライン活動"
-
-#. js-lingui-id: B1CYKX
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Timeline activities linked to the workflow"
-msgstr "ワークフローに関連するタイムライン活動"
-
-#. js-lingui-id: G0UmtQ
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Timeline Activities tied to the {label}"
-msgstr "{label}に関連するタイムライン活動"
-
-#. js-lingui-id: K/kU4E
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "Timeline Activity"
-msgstr "タイムライン活動"
-
-#. js-lingui-id: MHrjPM
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-msgid "Title"
-msgstr "タイトル"
-
 #. js-lingui-id: /ObxXq
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
@@ -5321,20 +3723,6 @@ msgstr ""
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "更新フィールドの制限は更新可能なオブジェクトにのみ適用されます。"
 
-#. js-lingui-id: KQsreu
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-msgid "Updated by"
-msgstr "更新者"
-
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
@@ -5425,26 +3813,6 @@ msgstr "ユーザーワークスペースが見つかりません。"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "User workspace role configuration not found."
 msgstr "ユーザーワークスペースのロール設定が見つかりません。"
-
-#. js-lingui-id: 43zCwQ
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User's preferred date format"
-msgstr "ユーザーの優先する日付形式"
-
-#. js-lingui-id: PLfanm
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User's preferred number format"
-msgstr "ユーザーの優先する数値形式"
-
-#. js-lingui-id: Uce+A8
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User's preferred start day of the week"
-msgstr "ユーザーの優先する週の開始曜日"
-
-#. js-lingui-id: kJuoKm
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "User's preferred time format"
-msgstr "ユーザーの優先する時間形式"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -5837,43 +4205,15 @@ msgstr ""
 msgid "Widget type WORKFLOW_VERSION is not supported yet."
 msgstr ""
 
-#. js-lingui-id: bLt/0J
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Workflow"
-msgstr "ワークフロー"
-
-#. js-lingui-id: hdtWQn
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow automated triggers linked to the workflow."
-msgstr "ワークフローに関連する自動トリガー"
-
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Workflow edge not found."
 msgstr "ワークフローのエッジが見つかりません。"
 
-#. js-lingui-id: vwSkSW
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow linked to the run."
-msgstr "実行に関連するワークフロー"
-
 #. js-lingui-id: R67jts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
 msgstr "ワークフローが見つかりません。"
-
-#. js-lingui-id: y9tnFx
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow record position"
-msgstr "ワークフロー表示順"
 
 #. js-lingui-id: ysb9m+
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
@@ -5894,38 +4234,6 @@ msgstr "ワークフロー実行の上限に達しました。"
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow run not found."
 msgstr "ワークフロー実行が見つかりません。"
-
-#. js-lingui-id: IUaK6s
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow run position"
-msgstr "ワークフロー実行表示順"
-
-#. js-lingui-id: zaN7tH
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow run started at"
-msgstr "ワークフロー実行が開始された時間"
-
-#. js-lingui-id: 1TU2A8
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow run status"
-msgstr "ワークフロー実行のステータス"
-
-#. js-lingui-id: u6DF/V
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow Runs"
-msgstr "ワークフロー実行"
-
-#. js-lingui-id: 9nOy7k
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Workflow runs linked to the version."
-msgstr "バージョンに関連するワークフロー実行"
-
-#. js-lingui-id: c37F3j
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow runs linked to the workflow."
-msgstr "ワークフローに関連するワークフロー実行"
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
@@ -5948,56 +4256,6 @@ msgstr "ワークフローバージョンにはトリガーが含まれていま
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "ワークフローバージョンは下書き状態ではありません"
-
-#. js-lingui-id: CocTJJ
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-msgid "Workflow version linked to the run."
-msgstr "実行に関連するワークフローバージョン"
-
-#. js-lingui-id: 9l+pJT
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Workflow version position"
-msgstr "ワークフローバージョン表示順"
-
-#. js-lingui-id: OCyhkn
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "Workflow Versions"
-msgstr "ワークフローバージョン"
-
-#. js-lingui-id: 018fP9
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow versions linked to the workflow."
-msgstr "ワークフローに関連するワークフローバージョン"
-
-#. js-lingui-id: s7p+TL
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "WorkflowAutomatedTrigger"
-msgstr "ワークフロー自動トリガー"
-
-#. js-lingui-id: 96bCgZ
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "WorkflowAutomatedTrigger workflow"
-msgstr "WorkflowAutomatedTriggerのワークフロー"
-
-#. js-lingui-id: 5z92T9
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-msgid "WorkflowAutomatedTriggers"
-msgstr "ワークフロー自動トリガー"
-
-#. js-lingui-id: woYYQq
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflows"
-msgstr "ワークフロー"
-
-#. js-lingui-id: urCUgs
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-msgid "WorkflowVersion"
-msgstr "WorkflowVersion"
-
-#. js-lingui-id: b4kire
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-msgid "WorkflowVersion workflow"
-msgstr "WorkflowVersionのワークフロー"
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -6023,16 +4281,6 @@ msgstr "ワークスペースは新しいメンバーを迎える準備ができ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "ワークスペースメンバーが見つかりません。"
-
-#. js-lingui-id: NiUpuN
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Workspace member position"
-msgstr "ワークスペースメンバー表示順"
-
-#. js-lingui-id: YCAEr+
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Workspace Members"
-msgstr "ワークスペースメンバー"
 
 #. js-lingui-id: JYc1v3
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
@@ -6231,11 +4479,6 @@ msgstr "パスワードが正常に変更されました"
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "このワークスペースでのロールが見つかりませんでした。ワークスペース管理者に連絡してください。"
-
-#. js-lingui-id: vPccnr
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-msgid "Your team member responsible for managing the company account"
-msgstr "会社アカウントの担当メンバー"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
