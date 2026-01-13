@@ -83,7 +83,6 @@ const collectAllIds = (
     }
   }
 
-  // Object extensions
   for (const ext of manifest.objectExtensions ?? []) {
     const targetName =
       ext.targetObject?.nameSingular ??
@@ -234,7 +233,7 @@ const validateObjects = (
       if (
         (field.type === FieldMetadataType.SELECT ||
           field.type === FieldMetadataType.MULTI_SELECT) &&
-        (!field.options || (field.options as unknown[]).length === 0)
+        (!Array.isArray(field.options) || field.options.length === 0)
       ) {
         errors.push({
           path: fieldPath,
@@ -321,7 +320,7 @@ const validateObjectExtensions = (
       if (
         (field.type === FieldMetadataType.SELECT ||
           field.type === FieldMetadataType.MULTI_SELECT) &&
-        (!field.options || (field.options as unknown[]).length === 0)
+        (!Array.isArray(field.options) || field.options.length === 0)
       ) {
         errors.push({
           path: fieldPath,

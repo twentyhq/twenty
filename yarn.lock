@@ -56751,6 +56751,7 @@ __metadata:
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
+    "@sniptt/guards": "npm:^0.2.0"
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/jest": "npm:^29.5.0"

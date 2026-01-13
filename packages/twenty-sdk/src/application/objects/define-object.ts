@@ -1,5 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectManifest } from 'twenty-shared/application';
+import { isNonEmptyString } from '@sniptt/guards';
+import { validateFieldsOrThrow } from './validate-fields';
 
 /**
  * Define an object configuration with validation.
@@ -35,51 +36,27 @@ import { type ObjectManifest } from 'twenty-shared/application';
  * ```
  */
 export const defineObject = <T extends ObjectManifest>(config: T): T => {
-  if (!config.universalIdentifier) {
+  if (!isNonEmptyString(config.universalIdentifier)) {
     throw new Error('Object must have a universalIdentifier');
   }
 
-  if (!config.nameSingular) {
+  if (!isNonEmptyString(config.nameSingular)) {
     throw new Error('Object must have a nameSingular');
   }
 
-  if (!config.namePlural) {
+  if (!isNonEmptyString(config.namePlural)) {
     throw new Error('Object must have a namePlural');
   }
 
-  if (!config.labelSingular) {
+  if (!isNonEmptyString(config.labelSingular)) {
     throw new Error('Object must have a labelSingular');
   }
 
-  if (!config.labelPlural) {
+  if (!isNonEmptyString(config.labelPlural)) {
     throw new Error('Object must have a labelPlural');
   }
 
-  // Validate each field
-  for (const field of config.fields ?? []) {
-    if (!field.label) {
-      throw new Error('Field must have a label');
-    }
-
-    if (!field.name) {
-      throw new Error(`Field "${field.label}" must have a name`);
-    }
-
-    if (!field.universalIdentifier) {
-      throw new Error(`Field "${field.label}" must have a universalIdentifier`);
-    }
-
-    // Validate SELECT fields have options
-    if (
-      (field.type === FieldMetadataType.SELECT ||
-        field.type === FieldMetadataType.MULTI_SELECT) &&
-      (!field.options || (field.options as unknown[]).length === 0)
-    ) {
-      throw new Error(
-        `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,
-      );
-    }
-  }
+  validateFieldsOrThrow(config.fields);
 
   return config;
 };

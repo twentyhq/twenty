@@ -1,5 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectExtensionManifest } from 'twenty-shared/application';
+import { isNonEmptyString } from '@sniptt/guards';
+import { validateFieldsOrThrow } from './validate-fields';
 
 /**
  * Extend an existing object with additional fields.
@@ -53,13 +54,16 @@ export const extendObject = <T extends ObjectExtensionManifest>(
 
   const { nameSingular, universalIdentifier } = config.targetObject;
 
-  if (!nameSingular && !universalIdentifier) {
+  if (
+    !isNonEmptyString(nameSingular) &&
+    !isNonEmptyString(universalIdentifier)
+  ) {
     throw new Error(
       'targetObject must have either nameSingular or universalIdentifier',
     );
   }
 
-  if (nameSingular && universalIdentifier) {
+  if (isNonEmptyString(nameSingular) && isNonEmptyString(universalIdentifier)) {
     throw new Error(
       'targetObject cannot have both nameSingular and universalIdentifier - they are mutually exclusive',
     );
@@ -69,31 +73,7 @@ export const extendObject = <T extends ObjectExtensionManifest>(
     throw new Error('Object extension must have at least one field');
   }
 
-  // Validate each field
-  for (const field of config.fields) {
-    if (!field.label) {
-      throw new Error('Field must have a label');
-    }
-
-    if (!field.name) {
-      throw new Error(`Field "${field.label}" must have a name`);
-    }
-
-    if (!field.universalIdentifier) {
-      throw new Error(`Field "${field.label}" must have a universalIdentifier`);
-    }
-
-    // Validate SELECT fields have options
-    if (
-      (field.type === FieldMetadataType.SELECT ||
-        field.type === FieldMetadataType.MULTI_SELECT) &&
-      (!field.options || (field.options as unknown[]).length === 0)
-    ) {
-      throw new Error(
-        `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,
-      );
-    }
-  }
+  validateFieldsOrThrow(config.fields);
 
   return config;
 };

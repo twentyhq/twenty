@@ -98,7 +98,7 @@ export class ApplicationSyncService {
     });
 
     if (manifest.objectExtensions && manifest.objectExtensions.length > 0) {
-      await this.syncObjectExtensions({
+      await this.syncObjectExtensionsOrThrow({
         objectExtensionsToSync: manifest.objectExtensions,
         workspaceId,
         applicationId: application.id,
@@ -781,7 +781,7 @@ export class ApplicationSyncService {
     }
   }
 
-  private async syncObjectExtensions({
+  private async syncObjectExtensionsOrThrow({
     objectExtensionsToSync,
     workspaceId,
     applicationId,
