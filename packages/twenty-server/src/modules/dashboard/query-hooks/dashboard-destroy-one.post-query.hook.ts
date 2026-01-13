@@ -55,10 +55,12 @@ export class DashboardDestroyOnePostQueryHook
         `Failed to destroy page layouts for dashboards, restoring dashboards: ${error}`,
       );
 
-      await this.dashboardToPageLayoutSyncService.restoreDestroyedDashboards({
-        dashboards: destroyedDashboards,
-        workspaceId: workspace.id,
-      });
+      await this.dashboardToPageLayoutSyncService.restoreDestroyedDashboardsToSoftDeletedState(
+        {
+          dashboards: destroyedDashboards,
+          workspaceId: workspace.id,
+        },
+      );
 
       throw error;
     }

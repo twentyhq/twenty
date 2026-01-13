@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -8,12 +8,16 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  DashboardException,
+  DashboardExceptionCode,
+  DashboardExceptionMessageKey,
+  generateDashboardExceptionMessage,
+} from 'src/modules/dashboard/exceptions/dashboard.exception';
 import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
 export class DashboardToPageLayoutSyncService {
-  private readonly logger = new Logger(DashboardToPageLayoutSyncService.name);
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly pageLayoutService: PageLayoutService,
@@ -83,7 +87,7 @@ export class DashboardToPageLayoutSyncService {
     );
   }
 
-  public async restoreDestroyedDashboards({
+  public async restoreDestroyedDashboardsToSoftDeletedState({
     dashboards,
     workspaceId,
   }: {
@@ -95,6 +99,8 @@ export class DashboardToPageLayoutSyncService {
     }
 
     const authContext = buildSystemAuthContext(workspaceId);
+
+    const errors: Error[] = [];
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
@@ -110,10 +116,18 @@ export class DashboardToPageLayoutSyncService {
           try {
             await dashboardRepository.insert(dashboard);
           } catch (error) {
-            this.logger.error(
-              `Failed to restore dashboard ${dashboard.id}: ${error}`,
-            );
+            errors.push(error);
           }
+        }
+
+        if (errors.length > 0) {
+          throw new DashboardException(
+            generateDashboardExceptionMessage(
+              DashboardExceptionMessageKey.DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED,
+              dashboards.map((dashboard) => dashboard.id).join(', '),
+            ),
+            DashboardExceptionCode.DASHBOARD_RESTORATION_TO_SOFT_DELETED_STATE_FAILED,
+          );
         }
       },
     );
