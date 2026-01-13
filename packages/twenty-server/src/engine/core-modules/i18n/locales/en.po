@@ -1632,6 +1632,7 @@ msgstr "Invalid identity provider type."
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Invalid input provided."
 msgstr "Invalid input provided."
 
