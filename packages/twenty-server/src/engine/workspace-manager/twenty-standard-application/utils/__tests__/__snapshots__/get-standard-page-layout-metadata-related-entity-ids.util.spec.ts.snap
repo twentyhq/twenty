@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard page layout metadata related entity ids 1`] = `
+{
+  "myFirstDashboard": {
+    "id": "00000000-0000-0000-0000-000000000010",
+    "tabs": {
+      "tab1": {
+        "id": "00000000-0000-0000-0000-000000000009",
+        "widgets": {
+          "dealValueCreatedThisMonth": {
+            "id": "00000000-0000-0000-0000-000000000008",
+          },
+          "dealsByCompany": {
+            "id": "00000000-0000-0000-0000-000000000002",
+          },
+          "dealsCreatedThisMonth": {
+            "id": "00000000-0000-0000-0000-000000000007",
+          },
+          "opportunitiesByOwner": {
+            "id": "00000000-0000-0000-0000-000000000005",
+          },
+          "pipelineValueByStage": {
+            "id": "00000000-0000-0000-0000-000000000003",
+          },
+          "revenueTimeline": {
+            "id": "00000000-0000-0000-0000-000000000004",
+          },
+          "stockMarketIframe": {
+            "id": "00000000-0000-0000-0000-000000000006",
+          },
+          "welcomeRichText": {
+            "id": "00000000-0000-0000-0000-000000000001",
+          },
+        },
+      },
+    },
+  },
+}
+`;

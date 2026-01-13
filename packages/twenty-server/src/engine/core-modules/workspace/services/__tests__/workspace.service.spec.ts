@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
@@ -139,6 +139,19 @@ describe('WorkspaceService', () => {
           provide: getQueueToken(MessageQueue.deleteCascadeQueue),
           useValue: {
             add: jest.fn(),
+          },
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            createQueryRunner: jest.fn().mockReturnValue({
+              connect: jest.fn(),
+              startTransaction: jest.fn(),
+              commitTransaction: jest.fn(),
+              rollbackTransaction: jest.fn(),
+              release: jest.fn(),
+              manager: {},
+            }),
           },
         },
       ],

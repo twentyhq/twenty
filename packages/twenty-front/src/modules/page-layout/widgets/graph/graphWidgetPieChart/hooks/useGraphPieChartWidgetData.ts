@@ -5,6 +5,7 @@ import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -24,6 +25,7 @@ type UseGraphPieChartWidgetDataResult = {
   hasTooManyGroups: boolean;
   objectMetadataItem: ObjectMetadataItem;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
   showDataLabels: boolean;
   showCenterMetric: boolean;
 };

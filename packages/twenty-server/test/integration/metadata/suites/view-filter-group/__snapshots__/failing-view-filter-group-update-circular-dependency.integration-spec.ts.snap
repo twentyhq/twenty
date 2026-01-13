@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`View Filter Group update should fail with circular dependency when parentViewFilterGroupId equals id (self-reference) 1`] = `
 {

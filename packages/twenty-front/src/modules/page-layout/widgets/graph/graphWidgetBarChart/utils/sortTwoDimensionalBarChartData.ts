@@ -1,12 +1,17 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { sortSecondaryAxisData } from '@/page-layout/widgets/graph/utils/sortSecondaryAxisData';
-import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually';
+import { sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded } from '@/page-layout/widgets/graph/utils/sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded';
 import { type BarDatum } from '@nivo/bar';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 import { type BarChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type SortTwoDimensionalBarChartDataConfiguration = {
@@ -18,12 +23,15 @@ type SortTwoDimensionalBarChartDataConfiguration = {
   primaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
   secondaryAxisFormattedToRawLookup?: Map<string, RawDimensionValue>;
   secondaryAxisSelectFieldOptions?: FieldMetadataItemOption[] | null;
+  secondaryAxisFieldType?: FieldMetadataType;
+  secondaryAxisSubFieldName?: CompositeFieldSubFieldName;
 };
 
 type SortTwoDimensionalBarChartDataResult = {
   sortedData: BarDatum[];
   sortedKeys: string[];
   sortedSeries: BarChartSeries[];
+  colorMode: GraphColorMode;
 };
 
 export const sortTwoDimensionalBarChartData = ({
@@ -41,6 +49,8 @@ export const sortTwoDimensionalBarChartData = ({
   primaryAxisSelectFieldOptions,
   secondaryAxisFormattedToRawLookup,
   secondaryAxisSelectFieldOptions,
+  secondaryAxisFieldType,
+  secondaryAxisSubFieldName,
 }: SortTwoDimensionalBarChartDataConfiguration): SortTwoDimensionalBarChartDataResult => {
   const sortedKeys = sortSecondaryAxisData({
     items: keys,
@@ -49,13 +59,23 @@ export const sortTwoDimensionalBarChartData = ({
     formattedToRawLookup: secondaryAxisFormattedToRawLookup,
     selectFieldOptions: secondaryAxisSelectFieldOptions,
     getFormattedValue: (item) => item,
+    fieldType: secondaryAxisFieldType,
+    subFieldName: secondaryAxisSubFieldName,
   });
 
-  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => ({
-    key,
-    label: key,
-    color: color as GraphColor,
-  }));
+  const sortedSeries: BarChartSeries[] = sortedKeys.map((key) => {
+    const rawValue = secondaryAxisFormattedToRawLookup?.get(key);
+
+    return {
+      key,
+      label: key,
+      color: determineChartItemColor({
+        configurationColor: parseGraphColor(color),
+        selectOptions: secondaryAxisSelectFieldOptions,
+        rawValue: isDefined(rawValue) ? String(rawValue) : key,
+      }),
+    };
+  });
 
   let sortedData: BarDatum[] = data;
 
@@ -70,20 +90,27 @@ export const sortTwoDimensionalBarChartData = ({
         orderBy: primaryAxisOrderBy,
       });
     } else {
-      sortedData = sortTwoDimensionalChartPrimaryAxisDataByFieldOrManually({
-        data,
-        orderBy: primaryAxisOrderBy,
-        manualSortOrder: primaryAxisManualSortOrder,
-        formattedToRawLookup: primaryAxisFormattedToRawLookup,
-        getFormattedValue: (datum) => datum[indexByKey] as string,
-        selectFieldOptions: primaryAxisSelectFieldOptions,
-      });
+      sortedData =
+        sortTwoDimensionalChartPrimaryAxisDataByFieldOrManuallyIfNeeded({
+          data,
+          orderBy: primaryAxisOrderBy,
+          manualSortOrder: primaryAxisManualSortOrder,
+          formattedToRawLookup: primaryAxisFormattedToRawLookup,
+          getFormattedValue: (datum) => datum[indexByKey] as string,
+          selectFieldOptions: primaryAxisSelectFieldOptions,
+        });
     }
   }
+
+  const colorMode = determineGraphColorMode({
+    configurationColor: color,
+    selectFieldOptions: secondaryAxisSelectFieldOptions,
+  });
 
   return {
     sortedData,
     sortedKeys,
     sortedSeries,
+    colorMode,
   };
 };

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow creating a view field with a position lower than the label identifier view field 1`] = `
 {

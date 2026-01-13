@@ -6,11 +6,12 @@ import {
   ApplicationManifest,
   FieldManifest,
   ObjectManifest,
+  RelationFieldManifest,
   RoleManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'twenty-shared/application';
-import { HTTPMethod, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -43,7 +44,7 @@ import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serv
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -84,6 +85,12 @@ export class ApplicationSyncService {
     });
 
     await this.syncObjects({
+      objectsToSync: manifest.objects,
+      workspaceId,
+      applicationId: application.id,
+    });
+
+    await this.syncRelations({
       objectsToSync: manifest.objects,
       workspaceId,
       applicationId: application.id,
@@ -350,6 +357,12 @@ export class ApplicationSyncService {
     }
   }
 
+  private isRelationFieldManifest(
+    field: FieldManifest | RelationFieldManifest,
+  ): field is RelationFieldManifest {
+    return field.type === FieldMetadataType.RELATION;
+  }
+
   private async syncFields({
     objectId,
     fieldsToSync,
@@ -359,9 +372,36 @@ export class ApplicationSyncService {
     objectId: string;
     workspaceId: string;
     applicationId: string;
-    fieldsToSync?: FieldManifest[];
+    fieldsToSync?: (FieldManifest | RelationFieldManifest)[];
   }) {
     if (!isDefined(fieldsToSync)) {
+      return;
+    }
+
+    const regularFields = fieldsToSync.filter(
+      (field): field is FieldManifest => !this.isRelationFieldManifest(field),
+    );
+
+    await this.syncRegularFields({
+      objectId,
+      fieldsToSync: regularFields,
+      workspaceId,
+      applicationId,
+    });
+  }
+
+  private async syncRegularFields({
+    objectId,
+    fieldsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    objectId: string;
+    workspaceId: string;
+    applicationId: string;
+    fieldsToSync: FieldManifest[];
+  }) {
+    if (fieldsToSync.length === 0) {
       return;
     }
 
@@ -466,6 +506,82 @@ export class ApplicationSyncService {
         applicationId,
         isCustom: true,
         workspaceId,
+      };
+
+      await this.fieldMetadataService.createOneField({
+        createFieldInput,
+        workspaceId,
+        applicationId,
+      });
+    }
+  }
+
+  private async syncRelationFields({
+    objectId,
+    relationsToSync,
+    workspaceId,
+    applicationId,
+    flatObjectMetadataMaps,
+  }: {
+    objectId: string;
+    relationsToSync: RelationFieldManifest[];
+    workspaceId: string;
+    applicationId: string;
+    flatObjectMetadataMaps: {
+      idByUniversalIdentifier: Partial<Record<string, string>>;
+    };
+  }) {
+    const { flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    for (const relation of relationsToSync) {
+      const existingRelationField = Object.values(
+        flatFieldMetadataMaps.byId,
+      ).find(
+        (field) =>
+          isDefined(field) &&
+          field.universalIdentifier === relation.universalIdentifier,
+      );
+
+      if (isDefined(existingRelationField)) {
+        continue;
+      }
+
+      const targetObjectId =
+        flatObjectMetadataMaps.idByUniversalIdentifier[
+          relation.targetObjectUniversalIdentifier
+        ];
+
+      if (!isDefined(targetObjectId)) {
+        throw new ApplicationException(
+          `Failed to find target object with universalIdentifier ${relation.targetObjectUniversalIdentifier}`,
+          ApplicationExceptionCode.OBJECT_NOT_FOUND,
+        );
+      }
+
+      const createFieldInput: CreateFieldInput = {
+        name: computeMetadataNameFromLabelOrThrow(relation.label),
+        type: FieldMetadataType.RELATION,
+        label: relation.label,
+        description: relation.description ?? undefined,
+        icon: relation.icon ?? undefined,
+        objectMetadataId: objectId,
+        universalIdentifier: relation.universalIdentifier,
+        standardId: relation.universalIdentifier,
+        applicationId,
+        isCustom: true,
+        workspaceId,
+        relationCreationPayload: {
+          type: relation.relationType,
+          targetObjectMetadataId: targetObjectId,
+          targetFieldLabel: relation.targetFieldLabel,
+          targetFieldIcon: relation.targetFieldIcon ?? 'IconRelationOneToMany',
+        },
       };
 
       await this.fieldMetadataService.createOneField({
@@ -603,6 +719,55 @@ export class ApplicationSyncService {
         objectId: createdObject.id,
         workspaceId,
         applicationId,
+      });
+    }
+  }
+
+  private async syncRelations({
+    objectsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    objectsToSync: ObjectManifest[];
+    workspaceId: string;
+    applicationId: string;
+  }) {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    for (const objectToSync of objectsToSync) {
+      const relationFields = objectToSync.fields.filter(
+        (field): field is RelationFieldManifest =>
+          this.isRelationFieldManifest(field),
+      );
+
+      if (relationFields.length === 0) {
+        continue;
+      }
+
+      const sourceObjectId =
+        flatObjectMetadataMaps.idByUniversalIdentifier[
+          objectToSync.universalIdentifier
+        ];
+
+      if (!isDefined(sourceObjectId)) {
+        throw new ApplicationException(
+          `Failed to find source object with universalIdentifier ${objectToSync.universalIdentifier}`,
+          ApplicationExceptionCode.OBJECT_NOT_FOUND,
+        );
+      }
+
+      await this.syncRelationFields({
+        objectId: sourceObjectId,
+        relationsToSync: relationFields,
+        workspaceId,
+        applicationId,
+        flatObjectMetadataMaps,
       });
     }
   }

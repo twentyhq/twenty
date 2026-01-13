@@ -14,7 +14,6 @@ import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { BACKGROUND_LIGHT } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
@@ -86,7 +85,7 @@ export const SettingsBillingCreditsSection = ({
             barColor={
               progressBarValue > 100 ? theme.color.red8 : theme.color.blue
             }
-            backgroundColor={BACKGROUND_LIGHT.tertiary}
+            backgroundColor={theme.background.tertiary}
             withBorderRadius={true}
           />
 

@@ -117,7 +117,7 @@ describe('WorkspaceEntityManager', () => {
       shortcut: null,
       standardId: null,
       standardOverrides: null,
-      applicationId: null,
+      applicationId: 'test-application-id',
       isLabelSyncedWithName: false,
       isUIReadOnly: false,
       duplicateCriteria: null,
@@ -161,7 +161,7 @@ describe('WorkspaceEntityManager', () => {
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       morphId: null,
-      applicationId: null,
+      applicationId: 'application-id',
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
@@ -207,9 +207,6 @@ describe('WorkspaceEntityManager', () => {
         'test-entity': 'test-entity-id',
       },
       featureFlagsMap: {
-        IS_AIRTABLE_INTEGRATION_ENABLED: false,
-        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
-        IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
@@ -223,7 +220,6 @@ describe('WorkspaceEntityManager', () => {
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
-        IS_WORKSPACE_CREATION_V2_ENABLED: false,
         IS_IF_ELSE_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
@@ -236,9 +232,6 @@ describe('WorkspaceEntityManager', () => {
 
     mockDataSource = {
       featureFlagMap: {
-        IS_AIRTABLE_INTEGRATION_ENABLED: false,
-        IS_POSTGRESQL_INTEGRATION_ENABLED: false,
-        IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,

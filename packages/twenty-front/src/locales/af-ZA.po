@@ -569,9 +569,9 @@ msgstr "Vermoë om meer as een URL by te voeg"
 msgid "Ability to edit all settings"
 msgstr "Vermoë om alle instellings te wysig"
 
-#. js-lingui-id: be8QOI
+#. js-lingui-id: 7J3Y++
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to interact with specific records of this object."
+msgid "Ability to filter the records a user can interact with."
 msgstr ""
 
 #. js-lingui-id: wTKqOI
@@ -715,7 +715,6 @@ msgstr "Aktiveer Werkstroom"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -734,7 +733,6 @@ msgstr "Aktiewe sinkronisering"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Add"
 msgstr "Voeg by"
 
@@ -806,6 +804,8 @@ msgstr "Voeg lêer by"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
 msgid "Add filter"
@@ -920,6 +920,8 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -1142,7 +1144,6 @@ msgstr "Agent-tekens"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "Agente"
@@ -1151,11 +1152,6 @@ msgstr "Agente"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
 msgstr "Agente wat hierdie toepassing aandryf"
-
-#. js-lingui-id: 0k5XwN
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
-msgid "Agents used to route queries to specialized agents"
-msgstr "Agentse gebruik om navrae na gespesialiseerde agente te stuur"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -1410,18 +1406,18 @@ msgstr "'n Fout het voorgekom tydens die oplaai van die prent."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
-#: src/modules/views/hooks/internal/usePersistView.ts
-#: src/modules/views/hooks/internal/usePersistView.ts
-#: src/modules/views/hooks/internal/usePersistView.ts
+#: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
+#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
 #: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
@@ -4164,6 +4160,7 @@ msgid "Downgrade"
 msgstr "Verlaagde gradering"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
 msgstr "Laai af"
@@ -5524,6 +5521,7 @@ msgstr "Veld op bestemming"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
@@ -6043,6 +6041,11 @@ msgstr "Steek weg"
 msgid "Hide deleted"
 msgstr "Versteek verwyderde"
 
+#. js-lingui-id: rp2bZI
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Hide deleted dashboards"
+msgstr ""
+
 #. js-lingui-id: OTmbll
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Hide deleted members"
@@ -6310,11 +6313,6 @@ msgstr "Voer rekords in"
 msgid "Import workflows"
 msgstr "Voer werkvloeie in"
 
-#. js-lingui-id: 9eZDRo
-#: src/modules/settings/integrations/components/SettingsIntegrationPreview.tsx
-msgid "Import your tables as remote objects"
-msgstr "Voer jou tabelle in as afgeleë objekte"
-
 #. js-lingui-id: wsKZ+v
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Imported data"
@@ -6445,12 +6443,6 @@ msgstr ""
 msgid "Instructions for AI"
 msgstr "Instruksies vir KI"
 
-#. js-lingui-id: nbfdhU
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
-msgid "Integrations"
-msgstr "Integrasies"
-
 #. js-lingui-id: RGm66q
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
@@ -6485,6 +6477,16 @@ msgstr "Ongeldig outentiekasieverskaffer omseil"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Ongeldig outentiekasieverskaffer"
+
+#. js-lingui-id: O/7n0L
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay.tsx
+msgid "Invalid Configuration"
+msgstr ""
+
+#. js-lingui-id: fSwqXe
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay.tsx
+msgid "Invalid configuration. Click edit to configure this widget."
+msgstr ""
 
 #. js-lingui-id: ER/0YT
 #: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
@@ -7323,8 +7325,14 @@ msgstr "MCP-bediener"
 
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
 msgid "Me"
 msgstr "Ek"
+
+#. js-lingui-id: pfWzog
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Me (User ID)"
+msgstr ""
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7941,6 +7949,11 @@ msgstr "Geen verandering waargeneem nie"
 msgid "No comment"
 msgstr ""
 
+#. js-lingui-id: qTxPPY
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "No compatible fields"
+msgstr ""
+
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
@@ -7968,6 +7981,7 @@ msgstr "Geen geldeenheid"
 #. js-lingui-id: plhHQt
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
 msgstr "Geen data"
 
@@ -8179,11 +8193,6 @@ msgstr "Geen toestemmings is ingestel vir individuele voorwerpe nie."
 msgid "No record is required to trigger this workflow"
 msgstr "Geen rekord is nodig om hierdie werkvloei te aktiveer nie"
 
-#. js-lingui-id: DiSvfp
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "No record-level rules have been set yet."
-msgstr ""
-
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -8194,12 +8203,6 @@ msgstr "Geen rekords gevind nie"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No records matching the filter criteria were found."
 msgstr "Geen rekords wat aan die filterkriteria voldoen, is gevind nie."
-
-#. js-lingui-id: QmAM1h
-#: src/modules/page-layout/widgets/field/components/FieldWidgetRelation.tsx
-#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelation.tsx
-msgid "No related records"
-msgstr "Geen verwante rekords nie"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
@@ -8701,6 +8704,7 @@ msgstr "Organisasie"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
 msgid "Other"
 msgstr "Ander"
 
@@ -9676,6 +9680,11 @@ msgstr "Herstel na Verstek"
 msgid "Reset to Default"
 msgstr "Herstel na Verstek"
 
+#. js-lingui-id: 14xBUx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+msgid "Reset to static value"
+msgstr ""
+
 #. js-lingui-id: 6rzsES
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "Reset variable"
@@ -9724,6 +9733,11 @@ msgstr "Herstel"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Restore dashboard"
 msgstr "Herstel paneelbord"
+
+#. js-lingui-id: jC7v7d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboards"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -9989,6 +10003,16 @@ msgstr "Soek"
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Soek ''{commandMenuSearch}'' met..."
 
+#. js-lingui-id: g2dQp/
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Search 1 {fieldTypeLabelLowercase} field"
+msgstr ""
+
+#. js-lingui-id: 4XD2Lr
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Search 1 field"
+msgstr ""
+
 #. js-lingui-id: n9V88v
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 msgid "Search a built-in tool..."
@@ -10209,6 +10233,11 @@ msgstr "Sien {objectLabelPlural}"
 msgid "See active version"
 msgstr "Sien aktiewe weergawe"
 
+#. js-lingui-id: f4Lu+X
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "See deleted dashboards"
+msgstr ""
+
 #. js-lingui-id: 8O9AJI
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "See deleted members"
@@ -10285,6 +10314,16 @@ msgstr "Sien werkvloeie"
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
 msgid "Select"
 msgstr "Kies"
+
+#. js-lingui-id: 9NFSzl
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Select 1 {fieldTypeLabelLowercase} field"
+msgstr ""
+
+#. js-lingui-id: VjMMyZ
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+msgid "Select 1 field"
+msgstr ""
 
 #. js-lingui-id: D1pVcW
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
@@ -10841,7 +10880,6 @@ msgstr "Sommige vouers"
 
 #. js-lingui-id: yHwG3y
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -11598,6 +11636,11 @@ msgstr "Hierdie aksie sal hierdie gunstelingvouer en die gunsteling daarin uitve
 msgid "This database value overrides environment settings. "
 msgstr "Hierdie databasis waarde oorskry omgewingsinstellings."
 
+#. js-lingui-id: own57K
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file cannot be previewed because it is hosted locally."
+msgstr ""
+
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file type cannot be previewed. Please download the file to view it."
@@ -12202,7 +12245,6 @@ msgid "update"
 msgstr "opdateer"
 
 #. js-lingui-id: EkH9pt
-#: src/modules/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -12305,11 +12347,6 @@ msgstr "URL"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
 msgstr "URL om in te voeg"
-
-#. js-lingui-id: DsBeuB
-#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
-msgid "Use"
-msgstr "Gebruik"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -12733,6 +12770,7 @@ msgstr "Wanneer die sleutel gedeaktiveer sal word"
 
 #. js-lingui-id: YvwwqC
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell.tsx
 msgid "Where"
@@ -12790,7 +12828,6 @@ msgstr "Werksvloeie"
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
-#: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx

@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -18,6 +19,7 @@ import {
 
 export const useRecordIndexGroupCommonQueryVariables = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
@@ -50,7 +52,11 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
       filterValue: anyFieldFilterValue,
     });
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
+  const orderBy = turnSortsIntoOrderBy(
+    objectMetadataItem,
+    currentRecordSorts,
+    objectMetadataItems,
+  );
 
   const recordGroupFieldMetadata = useRecoilComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
