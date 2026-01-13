@@ -32,6 +32,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
@@ -74,8 +75,6 @@ export const useAuth = () => {
   const setIsAppEffectRedirectEnabled = useSetRecoilState(
     isAppEffectRedirectEnabledState,
   );
-
-  const LAST_AUTHENTICATED_METHOD_STORAGE_KEY = 'lastAuthenticatedMethodState';
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -154,6 +153,9 @@ export const useAuth = () => {
         const workspacePublicData = snapshot
           .getLoadable(workspacePublicDataState)
           .getValue();
+        const lastAuthenticatedMethod = snapshot
+          .getLoadable(lastAuthenticatedMethodState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -173,24 +175,14 @@ export const useAuth = () => {
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
           set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
+          set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
           return undefined;
         });
-
-        goToRecoilSnapshot(initialSnapshot);
-
-        const lastAuthenticatedMethod = localStorage.getItem(
-          LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-        );
 
         sessionStorage.clear();
         localStorage.clear();
 
-        if (lastAuthenticatedMethod !== null) {
-          localStorage.setItem(
-            LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-            lastAuthenticatedMethod,
-          );
-        }
+        goToRecoilSnapshot(initialSnapshot);
 
         await client.clearStore();
         setLastAuthenticateWorkspaceDomain(null);
