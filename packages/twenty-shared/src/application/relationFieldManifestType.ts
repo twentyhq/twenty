@@ -13,5 +13,5 @@ export type RelationFieldManifest = SyncableEntityOptions & {
   targetFieldLabel: string;
   targetFieldIcon?: string;
   onDelete?: RelationOnDeleteAction;
-  type: FieldMetadataType;
+  type: FieldMetadataType.RELATION;
 };
