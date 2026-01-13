@@ -19,7 +19,6 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
-import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -27,13 +26,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
-import {
-  Responsive,
-  WidthProvider,
-  type Layout,
-  type Layouts,
-  type ResponsiveProps,
-} from 'react-grid-layout';
+import { Responsive, useContainerWidth } from 'react-grid-layout';
+import { verticalCompactor } from 'react-grid-layout/core';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledGridContainer = styled.div`
@@ -64,20 +58,13 @@ const StyledGridContainer = styled.div`
   }
 `;
 
-type ExtendedResponsiveProps = ResponsiveProps & {
-  maxCols?: number;
-  preventCollision?: boolean;
-};
-
-const ResponsiveGridLayout = WidthProvider(
-  Responsive,
-) as React.ComponentType<ExtendedResponsiveProps>;
-
 type PageLayoutGridLayoutProps = {
   tabId: string;
 };
 
 export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
+  const { width, containerRef, mounted } = useContainerWidth();
+
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
@@ -91,16 +78,6 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   );
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
-
-  const handleLayoutChangeWithoutPendingPlaceholder = (
-    currentLayout: Layout[],
-    allLayouts: Layouts,
-  ) => {
-    handleLayoutChange(
-      currentLayout,
-      filterPendingPlaceholderFromLayouts(allLayouts),
-    );
-  };
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
@@ -143,61 +120,74 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   );
 
   return (
-    <StyledGridContainer ref={gridContainerRef}>
-      {isPageLayoutInEditMode && (
-        <>
-          <PageLayoutGridOverlay />
-          <PageLayoutGridLayoutDragSelector
-            gridContainerRef={gridContainerRef}
-          />
-        </>
-      )}
+    <StyledGridContainer ref={containerRef as React.RefObject<HTMLDivElement>}>
+      <div ref={gridContainerRef} style={{ width: '100%', height: '100%' }}>
+        {isPageLayoutInEditMode && (
+          <>
+            <PageLayoutGridOverlay />
+            <PageLayoutGridLayoutDragSelector
+              gridContainerRef={gridContainerRef}
+            />
+          </>
+        )}
 
-      <ResponsiveGridLayout
-        className="layout"
-        layouts={layouts}
-        breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
-        cols={PAGE_LAYOUT_CONFIG.columns}
-        rowHeight={PAGE_LAYOUT_GRID_ROW_HEIGHT}
-        maxCols={12}
-        containerPadding={[0, 0]}
-        margin={[PAGE_LAYOUT_GRID_MARGIN, PAGE_LAYOUT_GRID_MARGIN]}
-        isDraggable={isPageLayoutInEditMode}
-        isResizable={isPageLayoutInEditMode}
-        draggableHandle=".drag-handle"
-        compactType="vertical"
-        preventCollision={false}
-        resizeHandle={
-          isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
-        }
-        resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
-        onDragStart={(_layout, _oldItem, newItem) => {
-          setDraggingWidgetId(newItem.i);
-        }}
-        onDragStop={() => {
-          setDraggingWidgetId(null);
-        }}
-        onResizeStart={(_layout, _oldItem, newItem) => {
-          setResizingWidgetId(newItem.i);
-        }}
-        onResizeStop={() => {
-          setResizingWidgetId(null);
-        }}
-        onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
-        onBreakpointChange={(newBreakpoint) =>
-          setPageLayoutCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
-        }
-      >
-        {gridLayoutItems.map((item) => (
-          <ReactGridLayoutCardWrapper key={item.id}>
-            {item.type === 'placeholder' ? (
-              <WidgetPlaceholder />
-            ) : (
-              <WidgetRenderer widget={item.widget} />
-            )}
-          </ReactGridLayoutCardWrapper>
-        ))}
-      </ResponsiveGridLayout>
+        {mounted && (
+          <Responsive
+            className="layout"
+            width={width}
+            layouts={layouts}
+            breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
+            cols={PAGE_LAYOUT_CONFIG.columns}
+            rowHeight={PAGE_LAYOUT_GRID_ROW_HEIGHT}
+            margin={[PAGE_LAYOUT_GRID_MARGIN, PAGE_LAYOUT_GRID_MARGIN]}
+            containerPadding={[0, 0]}
+            compactor={verticalCompactor}
+            dragConfig={{
+              enabled: isPageLayoutInEditMode,
+              handle: '.drag-handle',
+            }}
+            resizeConfig={{
+              enabled: isPageLayoutInEditMode,
+              handles: ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'],
+              handleComponent: isPageLayoutInEditMode ? (
+                <PageLayoutGridResizeHandle />
+              ) : undefined,
+            }}
+            onDragStart={(_layout, _oldItem, newItem) => {
+              if (isDefined(newItem)) {
+                setDraggingWidgetId(newItem.i);
+              }
+            }}
+            onDragStop={() => {
+              setDraggingWidgetId(null);
+            }}
+            onResizeStart={(_layout, _oldItem, newItem) => {
+              if (isDefined(newItem)) {
+                setResizingWidgetId(newItem.i);
+              }
+            }}
+            onResizeStop={() => {
+              setResizingWidgetId(null);
+            }}
+            onLayoutChange={handleLayoutChange}
+            onBreakpointChange={(newBreakpoint) =>
+              setPageLayoutCurrentBreakpoint(
+                newBreakpoint as PageLayoutBreakpoint,
+              )
+            }
+          >
+            {gridLayoutItems.map((item) => (
+              <ReactGridLayoutCardWrapper key={item.id}>
+                {item.type === 'placeholder' ? (
+                  <WidgetPlaceholder />
+                ) : (
+                  <WidgetRenderer widget={item.widget} />
+                )}
+              </ReactGridLayoutCardWrapper>
+            ))}
+          </Responsive>
+        )}
+      </div>
     </StyledGridContainer>
   );
 };

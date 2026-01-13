@@ -1,3 +1,3 @@
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
-export type TabLayouts = Record<string, Layouts>;
+export type TabLayouts = Record<string, ResponsiveLayouts>;

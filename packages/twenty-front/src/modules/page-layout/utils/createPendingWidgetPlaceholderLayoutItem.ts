@@ -1,11 +1,11 @@
 import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
-import { type Layout } from 'react-grid-layout';
+import { type LayoutItem } from 'react-grid-layout';
 
 export const createPendingWidgetPlaceholderLayoutItem = (
   draggedArea: { x: number; y: number; w: number; h: number },
   breakpoint: 'desktop' | 'mobile',
-): Layout => ({
+): LayoutItem => ({
   i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
   x: breakpoint === 'mobile' ? 0 : draggedArea.x,
   y: draggedArea.y,

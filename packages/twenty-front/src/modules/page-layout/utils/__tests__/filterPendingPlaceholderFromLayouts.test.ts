@@ -1,10 +1,10 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
-import { type Layouts } from 'react-grid-layout';
 import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
 describe('filterPendingPlaceholderFromLayouts', () => {
   it('should remove pending placeholder from both desktop and mobile layouts', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 4 },
         { i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY, x: 4, y: 0, w: 4, h: 4 },
@@ -33,7 +33,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
   });
 
   it('should handle layouts with no pending placeholder', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 4 },
         { i: 'widget-2', x: 4, y: 0, w: 4, h: 4 },
@@ -59,7 +59,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
         { i: 'widget-1', x: 0, y: 0, w: 1, h: 4 },
         { i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY, x: 0, y: 4, w: 1, h: 4 },
       ],
-    } as Layouts;
+    } as ResponsiveLayouts;
 
     const result1 = filterPendingPlaceholderFromLayouts(layoutsWithoutDesktop);
 
@@ -73,7 +73,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 4 },
         { i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY, x: 4, y: 0, w: 4, h: 4 },
       ],
-    } as Layouts;
+    } as ResponsiveLayouts;
 
     const result2 = filterPendingPlaceholderFromLayouts(layoutsWithoutMobile);
 
@@ -85,7 +85,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
   });
 
   it('should handle empty layouts', () => {
-    const emptyLayouts: Layouts = {
+    const emptyLayouts: ResponsiveLayouts = {
       desktop: [],
       mobile: [],
     };
@@ -97,7 +97,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
   });
 
   it('should handle layouts with only pending placeholder', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY, x: 0, y: 0, w: 4, h: 4 },
       ],
@@ -113,7 +113,7 @@ describe('filterPendingPlaceholderFromLayouts', () => {
   });
 
   it('should not mutate the original layouts', () => {
-    const layouts: Layouts = {
+    const layouts: ResponsiveLayouts = {
       desktop: [
         { i: 'widget-1', x: 0, y: 0, w: 4, h: 4 },
         { i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY, x: 4, y: 0, w: 4, h: 4 },

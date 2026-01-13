@@ -99,17 +99,16 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           ...generateDuplicatedTimestamps(),
         };
 
-        const sourceLayouts = allTabLayouts[tabId] ?? {
-          desktop: [],
-          mobile: [],
-        };
+        const sourceLayouts = allTabLayouts[tabId];
+        const sourceDesktop = sourceLayouts?.desktop ?? [];
+        const sourceMobile = sourceLayouts?.mobile ?? [];
 
         const newLayouts = {
-          desktop: sourceLayouts.desktop.map((layout) => ({
+          desktop: sourceDesktop.map((layout) => ({
             ...layout,
             i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
           })),
-          mobile: sourceLayouts.mobile.map((layout) => ({
+          mobile: sourceMobile.map((layout) => ({
             ...layout,
             i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
           })),
