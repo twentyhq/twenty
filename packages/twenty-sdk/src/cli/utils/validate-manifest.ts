@@ -1,6 +1,7 @@
 import {
   type ApplicationManifest,
   type ServerlessFunctionManifest,
+  type ObjectExtensionManifest,
   type ObjectManifest,
   type RoleManifest,
   type Application,
@@ -25,7 +26,9 @@ export type ValidationResult = {
 
 export class ManifestValidationError extends Error {
   constructor(public readonly errors: ValidationError[]) {
-    const messages = errors.map((e) => `  • ${e.path}: ${e.message}`).join('\n');
+    const messages = errors
+      .map((e) => `  • ${e.path}: ${e.message}`)
+      .join('\n');
     super(`Manifest validation failed:\n${messages}`);
     this.name = 'ManifestValidationError';
   }
@@ -75,6 +78,22 @@ const collectAllIds = (
         ids.push({
           id: field.universalIdentifier,
           location: `objects/${obj.nameSingular}.fields.${field.label}`,
+        });
+      }
+    }
+  }
+
+  for (const ext of manifest.objectExtensions ?? []) {
+    const targetName =
+      ext.targetObject?.nameSingular ??
+      ext.targetObject?.universalIdentifier ??
+      'unknown';
+    // Extension fields
+    for (const field of ext.fields ?? []) {
+      if (field.universalIdentifier) {
+        ids.push({
+          id: field.universalIdentifier,
+          location: `object-extensions/${targetName}.fields.${field.label}`,
         });
       }
     }
@@ -214,7 +233,94 @@ const validateObjects = (
       if (
         (field.type === FieldMetadataType.SELECT ||
           field.type === FieldMetadataType.MULTI_SELECT) &&
-        (!field.options || (field.options as unknown[]).length === 0)
+        (!Array.isArray(field.options) || field.options.length === 0)
+      ) {
+        errors.push({
+          path: fieldPath,
+          message: 'SELECT/MULTI_SELECT field must have options',
+        });
+      }
+    }
+  }
+};
+
+/**
+ * Validate object extensions and their fields.
+ */
+const validateObjectExtensions = (
+  extensions: ObjectExtensionManifest[],
+  errors: ValidationError[],
+): void => {
+  for (const ext of extensions) {
+    const targetName =
+      ext.targetObject?.nameSingular ??
+      ext.targetObject?.universalIdentifier ??
+      'unknown';
+    const extPath = `object-extensions/${targetName}`;
+
+    if (!ext.targetObject) {
+      errors.push({
+        path: extPath,
+        message: 'Object extension must have a targetObject',
+      });
+      continue;
+    }
+
+    const { nameSingular, universalIdentifier } = ext.targetObject;
+
+    if (!nameSingular && !universalIdentifier) {
+      errors.push({
+        path: extPath,
+        message:
+          'Object extension targetObject must have either nameSingular or universalIdentifier',
+      });
+    }
+
+    if (nameSingular && universalIdentifier) {
+      errors.push({
+        path: extPath,
+        message:
+          'Object extension targetObject cannot have both nameSingular and universalIdentifier',
+      });
+    }
+
+    if (!ext.fields || ext.fields.length === 0) {
+      errors.push({
+        path: extPath,
+        message: 'Object extension must have at least one field',
+      });
+    }
+
+    // Validate fields
+    for (const field of ext.fields ?? []) {
+      const fieldPath = `${extPath}.fields.${field.label ?? 'unknown'}`;
+
+      if (!field.universalIdentifier) {
+        errors.push({
+          path: fieldPath,
+          message: 'Field must have a universalIdentifier',
+        });
+      }
+
+      if (!field.type) {
+        errors.push({
+          path: fieldPath,
+          message: 'Field must have a type',
+        });
+      }
+
+      if (!field.label) {
+        errors.push({
+          path: fieldPath,
+          message: 'Field must have a label',
+        });
+      }
+
+      // Check SELECT/MULTI_SELECT fields have options
+      if (
+        (field.type === FieldMetadataType.SELECT ||
+          field.type === FieldMetadataType.MULTI_SELECT) &&
+        (!Array.isArray(field.options) || field.options.length === 0)
       ) {
         errors.push({
           path: fieldPath,
@@ -340,6 +446,9 @@ export const validateManifest = (
   // Validate objects
   validateObjects(manifest.objects ?? [], errors);
 
+  // Validate object extensions
+  validateObjectExtensions(manifest.objectExtensions ?? [], errors);
+
   // Validate functions
   validateFunctions(manifest.serverlessFunctions ?? [], errors);
 
@@ -363,7 +472,10 @@ export const validateManifest = (
     });
   }
 
-  if (!manifest.serverlessFunctions || manifest.serverlessFunctions.length === 0) {
+  if (
+    !manifest.serverlessFunctions ||
+    manifest.serverlessFunctions.length === 0
+  ) {
     warnings.push({
       message: 'No functions defined in src/app/functions/',
     });
